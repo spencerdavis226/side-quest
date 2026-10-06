@@ -9,8 +9,9 @@ import { cardFactory } from "./author";
 // The mechanics are borrowed from party games (Paranoia, Killer, Heads Up,
 // Taboo, charades, 5 Second Rule, hot potato); every prompt is written for
 // this table. A secret shows only while a player holds the card's plaque; a
-// timed card can't be put aside until its time is up. Nothing is saved
-// between cards.
+// timed card can't be put aside until its time is up. A fuse never asks
+// anyone to pass the phone: it stays on the table while a beer goes round.
+// Nothing is saved between cards.
 //
 // IDs are `secrets.<kind>-NN` by position in each list; append new entries
 // at the end of a list and never reuse a number.
@@ -204,6 +205,14 @@ const foreheadWords = [
   "Beer pong",
   "Group chat",
   "Pub crawl",
+  "Tailgate",
+  "Hot tub",
+  "Bar fight",
+  "Spring break",
+  "Wine mom",
+  "Ugly sweater",
+  "Fake ID",
+  "Jägerbomb",
 ];
 
 const banned = [
@@ -215,6 +224,14 @@ const banned = [
   "CAMPFIRE. Banned: fire, camp, s'mores, wood, marshmallow.",
   "BRUNCH. Banned: mimosa, eggs, Sunday, breakfast, lunch.",
   "SUNBURN. Banned: sun, beach, red, burn, lotion.",
+  "KARAOKE. Banned: sing, song, microphone, bar, lyrics.",
+  "PIZZA. Banned: cheese, slice, pepperoni, Italy, delivery.",
+  "UBER. Banned: car, ride, app, driver, Lyft.",
+  "AIRPORT. Banned: plane, flight, gate, security, TSA.",
+  "BEACH. Banned: sand, ocean, sun, waves, towel.",
+  "WINE. Banned: grape, red, white, glass, bottle.",
+  "BACHELORETTE. Banned: bride, party, wedding, sash, Nashville.",
+  "TATTOO. Banned: ink, needle, skin, arm, artist.",
 ];
 
 const charades = [
@@ -222,6 +239,12 @@ const charades = [
   "Sneaking in at 4 a.m. and getting caught.",
   "A bartender ignoring you.",
   "Dropping your phone in a pool.",
+  "Doing a keg stand.",
+  "Walking into a glass door.",
+  "A group selfie going wrong.",
+  "Opening a beer with your teeth.",
+  "Failing a sobriety test.",
+  "Building IKEA furniture drunk.",
 ];
 
 const quickfire = [
@@ -230,6 +253,11 @@ const quickfire = [
   "reasons to call in sick",
   "things never to say on a date",
   "wrong pizza toppings",
+  "drinking games",
+  "things at a frat house",
+  "excuses to leave a party",
+  "songs everyone knows",
+  "texts not to send your boss",
 ];
 
 const clockCards: CardDefinition[] = [
@@ -337,44 +365,75 @@ const clockCards: CardDefinition[] = [
     ),
     countdown(20, "Time. Made it to A? Give 3. Didn't? Drink 3."),
   ),
+  withTimer(
+    card(
+      "clock-waterfall",
+      "Timed Waterfall",
+      "sip",
+      "Start the clock. Everyone drinks until time's up; anyone who stops early drinks 2 more.",
+    ),
+    countdown(5, "Time. Everyone stops drinking."),
+  ),
+  withTimer(
+    card(
+      "clock-wall-sit",
+      "Wall Sit",
+      "challenge",
+      "Start the clock and wall sit until time's up. Stand early and you drink 4.",
+    ),
+    countdown(30, "Time. Still sitting? Give 4."),
+  ),
+  withTimer(
+    card(
+      "clock-flamingo",
+      "Flamingo",
+      "group",
+      "Start the clock. Everyone stands on one leg; the first to touch down drinks 3.",
+    ),
+    countdown(30, "Time. Everyone still standing gives 1."),
+  ),
+  withTimer(
+    card(
+      "clock-no-blinking",
+      "No Blinking",
+      "challenge",
+      "Start the clock and don't blink until time's up. Your left neighbor watches.",
+    ),
+    countdown(15, "Time. Blinked? Drink 3. Didn't? Give 3."),
+  ),
+  withTimer(
+    card(
+      "clock-tongue-twister",
+      "Tongue Twister",
+      "challenge",
+      'Start the clock and say "red lorry, yellow lorry" five times before time runs out.',
+    ),
+    countdown(10, "Time. Tripped up or ran out? Drink 3. Nailed it? Give 3."),
+  ),
+  withTimer(
+    card(
+      "clock-hum",
+      "Hum That Tune",
+      "group",
+      "Start the clock and hum a song. Everyone else races to name it.",
+    ),
+    countdown(30, "Time. Named? You and the guesser give 2. Nobody? Drink 3."),
+  ),
 ];
 
 // --- Fuses -----------------------------------------------------------------
+// The phone stays on the table; a beer goes round. Nobody throws the phone.
 
+const BEER_3 = "Boom. Whoever's holding the beer drinks 3.";
 const potato: [topic: string, end: string][] = [
-  ["beer brand", "Boom. Whoever's holding this drinks 3."],
-  ["car brand", "Boom. Whoever's holding this drinks 3."],
-  ["fast-food chain", "Boom. Whoever's holding this drinks 3."],
-  ["Pokémon", "Boom. Whoever's holding this drinks 4."],
-  ["Disney movie", "Boom. Whoever's holding this drinks 3."],
-  ["cocktail", "Boom. Whoever's holding this takes a shot."],
-  ["U.S. state", "Boom. Whoever's holding this drinks 3."],
-  ["country in Europe", "Boom. Whoever's holding this drinks 3."],
-  ["boy band", "Boom. Whoever's holding this drinks 3."],
-  ["cereal", "Boom. Whoever's holding this drinks 3."],
-  ["Marvel character", "Boom. Whoever's holding this drinks 4."],
-  ["dog breed", "Boom. Whoever's holding this drinks 3."],
-  ["Taylor Swift song", "Boom. Whoever's holding this drinks 4."],
-  ["breakfast food", "Boom. Whoever's holding this drinks 3."],
-  ["sitcom", "Boom. Whoever's holding this drinks 3."],
-  ["cheese", "Boom. Whoever's holding this drinks 3."],
-  ["NFL team", "Boom. Whoever's holding this drinks 4."],
-  ["thing in a purse", "Boom. Whoever's holding this drinks 3."],
-  ["excuse for being late", "Boom. Whoever's holding this drinks 3."],
-  ["app on your phone", "Boom. Whoever's holding this drinks 3."],
-  ['word for "drunk"', "Boom. Whoever's holding this takes a shot."],
-  ["famous Chris", "Boom. Whoever's holding this drinks 3."],
-  ["reality TV show", "Boom. Whoever's holding this drinks 3."],
-  ["Harry Potter character", "Boom. Whoever's holding this drinks 4."],
-  ["pasta shape", "Boom. Whoever's holding this drinks 3."],
-  ["airline", "Boom. Whoever's holding this drinks 3."],
-  ["board game", "Boom. Whoever's holding this drinks 3."],
-  ["pizza topping", "Boom. Whoever's holding this drinks 3."],
-  ["sticky thing", "Boom. Whoever's holding this drinks 3."],
-  ["famous duo", "Boom. The holder drinks 3 and whoever passed it drinks 2."],
+  ["beer brand", BEER_3],
+  ["fast-food chain", BEER_3],
+  ["Pokémon", "Boom. Whoever's holding the beer drinks 4."],
+  ["cocktail", "Boom. Whoever's holding the beer takes a shot."],
+  ["Taylor Swift song", "Boom. Whoever's holding the beer drinks 4."],
+  ['word for "drunk"', "Boom. Whoever's holding the beer finishes it."],
 ];
 
-const HOLDER_3 = "Boom. Whoever's holding this drinks 3.";
 const fuseCards: CardDefinition[] = [
   ...potato.map(([topic, end], i) =>
     withTimer(
@@ -382,7 +441,7 @@ const fuseCards: CardDefinition[] = [
         id("potato", i),
         "Hot Potato",
         "category",
-        `Light the fuse. Name a ${topic}, then pass the phone left. No repeats.`,
+        `Light the fuse. Name a ${topic}, then pass a beer left. No repeats.`,
       ),
       fuse(end),
     ),
@@ -392,135 +451,54 @@ const fuseCards: CardDefinition[] = [
       "fuse-compliment",
       "Compliment Bomb",
       "group",
-      "Light the fuse. Give your left neighbor a real compliment, then pass the phone to them.",
+      "Light the fuse. Compliment your left neighbor, then pass them a beer.",
     ),
-    fuse(HOLDER_3),
+    fuse(BEER_3),
   ),
   withTimer(
     card(
       "fuse-rhyme",
       "Rhyme Bomb",
       "category",
-      "Light the fuse. Say a word that rhymes with beer, then pass the phone left. No repeats.",
+      "Light the fuse. Rhyme with beer, then pass a beer left. No repeats.",
     ),
-    fuse(HOLDER_3),
-  ),
-  withTimer(
-    card(
-      "fuse-alphabet",
-      "Alphabet Bomb",
-      "category",
-      "Light the fuse. Say a word starting with A, the next player B, and so on, passing left.",
-    ),
-    fuse(HOLDER_3),
+    fuse(BEER_3),
   ),
   withTimer(
     card(
       "fuse-buzz",
       "Buzz Bomb",
       "group",
-      "Light the fuse. Count up passing left; say buzz on any number with a 7 or divisible by 7.",
+      "Light the fuse. Pass a beer left counting up; say buzz on 7s and multiples of 7.",
     ),
-    fuse(HOLDER_3),
-  ),
-  withTimer(
-    card(
-      "fuse-questions",
-      "Questions Only",
-      "group",
-      "Light the fuse. Pass left, speaking only in questions. Anyone who answers plainly drinks 2.",
-    ),
-    fuse(HOLDER_3),
-  ),
-  withTimer(
-    card(
-      "fuse-accent",
-      "Accent Bomb",
-      "group",
-      "Light the fuse. Say a sentence in an accent, then pass the phone left. No repeat accents.",
-    ),
-    fuse(HOLDER_3),
-  ),
-  withTimer(
-    card(
-      "fuse-colors",
-      "Wrong Way",
-      "category",
-      "Light the fuse. Name a song with a color in the title, then pass the phone right.",
-    ),
-    fuse(HOLDER_3),
-  ),
-  withTimer(
-    card(
-      "fuse-confess",
-      "Confession Bomb",
-      "group",
-      "Light the fuse. Confess one small sin, then pass the phone left. No repeats.",
-    ),
-    fuse(HOLDER_3),
-  ),
-  withTimer(
-    card(
-      "fuse-story",
-      "Chain Story",
-      "group",
-      "Light the fuse. Add one sentence to a story, then pass the phone left.",
-    ),
-    fuse(HOLDER_3),
+    fuse(BEER_3),
   ),
   withTimer(
     card(
       "fuse-last-letter",
       "Last Letter",
       "category",
-      "Light the fuse. Say a word starting with the last word's last letter, then pass left.",
+      "Light the fuse. Start a word with the last word's last letter, then pass a beer left.",
     ),
-    fuse(HOLDER_3),
-  ),
-  withTimer(
-    card(
-      "fuse-short",
-      "Short Fuse",
-      "group",
-      "Light the fuse. Say a swear word, then pass the phone left fast. No repeats.",
-    ),
-    fuse("Boom. Whoever's holding this takes a shot.", 5, 15),
-  ),
-  withTimer(
-    card(
-      "fuse-long",
-      "Long Fuse",
-      "category",
-      "Light the fuse. Name a movie with a number in its title, then pass left. No repeats.",
-    ),
-    fuse("Boom. Whoever's holding this finishes their drink.", 40, 80),
+    fuse(BEER_3),
   ),
   withTimer(
     card(
       "fuse-toll",
       "Toll Bomb",
       "sip",
-      "Light the fuse. Drink 1, then pass the phone left. Everyone pays the toll every time.",
+      "Light the fuse. Drink 1, then pass a beer left. Everyone pays every time.",
     ),
-    fuse("Boom. Whoever's holding this drinks 3 more."),
+    fuse("Boom. Whoever's holding the beer drinks 3 more."),
   ),
   withTimer(
     card(
-      "fuse-hot-seat",
-      "Hot Seat Bomb",
+      "fuse-short",
+      "Short Fuse",
       "group",
-      "Light the fuse. The holder answers one question from the table, then passes left.",
+      "Light the fuse. Say a swear word, pass a beer left fast. No repeats.",
     ),
-    fuse(HOLDER_3),
-  ),
-  withTimer(
-    card(
-      "fuse-meow",
-      "Cat Bomb",
-      "group",
-      "Light the fuse. Meow at your left neighbor straight-faced, then pass. Laugh and drink 2.",
-    ),
-    fuse(HOLDER_3),
+    fuse("Boom. Whoever's holding the beer takes a shot.", 5, 15),
   ),
 ];
 
@@ -536,6 +514,6 @@ export const secretsPack: PackDefinition = {
   logo: "art/packs/secrets.svg",
   title: "Secrets & fuses",
   description:
-    "Hold-to-read secrets, hidden fuses and the clock: Paranoia, missions, hot potato and Heads Up.",
+    "Hold-to-read secrets and the clock: Paranoia, missions, Heads Up, charades, and a beer for hot potato.",
   cardIds: secretsCards.map((c) => c.id),
 };

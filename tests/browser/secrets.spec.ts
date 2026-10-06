@@ -93,7 +93,7 @@ test("@release a fuse holds the card until the boom", async ({
     if ((await rules.textContent())?.startsWith("Boom")) break;
     await page.clock.runFor(1_000);
   }
-  await expect(rules).toHaveText("Boom. Whoever's holding this drinks 3.");
+  await expect(rules).toHaveText("Boom. Whoever's holding the beer drinks 3.");
   await expect(page.locator(".timer-blast.boom")).toBeVisible();
   await page.screenshot({ path: info.outputPath("boom.png") });
   // The blast clears itself and never blocks the card.

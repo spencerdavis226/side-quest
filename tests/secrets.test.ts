@@ -9,14 +9,14 @@ import type { CardDefinition } from "../src/game/types";
 const pack = packs.find((p) => p.id === "secrets")!;
 
 describe("Secrets & fuses pack", () => {
-  it("ships 150 cards: 75 secrets, 30 on the clock, 45 fuses", () => {
+  it("ships 150 cards: 75 secrets, 63 on the clock, 12 beer fuses", () => {
     expect(pack.cardIds).toHaveLength(150);
     const fuses = secretsCards.filter((c) => c.timer?.kind === "fuse");
     const clocks = secretsCards.filter((c) => c.timer?.kind === "countdown");
     const secretsOnly = secretsCards.filter((c) => c.secret && !c.timer);
     expect(secretsOnly).toHaveLength(75);
-    expect(clocks).toHaveLength(30);
-    expect(fuses).toHaveLength(45);
+    expect(clocks).toHaveLength(63);
+    expect(fuses).toHaveLength(12);
     // Every card in the pack is a secret or a timer; none rolls dice.
     expect(secretsCards.every((c) => (c.secret || c.timer) && !c.dice)).toBe(
       true,
@@ -25,8 +25,13 @@ describe("Secrets & fuses pack", () => {
 
   it("names the plaque each card's rules point at", () => {
     for (const c of secretsCards) {
-      if (c.timer?.kind === "fuse")
+      // A fuse never sends the phone round: a beer goes instead.
+      if (c.timer?.kind === "fuse") {
         expect(c.rules, c.id).toMatch(/^Light the fuse/);
+        expect(c.rules, c.id).toMatch(/beer/);
+        expect(c.timer.end, c.id).toMatch(/holding the beer/);
+      }
+      expect(c.rules, c.id).not.toMatch(/pass(es)? (the|this) phone/i);
       if (c.timer?.kind === "countdown")
         expect(c.rules, c.id).toMatch(/Start the clock/);
       if (c.secret && !/Hold to read/.test(c.rules))

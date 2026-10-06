@@ -142,7 +142,7 @@ export function CardActions({
             {fuse ? "Light the fuse" : "Start the clock"}
             <small>
               {fuse
-                ? "it could blow any second"
+                ? "phone stays put"
                 : `${(card.timer as { seconds: number }).seconds} seconds`}
             </small>
           </button>
