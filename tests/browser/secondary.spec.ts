@@ -98,6 +98,7 @@ test("@release the pack count stays readable with every pack selected", async ({
       return el.scrollWidth <= el.clientWidth + 1 && text.right <= box.right;
     }),
   ).toBe(true);
+  await row.screenshot({ path: test.info().outputPath("seven-packs.png") });
 });
 test("@release House and VIP are selectable add-ons and Core can be deselected", async ({
   page,

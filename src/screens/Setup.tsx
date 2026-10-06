@@ -131,7 +131,7 @@ export function Setup({
           <span>
             <strong>Choose packs</strong>
             {/* Marks, not names: four pack titles never fit one phone row. */}
-            <small>
+            <small className={selected.length > 5 ? "many" : undefined}>
               {selected.map((pack) => (
                 <PackLogo key={pack.id} pack={pack} decorative />
               ))}
