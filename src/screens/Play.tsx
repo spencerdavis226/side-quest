@@ -177,7 +177,7 @@ export function Play({
                 : choice
                   ? `${card.title}. ${card.rules} Choose ${choice.skip} or ${choice.roll}.`
                   : blocked
-                    ? `${card.title}. ${card.rules} ${card.timer!.kind === "fuse" ? "Light the fuse" : "Start the clock"} first.`
+                    ? `${card.title}. ${card.rules} ${card.timer!.kind === "fuse" ? "Light the fuse" : "Start the clock"}, or skip it.`
                     : actions.shown === "end"
                       ? `${card.title}. ${card.timer!.end} Tap to put this card aside.`
                       : card.dice && !session.roll?.returned
@@ -220,7 +220,12 @@ export function Play({
             </span>
           </button>
           {acting && (
-            <CardActions card={card} actions={actions} groupRef={choiceRef} />
+            <CardActions
+              card={card}
+              actions={actions}
+              groupRef={choiceRef}
+              onSkip={onTap}
+            />
           )}
           {choice && (
             <div

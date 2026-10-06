@@ -139,3 +139,43 @@ test("a countdown counts, keeps its secret, and a reload unlights it", async ({
   ).toBeVisible();
   expect(await discarded(page)).toBe(0);
 });
+
+for (const width of [320, 390])
+  test(`@release a timed card can be skipped, lit or not, at ${width}px`, async ({
+    page,
+  }, info) => {
+    await page.setViewportSize({ width, height: 700 });
+    await page.clock.install();
+    // A secret on the clock carries three plaques; all fit inside the card.
+    await seed(page, "secrets.banned-01");
+    const actions = page.locator(".card-actions");
+    await expect(actions.getByRole("button")).toHaveCount(3);
+    const card = (await page.locator(".game-card").boundingBox())!;
+    for (const plaque of await actions.locator(".card-choice-option").all()) {
+      const box = (await plaque.boundingBox())!;
+      expect(box.x).toBeGreaterThanOrEqual(card.x);
+      expect(box.x + box.width).toBeLessThanOrEqual(card.x + card.width);
+      expect(box.height).toBeGreaterThanOrEqual(44);
+      // Labels never spill out of their plaque.
+      expect(
+        await plaque.evaluate((el) => el.scrollWidth <= el.clientWidth + 1),
+      ).toBe(true);
+    }
+    await actions.getByRole("button", { name: /Start the clock/ }).click();
+    await expect(page.getByRole("timer")).toHaveAccessibleName(
+      "60 seconds left",
+    );
+    await page.screenshot({ path: info.outputPath(`skip-${width}.png`) });
+    // Skipping mid-clock puts the card aside without waiting it out.
+    await actions.getByRole("button", { name: "Skip this card" }).click();
+    await expect.poll(() => discarded(page)).toBe(1);
+    await expect(page.locator(".timer-blast")).toHaveCount(0);
+  });
+
+test("an unlit fuse can be skipped", async ({ page }) => {
+  await seed(page, "secrets.potato-01");
+  const actions = page.locator(".card-actions");
+  await expect(actions.getByRole("button")).toHaveCount(2);
+  await actions.getByRole("button", { name: "Skip this card" }).click();
+  await expect.poll(() => discarded(page)).toBe(1);
+});

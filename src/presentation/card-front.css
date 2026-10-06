@@ -462,8 +462,33 @@
 
 /* Secret and timed cards share the choice plaques' place and chrome. A lone
    plaque spans the foot of the card. */
-.card-actions.single {
+.card-actions.plaques-1 {
   grid-template-columns: 1fr;
+}
+/* Skip is the quiet last plaque on a timed card. */
+.card-actions.plaques-2 {
+  grid-template-columns: 1fr 0.42fr;
+}
+.card-actions.plaques-3 {
+  grid-template-columns: 1fr 1fr 0.5fr;
+  gap: clamp(6px, 2cqw, max(10px, 2.13cqw));
+}
+.card-actions.plaques-3 .card-choice-option {
+  font-size: clamp(15px, 5.4cqw, max(22px, 4.68cqw));
+  line-height: 1.05;
+  text-align: center;
+}
+.card-actions.plaques-3 .card-choice-option small {
+  display: none;
+}
+.card-actions.plaques-3 .timer-live strong {
+  font-size: clamp(22px, 8.4cqw, max(32px, 6.8cqw));
+}
+.card-skip {
+  color: #f5e5bd;
+  background: linear-gradient(145deg, #4a3a28, #2d2116);
+  font-size: clamp(15px, 5.4cqw, max(22px, 4.68cqw));
+  animation-delay: 140ms;
 }
 .card-hold {
   touch-action: none;

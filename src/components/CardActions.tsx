@@ -92,18 +92,22 @@ export function CardActions({
   card,
   actions,
   groupRef,
+  onSkip,
 }: {
   card: CardDefinition;
   actions: Actions;
   groupRef?: Ref<HTMLDivElement>;
+  /** Puts a timed card aside before its time is up. */
+  onSkip: () => void;
 }) {
   const { timer, holding, setHolding, start, remaining } = actions;
   const showTimer = !!card.timer && timer.phase !== "done";
   const fuse = card.timer?.kind === "fuse";
+  const plaques = (card.secret ? 1 : 0) + (showTimer ? 2 : 0);
   return (
     <div
       ref={groupRef}
-      className={`card-choice card-actions${card.secret && showTimer ? "" : " single"}`}
+      className={`card-choice card-actions plaques-${plaques}`}
       role="group"
       aria-label="Card actions"
     >
@@ -166,6 +170,16 @@ export function CardActions({
             )}
           </div>
         ))}
+      {/* A table that doesn't want a timed card can put it aside, lit or not. */}
+      {showTimer && (
+        <button
+          className="card-choice-option card-skip"
+          aria-label="Skip this card"
+          onClick={onSkip}
+        >
+          Skip
+        </button>
+      )}
     </div>
   );
 }
