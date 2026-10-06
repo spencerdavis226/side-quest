@@ -29,6 +29,19 @@ const diceCell = (card: CardDefinition) => {
         .join(" ")}`;
 };
 
+// Secrets and timers ride in the same column as dice: one mechanic per card.
+const mechanicCell = (card: CardDefinition) => {
+  const t = card.timer;
+  return [
+    diceCell(card),
+    card.secret ? `Secret: ${card.secret}` : "",
+    t?.kind === "fuse" ? `Fuse ${t.min}–${t.max} s: ${t.end}` : "",
+    t?.kind === "countdown" ? `Clock ${t.seconds} s: ${t.end}` : "",
+  ]
+    .filter(Boolean)
+    .join(" · ");
+};
+
 const csvValue = (value: string) => `"${value.replaceAll('"', '""')}"`;
 
 const byCategory = (list: CardDefinition[]) =>
@@ -63,12 +76,12 @@ for (const pack of packs) {
     "",
     `${packCards.length} cards · ${counts} · ${packCards.filter((c) => c.dice).length} dice`,
     "",
-    "| Review | Title | ID | Cat | Rules | Dice |",
+    "| Review | Title | ID | Cat | Rules | Dice, secret or timer |",
     "| --- | --- | --- | --- | --- | --- |",
   );
   for (const card of packCards)
     md.push(
-      `| ☐ | ${card.title} | \`${card.id}\` | ${card.category} | ${card.rules} | ${diceCell(card)} |`,
+      `| ☐ | ${card.title} | \`${card.id}\` | ${card.category} | ${card.rules} | ${mechanicCell(card)} |`,
     );
   md.push("");
 }
@@ -78,6 +91,9 @@ md.push(
   "",
   "- Dice cards are ordinary cards with a `dice` definition (which dice plus how",
   "  to read the total); the engine pauses the deck until the roll is resolved.",
+  "- Secret cards show the secret only while a player holds the card's plaque;",
+  "  a fuse burns for a hidden time in its range, a clock counts down in view,",
+  "  and the card can't be put aside until time is up.",
   "- Rules target 90 characters / 18 words; the build warns above that and",
   "  rejects over 120 characters / 24 words.",
   "- Rank cards for 9 / 10 / Jack / Queen are intentionally covered by the",
@@ -101,7 +117,7 @@ for (const pack of packs)
         csvValue(card.title),
         csvValue(card.category),
         csvValue(card.rules),
-        csvValue(diceCell(card)),
+        csvValue(mechanicCell(card)),
         csvValue(""),
       ].join(","),
     );

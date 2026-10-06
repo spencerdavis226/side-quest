@@ -1,6 +1,6 @@
 # Card review sheet
 
-Generated 2026-10-05 by `npm run cards:review`. Do not edit by hand — edit the
+Generated 2026-10-06 by `npm run cards:review`. Do not edit by hand — edit the
 source modules under `src/content` and regenerate. Each row is one card;
 the Review column is intentionally blank so you can mark it up.
 
@@ -8,7 +8,7 @@ the Review column is intentionally blank so you can mark it up.
 
 105 cards · 16 sip · 22 group · 9 category · 43 challenge · 15 rule · 36 dice
 
-| Review | Title | ID | Cat | Rules | Dice |
+| Review | Title | ID | Cat | Rules | Dice, secret or timer |
 | --- | --- | --- | --- | --- | --- |
 | ☐ | House Special | `core.house-special` | sip | Drink 3. |  |
 | ☐ | Bar Tab | `core.bar-tab` | sip | Give 3. |  |
@@ -120,7 +120,7 @@ the Review column is intentionally blank so you can mark it up.
 
 94 cards · 29 sip · 15 group · 14 category · 27 challenge · 9 rule · 15 dice
 
-| Review | Title | ID | Cat | Rules | Dice |
+| Review | Title | ID | Cat | Rules | Dice, secret or timer |
 | --- | --- | --- | --- | --- | --- |
 | ☐ | California Sober | `house.sheet-004` | sip | Get pitted and smoke something, then drink 1d6 water. Else, take a shot. | 1d6 — Drink {total} water. |
 | ☐ | The Game Giveth | `house.sheet-006` | sip | Give 3 drinks. If "The Game Taketh" was already played, multiply by 1d6. |  |
@@ -221,7 +221,7 @@ the Review column is intentionally blank so you can mark it up.
 
 16 cards · 5 sip · 4 group · 2 category · 3 challenge · 2 rule · 0 dice
 
-| Review | Title | ID | Cat | Rules | Dice |
+| Review | Title | ID | Cat | Rules | Dice, secret or timer |
 | --- | --- | --- | --- | --- | --- |
 | ☐ | A toast to the VIP | `vip.toast` | sip | Everyone toasts the VIP by name, then takes 1 sip. |  |
 | ☐ | Choose a sidekick | `vip.sidekick` | sip | The VIP picks a sidekick for the rest of the game. The sidekick drinks when the VIP does. |  |
@@ -244,7 +244,7 @@ the Review column is intentionally blank so you can mark it up.
 
 140 cards · 21 sip · 24 group · 5 category · 65 challenge · 25 rule · 36 dice
 
-| Review | Title | ID | Cat | Rules | Dice |
+| Review | Title | ID | Cat | Rules | Dice, secret or timer |
 | --- | --- | --- | --- | --- | --- |
 | ☐ | Smeargle | `pokemon.smeargle` | sip | Smeargle used Sketch! Switch drinks with another player. |  |
 | ☐ | Magikarp | `pokemon.magikarp` | sip | Magikarp used Splash! ...but nothing happened. |  |
@@ -391,7 +391,7 @@ the Review column is intentionally blank so you can mark it up.
 
 85 cards · 22 sip · 11 group · 0 category · 34 challenge · 18 rule · 23 dice
 
-| Review | Title | ID | Cat | Rules | Dice |
+| Review | Title | ID | Cat | Rules | Dice, secret or timer |
 | --- | --- | --- | --- | --- | --- |
 | ☐ | Fuck You In Particular | `cabin.fuck-you` | sip | Roll d6. Drink 10 minus your roll. | 1d6 — 1-1: Drink 9. 2-2: Drink 8. 3-3: Drink 7. 4-4: Drink 6. 5-5: Drink 5. 6-6: Drink 4. |
 | ☐ | For Safety | `cabin.for-safety` | sip | Make your next drink a water or something hydrating. |  |
@@ -483,7 +483,7 @@ the Review column is intentionally blank so you can mark it up.
 
 250 cards · 0 sip · 250 group · 0 category · 0 challenge · 0 rule · 0 dice
 
-| Review | Title | ID | Cat | Rules | Dice |
+| Review | Title | ID | Cat | Rules | Dice, secret or timer |
 | --- | --- | --- | --- | --- | --- |
 | ☐ | Most Likely To | `likely.001` | group | Text their ex tonight. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.002` | group | Fall asleep first tonight. Point on three: most votes drinks 2. |  |
@@ -736,10 +736,170 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Most Likely To | `likely.249` | group | Survive on gas station food for a week. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.250` | group | Be talking about this game tomorrow. Point on three: most votes finishes their drink. |  |
 
+## Secrets & fuses (`secrets`)
+
+150 cards · 1 sip · 56 group · 40 category · 50 challenge · 3 rule · 0 dice
+
+| Review | Title | ID | Cat | Rules | Dice, secret or timer |
+| --- | --- | --- | --- | --- | --- |
+| ☐ | Toll Bomb | `secrets.fuse-toll` | sip | Light the fuse. Drink 1, then pass the phone left. Everyone pays the toll every time. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3 more. |
+| ☐ | Paranoia | `secrets.paranoia-01` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here would you least trust with your unlocked phone? |
+| ☐ | Paranoia | `secrets.paranoia-02` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here is most likely to have a secret account? |
+| ☐ | Paranoia | `secrets.paranoia-03` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here would you call to help hide a body? |
+| ☐ | Paranoia | `secrets.paranoia-04` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here has the worst taste in partners? |
+| ☐ | Paranoia | `secrets.paranoia-05` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here would last longest in a zombie apocalypse? |
+| ☐ | Paranoia | `secrets.paranoia-06` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here talks about you behind your back? |
+| ☐ | Paranoia | `secrets.paranoia-07` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here would you want to be stuck in an elevator with? |
+| ☐ | Paranoia | `secrets.paranoia-08` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here is the worst kisser, judging by vibes alone? |
+| ☐ | Paranoia | `secrets.paranoia-09` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here would sell out the whole group for $10,000? |
+| ☐ | Paranoia | `secrets.paranoia-10` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here has the most embarrassing search history? |
+| ☐ | Paranoia | `secrets.paranoia-11` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here is secretly the most competitive? |
+| ☐ | Paranoia | `secrets.paranoia-12` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here would you trust to dress you for a wedding? |
+| ☐ | Paranoia | `secrets.paranoia-13` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here dies first in a horror movie? |
+| ☐ | Paranoia | `secrets.paranoia-14` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here has the highest body count? |
+| ☐ | Paranoia | `secrets.paranoia-15` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here would you least want to share a bed with? |
+| ☐ | Paranoia | `secrets.paranoia-16` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here is most likely to have a dark side nobody's seen? |
+| ☐ | Paranoia | `secrets.paranoia-17` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here gives the worst advice? |
+| ☐ | Paranoia | `secrets.paranoia-18` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here would you call at 3 a.m. in a real crisis? |
+| ☐ | Paranoia | `secrets.paranoia-19` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here should never be allowed to plan a trip? |
+| ☐ | Paranoia | `secrets.paranoia-20` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here is most likely to get arrested this year? |
+| ☐ | Paranoia | `secrets.paranoia-21` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who is the best-looking person at this table? |
+| ☐ | Paranoia | `secrets.paranoia-22` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here would you swap lives with for a week? |
+| ☐ | Paranoia | `secrets.paranoia-23` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here is faking having their life together? |
+| ☐ | Paranoia | `secrets.paranoia-24` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here would cry first in an argument? |
+| ☐ | Paranoia | `secrets.paranoia-25` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here has the most annoying laugh? |
+| ☐ | Paranoia | `secrets.paranoia-26` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here would you pick as your wingman tonight? |
+| ☐ | Paranoia | `secrets.paranoia-27` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here is the worst driver? |
+| ☐ | Paranoia | `secrets.paranoia-28` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here wins a fistfight against everyone else? |
+| ☐ | Paranoia | `secrets.paranoia-29` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here is most likely to ghost someone? |
+| ☐ | Paranoia | `secrets.paranoia-30` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here owes someone at this table an apology? |
+| ☐ | Fact or Cap | `secrets.fact-01` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: FACT: Octopuses have three hearts. |
+| ☐ | Fact or Cap | `secrets.fact-02` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: CAP: Goldfish only have a three-second memory. |
+| ☐ | Fact or Cap | `secrets.fact-03` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: FACT: Honey found in ancient Egyptian tombs was still edible. |
+| ☐ | Fact or Cap | `secrets.fact-04` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: CAP: You can see the Great Wall of China from space with the naked eye. |
+| ☐ | Fact or Cap | `secrets.fact-05` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: FACT: Bananas are berries, but strawberries are not. |
+| ☐ | Fact or Cap | `secrets.fact-06` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: FACT: A day on Venus is longer than its year. |
+| ☐ | Fact or Cap | `secrets.fact-07` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: CAP: Bulls charge because the color red makes them angry. |
+| ☐ | Fact or Cap | `secrets.fact-08` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: FACT: Scotland's national animal is the unicorn. |
+| ☐ | Fact or Cap | `secrets.fact-09` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: CAP: Napoleon was unusually short for his time. |
+| ☐ | Fact or Cap | `secrets.fact-10` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: FACT: Cleopatra lived closer to the Moon landing than to the building of the Great Pyramid. |
+| ☐ | Fact or Cap | `secrets.fact-11` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: FACT: Wombat poop is cube-shaped. |
+| ☐ | Fact or Cap | `secrets.fact-12` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: CAP: Humans only use 10% of their brains. |
+| ☐ | Fact or Cap | `secrets.fact-13` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: FACT: Oxford University is older than the Aztec Empire. |
+| ☐ | Fact or Cap | `secrets.fact-14` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: CAP: Lightning never strikes the same place twice. |
+| ☐ | Fact or Cap | `secrets.fact-15` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: CAP: Shaving makes hair grow back thicker. |
+| ☐ | Fact or Cap | `secrets.fact-16` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: FACT: Sharks have been around longer than trees. |
+| ☐ | Dead Silence | `secrets.clock-silence` | group | Start the clock. Everyone stays silent until time's up; first to make a sound drinks 3. | Clock 30 s: Time. Everyone who stayed silent gives 1. |
+| ☐ | Compliment Bomb | `secrets.fuse-compliment` | group | Light the fuse. Give your left neighbor a real compliment, then pass the phone to them. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Buzz Bomb | `secrets.fuse-buzz` | group | Light the fuse. Count up passing left; say buzz on any number with a 7 or divisible by 7. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Questions Only | `secrets.fuse-questions` | group | Light the fuse. Pass left, speaking only in questions. Anyone who answers plainly drinks 2. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Accent Bomb | `secrets.fuse-accent` | group | Light the fuse. Say a sentence in an accent, then pass the phone left. No repeat accents. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Confession Bomb | `secrets.fuse-confess` | group | Light the fuse. Confess one small sin, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Chain Story | `secrets.fuse-story` | group | Light the fuse. Add one sentence to a story, then pass the phone left. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Short Fuse | `secrets.fuse-short` | group | Light the fuse. Say a swear word, then pass the phone left fast. No repeats. | Fuse 5–15 s: Boom. Whoever's holding this takes a shot. |
+| ☐ | Hot Seat Bomb | `secrets.fuse-hot-seat` | group | Light the fuse. The holder answers one question from the table, then passes left. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Cat Bomb | `secrets.fuse-meow` | group | Light the fuse. Meow at your left neighbor straight-faced, then pass. Laugh and drink 2. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Three in Five | `secrets.quick-01` | category | Start the clock: name three beers you'd actually order before it ends. Table judges duds. | Clock 5 s: Time. Didn't get three? Drink 3. Did? Give 3. |
+| ☐ | Three in Five | `secrets.quick-02` | category | Start the clock: name three things in a junk drawer before it ends. Table judges duds. | Clock 5 s: Time. Didn't get three? Drink 3. Did? Give 3. |
+| ☐ | Three in Five | `secrets.quick-03` | category | Start the clock: name three reasons to call in sick before it ends. Table judges duds. | Clock 5 s: Time. Didn't get three? Drink 3. Did? Give 3. |
+| ☐ | Three in Five | `secrets.quick-04` | category | Start the clock: name three things never to say on a date before it ends. Table judges duds. | Clock 5 s: Time. Didn't get three? Drink 3. Did? Give 3. |
+| ☐ | Three in Five | `secrets.quick-05` | category | Start the clock: name three wrong pizza toppings before it ends. Table judges duds. | Clock 5 s: Time. Didn't get three? Drink 3. Did? Give 3. |
+| ☐ | Hot Potato | `secrets.potato-01` | category | Light the fuse. Name a beer brand, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Hot Potato | `secrets.potato-02` | category | Light the fuse. Name a car brand, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Hot Potato | `secrets.potato-03` | category | Light the fuse. Name a fast-food chain, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Hot Potato | `secrets.potato-04` | category | Light the fuse. Name a Pokémon, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 4. |
+| ☐ | Hot Potato | `secrets.potato-05` | category | Light the fuse. Name a Disney movie, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Hot Potato | `secrets.potato-06` | category | Light the fuse. Name a cocktail, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this takes a shot. |
+| ☐ | Hot Potato | `secrets.potato-07` | category | Light the fuse. Name a U.S. state, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Hot Potato | `secrets.potato-08` | category | Light the fuse. Name a country in Europe, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Hot Potato | `secrets.potato-09` | category | Light the fuse. Name a boy band, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Hot Potato | `secrets.potato-10` | category | Light the fuse. Name a cereal, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Hot Potato | `secrets.potato-11` | category | Light the fuse. Name a Marvel character, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 4. |
+| ☐ | Hot Potato | `secrets.potato-12` | category | Light the fuse. Name a dog breed, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Hot Potato | `secrets.potato-13` | category | Light the fuse. Name a Taylor Swift song, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 4. |
+| ☐ | Hot Potato | `secrets.potato-14` | category | Light the fuse. Name a breakfast food, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Hot Potato | `secrets.potato-15` | category | Light the fuse. Name a sitcom, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Hot Potato | `secrets.potato-16` | category | Light the fuse. Name a cheese, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Hot Potato | `secrets.potato-17` | category | Light the fuse. Name a NFL team, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 4. |
+| ☐ | Hot Potato | `secrets.potato-18` | category | Light the fuse. Name a thing in a purse, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Hot Potato | `secrets.potato-19` | category | Light the fuse. Name a excuse for being late, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Hot Potato | `secrets.potato-20` | category | Light the fuse. Name a app on your phone, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Hot Potato | `secrets.potato-21` | category | Light the fuse. Name a word for "drunk", then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this takes a shot. |
+| ☐ | Hot Potato | `secrets.potato-22` | category | Light the fuse. Name a famous Chris, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Hot Potato | `secrets.potato-23` | category | Light the fuse. Name a reality TV show, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Hot Potato | `secrets.potato-24` | category | Light the fuse. Name a Harry Potter character, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 4. |
+| ☐ | Hot Potato | `secrets.potato-25` | category | Light the fuse. Name a pasta shape, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Hot Potato | `secrets.potato-26` | category | Light the fuse. Name a airline, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Hot Potato | `secrets.potato-27` | category | Light the fuse. Name a board game, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Hot Potato | `secrets.potato-28` | category | Light the fuse. Name a pizza topping, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Hot Potato | `secrets.potato-29` | category | Light the fuse. Name a sticky thing, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Hot Potato | `secrets.potato-30` | category | Light the fuse. Name a famous duo, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. The holder drinks 3 and whoever passed it drinks 2. |
+| ☐ | Rhyme Bomb | `secrets.fuse-rhyme` | category | Light the fuse. Say a word that rhymes with beer, then pass the phone left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Alphabet Bomb | `secrets.fuse-alphabet` | category | Light the fuse. Say a word starting with A, the next player B, and so on, passing left. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Wrong Way | `secrets.fuse-colors` | category | Light the fuse. Name a song with a color in the title, then pass the phone right. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Last Letter | `secrets.fuse-last-letter` | category | Light the fuse. Say a word starting with the last word's last letter, then pass left. | Fuse 15–45 s: Boom. Whoever's holding this drinks 3. |
+| ☐ | Long Fuse | `secrets.fuse-long` | category | Light the fuse. Name a movie with a number in its title, then pass left. No repeats. | Fuse 40–80 s: Boom. Whoever's holding this finishes their drink. |
+| ☐ | Secret Mission | `secrets.mission-01` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to say the word "literally." |
+| ☐ | Secret Mission | `secrets.mission-02` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to give you a high five. |
+| ☐ | Secret Mission | `secrets.mission-03` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get two people to cheers with you at once. |
+| ☐ | Secret Mission | `secrets.mission-04` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to tell you what time it is. |
+| ☐ | Secret Mission | `secrets.mission-05` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Work the word "pineapple" into conversation twice. |
+| ☐ | Secret Mission | `secrets.mission-06` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to repeat a sentence back to you. |
+| ☐ | Secret Mission | `secrets.mission-07` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to stand up. |
+| ☐ | Secret Mission | `secrets.mission-08` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to hand you something. |
+| ☐ | Secret Mission | `secrets.mission-09` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get the table singing, even one line. |
+| ☐ | Secret Mission | `secrets.mission-10` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to show you a photo on their phone. |
+| ☐ | Secret Mission | `secrets.mission-11` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Make someone say "what?" three times. |
+| ☐ | Secret Mission | `secrets.mission-12` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to swap seats with you. |
+| ☐ | Secret Mission | `secrets.mission-13` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to say your name. |
+| ☐ | Secret Mission | `secrets.mission-14` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to agree with an obviously false fact. |
+| ☐ | Secret Mission | `secrets.mission-15` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Say one full sentence in a British accent without explaining it. |
+| ☐ | Secret Mission | `secrets.mission-16` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Tell a terrible joke and get someone to laugh at it. |
+| ☐ | Secret Mission | `secrets.mission-17` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to ask you about your childhood. |
+| ☐ | Secret Mission | `secrets.mission-18` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to say "I love you." |
+| ☐ | Secret Mission | `secrets.mission-19` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Make someone drink at the same moment as you, three times. |
+| ☐ | Secret Mission | `secrets.mission-20` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to compliment your outfit. |
+| ☐ | Worst Date | `secrets.story-01` | challenge | Read alone, tell your worst date story. Table votes truth or lie; wrong voters drink 2. | Secret: Lie. Make it up and sell it. |
+| ☐ | Police Story | `secrets.story-02` | challenge | Read alone, tell your best cop story. Table votes truth or lie; wrong voters drink 2. | Secret: Tell the truth. Every word. |
+| ☐ | Celebrity Sighting | `secrets.story-03` | challenge | Read alone, tell your best celebrity story. Table votes truth or lie; wrong voters drink 2. | Secret: Lie. Make it up and sell it. |
+| ☐ | ER Visit | `secrets.story-04` | challenge | Read alone, tell your dumbest injury story. Table votes truth or lie; wrong voters drink 2. | Secret: Tell the truth. Every word. |
+| ☐ | Worst Job | `secrets.story-05` | challenge | Read alone, tell your worst job story. Table votes truth or lie; wrong voters drink 2. | Secret: Lie. Make it up and sell it. |
+| ☐ | Worst Hangover | `secrets.story-06` | challenge | Read alone, tell your worst hangover story. Table votes truth or lie; wrong voters drink 2. | Secret: Tell the truth. Every word. |
+| ☐ | Forehead | `secrets.forehead-01` | challenge | Start the clock. Phone on your forehead, press Hold to read. Table gives clues; you guess. | Secret: Hangover · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
+| ☐ | Forehead | `secrets.forehead-02` | challenge | Start the clock. Phone on your forehead, press Hold to read. Table gives clues; you guess. | Secret: Karaoke · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
+| ☐ | Forehead | `secrets.forehead-03` | challenge | Start the clock. Phone on your forehead, press Hold to read. Table gives clues; you guess. | Secret: Bachelor party · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
+| ☐ | Forehead | `secrets.forehead-04` | challenge | Start the clock. Phone on your forehead, press Hold to read. Table gives clues; you guess. | Secret: Designated driver · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
+| ☐ | Forehead | `secrets.forehead-05` | challenge | Start the clock. Phone on your forehead, press Hold to read. Table gives clues; you guess. | Secret: Walk of shame · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
+| ☐ | Forehead | `secrets.forehead-06` | challenge | Start the clock. Phone on your forehead, press Hold to read. Table gives clues; you guess. | Secret: Beer pong · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
+| ☐ | Forehead | `secrets.forehead-07` | challenge | Start the clock. Phone on your forehead, press Hold to read. Table gives clues; you guess. | Secret: Group chat · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
+| ☐ | Forehead | `secrets.forehead-08` | challenge | Start the clock. Phone on your forehead, press Hold to read. Table gives clues; you guess. | Secret: Pub crawl · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
+| ☐ | No Saying It | `secrets.banned-01` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: TEQUILA. Banned: shot, Mexico, lime, salt, margarita. · Clock 60 s: Time. Guessed? Give 3. Not guessed, or a banned word slipped? Drink 3. |
+| ☐ | No Saying It | `secrets.banned-02` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: WEDDING. Banned: marry, bride, groom, ring, dress. · Clock 60 s: Time. Guessed? Give 3. Not guessed, or a banned word slipped? Drink 3. |
+| ☐ | No Saying It | `secrets.banned-03` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: BARTENDER. Banned: bar, drink, serve, tip, cocktail. · Clock 60 s: Time. Guessed? Give 3. Not guessed, or a banned word slipped? Drink 3. |
+| ☐ | No Saying It | `secrets.banned-04` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: VEGAS. Banned: casino, gamble, Nevada, strip, Elvis. · Clock 60 s: Time. Guessed? Give 3. Not guessed, or a banned word slipped? Drink 3. |
+| ☐ | No Saying It | `secrets.banned-05` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: DATING APP. Banned: swipe, date, match, profile, phone. · Clock 60 s: Time. Guessed? Give 3. Not guessed, or a banned word slipped? Drink 3. |
+| ☐ | No Saying It | `secrets.banned-06` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: CAMPFIRE. Banned: fire, camp, s'mores, wood, marshmallow. · Clock 60 s: Time. Guessed? Give 3. Not guessed, or a banned word slipped? Drink 3. |
+| ☐ | No Saying It | `secrets.banned-07` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: BRUNCH. Banned: mimosa, eggs, Sunday, breakfast, lunch. · Clock 60 s: Time. Guessed? Give 3. Not guessed, or a banned word slipped? Drink 3. |
+| ☐ | No Saying It | `secrets.banned-08` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: SUNBURN. Banned: sun, beach, red, burn, lotion. · Clock 60 s: Time. Guessed? Give 3. Not guessed, or a banned word slipped? Drink 3. |
+| ☐ | Act It Out | `secrets.charade-01` | challenge | Read this alone. Start the clock and act it out, no words or sounds. The table guesses. | Secret: Parallel parking a limo. · Clock 45 s: Time. Someone guessed? You both give 2. Nobody did? You drink 3. |
+| ☐ | Act It Out | `secrets.charade-02` | challenge | Read this alone. Start the clock and act it out, no words or sounds. The table guesses. | Secret: Sneaking in at 4 a.m. and getting caught. · Clock 45 s: Time. Someone guessed? You both give 2. Nobody did? You drink 3. |
+| ☐ | Act It Out | `secrets.charade-03` | challenge | Read this alone. Start the clock and act it out, no words or sounds. The table guesses. | Secret: A bartender ignoring you. · Clock 45 s: Time. Someone guessed? You both give 2. Nobody did? You drink 3. |
+| ☐ | Act It Out | `secrets.charade-04` | challenge | Read this alone. Start the clock and act it out, no words or sounds. The table guesses. | Secret: Dropping your phone in a pool. · Clock 45 s: Time. Someone guessed? You both give 2. Nobody did? You drink 3. |
+| ☐ | Staring Contest | `secrets.clock-stare` | challenge | Start the clock and stare down your left neighbor. First to look away or laugh drinks 3. | Clock 30 s: Time. Nobody broke? You both drink 2. |
+| ☐ | Straight Face | `secrets.clock-straight-face` | challenge | Start the clock. Everyone tries to make you laugh; keep a straight face the whole time. | Clock 30 s: Time. Cracked? Drink 3. Held it? Everyone else drinks 2. |
+| ☐ | Plank It | `secrets.clock-plank` | challenge | Start the clock and hold a plank until time's up. Drop early and you drink 4. | Clock 30 s: Time. Still up? Give 4. |
+| ☐ | Backwards | `secrets.clock-alphabet` | challenge | Start the clock and say the alphabet backwards, Z to A, before time runs out. | Clock 20 s: Time. Made it to A? Give 3. Didn't? Drink 3. |
+| ☐ | Secret Rule | `secrets.rule-01` | rule | Read alone. This rule holds the rest of the game; anyone you catch breaking it drinks 2. | Secret: Nobody may say the word "drink." |
+| ☐ | Secret Rule | `secrets.rule-02` | rule | Read alone. This rule holds the rest of the game; anyone you catch breaking it drinks 2. | Secret: Nobody may point with a finger. |
+| ☐ | Secret Rule | `secrets.rule-03` | rule | Read alone. This rule holds the rest of the game; anyone you catch breaking it drinks 2. | Secret: Nobody may say anyone's name. |
+
 ## Notes for review
 
 - Dice cards are ordinary cards with a `dice` definition (which dice plus how
   to read the total); the engine pauses the deck until the roll is resolved.
+- Secret cards show the secret only while a player holds the card's plaque;
+  a fuse burns for a hidden time in its range, a clock counts down in view,
+  and the card can't be put aside until time is up.
 - Rules target 90 characters / 18 words; the build warns above that and
   rejects over 120 characters / 24 words.
 - Rank cards for 9 / 10 / Jack / Queen are intentionally covered by the

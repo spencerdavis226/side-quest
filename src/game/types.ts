@@ -41,7 +41,20 @@ export interface CardDefinition {
   /** The ribbon's finish; gold when absent. The League gives each finale
    * stage its own: pearl Legendaries, violet Elite Four, crimson Champions. */
   ribbonTone?: RibbonTone;
+  /** Text one player reads alone: it shows only while they hold the card's
+   * Hold to read plaque and hides on release (a Paranoia question, a secret
+   * mission, a word for the table to act out). The rules say who reads it. */
+  secret?: string;
+  /** A timed card: a plaque starts it and the card can't be put aside until
+   * time is up, when `end` replaces the rules. */
+  timer?: TimerDefinition;
 }
+/** `fuse`: a hidden length between `min` and `max` seconds, picked when it is
+ * lit, so nobody knows who will hold the phone at the boom. `countdown`: the
+ * seconds are shown counting down. Display only: a reload unlights it. */
+export type TimerDefinition =
+  | { version: 1; kind: "fuse"; min: number; max: number; end: string }
+  | { version: 1; kind: "countdown"; seconds: number; end: string };
 export const RIBBON_TONES = ["pearl", "violet", "crimson"] as const;
 export type RibbonTone = (typeof RIBBON_TONES)[number];
 /** One stage of a quest's finale: `pick` cards drawn at random from

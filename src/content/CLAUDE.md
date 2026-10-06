@@ -1,6 +1,6 @@
 # src/content — card and pack data
 
-Read `docs/AUTHORING.md` and `docs/CARD_VOICE_REFERENCE.md` before editing. Cards are title + rules + category (`sip|group|category|challenge|rule`) + optional `dice`. No illustration text.
+Read `docs/AUTHORING.md` and `docs/CARD_VOICE_REFERENCE.md` before editing. Cards are title + rules + category (`sip|group|category|challenge|rule`) + optional `dice`, or optional `secret` / `timer` (never with dice; see `docs/AUTHORING.md`). No illustration text.
 
 | File | Pack | Cards |
 | --- | --- | --- |
@@ -10,6 +10,7 @@ Read `docs/AUTHORING.md` and `docs/CARD_VOICE_REFERENCE.md` before editing. Card
 | `pokemon.ts` (+ `pokemon-league.ts`: 24 gym leaders and the 20-card gauntlet, League mode only) | `pokemon` | 120 |
 | `cabin.ts` (+ the 8 CABIIN sheet rows from `custom.ts`) | `cabin` | 85 |
 | `likely.ts` | `likely` (vote cards, IDs `likely.NNN` by list position) | 250 |
+| `secrets.ts` | `secrets` (Secrets & fuses: `secret` and `timer` cards, IDs `secrets.<kind>-NN` by list position) | 150 |
 
 `catalog.ts` aggregates everything for tests, scripts and the workshop only. The app imports `manifest.generated.ts` (run `npm run content:manifest` after changing packs or card IDs; the build does it too and a test catches a stale file) and loads card text through `loaders.ts`, one lazy chunk per content module. A new pack needs a loader entry. Never import a content module statically from app code; the budget check fails the build if card text reaches the initial chunk.
 

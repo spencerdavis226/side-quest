@@ -21,6 +21,8 @@ const DURATION_EXCEPTIONS = new Set([
 const textOf = (card: CardDefinition) =>
   [
     card.rules,
+    card.secret ?? "",
+    card.timer?.end ?? "",
     card.dice?.instruction ?? "",
     card.dice?.doubles ?? "",
     ...(card.dice?.outcomes ?? []).map((outcome) => outcome.instruction),
