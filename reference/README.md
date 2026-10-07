@@ -29,7 +29,12 @@ material, not game content:
   `house.sheet-003`…`house.sheet-105`; the 8 rows that are CABIIN spaces
   (12, 16, 24, 28, 40, 42, 53, 54) ship in Cabin weekend as `cabin.*` cards. The 2026-09-26 logic pass made minimal
   clarity edits to six ambiguous rows; those edits exist only in the shipping
-  source, never in this folder.
+  source, never in this folder. At the owner's request (2026-10-07, "more
+  crude-funny", all decks) thirteen flat rows gained a crude kicker while
+  keeping their first sentence: the nine travel Never Have I Evers (rows 26,
+  50, 67–73), Singles (64), Damn, you're old (61), Big Baby (76) and Work it
+  (80). Every in-joke row (Ron, Steve, Becca, Freddies, Same, Split the G and
+  so on) is unchanged.
 - **VIP**: the four VIP rows become `vip.sheet-003`…`vip.sheet-006` in the same
   file; the rest of `VIP night` is original.
 - **CABIIN**: tone reference only; see `docs/CARD_VOICE_REFERENCE.md` for what
@@ -41,7 +46,10 @@ material, not game content:
   became pours, one-shot dice, or next-turn rules, and untitled spaces are
   named after the Pokémon in them. Source consequences are kept as written —
   shots, chugs, gendered splits, mixed drinks and rough dares are not
-  softened. Board-only plumbing (squares, lights, turn order, extra turns) is
+  softened. The 2026-10-07 crude pass reworded the flat dice spaces (Mareep,
+  Zubat, Gym Battle, Poké Ball, Chansey, Supersonic, Game Corner, Rival Wally,
+  Delibird, Elite Four) so the roll is a joke with its pour, and evened out
+  Battle of the Sexes; the beasts, shots and chugs are as before. Board-only plumbing (squares, lights, turn order, extra turns) is
   intentionally not carried over.
 
 ## Adding a new reference file

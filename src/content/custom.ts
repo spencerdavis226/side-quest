@@ -7,6 +7,8 @@ import { cardFactory, choice, roll } from "./author";
 // keep the sheet's wording and let the engine compute the exact pour. Numeric
 // IDs are the original 1-based sheet row numbers, so duplicate titles stay
 // distinct and `house.` keeps saved sessions working.
+// Exception: at the owner's request (2026-10-07) thirteen flat rows gained a
+// crude kicker after their original first sentence; see reference/README.md.
 const houseCard = cardFactory("house");
 const vipCard = cardFactory("vip");
 
@@ -138,7 +140,7 @@ const sheetRows: CardDefinition[] = [
     "sheet-026",
     "Never Have I Ever",
     "sip",
-    "Drink if you've been to Mexico",
+    "Drink if you've been to Mexico. Drink 3 if you drank the water and blamed the tequila",
   ),
   houseCard(
     "sheet-027",
@@ -263,7 +265,7 @@ const sheetRows: CardDefinition[] = [
     "sheet-050",
     "Never Have I Ever",
     "sip",
-    "Drink if you've flown First Class",
+    "Drink if you've flown First Class. Drink 3 if you've joined the mile-high club",
   ),
   houseCard(
     "sheet-051",
@@ -318,7 +320,12 @@ const sheetRows: CardDefinition[] = [
     "challenge",
     "Tell your worst vacation story. If team agrees it's bad, give 2 drinks. If team agrees it's not bad, drink 2 drinks.",
   ),
-  houseCard("sheet-061", "Damn, you're old", "group", "Oldest takes a drink"),
+  houseCard(
+    "sheet-061",
+    "Damn, you're old",
+    "group",
+    "Oldest takes a drink and tells us what sex was like before phones",
+  ),
   houseCard(
     "sheet-062",
     "What was that?",
@@ -327,7 +334,12 @@ const sheetRows: CardDefinition[] = [
     choice(roll(1, 6, "Drink {total}."), "Read it", "Refuse"),
   ),
   houseCard("sheet-063", "Straight to jail", "sip", "Finish your drink"),
-  houseCard("sheet-064", "Singles", "sip", "Drink if you're single"),
+  houseCard(
+    "sheet-064",
+    "Singles",
+    "sip",
+    "Drink if you're single. Drink 2 more if it's \"by choice\"",
+  ),
   houseCard(
     "sheet-065",
     "Couples",
@@ -339,43 +351,43 @@ const sheetRows: CardDefinition[] = [
     "sheet-067",
     "Never Have I Ever",
     "sip",
-    "Drink if you've been to Germany",
+    "Drink if you've been to Germany. Drink 3 if you pissed in public there",
   ),
   houseCard(
     "sheet-068",
     "Never Have I Ever",
     "sip",
-    "Drink if you've been to Ireland",
+    "Drink if you've been to Ireland. Finish your drink if you came back sober",
   ),
   houseCard(
     "sheet-069",
     "Never Have I Ever",
     "sip",
-    "Drink if you've been to Italy",
+    "Drink if you've been to Italy. Drink 3 if you hooked up with a waiter",
   ),
   houseCard(
     "sheet-070",
     "Never Have I Ever",
     "sip",
-    "Drink if you've been to Paris",
+    "Drink if you've been to Paris. Drink 3 if you got pickpocketed or dumped there",
   ),
   houseCard(
     "sheet-071",
     "Never Have I Ever",
     "sip",
-    "Drink if you've been to Canada",
+    "Drink if you've been to Canada. Drink 3 if it was just to drink legally at 19",
   ),
   houseCard(
     "sheet-072",
     "Never Have I Ever",
     "sip",
-    "Drink if you've been to Thailand",
+    "Drink if you've been to Thailand. Drink 3 if you can't tell us what happened there",
   ),
   houseCard(
     "sheet-073",
     "Never Have I Ever",
     "sip",
-    "Drink if you've been to Japan",
+    "Drink if you've been to Japan. Drink 3 if a vending machine sold you something weird",
   ),
   houseCard(
     "sheet-074",
@@ -383,7 +395,12 @@ const sheetRows: CardDefinition[] = [
     "sip",
     "Drink if you've literally shit your pants. Drink 2 if you've shit yourself at the cabin.",
   ),
-  houseCard("sheet-076", "Big Baby", "group", "Drink if you're the youngest"),
+  houseCard(
+    "sheet-076",
+    "Big Baby",
+    "group",
+    "Drink if you're the youngest, then explain one slang word to the oldest",
+  ),
   houseCard(
     "sheet-077",
     "Nicetitties",
@@ -404,7 +421,12 @@ const sheetRows: CardDefinition[] = [
     "You fucking blew it, drink 1d6 drinks",
     roll(1, 6, "Drink {total}."),
   ),
-  houseCard("sheet-080", "Work it", "challenge", "Do a runway walk"),
+  houseCard(
+    "sheet-080",
+    "Work it",
+    "challenge",
+    "Do a runway walk. The table scores it; under 7, drink 3",
+  ),
   houseCard(
     "sheet-081",
     "ABC's",

@@ -20,14 +20,14 @@ const authored: CardDefinition[] = [
     "fuck-you",
     "Fuck You In Particular",
     "sip",
-    "Roll d6. Drink 10 minus your roll.",
+    "The game has a personal problem with you. Roll d6 and take it.",
     rollTable(1, 6, [
-      { min: 1, max: 1, instruction: "Drink 9." },
+      { min: 1, max: 1, instruction: "It hates you a lot. Drink 9." },
       { min: 2, max: 2, instruction: "Drink 8." },
       { min: 3, max: 3, instruction: "Drink 7." },
       { min: 4, max: 4, instruction: "Drink 6." },
       { min: 5, max: 5, instruction: "Drink 5." },
-      { min: 6, max: 6, instruction: "Drink 4." },
+      { min: 6, max: 6, instruction: "It only mildly hates you. Drink 4." },
     ]),
   ),
   card(
@@ -338,7 +338,7 @@ const authored: CardDefinition[] = [
     "wisconsin",
     "Wisconsin",
     "challenge",
-    "The real mitten state. Roll d6. Drink 7 minus your roll. From Wisconsin? Give it.",
+    "The real mitten state. Roll d6. From Wisconsin? You give instead of drinking.",
     rollTable(1, 6, [
       { min: 1, max: 1, instruction: "Drink 6. From Wisconsin? Give 6." },
       { min: 2, max: 2, instruction: "Drink 5. From Wisconsin? Give 5." },
@@ -352,12 +352,12 @@ const authored: CardDefinition[] = [
     "samesies",
     "Samesies",
     "challenge",
-    "Roll 2d6. Doubles: give the total. Else drink half.",
+    "Roll 2d6. Matching dice means the universe agrees with you.",
     {
       version: 1,
       count: 2,
       sides: 6,
-      doubles: "Give {total}.",
+      doubles: "Samesies! Give {total}.",
       outcomes: [
         { min: 2, max: 2, instruction: "Drink 1." },
         { min: 3, max: 4, instruction: "Drink 2." },
@@ -404,7 +404,7 @@ const authored: CardDefinition[] = [
     "florida",
     "Florida",
     "challenge",
-    "Tell everyone how nice Florida is. Roll d6 and drink half, warm. From Florida? Give it.",
+    "Tell everyone how nice Florida is, then roll d6. From Florida? You give instead.",
     rollTable(1, 6, [
       { min: 1, max: 2, instruction: "Drink 1, warm. From Florida? Give 1." },
       { min: 3, max: 4, instruction: "Drink 2, warm. From Florida? Give 2." },
@@ -421,10 +421,10 @@ const authored: CardDefinition[] = [
     "crypto",
     "Crypto",
     "challenge",
-    "Roll d6. Odd: drink your roll. Even: give it.",
+    "You bought the dip. Roll d6 to see if it kept dipping.",
     rollTable(1, 6, [
-      { min: 1, max: 5, step: 2, instruction: "Drink {total}." },
-      { min: 2, max: 6, step: 2, instruction: "Give {total}." },
+      { min: 1, max: 5, step: 2, instruction: "Rug pulled. Drink {total}." },
+      { min: 2, max: 6, step: 2, instruction: "To the moon. Give {total}." },
     ]),
   ),
   card(
@@ -437,7 +437,7 @@ const authored: CardDefinition[] = [
     "im-sorry-baby",
     "I'm Sorry Baby",
     "challenge",
-    "Roll d6. 1: you're a nobody, drink 4. 2–4: smoochie-smoochie, drink 2. 5–6: give 3.",
+    "Roll d6 to find out how sorry you are.",
     rollTable(1, 6, [
       { min: 1, max: 1, instruction: "You're a nobody. Drink 4." },
       { min: 2, max: 4, instruction: "Smoochie-smoochie. Drink 2." },

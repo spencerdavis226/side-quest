@@ -2,18 +2,17 @@ import type { CardDefinition, Category, DiceDefinition } from "../game/types";
 import { cardFactory, roll, rollTable } from "./author";
 
 /**
- * The generated standard deck: original, dice-forward prompts in the blunt
- * table voice. This pass cut the file hard — every card here either rolls dice
- * with an exact computed result, or does something no other card does. The
- * near-identical d6 branch tables, duplicate call-outs, duplicate categories
- * and gimmick temporary rules were removed.
+ * The generated standard deck. The 2026-10-07 rewrite cut the bare "roll d6,
+ * drink or give a number" cards (and their duplicates) and replaced them with
+ * cards where something happens between people. Dice stay where the roll is
+ * the joke: each result is a punchline with its pour attached.
  *
  * Design rules for this file:
  * - One instruction per card; nobody tracks state between cards.
- * - Dice drive the amounts wherever possible (one to four d6/d20, total only).
- * - Every dice card resolves to an exact instruction; no odds/evens or
- *   "otherwise" logic is left for the table to work out.
- * - Keep it snarky and specific; avoid generic party-game boilerplate.
+ * - A dice card's rules give the premise; its outcomes carry the numbers, and
+ *   every result resolves to one exact instruction.
+ * - Crude, specific, and aimed at the people at the table; no generic
+ *   party-game boilerplate.
  *
  * Keep IDs stable: active sessions snapshot their text and order.
  */
@@ -27,180 +26,168 @@ type Draft = [
 const card = cardFactory("core");
 
 const drafts: Draft[] = [
-  // --- Dice: straight pours -------------------------------------------------
+  // --- Dice: the roll is the joke -------------------------------------------
   [
-    "empty-the-tank",
-    "Empty the Tank",
+    "prostate-exam",
+    "Prostate Exam",
     "sip",
-    "Roll d6. Drink your roll. The die knows what you did.",
-    roll(1, 6, "Drink {total}."),
+    "Roll d6. That's how many fingers the doctor used.",
+    roll(1, 6, "{total} fingers. Drink {total} and say thank you, doctor."),
   ],
   [
-    "pay-your-tab",
-    "Pay Your Tab",
-    "challenge",
-    "Roll d6. Give your roll to anyone. No takebacks, no crying.",
-    roll(1, 6, "Give {total}."),
-  ],
-  [
-    "dice-debt",
-    "Dice Debt",
-    "challenge",
-    "Roll d6. Drink 7 minus your roll. Show your work.",
+    "walk-of-shame",
+    "Walk of Shame",
+    "sip",
+    "Roll d6 to find out where you woke up this morning.",
     rollTable(1, 6, [
-      { min: 1, max: 1, instruction: "Drink 6." },
-      { min: 2, max: 2, instruction: "Drink 5." },
-      { min: 3, max: 3, instruction: "Drink 4." },
-      { min: 4, max: 4, instruction: "Drink 3." },
-      { min: 5, max: 5, instruction: "Drink 2." },
-      { min: 6, max: 6, instruction: "Drink 1." },
+      {
+        min: 1,
+        max: 1,
+        instruction: "Behind a Waffle House. Finish your drink.",
+      },
+      { min: 2, max: 3, instruction: "Your ex's couch. Drink 3." },
+      { min: 4, max: 5, instruction: "Your own bed, alone. Drink 1." },
+      { min: 6, max: 6, instruction: "A yacht. Give 6." },
     ]),
   ],
   [
-    "loose-change",
-    "Loose Change",
-    "sip",
-    "Roll d6. Give that many, split between two people.",
-    roll(1, 6, "Give {total}, split between two people."),
-  ],
-  [
-    "big-spender",
-    "Big Spender",
-    "sip",
-    "Roll 2d6. Give the total. Announce it like it's charity.",
-    roll(2, 6, "Give {total}."),
-  ],
-
-  // --- Dice: 2d6 gambles ----------------------------------------------------
-  [
-    "lucky-sevens",
-    "Lucky Sevens",
+    "gas-station-sushi",
+    "Gas Station Sushi",
     "challenge",
-    "Roll 2d6. A 7: give 7. Doubles: drink 4. Else drink 2.",
-    {
-      version: 1,
-      count: 2,
-      sides: 6,
-      doubles: "Drink 4.",
-      outcomes: [
-        { min: 2, max: 6, instruction: "Drink 2." },
-        { min: 7, max: 7, instruction: "Give 7." },
-        { min: 8, max: 12, instruction: "Drink 2." },
-      ],
-    },
-  ],
-  [
-    "boxcars",
-    "Boxcars",
-    "challenge",
-    "Roll 2d6. Double 6s: everyone else drinks 4.",
-    rollTable(2, 6, [
-      { min: 2, max: 11, instruction: "Nothing happens." },
-      { min: 12, max: 12, instruction: "Everyone else drinks 4." },
+    "You ate the gas station sushi. Roll d6.",
+    rollTable(1, 6, [
+      { min: 1, max: 1, instruction: "You shit yourself. Finish your drink." },
+      { min: 2, max: 3, instruction: "Cold sweats. Drink 3." },
+      { min: 4, max: 5, instruction: "Rumbling, but holding. Drink 2." },
+      { min: 6, max: 6, instruction: "Iron gut. Give 4." },
     ]),
   ],
-
-  // --- Dice: d20 drama ------------------------------------------------------
+  [
+    "body-count",
+    "Body Count",
+    "group",
+    "Roll d20. Anyone whose body count beats it drinks 3. Lying is between you and God.",
+    roll(1, 20, "Body count over {total}? Drink 3."),
+  ],
+  [
+    "lap-dance",
+    "Lap Dance Roulette",
+    "challenge",
+    "Roll d6 and count that many seats to your left. That's who gets a 10-second lap dance.",
+    roll(1, 6, "{total} seats left. Dance for them or drink 5."),
+  ],
+  [
+    "hot-seat",
+    "Hot Seat",
+    "challenge",
+    "Roll d6. That many players each ask you a yes-or-no question. Lie and the table knows.",
+    roll(1, 6, "{total} questions. Each lie: drink 3."),
+  ],
   [
     "nat-one",
     "Nat One",
     "challenge",
-    "Roll d20. A 1: finish your drink. Else drink 3.",
+    "Roll d20. Pray.",
     rollTable(1, 20, [
-      { min: 1, max: 1, instruction: "Finish your drink." },
-      { min: 2, max: 20, instruction: "Drink 3." },
-    ]),
-  ],
-  [
-    "nat-twenty",
-    "Nat Twenty",
-    "challenge",
-    "Roll d20. A 20: give 8. Else drink 2.",
-    rollTable(1, 20, [
-      { min: 1, max: 19, instruction: "Drink 2." },
-      { min: 20, max: 20, instruction: "Give 8." },
-    ]),
-  ],
-  [
-    "close-call",
-    "Close Call",
-    "challenge",
-    "Roll d20. 1–5: drink 5. 16–20: give 5. Else nothing.",
-    rollTable(1, 20, [
-      { min: 1, max: 5, instruction: "Drink 5." },
-      { min: 6, max: 15, instruction: "Nothing happens." },
-      { min: 16, max: 20, instruction: "Give 5." },
-    ]),
-  ],
-  [
-    "skyscraper",
-    "Skyscraper",
-    "challenge",
-    "Roll d20. A 20: give 10. A 1: drink 10. Else drink 2.",
-    rollTable(1, 20, [
-      { min: 1, max: 1, instruction: "Drink 10." },
-      { min: 2, max: 19, instruction: "Drink 2." },
-      { min: 20, max: 20, instruction: "Give 10." },
-    ]),
-  ],
-  [
-    "overdrive",
-    "Overdrive",
-    "challenge",
-    "Roll 4d6. Even total: give 6. Odd total: drink 6.",
-    rollTable(4, 6, [
-      { min: 4, max: 24, step: 2, instruction: "Give 6." },
-      { min: 5, max: 23, step: 2, instruction: "Drink 6." },
+      {
+        min: 1,
+        max: 1,
+        instruction:
+          "Critical fail. Finish your drink and confess your worst hookup.",
+      },
+      { min: 2, max: 19, instruction: "Drink 3. The gods are bored." },
+      {
+        min: 20,
+        max: 20,
+        instruction: "Natural 20. Make anyone finish their drink.",
+      },
     ]),
   ],
 
-  // --- Dice: whole table ----------------------------------------------------
+  // --- Table moments --------------------------------------------------------
   [
-    "round-for-the-table",
-    "Round for the Table",
-    "group",
-    "Roll d6. Everyone drinks your roll. You just watch.",
-    roll(1, 6, "Everyone but you drinks {total}."),
-  ],
-  [
-    "group-roll",
-    "Group Roll",
-    "group",
-    "Roll d20. 10+: everyone gives you 1. Else everyone drinks 1.",
-    rollTable(1, 20, [
-      { min: 1, max: 9, instruction: "Everyone drinks 1." },
-      { min: 10, max: 20, instruction: "Everyone gives you 1." },
-    ]),
-  ],
-  [
-    "committee",
-    "Committee",
-    "group",
-    "Roll d6. Point at that many people. Each drinks 1.",
-    roll(1, 6, "Point at {total} players to drink 1 each."),
-  ],
-
-  // --- Dice: temporary rules ------------------------------------------------
-  [
-    "heavy-hand",
-    "Heavy Hand",
-    "rule",
-    "Roll d6. All drinks are doubled until your next turn.",
-    roll(1, 6, "Double every drink until your next turn."),
-  ],
-
-  // --- Callouts: blunt, personal, specific ----------------------------------
-  [
-    "accent-off",
-    "Accent Off",
+    "hostage-video",
+    "Hostage Video",
     "challenge",
-    "Everyone talks in an accent. First to laugh drinks 2.",
+    "Film a hostage video begging your mom for bail. Show the table. Weak acting: drink 3.",
   ],
   [
-    "loud-and-proud",
-    "Loud and Proud",
+    "dramatic-reading",
+    "Dramatic Reading",
     "challenge",
-    "Say your next sentence too loud. If it lands, give 2.",
+    "Your left neighbor picks one of your texts. Read it aloud like erotica. Refuse: drink 4.",
+  ],
+  [
+    "search-history",
+    "Search History",
+    "challenge",
+    "Read your last three searches aloud. Each one you won't read: drink 2.",
+  ],
+  [
+    "hall-pass",
+    "Hall Pass",
+    "challenge",
+    "Name your celebrity hall pass. If anyone laughs, drink 3.",
+  ],
+  [
+    "dating-profile",
+    "Dating Profile",
+    "challenge",
+    "Your right neighbor pitches you as a dating profile. Hate it: drink 3. Love it: they do.",
+  ],
+  [
+    "bad-kisser",
+    "Bad Kisser",
+    "challenge",
+    "Describe your worst kiss in detail. Anyone winces: give 3. Nobody winces: drink 3.",
+  ],
+  [
+    "pickup-artist",
+    "Pickup Artist",
+    "challenge",
+    "Try your worst pickup line on someone. They laugh: give 3. They don't: drink 3.",
+  ],
+  [
+    "drunk-dial",
+    "Drunk Dial",
+    "challenge",
+    'Call the third person in your recents and say "I know what you did." Chicken out: drink 4.',
+  ],
+  [
+    "meg-ryan",
+    "Meg Ryan",
+    "challenge",
+    "Fake an orgasm for the table. Weak effort, as judged by the table: drink 3.",
+  ],
+  [
+    "confession-booth",
+    "Confession Booth",
+    "challenge",
+    "Confess the grossest thing you did this year. Not gross enough for the table: drink 3.",
+  ],
+  [
+    "roast-me",
+    "Roast Me",
+    "challenge",
+    "Clockwise, everyone describes you in one word. Drink 1 for every word that stings.",
+  ],
+  [
+    "wet-willy",
+    "Wet Willy",
+    "challenge",
+    "Pick someone. They take a wet willy from you or drink 3. Their call.",
+  ],
+  [
+    "smell-check",
+    "Smell Check",
+    "challenge",
+    "Sniff your right neighbor's armpit and rate it out loud. Under 5: they drink 3.",
+  ],
+  [
+    "ugly-crier",
+    "Ugly Crier",
+    "challenge",
+    "Do your best ugly cry for 10 seconds. If the table isn't moved, drink 3.",
   ],
   [
     "useless-fact",
@@ -218,13 +205,7 @@ const drafts: Draft[] = [
     "gym-class",
     "Gym Class",
     "challenge",
-    "Ten jumping jacks or drink 3. No negotiation.",
-  ],
-  [
-    "runway",
-    "Runway",
-    "challenge",
-    "Do a runway walk. Table scores it: under 7, drink 3.",
+    "Do 10 jumping jacks or drink 3. Anyone caught watching too closely drinks 1.",
   ],
   [
     "debate-club",
@@ -233,7 +214,69 @@ const drafts: Draft[] = [
     "Defend an opinion nobody shares. Lose the vote: drink 3.",
   ],
 
-  // --- Categories with teeth ------------------------------------------------
+  // --- Whole table ----------------------------------------------------------
+  [
+    "who-farted",
+    "Who Farted",
+    "group",
+    "On three, point at whoever farted. Most pointed drinks 3. Denying it costs 2 more.",
+  ],
+  [
+    "phone-check",
+    "Phone Check",
+    "group",
+    "Everyone puts their phone face up on the table. First to buzz drinks 3 and reads it aloud.",
+  ],
+  [
+    "screenshot",
+    "Screenshot",
+    "group",
+    "Everyone opens their last screenshot. The most damning, by vote, drinks 3.",
+  ],
+  [
+    "camera-roll",
+    "Spicy Camera Roll",
+    "group",
+    "Anyone with a nude in their camera roll right now drinks 2. Liars burn in hell.",
+  ],
+  [
+    "toilet-talk",
+    "Toilet Talk",
+    "group",
+    "Everyone says how long their longest dump lasted. Longest drinks 3. Call bullshit freely.",
+  ],
+  [
+    "ex-files",
+    "Ex Files",
+    "group",
+    "Anyone who's hooked up with someone at this table drinks 3. Don't look at each other.",
+  ],
+  [
+    "wipe-check",
+    "Wipe Check",
+    "group",
+    "Everyone says whether they wipe standing or sitting. The smaller side drinks 2.",
+  ],
+  [
+    "nipple-check",
+    "Nipple Check",
+    "group",
+    "Pierced nipples, past or present, give 3. Everyone else drinks 1 out of respect.",
+  ],
+  [
+    "still-following",
+    "Still Following",
+    "sip",
+    "Drink 1 for every ex you still follow. The table may audit your phone.",
+  ],
+  [
+    "sloppy-seconds",
+    "Sloppy Seconds",
+    "sip",
+    "Finish your left neighbor's drink, then get them a fresh one.",
+  ],
+
+  // --- Categories -----------------------------------------------------------
   [
     "bad-baby-names",
     "Bad Baby Names",
@@ -244,7 +287,7 @@ const drafts: Draft[] = [
     "ex-cuses",
     "Ex-Cuses",
     "category",
-    "Name an ex. First repeat, blank or cringe drinks 3.",
+    "Clockwise, name reasons you dumped someone. First repeat or blank drinks 3.",
   ],
   [
     "cheap-beers",
@@ -253,18 +296,54 @@ const drafts: Draft[] = [
     "Name cheap beers. First repeat or blank drinks 3.",
   ],
   [
-    "creepy-crawlies",
-    "Creepy Crawlies",
+    "euphemisms",
+    "Euphemisms",
     "category",
-    "Name bugs. First repeat or blank drinks 3.",
+    "Clockwise, name words for a penis. First repeat or blank drinks 3.",
+  ],
+  [
+    "kama-sutra",
+    "Kama Sutra",
+    "category",
+    "Clockwise, name sex positions; made-up ones count. First repeat or blank drinks 3.",
+  ],
+  [
+    "pillow-talk",
+    "Pillow Talk",
+    "category",
+    "Clockwise, name things you should never say during sex. First repeat or blank drinks 3.",
   ],
 
   // --- Temporary rules ------------------------------------------------------
   [
-    "personal-space",
-    "Personal Space",
+    "phone-sex",
+    "Phone Sex Operator",
     "rule",
-    "Until your next turn, everyone sits on their own hands. Slip: drink 2.",
+    "Until your next turn, everyone talks like a phone sex operator. Slip: drink 2.",
+  ],
+  [
+    "moms-here",
+    "Mom's Here",
+    "rule",
+    "Until your next turn, everyone acts like their mom is here. Anything she'd hate: drink 2.",
+  ],
+  [
+    "what-she-said",
+    "That's What She Said",
+    "rule",
+    'For the rest of the game, the first to call "that\'s what she said" on a setup gives 2.',
+  ],
+  [
+    "hall-monitor",
+    "Hall Monitor",
+    "rule",
+    "Until your next turn, nobody pees without asking you. Ask nicely or drink 2.",
+  ],
+  [
+    "horny-jail",
+    "Horny Jail",
+    "rule",
+    "Until your next turn, anyone who says something horny gets bonked and drinks 2.",
   ],
   [
     "formal-night",

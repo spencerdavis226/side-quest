@@ -13,7 +13,9 @@ import {
 // do not exist in this game, so those effects became pours, one-shot dice
 // rolls, or lasting rules that end at the drawing player's next turn. Source
 // consequences stay as written: shots, chugs, gendered splits, mixed drinks,
-// slaps and rough dares are not softened. The source sheet is kept raw at
+// slaps and rough dares are not softened (the 2026-10-07 crude pass reworded
+// the flat dice spaces so each roll lands a joke; see reference/README.md).
+// The source sheet is kept raw at
 // reference/pokemon_board_spaces.json; never rewrite it to match this file.
 // Keep IDs stable: active sessions snapshot their text and order.
 //
@@ -31,10 +33,15 @@ const deck: CardDefinition[] = [
     "mareep",
     "Mareep",
     "challenge",
-    "Wild Mareep appeared! Roll d6. Even: catch it and give 2. Odd: it escapes; drink 2.",
+    "Wild Mareep appeared! Grab it by the fluff and roll d6.",
     rollTable(1, 6, [
-      { min: 1, max: 5, step: 2, instruction: "It escapes. Drink 2." },
-      { min: 2, max: 6, step: 2, instruction: "Caught it! Give 2." },
+      { min: 1, max: 2, instruction: "Static shock to the nipples. Drink 3." },
+      {
+        min: 3,
+        max: 4,
+        instruction: "It headbutts you in the crotch. Drink 2.",
+      },
+      { min: 5, max: 6, instruction: "Free wool sweater. Give 2." },
     ]),
   ),
   card(
@@ -59,11 +66,8 @@ const deck: CardDefinition[] = [
     "zubat",
     "Zubat",
     "challenge",
-    "Zubats! Roll d6. Odd: drink 2, they're still here. Even: swat through and give 1.",
-    rollTable(1, 6, [
-      { min: 1, max: 5, step: 2, instruction: "Drink 2. They're still here." },
-      { min: 2, max: 6, step: 2, instruction: "Swat through. Give 1." },
-    ]),
+    "Another fucking Zubat. Roll d6: that's how many bit your neck.",
+    roll(1, 6, "Drink {total}. You're a vampire now: bite someone's neck."),
   ),
   card(
     "magikarp",
@@ -272,8 +276,8 @@ const deck: CardDefinition[] = [
     "wally",
     "Rival Wally",
     "challenge",
-    "Rival Wally caught one Pokémon and got cocky. Roll d6 and drink that many.",
-    roll(1, 6, "Drink {total}."),
+    "Rival Wally has asthma and one Ralts. Roll d6: that's how many puffs he needs.",
+    roll(1, 6, "{total} puffs. Drink {total}, you bully."),
   ),
   card(
     "may",
@@ -321,10 +325,10 @@ const deck: CardDefinition[] = [
     "elite-four",
     "Elite Four",
     "challenge",
-    "Challenge the Elite Four! Roll 4d6. Total 10 or less: you win and give 4. Higher: drink 4.",
+    "Challenge the Elite Four with an underleveled team. Roll 4d6.",
     rollTable(4, 6, [
-      { min: 4, max: 10, instruction: "You win! Give 4." },
-      { min: 11, max: 24, instruction: "Drink 4." },
+      { min: 4, max: 10, instruction: "You win! Give 4 and make a speech." },
+      { min: 11, max: 24, instruction: "Bruno beats your ass. Drink 4." },
     ]),
   ),
 
@@ -333,10 +337,12 @@ const deck: CardDefinition[] = [
     "gym-battle",
     "Gym Battle",
     "challenge",
-    "Gym battle! Roll d6. Even: give 2. Odd: drink 2.",
+    "Gym battle! Roll d6 to see what's on your team.",
     rollTable(1, 6, [
-      { min: 1, max: 5, step: 2, instruction: "Drink 2." },
-      { min: 2, max: 6, step: 2, instruction: "Give 2." },
+      { min: 1, max: 1, instruction: "Six Magikarp. Finish your drink." },
+      { min: 2, max: 3, instruction: "You lose and pay the leader. Drink 3." },
+      { min: 4, max: 5, instruction: "Ugly win. Give 2." },
+      { min: 6, max: 6, instruction: "Clean sweep. Give 4 and strike a pose." },
     ]),
   ),
 
@@ -345,10 +351,10 @@ const deck: CardDefinition[] = [
     "delibird",
     "Delibird",
     "challenge",
-    "Delibird used Present! Roll d6. 1-3: drink that many. 4-6: give that many.",
+    "Delibird used Present! Roll d6 and open it.",
     rollTable(1, 6, [
-      { min: 1, max: 3, instruction: "Drink {total}." },
-      { min: 4, max: 6, instruction: "Give {total}." },
+      { min: 1, max: 3, instruction: "It's a bomb. Drink {total}." },
+      { min: 4, max: 6, instruction: "It's a gift. Give {total}." },
     ]),
   ),
   card(
@@ -418,11 +424,11 @@ const deck: CardDefinition[] = [
     "game-corner",
     "Game Corner",
     "challenge",
-    "The Game Corner calls. Roll 2d6. 7: give 7. Anything else: drink 2.",
+    "The Game Corner slots are rigged by Team Rocket. Roll 2d6 anyway.",
     rollTable(2, 6, [
-      { min: 2, max: 6, instruction: "Drink 2." },
-      { min: 7, max: 7, instruction: "Give 7." },
-      { min: 8, max: 12, instruction: "Drink 2." },
+      { min: 2, max: 6, instruction: "The house wins. Drink 2." },
+      { min: 7, max: 7, instruction: "Jackpot! Give 7." },
+      { min: 8, max: 12, instruction: "The house wins. Drink 2." },
     ]),
   ),
   card(
@@ -464,30 +470,45 @@ const deck: CardDefinition[] = [
     "chansey",
     "Chansey",
     "challenge",
-    "Chansey appears! Roll d6. 1-3: she eludes you; drink 1. 4-6: caught; give 2.",
+    "Chansey hands you her egg. Don't ask where it came from. Roll d6.",
     rollTable(1, 6, [
-      { min: 1, max: 3, instruction: "She eludes you. Drink 1." },
-      { min: 4, max: 6, instruction: "Caught her! Give 2." },
+      { min: 1, max: 2, instruction: "You drop it. Drink 3, egg murderer." },
+      { min: 3, max: 5, instruction: "She takes it back. Drink 1." },
+      { min: 6, max: 6, instruction: "Lucky Egg! Give 4." },
     ]),
   ),
   card(
     "pokeball",
     "Poké Ball",
     "challenge",
-    "Throw a Poké Ball! Roll d6. 1-3: caught; give 3. 4-6: it flees; drink 3.",
+    "Throw a Poké Ball! Roll d6.",
     rollTable(1, 6, [
-      { min: 1, max: 3, instruction: "Caught it! Give 3." },
-      { min: 4, max: 6, instruction: "It flees. Drink 3." },
+      {
+        min: 1,
+        max: 2,
+        instruction: "You nail the trainer in the balls. You both drink 2.",
+      },
+      { min: 3, max: 4, instruction: "It flees. Drink 3." },
+      {
+        min: 5,
+        max: 6,
+        instruction: "Caught it! Give 3 and name it after someone here.",
+      },
     ]),
   ),
   card(
     "supersonic",
     "Supersonic",
     "challenge",
-    "Tentacool used Supersonic! Roll d6. Even: drink 2. Odd: you snap out and give 2.",
+    "Tentacool used Supersonic! You're confused. Roll d6.",
     rollTable(1, 6, [
-      { min: 1, max: 5, step: 2, instruction: "You snap out. Give 2." },
-      { min: 2, max: 6, step: 2, instruction: "Drink 2." },
+      {
+        min: 1,
+        max: 2,
+        instruction: "You hurt yourself in confusion. Drink 4.",
+      },
+      { min: 3, max: 4, instruction: "Drink 2 with your other hand." },
+      { min: 5, max: 6, instruction: "You snap out of it. Give 2." },
     ]),
   ),
   card(
@@ -849,7 +870,7 @@ const deck: CardDefinition[] = [
     "battle-of-sexes",
     "Battle of the Sexes",
     "group",
-    "If you're a guy, guys drink 1. If you're a girl, girls drink 1.",
+    "Your side drinks 2: guys if you're a guy, girls if you're a girl. The other side gives 1 each.",
   ),
 ];
 
