@@ -1218,6 +1218,11 @@ button.quest-meter:active:not(:disabled) {
   background:
     linear-gradient(#10100c33, #10100cdd),
     url("/art/hall-of-fame.webp") center top / cover;
+  /* The painting ends in stone steps whose dark bands sat behind the text
+     link like a second button. Fade the hall into the table before the
+     buttons, so only the painted Play again plate reads as a button. */
+  -webkit-mask-image: linear-gradient(#000 62%, transparent 86%);
+  mask-image: linear-gradient(#000 62%, transparent 86%);
   pointer-events: none;
 }
 

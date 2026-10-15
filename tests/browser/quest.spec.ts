@@ -278,3 +278,32 @@ test("@release beating the Champion opens the Hall of Fame", async ({
   });
   await expect(page.getByRole("button", { name: "Play again" })).toBeVisible();
 });
+
+test("a finale card is dealt face down without turning the last one back over", async ({
+  page,
+}) => {
+  // The finale deals between deck cards without moving the deck, so the
+  // next card shares the last one's deck position.
+  const session = playLeague(
+    (s) =>
+      !!s.quest?.due &&
+      s.phase === "hidden" &&
+      s.quest.step < s.quest.finale.length - 1 &&
+      !currentCard(s).dice,
+  );
+  await seed(page, session);
+  const card = page.locator(".game-card");
+  await card.click();
+  await expect(page.locator(".card-stage")).not.toHaveClass(/deal|flip/);
+  await page.locator(".card-rotator").evaluate((el) => {
+    (window as unknown as { __rotator?: Element }).__rotator = el;
+  });
+  await card.click();
+  await expect(page.locator(".card-stage")).not.toHaveClass(/discard/);
+  expect(
+    await page.locator(".card-rotator").evaluate((el) => ({
+      fresh: el !== (window as unknown as { __rotator?: Element }).__rotator,
+      turning: el.getAnimations().length,
+    })),
+  ).toEqual({ fresh: true, turning: 0 });
+});

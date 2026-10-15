@@ -176,7 +176,10 @@ export function Play({
           >
             <span
               className="card-rotator"
-              key={`${session.cycle}-${session.position}`}
+              // One rotator per dealt card. A quest finale deals its cards
+              // without moving the deck, so cycle and position repeat; reusing
+              // the face-up rotator would visibly turn it back over.
+              key={session.discarded}
             >
               <span className="card-surface card-back" aria-hidden="true" />
               <span

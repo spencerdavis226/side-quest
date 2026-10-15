@@ -51,8 +51,15 @@ export function CardFace({
       heading.style.fontSize = `${size}px`;
       const lineHeight = parseFloat(getComputedStyle(heading).lineHeight);
       // Fractional height: a rounded offsetHeight lets the search settle on a
-      // size that still spills a sub-pixel past the band.
-      const height = heading.getBoundingClientRect().height;
+      // size that still spills a sub-pixel past the band. The rect is drawn
+      // in screen space, though, and a fit can run mid-flip (a resize or a
+      // font load), when the 3D turn stretches it and the title would stay
+      // stuck small. Divide by the band's own on-screen stretch: both sit in
+      // the same plane, so this recovers the flat height at any angle.
+      const band = title.getBoundingClientRect().height;
+      const stretch =
+        band > 0 && title.offsetHeight > 0 ? band / title.offsetHeight : 1;
+      const height = heading.getBoundingClientRect().height / stretch;
       return (
         height <= title.clientHeight + 1 &&
         heading.scrollWidth <= title.clientWidth + 1 &&

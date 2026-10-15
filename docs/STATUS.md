@@ -2,6 +2,17 @@
 
 Updated 2026-10-06. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Title fit, League finale flip, Hall of Fame link (2026-10-15, committed locally, not pushed)
+
+**Reports (owner, Safari on a Mac).** A card title rendered tiny beside large rules; in a Pokémon League game the next card's frame visibly turned over after a card was put aside; on the Hall of Fame both actions looked like buttons.
+
+**Causes and fixes.**
+- Title: the fit in `Cards.tsx` measured the heading's on-screen rect. A re-fit that runs during the flip (a resize or font load) sees a box stretched by the 3D turn, settles small, and nothing re-fits once the card lies flat. The height is now divided by the title band's own on-screen stretch, which recovers the flat height at any angle. Reproduced live: a 1px resize 200 to 360 ms into the flip left the title at 18px in WebKit, and at 35.7px in some Chromium runs, instead of 44.6px.
+- League flip: finale cards are dealt without moving the deck, so `cycle`/`position` repeat and `Play.tsx` reused the face-up rotator, which turned back over. The rotator is now keyed by `session.discarded`.
+- Hall of Fame: "Change deck" never had a background; the painting's stone steps sat behind it. `.painted-hall::before` now fades the hall into the table above the buttons.
+
+**Verified.** `npm test` 141 passed; typecheck clean; Pages build and budgets passed. Full production E2E (Chromium + emulated WebKit): 188 passed, 3 intentional skips, 1 flaky (`pages.spec.ts:22`, WebKit, then 4/4 alone). New `tests/browser/title-fit.spec.ts` and a finale-flip test in `quest.spec.ts` fail on the old code and pass with the fixes (6/6 and 12/12 with repeats). Release smoke 45/45, update flow passed. Hall of Fame checked in a WebKit capture at 390x844. **Not verified:** real Safari or an iPhone; workshop suites.
+
 ## Painted title crest and Safari-only installation help (2026-10-06, deployed)
 
 **Owner decision.** Rejected the ordinary horizontal text/small-tankard treatment; approved a cohesive painted title crest. Removed the prominent Install button. Asked for quiet installation instructions available only in Safari on an uninstalled iPhone/iPad.
