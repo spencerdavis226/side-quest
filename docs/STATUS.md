@@ -18,6 +18,16 @@ Updated 2026-10-07. **Single authoritative handoff.** Read `AGENTS.md` first. Ol
 
 **Next.** Owner reviews the copy (`docs/CARD_REVIEW.md` is regenerated), then a Short game with the group. Run the WebKit suites before merging. Merging to `main` publishes; it needs the owner's go-ahead.
 
+## Ancient Mew League pair in play; repository cleanup (2026-10-15)
+
+**League pair.** Every card in a Pokémon League game now uses the Ancient Mew back and front (`public/art/card-back-league.webp`, `src/presentation/art/league-front.webp`, 768×1152, 268.6 + 123.5 KiB). `main` gets `.league-deck` while the displayed game's `config.quest` is `pokemon` (`LEAGUE_QUEST` in `frame-surfaces.ts`). It applies to the card back, the deck stack, the front and Previous Card; other modes keep the base pair. The pair is preloaded with the other surfaces, and a resumed League game holds its first render for it. `scripts/ancient-league-art.ts` now writes these two runtime files directly. New `@release` test in `quest.spec.ts`. Runtime is 3466 KiB of the 4 MiB budget.
+
+**Cleanup.** Removed from the tree (all still in git history): 133 unreferenced files (old study screenshots in `docs/studies` except the typography study page the title-fit test loads, superseded art drafts and review captures, the retired continuous-frame slices, rejected Ancient front drafts, the superseded trophy League back with its `draft.json` step in `scripts/league-art.ts`), plus untracked " 2" duplicates, `.DS_Store` files and `test-results/`. Kept: sources for every shipped asset and every file a script, test or config reads.
+
+**Not done (needs owner approval; the agent's safety check blocked it).** Delete the seven merged remote branches and their local copies, drop the 2026-09-25 stash, prune the two dead worktree records.
+
+**Verified.** `npm test` 149 passed; typecheck clean; build and budgets passed. Full production E2E, Chromium + emulated WebKit: 209 passed, 3 intentional skips. Every-title workshop fit: passed in both browsers. Update flow passed. League back and front inspected in a WebKit capture at 390×844. **Not verified:** a physical device.
+
 ## Published Secrets & fuses and the card rewrite (2026-10-15)
 
 **Merged.** PR #7 (Secrets & fuses, 150 cards) and PR #8 (card rewrite) were reviewed, rebased onto `main`, re-verified and squash-merged. The catalog is 855 cards in 7 packs; the plain modes deal 811 (92 sip, 377 group, 49 category, 221 challenge, 72 rule; 75 dice), plus 24 League gym leaders and 20 gauntlet cards.

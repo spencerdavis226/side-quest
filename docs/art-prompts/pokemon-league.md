@@ -94,7 +94,7 @@ Runtime: `public/art/hall-of-fame.webp` (opaque, 600×800 portrait). A darkened 
 
 Purpose: the finale cards could flip from a special back so the table knows something big is coming. This is a change to the approved card frame, so it needs the owner's sign-off before it ships.
 
-Review draft only: `assets/source/league-2026-10-05/card-back-league-v1.png`. A display-sized 2:3 draft lives beside it, outside `public/` and the bundle. The approved runtime card back remains unchanged. Wiring a special back still needs the owner's explicit sign-off.
+Superseded: this trophy back was replaced by the Ancient Mew pair (§8), which every League card now uses. The draft files were removed on 2026-10-15.
 
 > [Shared style] Opaque painted card back, portrait, exact 2:3. Matches a deep teal leather card back with an aged brass border and hop-vine filigree, but the centre medallion holds **a gold trophy cup with a four-point star above it** instead of a beer tankard, and the leather has a faint gold sheen. Symmetrical, no text.
 
@@ -104,6 +104,6 @@ The rename handoff proposed an RPG quest marker above the existing tankard. Gene
 
 ## 8. Ancient League pair (owner revision, 2026-10-06)
 
-The owner requested an Ancient Mew-like engraved relic treatment that stays much closer to the base card back, plus a matching front with rigid existing text areas. Selected review artifacts: `assets/source/league-ancient-2026-10-06/back-v2.webp` and `front-v4.webp`, both 768×1152. The back's medallion depicts Mew as an antique bronze relief with decorative pictographs; the front confines glyphs and muted rose/violet inlays to the outer rails/corners. The title stays dark teal and the rules area stays light cream.
+The owner requested an Ancient Mew-like engraved relic treatment that stays much closer to the base card back, plus a matching front with rigid existing text areas. Selected sources: `assets/source/league-ancient-2026-10-06/back-v2.png` and `front-v4.png`; runtime `public/art/card-back-league.webp` and `src/presentation/art/league-front.webp`, both 768×1152. The back's medallion depicts Mew as an antique bronze relief with decorative pictographs; the front confines glyphs and muted rose/violet inlays to the outer rails/corners. The title stays dark teal and the rules area stays light cream.
 
-Exact executed prompts and the front iteration history: `assets/source/league-ancient-2026-10-06/pair.json`. Rebuild with `npx tsx scripts/ancient-league-art.ts`; open the self-contained `review.html` beside the images to compare the base/new front with current fonts, live text, width controls and safe-area guides. Fixed title rectangle: x21–79%, y9.75–21.5%; fixed body rectangle: x12–88%, y32–87.5%. These are read from the current card CSS. No production surface is replaced by this review pair.
+Exact executed prompts and the front iteration history: `assets/source/league-ancient-2026-10-06/pair.json`. Rebuild the runtime files with `npx tsx scripts/ancient-league-art.ts`. The rejected front drafts and review captures were removed on 2026-10-15. Fixed title rectangle: x21–79%, y9.75–21.5%; fixed body rectangle: x12–88%, y32–87.5%. These are read from the current card CSS. Since 2026-10-15 every card in a Pokémon League game uses this pair (`.league-deck` in `src/style.css` and `src/presentation/card-front.css`); every other mode keeps the base pair.

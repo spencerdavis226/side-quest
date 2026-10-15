@@ -46,7 +46,7 @@ Sound has been removed; there are no audio checks. Verify the visual and dice it
 
 ## Core workshop milestone
 
-Automated evidence is recorded in `docs/studies/README.md`. Keep the following pending until observed on physical hardware:
+Automated evidence is recorded in `docs/STATUS.md`. Keep the following pending until observed on physical hardware:
 
 - [ ] Approve the short, long, and temporary-rule front studies on an iPhone and iPad.
 - [ ] Play Short (30 cards from the 105-card Core deck) using the playtest record, then sample more cards in Infinite with the House deck. Engine tests cover the full shuffle cycle.

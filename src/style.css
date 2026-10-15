@@ -664,3 +664,10 @@ dialog p {
     scroll-behavior: auto !important;
   }
 }
+/* Pokémon League: every card in the game wears the Ancient Mew back. */
+.league-deck .card-stage:before,
+.league-deck .card-stage:after,
+.league-deck .deck-under,
+.league-deck .card-back {
+  background-image: url("/art/card-back-league.webp");
+}

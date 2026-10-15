@@ -94,14 +94,3 @@ for (const item of selections) {
 console.log(
   `League art: ${(total / 1024).toFixed(1)} KiB across ${selections.length} assets`,
 );
-
-const draft: Selection = JSON.parse(
-  await readFile(join(root, "draft.json"), "utf8"),
-);
-await sharp(join(root, draft.source))
-  .resize(draft.width, draft.height, { fit: "contain" })
-  .webp({ quality: draft.quality, effort: 6 })
-  .toFile(draft.output);
-console.log(
-  `Review-only League back: ${draft.width}×${draft.height}, outside public/ and the bundle`,
-);

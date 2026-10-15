@@ -8,7 +8,7 @@ An original, mischievous fantasy tavern collectible-card game. Weathered walnut,
 
 The approved card back and ornate teal front remain anchors. The current card front uses live text over plain parchment. **Premium means coherent construction and effortless reading before it means more detail.** A visible seam, hidden instruction, stretched frame, unclear control or detached shadow fails the quality bar even when the source art is excellent. Automated functional tests alone cannot approve a visual release.
 
-See [visual audit evidence](studies/visual-audit-2026-09-20/README.md) for current failures. Those captures are not approved golden images.
+The 2026-09-20 visual audit captures were removed on 2026-10-15; its findings are in `STATUS_ARCHIVE.md`.
 
 ## Matched rounded card pair
 

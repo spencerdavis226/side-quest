@@ -307,3 +307,44 @@ test("a finale card is dealt face down without turning the last one back over", 
     })),
   ).toEqual({ fresh: true, turning: 0 });
 });
+
+test("@release every card of a League game wears the Ancient Mew pair", async ({
+  page,
+}) => {
+  const bg = (selector: string, pseudo?: string) =>
+    page
+      .locator(selector)
+      .first()
+      .evaluate(
+        (el, pseudo) => getComputedStyle(el, pseudo ?? null).backgroundImage,
+        pseudo,
+      );
+  // A League game: back, deck stack and front all use the League pair.
+  await seed(
+    page,
+    playLeague((s) => s.discarded === 1 && s.phase === "hidden"),
+  );
+  expect(await bg(".card-back")).toContain("card-back-league");
+  expect(await bg(".deck-under")).toContain("card-back-league");
+  expect(await bg(".card-stage", "::before")).toContain("card-back-league");
+  await page.locator(".game-card").click();
+  await expect(page.locator(".card-stage")).not.toHaveClass(/flip/);
+  expect(await bg(".game-card .study-face")).toContain("league-front");
+  await page.getByRole("button", { name: "Open game menu" }).click();
+  await page
+    .getByRole("button", { name: "Previous card", exact: true })
+    .click();
+  expect(await bg(".previous-card .study-face")).toContain("league-front");
+  // Any other mode keeps the base pair.
+  const plain = createSession(
+    { version: 1, packIds: ["pokemon"], limit: 30 },
+    cards,
+    packs,
+  );
+  await seed(page, plain);
+  expect(await bg(".card-back")).toContain("card-back.webp");
+  expect(await bg(".card-back")).not.toContain("league");
+  await page.locator(".game-card").click();
+  await expect(page.locator(".card-stage")).not.toHaveClass(/flip/);
+  expect(await bg(".game-card .study-face")).not.toContain("league-front");
+});

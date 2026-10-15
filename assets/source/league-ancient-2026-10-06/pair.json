@@ -1,11 +1,11 @@
 {
   "name": "Ancient League pair",
   "tool": "built-in image_gen",
-  "status": "Local review pair; production front/back unchanged",
+  "status": "In production since 2026-10-15: every card in a Pokémon League game uses this back and front",
   "assets": {
     "back": {
       "source": "back-v2.png",
-      "output": "back-v2.webp",
+      "output": "public/art/card-back-league.webp",
       "prompt": "Use case: precise-object-edit / stylized-concept.\nAsset: revised League card back for Side Quest, opaque portrait, exactly 2:3.\nInput image 1 is the BASE GAME card back and is the PRIMARY edit target, material reference and exact structural template. Input image 2 is the earlier trophy draft, provided only for context; follow image 1's craftsmanship and proportions more closely.\nRequest: turn the base back into an ancient relic card with the evocative engraved, archaeological, softly iridescent feel of the Ancient Mew promo. Keep it unmistakably part of this hand-painted tavern deck.\nLOCK: the base card's exact silhouette, frame thickness, dark walnut edge rails, corner plates, rivets, four side studs, central round medallion size/position, upper and lower hop-vine symmetry, warm upper-left light, painted brushwork, wear and dimensional hammered metal.\nChange the medallion's tankard into an ancient shallow-relief Mew figure: a small enigmatic long-tailed feline creature curled gracefully in profile, its tail making an elegant loop, carved/embossed into aged bronze as a pictographic sacred seal. A few restrained incised geometric rune-like pictographs may form a narrow ring within the medallion; decorative marks, no legible text.\nThe hop-vine scrollwork becomes subtly chiseled, weathered ceremonial engraving while retaining its location and readable silhouette. Keep dark wood clearly wood and deep teal leather clearly worn leather, with slight verdigris mineral patina.\nPalette: the base deep petrol teal, smoky walnut, candlelit aged brass/antique bronze; very faint muted dusty-rose/lavender iridescent enamel sheen in shallow engravings only. Low saturation, no neon, no rainbow foil glare. No trophy, no star trophy logo, no typography, words, numerals, watermark or scene illustration.\nFull card only, straight-on, fills the canvas, complete unclipped frame, no perspective, no mockup, no external background.",
       "references": [
         "public/art/card-back.webp",
@@ -14,7 +14,7 @@
     },
     "front": {
       "source": "front-v4.png",
-      "output": "front-v4.webp",
+      "output": "src/presentation/art/league-front.webp",
       "prompt": "Edit ONLY the cream parchment SURFACE of this card front. The paper currently has an unwanted repeating diamond-shaped weave/crosshatch. Replace that surface texture with smooth, plain, softly aged NON-WOVEN parchment: subtle irregular cloudy warm ivory/cream tonal mottling and a few faint random age spots, no diagonal lines, diamonds, grid, lattice, embroidery, repeated pattern, embossing, illustration or symbols. Make it a calm easy-to-read blank writing area.\nPreserve ALL geometry and everything outside the paper EXACTLY: teal title recess, brass separator, central finial, top arch, engraved walnut rails, rose/violet corner inlays, metal hardware, border, lighting, colors, image size, scale and framing. Do not enlarge or shrink the paper, do not move any edge. Keep x12–88%, y32–87.5% entirely clean light parchment; x21–79%, y9.75–21.5% remains uninterrupted dark teal title space. Current separator finial position is correct, do not move it.\nExact 2:3 opaque full card, straight-on. No text or watermark. Single targeted texture cleanup only.",
       "references": [
         "front-v3.png"
@@ -60,6 +60,6 @@
       "bottom": 0.875
     }
   },
-  "geometrySource": "src/presentation/card-front.css; current CSS remains unchanged",
+  "geometrySource": "src/presentation/card-front.css; the League front shares the base front's title and body boxes",
   "rebuild": "npx tsx scripts/ancient-league-art.ts"
 }

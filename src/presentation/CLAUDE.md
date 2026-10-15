@@ -4,7 +4,7 @@
 - `usePresentation.ts`: timers and Reduced Motion/hidden-tab handling; backgrounding or Reduced Motion settles any motion immediately.
 - `theme.ts`: motion durations and asset paths. They become `--motion-*` CSS variables in `main.tsx`; keep names in sync with the CSS fallbacks.
 - `theme.css`, `card-front.css`, `../style.css`: the three stylesheets. `style.css` owns layout, safe areas, and the table backdrop; `theme.css` owns dialogs, atmosphere (fire, embers, dust, candle), and button chrome; `card-front.css` owns card text fitting.
-- `frame-surfaces.ts`: the only list of bundled frame images. Do not add an eager glob of `art/`.
+- `frame-surfaces.ts`: the only list of bundled frame images (`coreFrameSurfaces`, and `leagueSurfaces`, the Ancient Mew front and back every card of a Pokémon League game uses via `.league-deck` on `main`). Do not add an eager glob of `art/`.
 - `artwork.ts`, `imprint.ts`, `imprint/`: legacy artwork resolver and the generated icon sprite (`npm run imprint`). Keep both for saved-content compatibility; card fronts do not render illustrations.
 - `dice/`: see its own CLAUDE.md.
 

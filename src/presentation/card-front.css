@@ -641,3 +641,10 @@
     animation: none;
   }
 }
+
+/* Pokémon League: the matching Ancient Mew front, same title and body boxes. */
+.league-deck .study-face {
+  background-image:
+    url("./art/league-front.webp"),
+    linear-gradient(to bottom, #213b39 28%, #f4dfb4 28%);
+}

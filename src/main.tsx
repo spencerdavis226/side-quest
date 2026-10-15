@@ -18,7 +18,11 @@ import { PresentationController } from "./presentation/controller";
 import { usePresentation } from "./presentation/usePresentation";
 import { theme } from "./presentation/theme";
 import { preloadUrl } from "./presentation/artwork";
-import { coreFrameSurfaces } from "./presentation/frame-surfaces";
+import {
+  coreFrameSurfaces,
+  LEAGUE_QUEST,
+  leagueSurfaces,
+} from "./presentation/frame-surfaces";
 import { Button, IconButton, Notice } from "./components/UI";
 import {
   INSTALL_HELP_KEY,
@@ -174,7 +178,8 @@ function App() {
   }, [prefs]);
   useEffect(() => {
     // Shared surfaces only: hero illustrations are retired from card fronts.
-    for (const src of coreFrameSurfaces) void preloadUrl(src);
+    for (const src of [...coreFrameSurfaces, ...leagueSurfaces])
+      void preloadUrl(src);
     for (const path of Object.values(theme.assets)) void preloadUrl(path);
     const onVisibility = () => setHidden(document.hidden);
     document.addEventListener("visibilitychange", onVisibility);
@@ -222,7 +227,10 @@ function App() {
       <Atmosphere hidden={hidden} />
       <PortraitGate />
       <main
-        className={`${active ? "app playing" : "app"} ${hidden ? "suspended" : ""}`}
+        className={`${active ? "app playing" : "app"} ${hidden ? "suspended" : ""} ${
+          // A Pokémon League game deals every card in the Ancient Mew pair.
+          display?.config.quest === LEAGUE_QUEST ? "league-deck" : ""
+        }`}
         style={styles}
       >
         {!display &&
@@ -410,14 +418,21 @@ if (import.meta.env.DEV && params.get("preview") === "1") {
   // flat fallback Play bar and system serif until they arrive. Hold the first
   // render until what that screen needs is decoded; a resumed game opens on
   // the table, so it waits for the card surfaces as well.
-  let resuming = false;
+  let resuming = false,
+    league = false;
   try {
-    resuming = localStorage.getItem(SAVE_KEY) !== null;
+    const saved = localStorage.getItem(SAVE_KEY);
+    resuming = saved !== null;
+    league = !!saved && JSON.parse(saved)?.config?.quest === LEAGUE_QUEST;
   } catch {
-    // Storage unavailable: the app opens on setup.
+    // Storage unavailable or unreadable: the app opens on setup.
   }
   const firstScreen: string[] = resuming
-    ? [...Object.values(theme.assets), ...coreFrameSurfaces]
+    ? [
+        ...Object.values(theme.assets),
+        ...coreFrameSurfaces,
+        ...(league ? leagueSurfaces : []),
+      ]
     : [theme.assets.table, theme.assets.button, theme.assets.titleCrest];
   const fonts = ["700 1em Grenze", "italic 600 1em Grenze"].map((font) =>
     document.fonts.load(font).catch(() => undefined),
