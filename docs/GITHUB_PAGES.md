@@ -25,7 +25,7 @@ The normal PR/main workflow uses the tagged Chromium/WebKit release smoke suite,
 
 The deployment uploads the exact `dist` artifact tested by browser checks. The two-build update test builds its second release in a temporary directory and never modifies that artifact. `VITE_RELEASE_ID` uses the commit SHA in CI and is exposed only as an HTML data attribute for diagnostics.
 
-Build budgets (`scripts/check-budget.ts`): at most 3 MiB total runtime files (a conservative precache upper bound), 500 KiB per image, at most 100 KiB gzip initial (entry) JavaScript, and at most 200 KiB gzip lazy feature JavaScript. The build rejects workshop code in shipped JavaScript. Workshop assets live outside public and are not shipped. Future illustrated packs require reviewing these budgets and caching strategy deliberately.
+Build budgets (`scripts/check-budget.ts`): at most 4 MiB total runtime files (a conservative precache upper bound; raised from 3 MiB on 2026-10-15), 500 KiB per image, and at most 200 KiB gzip lazy feature JavaScript. Initial (entry) JavaScript is reported but uncapped since 2026-10-05, and card text must stay out of it. The build rejects workshop code in shipped JavaScript. Workshop assets live outside public and are not shipped. Future illustrated packs require reviewing these budgets and caching strategy deliberately.
 
 The service worker caches local fonts and artwork. Updates remain pending during gameplay and are offered between games. Saved sessions and preferences are retained. GitHub Pages cannot supply custom cache headers; rely on Vite's hashed bundles and the service-worker release lifecycle.
 

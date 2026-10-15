@@ -31,6 +31,8 @@ const titleSize = (page: Page) =>
     .evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
 
 test("a title fitted mid-flip settles at its full size", async ({ page }) => {
+  // Four full game setups; slow WebKit runs exceed the default 30 s.
+  test.setTimeout(90000);
   await page.setViewportSize({ width: 1850, height: 1065 });
   await revealTitleCard(page);
   await expect(page.locator(".card-stage")).not.toHaveClass(/flip/);

@@ -53,7 +53,8 @@ export function Play({
   // card stays on the table until its time is up.
   const actions = useCardActions(
     card,
-    `${session.cycle}-${session.position}-${session.quest?.due ? session.quest.step : ""}-${card.id}`,
+    // One state per dealt card, like the rotator below.
+    `${session.discarded}-${card.id}`,
   );
   const acting =
     !motion && session.phase === "revealed" && hasActions(card, actions);
