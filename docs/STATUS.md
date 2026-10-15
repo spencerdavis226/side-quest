@@ -18,6 +18,16 @@ Updated 2026-10-07. **Single authoritative handoff.** Read `AGENTS.md` first. Ol
 
 **Next.** Owner reviews the copy (`docs/CARD_REVIEW.md` is regenerated), then a Short game with the group. Run the WebKit suites before merging. Merging to `main` publishes; it needs the owner's go-ahead.
 
+## Published Secrets & fuses and the card rewrite (2026-10-15)
+
+**Merged.** PR #7 (Secrets & fuses, 150 cards) and PR #8 (card rewrite) were reviewed, rebased onto `main`, re-verified and squash-merged. The catalog is 855 cards in 7 packs; the plain modes deal 811 (92 sip, 377 group, 49 category, 221 challenge, 72 rule; 75 dice), plus 24 League gym leaders and 20 gauntlet cards.
+
+**Review changes.** The runtime budget is 4 MiB (owner decision 2026-10-15; Secrets & fuses passed 3 MiB by about 1 KiB). Secret and timer state is keyed per dealt card, like the card rotator. The title fit divides by the band's exact computed height rather than its rounded `offsetHeight`, which let "Corporate Wellness" overflow by a fraction of a pixel at 330px. PR #8's count conflicts were merged with PR #7's seventh pack; generated files were regenerated.
+
+**Verified (final tree).** `npm test` 149 passed; build and budgets passed (3075 KiB runtime). Full production E2E, Chromium + emulated WebKit: 207 passed, 3 intentional skips, no flakes. Workshop title fit for every title, both browsers: passed. Update flow passed. **Not run:** the workshop every-card geometry sweeps; any physical device. PR #7 was only ever tested in Chromium before this; both browsers now pass. Not changed: Paranoia passes the phone to the left neighbour and Forehead holds it to a forehead, which stretch the pack's "phone never leaves the table" rule.
+
+**Next.** The Ancient Mew League card pair (`assets/source/league-ancient-2026-10-06/`, 392 KiB) is still review-only; it now fits the 4 MiB budget.
+
 ## Title fit, League finale flip, Hall of Fame link (2026-10-15, committed locally, not pushed)
 
 **Reports (owner, Safari on a Mac).** A card title rendered tiny beside large rules; in a Pokémon League game the next card's frame visibly turned over after a card was put aside; on the Hall of Fame both actions looked like buttons.
