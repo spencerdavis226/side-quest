@@ -13,6 +13,12 @@ import { awaitingChoice, currentCard } from "../game/engine";
 import type { Motion } from "../presentation/controller";
 import { cardPacks } from "../presentation/packs";
 import { CardFace } from "../components/Cards";
+import {
+  CardActions,
+  TimerBlast,
+  hasActions,
+  useCardActions,
+} from "../components/CardActions";
 const FullScreenDice = lazy(() => import("../components/FullScreenDice"));
 export function Play({
   session,
@@ -43,6 +49,16 @@ export function Play({
   // The plaques arrive once the card has landed face up and leave with the
   // decision; the card itself takes no action while they are up.
   const choice = !motion && awaitingChoice(session) ? card.dice!.choice! : null;
+  // Secret and timed cards: plaques once the card has landed face up; a timed
+  // card stays on the table until its time is up.
+  const actions = useCardActions(
+    card,
+    // One state per dealt card, like the rotator below.
+    `${session.discarded}-${card.id}`,
+  );
+  const acting =
+    !motion && session.phase === "revealed" && hasActions(card, actions);
+  const blocked = acting && actions.blocking;
   // WebKit can paint the reverse of a nested, clipped 3D face despite
   // backface-visibility. Cull by the actual rendered angle, not a timer, so
   // interrupted/reduced-motion turns cannot expose mirrored card text.
@@ -122,7 +138,7 @@ export function Play({
             : ""}
         </span>
         <div
-          className={`card-stage ${motion ?? ""} ${choice ? "choosing" : ""}`}
+          className={`card-stage ${motion ?? ""} ${choice || acting ? "choosing" : ""}`}
         >
           <div className="deck-under" aria-hidden="true" />
           <button
@@ -134,7 +150,7 @@ export function Play({
                 !!session.roll &&
                 !session.roll.returned &&
                 motion !== "roll";
-              if (choice) {
+              if (choice || blocked) {
                 // Point at the plaques instead of acting on a stray tap.
                 if (!matchMedia("(prefers-reduced-motion: reduce)").matches)
                   choiceRef.current?.animate(
@@ -149,6 +165,7 @@ export function Play({
             }}
             aria-disabled={
               !!choice ||
+              blocked ||
               (!!motion && motion !== "roll") ||
               (!!card.dice &&
                 !!session.roll &&
@@ -160,18 +177,22 @@ export function Play({
                 ? "Reveal card"
                 : choice
                   ? `${card.title}. ${card.rules} Choose ${choice.skip} or ${choice.roll}.`
-                  : card.dice && !session.roll?.returned
-                    ? session.roll
-                      ? motion === "roll"
-                        ? "Finish dice roll"
-                        : "Revealing dice result"
-                      : `Roll ${diceNotation(card.dice)}. ${card.rules}`
-                    : `${card.title}. ${session.roll?.returned ? `Rolled ${session.roll.total}. ${diceResultText(card, session.roll)}` : card.rules} ${cardPacks(
-                        card.id,
-                        session.config.packIds,
-                      )
-                        .map((pack) => pack.title)
-                        .join(", ")}. Tap to put this card aside.`
+                  : blocked
+                    ? `${card.title}. ${card.rules} ${card.timer!.kind === "fuse" ? "Light the fuse" : "Start the clock"}, or skip it.`
+                    : actions.shown === "end"
+                      ? `${card.title}. ${card.timer!.end} Tap to put this card aside.`
+                      : card.dice && !session.roll?.returned
+                        ? session.roll
+                          ? motion === "roll"
+                            ? "Finish dice roll"
+                            : "Revealing dice result"
+                          : `Roll ${diceNotation(card.dice)}. ${card.rules}`
+                        : `${card.title}. ${session.roll?.returned ? `Rolled ${session.roll.total}. ${diceResultText(card, session.roll)}` : card.rules} ${cardPacks(
+                            card.id,
+                            session.config.packIds,
+                          )
+                            .map((pack) => pack.title)
+                            .join(", ")}. Tap to put this card aside.`
             }
           >
             <span
@@ -193,11 +214,20 @@ export function Play({
                     card={card}
                     packIds={session.config.packIds}
                     roll={session.roll}
+                    shown={session.phase === "revealed" ? actions.shown : null}
                   />
                 )}
               </span>
             </span>
           </button>
+          {acting && (
+            <CardActions
+              card={card}
+              actions={actions}
+              groupRef={choiceRef}
+              onSkip={onTap}
+            />
+          )}
           {choice && (
             <div
               ref={choiceRef}
@@ -223,6 +253,16 @@ export function Play({
           )}
         </div>
       </section>
+      <span className="sr-only" role="status" aria-live="assertive">
+        {actions.shown === "secret"
+          ? `Secret: ${card.secret}`
+          : actions.shown === "end"
+            ? `${card.timer!.kind === "fuse" ? "Boom" : "Time"}. ${card.timer!.end}`
+            : ""}
+      </span>
+      {session.phase === "revealed" && (
+        <TimerBlast card={card} actions={actions} />
+      )}
       {overlay &&
         session.phase === "revealed" &&
         card.dice &&

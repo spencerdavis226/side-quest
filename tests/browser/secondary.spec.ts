@@ -83,12 +83,13 @@ test("@release the pack count stays readable with every pack selected", async ({
     "Pokémon night",
     "Cabin weekend",
     "Most Likely To",
+    "Secrets & fuses",
   ])
     await dialog.getByRole("button", { name, exact: true }).click();
   await dialog.getByRole("button", { name: "Done" }).click();
   const row = page.locator(".pack-selector");
-  await expect(row.locator(".pack-logo")).toHaveCount(6);
-  const count = row.getByText("670 cards");
+  await expect(row.locator(".pack-logo")).toHaveCount(7);
+  const count = row.getByText("820 cards");
   await expect(count).toBeVisible();
   expect(
     await count.evaluate((el) => {
@@ -97,6 +98,7 @@ test("@release the pack count stays readable with every pack selected", async ({
       return el.scrollWidth <= el.clientWidth + 1 && text.right <= box.right;
     }),
   ).toBe(true);
+  await row.screenshot({ path: test.info().outputPath("seven-packs.png") });
 });
 test("@release House and VIP are selectable add-ons and Core can be deselected", async ({
   page,

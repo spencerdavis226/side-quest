@@ -8,10 +8,13 @@ export function CardFace({
   card,
   packIds,
   roll = null,
+  shown = null,
 }: {
   card: CardDefinition;
   packIds?: readonly string[];
   roll?: DiceRoll | null;
+  /** What replaces the rules: the held secret, or a finished timer's end. */
+  shown?: "secret" | "end" | null;
 }) {
   const gesture = useRef<{
     pointerId: number;
@@ -111,7 +114,7 @@ export function CardFace({
     for (const child of el.children) observer.observe(child);
     document.fonts?.ready.then(updateOverflow).catch(() => undefined);
     return () => observer.disconnect();
-  }, [resolved, card.id]);
+  }, [resolved, card.id, shown]);
   return (
     <div
       className={`study-face${card.ribbon ? ` has-ribbon tone-${card.ribbonTone ?? "gold"}` : ""}`}
@@ -163,7 +166,7 @@ export function CardFace({
         )}
         <div
           ref={rulesRef}
-          className={`study-rules ${resolved ? "rules-resolved" : ""}`}
+          className={`study-rules ${resolved || shown === "end" ? "rules-resolved" : ""}`}
           data-overflow={overflow}
           onScroll={(event) => {
             const active = gesture.current;
@@ -209,6 +212,16 @@ export function CardFace({
                   )}
               </p>
             </div>
+          ) : shown === "secret" && card.secret ? (
+            // A word for the table to read across the room prints large.
+            <div
+              className={`card-secret${card.secret.length <= 24 ? " word" : ""}`}
+            >
+              <span className="card-secret-label">Secret</span>
+              <p>{card.secret}</p>
+            </div>
+          ) : shown === "end" && card.timer ? (
+            <p className="resolved-instruction timer-end">{card.timer.end}</p>
           ) : (
             <p>{card.rules}</p>
           )}

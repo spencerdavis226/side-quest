@@ -1,4 +1,5 @@
 import { validateDice } from "../game/dice";
+import { validateTimer } from "../game/timer";
 import type { CardDefinition, PackDefinition } from "../game/types";
 import { RIBBON_TONES } from "../game/types";
 
@@ -40,6 +41,20 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
       (!c.ribbon || !RIBBON_TONES.includes(c.ribbonTone))
     )
       fail(`Invalid ribbon tone: ${c.id}`);
+    if (
+      c.secret !== undefined &&
+      (typeof c.secret !== "string" ||
+        !c.secret.trim() ||
+        c.secret.length > 120)
+    )
+      fail(`Invalid secret: ${c.id}`);
+    if (c.timer !== undefined) {
+      validateTimer(c.timer);
+      // One mechanic at a time: a timed card never also rolls.
+      if (c.dice !== undefined) fail(`Timer and dice on one card: ${c.id}`);
+    }
+    if (c.secret !== undefined && c.dice !== undefined)
+      fail(`Secret and dice on one card: ${c.id}`);
   }
   const packIds = new Set<string>();
   for (const p of ps) {

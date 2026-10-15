@@ -336,6 +336,16 @@ dialog p,
 .pack-selector small span:last-child {
   margin-left: 3px;
 }
+/* Six or more marks: smaller marks, and the count takes its own line when
+   the row still can't hold it (seven packs on a 320px phone). */
+.pack-selector small.many {
+  flex-wrap: wrap;
+  gap: 2px 5px;
+}
+.pack-selector small.many .pack-logo {
+  width: 24px;
+  height: 24px;
+}
 .pack-selector > span:last-child {
   margin-left: auto;
   font-size: 2rem;

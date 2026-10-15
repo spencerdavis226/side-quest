@@ -16,7 +16,8 @@ async function walk(dir: string): Promise<string[]> {
 // the first screen, not script); it is reported, and the real guard is that
 // card text never reaches it (below). Lazy chunks (the 3D dice library, each
 // pack's cards) keep their own tier.
-const RUNTIME_LIMIT = 3 * 1024 * 1024;
+// 4 MiB since 2026-10-15 (owner decision): Secrets & fuses passed 3 MiB.
+const RUNTIME_LIMIT = 4 * 1024 * 1024;
 const IMAGE_LIMIT = 500 * 1024;
 const LAZY_JS_LIMIT = 200 * 1024;
 
@@ -66,7 +67,7 @@ const leaked = cards.find((card) => {
 });
 if (leaked) throw Error(`Card text reached the initial chunk: ${leaked.id}`);
 // Conservatively count all runtime files, including SW, rather than undercount precache.
-if (cache > RUNTIME_LIMIT) throw Error(`Runtime cache exceeds 3 MiB: ${cache}`);
+if (cache > RUNTIME_LIMIT) throw Error(`Runtime cache exceeds 4 MiB: ${cache}`);
 if (lazyJs > LAZY_JS_LIMIT)
   throw Error(`Lazy JavaScript exceeds 200 KiB gzip: ${lazyJs}`);
 console.log(

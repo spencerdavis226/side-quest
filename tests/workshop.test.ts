@@ -72,7 +72,7 @@ test("each supplied sheet row lands in the House deck, Cabin weekend or VIP nigh
   expect(vip.cardIds.slice(-4)).toEqual(
     [3, 4, 5, 6].map((row) => `vip.sheet-${String(row).padStart(3, "0")}`),
   );
-  expect(cards).toHaveLength(714); // 105 core + 94 house + 16 vip + 120 Pokémon (+24 League-only gym leaders, 20 gauntlet cards) + 85 cabin + 250 likely
+  expect(cards).toHaveLength(864); // 105 core + 94 house + 16 vip + 120 Pokémon (+24 League-only gym leaders, 20 gauntlet cards) + 85 cabin + 250 likely + 150 secrets
 });
 
 test("Cabin weekend owns its CABIIN cards and shares none", () => {

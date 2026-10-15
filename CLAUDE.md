@@ -13,7 +13,7 @@ AGENTS.md (imported above) holds the binding constraints and commands; `docs/STA
 | Path | Role |
 | --- | --- |
 | `src/game` | Pure engine: shuffle, advance, dice sampling. No DOM, no React. |
-| `src/content` | Card and pack data (685 cards incl. one quest finale, 6 packs). App code imports `manifest.generated.ts` and loads card text per pack via `loaders.ts`. |
+| `src/content` | Card and pack data (864 cards incl. League-only and gauntlet cards, 7 packs). App code imports `manifest.generated.ts` and loads card text per pack via `loaders.ts`. |
 | `src/app/persistence.ts` | localStorage save/load, v1→v2 migration, preferences. |
 | `src/presentation` | Controller (animation state machine), theme, CSS, dice renderer adapter, imprint sprite. |
 | `src/components`, `src/screens` | React UI; `main.tsx` wires state, PWA update, and dialogs. |

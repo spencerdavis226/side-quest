@@ -13,6 +13,7 @@ const loaders: Record<string, () => Promise<CardDefinition[]>> = {
   pokemon: () => import("./pokemon").then((m) => m.pokemonCards),
   cabin: () => import("./cabin").then((m) => m.cabinCards),
   likely: () => import("./likely").then((m) => m.likelyCards),
+  secrets: () => import("./secrets").then((m) => m.secretsCards),
 };
 
 export const loadablePackIds = Object.keys(loaders);
