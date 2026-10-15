@@ -21,9 +21,9 @@ test("seeded workshop preserves the pool and reproduces order", () => {
 test("Core composition matches the trimmed content brief", () => {
   const core = packs.find((p) => p.id === "core")!;
   const coreCards = cards.filter((c) => core.cardIds.includes(c.id));
-  // Sample set (31), trimmed classics (45), trimmed standard expansion (29);
-  // the CABIIN-born cards moved to Cabin weekend.
-  expect(coreCards).toHaveLength(105);
+  // The 2026-10-07 rewrite: sample set (25), classics (24) and the standard
+  // expansion (47), with the bare roll-and-pour cards cut.
+  expect(coreCards).toHaveLength(96);
   expect(
     Object.fromEntries(
       ["sip", "group", "category", "challenge", "rule"].map((c) => [
@@ -31,8 +31,8 @@ test("Core composition matches the trimmed content brief", () => {
         coreCards.filter((card) => card.category === c).length,
       ]),
     ),
-  ).toEqual({ sip: 16, group: 22, category: 9, challenge: 43, rule: 15 });
-  expect(coreCards.filter((c) => c.dice)).toHaveLength(36);
+  ).toEqual({ sip: 13, group: 21, category: 10, challenge: 37, rule: 15 });
+  expect(coreCards.filter((c) => c.dice)).toHaveLength(16);
 });
 
 // Sheet rows that are CABIIN board spaces play in Cabin weekend instead.
@@ -72,7 +72,7 @@ test("each supplied sheet row lands in the House deck, Cabin weekend or VIP nigh
   expect(vip.cardIds.slice(-4)).toEqual(
     [3, 4, 5, 6].map((row) => `vip.sheet-${String(row).padStart(3, "0")}`),
   );
-  expect(cards).toHaveLength(864); // 105 core + 94 house + 16 vip + 120 Pokémon (+24 League-only gym leaders, 20 gauntlet cards) + 85 cabin + 250 likely + 150 secrets
+  expect(cards).toHaveLength(855); // 96 core + 94 house + 16 vip + 120 Pokémon (+24 League-only gym leaders, 20 gauntlet cards) + 85 cabin + 250 likely + 150 secrets
 });
 
 test("Cabin weekend owns its CABIIN cards and shares none", () => {

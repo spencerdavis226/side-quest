@@ -204,7 +204,7 @@ test("@release home fits Safari's visible height without moving Install into the
     await page.setViewportSize({ width, height });
     await page.goto("./");
     await expect(page.locator(".setup")).toBeVisible();
-    await expect(page.locator(".pack-selector")).toContainText("359 cards");
+    await expect(page.locator(".pack-selector")).toContainText("350 cards");
     await page.evaluate(() => document.fonts.ready);
     await page.addStyleTag({
       content: `:root { --top-safe: ${top}px; --bottom-safe: ${bottom}px }`,

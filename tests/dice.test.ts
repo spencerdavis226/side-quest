@@ -87,9 +87,15 @@ describe("dice content", () => {
     expect(resolveInstruction(d, [20, 20, 20, 20])).toBe(
       "Tell a 80-word tale.",
     );
-    expect(resolveInstruction(fixture.dice!, [1, 1])).toBe("Give 2.");
-    expect(resolveInstruction(fixture.dice!, [6, 6])).toBe("Give 12.");
-    expect(resolveInstruction(fixture.dice!, [1, 2])).toBe("Drink 3.");
+    expect(resolveInstruction(fixture.dice!, [1, 1])).toBe(
+      "Basic as hell. Say your coffee order and drink 2.",
+    );
+    expect(resolveInstruction(fixture.dice!, [6, 6])).toBe(
+      "Basic as hell. Say your coffee order and drink 12.",
+    );
+    expect(resolveInstruction(fixture.dice!, [1, 2])).toBe(
+      "Weirdly original. Give 3.",
+    );
   });
   it("resolves every production roll to one exact instruction", () => {
     for (const card of diceCards) {

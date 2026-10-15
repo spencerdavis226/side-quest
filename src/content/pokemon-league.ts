@@ -43,7 +43,7 @@ export const gymLeaders: CardDefinition[] = [
     "brock",
     "Brock",
     "Boulder",
-    "Brock's Onix won't budge. Roll d20. 1–12: drink 5. 13–19: drink 2. 20: give 6.",
+    "Brock is busy hitting on Nurse Joy. Hit on someone here for him, then roll d20.",
     rollTable(1, 20, [
       { min: 1, max: 12, instruction: "Onix flattens you. Drink 5." },
       { min: 13, max: 19, instruction: "You chip through. Drink 2." },
@@ -60,7 +60,7 @@ export const gymLeaders: CardDefinition[] = [
     "lt-surge",
     "Lt. Surge",
     "Thunder",
-    "Roll 2d6. Matching dice: finish your drink. Under 8: drink 4. 8 or more: give 4.",
+    "Lt. Surge wants to see your service record. Salute him and roll 2d6.",
     {
       ...rollTable(2, 6, [
         { min: 2, max: 7, instruction: "Shocked. Drink 4." },
@@ -73,7 +73,7 @@ export const gymLeaders: CardDefinition[] = [
     "erika",
     "Erika",
     "Rainbow",
-    "Sleep Powder: eyes shut until your next turn. Roll d6 and drink it plus 2.",
+    "Erika's Sleep Powder. Roll d6, then keep your eyes shut until your next turn.",
     rollTable(
       1,
       6,
@@ -106,7 +106,7 @@ export const gymLeaders: CardDefinition[] = [
     "giovanni",
     "Giovanni",
     "Earth",
-    "The boss. Roll d20. 1–10: a shot and 3 more. 11–19: drink 4. 20: everyone else finishes.",
+    "The mob boss of Kanto runs a gym on the side. Kiss his ring, then roll d20.",
     rollTable(1, 20, [
       {
         min: 1,
@@ -133,14 +133,14 @@ export const gymLeaders: CardDefinition[] = [
     "bugsy",
     "Bugsy",
     "Hive",
-    "Bug swarm. Roll 3d6 and drink half the total, rounded up.",
+    "Bugsy's bugs got in your pants. Roll 3d6 and check your shorts.",
     half(3, 6),
   ),
   leader(
     "whitney",
     "Whitney",
     "Plain",
-    "Miltank's Rollout. Roll d6. 1: drink 1. 2: 3. 3: 6. 4: 10. 5–6: Whitney cries; give 5.",
+    "Whitney's Miltank used Rollout. It gets worse every hit. Roll d6.",
     rollTable(1, 6, [
       { min: 1, max: 1, instruction: "Rollout hits once. Drink 1." },
       { min: 2, max: 2, instruction: "Rollout hits twice. Drink 3." },
@@ -178,7 +178,7 @@ export const gymLeaders: CardDefinition[] = [
     "clair",
     "Clair",
     "Rising",
-    "Dragon battle. Roll 2d6. Under 9: drink the total. 9 or more: give the total.",
+    "Clair says you're too weak for dragons. Tell her she's right, then roll 2d6.",
     rollTable(2, 6, [
       { min: 2, max: 8, instruction: "Dragonbreath. Drink {total}." },
       { min: 9, max: 12, instruction: "You tame the dragon. Give {total}." },
@@ -203,7 +203,7 @@ export const gymLeaders: CardDefinition[] = [
     "wattson",
     "Wattson",
     "Dynamo",
-    "Wahahaha! Roll 2d6 and drink the total. Matching dice: everyone else drinks it instead.",
+    "Wahahaha! Wattson licks a battery and dares you to do the same. Roll 2d6.",
     {
       ...rollTable(2, 6, [
         { min: 2, max: 12, instruction: "Shocked. Drink {total}." },
@@ -215,7 +215,7 @@ export const gymLeaders: CardDefinition[] = [
     "flannery",
     "Flannery",
     "Heat",
-    "Roll d6. 1–4: take a high-proof or spicy shot. 5–6: give a shot.",
+    "Flannery is new and nervous and set the gym on fire. Roll d6.",
     rollTable(1, 6, [
       {
         min: 1,
@@ -241,7 +241,7 @@ export const gymLeaders: CardDefinition[] = [
     "tate-liza",
     "Tate & Liza",
     "Mind",
-    "Pick a partner. Roll 2d6. Matching: both give 8. Under 8: both drink 5. Over: both drink 2.",
+    "Creepy twins. Pick a partner and speak in unison while you roll 2d6.",
     {
       ...rollTable(2, 6, [
         { min: 2, max: 7, instruction: "They outmatch you. You both drink 5." },
@@ -293,7 +293,7 @@ export const legendaries: CardDefinition[] = [
   legendary(
     "articuno",
     "Articuno",
-    "Blizzard hits the table. Roll d20. 1–13: everyone drinks 3. 14–20: caught; give 8.",
+    "Articuno freezes the table. Everyone shivers dramatically while you roll d20.",
     rollTable(1, 20, [
       { min: 1, max: 13, instruction: "Frozen. Everyone drinks 3." },
       { min: 14, max: 20, instruction: "Caught! Give 8." },
@@ -302,7 +302,7 @@ export const legendaries: CardDefinition[] = [
   legendary(
     "zapdos",
     "Zapdos",
-    "Thunder. Roll 2d6. Under 9: you and both neighbors drink the total. 9 or more: caught.",
+    "Zapdos used Thunder. Hold hands with both neighbors to ground it, then roll 2d6.",
     rollTable(2, 6, [
       {
         min: 2,
@@ -315,7 +315,7 @@ export const legendaries: CardDefinition[] = [
   legendary(
     "moltres",
     "Moltres",
-    "Sky Attack. Roll d20. 1–12: take a high-proof shot. 13–20: caught; give a shot.",
+    "Moltres is on fire and so is your throat. Roll d20.",
     rollTable(1, 20, [
       { min: 1, max: 12, instruction: "Scorched. Take a high-proof shot." },
       { min: 13, max: 20, instruction: "Caught! Give a shot." },
@@ -324,7 +324,7 @@ export const legendaries: CardDefinition[] = [
   legendary(
     "mewtwo",
     "Mewtwo",
-    "Psystrike. Roll d20. 1–15: finish your drink. 16–19: drink 4. 20: caught.",
+    "Mewtwo reads your mind and tells the table your worst thought. Only a 20 catches it. Roll d20.",
     rollTable(1, 20, [
       { min: 1, max: 15, instruction: "Overpowered. Finish your drink." },
       { min: 16, max: 19, instruction: "You hold on. Drink 4." },
@@ -338,7 +338,7 @@ export const legendaries: CardDefinition[] = [
   legendary(
     "lugia",
     "Lugia",
-    "Roll d20: everyone drinks that many seconds. 20: caught; you're spared.",
+    "Lugia floods the table. Roll d20 for how long everyone drinks.",
     rollTable(1, 20, [
       {
         min: 1,
@@ -355,7 +355,7 @@ export const legendaries: CardDefinition[] = [
   legendary(
     "ho-oh",
     "Ho-Oh",
-    "Sacred Fire. Roll d6. Drink that many, then give twice that.",
+    "Ho-Oh used Sacred Fire. It burns going down and comes back twice as hot. Roll d6.",
     rollTable(
       1,
       6,
@@ -369,7 +369,7 @@ export const legendaries: CardDefinition[] = [
   legendary(
     "eon-duo",
     "Latias & Latios",
-    "Pick a partner. Roll 2d6. Matching dice: caught; both give 10. Else both drink half.",
+    "Pick a partner. Spoon them while you roll 2d6. Matching dice catches the pair.",
     {
       ...rollTable(
         2,
@@ -386,7 +386,7 @@ export const legendaries: CardDefinition[] = [
   legendary(
     "deoxys",
     "Deoxys",
-    "Psycho Boost. Roll d20. 1–10: drink 6. 11–19: drink 3. 20: caught; give 10.",
+    "A space virus with a laser. Only a 20 catches it. Roll d20.",
     rollTable(1, 20, [
       { min: 1, max: 10, instruction: "Psycho Boost lands. Drink 6." },
       { min: 11, max: 19, instruction: "Glancing blow. Drink 3." },
@@ -408,7 +408,7 @@ export const eliteFourMembers: CardDefinition[] = [
     "lorelei",
     "Lorelei",
     "Ice",
-    "Chug a glass of ice water, then roll d6 and drink that many.",
+    "Chug a glass of ice water, then roll d6. Lorelei likes it cold.",
     rollTable(
       1,
       6,
@@ -447,7 +447,7 @@ export const eliteFourMembers: CardDefinition[] = [
     "sidney",
     "Sidney",
     "Dark",
-    "Roll 2d6. Under 7: finish your drink. Exactly 7: drink 7. Over 7: give 5.",
+    "Sidney thinks you're a little bitch. Prove him wrong: roll 2d6.",
     rollTable(2, 6, [
       { min: 2, max: 6, instruction: "Crunched. Finish your drink." },
       { min: 7, max: 7, instruction: "A standoff. Drink 7." },
@@ -464,7 +464,7 @@ export const eliteFourMembers: CardDefinition[] = [
     "glacia",
     "Glacia",
     "Ice",
-    "Roll d20. 1–12: drink 6, ice cold. 13–19: drink 3. 20: give 8.",
+    "Glacia says your drink is warm and your heart is too. Roll d20.",
     rollTable(1, 20, [
       { min: 1, max: 12, instruction: "Sheer Cold. Drink 6." },
       { min: 13, max: 19, instruction: "You thaw out. Drink 3." },
@@ -475,7 +475,7 @@ export const eliteFourMembers: CardDefinition[] = [
     "drake",
     "Drake",
     "Dragon",
-    "Dragon Claw. Roll 3d6. Drink half the total, rounded up, plus 2.",
+    "Drake is a sailor. Drink like one. Roll 3d6.",
     rollTable(
       3,
       6,
@@ -510,7 +510,7 @@ export const champions: CardDefinition[] = [
     "blue",
     "Blue",
     "Kanto",
-    "Your rival got here first. Roll d20. 1–8: all finish. 9–16: all drink 4. 17–20: you win.",
+    "Your rival got here first and smells like your mom's perfume. The whole table fights. Roll d20.",
     rollTable(1, 20, [
       {
         min: 1,
@@ -529,7 +529,7 @@ export const champions: CardDefinition[] = [
     "lance",
     "Lance",
     "Johto",
-    "Hyper Beam. Roll d20. 1–10: all finish. 11–18: all drink 3. 19–20: you win.",
+    "Lance used Hyper Beam on the whole table. Roll d20. Pray for a 19.",
     rollTable(1, 20, [
       {
         min: 1,
@@ -549,7 +549,7 @@ export const champions: CardDefinition[] = [
     "steven",
     "Steven",
     "Hoenn",
-    "Roll 2d6. Under 9: everyone drinks the total. 9 or more: you win; give it.",
+    "Steven wants to show the whole table his rock collection. Roll 2d6 to escape.",
     rollTable(2, 6, [
       {
         min: 2,

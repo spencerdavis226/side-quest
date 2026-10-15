@@ -13,7 +13,8 @@ import { cardFactory } from "./author";
 const card = cardFactory("likely");
 
 type Payout = 2 | 3 | "finish" | "shot";
-type Prompt = [prompt: string, payout?: Payout];
+// A retired prompt stays as `null` so later IDs keep their numbers.
+type Prompt = [prompt: string, payout?: Payout] | null;
 
 const prompts: Prompt[] = [
   // --- Nights out --------------------------------------------------------------
@@ -70,86 +71,86 @@ const prompts: Prompt[] = [
 
   // --- Embarrassing ------------------------------------------------------------
   ["lock themselves out of the house"],
-  ["get scammed online"],
+  null, // 52: retired 2026-10-07 ("get scammed online")
   ["text the person they were talking about", 3],
   ["reply-all to the whole company"],
-  ["get lost with the GPS on"],
+  null, // 55: retired 2026-10-07 ("get lost with the GPS on")
   ["miss a flight"],
   ["go to the wrong airport"],
-  ["believe a fake headline"],
-  ["pay for something that's free"],
+  null, // 58: retired 2026-10-07 ("believe a fake headline")
+  null, // 59: retired 2026-10-07 ("pay for something that's free")
   ["lose rock-paper-scissors to a child"],
   ['call a teacher "mom"'],
-  ["get sunburned on a cloudy day"],
-  ["wear a shirt inside out all day"],
-  ["walk into a glass door"],
-  ["wave back at someone who wasn't waving"],
-  ["get hurt opening a bag of chips"],
-  ["push a pull door"],
+  null, // 62: retired 2026-10-07 ("get sunburned on a cloudy day")
+  null, // 63: retired 2026-10-07 ("wear a shirt inside out all day")
+  null, // 64: retired 2026-10-07 ("walk into a glass door")
+  null, // 65: retired 2026-10-07 ("wave back at someone who wasn't waving")
+  null, // 66: retired 2026-10-07 ("get hurt opening a bag of chips")
+  null, // 67: retired 2026-10-07 ("push a pull door")
   ["like a three-year-old photo by accident"],
   ["join a pyramid scheme"],
   ["get a parking ticket in their own driveway"],
-  ["burn water"],
+  null, // 71: retired 2026-10-07 ("burn water")
   ["send a screenshot to the person in it", 3],
-  ["microwave something metal"],
-  ["forget their own phone number"],
+  null, // 73: retired 2026-10-07 ("microwave something metal")
+  null, // 74: retired 2026-10-07 ("forget their own phone number")
   ["lose their wallet twice on one trip"],
-  ["trip over absolutely nothing"],
+  null, // 76: retired 2026-10-07 ("trip over absolutely nothing")
   ["set the kitchen on fire"],
   ["fall for an obvious prank"],
-  ["get stuck in a revolving door"],
+  null, // 79: retired 2026-10-07 ("get stuck in a revolving door")
   ["put the wrong fuel in a car"],
   ["butt-dial their boss"],
   ["laugh at a funeral", 3],
-  ["forget the name of someone they just met"],
+  null, // 83: retired 2026-10-07 ("forget the name of someone they just met")
   ['say "you too" when the waiter says enjoy'],
   ["fake-laugh at a joke they didn't get"],
   ["get caught talking to themselves"],
   ["sing the wrong lyrics with full confidence"],
-  ["leave the house in slippers by accident"],
-  ["search for the keys in their hand"],
+  null, // 88: retired 2026-10-07 ("leave the house in slippers by accident")
+  null, // 89: retired 2026-10-07 ("search for the keys in their hand")
   ["get their head stuck in something"],
   ["send a text meant for someone else"],
   ["get caught stalking someone's Instagram"],
-  ["wear socks with sandals unironically"],
+  null, // 93: retired 2026-10-07 ("wear socks with sandals unironically")
   ["get locked in a bathroom"],
   ["show up on the wrong day"],
-  ["forget why they walked into a room"],
-  ["lose a fight with a vending machine"],
+  null, // 96: retired 2026-10-07 ("forget why they walked into a room")
+  null, // 97: retired 2026-10-07 ("lose a fight with a vending machine")
   ["go live on social media by accident"],
-  ["lose their car in a parking garage"],
+  null, // 99: retired 2026-10-07 ("lose their car in a parking garage")
   ["call 911 by accident"],
 
   // --- Stoned ------------------------------------------------------------------
   ["eat an entire pizza alone"],
-  ["forget what they were saying mid-sentence"],
-  ["rewatch the same show for the tenth time"],
+  null, // 102: retired 2026-10-07 ("forget what they were saying mid-sentence")
+  null, // 103: retired 2026-10-07 ("rewatch the same show for the tenth time")
   ["believe in aliens with their whole chest"],
-  ["spend 20 minutes choosing a snack"],
+  null, // 105: retired 2026-10-07 ("spend 20 minutes choosing a snack")
   ["have a deep conversation with a dog"],
   ["order delivery twice in one night"],
   ["laugh at nothing for five straight minutes"],
   ["start a conspiracy podcast"],
-  ["put the milk in the cupboard"],
+  null, // 110: retired 2026-10-07 ("put the milk in the cupboard")
   ["pitch a genius business idea at 2 a.m."],
   ["get paranoid about a cop who isn't there"],
-  ["watch nature documentaries for fun"],
+  null, // 113: retired 2026-10-07 ("watch nature documentaries for fun")
   ["buy crystals and mean it"],
-  ["take three hours to get ready"],
-  ["get obsessed with a new hobby for a month"],
+  null, // 115: retired 2026-10-07 ("take three hours to get ready")
+  null, // 116: retired 2026-10-07 ("get obsessed with a new hobby for a month")
   ['reply "lol" to a serious text'],
-  ["eat cereal for dinner"],
+  null, // 118: retired 2026-10-07 ("eat cereal for dinner")
   ["explain the universe to a bartender"],
-  ["name their houseplants"],
+  null, // 120: retired 2026-10-07 ("name their houseplants")
   ["get distracted by a bird mid-argument"],
   ['say "bro, what if…" the most'],
-  ["play one album all night"],
+  null, // 123: retired 2026-10-07 ("play one album all night")
   ["fall asleep during a movie they picked"],
   ["eat something off the floor"],
   ["own a bong with a name"],
   ["raid someone else's fridge uninvited"],
   ["think they can talk to animals"],
-  ["forget their own birthday"],
+  null, // 129: retired 2026-10-07 ("forget their own birthday")
   ["order half the menu at a drive-through"],
 
   // --- Spicy -------------------------------------------------------------------
@@ -169,7 +170,7 @@ const prompts: Prompt[] = [
   ["keep a dating app open just to look"],
   ["write a love letter to a celebrity"],
   ["propose in public"],
-  ["cry at a romcom"],
+  null, // 147: retired 2026-10-07 ("cry at a romcom")
   ["plan the wedding before the second date"],
   ["get walked in on", 3],
   ["flirt their way out of a ticket"],
@@ -195,29 +196,29 @@ const prompts: Prompt[] = [
   ["have a type nobody understands"],
 
   // --- The future ----------------------------------------------------------------
-  ["become famous"],
+  null, // 171: retired 2026-10-07 ("become famous")
   ["go to jail", 3],
   ["win the lottery and lose it all"],
-  ["become a millionaire"],
+  null, // 174: retired 2026-10-07 ("become a millionaire")
   ["move to another country on a whim"],
   ["end up on reality TV"],
   ["start a cult"],
-  ["start a business that actually works"],
+  null, // 178: retired 2026-10-07 ("start a business that actually works")
   ["get canceled online"],
   ["go viral for the wrong reason"],
-  ["live to 100"],
+  null, // 181: retired 2026-10-07 ("live to 100")
   ["get abducted by aliens"],
-  ["survive a zombie apocalypse"],
+  null, // 183: retired 2026-10-07 ("survive a zombie apocalypse")
   ["die first in a horror movie"],
-  ["run for office"],
-  ["write a memoir nobody asked for"],
+  null, // 185: retired 2026-10-07 ("run for office")
+  null, // 186: retired 2026-10-07 ("write a memoir nobody asked for")
   ["end up on the news"],
   ["quit their job dramatically", 3],
-  ["have ten kids"],
-  ["retire first"],
-  ["become a crazy cat person"],
-  ["run a marathon"],
-  ["adopt a pet on a whim"],
+  null, // 189: retired 2026-10-07 ("have ten kids")
+  null, // 190: retired 2026-10-07 ("retire first")
+  null, // 191: retired 2026-10-07 ("become a crazy cat person")
+  null, // 192: retired 2026-10-07 ("run a marathon")
+  null, // 193: retired 2026-10-07 ("adopt a pet on a whim")
   ["get arrested at a protest"],
   ["own a boat they can't afford"],
   ["move back in with their parents"],
@@ -227,9 +228,9 @@ const prompts: Prompt[] = [
   ["buy a timeshare"],
   ["get a DUI on a lawn mower"],
   ["open a bar"],
-  ["star in a commercial"],
+  null, // 203: retired 2026-10-07 ("star in a commercial")
   ["become a landlord everyone hates"],
-  ["follow a band on tour"],
+  null, // 205: retired 2026-10-07 ("follow a band on tour")
   ["live in a van by choice"],
   ["show up on a true crime show"],
   ["fake their own death", 3],
@@ -238,28 +239,28 @@ const prompts: Prompt[] = [
 
   // --- The group -----------------------------------------------------------------
   ["be late to their own wedding"],
-  ["be the group therapist"],
+  null, // 212: retired 2026-10-07 ("be the group therapist")
   ["start drama and act surprised"],
   ["know everyone's secrets"],
   ["leak a secret by accident", 3],
-  ["cancel plans last minute"],
-  ["plan the whole trip and get no thanks"],
-  ["forget to pay you back"],
+  null, // 216: retired 2026-10-07 ("cancel plans last minute")
+  null, // 217: retired 2026-10-07 ("plan the whole trip and get no thanks")
+  null, // 218: retired 2026-10-07 ("forget to pay you back")
   ["eat the last slice without asking"],
   ["hog the aux"],
-  ["take 200 selfies on one trip"],
-  ["overpack for a weekend"],
+  null, // 221: retired 2026-10-07 ("take 200 selfies on one trip")
+  null, // 222: retired 2026-10-07 ("overpack for a weekend")
   ["get lost on a group hike"],
   ["complain all trip and have the best time"],
-  ["read the group chat and never reply"],
+  null, // 225: retired 2026-10-07 ("read the group chat and never reply")
   ["send a five-minute voice memo"],
   ["start a fight in the group chat"],
   ["change the plan at the last second"],
   ["become the main character on vacation"],
-  ["make a spreadsheet for the trip"],
+  null, // 230: retired 2026-10-07 ("make a spreadsheet for the trip")
   ["fall asleep in the car every time"],
   ["pick the worst restaurant"],
-  ["argue with the GPS"],
+  null, // 233: retired 2026-10-07 ("argue with the GPS")
   ["steal a souvenir from a hotel"],
   ["leave the party without saying goodbye"],
   ["win every argument by yelling"],
@@ -269,14 +270,76 @@ const prompts: Prompt[] = [
   ["take a game way too seriously"],
   ["flip the board when they lose"],
   ["blame the dice for losing", 3],
-  ["read the rules and still not get it"],
-  ["keep score when nobody asked"],
-  ["bring a lucky charm to game night"],
+  null, // 243: retired 2026-10-07 ("read the rules and still not get it")
+  null, // 244: retired 2026-10-07 ("keep score when nobody asked")
+  null, // 245: retired 2026-10-07 ("bring a lucky charm to game night")
   ["be the reason we can't go back somewhere", 3],
   ["get banned from a restaurant"],
-  ["have a secret talent nobody knows"],
+  null, // 248: retired 2026-10-07 ("have a secret talent nobody knows")
   ["survive on gas station food for a week"],
   ["be talking about this game tomorrow", "finish"],
+  // --- Filthy (appended 2026-10-07) --------------------------------------------
+  ["have sex in a car this year", 3],
+  ["fake an orgasm tonight"],
+  ["have a sex tape somewhere", "shot"],
+  ["shit their pants as an adult", 3],
+  ["pee in a pool on purpose"],
+  ["sleep with an ex's sibling", 3],
+  ["have a fetish they'd never admit", 3],
+  ["blame an STD on a toilet seat", 3],
+  ["own a sex swing"],
+  ["fart during sex"],
+  ["cry after sex"],
+  ["send a nude to the family group chat", "shot"],
+  ["get caught masturbating", 3],
+  ["keep a burner account to spy on exes"],
+  ["make out with someone just to make someone else jealous"],
+  ["hook up in a bar bathroom", 3],
+  ["sleep with someone whose name they never learned", 3],
+  ["get kicked out of a strip club", 3],
+  ["call someone the wrong name in bed", 3],
+  ["puke on someone they were hooking up with", "finish"],
+  ["scream during a Brazilian wax"],
+  ["lie about their body count"],
+  ["hook up with a married person", "shot"],
+  ["date someone for their money"],
+  ["pay for someone's OnlyFans", 3],
+  ["pee in a sink at a party"],
+  ["eat ass on a first date", 3],
+  ["sext the wrong person"],
+  ["have sex at a family wedding", 3],
+  ["clog a hookup's toilet", 3],
+  ["shit with the door open"],
+  ["sniff their own fingers"],
+  ["wear the same underwear three days straight"],
+  ["eat a booger in public"],
+  ["have a crusty sock under their bed"],
+  ["fart and blame the dog"],
+  ["pop a boner at the worst possible moment"],
+  ["have loud tent sex on a group trip", 3],
+  ["flash a cop", 3],
+  ["get crabs"],
+  ["have had a threesome", 3],
+  ["lose a phone with a sex tape on it", "shot"],
+  ["sleep with their boss", 3],
+  ["jerk off at work"],
+  ["get caught peeing in public", 3],
+  ["throw up in their mouth and swallow it"],
+  ["lick a stranger on a dare"],
+  ["get a hickey after 30"],
+  ["do a keg stand in a dress"],
+  ["streak through somewhere public", 3],
+  ["make out with a stranger in front of their date", 3],
+  ["use their roommate's toothbrush"],
+  ["lose their virginity somewhere embarrassing"],
+  ["talk dirty and make it weird"],
+  ["google their symptoms after a hookup"],
+  ["shit in the woods this weekend"],
+  ["get a nipple piercing on a whim"],
+  ["moan in their sleep"],
+  ["have sex in a pool and lie about it", 3],
+  ["get walked in on by a parent", 3],
+  ["fall asleep mid-hookup"],
 ];
 
 const payoutText = (payout: Payout = 2) =>
@@ -286,14 +349,17 @@ const payoutText = (payout: Payout = 2) =>
       ? "most votes takes a shot"
       : `most votes drinks ${payout}`;
 
-export const likelyCards: CardDefinition[] = prompts.map(
-  ([prompt, payout], index) =>
-    card(
-      String(index + 1).padStart(3, "0"),
-      "Most Likely To",
-      "group",
-      `${prompt[0].toUpperCase()}${prompt.slice(1)}. Point on three: ${payoutText(payout)}.`,
-    ),
+export const likelyCards: CardDefinition[] = prompts.flatMap((entry, index) =>
+  entry
+    ? [
+        card(
+          String(index + 1).padStart(3, "0"),
+          "Most Likely To",
+          "group",
+          `${entry[0][0].toUpperCase()}${entry[0].slice(1)}. Point on three: ${payoutText(entry[1])}.`,
+        ),
+      ]
+    : [],
 );
 
 export const likelyPack: PackDefinition = {

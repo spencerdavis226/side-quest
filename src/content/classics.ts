@@ -1,5 +1,5 @@
 import type { CardDefinition } from "../game/types";
-import { cardFactory, roll, rollTable } from "./author";
+import { cardFactory, roll } from "./author";
 
 /**
  * Classic party and King's Cup content for the generated main deck. Traditional
@@ -16,40 +16,23 @@ const card = cardFactory("core");
 export const classicCards: CardDefinition[] = [
   // --- Table standards -----------------------------------------------------
   card(
-    "give-one",
-    "Give One",
-    "sip",
-    "Give 1 sip to anyone. Make eye contact.",
-  ),
-  card("drink-two", "Drink Two", "sip", "Drink 2. No explanation owed."),
-  card(
-    "give-take",
-    "Give and Take",
-    "sip",
-    "Give 2 sips to someone. Take 1 yourself. Balanced.",
-  ),
-  card("social-sip", "Social Sip", "group", "Everyone drinks 2. Cheers!"),
-  card("girls-drink", "Girls Drink", "group", "Girls drink 2."),
-  card("guys-drink", "Guys Drink", "group", "Guys drink 2."),
-  card(
-    "table-toast",
-    "Table Toast",
+    "girls-drink",
+    "Girls Drink",
     "group",
-    "Raise your glass. Last to toast drinks 2.",
+    "Girls drink 2. Anyone who's cried in a bar bathroom this year drinks 2 more.",
   ),
   card(
-    "elders",
-    "Respect Your Elders",
+    "guys-drink",
+    "Guys Drink",
     "group",
-    "Oldest player drinks 2. You owe them this.",
+    "Guys drink 2. Anyone who's ever peed in a sink drinks 2 more.",
   ),
   card(
-    "youth",
-    "Youth Is Wasted",
+    "tallest",
+    "Big Friendly Giant",
     "group",
-    "Youngest player drinks 2. Youth is wasted on them.",
+    "Tallest player drinks 2. Shortest player gives 2 and finally feels powerful.",
   ),
-  card("tallest", "Big Friendly Giant", "group", "Tallest player drinks 2."),
   card(
     "new-blood",
     "New Blood",
@@ -60,95 +43,56 @@ export const classicCards: CardDefinition[] = [
     "late-arrival",
     "Fashionably Late",
     "group",
-    "Last to arrive drinks 2. Sinner.",
+    "Last to arrive drinks 2 and gives the real reason. We all know it was a poop.",
   ),
   card(
     "couples",
     "Couples Drink",
     "group",
-    "Couples drink 2. Singles give 2 and sulk.",
+    "Couples drink 2 and say where they last had sex. Singles give 2 and pretend not to care.",
   ),
-  card(
-    "birthday",
-    "Birthday Month",
-    "group",
-    "Your birthday this month? Drink 2. Everyone else toasts you.",
-  ),
-
   // --- Reaction and reflex -------------------------------------------------
   card(
     "kings-four",
     "Four Is Floor",
     "challenge",
-    "Touch the floor with your hands. Last one down drinks 2.",
+    "Everyone touches the floor. Last one down drinks 2.",
   ),
-  card(
-    "kings-seven",
-    "Seven Is Heaven",
-    "challenge",
-    "Hands up. Last hand up drinks 2.",
-  ),
-
   // --- Verbal games --------------------------------------------------------
   card(
     "truth-or-drink",
     "Truth or Drink",
     "challenge",
-    "The group asks you a question. Answer honestly, or roll d6 and drink it.",
-    roll(1, 6, "Drink {total}."),
+    "The table asks you one filthy question. Answer honestly, or roll d6 and drink it.",
+    roll(1, 6, "Coward. Drink {total}."),
   ),
   card(
     "rant",
     "Rant Mode",
     "challenge",
-    "Rant for 20 seconds or roll d6 and drink it.",
-    roll(1, 6, "Drink {total}."),
+    "Rant for 20 seconds about something you hate. Run dry early: roll d6 and drink it.",
+    roll(1, 6, "Ran out of hate. Drink {total}."),
   ),
   card(
     "impression",
     "Do the Impression",
     "challenge",
-    "Do an impression of someone here. You both drink 3.",
+    "Do an impression of someone here having sex. You both drink 3.",
   ),
   card(
     "stare-down",
     "Stare Down",
     "challenge",
-    "Stare down a rival. First to blink or laugh drinks 2.",
-  ),
-  card(
-    "thumb-war",
-    "Thumb War",
-    "challenge",
-    "Challenge someone to a thumb war. Loser drinks 2.",
+    "Stare down someone. First to blink or laugh drinks 2.",
   ),
   card(
     "story-time",
     "Story Time",
     "category",
-    "Go around the table adding one word to a group story. First mistake drinks 2.",
+    "Clockwise, build an erotic story one word at a time. First to stall or laugh drinks 2.",
   ),
-
   // --- Temporary rules -----------------------------------------------------
-  card(
-    "sober-talk",
-    "Sober Talk",
-    "rule",
-    "Until your next turn, you can't say drink, drank or drunk. Slip = drink 2.",
-  ),
   card("buffalo", "Buffalo", "rule", "It's gotta go."),
-  card(
-    "accent",
-    "Accent Lock",
-    "rule",
-    "Until your next turn: everyone talks in an accent. Slip = drink 2.",
-  ),
-  card(
-    "library",
-    "Library Mode",
-    "rule",
-    "Until your next turn, everyone whispers. Slip = drink 2.",
-  ),
   card(
     "little-green-man",
     "Little Green Man",
@@ -161,7 +105,6 @@ export const classicCards: CardDefinition[] = [
     "rule",
     "Until your next turn: anyone who answers your question drinks 2.",
   ),
-
   // --- King's Cup ranks ----------------------------------------------------
   card(
     "waterfall",
@@ -173,92 +116,32 @@ export const classicCards: CardDefinition[] = [
     "kings-two",
     "Two Is You",
     "sip",
-    "Give 2 sips to anyone. Point so it's personal.",
+    "Give 2 to the person you'd least want to share a bed with. Point so it's personal.",
   ),
   card(
     "kings-three",
     "Three Is Me",
     "sip",
-    "Drink 3. The cards hate you personally.",
+    "Drink 3. The cards have seen your browser history.",
   ),
   card(
     "kings-eight",
     "Eight Is Mate",
     "rule",
-    "Pick a mate until your next turn. When one of you drinks, both drink.",
+    "Pick a mate until your next turn. When one of you drinks, both drink, holding hands.",
   ),
-
-  // --- Dice basics ---------------------------------------------------------
-  card(
-    "lucky-sip",
-    "Lucky Sip",
-    "challenge",
-    "Roll d6. Drink your roll. Call it luck.",
-    roll(1, 6, "Drink {total}."),
-  ),
-  card(
-    "open-hand",
-    "Open Hand",
-    "challenge",
-    "Roll d6. Give your roll. Look generous.",
-    roll(1, 6, "Give {total}."),
-  ),
-  card(
-    "odd-even",
-    "Coin Flip",
-    "challenge",
-    "Roll d6. Odd: drink 3. Even: give 3.",
-    rollTable(1, 6, [
-      { min: 1, max: 5, step: 2, instruction: "Drink 3." },
-      { min: 2, max: 6, step: 2, instruction: "Give 3." },
-    ]),
-  ),
-  card(
-    "fate",
-    "Fate",
-    "challenge",
-    "Roll d20. 10 or more: give 3. Under 10: drink 4.",
-    rollTable(1, 20, [
-      { min: 1, max: 9, instruction: "Drink 4." },
-      { min: 10, max: 20, instruction: "Give 3." },
-    ]),
-  ),
-  card(
-    "blessing",
-    "Blessing",
-    "challenge",
-    "Roll d20. Give your roll.",
-    roll(1, 20, "Give {total}."),
-  ),
-
   // --- Flavorful one-offs --------------------------------------------------
   card(
     "dragon-breath",
     "Dragon's Breath",
     "challenge",
-    "Take a sip, then name someone. They drink 1 and take a sip back.",
+    "Breathe on the person to your right. They rate it out of 10. Over 5: you drink 3.",
   ),
   card(
     "potion-courage",
     "Potion of Courage",
     "sip",
     "Drink as many as you want, then pick someone to drink that many.",
-  ),
-  card(
-    "loot-drop",
-    "Loot Drop",
-    "challenge",
-    "Roll d6. 5–6: give 4. Else drink 2.",
-    rollTable(1, 6, [
-      { min: 1, max: 4, instruction: "Drink 2." },
-      { min: 5, max: 6, instruction: "Give 4." },
-    ]),
-  ),
-  card(
-    "tavern-brawl",
-    "Tavern Brawl",
-    "group",
-    "On three, everyone points at someone. Most pointed drinks 3.",
   ),
   card(
     "dungeon-master",
@@ -271,12 +154,6 @@ export const classicCards: CardDefinition[] = [
     "Prophecy",
     "challenge",
     "Predict who finishes their drink next. Right: give 3. Wrong: drink 3.",
-  ),
-  card(
-    "mimic-chest",
-    "Mimic Chest",
-    "sip",
-    "Open the chest: take 2 sips and give 1 away.",
   ),
   card(
     "side-quest",

@@ -1,6 +1,32 @@
 # Current state and implementation plan
 
-Updated 2026-10-06. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
+Updated 2026-10-07. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
+
+## Crude card rewrite, all decks (2026-10-07, branch `card-rewrite`, not on `main`)
+
+**Owner request.** "Really review the cards and get more creative and crude-funny. A lot of them are just straight up dice roll conditionals and math." No lore supplied ("just do your best"), "as crude as you'd like", King's Cup classics may be rewritten, all decks in scope. This overrides the House/Pokémon "source wording only" rule for this pass; the changes are listed in `reference/README.md`.
+
+**What changed.**
+- **Core (105 → 96, dice 36 → 16).** Cut the roll-and-pour cards and duplicates (Dice Debt, Lucky Sip, Open Hand, Pay Your Tab, Close Call, Loot Drop, Seven Is Heaven, Social Sip, Fuckin' Math, Pathetic, Snake Eyes, Lucky Bastard, Critical Failure, Coin Flip, Fate, Blessing, Lucky Sevens, Boxcars, Nat Twenty, Skyscraper, Overdrive, Big Spender, Loose Change, Committee, Group Roll, Round for the Table, Heavy Hand, plus bland fillers). Kept dice where the roll is the joke (Big Dick Energy, Prostate Exam, Walk of Shame, Gas Station Sushi, Body Count, Lap Dance Roulette, Hot Seat, Dice Tax, Same Shit). Added table-moment cards (Hostage Video, Dramatic Reading, Search History, Meg Ryan, Who Farted, Phone Check, Ex Files, Wipe Check, crude categories and rules). Test-referenced IDs kept (`house-special`, `bar-tab`, `cheers-idiots`, `dice-tax`, `same-shit`, `fuck-around`, `chosen-one`, `categories`, `rulemaster`, `buffalo`); retired IDs are not reused.
+- **Dice rules text.** Pokémon, League and Cabin dice cards now state a premise; outcomes carry the numbers with a punchline. No dice mechanics, IDs or League structure changed.
+- **House.** Thirteen flat rows got a crude kicker after their original sentence; in-joke rows untouched.
+- **VIP.** The twelve generated cards rewritten (categories and IDs unchanged); the four sheet rows untouched.
+- **Most Likely To.** 61 bland prompts retired as `null` placeholders (IDs keep their numbers), 61 crude prompts appended as `likely.251`–`likely.311`; still 250 cards.
+- Count assertions updated: `tests/workshop.test.ts` (Core 96, 16 dice, 705 total), `tests/dice.test.ts` (Same Shit's new text), `tests/browser/layout.spec.ts` (350-card League setup), `tests/browser/secondary.spec.ts` (190 Core+House, 661 all packs).
+
+**Verification.** `npm test` 141/141. `BASE_PATH=/side-quest/ npm run build` passed: 3049 KiB runtime, 89.4 KiB initial + 175.8 KiB lazy gzip, no card text in the initial chunk. Full production E2E in **Chromium only**, no retries: 96/96 passed. Workshop suite (dev server, Chromium only, serial, no retries): 12 passed, 1 failed. Every authored title fits its band at supported widths, and the stress cards keep their ratio at small phone, large phone and iPad. The failure is `dice-texture.spec.ts` (numeral 7 horizontal centre 186.5 px off); it fails identically on unmodified `main` in this container, which runs a different Chromium build (1194, via `executablePath`) than the repo's pinned Playwright, so it is unrelated to card copy. That is not a pass. WebKit is not installed in this cloud container, so the WebKit half of every suite did not run. No physical-device check. Long-rule warnings remain review flags only (all rules are under the 120-character / 24-word hard limit).
+
+**Next.** Owner reviews the copy (`docs/CARD_REVIEW.md` is regenerated), then a Short game with the group. Run the WebKit suites before merging. Merging to `main` publishes; it needs the owner's go-ahead.
+
+## Published Secrets & fuses and the card rewrite (2026-10-15)
+
+**Merged.** PR #7 (Secrets & fuses, 150 cards) and PR #8 (card rewrite) were reviewed, rebased onto `main`, re-verified and squash-merged. The catalog is 855 cards in 7 packs; the plain modes deal 811 (92 sip, 377 group, 49 category, 221 challenge, 72 rule; 75 dice), plus 24 League gym leaders and 20 gauntlet cards.
+
+**Review changes.** The runtime budget is 4 MiB (owner decision 2026-10-15; Secrets & fuses passed 3 MiB by about 1 KiB). Secret and timer state is keyed per dealt card, like the card rotator. The title fit divides by the band's exact computed height rather than its rounded `offsetHeight`, which let "Corporate Wellness" overflow by a fraction of a pixel at 330px. PR #8's count conflicts were merged with PR #7's seventh pack; generated files were regenerated.
+
+**Verified (final tree).** `npm test` 149 passed; build and budgets passed (3075 KiB runtime). Full production E2E, Chromium + emulated WebKit: 207 passed, 3 intentional skips, no flakes. Workshop title fit for every title, both browsers: passed. Update flow passed. **Not run:** the workshop every-card geometry sweeps; any physical device. PR #7 was only ever tested in Chromium before this; both browsers now pass. Not changed: Paranoia passes the phone to the left neighbour and Forehead holds it to a forehead, which stretch the pack's "phone never leaves the table" rule.
+
+**Next.** The Ancient Mew League card pair (`assets/source/league-ancient-2026-10-06/`, 392 KiB) is still review-only; it now fits the 4 MiB budget.
 
 ## Title fit, League finale flip, Hall of Fame link (2026-10-15, committed locally, not pushed)
 
