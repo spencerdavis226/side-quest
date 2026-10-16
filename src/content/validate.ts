@@ -113,12 +113,33 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
             (o.cost !== undefined && !count(o.cost, 5)) ||
             (o.heal !== undefined && !count(o.heal, 5)) ||
             (o.loot !== undefined && !LOOT.includes(o.loot)) ||
-            (o.elite !== undefined && o.elite !== true),
+            (o.elite !== undefined && o.elite !== true) ||
+            (o.evolve !== undefined && o.evolve !== true),
         ))
     )
       fail(`Invalid offers: ${c.id}`);
-    if (c.omen !== undefined) {
-      const o = c.omen;
+    // A starter's later forms: one or two, each with its own omen effect.
+    if (
+      c.evolves !== undefined &&
+      (c.omen === undefined ||
+        !Array.isArray(c.evolves) ||
+        c.evolves.length < 1 ||
+        c.evolves.length > 2 ||
+        c.evolves.some(
+          (e) =>
+            !e ||
+            [e.title, e.rules].some(
+              (text) => typeof text !== "string" || !text.trim(),
+            ) ||
+            e.title.length > 24 ||
+            !e.omen,
+        ))
+    )
+      fail(`Invalid evolves: ${c.id}`);
+    for (const o of [
+      ...(c.omen !== undefined ? [c.omen] : []),
+      ...(Array.isArray(c.evolves) ? c.evolves.map((e) => e.omen) : []),
+    ]) {
       const step = (n: unknown, lo: number, hi: number) =>
         n === undefined ||
         (Number.isSafeInteger(n) && (n as number) >= lo && (n as number) <= hi);

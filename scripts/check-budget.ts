@@ -15,7 +15,10 @@ async function walk(dir: string): Promise<string[]> {
 // owner dropped the old 100 KiB limit on 2026-10-05: art and fonts dominate
 // the first screen, not script); it is reported, and the real guard is that
 // card text never reaches it (below). Lazy chunks (the 3D dice library, each
-// pack's cards) keep their own tier.
+// pack's cards) keep their own tier, capped one chunk at a time since
+// 2026-10-16 (owner decision): a game fetches only the packs it plays, so a
+// cap on the sum of every pack only penalised adding packs. The runtime cap
+// below still bounds the whole offline precache.
 // 4 MiB since 2026-10-15 (owner decision): Secrets & fuses passed 3 MiB.
 const RUNTIME_LIMIT = 4 * 1024 * 1024;
 const IMAGE_LIMIT = 500 * 1024;
@@ -33,6 +36,7 @@ const initialChunks = new Set(
 let cache = 0,
   initialJs = 0,
   lazyJs = 0,
+  largestLazy = { name: "", gzip: 0 },
   initialCode = "";
 for (const file of files) {
   const size = (await stat(file)).size;
@@ -46,7 +50,12 @@ for (const file of files) {
     if (name && initialChunks.has(name)) {
       initialJs += gzip;
       initialCode += code;
-    } else lazyJs += gzip;
+    } else {
+      lazyJs += gzip;
+      if (gzip > largestLazy.gzip) largestLazy = { name: name ?? file, gzip };
+      if (gzip > LAZY_JS_LIMIT)
+        throw Error(`Lazy chunk exceeds 200 KiB gzip: ${file} (${gzip})`);
+    }
     if (
       /Card workshop|Front study|workshop-viewport|core\.dice-toast-study|core\.dice-title-study/.test(
         code,
@@ -68,8 +77,6 @@ const leaked = cards.find((card) => {
 if (leaked) throw Error(`Card text reached the initial chunk: ${leaked.id}`);
 // Conservatively count all runtime files, including SW, rather than undercount precache.
 if (cache > RUNTIME_LIMIT) throw Error(`Runtime cache exceeds 4 MiB: ${cache}`);
-if (lazyJs > LAZY_JS_LIMIT)
-  throw Error(`Lazy JavaScript exceeds 200 KiB gzip: ${lazyJs}`);
 console.log(
-  `Budgets passed: ${(cache / 1024).toFixed(0)} KiB runtime; ${(initialJs / 1024).toFixed(1)} KiB gzip initial + ${(lazyJs / 1024).toFixed(1)} KiB gzip lazy JavaScript. Workshop excluded.`,
+  `Budgets passed: ${(cache / 1024).toFixed(0)} KiB runtime; ${(initialJs / 1024).toFixed(1)} KiB gzip initial + ${(lazyJs / 1024).toFixed(1)} KiB gzip lazy JavaScript (largest chunk ${largestLazy.name}, ${(largestLazy.gzip / 1024).toFixed(1)} KiB). Workshop excluded.`,
 );

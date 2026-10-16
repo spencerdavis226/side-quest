@@ -78,6 +78,17 @@ export interface CardDefinition {
   /** Pub Crawl: tonight's omen, dealt first. Its effect holds for the run
    * once the card is put aside. */
   omen?: OmenEffect;
+  /** Pokémon League: a starter omen's later forms, in order. An offer with
+   * `evolve` moves the run to the next form, whose effect replaces the one
+   * before it (`party.form`). */
+  evolves?: Evolution[];
+}
+/** One later form of a starter: its name, what it does (shown in the team
+ * dialog) and the omen effect it holds while it is the current form. */
+export interface Evolution {
+  title: string;
+  rules: string;
+  omen: OmenEffect;
 }
 export const ENCOUNTERS = [
   "monster",
@@ -104,6 +115,9 @@ export interface Offer {
   loot?: Loot;
   heal?: number;
   elite?: true;
+  /** The starter evolves into its next form; never taken once it is fully
+   * evolved. */
+  evolve?: true;
 }
 /** What an omen changes for the run. `hearts` moves the party's maximum and
  * current hearts; `loot` goes into the satchel; `satchel` is its size;
@@ -220,6 +234,8 @@ export interface PartyState {
   /** The id of tonight's omen card once it is put aside; older saves and
    * runs without an omen omit it. */
   omen?: string;
+  /** How many times tonight's omen has evolved (`evolves`); absent is 0. */
+  form?: number;
 }
 export interface PackDefinition {
   version: 1;

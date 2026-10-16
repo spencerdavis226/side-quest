@@ -6,6 +6,7 @@ import {
   findCard,
   hitsNeeded,
   omenEffect,
+  omenForm,
   satchelSize,
   validConfig,
 } from "../game/engine";
@@ -137,7 +138,12 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
     (p.omen !== undefined &&
       (typeof p.omen !== "string" ||
         !s.quest!.finale.slice(0, s.quest!.step + 1).includes(p.omen) ||
-        !omenEffect(s.quest)))
+        !omenEffect(s.quest))) ||
+    // The starter's form: a later form it has, once the omen is set.
+    (p.form !== undefined &&
+      (!whole(p.form, 1) ||
+        p.omen === undefined ||
+        p.form > (omenForm(s.quest)?.line.length ?? 1) - 1))
   )
     throw Error("Invalid party");
 }

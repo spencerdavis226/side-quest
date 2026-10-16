@@ -319,12 +319,50 @@ export const finaleCard = (quest: QuestState, id: string) =>
  * existed had hits only on bosses. */
 export const isBossCard = (c: CardDefinition) =>
   c.encounter ? c.encounter === "boss" : !!c.hits;
-/** Tonight's omen, once its card is put aside. */
+/** Tonight's omen, once its card is put aside: its current form's effect
+ * when the starter has evolved. */
 export function omenEffect(
   quest: QuestState | undefined,
 ): OmenEffect | undefined {
   const id = quest?.party?.omen;
-  return id ? finaleCard(quest, id)?.omen : undefined;
+  const card = id ? finaleCard(quest, id) : undefined;
+  const form = quest?.party?.form ?? 0;
+  return form ? card?.evolves?.[form - 1]?.omen : card?.omen;
+}
+/** Tonight's omen as it stands: its card, the current form's name and
+ * rules, and the forms still to come. */
+export function omenForm(quest: QuestState | undefined) {
+  const id = quest?.party?.omen;
+  const card = id ? finaleCard(quest, id) : undefined;
+  if (!card) return undefined;
+  const form = quest?.party?.form ?? 0;
+  const now = form ? card.evolves?.[form - 1] : undefined;
+  return {
+    card,
+    form,
+    title: now?.title ?? card.title,
+    rules: now?.rules ?? card.rules,
+    line: [card.title, ...(card.evolves ?? []).map((e) => e.title)],
+    canEvolve: form < (card.evolves?.length ?? 0),
+  };
+}
+/** The starter's next form: its effect replaces the current one. The change
+ * in hearts moves the maximum and the hearts left (never below one), the new
+ * form's items join the satchel, and a smaller satchel drops its newest. */
+function evolve(party: PartyState, quest: QuestState): PartyState {
+  const now = omenForm(quest);
+  if (!now?.canEvolve) return party;
+  const before = omenEffect(quest) ?? {};
+  const after = now.card.evolves![now.form].omen;
+  const delta = (after.hearts ?? 0) - (before.hearts ?? 0);
+  const max = Math.max(1, party.max + delta);
+  return {
+    ...party,
+    max,
+    hearts: Math.min(max, Math.max(1, party.hearts + delta)),
+    loot: [...party.loot, ...(after.loot ?? [])].slice(0, after.satchel ?? 3),
+    form: now.form + 1,
+  };
 }
 /** How many items the satchel holds. */
 export const satchelSize = (quest: QuestState | undefined) =>
@@ -385,7 +423,11 @@ export function awaitingOffer(s: SessionState) {
 export function canTakeOffer(s: SessionState, index: number): boolean {
   if (!awaitingOffer(s)) return false;
   const offer = currentCard(s).offers![index];
-  return !!offer && (!offer.cost || s.quest!.party!.hearts > offer.cost);
+  return (
+    !!offer &&
+    (!offer.cost || s.quest!.party!.hearts > offer.cost) &&
+    (!offer.evolve || !!omenForm(s.quest)?.canEvolve)
+  );
 }
 /** Take a merchant's ware or a fork's door, and put the card aside. */
 export function takeOffer(
@@ -396,14 +438,17 @@ export function takeOffer(
   if (!canTakeOffer(s, index)) return s;
   const q = s.quest!;
   const offer = currentCard(s).offers![index];
-  const party = { ...q.party! };
+  let party = { ...q.party! };
   if (offer.cost) party.hearts -= offer.cost;
+  if (offer.evolve) party = evolve(party, q);
+  // Healing and the satchel follow the form the starter is now.
+  const now = { ...q, party };
   if (offer.heal)
     party.hearts = Math.min(
       party.max,
-      party.hearts + offer.heal + (omenEffect(q)?.heal ?? 0),
+      party.hearts + offer.heal + (omenEffect(now)?.heal ?? 0),
     );
-  if (offer.loot && party.loot.length < satchelSize(q))
+  if (offer.loot && party.loot.length < satchelSize(now))
     party.loot = [...party.loot, offer.loot];
   let finale = q.finale;
   // The loud door: the next room on this floor becomes one of its elites.
