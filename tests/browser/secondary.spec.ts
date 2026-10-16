@@ -84,8 +84,13 @@ test("@release the pack count stays readable with every pack selected", async ({
     "Cabin weekend",
     "Most Likely To",
     "Secrets & fuses",
-  ])
-    await dialog.getByRole("button", { name, exact: true }).click();
+  ]) {
+    const pack = dialog.getByRole("button", { name, exact: true });
+    await pack.click();
+    // Each tap toggles its pack and leaves the picker open.
+    await expect(pack, name).toHaveAttribute("aria-pressed", "true");
+    await expect(dialog, name).toBeVisible();
+  }
   await dialog.getByRole("button", { name: "Done" }).click();
   const row = page.locator(".pack-selector");
   await expect(row.locator(".pack-logo")).toHaveCount(7);
