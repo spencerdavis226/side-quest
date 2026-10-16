@@ -2,6 +2,16 @@
 
 Updated 2026-10-15. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Tooling: lint, test typechecking, faster CI (2026-10-15, branch `optimize`)
+
+**Owner request.** "Let's do it all" after a review of speed and practices.
+
+- `tsconfig.json` now includes `tests` and `*.config.ts`; 8 latent type errors in tests were fixed without changing behavior.
+- ESLint (`eslint.config.js`, `npm run lint`): typescript-eslint recommended plus react-hooks `rules-of-hooks` and `exhaustive-deps`. `any` is allowed only in the untyped dice-library adapter and its texture spec.
+- `src/main.tsx` split: `app/useAppUpdate.ts` (service worker, takeover, update checks, preload-error reload), `app/useStandalone.ts` (standalone detection and top pinning), `components/TopBar.tsx`; motion CSS variables are computed once at module load. No behavior change.
+- CI: build job (unit, lint, build, upload `dist`) then Chromium and WebKit browser jobs in parallel in the Playwright container; deploy waits for both. Docs-only pushes skip.
+- Considered and dropped: recompressing the app icons (7–20% smaller at visible quality cost).
+
 ## Dungeon night and Pub Crawl (2026-10-15, built on owner request)
 
 **Owner request.** Build the dungeon crawl "elegantly and professionally... really high quality and great feeling, going the extra mile". Names: pack "Dungeon night", mode "Pub Crawl". Decisions: 12 hearts; healing is hard (a fresh, full drink for one heart); a wipe ends with everyone finishing their drink. Standing rules apply: no names or teams, the phone stays on the table, and players only tap.

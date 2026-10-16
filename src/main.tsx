@@ -1,6 +1,5 @@
 import React, { useEffect, useState, type CSSProperties } from "react";
 import { createRoot } from "react-dom/client";
-import { useRegisterSW } from "virtual:pwa-register/react";
 import { packs } from "./content/manifest.generated";
 import { loadedPackCards, loadPackCards } from "./content/loaders";
 import { createSession, questRecord, replaySession } from "./game/engine";
@@ -24,6 +23,9 @@ import {
   leagueSurfaces,
 } from "./presentation/frame-surfaces";
 import { Button, IconButton, Notice } from "./components/UI";
+import { TopBar } from "./components/TopBar";
+import { useAppUpdate } from "./app/useAppUpdate";
+import { useStandalone } from "./app/useStandalone";
 import {
   INSTALL_HELP_KEY,
   isIOSSafari,
@@ -36,47 +38,27 @@ import { Completion } from "./screens/Completion";
 import { GameDialogs, type DialogName } from "./screens/GameDialogs";
 import { useWakeLock } from "./app/wakeLock";
 import { PortraitGate } from "./components/PortraitGate";
-import { QuestMeter } from "./components/QuestMeter";
 import { StageBanner } from "./components/StageBanner";
-import { CrawlProgress, PartyPulse } from "./components/Crawl";
+import { PartyPulse } from "./components/Crawl";
 import "./style.css";
 import "./presentation/theme.css";
 import "./presentation/card-front.css";
 import "./presentation/crawl.css";
 migrateStorageKeys();
-function isStandaloneApp() {
-  return (
-    window.matchMedia("(display-mode: standalone)").matches ||
-    ("standalone" in navigator && navigator.standalone === true)
-  );
-}
-// A new release's worker can take control before the app has mounted (the
-// first render is held for its art) or before the update hook is listening.
-// Catch that takeover here so the Update game offer is never lost. The first
-// install also fires controllerchange; it replaces nothing, so it is ignored.
-const takeover: { seen: boolean; notify: (() => void) | null } = {
-  seen: false,
-  notify: null,
-};
-if ("serviceWorker" in navigator) {
-  let controlled = !!navigator.serviceWorker.controller;
-  navigator.serviceWorker.addEventListener("controllerchange", () => {
-    if (controlled) {
-      takeover.seen = true;
-      takeover.notify?.();
-    }
-    controlled = true;
-  });
-}
+// theme.motion's camelCase keys become kebab-case CSS variables
+// (dialogExit -> --motion-dialog-exit), set once on the app root.
+const motionStyles = Object.fromEntries(
+  Object.entries(theme.motion).map(([key, value]) => [
+    `--motion-${key.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`)}`,
+    `${value}ms`,
+  ]),
+) as CSSProperties;
 function App() {
   const [loaded] = useState(loadSession),
     [corrupt, setCorrupt] = useState(loaded.corrupt),
     [notice, setNotice] = useState(loaded.unavailable),
     [prefs, setPrefs] = useState(loadPreferences),
-    [cachedReady, setCachedReady] = useState(false),
-    [updateReady, setUpdateReady] = useState(false),
     [modal, setModal] = useState<DialogName>(null),
-    [standalone, setStandalone] = useState(isStandaloneApp),
     [installHelpDismissed, setInstallHelpDismissed] = useState(
       loadInstallHelpDismissed,
     ),
@@ -94,87 +76,8 @@ function App() {
   const active = !!display && display.phase !== "complete";
   useWakeLock(active);
   useEffect(requestPersistence, []);
-  const {
-    offlineReady: [offlineReady],
-  } = useRegisterSW({
-    // A newer worker already controls the page; keep playing on this build and
-    // offer the reload between games. Every navigation from now on is served
-    // by the new release, so closing or refreshing the app also updates it.
-    onNeedReload: () => setUpdateReady(true),
-    onRegisteredSW(_url, registration) {
-      if (registration?.active) setCachedReady(true);
-    },
-  });
-  useEffect(() => {
-    takeover.notify = () => setUpdateReady(true);
-    if (takeover.seen) setUpdateReady(true);
-    return () => {
-      takeover.notify = null;
-    };
-  }, []);
-  useEffect(() => {
-    const media = window.matchMedia("(display-mode: standalone)");
-    const update = () => setStandalone(isStandaloneApp());
-    media.addEventListener("change", update);
-    window.addEventListener("pageshow", update);
-    return () => {
-      media.removeEventListener("change", update);
-      window.removeEventListener("pageshow", update);
-    };
-  }, []);
-  useEffect(() => {
-    document.documentElement.classList.toggle("standalone", standalone);
-    if (!standalone) return;
-    // iOS can launch or resume the installed app with the page resting one
-    // status-bar inset down. The root never scrolls there (style.css), so hold
-    // it at the top, where the page covers the whole screen.
-    const pin = () => {
-      if (window.scrollY !== 0) window.scrollTo(0, 0);
-    };
-    const events = ["scroll", "resize", "pageshow", "orientationchange"];
-    pin();
-    for (const name of events) window.addEventListener(name, pin);
-    document.addEventListener("visibilitychange", pin);
-    return () => {
-      for (const name of events) window.removeEventListener(name, pin);
-      document.removeEventListener("visibilitychange", pin);
-    };
-  }, [standalone]);
-  useEffect(() => {
-    if (!("serviceWorker" in navigator)) return;
-    const check = () => {
-      navigator.serviceWorker
-        .getRegistration()
-        .then((registration) => registration?.update())
-        .catch(() => {});
-    };
-    const onResume = () => {
-      if (!document.hidden) check();
-    };
-    // Installed apps are rarely navigated, so look for a new release when the
-    // app starts, comes back to the foreground, and periodically while open.
-    const timer = window.setInterval(check, 15 * 60 * 1000);
-    check();
-    window.addEventListener("pageshow", onResume);
-    document.addEventListener("visibilitychange", onResume);
-    return () => {
-      window.clearInterval(timer);
-      window.removeEventListener("pageshow", onResume);
-      document.removeEventListener("visibilitychange", onResume);
-    };
-  }, []);
-  useEffect(() => {
-    // An update can replace this page's hashed chunks while it is still open.
-    // The active worker already serves the new release, so a single reload
-    // repairs the mismatch instead of stranding a dead lazy import.
-    const onPreloadError = (event: Event) => {
-      event.preventDefault();
-      location.reload();
-    };
-    window.addEventListener("vite:preloadError", onPreloadError);
-    return () =>
-      window.removeEventListener("vite:preloadError", onPreloadError);
-  }, []);
+  const { offlineReady, updateReady } = useAppUpdate();
+  const standalone = useStandalone();
   useEffect(() => {
     if (!save(SETTINGS_KEY, prefs)) setNotice(true);
   }, [prefs]);
@@ -224,13 +127,6 @@ function App() {
       .finally(() => setStarting(false));
   };
   const finish = (id: number) => controller.finish(id);
-  const styles = Object.fromEntries(
-    Object.entries(theme.motion).map(([key, value]) => [
-      // camelCase keys become kebab-case CSS variables (dialogExit -> --motion-dialog-exit).
-      `--motion-${key.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`)}`,
-      `${value}ms`,
-    ]),
-  ) as CSSProperties;
   return (
     <>
       <Atmosphere hidden={hidden} />
@@ -240,7 +136,7 @@ function App() {
           // A Pokémon League game deals every card in the Ancient Mew pair.
           display?.config.quest === LEAGUE_QUEST ? "league-deck" : ""
         } ${display?.quest?.party ? "crawl-deck" : ""}`}
-        style={styles}
+        style={motionStyles}
       >
         {!display &&
           !corrupt &&
@@ -264,39 +160,12 @@ function App() {
             </IconButton>
           )}
         {active && (
-          <header className="topbar">
-            {/* One row of table furniture: a pack quest's meter, the
-                    count on a brass medallion, the menu on a matching stud. */}
-            <QuestMeter
-              session={display}
-              disabled={!!motion}
-              onOpen={() => setModal("badges")}
-            />
-            {display.quest?.party ? (
-              <CrawlProgress quest={display.quest} />
-            ) : (
-              <div
-                className="progress"
-                role="img"
-                aria-label={`Card ${display.discarded + 1} of ${display.config.limit ?? "endless"}`}
-              >
-                <strong>{display.discarded + 1}</strong>
-                <span className="muted"> / {display.config.limit ?? "∞"}</span>
-              </div>
-            )}
-            <IconButton
-              className="menu-button"
-              label="Open game menu"
-              disabled={!!motion}
-              onClick={() => setModal("menu")}
-            >
-              <span className="menu-icon" aria-hidden="true">
-                <i />
-                <i />
-                <i />
-              </span>
-            </IconButton>
-          </header>
+          <TopBar
+            session={display}
+            disabled={!!motion}
+            onOpenMeter={() => setModal("badges")}
+            onOpenMenu={() => setModal("menu")}
+          />
         )}
         {notice && (
           <Notice>
@@ -379,7 +248,7 @@ function App() {
           modal={modal}
           setModal={setModal}
           session={session}
-          offlineReady={offlineReady || cachedReady}
+          offlineReady={offlineReady}
           onHideInstallHelp={() => {
             setInstallHelpDismissed(true);
             save(INSTALL_HELP_KEY, true);
