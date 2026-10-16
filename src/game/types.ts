@@ -57,7 +57,28 @@ export interface CardDefinition {
    * a quest only a win counts: a lost gym leader goes back into the deck, and
    * a lost finale card is replaced by another from its stage. */
   battle?: true;
+  /** Pub Crawl: hearts the party loses when this battle is lost. */
+  damage?: number;
+  /** A boss: the battle has to be won this many times. Each swing is one
+   * deal, and the boss is dealt again, win or lose, until it falls. */
+  hits?: number;
+  /** Pub Crawl: what the card brings the party when it is put aside (a
+   * battle only on a win): an item for the satchel, or hearts back. */
+  reward?: { loot?: Loot; heal?: number };
+  /** Pub Crawl: a curse on the party to the end of the floor (a battle's
+   * only when lost). */
+  curse?: Curse;
 }
+/** Pub Crawl items, carried in the party's satchel (at most three).
+ * `draught`: down a fresh, full drink to heal a heart. `shield`: the next
+ * heart loss is blocked, on its own. `die`: roll a lost fight again.
+ * `smoke`: escape a room fight before it starts (never a boss). */
+export const LOOT = ["draught", "shield", "die", "smoke"] as const;
+export type Loot = (typeof LOOT)[number];
+/** Pub Crawl curses, to the end of the floor. `bleed`: every heart loss
+ * costs one more. `hex`: the satchel is sealed (no items, no shield). */
+export const CURSES = ["bleed", "hex"] as const;
+export type Curse = (typeof CURSES)[number];
 /** `fuse`: a hidden length between `min` and `max` seconds, picked when it is
  * lit, so nobody knows who will hold the phone at the boom. `countdown`: the
  * seconds are shown counting down. Display only: a reload unlights it. */
@@ -94,6 +115,14 @@ export interface PackQuest {
   /** Cards that only play in this mode (not in `cardIds`). */
   cardIds: string[];
   finale: QuestStage[];
+  /** The mode's own mark on the setup screen and meter (single-colour SVG),
+   * when it differs from the pack's. */
+  mark?: string;
+  /** A crawl: the run is the finale stages alone, dealt from the first card
+   * (`goal` is 0 and the deck is never dealt), and the table shares
+   * `hearts`. Losing them all ends the game. Stage cards may also be in the
+   * pack's deck, which plays them as ordinary cards in the plain modes. */
+  party?: { hearts: number };
 }
 /** A quest's progress in one game. `stages` snapshots each stage's pool and
  * `finale` holds the cards picked at the start, in the order they are dealt.
@@ -112,6 +141,22 @@ export interface QuestState {
   /** Battles lost so far. Each was a draw that took no deck position or
    * finale step; older saves omit it. */
   lost?: number;
+  /** A crawl's party; absent in other quests. */
+  party?: PartyState;
+}
+export interface PartyState {
+  hearts: number;
+  max: number;
+  /** The satchel, oldest first. */
+  loot: Loot[];
+  curse: Curse | null;
+  /** Swings landed on the boss in play. */
+  hits: number;
+  /** Boss swings that landed without felling it: each dealt the boss again
+   * without a finale step, like a lost battle. */
+  rounds: number;
+  /** The hearts ran out; the game ended in defeat. */
+  wiped: boolean;
 }
 export interface PackDefinition {
   version: 1;

@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import type { CardDefinition, DiceRoll } from "../game/types";
+import type { CardDefinition, DiceRoll, PartyState } from "../game/types";
+import { CardStakes } from "./Crawl";
 import { diceResultText } from "../presentation/dice/result-text";
 import { rollWins } from "../game/dice";
 import { CardPackMarks } from "./PackMarks";
@@ -10,12 +11,15 @@ export function CardFace({
   packIds,
   roll = null,
   shown = null,
+  party,
 }: {
   card: CardDefinition;
   packIds?: readonly string[];
   roll?: DiceRoll | null;
   /** What replaces the rules: the held secret, or a finished timer's end. */
   shown?: "secret" | "end" | null;
+  /** A crawl's party: the card shows what it puts on the line. */
+  party?: PartyState;
 }) {
   const gesture = useRef<{
     pointerId: number;
@@ -236,6 +240,7 @@ export function CardFace({
           )}
         </div>
         <div className="card-footer">
+          {party && <CardStakes card={card} party={party} />}
           <CardPackMarks cardId={card.id} packIds={packIds} />
         </div>
       </div>

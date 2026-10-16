@@ -3,7 +3,7 @@ import { cardFactory, rollTable } from "./author";
 
 // Pokémon League mode only: the 24 gym leaders of Kanto, Johto and Hoenn and
 // the League finale. None of these is in the regular Pokémon deck; the mode
-// adds them (`quest.cardIds`). Hardcore (2026-10-15, owner): every leader is a
+// adds them (`quest.cardIds`). Since 2026-10-15 (owner) every leader is a
 // `battle`, and only a win earns the badge. A dice leader is won on its `win`
 // outcomes; any other is settled with Won and Lost plaques, so each has to be
 // judged the moment it is played. A lost leader goes back into the deck.

@@ -14,6 +14,7 @@ const loaders: Record<string, () => Promise<CardDefinition[]>> = {
   cabin: () => import("./cabin").then((m) => m.cabinCards),
   likely: () => import("./likely").then((m) => m.likelyCards),
   secrets: () => import("./secrets").then((m) => m.secretsCards),
+  dungeon: () => import("./dungeon").then((m) => m.dungeonCards),
 };
 
 export const loadablePackIds = Object.keys(loaders);

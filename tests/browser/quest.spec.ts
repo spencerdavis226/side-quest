@@ -73,7 +73,9 @@ for (const width of [320, 390])
     // on the card does nothing.
     await page.locator(".game-card").click({ force: true });
     await expect(meter).toHaveAccessibleName("Badges: 7 of 8");
-    await expect(page.getByRole("button", { name: "Lost", exact: true })).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Lost", exact: true }),
+    ).toBeVisible();
     // The eighth badge opens the gauntlet: the Legendary comes first, under
     // a pearl banner that never blocks the card.
     await page.getByRole("button", { name: "Won", exact: true }).click();

@@ -38,9 +38,11 @@ import { useWakeLock } from "./app/wakeLock";
 import { PortraitGate } from "./components/PortraitGate";
 import { QuestMeter } from "./components/QuestMeter";
 import { StageBanner } from "./components/StageBanner";
+import { CrawlProgress, PartyPulse } from "./components/Crawl";
 import "./style.css";
 import "./presentation/theme.css";
 import "./presentation/card-front.css";
+import "./presentation/crawl.css";
 migrateStorageKeys();
 function isStandaloneApp() {
   return (
@@ -205,12 +207,19 @@ function App() {
       ...(prefs.choice === "quest" && quest ? { quest } : {}),
     };
     setPrefs({ ...prefs, config });
-    const ready = loadedPackCards(packIds);
-    if (ready) return controller.start(createSession(config, ready, packs));
+    // A crawl is its own deck: the other selected packs sit it out, and stay
+    // selected for the next game.
+    const crawl =
+      config.quest &&
+      packs.find((p) => p.id === config.quest)?.quest?.party &&
+      config.quest;
+    const game = crawl ? { ...config, packIds: [crawl] } : config;
+    const ready = loadedPackCards(game.packIds);
+    if (ready) return controller.start(createSession(game, ready, packs));
     setStarting(true);
     setLoadFailed(false);
-    loadPackCards(packIds)
-      .then((cards) => controller.start(createSession(config, cards, packs)))
+    loadPackCards(game.packIds)
+      .then((cards) => controller.start(createSession(game, cards, packs)))
       .catch(() => setLoadFailed(true))
       .finally(() => setStarting(false));
   };
@@ -230,7 +239,7 @@ function App() {
         className={`${active ? "app playing" : "app"} ${hidden ? "suspended" : ""} ${
           // A Pokémon League game deals every card in the Ancient Mew pair.
           display?.config.quest === LEAGUE_QUEST ? "league-deck" : ""
-        }`}
+        } ${display?.quest?.party ? "crawl-deck" : ""}`}
         style={styles}
       >
         {!display &&
@@ -263,14 +272,18 @@ function App() {
               disabled={!!motion}
               onOpen={() => setModal("badges")}
             />
-            <div
-              className="progress"
-              role="img"
-              aria-label={`Card ${display.discarded + 1} of ${display.config.limit ?? "endless"}`}
-            >
-              <strong>{display.discarded + 1}</strong>
-              <span className="muted"> / {display.config.limit ?? "∞"}</span>
-            </div>
+            {display.quest?.party ? (
+              <CrawlProgress quest={display.quest} />
+            ) : (
+              <div
+                className="progress"
+                role="img"
+                aria-label={`Card ${display.discarded + 1} of ${display.config.limit ?? "endless"}`}
+              >
+                <strong>{display.discarded + 1}</strong>
+                <span className="muted"> / {display.config.limit ?? "∞"}</span>
+              </div>
+            )}
             <IconButton
               className="menu-button"
               label="Open game menu"
@@ -342,6 +355,7 @@ function App() {
               onTap={() => controller.tap()}
               onChoose={(option) => controller.choose(option)}
               onSettle={(won) => controller.settle(won)}
+              onSpend={(item) => controller.spend(item)}
               onRevealRoll={() => controller.revealRoll()}
               onFinish={finish}
             />
@@ -357,7 +371,11 @@ function App() {
             Update game
           </Button>
         )}
+        {display?.quest?.party && (
+          <PartyPulse party={display.quest.party} hidden={hidden} />
+        )}
         <GameDialogs
+          onSpend={(item) => controller.spend(item)}
           modal={modal}
           setModal={setModal}
           session={session}

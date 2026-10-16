@@ -10,8 +10,13 @@ test("seeded workshop preserves the pool and reproduces order", () => {
   expect(new Set(a.order).size).toBe(
     new Set(packs.flatMap((p) => p.cardIds)).size,
   );
+  // A crawl's stages reuse its deck cards; only its finds are extra.
   const questOnly = packs.flatMap((p) =>
-    p.quest ? [...p.quest.cardIds, ...finaleCardIds(p.quest)] : [],
+    p.quest
+      ? [...p.quest.cardIds, ...finaleCardIds(p.quest)].filter(
+          (id) => !p.cardIds.includes(id),
+        )
+      : [],
   );
   expect(workshopCards.length).toBe(a.order.length + questOnly.length);
   expect(a.order).not.toEqual(
@@ -72,7 +77,7 @@ test("each supplied sheet row lands in the House deck, Cabin weekend or VIP nigh
   expect(vip.cardIds.slice(-4)).toEqual(
     [3, 4, 5, 6].map((row) => `vip.sheet-${String(row).padStart(3, "0")}`),
   );
-  expect(cards).toHaveLength(855); // 96 core + 94 house + 16 vip + 120 Pokémon (+24 League-only gym leaders, 20 gauntlet cards) + 85 cabin + 250 likely + 150 secrets
+  expect(cards).toHaveLength(912); // 96 core + 94 house + 16 vip + 120 Pokémon (+24 League-only gym leaders, 20 gauntlet cards) + 85 cabin + 250 likely + 150 secrets + 57 Dungeon night (48 rooms and bosses, 9 Pub Crawl finds)
 });
 
 test("Cabin weekend owns its CABIIN cards and shares none", () => {

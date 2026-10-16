@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import type { SessionState } from "../game/types";
+import type { Loot, SessionState } from "../game/types";
 import { Button, Modal } from "../components/UI";
 import { PackLogo } from "../components/PackMarks";
 import { selectedPacks } from "../presentation/packs";
 import { findCard, questRecord } from "../game/engine";
 import { QuestRecord } from "../components/QuestRecord";
+import { CrawlRecord } from "../components/Crawl";
 import { CardFrame } from "../components/Cards";
 import { theme } from "../presentation/theme";
 export type DialogName =
@@ -20,6 +21,7 @@ export function GameDialogs({
   offlineReady,
   onHideInstallHelp,
   onEnd,
+  onSpend = () => {},
 }: {
   modal: DialogName;
   setModal: (modal: DialogName) => void;
@@ -27,6 +29,8 @@ export function GameDialogs({
   offlineReady: boolean;
   onHideInstallHelp: () => void;
   onEnd: () => void;
+  /** Use a crawl item from the satchel (the draught). */
+  onSpend?: (item: Loot) => void;
 }) {
   // Keep the last dialog mounted while it animates out, so pause states do not
   // pop away instantly.
@@ -124,6 +128,13 @@ export function GameDialogs({
       </Modal>
     );
   const record = session && questRecord(session);
+  if (displayed === "badges" && record?.party)
+    return (
+      <Modal title="The party" onClose={() => setModal(null)} exiting={exiting}>
+        <CrawlRecord record={record} session={session} onUse={onSpend} />
+        <Button onClick={() => setModal(null)}>Back to game</Button>
+      </Modal>
+    );
   if (displayed === "badges" && record)
     return (
       <Modal

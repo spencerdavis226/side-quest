@@ -6,9 +6,10 @@ import {
   currentCard,
   settleBattle,
   skipRoll,
+  spendLoot,
   type Random,
 } from "../game/engine";
-import type { SessionState } from "../game/types";
+import type { Loot, SessionState } from "../game/types";
 import { theme } from "./theme";
 // Card motion phases. The dialog enter/exit tokens share the manifest but are
 // not card animations, so they are excluded from the controller's Motion.
@@ -144,6 +145,22 @@ export class PresentationController {
     this.persist(next);
     this.transition(next, "discard", session);
     this.effect("discard");
+  }
+  /** Use a crawl item from the satchel. A smoke bomb puts the room aside;
+   * a loaded die clears the lost roll so the card can be rolled again. */
+  spend(item: Loot) {
+    const { session, motion } = this.state;
+    if (!session || motion) return;
+    const next = spendLoot(session, item, this.random);
+    if (next === session) return;
+    this.persist(next);
+    if (item === "smoke") {
+      this.transition(next, "discard", session);
+      this.effect("discard");
+    } else {
+      this.transition(next, null);
+      this.effect("press");
+    }
   }
   revealRoll() {
     const { session, motion } = this.state;

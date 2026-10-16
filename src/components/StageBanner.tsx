@@ -4,14 +4,18 @@ import { packs } from "../content/manifest.generated";
 import { stageArt } from "../presentation/league-art";
 
 /** The banner that sweeps across the table as each finale stage begins (the
- * Legendary, the Elite Four, the Champion): shown while the stage's first
- * card is dealt face down, once per stage. It never takes a tap; the card
+ * Legendary, the Elite Four, the Champion; a crawl's floors and bosses):
+ * shown while the stage's first card is dealt face down, once per stage. It never takes a tap; the card
  * underneath stays playable. */
 export function StageBanner({ session }: { session: SessionState }) {
   const quest = session.quest;
   if (!quest?.due || session.phase !== "hidden") return null;
   const stage = finaleStage(quest);
   if (stage.index !== 0) return null;
+  // Once per stage: not again when a boss is dealt for another swing or a
+  // lost Champion is replaced.
+  const pool = quest.stages[stage.stage].cards;
+  if (pool.some((c) => c.id === session.previousId)) return null;
   const rules = packs.find((p) => p.id === quest.packId)?.quest;
   const intro = rules?.finale[stage.stage]?.intro ?? stage.label;
   // The banner takes the stage's ribbon finish (pearl, violet, crimson).

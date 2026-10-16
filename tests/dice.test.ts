@@ -349,6 +349,10 @@ describe("choice cards", () => {
       "cabin.fourth-meal",
       // Sheet row 42, a CABIIN space, now plays in Cabin weekend.
       "cabin.pet-that-dog",
+      // Dungeon night relics: walk away, or roll for the loot.
+      "dungeon.mimic-cooler",
+      "dungeon.cursed-idol",
+      "dungeon.sunken-chest",
     ]);
     for (const choice of [
       {},

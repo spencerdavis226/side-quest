@@ -3,7 +3,7 @@ import { expect, test } from "vitest";
 import { cards, packs } from "../src/content/catalog";
 import { packs as manifest } from "../src/content/manifest.generated";
 import { loadablePackIds, loadPackCards } from "../src/content/loaders";
-import { finaleCardIds } from "../src/game/engine";
+import { packCardIds } from "../src/game/engine";
 import { renderManifest } from "../scripts/manifest-render";
 
 test("the generated pack manifest matches the catalog", async () => {
@@ -18,12 +18,7 @@ test("every pack has a loader that returns exactly its cards", async () => {
   expect(loadablePackIds).toEqual(packs.map((pack) => pack.id));
   for (const pack of packs) {
     const loaded = await loadPackCards([pack.id]);
-    const expected = [
-      ...pack.cardIds,
-      ...(pack.quest
-        ? [...pack.quest.cardIds, ...finaleCardIds(pack.quest)]
-        : []),
-    ];
+    const expected = packCardIds(pack);
     expect(loaded.map((c) => c.id).sort(), pack.id).toEqual(
       [...expected].sort(),
     );

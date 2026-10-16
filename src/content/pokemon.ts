@@ -892,6 +892,7 @@ export const pokemonPack: PackDefinition = {
   cardIds: deck.map((card) => card.id),
   quest: {
     mode: "Pokémon League",
+    mark: "art/packs/league.svg",
     summary: "Earn 8 badges",
     label: "Badges",
     goal: 8,

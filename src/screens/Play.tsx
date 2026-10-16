@@ -6,7 +6,7 @@ import {
   useRef,
   type ReactNode,
 } from "react";
-import type { SessionState, CardDefinition } from "../game/types";
+import type { SessionState, CardDefinition, Loot } from "../game/types";
 import { diceResultText } from "../presentation/dice/result-text";
 import { diceNotation } from "../game/dice";
 import { awaitingChoice, awaitingVerdict, currentCard } from "../game/engine";
@@ -19,6 +19,7 @@ import {
   hasActions,
   useCardActions,
 } from "../components/CardActions";
+import { LootPlaque, usableItems } from "../components/Crawl";
 const FullScreenDice = lazy(() => import("../components/FullScreenDice"));
 export function Play({
   session,
@@ -28,6 +29,7 @@ export function Play({
   onTap,
   onChoose,
   onSettle,
+  onSpend = () => {},
   onRevealRoll,
   onFinish,
   renderFace,
@@ -40,6 +42,7 @@ export function Play({
   onTap: () => void;
   onChoose: (option: "skip" | "roll") => void;
   onSettle: (won: boolean) => void;
+  onSpend?: (item: Loot) => void;
   onRevealRoll: () => void;
   onFinish: (id: number) => void;
   renderFace?: (card: CardDefinition) => ReactNode;
@@ -53,6 +56,10 @@ export function Play({
   const choice = !motion && awaitingChoice(session) ? card.dice!.choice! : null;
   // A battle without dice: the table says whether it won.
   const verdict = !motion && awaitingVerdict(session);
+  // A crawl's items that work on this card: a smoke bomb before a room fight,
+  // a loaded die after a lost roll. They join the card's own plaques.
+  const items =
+    !motion && session.phase === "revealed" ? usableItems(session) : [];
   // Secret and timed cards: plaques once the card has landed face up; a timed
   // card stays on the table until its time is up.
   const actions = useCardActions(
@@ -142,7 +149,7 @@ export function Play({
             : ""}
         </span>
         <div
-          className={`card-stage ${motion ?? ""} ${choice || verdict || acting ? "choosing" : ""}`}
+          className={`card-stage ${motion ?? ""} ${choice || verdict || acting || items.length ? "choosing" : ""}`}
         >
           <div className="deck-under" aria-hidden="true" />
           <button
@@ -222,6 +229,7 @@ export function Play({
                     packIds={session.config.packIds}
                     roll={session.roll}
                     shown={session.phase === "revealed" ? actions.shown : null}
+                    party={session.quest?.party}
                   />
                 )}
               </span>
@@ -238,7 +246,7 @@ export function Play({
           {verdict && (
             <div
               ref={choiceRef}
-              className="card-choice verdict"
+              className={`card-choice verdict plaques-${2 + items.length}`}
               role="group"
               aria-label="Did you win?"
             >
@@ -254,6 +262,21 @@ export function Play({
               >
                 Lost
               </button>
+              {items.map((item) => (
+                <LootPlaque key={item} item={item} onUse={onSpend} />
+              ))}
+            </div>
+          )}
+          {!verdict && !choice && !acting && items.length > 0 && (
+            <div
+              ref={choiceRef}
+              className={`card-choice items plaques-${items.length}`}
+              role="group"
+              aria-label="Satchel"
+            >
+              {items.map((item) => (
+                <LootPlaque key={item} item={item} onUse={onSpend} />
+              ))}
             </div>
           )}
           {choice && (

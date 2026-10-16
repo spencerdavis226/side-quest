@@ -7,5 +7,7 @@
 - `PortraitGate.tsx`: blocks play in phone landscape (user-agent sniff, `orientation: landscape`, and a short side under 600px). iPad landscape plays.
 - `PackMarks.tsx`: paints each pack's single-colour `logo` as a CSS mask (gilded in setup and menus, debossed in card footers). A new pack needs only its SVG and `logo` path; no mapping here.
 - `Atmosphere.tsx`: decorative looping background; `aria-hidden`, paused when the page is hidden.
+- `Crawl.tsx`: everything Pub Crawl shows (styles in `presentation/crawl.css`): `CrawlIcon` (the `public/art/crawl` marks as masks), the hearts meter face, `CrawlProgress` (room of 7, or the boss with hit pips) in the brass medallion, `CardStakes` (wax seals in a card's foot: hearts lost, the reward, the curse; only in a crawl), `LootPlaque` (Flee and Reroll join the card's plaques when `canUseLoot` allows), `CrawlRecord` (hearts, curse, satchel with the draught's Drink button, floors) for the party dialog and both end screens, and `PartyPulse` (the red or gold flush when hearts change).
+- `QuestMeter.tsx`: a quest's meter; a crawl's is the party (hearts, curse, satchel count). `StageBanner.tsx` sweeps once per finale stage, never again for a boss re-dealt or a Champion replaced.
 
 Buttons should be at least 44px touch targets, labelled, and free of outer focus rings (the project uses a brightness shift). Do not add hover-only affordances; this is a touch app.

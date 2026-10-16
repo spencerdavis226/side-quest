@@ -2,9 +2,53 @@
 
 Updated 2026-10-15. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Hardcore League (2026-10-15, committed and pushed on owner approval)
+## Dungeon night and Pub Crawl (2026-10-15, built on owner request)
 
-**Owner request.** "Hardcore mode for sure. You should be able to fail the final leader always and have to keep fighting random champions until you pass. Just make that default. Drop the other league ideas."
+**Owner request.** Build the dungeon crawl "elegantly and professionally... really high quality and great feeling, going the extra mile". Names: pack "Dungeon night", mode "Pub Crawl". Decisions: 12 hearts; healing is hard (a fresh, full drink for one heart); a wipe ends with everyone finishing their drink. Standing rules apply: no names or teams, the phone stays on the table, and players only tap.
+
+**The game.**
+- A new pack, `dungeon` (`src/content/dungeon.ts`): 48 monsters, trials, traps and bosses that also play as ordinary cards in Short, Long and Infinite. Plus 9 finds (treasure, shrines, relics) that only appear in Pub Crawl.
+- Pub Crawl plays the pack alone: three floors (the Cellar, the Catacombs, the Drowned Taproom), each with 7 random rooms and a boss. The bosses take 1, 2 and 3 hits and are dealt again until they fall.
+- The table shares 12 hearts. A lost fight costs the drawer a drink and the party hearts. At zero hearts the party wipes.
+- Items (draught, shield, loaded die, smoke bomb) and curses (bleeding, hexed) are described in `docs/GAME_DESIGN.md`.
+- **Difficulty is measured, not guessed.** `tests/dungeon.test.ts` plays 2,000 seeded runs through the real engine, with a table that plays sensibly. About **25%** of runs survive. Wipes: about 6% in the Catacombs, 16% at its boss, 27% in the Taproom and 26% at Last Call. The first content pass survived only 8.6% of runs, so rooms, traps and bosses each came down a step (constants at the top of `dungeon.ts`).
+
+**Engine.**
+- A quest may carry `party: { hearts }`. That makes it a crawl: `goal` 0, the stages are the whole run, and stage cards may also be deck cards.
+- New card fields: `damage`, `hits`, `reward`, `curse`.
+- Party state is kept in `quest.party`. It is optional, so schema v2 is unchanged and older saves load as before.
+- Other engine changes:
+  - `canUseLoot` and `spendLoot` handle the satchel.
+  - Skipping a battle that offers a choice now counts as walking away: neither a win nor a loss.
+  - `packCardIds` no longer lists a card twice.
+  - The quest record marks boss stages.
+- `parseSession` validates the party, and counts `rounds` (boss hits that didn't fell it) as draws.
+
+**Interface.**
+- **Top bar:** a hearts meter (floor name, curse marker, satchel count stud) and a room medallion that turns into the boss's hit pips.
+- **Cards:** wax seals in each card's foot for the stakes. Flee and Reroll plaques appear next to Won/Lost or a card's choice.
+- **Meter dialog** (the party): hearts, curse, satchel with a Drink button, and floors.
+- **End screens:** "Last call, survived." and "Party wiped."
+- **Effects:** a red flush when hearts are lost, a gold one on a heal, a heartbeat at 3 hearts or fewer, and stage banners shown once per stage.
+- **Setup:** quest modes now sit one per row, with each mode's own mark (`quest.mark`). On screens 720px tall or shorter they sit side by side as compact chips, so Play clears Safari's toolbar. Choosing Pub Crawl replaces the pack picker with a summary of the crawl.
+- **Icons:** 12 game-icons silhouettes, written by `scripts/crawl-icons.ts`.
+
+**Also in this change.** Dropped the "hardcore" name: battles are simply the core League rule (owner, 2026-10-15). Fixed `docs/GAME_DESIGN.md`, which still said leaders earn badges "win or lose".
+
+**Verified.**
+- `npm test`: 171 passed, including 16 Pub Crawl tests and the 2,000-run difficulty check.
+- Build and budgets: 3524 KiB runtime of 4 MiB.
+- New `tests/browser/crawl.spec.ts`, Chromium:
+  - start, stakes and Flee, Reroll, trial plaques, boss pips, the party dialog and its draught, wipe and victory screens;
+  - the meter at 320 and 390px;
+  - every Dungeon night card fits its face, with its plaques showing, at 375×667.
+- Full production E2E (Chromium and emulated WebKit), last full run: 231 passed, 3 intentional skips. The only 4 failures were the two stale counts in `game.spec.ts` and the 320×548 home layout, which this change caused and then fixed.
+- `game.spec.ts`, `layout.spec.ts` and `crawl.spec.ts` were then rerun in both browsers and pass.
+- **Not verified:** any physical device. Screenshots were reviewed for setup, every crawl state, and both end screens.
+
+## League battles: badges only on a win (2026-10-15, pushed as `086244c`)
+
+**Owner request.** (Asked for as "hardcore mode"; the owner then said it is simply the core League rule, with no separate name.) "Hardcore mode for sure. You should be able to fail the final leader always and have to keep fighting random champions until you pass. Just make that default. Drop the other league ideas."
 
 **Rules now (every League game; no option).**
 - Gym leaders and Champions are `battle` cards. A badge counts only when the leader is beaten. A lost leader goes back into the rest of the deck, at least one card away, and the remaining leaders are re-paced, so a run still deals about one leader every five draws until the eighth badge.
@@ -22,13 +66,13 @@ Champion win chances per fight: Blue 20%, Lance 10%, Steven 28%. That works out 
 **Changed files.** `src/game/{types,engine,dice}.ts`, `src/app/persistence.ts`, `src/content/{validate,pokemon-league}.ts`, `src/presentation/{controller.ts,card-front.css}`, `src/screens/Play.tsx`, `src/components/Cards.tsx`, `src/main.tsx`, `src/workshop/Preview.tsx`, tests `tests/{quest,dice}.test.ts`, `tests/browser/quest.spec.ts`, regenerated `docs/CARD_REVIEW.md` and `docs/card-review.csv`, plus these docs: AGENTS.md, AUTHORING.md, and the CLAUDE.md files in content, game and screens.
 
 **Verified.**
-- `npm test`: 155 passed, including 6 new hardcore tests.
+- `npm test`: 155 passed, including 6 new battle tests.
 - Build and budgets passed: 3469 KiB runtime.
 - `quest.spec.ts` in Chromium and emulated WebKit: 22 passed, including the new Won/Lost, lost leader and lost Champion tests.
 - Full production E2E, Chromium and emulated WebKit: 213 passed, 3 intentional skips, exit 0.
 - **Not verified:** a physical device.
 
-## Dungeon crawl plan (2026-10-15, proposed, not built)
+## Dungeon crawl plan (2026-10-15; built as Dungeon night / Pub Crawl above, with retuned numbers)
 
 **Owner brief.** Very flavourful cards; a game that is actually difficult and can be lost; inspired by Heroes of Barcadia, but its own thing, not more of the same. The standing rules still apply: no teams, no names, the phone stays on the table, and you only tap.
 
@@ -55,7 +99,7 @@ We keep the d20-against-a-level fight and the loot, and add what Barcadia lacks:
   - Smoke Bomb: flee a room monster, but not a boss.
   - Skeleton Key: skip a trap.
 - **Curses** last until the end of the floor and show beside the hearts. Examples: every roll −2; all damage +1.
-- **Bosses** must be beaten, using the hardcore machinery. A boss takes 1, 2 or 3 hits by floor, needing 8+, 10+ or 12+. Each failed swing costs 2, 2 or 3 hearts. The boss is dealt again, to the next drawer, until it falls or the party wipes. Each floor has two possible bosses, picked at random. The final boss is one of two: **The Last Call Lich** or **The Bartender Below**.
+- **Bosses** must be beaten, using the League's battle rule. A boss takes 1, 2 or 3 hits by floor, needing 8+, 10+ or 12+. Each failed swing costs 2, 2 or 3 hearts. The boss is dealt again, to the next drawer, until it falls or the party wipes. Each floor has two possible bosses, picked at random. The final boss is one of two: **The Last Call Lich** or **The Bartender Below**.
 - **Difficulty (Monte Carlo, 30,000 runs, with loot used when hearts reach 3).** With the one-heart Healing Draught, the party wins about **29%** of runs and wipes on floor 2 about 12% of the time and on floor 3 about 59%. At the old targets (8+/10+/12+ monsters, 9+/11+/13+ bosses) the costly draught dropped the win rate to 18%, so the targets came down one step. Hearts, the target rolls and boss damage are the tuning knobs.
 
 **Flavour (first drafts, house voice; drawer acts; no names or teams).**
@@ -405,7 +449,7 @@ The owner's goal: packs that change how the game plays, not just add cards. Toda
 - **Fluxx rule changers (needs C).** Cards that rewrite rules and sit in the tray.
 - **Travel/airport pack.** Considered; overlaps House (Spirit Airlines, Never Have I Ever countries) and Cabin weekend.
 
-**Pokémon League immersion.** Banners, badge case, Hall of Fame, ribbons, painted art and the Ancient Mew pair are built. Hardcore is built and is the default (2026-10-15). The owner dropped region runs, pacing beats and the rest (2026-10-15).
+**Pokémon League immersion.** Banners, badge case, Hall of Fame, ribbons, painted art and the Ancient Mew pair are built. Battles are the core League rule (2026-10-15): badges only on a win, Champions until one falls. The owner dropped region runs, pacing beats and the rest (2026-10-15).
 
 **Suggested order (owner set dungeon crawl next, 2026-10-06; secret and timer cards shipped first on branch `secrets-and-fuses`):** per-pack loading (done) → vote pack (done) → A + Pokémon badge quest (done, 2026-10-05) → dungeon crawl (reuses quests; would add a finale at the end of a finite game and loot) → B + rules tray + awards → secret and timer card packs.
 

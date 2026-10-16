@@ -1,9 +1,11 @@
 import { Button, Artwork } from "../components/UI";
 import { asset } from "../presentation/theme";
 import { QuestRecord } from "../components/QuestRecord";
+import { CrawlIcon, CrawlRecord } from "../components/Crawl";
 import type { questRecord } from "../game/engine";
 /** The end of a game: a toast to the table, or, when a quest mode's finale is
- * beaten, the Hall of Fame with the run laid out. */
+ * beaten, the Hall of Fame with the run laid out. A crawl ends either way:
+ * the last boss falls, or the party wipes. */
 export function Completion({
   count,
   record,
@@ -24,14 +26,43 @@ export function Completion({
   onSetup: () => void;
   onFinish: () => void;
 }) {
+  const crawl = record?.party;
+  const wiped = !!crawl?.wiped;
   return (
     <section
-      className={`complete${record?.won ? ` hall-of-fame${league ? " painted-hall" : ""}` : ""}${celebrate ? " celebrate" : ""}`}
+      className={`complete${record?.won ? ` hall-of-fame${league ? " painted-hall" : ""}` : ""}${crawl ? " crawl-end" : ""}${wiped ? " wiped" : ""}${celebrate ? " celebrate" : ""}`}
       onAnimationEnd={(e) => {
         if (e.target === e.currentTarget) onFinish();
       }}
     >
-      {record?.won ? (
+      {crawl && record ? (
+        <>
+          <CrawlIcon
+            name={wiped ? "wiped" : "boss"}
+            className="crawl-end-mark"
+          />
+          <p className="hall-kicker">{mode}</p>
+          {wiped ? (
+            <h1>
+              Party
+              <br />
+              <em>wiped.</em>
+            </h1>
+          ) : (
+            <h1>
+              Last call,
+              <br />
+              <em>survived.</em>
+            </h1>
+          )}
+          <p className="crawl-verdict">
+            {wiped
+              ? "Everyone finishes their drink."
+              : "Make a rule for the rest of the night."}
+          </p>
+          <CrawlRecord record={record} />
+        </>
+      ) : record?.won ? (
         <>
           <p className="hall-kicker">{mode}</p>
           <h1>

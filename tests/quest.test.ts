@@ -327,9 +327,9 @@ describe("quest mode", () => {
   });
 });
 
-// Hardcore: battles can be lost. Gym A is settled with plaques, gym B wins on
+// Battles can be lost. Gym A is settled with plaques, gym B wins on
 // a 4 or more, and the boss stage holds three champions that win on a 6.
-describe("hardcore battles", () => {
+describe("battles", () => {
   const winsOn = (from: number) => ({
     version: 1 as const,
     count: 1,
@@ -407,10 +407,6 @@ describe("hardcore battles", () => {
           sides: 6,
           outcomes: [{ min: 1, max: 6, instruction: "Drink 3." }],
         },
-      }),
-      plain("x", {
-        battle: true,
-        dice: { ...winsOn(4), choice: { skip: "Do it", roll: "Roll" } },
       }),
       plain("x", { battle: true, secret: "Shh" }),
     ])

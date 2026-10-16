@@ -1,7 +1,7 @@
 import { validateDice } from "../game/dice";
 import { validateTimer } from "../game/timer";
 import type { CardDefinition, PackDefinition } from "../game/types";
-import { RIBBON_TONES } from "../game/types";
+import { CURSES, LOOT, RIBBON_TONES } from "../game/types";
 
 // Structural validation for cards and packs. Kept apart from `catalog.ts` so
 // saved-session parsing can use it without pulling card content into the
@@ -56,7 +56,8 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
     if (c.secret !== undefined && c.dice !== undefined)
       fail(`Secret and dice on one card: ${c.id}`);
     // A battle can be won and lost: dice need both kinds of outcome, and a
-    // battle without dice is settled with plaques, so nothing else on it.
+    // battle without dice is settled with plaques, so nothing else on it. A
+    // choice battle's skip walks away from the fight: neither won nor lost.
     if (c.battle !== undefined) {
       const outcomes = c.dice?.outcomes ?? [];
       const results = [
@@ -67,14 +68,28 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         c.battle !== true ||
         c.secret !== undefined ||
         c.timer !== undefined ||
-        (c.dice &&
-          (c.dice.choice !== undefined ||
-            !results.includes(true) ||
-            !results.includes(false)))
+        (c.dice && (!results.includes(true) || !results.includes(false)))
       )
         fail(`Invalid battle: ${c.id}`);
     } else if (c.dice?.outcomes?.some((o) => o.win) || c.dice?.doublesWin)
       fail(`Win outcome on a card that is not a battle: ${c.id}`);
+    // Pub Crawl stakes: hearts lost, boss swings, rewards and curses.
+    const count = (n: unknown, max: number) =>
+      Number.isSafeInteger(n) && (n as number) >= 1 && (n as number) <= max;
+    if (c.damage !== undefined && (!c.battle || !count(c.damage, 5)))
+      fail(`Invalid damage: ${c.id}`);
+    if (c.hits !== undefined && (!c.battle || !count(c.hits, 5)))
+      fail(`Invalid boss hits: ${c.id}`);
+    if (
+      c.reward !== undefined &&
+      (!c.reward ||
+        (c.reward.loot === undefined && c.reward.heal === undefined) ||
+        (c.reward.loot !== undefined && !LOOT.includes(c.reward.loot)) ||
+        (c.reward.heal !== undefined && !count(c.reward.heal, 5)))
+    )
+      fail(`Invalid reward: ${c.id}`);
+    if (c.curse !== undefined && !CURSES.includes(c.curse))
+      fail(`Invalid curse: ${c.id}`);
   }
   const packIds = new Set<string>();
   for (const p of ps) {
@@ -109,7 +124,20 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
     )
       fail(`Invalid card membership: ${p.id}`);
     if (p.quest !== undefined) {
-      const { mode, summary, label, goal, length, finale, cardIds } = p.quest;
+      const {
+        mode,
+        summary,
+        label,
+        goal,
+        length,
+        finale,
+        cardIds,
+        party,
+        mark,
+      } = p.quest;
+      // A crawl deals its stages from the first card, and its rooms may be
+      // the pack's own deck cards.
+      const crawl = party !== undefined;
       const finaleIds = Array.isArray(finale)
         ? finale.flatMap((stage) =>
             Array.isArray(stage?.cardIds) ? stage.cardIds : [],
@@ -124,7 +152,15 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
           (text) => typeof text !== "string" || !text.trim(),
         ) ||
         !Number.isSafeInteger(goal) ||
-        goal < 1 ||
+        goal < (crawl ? 0 : 1) ||
+        (crawl &&
+          (goal !== 0 ||
+            !Number.isSafeInteger(party?.hearts) ||
+            party!.hearts < 1 ||
+            party!.hearts > 30)) ||
+        (mark !== undefined &&
+          (typeof mark !== "string" ||
+            !/^art\/[a-zA-Z0-9/_-]+\.svg$/.test(mark))) ||
         !Number.isSafeInteger(length) ||
         length <= goal ||
         !Array.isArray(cardIds) ||
@@ -146,7 +182,9 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
             stage.pick > stage.cardIds.length,
         ) ||
         new Set(finaleIds).size !== finaleIds.length ||
-        finaleIds.some((id) => !ids.has(id) || playable.includes(id)) ||
+        finaleIds.some(
+          (id) => !ids.has(id) || (!crawl && playable.includes(id)),
+        ) ||
         advancing < goal
       )
         fail(`Invalid quest: ${p.id}`);

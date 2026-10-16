@@ -2,7 +2,8 @@ import { packs } from "../content/manifest.generated";
 import { validateCatalog } from "../content/validate";
 import { validateRoll } from "../game/dice";
 import { currentCard, findCard, validConfig } from "../game/engine";
-import type { GameConfig, SessionState } from "../game/types";
+import type { GameConfig, PartyState, SessionState } from "../game/types";
+import { CURSES, LOOT } from "../game/types";
 export const SAVE_KEY = "side-quest.session.v1";
 export const SETTINGS_KEY = "side-quest.settings.v1";
 /** Keys from before the rename to Side Quest, mapped to their new names. */
@@ -82,7 +83,8 @@ function validateQuest(s: SessionState) {
     q.packId !== s.config.quest ||
     typeof q.label !== "string" ||
     !q.label.trim() ||
-    !whole(q.goal, 1) ||
+    !whole(q.goal, q.party ? 0 : 1) ||
+    (q.party && q.goal !== 0) ||
     !whole(q.length, q.goal + 1) ||
     !whole(q.count, 0) ||
     q.count > q.goal ||
@@ -91,9 +93,32 @@ function validateQuest(s: SessionState) {
     (q.lost !== undefined && !whole(q.lost, 0)) ||
     q.step >= q.finale.length ||
     (!q.due && q.step !== 0) ||
-    pool.some((c) => s.cards.some((d) => d.id === c.id))
+    // A crawl's rooms are also its pack's deck cards, never dealt in a crawl.
+    (!q.party && pool.some((c) => s.cards.some((d) => d.id === c.id)))
   )
     throw Error("Invalid quest");
+  validateParty(s, q.party);
+}
+function validateParty(s: SessionState, p: PartyState | undefined) {
+  if (p === undefined) return;
+  const whole = (n: unknown, min: number): n is number =>
+    Number.isSafeInteger(n) && (n as number) >= min;
+  if (
+    !p ||
+    !whole(p.max, 1) ||
+    !whole(p.hearts, 0) ||
+    p.hearts > p.max ||
+    !Array.isArray(p.loot) ||
+    p.loot.length > 3 ||
+    p.loot.some((item) => !LOOT.includes(item)) ||
+    !(p.curse === null || CURSES.includes(p.curse)) ||
+    !whole(p.hits, 0) ||
+    !whole(p.rounds, 0) ||
+    typeof p.wiped !== "boolean" ||
+    p.wiped !== (p.hearts === 0) ||
+    (p.wiped && s.phase !== "complete")
+  )
+    throw Error("Invalid party");
 }
 export function parseSession(raw: string): SessionState {
   const parsed = JSON.parse(raw);
@@ -162,13 +187,14 @@ export function parseSession(raw: string): SessionState {
     s.cycle * s.cards.length +
     s.position +
     (q?.due ? q.step : 0) +
-    (q?.lost ?? 0);
+    (q?.lost ?? 0) +
+    (q?.party?.rounds ?? 0);
   if (s.phase === "complete") {
     // A finite game ends at its limit; a quest mode on its last finale card.
     if (
       !(s.config.limit !== null
         ? s.discarded === s.config.limit
-        : q?.due && q.step === q.finale.length - 1) ||
+        : (q?.due && q.step === q.finale.length - 1) || !!q?.party?.wiped) ||
       s.discarded !== drawn + 1 ||
       s.previousId !== currentCard(s).id
     )
@@ -180,12 +206,15 @@ export function parseSession(raw: string): SessionState {
     throw Error("Invalid count");
   const current = currentCard(s);
   const previous = findCard(s, s.previousId);
+  if (q?.party && q.party.hits >= (current.hits ?? 1))
+    throw Error("Invalid party");
   validateRoll(s.roll, current.dice);
   validateRoll(s.previousRoll, previous?.dice);
   if (
     (s.phase === "hidden" && s.roll !== null) ||
-    // A choice card may have been put aside without a roll.
-    (previous?.dice && !previous.dice.choice && !s.previousRoll) ||
+    // A choice card may have been put aside without a roll, and a crawl's
+    // smoke bomb escapes a fight before it is rolled.
+    (previous?.dice && !previous.dice.choice && !q?.party && !s.previousRoll) ||
     (s.previousRoll && !s.previousRoll.returned) ||
     (s.phase === "complete" &&
       current.dice &&

@@ -1,8 +1,10 @@
 import type {
   CardDefinition,
   GameConfig,
+  Loot,
   PackDefinition,
   PackQuest,
+  PartyState,
   QuestState,
   SessionState,
 } from "./types";
@@ -145,10 +147,12 @@ export function createSession(
       goal,
       length,
       count: 0,
-      due: false,
+      // A crawl has no goal to reach: its stages are the whole run.
+      due: goal === 0,
       stages,
       finale: pickFinale(stages, random),
       step: 0,
+      ...(rules.party ? { party: newParty(rules.party.hearts) } : {}),
     };
   }
   return {
@@ -174,14 +178,26 @@ export function createSession(
     ...(quest ? { quest } : {}),
   };
 }
+const newParty = (hearts: number): PartyState => ({
+  hearts,
+  max: hearts,
+  loot: [],
+  curse: null,
+  hits: 0,
+  rounds: 0,
+  wiped: false,
+});
 /** Every card a pack can deal: its deck, its quest-only cards and its
  * quest's finale. */
 export function packCardIds(pack: PackDefinition): string[] {
+  // A crawl's rooms are in both its deck and its stages; list each once.
   return [
-    ...pack.cardIds,
-    ...(pack.quest
-      ? [...pack.quest.cardIds, ...finaleCardIds(pack.quest)]
-      : []),
+    ...new Set([
+      ...pack.cardIds,
+      ...(pack.quest
+        ? [...pack.quest.cardIds, ...finaleCardIds(pack.quest)]
+        : []),
+    ]),
   ];
 }
 /** Every card a quest's finale stages can deal. */
@@ -228,7 +244,7 @@ export function questRecord(s: SessionState) {
     .map((id) => s.cards.find((c) => c.id === id)!)
     .filter((c) => c.quest === q.packId)
     .slice(0, q.count);
-  const won = q.due && s.phase === "complete";
+  const won = q.due && s.phase === "complete" && !q.party?.wiped;
   const beaten = won ? q.finale.length : q.due ? q.step : 0;
   let first = 0;
   const stages = q.stages.map((stage) => {
@@ -236,9 +252,19 @@ export function questRecord(s: SessionState) {
       .slice(first, Math.min(first + stage.pick, beaten))
       .map((id) => finaleCard(q, id)!);
     first += stage.pick;
-    return { label: stage.label, size: stage.pick, cards };
+    // A crawl's boss stages close its floors.
+    const boss = stage.cards.some((c) => !!c.hits);
+    return { label: stage.label, size: stage.pick, cards, boss };
   });
-  return { label: q.label, goal: q.goal, count: q.count, earned, stages, won };
+  return {
+    label: q.label,
+    goal: q.goal,
+    count: q.count,
+    earned,
+    stages,
+    won,
+    party: q.party,
+  };
 }
 const finaleCard = (quest: QuestState, id: string) =>
   quest.stages.flatMap((stage) => stage.cards).find((c) => c.id === id);
@@ -274,12 +300,13 @@ export function advance(
   if (awaitingVerdict(s)) return s;
   return discard(s, random);
 }
-/** Take the no-roll option of a choice card: it is put aside unrolled. */
+/** Take the no-roll option of a choice card: it is put aside unrolled (a
+ * battle walked away from is neither won nor lost). */
 export function skipRoll(
   s: SessionState,
   random: Random = Math.random,
 ): SessionState {
-  return awaitingChoice(s) ? discard(s, random) : s;
+  return awaitingChoice(s) ? discard(s, random, "fled") : s;
 }
 /** Put a battle without dice aside, won or lost. */
 export function settleBattle(
@@ -287,26 +314,155 @@ export function settleBattle(
   won: boolean,
   random: Random = Math.random,
 ): SessionState {
-  return awaitingVerdict(s) ? discard(s, random, won) : s;
+  return awaitingVerdict(s) ? discard(s, random, won ? "won" : "lost") : s;
+}
+type Outcome = "won" | "lost" | "fled";
+/** Whether the party can use the satchel's item `item` now. */
+export function canUseLoot(s: SessionState, item: Loot): boolean {
+  const party = s.quest?.party;
+  if (!party || s.phase === "complete" || party.curse === "hex") return false;
+  if (!party.loot.includes(item)) return false;
+  const card = currentCard(s);
+  switch (item) {
+    case "draught":
+      return party.hearts < party.max;
+    case "die":
+      // A lost fight's result is on the card: roll it again.
+      return (
+        s.phase === "revealed" &&
+        !!card.battle &&
+        !!card.dice &&
+        !!s.roll?.returned &&
+        !rollWins(card.dice, s.roll.values)
+      );
+    case "smoke":
+      // Slip past a room fight before it starts; a boss blocks the stairs.
+      return (
+        s.phase === "revealed" &&
+        !!card.battle &&
+        !card.hits &&
+        !s.roll &&
+        !card.dice?.choice
+      );
+    case "shield":
+      return false; // It blocks the next heart loss on its own.
+  }
+}
+/** Use one of the satchel's items. Returns the session unchanged when the
+ * item cannot be used now. */
+export function spendLoot(
+  s: SessionState,
+  item: Loot,
+  random: Random = Math.random,
+): SessionState {
+  if (!canUseLoot(s, item)) return s;
+  const party = s.quest!.party!;
+  const loot = [...party.loot];
+  loot.splice(loot.indexOf(item), 1);
+  const used = { ...s, quest: { ...s.quest!, party: { ...party, loot } } };
+  switch (item) {
+    case "draught":
+      used.quest.party.hearts += 1;
+      return used;
+    case "die":
+      return { ...used, roll: null };
+    case "smoke":
+      return discard(used, random, "fled");
+    default:
+      return s;
+  }
+}
+/** A heart loss: the shield takes it whole unless the satchel is hexed, and
+ * bleeding costs one more. */
+function hurt(party: PartyState, damage: number): PartyState {
+  if (damage <= 0) return party;
+  const shield = party.curse === "hex" ? -1 : party.loot.indexOf("shield");
+  if (shield >= 0)
+    return { ...party, loot: party.loot.filter((_, i) => i !== shield) };
+  const loss = damage + (party.curse === "bleed" ? 1 : 0);
+  return { ...party, hearts: Math.max(0, party.hearts - loss) };
+}
+/** What a card brings: its reward (a battle's only on a win) and its curse
+ * (a battle's only on a loss). */
+function settleParty(
+  party: PartyState,
+  card: CardDefinition,
+  outcome: Outcome | null,
+): PartyState {
+  let next = party;
+  if (outcome === "lost") next = hurt(next, card.damage ?? 0);
+  if (outcome === null || outcome === "won") {
+    const { loot, heal } = card.reward ?? {};
+    if (loot && next.loot.length < 3)
+      next = { ...next, loot: [...next.loot, loot] };
+    if (heal)
+      next = { ...next, hearts: Math.min(next.max, next.hearts + heal) };
+  }
+  if (card.curse && (outcome === null || outcome === "lost"))
+    next = { ...next, curse: card.curse };
+  return next;
 }
 function discard(
   s: SessionState,
   random: Random,
-  verdict?: boolean,
+  verdict?: Outcome,
 ): SessionState {
   const history = { previousRoll: s.roll, roll: null };
   const card = currentCard(s);
   const discarded = s.discarded + 1,
     previousId = card.id;
-  // Hardcore: in a quest only a won battle counts.
-  const lost =
-    !!s.quest &&
-    !!card.battle &&
-    !(card.dice ? !!s.roll && rollWins(card.dice, s.roll.values) : verdict);
+  // In a quest only a won battle counts.
+  const outcome: Outcome | null =
+    !s.quest || !card.battle
+      ? null
+      : (verdict ??
+        (card.dice && s.roll && rollWins(card.dice, s.roll.values)
+          ? "won"
+          : "lost"));
+  const lost = outcome === "lost";
   const lostCount = (s.quest?.lost ?? 0) + 1;
+  const party = s.quest?.party;
+  if (s.quest?.due && party) {
+    const q = s.quest;
+    let next = settleParty(party, card, outcome);
+    // The hearts ran out: the party wipes and the game ends on this card.
+    if (next.hearts === 0)
+      return {
+        ...s,
+        previousRoll: s.roll,
+        phase: "complete",
+        discarded,
+        previousId,
+        quest: { ...q, party: { ...next, wiped: true } },
+      };
+    // A boss is dealt again, to the next drawer, until it falls.
+    if (card.hits && outcome !== "fled") {
+      const hits = next.hits + (outcome === "won" ? 1 : 0);
+      if (hits < card.hits)
+        return {
+          ...s,
+          ...history,
+          discarded,
+          previousId,
+          phase: "hidden",
+          quest: {
+            ...q,
+            ...(lost ? { lost: lostCount } : {}),
+            party: {
+              ...next,
+              hits,
+              rounds: next.rounds + (outcome === "won" ? 1 : 0),
+            },
+          },
+        };
+      // The floor's boss falls: its curse lifts with it.
+      next = { ...next, hits: 0, curse: null };
+    }
+    s = { ...s, quest: { ...q, party: next } };
+  }
   // A lost finale card is replaced by another from its stage, dealt next,
   // until one is beaten: the Champion must fall before the game ends.
-  if (s.quest?.due && lost) {
+  if (s.quest?.due && lost && !party) {
     const q = s.quest;
     const { stage } = finaleStage(q);
     const pool = q.stages[stage].cards.map((c) => c.id);
@@ -425,9 +581,10 @@ export function replaySession(
             stages: structuredClone(s.quest.stages),
             finale: pickFinale(s.quest.stages, random),
             count: 0,
-            due: false,
+            due: s.quest.goal === 0,
             step: 0,
             lost: 0,
+            ...(s.quest.party ? { party: newParty(s.quest.party.max) } : {}),
           },
         }
       : {}),

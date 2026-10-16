@@ -3,12 +3,12 @@ import type { PackDefinition } from "../game/types";
 import { asset } from "../presentation/theme";
 import { cardPacks } from "../presentation/packs";
 
-/** A mode mark, separate from the Pokémon pack's mark. */
-export function LeagueMark() {
-  const mark = asset("art/packs/league.svg");
+/** A quest mode's own mark (`quest.mark`), separate from its pack's. */
+export function ModeMark({ src = "art/packs/league.svg" }: { src?: string }) {
+  const mark = asset(src);
   return (
     <span
-      className="league-mark"
+      className="league-mark mode-mark"
       aria-hidden="true"
       style={{ maskImage: `url("${mark}")`, WebkitMaskImage: `url("${mark}")` }}
     />

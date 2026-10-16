@@ -6,8 +6,9 @@ import {
 } from "../app/persistence";
 import type { PackDefinition } from "../game/types";
 import { Button, DeckChoices, Modal, PackTile } from "../components/UI";
-import { PackLogo, LeagueMark } from "../components/PackMarks";
+import { PackLogo, ModeMark } from "../components/PackMarks";
 import { asset } from "../presentation/theme";
+import { CrawlIcon } from "../components/Crawl";
 
 export function Setup({
   prefs,
@@ -35,6 +36,9 @@ export function Setup({
   ).size;
   const limit = MODE_LIMITS[prefs.choice];
   const questPack = prefs.choice === "quest" ? prefs.config.quest : undefined;
+  // A crawl plays its own deck, so the pack picker steps aside.
+  const crawlPack = packs.find((p) => p.id === questPack && p.quest?.party);
+  const crawl = !!crawlPack;
   const chooseLength = (choice: DeckChoice) => {
     const { quest: _quest, ...config } = prefs.config;
     onChange({ ...prefs, choice, config });
@@ -101,8 +105,8 @@ export function Setup({
                 aria-pressed={pack.id === questPack}
                 onClick={() => chooseQuest(pack.id)}
               >
-                {pack.id === "pokemon" ? (
-                  <LeagueMark />
+                {pack.quest!.mark ? (
+                  <ModeMark src={pack.quest!.mark} />
                 ) : (
                   <PackLogo pack={pack} decorative />
                 )}
@@ -114,35 +118,59 @@ export function Setup({
             ))}
         </div>
       </div>
-      <div className="setup-section setup-packs">
-        <div className="section-label">
-          <h2>Card packs</h2>
+      {!crawl && (
+        <div className="setup-section setup-packs">
+          <div className="section-label">
+            <h2>Card packs</h2>
+          </div>
+          <Button
+            variant="menu-row"
+            className="pack-selector"
+            aria-label={`Choose packs. ${
+              selected.length
+                ? `${selected.map((pack) => pack.title).join(", ")}, ${cardCount} cards`
+                : "Pick at least one"
+            }`}
+            onClick={() => setPacksOpen(true)}
+          >
+            <span>
+              <strong>Choose packs</strong>
+              {/* Marks, not names: four pack titles never fit one phone row. */}
+              <small className={selected.length > 5 ? "many" : undefined}>
+                {selected.map((pack) => (
+                  <PackLogo key={pack.id} pack={pack} decorative />
+                ))}
+                <span>
+                  {selected.length ? `${cardCount} cards` : "Pick at least one"}
+                </span>
+              </small>
+            </span>
+            <span aria-hidden="true">›</span>
+          </Button>
         </div>
-        <Button
-          variant="menu-row"
-          className="pack-selector"
-          aria-label={`Choose packs. ${
-            selected.length
-              ? `${selected.map((pack) => pack.title).join(", ")}, ${cardCount} cards`
-              : "Pick at least one"
-          }`}
-          onClick={() => setPacksOpen(true)}
-        >
-          <span>
-            <strong>Choose packs</strong>
-            {/* Marks, not names: four pack titles never fit one phone row. */}
-            <small className={selected.length > 5 ? "many" : undefined}>
-              {selected.map((pack) => (
-                <PackLogo key={pack.id} pack={pack} decorative />
-              ))}
-              <span>
-                {selected.length ? `${cardCount} cards` : "Pick at least one"}
-              </span>
-            </small>
-          </span>
-          <span aria-hidden="true">›</span>
-        </Button>
-      </div>
+      )}
+      {crawlPack && (
+        <div className="setup-section setup-packs">
+          <div className="section-label">
+            <h2>The crawl</h2>
+          </div>
+          <div
+            className="crawl-brief"
+            role="img"
+            aria-label={`${crawlPack.title}: ${crawlPack.quest!.party!.hearts} shared hearts, 3 floors, a boss on each`}
+          >
+            <PackLogo pack={crawlPack} decorative />
+            <span>
+              <strong>{crawlPack.title}</strong>
+              <small>
+                <CrawlIcon name="heart" />
+                {crawlPack.quest!.party!.hearts} hearts ·{" "}
+                {Math.ceil(crawlPack.quest!.finale.length / 2)} floors
+              </small>
+            </span>
+          </div>
+        </div>
+      )}
       {limit !== null && cardCount > 0 && cardCount < limit && (
         <p className="pack-hint" role="status">
           These packs have {cardCount} cards, so some will repeat.

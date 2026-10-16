@@ -104,13 +104,13 @@ test("three lengths and the quest modes appear, and every pack can be toggled", 
   await expect(
     page.getByRole("group", { name: "Game length" }).getByRole("button"),
   ).toHaveCount(3);
-  await expect(page.locator(".quest-mode")).toHaveCount(1);
+  await expect(page.locator(".quest-mode")).toHaveCount(2);
   await expect(
     page.getByRole("button", { name: "Short, 30 cards" }),
   ).toHaveAttribute("aria-pressed", "true");
   await page.getByRole("button", { name: "Choose packs" }).click();
   const dialog = page.getByRole("dialog");
-  await expect(dialog.locator(".pack")).toHaveCount(7);
+  await expect(dialog.locator(".pack")).toHaveCount(8);
   await expect(dialog).not.toContainText("Always included");
   const core = dialog.getByRole("button", { name: /The Core deck/ });
   await core.click();

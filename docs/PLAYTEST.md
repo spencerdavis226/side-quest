@@ -26,6 +26,15 @@ Status: **prepared, no results recorded.** Kit prepared 2026-09-21 at commit `3e
 - Note any repetition or pacing issues; automated engine tests verify cycle exhaustion.
 - If adding `VIP night`, choose a guest of honor before play and note whether the four sheet-sourced VIP prompts fit the occasion and read clearly.
 
+## Session C — Pub Crawl (Dungeon night)
+
+- Date / build commit:
+- Device / OS / Safari or installed Home Screen:
+- People / approximate length / floor reached / won or wiped:
+- Hearts left at each boss; items found and used; curses taken.
+- Was it hard but fair? Did the table understand that a lost fight costs both a drink and hearts without being told? Did anyone use the Healing Draught (a fresh, full drink for one heart)?
+- Which rooms got a laugh, which fell flat, and did any trial leave the table unsure whether to press Won or Lost?
+
 ## Dice and roll checks
 
 - Was tapping the card to roll obvious without coaching on the first dice card? Was tapping it again to return to the resolved rule obvious once the dice settled?
