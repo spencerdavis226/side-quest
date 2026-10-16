@@ -6,6 +6,7 @@ import type {
   QuestState,
   SessionState,
 } from "./types";
+import { rollWins } from "./dice";
 export type Random = () => number;
 export function shuffle(
   ids: string[],
@@ -26,17 +27,22 @@ export function shuffle(
 /**
  * Spread a quest's cards through its run: move enough of them into the draws
  * before the run's last one that the goal is met and the finale still lands
- * in time. The rest of the shuffle is untouched.
+ * in time. The rest of the shuffle is untouched. `from`, `need` and `window`
+ * re-pace the rest of a run after a lost battle: `need` tagged cards within
+ * `window` draws of `from`.
  */
 export function paceQuest(
   order: string[],
   cards: CardDefinition[],
   quest: QuestState | undefined,
   random: Random = Math.random,
+  from = 0,
+  need = quest?.goal ?? 0,
+  window = (quest?.length ?? 1) - 1,
 ): string[] {
   if (!quest) return order;
   const next = [...order];
-  const window = Math.min(quest.length - 1, next.length);
+  const end = Math.min(from + window, next.length);
   const tagged = new Set(
     cards.filter((c) => c.quest === quest.packId).map((c) => c.id),
   );
@@ -46,10 +52,10 @@ export function paceQuest(
       if (tagged.has(next[i]) === want) found.push(i);
     return found;
   };
-  let short = quest.goal - spots(0, window, true).length;
+  let short = need - spots(from, end, true).length;
   while (short-- > 0) {
-    const out = spots(window, next.length, true);
-    const into = spots(0, window, false);
+    const out = spots(end, next.length, true);
+    const into = spots(from, end, false);
     if (!out.length || !into.length) break;
     const a = out[Math.floor(random() * out.length)],
       b = into[Math.floor(random() * into.length)];
@@ -57,6 +63,28 @@ export function paceQuest(
   }
   return next;
 }
+/** The rest of a run, re-paced so the badges still missing keep the run's
+ * pace from `from` (the next draw) on. */
+function repace(
+  order: string[],
+  s: SessionState,
+  quest: QuestState,
+  from: number,
+  random: Random,
+) {
+  const need = quest.goal - quest.count;
+  const pace = (quest.length - 1) / quest.goal;
+  return paceQuest(
+    order,
+    s.cards,
+    quest,
+    random,
+    from,
+    need,
+    Math.ceil(pace * need),
+  );
+}
+
 export function validConfig(c: GameConfig): boolean {
   return (
     !!c &&
@@ -231,6 +259,11 @@ export function findCard(s: SessionState, id: string | null) {
 export function awaitingChoice(s: SessionState) {
   return s.phase === "revealed" && !s.roll && !!currentCard(s).dice?.choice;
 }
+/** A revealed quest battle without dice: the table says whether it won. */
+export function awaitingVerdict(s: SessionState) {
+  const card = currentCard(s);
+  return !!s.quest && s.phase === "revealed" && !!card.battle && !card.dice;
+}
 export function advance(
   s: SessionState,
   random: Random = Math.random,
@@ -238,6 +271,7 @@ export function advance(
   if (s.phase === "complete") return s;
   if (s.phase === "hidden") return { ...s, phase: "revealed" };
   if (currentCard(s).dice && !s.roll?.returned) return s;
+  if (awaitingVerdict(s)) return s;
   return discard(s, random);
 }
 /** Take the no-roll option of a choice card: it is put aside unrolled. */
@@ -247,11 +281,50 @@ export function skipRoll(
 ): SessionState {
   return awaitingChoice(s) ? discard(s, random) : s;
 }
-function discard(s: SessionState, random: Random): SessionState {
+/** Put a battle without dice aside, won or lost. */
+export function settleBattle(
+  s: SessionState,
+  won: boolean,
+  random: Random = Math.random,
+): SessionState {
+  return awaitingVerdict(s) ? discard(s, random, won) : s;
+}
+function discard(
+  s: SessionState,
+  random: Random,
+  verdict?: boolean,
+): SessionState {
   const history = { previousRoll: s.roll, roll: null };
   const card = currentCard(s);
   const discarded = s.discarded + 1,
     previousId = card.id;
+  // Hardcore: in a quest only a won battle counts.
+  const lost =
+    !!s.quest &&
+    !!card.battle &&
+    !(card.dice ? !!s.roll && rollWins(card.dice, s.roll.values) : verdict);
+  const lostCount = (s.quest?.lost ?? 0) + 1;
+  // A lost finale card is replaced by another from its stage, dealt next,
+  // until one is beaten: the Champion must fall before the game ends.
+  if (s.quest?.due && lost) {
+    const q = s.quest;
+    const { stage } = finaleStage(q);
+    const pool = q.stages[stage].cards.map((c) => c.id);
+    const taken = new Set(q.finale);
+    const fresh = pool.filter((id) => !taken.has(id));
+    const others = pool.filter((id) => id !== card.id && !taken.has(id));
+    const choices = fresh.length ? fresh : others.length ? others : [card.id];
+    const finale = [...q.finale];
+    finale[q.step] = choices[Math.floor(random() * choices.length)];
+    return {
+      ...s,
+      ...history,
+      discarded,
+      previousId,
+      phase: "hidden",
+      quest: { ...q, finale, lost: lostCount },
+    };
+  }
   const lastFinale =
     !!s.quest?.due && s.quest.step === s.quest.finale.length - 1;
   // A quest mode ends when its last finale card is put aside; a finite game
@@ -274,11 +347,31 @@ function discard(s: SessionState, random: Random): SessionState {
       phase: "hidden",
       quest: { ...s.quest, step: s.quest.step + 1 },
     };
-  if (s.quest && card.quest === s.quest.packId) {
+  // A lost gym leader goes back into the rest of the deck, at least one card
+  // away; the next card slides into its place, so the deck does not move.
+  if (s.quest && lost && s.position + 1 < s.order.length) {
+    const quest = { ...s.quest, lost: lostCount };
+    const rest = s.order.filter((_, i) => i !== s.position);
+    const at =
+      s.position + 1 + Math.floor(random() * (rest.length - s.position));
+    rest.splice(at, 0, card.id);
+    return {
+      ...s,
+      ...history,
+      discarded,
+      previousId,
+      phase: "hidden",
+      order: repace(rest, s, quest, s.position + 1, random),
+      quest,
+    };
+  }
+  if (s.quest && card.quest === s.quest.packId && !lost) {
     const count = s.quest.count + 1;
     s = { ...s, quest: { ...s.quest, count, due: count >= s.quest.goal } };
   }
-  if (s.position + 1 === s.order.length)
+  if (s.position + 1 === s.order.length) {
+    // A lost leader on the deck's last card is shuffled back in with it.
+    const order = shuffle(s.order, random, previousId);
     return {
       ...s,
       ...history,
@@ -287,8 +380,10 @@ function discard(s: SessionState, random: Random): SessionState {
       phase: "hidden",
       cycle: s.cycle + 1,
       position: 0,
-      order: shuffle(s.order, random, previousId),
+      order:
+        s.quest && !s.quest.due ? repace(order, s, s.quest, 0, random) : order,
     };
+  }
   return {
     ...s,
     ...history,
@@ -332,6 +427,7 @@ export function replaySession(
             count: 0,
             due: false,
             step: 0,
+            lost: 0,
           },
         }
       : {}),

@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   advance,
+  awaitingVerdict,
   createSession,
+  settleBattle,
   currentCard,
   finaleStage,
   questRecord,
@@ -322,5 +324,189 @@ describe("quest mode", () => {
       expect(() =>
         validateCatalog(catalog, [{ ...pack, quest: { ...rules, ...change } }]),
       ).toThrow("Invalid quest");
+  });
+});
+
+// Hardcore: battles can be lost. Gym A is settled with plaques, gym B wins on
+// a 4 or more, and the boss stage holds three champions that win on a 6.
+describe("hardcore battles", () => {
+  const winsOn = (from: number) => ({
+    version: 1 as const,
+    count: 1,
+    sides: 6 as const,
+    outcomes: [
+      { min: 1, max: from - 1, instruction: "Drink 3." },
+      { min: from, max: 6, instruction: "Give 3.", win: true as const },
+    ],
+  });
+  const champ = (id: string) =>
+    plain(id, { category: "challenge", battle: true, dice: winsOn(6) });
+  const cards = [
+    plain("gym-a", { quest: "hard", battle: true }),
+    plain("gym-b", { quest: "hard", battle: true, dice: winsOn(4) }),
+    ...["wild", "cave", "lake", "road"].map((id) => plain(id)),
+    plain("rival"),
+    champ("champ-a"),
+    champ("champ-b"),
+    champ("champ-c"),
+  ];
+  const hard: PackDefinition = {
+    version: 1,
+    id: "hard",
+    title: "Hard",
+    description: "Test",
+    cardIds: ["quest.wild", "quest.cave", "quest.lake", "quest.road"],
+    quest: {
+      mode: "Hard run",
+      summary: "Earn 2 badges",
+      label: "Badges",
+      goal: 2,
+      length: 5,
+      cardIds: ["quest.gym-a", "quest.gym-b"],
+      finale: [
+        { label: "Rival", pick: 1, cardIds: ["quest.rival"] },
+        {
+          label: "Champion",
+          pick: 1,
+          cardIds: ["quest.champ-a", "quest.champ-b", "quest.champ-c"],
+        },
+      ],
+    },
+  };
+  const begin = () => {
+    const s = createSession(
+      { version: 1, packIds: ["hard"], limit: null, quest: "hard" },
+      cards,
+      [hard],
+      rng,
+    );
+    s.order = [
+      "quest.gym-a",
+      "quest.wild",
+      "quest.gym-b",
+      "quest.cave",
+      "quest.lake",
+      "quest.road",
+    ];
+    return s;
+  };
+  // Roll the card in play to exactly `face`.
+  const rollTo = (s: SessionState, face: number) =>
+    returnToCard(rollDice(s, () => (face - 0.5) / 6));
+  const fight = (s: SessionState, face: number) =>
+    advance(rollTo(advance(s, rng), face), rng);
+
+  it("validates battles", () => {
+    expect(() => validateCatalog(cards, [hard])).not.toThrow();
+    for (const bad of [
+      plain("x", {
+        battle: true,
+        dice: {
+          version: 1,
+          count: 1,
+          sides: 6,
+          outcomes: [{ min: 1, max: 6, instruction: "Drink 3." }],
+        },
+      }),
+      plain("x", {
+        battle: true,
+        dice: { ...winsOn(4), choice: { skip: "Do it", roll: "Roll" } },
+      }),
+      plain("x", { battle: true, secret: "Shh" }),
+    ])
+      expect(() => validateCatalog([bad], [])).toThrow("Invalid battle");
+    expect(() =>
+      validateCatalog([plain("x", { dice: winsOn(4) })], []),
+    ).toThrow("not a battle");
+  });
+
+  it("a battle without dice waits for Won or Lost; only a win earns the badge", () => {
+    let s = advance(begin(), rng);
+    expect(awaitingVerdict(s)).toBe(true);
+    expect(advance(s, rng)).toBe(s);
+    const won = settleBattle(s, true, rng);
+    expect(won.quest).toMatchObject({ count: 1 });
+    expect(won.position).toBe(1);
+    roundTrip(won);
+    s = settleBattle(s, false, rng);
+    expect(s.quest).toMatchObject({ count: 0, lost: 1 });
+    // The next card slides into the leader's place; the leader waits later.
+    expect(s.position).toBe(0);
+    expect(currentCard(s).id).toBe("quest.wild");
+    expect(s.order.indexOf("quest.gym-a")).toBeGreaterThan(0);
+    expect([...s.order].sort()).toEqual([...begin().order].sort());
+    expect(s.previousId).toBe("quest.gym-a");
+    roundTrip(s);
+  });
+
+  it("a dice battle is won only on its winning outcomes", () => {
+    let s = settleBattle(advance(begin(), rng), true, rng);
+    s = draw(s);
+    expect(currentCard(s).id).toBe("quest.gym-b");
+    const lost = fight(s, 3);
+    expect(lost.quest).toMatchObject({ count: 1, lost: 1, due: false });
+    roundTrip(lost);
+    const won = fight(s, 4);
+    expect(won.quest).toMatchObject({ count: 2, due: true });
+    roundTrip(won);
+  });
+
+  it("a lost Champion is replaced by another until one is beaten", () => {
+    let s = settleBattle(advance(begin(), rng), true, rng);
+    s = fight(draw(s), 6);
+    s = draw(s); // the rival
+    expect(finaleStage(s.quest!).label).toBe("Champion");
+    const seen = new Set<string>();
+    for (let i = 0; i < 6; i++) {
+      const champion = currentCard(s).id;
+      seen.add(champion);
+      s = fight(s, 1);
+      expect(s.phase).toBe("hidden");
+      expect(s.previousId).toBe(champion);
+      expect(currentCard(s).id).not.toBe(champion);
+      expect(s.quest!.lost).toBe(i + 1);
+      roundTrip(s);
+    }
+    expect(seen.size).toBeGreaterThan(1);
+    const last = currentCard(s).id;
+    s = fight(s, 6);
+    expect(s.phase).toBe("complete");
+    expect(questRecord(s)!.stages[1].cards.map((c) => c.id)).toEqual([last]);
+    roundTrip(s);
+  });
+
+  it("losses keep the badges on pace", () => {
+    for (let seed = 1; seed <= 30; seed++) {
+      let s = createSession(
+        { version: 1, packIds: ["hard"], limit: null, quest: "hard" },
+        cards,
+        [hard],
+        seeded(seed),
+      );
+      for (let i = 0; i < 3 && !s.quest!.due; i++) {
+        s = advance(s, rng);
+        const card = currentCard(s);
+        if (card.battle)
+          s = card.dice
+            ? advance(rollTo(s, 1), rng)
+            : settleBattle(s, false, rng);
+        else s = advance(s, rng);
+        roundTrip(s);
+      }
+      // Both leaders still lie within the run's pace of the next draw.
+      const ahead = s.order.slice(s.position, s.position + 4);
+      expect(ahead.filter((id) => id.includes("gym")).length).toBe(
+        2 - s.quest!.count,
+      );
+    }
+  });
+
+  it("rejects a bad lost count", () => {
+    const s = settleBattle(advance(begin(), rng), false, rng);
+    const copy = structuredClone(s);
+    copy.quest!.lost = 2;
+    expect(() => parseSession(JSON.stringify(copy))).toThrow();
+    copy.quest!.lost = -1;
+    expect(() => parseSession(JSON.stringify(copy))).toThrow();
   });
 });

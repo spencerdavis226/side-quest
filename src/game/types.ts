@@ -6,6 +6,8 @@ export interface DiceOutcome {
   /** Repeat step so a table can cover every other total (odds, evens). */
   step?: number;
   instruction: string;
+  /** A battle card's winning outcome (see `CardDefinition.battle`). */
+  win?: true;
 }
 export interface DiceDefinition {
   version: 1;
@@ -14,6 +16,8 @@ export interface DiceDefinition {
   instruction?: string;
   /** Replaces the normal instruction when every die shows the same face. */
   doubles?: string;
+  /** A battle card's doubles are a win. */
+  doublesWin?: true;
   outcomes?: DiceOutcome[];
   /** The roll is one of two options. `skip` labels the option that puts the
    * card aside without rolling; `roll` labels the option that rolls. */
@@ -48,6 +52,11 @@ export interface CardDefinition {
   /** A timed card: a plaque starts it and the card can't be put aside until
    * time is up, when `end` replaces the rules. */
   timer?: TimerDefinition;
+  /** A fight the table can lose (gym leaders, Champions). A dice battle is won
+   * by its `win` outcomes; any other is settled with Won and Lost plaques. In
+   * a quest only a win counts: a lost gym leader goes back into the deck, and
+   * a lost finale card is replaced by another from its stage. */
+  battle?: true;
 }
 /** `fuse`: a hidden length between `min` and `max` seconds, picked when it is
  * lit, so nobody knows who will hold the phone at the boom. `countdown`: the
@@ -100,6 +109,9 @@ export interface QuestState {
   stages: { label: string; pick: number; cards: CardDefinition[] }[];
   finale: string[];
   step: number;
+  /** Battles lost so far. Each was a draw that took no deck position or
+   * finale step; older saves omit it. */
+  lost?: number;
 }
 export interface PackDefinition {
   version: 1;

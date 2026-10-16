@@ -2,7 +2,9 @@ import { rollDice, returnToCard } from "../game/dice";
 import {
   advance,
   awaitingChoice,
+  awaitingVerdict,
   currentCard,
+  settleBattle,
   skipRoll,
   type Random,
 } from "../game/engine";
@@ -95,7 +97,7 @@ export class PresentationController {
     }
     if (!session || motion || session.phase === "complete") return;
     // A choice card only moves through choose(); a stray tap must never roll.
-    if (awaitingChoice(session)) return;
+    if (awaitingChoice(session) || awaitingVerdict(session)) return;
     if (
       session.phase === "revealed" &&
       currentCard(session).dice &&
@@ -130,6 +132,15 @@ export class PresentationController {
     if (!session || motion || !awaitingChoice(session)) return;
     if (option === "roll") return this.roll(session);
     const next = skipRoll(session, this.random);
+    this.persist(next);
+    this.transition(next, "discard", session);
+    this.effect("discard");
+  }
+  /** Settle a battle without dice: the table won it or lost it. */
+  settle(won: boolean) {
+    const { session, motion } = this.state;
+    if (!session || motion || !awaitingVerdict(session)) return;
+    const next = settleBattle(session, won, this.random);
     this.persist(next);
     this.transition(next, "discard", session);
     this.effect("discard");

@@ -88,6 +88,7 @@ function validateQuest(s: SessionState) {
     q.count > q.goal ||
     q.due !== (q.count === q.goal) ||
     !whole(q.step, 0) ||
+    (q.lost !== undefined && !whole(q.lost, 0)) ||
     q.step >= q.finale.length ||
     (!q.due && q.step !== 0) ||
     pool.some((c) => s.cards.some((d) => d.id === c.id))
@@ -155,9 +156,13 @@ export function parseSession(raw: string): SessionState {
     throw Error("Invalid previous card");
   if ((s.discarded === 0) !== (s.previousId === null))
     throw Error("Invalid history");
-  // Finale cards are draws that take no deck position.
+  // Finale cards and lost battles are draws that take no deck position.
   const q = s.quest;
-  const drawn = s.cycle * s.cards.length + s.position + (q?.due ? q.step : 0);
+  const drawn =
+    s.cycle * s.cards.length +
+    s.position +
+    (q?.due ? q.step : 0) +
+    (q?.lost ?? 0);
   if (s.phase === "complete") {
     // A finite game ends at its limit; a quest mode on its last finale card.
     if (

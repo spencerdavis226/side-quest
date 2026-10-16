@@ -57,6 +57,8 @@ export function validateDice(value: unknown): asserts value is DiceDefinition {
     if (d.count < 2 || !templateIsValid(d.doubles, d.count))
       throw Error("Invalid doubles instruction");
   }
+  if (d.doublesWin !== undefined && (d.doublesWin !== true || !d.doubles))
+    throw Error("Invalid doubles win");
   if (d.instruction !== undefined) {
     if (!templateIsValid(d.instruction, d.count) || d.outcomes !== undefined)
       throw Error("Invalid dice instruction");
@@ -77,6 +79,7 @@ export function validateDice(value: unknown): asserts value is DiceDefinition {
       range.max < range.min ||
       !Number.isInteger(step) ||
       step < 1 ||
+      (range.win !== undefined && range.win !== true) ||
       !templateIsValid(range.instruction, d.count)
     )
       throw Error("Dice outcomes must cover every total exactly once");
@@ -111,6 +114,14 @@ export function resolveInstruction(
     .replaceAll("{second}", String(values[1]))
     .replaceAll("{third}", String(values[2]))
     .replaceAll("{fourth}", String(values[3]));
+}
+/** Whether a committed roll is one of a battle's winning outcomes. */
+export function rollWins(dice: DiceDefinition, values: number[]): boolean {
+  const total = values.reduce((a, b) => a + b, 0);
+  const doubles =
+    values.length > 1 && values.every((value) => value === values[0]);
+  if (doubles && dice.doubles) return !!dice.doublesWin;
+  return !!dice.outcomes?.find((range) => covers(range, total))?.win;
 }
 /** Only the engine samples randomness. Renderers receive these committed values. */
 export function rollDice(

@@ -62,6 +62,7 @@ export default function Preview() {
           finishingRoll={finishingRoll}
           onTap={() => controller.tap()}
           onChoose={(option) => controller.choose(option)}
+          onSettle={(won) => controller.settle(won)}
           onRevealRoll={() => controller.revealRoll()}
           onFinish={controller.finish.bind(controller)}
         />

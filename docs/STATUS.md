@@ -1,8 +1,85 @@
 # Current state and implementation plan
 
-Updated 2026-10-07. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
+Updated 2026-10-15. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Crude card rewrite, all decks (2026-10-07, branch `card-rewrite`, not on `main`)
+## Hardcore League (2026-10-15, committed and pushed on owner approval)
+
+**Owner request.** "Hardcore mode for sure. You should be able to fail the final leader always and have to keep fighting random champions until you pass. Just make that default. Drop the other league ideas."
+
+**Rules now (every League game; no option).**
+- Gym leaders and Champions are `battle` cards. A badge counts only when the leader is beaten. A lost leader goes back into the rest of the deck, at least one card away, and the remaining leaders are re-paced, so a run still deals about one leader every five draws until the eighth badge.
+- Dice leaders win on their marked outcomes (`win: true`, `doublesWin: true`). Leaders without dice land with **Won** and **Lost** plaques, and the card ignores taps until one is picked. A lost dice battle greys its ribbon and badge once the result is on the card.
+- A lost Champion is replaced by another Champion, dealt next, until one falls; only that win ends the game. The Hall of Fame names the Champion beaten. The Legendary and Elite Four are not battles and play as before.
+- Each lost battle is a draw that takes no deck position or finale step, counted in the optional `quest.lost`. Saves stay schema v2; saves without it load unchanged. A League game saved before this update keeps its old card snapshot, so it finishes under the old rules.
+
+**Card changes (`src/content/pokemon-league.ts`).** Every leader now has a way to win, and the table can judge it the moment it is played:
+- Rewritten: Misty, Erika, Koga, Blaine, Falkner, Bugsy, Morty, Pryce, Brawly, Wattson, Norman and Winona. Before, they had no way to win, a rule that lasted until your next turn, or a roll-or-do-it choice.
+- Pryce and Brawly are now feats, not choice cards.
+- Win outcomes were marked on the other dice leaders and on all three Champions.
+
+Champion win chances per fight: Blue 20%, Lance 10%, Steven 28%. That works out to roughly five Champion fights per run, which is intended.
+
+**Changed files.** `src/game/{types,engine,dice}.ts`, `src/app/persistence.ts`, `src/content/{validate,pokemon-league}.ts`, `src/presentation/{controller.ts,card-front.css}`, `src/screens/Play.tsx`, `src/components/Cards.tsx`, `src/main.tsx`, `src/workshop/Preview.tsx`, tests `tests/{quest,dice}.test.ts`, `tests/browser/quest.spec.ts`, regenerated `docs/CARD_REVIEW.md` and `docs/card-review.csv`, plus these docs: AGENTS.md, AUTHORING.md, and the CLAUDE.md files in content, game and screens.
+
+**Verified.**
+- `npm test`: 155 passed, including 6 new hardcore tests.
+- Build and budgets passed: 3469 KiB runtime.
+- `quest.spec.ts` in Chromium and emulated WebKit: 22 passed, including the new Won/Lost, lost leader and lost Champion tests.
+- Full production E2E, Chromium and emulated WebKit: 213 passed, 3 intentional skips, exit 0.
+- **Not verified:** a physical device.
+
+## Dungeon crawl plan (2026-10-15, proposed, not built)
+
+**Owner brief.** Very flavourful cards; a game that is actually difficult and can be lost; inspired by Heroes of Barcadia, but its own thing, not more of the same. The standing rules still apply: no teams, no names, the phone stays on the table, and you only tap.
+
+**Research.** Heroes of Barcadia uses your drink as your health:
+- Monsters are fought with a d20 against a level. Losing means drinking the monster's damage, and winning earns loot and power-ups.
+- Traps need a 10+ to disarm. Dying resets you and costs you your loot.
+- After three power-ups you can face the Grand Drink Guardian, whose 15+ roll ignores every bonus.
+- Reviewers liked the drinking and the jokes but called it "dumb luck" with little strategy.
+
+We keep the d20-against-a-level fight and the loot, and add what Barcadia lacks: one shared fate for the whole table and a real way to lose. Sources: rulespal.com/heroes-of-barcadia/rulebook and the Meeple Mountain review. Card text stays original; we don't copy theirs.
+
+**The game: pack "Dungeon night", mode "Pub Crawl" (owner, 2026-10-15).** The bar has a cellar, and the cellar goes down forever. One run is three floors: the Cellar, the Catacombs and the Drowned Taproom. Each floor deals about 8 rooms and then its boss. The whole table is one party, and the drawer plays each card, as now.
+
+- **Party HP (new meter).** The table shares 12 hearts, shown in the top row where the badges are now. A lost fight, a failed trap or a bad event costs hearts, and the drawer also drinks. At 0 the **party wipes**: everyone finishes their drink, and the game ends on a defeat screen showing the floor and room reached. There is no revive.
+- **Rooms** come from a separate pool on each floor, so difficulty climbs:
+  - *Monsters* (about 40%): d20 battles. Floor 1 wins on 7+ and costs 1 heart on a loss; floor 2 wins on 9+ (2 hearts); floor 3 wins on 11+ (2 hearts). Win outcomes hand out drinks.
+  - *Traps:* a d20 save at 10, 12 or 14 by floor, costing 1 heart.
+  - *Feats:* Won/Lost plaques. Examples: the riddling tap, holding a full pint at arm's length, a staring contest with the creature in the mirror.
+  - *Loot*, *shrines* (+2 hearts, and the table toasts) and *choice rooms*, using the existing choice plaques: open the chest or walk away, take the left or right door.
+- **Loot** sits in a small tray of at most 3 items. Each is tapped once to use, and none needs the phone to move:
+  - Healing Draught: the drawer downs a fresh, full drink and the party heals 1 heart (owner, 2026-10-15: healing should be hard).
+  - Coaster Shield: the next heart loss is ignored.
+  - Loaded Die: reroll the last failed roll.
+  - Smoke Bomb: flee a room monster, but not a boss.
+  - Skeleton Key: skip a trap.
+- **Curses** last until the end of the floor and show beside the hearts. Examples: every roll −2; all damage +1.
+- **Bosses** must be beaten, using the hardcore machinery. A boss takes 1, 2 or 3 hits by floor, needing 8+, 10+ or 12+. Each failed swing costs 2, 2 or 3 hearts. The boss is dealt again, to the next drawer, until it falls or the party wipes. Each floor has two possible bosses, picked at random. The final boss is one of two: **The Last Call Lich** or **The Bartender Below**.
+- **Difficulty (Monte Carlo, 30,000 runs, with loot used when hearts reach 3).** With the one-heart Healing Draught, the party wins about **29%** of runs and wipes on floor 2 about 12% of the time and on floor 3 about 59%. At the old targets (8+/10+/12+ monsters, 9+/11+/13+ bosses) the costly draught dropped the win rate to 18%, so the targets came down one step. Hearts, the target rolls and boss damage are the tuning knobs.
+
+**Flavour (first drafts, house voice; drawer acts; no names or teams).**
+- *Keg Golem* (floor 1 boss): "It's 800 pounds of lager and it's tapped. Shotgun your drink, then roll d20." A 9+ is a hit: "You pull its plug. Give 5." A miss: "It sits on you. Drink 4. −2 hearts."
+- *Gelatinous Shot:* "A cube of jello shots, and something's floating in it. Roll d20." An 8+: "You eat your way out. Give 3." A miss: "You're inside it now. Drink 3. −1 heart."
+- *Hangover Hydra* (floor 2 boss): "Every head you cut off grows back with a headache. Roll d20." A hit: "One head down. Everyone else drinks 2." A miss: "It breathes regret. Drink 5. −2 hearts."
+- *Tab Goblin:* "It's been putting drinks on your tab since 2019. Roll d20." A win: "You stiff it. Give 4." A loss: "It collects. Drink 3. −1 heart. Lose your newest loot."
+- *Bouncer Troll:* "You're not on the list. Prove you're sober: walk heel to toe across the room and back." Lost: drink 4, −1 heart.
+- *Karaoke Banshee:* "It screams the first line of a song; sing the next one." Lost: drink 3, −1 heart.
+- *The Mirror:* "Staring contest with your reflection in your drink." Blink and you drink 3, −1 heart.
+- *Mimic Cooler:* choice between "Open it" (a d20: 11+ gives a Healing Draught, anything less "It bites. Drink 4. −2 hearts.") and "Walk away".
+- *Wishing Drain:* a shrine. "Toss in a coin, or a fry. The party heals 2. Everyone toasts the drain."
+- *The Last Call Lich* (final boss): "Lights come up. The music stops. It's last call forever unless you kill it. Roll d20." A 13+ is a hit; a miss: "Closing time. Everyone drinks 4. −3 hearts."
+
+**Build order.**
+1. **Engine.** Add party `hp`/`maxHp`, `floor`, `curse` and `loot` to `QuestState` (all optional, still schema v2), plus a card `damage` (hearts lost on a loss) and a boss `hits`. Floors become per-floor room pools followed by a boss stage, built on the existing battle and re-deal logic. Add a defeat ending (`phase: "complete"` with a `wiped` flag). Persistence validation, and seeded tests that keep the simulated win rate between 20% and 45%.
+2. **Content.** About 60 rooms (24 monsters, 10 traps, 8 feats, 8 loot, 4 shrines, 6 choices and events) and 6 bosses, all original and in the card voice.
+3. **UI.** A hearts meter, the loot tray (tap to use), a curse marker, floor banners using the existing `StageBanner`, and the defeat and victory screens.
+4. **Art.** Hearts, loot icons, a defeat tombstone and a treasure scene, perhaps a cellar card pair. About 600 KiB of budget remains.
+5. **Tuning.** Play a run with the group.
+
+**Owner decisions (2026-10-15).** 12 hearts. Healing is hard: a fresh, full drink for one heart. A wipe ends with everyone finishing their drink. Names: pack "Dungeon night", mode "Pub Crawl" (a dungeon crawl and a pub crawl at once); floors the Cellar, the Catacombs and the Drowned Taproom; final boss the Last Call Lich.
+
+## Crude card rewrite, all decks (2026-10-07; merged as PR #8 on 2026-10-15)
 
 **Owner request.** "Really review the cards and get more creative and crude-funny. A lot of them are just straight up dice roll conditionals and math." No lore supplied ("just do your best"), "as crude as you'd like", King's Cup classics may be rewritten, all decks in scope. This overrides the House/Pokémon "source wording only" rule for this pass; the changes are listed in `reference/README.md`.
 
@@ -24,7 +101,7 @@ Updated 2026-10-07. **Single authoritative handoff.** Read `AGENTS.md` first. Ol
 
 **Cleanup.** Removed from the tree (all still in git history): 133 unreferenced files (old study screenshots in `docs/studies` except the typography study page the title-fit test loads, superseded art drafts and review captures, the retired continuous-frame slices, rejected Ancient front drafts, the superseded trophy League back with its `draft.json` step in `scripts/league-art.ts`), plus untracked " 2" duplicates, `.DS_Store` files and `test-results/`. Kept: sources for every shipped asset and every file a script, test or config reads.
 
-**Not done (needs owner approval; the agent's safety check blocked it).** Delete the seven merged remote branches and their local copies, drop the 2026-09-25 stash, prune the two dead worktree records.
+**Done on owner approval (2026-10-15).** Deleted the seven merged remote branches and their four local copies, dropped the 2026-09-25 stash (`0bed924`), pruned the two dead worktree records. Only `main` remains.
 
 **Verified.** `npm test` 149 passed; typecheck clean; build and budgets passed. Full production E2E, Chromium + emulated WebKit: 209 passed, 3 intentional skips. Every-title workshop fit: passed in both browsers. Update flow passed. League back and front inspected in a WebKit capture at 390×844. **Not verified:** a physical device.
 
@@ -38,7 +115,7 @@ Updated 2026-10-07. **Single authoritative handoff.** Read `AGENTS.md` first. Ol
 
 **Next.** The Ancient Mew League card pair (`assets/source/league-ancient-2026-10-06/`, 392 KiB) is still review-only; it now fits the 4 MiB budget.
 
-## Title fit, League finale flip, Hall of Fame link (2026-10-15, committed locally, not pushed)
+## Title fit, League finale flip, Hall of Fame link (2026-10-15, deployed as `fa1e476`)
 
 **Reports (owner, Safari on a Mac).** A card title rendered tiny beside large rules; in a Pokémon League game the next card's frame visibly turned over after a card was put aside; on the Hall of Fame both actions looked like buttons.
 
@@ -328,16 +405,7 @@ The owner's goal: packs that change how the game plays, not just add cards. Toda
 - **Fluxx rule changers (needs C).** Cards that rewrite rules and sit in the tray.
 - **Travel/airport pack.** Considered; overlaps House (Spirit Airlines, Never Have I Ever countries) and Cabin weekend.
 
-**Pokémon League immersion (owner wants all of these; 2026-10-05).**
-- **Stage banners.** Built in CSS (2026-10-05); painted banner art (§4) is an optional upgrade.
-- **Badge case.** Built with lettered medals (2026-10-05); painted badges (§1, §2) pending.
-- **Hall of Fame.** Built (2026-10-05); the painted scene (§5) is an optional upgrade.
-- **Tiered ribbons.** Built (2026-10-05): pearl, violet, crimson; gym leaders stay gold.
-- **Region runs.** Choose Kanto, Johto or Hoenn: that region's 8 leaders in canonical order, then that region's own Elite Four and Champion; today's random mix stays as "Mixed".
-- **Hardcore option.** A badge only on a win; a lost leader is shuffled back in. Needs per-outcome quest progress on dice leaders and Won/Lost plaques on feat leaders.
-- **Pacing beats.** A Pokémon Center water break after badge 4; rival battles (Blue, Silver, May) paced between badges.
-- **League card back.** A special back for gauntlet cards (art §6). Changes the approved frame, so it needs owner sign-off.
-- **Mode emblem.** A League mark for the setup button and meter (art §3).
+**Pokémon League immersion.** Banners, badge case, Hall of Fame, ribbons, painted art and the Ancient Mew pair are built. Hardcore is built and is the default (2026-10-15). The owner dropped region runs, pacing beats and the rest (2026-10-15).
 
 **Suggested order (owner set dungeon crawl next, 2026-10-06; secret and timer cards shipped first on branch `secrets-and-fuses`):** per-pack loading (done) → vote pack (done) → A + Pokémon badge quest (done, 2026-10-05) → dungeon crawl (reuses quests; would add a finale at the end of a finite game and loot) → B + rules tray + awards → secret and timer card packs.
 

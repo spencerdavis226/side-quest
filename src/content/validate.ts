@@ -55,6 +55,26 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
     }
     if (c.secret !== undefined && c.dice !== undefined)
       fail(`Secret and dice on one card: ${c.id}`);
+    // A battle can be won and lost: dice need both kinds of outcome, and a
+    // battle without dice is settled with plaques, so nothing else on it.
+    if (c.battle !== undefined) {
+      const outcomes = c.dice?.outcomes ?? [];
+      const results = [
+        ...outcomes.map((o) => !!o.win),
+        ...(c.dice?.doubles ? [!!c.dice.doublesWin] : []),
+      ];
+      if (
+        c.battle !== true ||
+        c.secret !== undefined ||
+        c.timer !== undefined ||
+        (c.dice &&
+          (c.dice.choice !== undefined ||
+            !results.includes(true) ||
+            !results.includes(false)))
+      )
+        fail(`Invalid battle: ${c.id}`);
+    } else if (c.dice?.outcomes?.some((o) => o.win) || c.dice?.doublesWin)
+      fail(`Win outcome on a card that is not a battle: ${c.id}`);
   }
   const packIds = new Set<string>();
   for (const p of ps) {

@@ -9,7 +9,7 @@ import {
 import type { SessionState, CardDefinition } from "../game/types";
 import { diceResultText } from "../presentation/dice/result-text";
 import { diceNotation } from "../game/dice";
-import { awaitingChoice, currentCard } from "../game/engine";
+import { awaitingChoice, awaitingVerdict, currentCard } from "../game/engine";
 import type { Motion } from "../presentation/controller";
 import { cardPacks } from "../presentation/packs";
 import { CardFace } from "../components/Cards";
@@ -27,6 +27,7 @@ export function Play({
   finishingRoll = false,
   onTap,
   onChoose,
+  onSettle,
   onRevealRoll,
   onFinish,
   renderFace,
@@ -38,6 +39,7 @@ export function Play({
   finishingRoll?: boolean;
   onTap: () => void;
   onChoose: (option: "skip" | "roll") => void;
+  onSettle: (won: boolean) => void;
   onRevealRoll: () => void;
   onFinish: (id: number) => void;
   renderFace?: (card: CardDefinition) => ReactNode;
@@ -49,6 +51,8 @@ export function Play({
   // The plaques arrive once the card has landed face up and leave with the
   // decision; the card itself takes no action while they are up.
   const choice = !motion && awaitingChoice(session) ? card.dice!.choice! : null;
+  // A battle without dice: the table says whether it won.
+  const verdict = !motion && awaitingVerdict(session);
   // Secret and timed cards: plaques once the card has landed face up; a timed
   // card stays on the table until its time is up.
   const actions = useCardActions(
@@ -138,7 +142,7 @@ export function Play({
             : ""}
         </span>
         <div
-          className={`card-stage ${motion ?? ""} ${choice || acting ? "choosing" : ""}`}
+          className={`card-stage ${motion ?? ""} ${choice || verdict || acting ? "choosing" : ""}`}
         >
           <div className="deck-under" aria-hidden="true" />
           <button
@@ -150,7 +154,7 @@ export function Play({
                 !!session.roll &&
                 !session.roll.returned &&
                 motion !== "roll";
-              if (choice || blocked) {
+              if (choice || verdict || blocked) {
                 // Point at the plaques instead of acting on a stray tap.
                 if (!matchMedia("(prefers-reduced-motion: reduce)").matches)
                   choiceRef.current?.animate(
@@ -165,6 +169,7 @@ export function Play({
             }}
             aria-disabled={
               !!choice ||
+              verdict ||
               blocked ||
               (!!motion && motion !== "roll") ||
               (!!card.dice &&
@@ -177,22 +182,24 @@ export function Play({
                 ? "Reveal card"
                 : choice
                   ? `${card.title}. ${card.rules} Choose ${choice.skip} or ${choice.roll}.`
-                  : blocked
-                    ? `${card.title}. ${card.rules} ${card.timer!.kind === "fuse" ? "Light the fuse" : "Start the clock"}, or skip it.`
-                    : actions.shown === "end"
-                      ? `${card.title}. ${card.timer!.end} Tap to put this card aside.`
-                      : card.dice && !session.roll?.returned
-                        ? session.roll
-                          ? motion === "roll"
-                            ? "Finish dice roll"
-                            : "Revealing dice result"
-                          : `Roll ${diceNotation(card.dice)}. ${card.rules}`
-                        : `${card.title}. ${session.roll?.returned ? `Rolled ${session.roll.total}. ${diceResultText(card, session.roll)}` : card.rules} ${cardPacks(
-                            card.id,
-                            session.config.packIds,
-                          )
-                            .map((pack) => pack.title)
-                            .join(", ")}. Tap to put this card aside.`
+                  : verdict
+                    ? `${card.title}. ${card.rules} Choose Won or Lost.`
+                    : blocked
+                      ? `${card.title}. ${card.rules} ${card.timer!.kind === "fuse" ? "Light the fuse" : "Start the clock"}, or skip it.`
+                      : actions.shown === "end"
+                        ? `${card.title}. ${card.timer!.end} Tap to put this card aside.`
+                        : card.dice && !session.roll?.returned
+                          ? session.roll
+                            ? motion === "roll"
+                              ? "Finish dice roll"
+                              : "Revealing dice result"
+                            : `Roll ${diceNotation(card.dice)}. ${card.rules}`
+                          : `${card.title}. ${session.roll?.returned ? `Rolled ${session.roll.total}. ${diceResultText(card, session.roll)}` : card.rules} ${cardPacks(
+                              card.id,
+                              session.config.packIds,
+                            )
+                              .map((pack) => pack.title)
+                              .join(", ")}. Tap to put this card aside.`
             }
           >
             <span
@@ -227,6 +234,27 @@ export function Play({
               groupRef={choiceRef}
               onSkip={onTap}
             />
+          )}
+          {verdict && (
+            <div
+              ref={choiceRef}
+              className="card-choice verdict"
+              role="group"
+              aria-label="Did you win?"
+            >
+              <button
+                className="card-choice-option won"
+                onClick={() => onSettle(true)}
+              >
+                Won
+              </button>
+              <button
+                className="card-choice-option lost"
+                onClick={() => onSettle(false)}
+              >
+                Lost
+              </button>
+            </div>
           )}
           {choice && (
             <div

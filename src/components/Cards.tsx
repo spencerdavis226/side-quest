@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { CardDefinition, DiceRoll } from "../game/types";
 import { diceResultText } from "../presentation/dice/result-text";
+import { rollWins } from "../game/dice";
 import { CardPackMarks } from "./PackMarks";
 import { badgeArt } from "../presentation/league-art";
 type Overflow = "none" | "top" | "bottom" | "both";
@@ -45,6 +46,12 @@ export function CardFace({
   // Keep the original rule until the dice have been dismissed.
   const resolved = !!roll?.returned;
   const badge = badgeArt(card.id);
+  // A lost battle's badge greys out once the result is on the card.
+  const lost =
+    resolved &&
+    !!card.battle &&
+    !!card.dice &&
+    !rollWins(card.dice, roll!.values);
   useLayoutEffect(() => {
     const title = titleRef.current;
     const heading = title?.querySelector<HTMLElement>("h2");
@@ -119,7 +126,7 @@ export function CardFace({
   }, [resolved, card.id, shown]);
   return (
     <div
-      className={`study-face${card.ribbon ? ` has-ribbon tone-${card.ribbonTone ?? "gold"}` : ""}`}
+      className={`study-face${card.ribbon ? ` has-ribbon tone-${card.ribbonTone ?? "gold"}` : ""}${lost ? " battle-lost" : ""}`}
       // A drag anywhere on the face (rules or an enlarged title) must scroll or
       // scrub, never activate the card action. A stationary tap still passes.
       onPointerDown={(event) => {

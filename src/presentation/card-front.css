@@ -331,6 +331,15 @@
   background: linear-gradient(145deg, #2a6464, #183d3d);
   animation-delay: 70ms;
 }
+.card-choice-option.won {
+  color: #2f1e0e;
+  background: linear-gradient(145deg, #f1d58c, #c99a3c);
+}
+.card-choice-option.lost {
+  color: #f5e5bd;
+  background: linear-gradient(145deg, #7a2a24, #4a1714);
+  animation-delay: 70ms;
+}
 .card-choice-option small {
   font: 500 clamp(12px, 4.2cqw, max(17px, 3.62cqw)) / 1 var(--font-tavern);
   letter-spacing: 0.04em;
@@ -647,4 +656,10 @@
   background-image:
     url("./art/league-front.webp"),
     linear-gradient(to bottom, #213b39 28%, #f4dfb4 28%);
+}
+
+/* A lost battle: the ribbon's badge and banner lose their colour. */
+.battle-lost .card-ribbon {
+  filter: grayscale(1) brightness(0.8);
+  transition: filter 400ms ease-out;
 }

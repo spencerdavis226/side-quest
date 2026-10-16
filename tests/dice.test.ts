@@ -345,9 +345,6 @@ describe("choice cards", () => {
       ...[4, 8, 9, 23, 62].map(
         (row) => `house.sheet-0${String(row).padStart(2, "0")}`,
       ),
-      // League-only gym leaders: do the feat or roll.
-      "pokemon.gym-pryce",
-      "pokemon.gym-brawly",
       "cabin.mint-chev",
       "cabin.fourth-meal",
       // Sheet row 42, a CABIIN space, now plays in Cabin weekend.

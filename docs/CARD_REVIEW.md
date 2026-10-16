@@ -1,6 +1,6 @@
 # Card review sheet
 
-Generated 2026-10-15 by `npm run cards:review`. Do not edit by hand — edit the
+Generated 2026-10-16 by `npm run cards:review`. Do not edit by hand — edit the
 source modules under `src/content` and regenerate. Each row is one card;
 the Review column is intentionally blank so you can mark it up.
 

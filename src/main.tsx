@@ -341,6 +341,7 @@ function App() {
               finishingRoll={finishingRoll}
               onTap={() => controller.tap()}
               onChoose={(option) => controller.choose(option)}
+              onSettle={(won) => controller.settle(won)}
               onRevealRoll={() => controller.revealRoll()}
               onFinish={finish}
             />
