@@ -50,8 +50,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
+      # WebKit runs about three times slower than Chromium here, so it is
+      # split across two shards to finish alongside the Chromium job.
       matrix:
-        project: [chromium, webkit]
+        include:
+          - { project: chromium, shard: 1, shards: 1 }
+          - { project: webkit, shard: 1, shards: 2 }
+          - { project: webkit, shard: 2, shards: 2 }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -76,20 +81,20 @@ jobs:
         with:
           name: dist
           path: dist
-      - run: npm run test:release -- --project=${{ matrix.project }}
+      - run: npm run test:release -- --project=${{ matrix.project }} --shard=${{ matrix.shard }}/${{ matrix.shards }}
       # Two fresh builds on one origin, driven in Chromium.
       - run: npm run test:update
         if: matrix.project == 'chromium'
-      - run: npm run test:e2e -- --project=${{ matrix.project }}
+      - run: npm run test:e2e -- --project=${{ matrix.project }} --shard=${{ matrix.shard }}/${{ matrix.shards }}
         if: github.event_name == 'workflow_dispatch' && inputs.full_validation
-      - run: npm run test:workshop -- --project=${{ matrix.project }}
+      - run: npm run test:workshop -- --project=${{ matrix.project }} --shard=${{ matrix.shard }}/${{ matrix.shards }}
         if: github.event_name == 'workflow_dispatch' && inputs.full_validation
         env:
           BASE_PATH: /
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: browser-failures-${{ matrix.project }}
+          name: browser-failures-${{ matrix.project }}-${{ matrix.shard }}
           path: test-results/
   deploy:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
