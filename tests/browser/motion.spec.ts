@@ -218,7 +218,8 @@ test("flip lands on the same transform as its resting state", async ({
     // Seek to the authored landing frame. WebKit may drop the CSS animation
     // when React clears the phase class before dispatching animationend.
     animation.pause();
-    animation.currentTime = animation.effect!.getComputedTiming().endTime;
+    animation.currentTime =
+      animation.effect!.getComputedTiming().endTime ?? null;
     const end = getComputedStyle(card).transform;
     animation.play();
     await new Promise<void>((resolve) => {
@@ -262,8 +263,8 @@ test("returning a rolled card settles without a positional jump", async ({
       value === "none" ? "none" : new DOMMatrixReadOnly(value).toString();
     const frame = (key: string) =>
       matrix(
-        [...settle.cssRules].find(
-          (rule) => (rule as CSSKeyframeRule).keyText === key,
+        ([...settle.cssRules] as CSSKeyframeRule[]).find(
+          (rule) => rule.keyText === key,
         )!.style.transform,
       );
     return {

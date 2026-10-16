@@ -15,8 +15,13 @@ test("dice face numerals paint on the face centre in every engine", async ({
   );
   const measures = await page.evaluate(
     async (labels: string[]) => {
-      const { installDiceSkin } =
-        await import("/src/presentation/dice/skin.ts");
+      // A dev-server URL, so TypeScript cannot resolve it; type it by path.
+      const skin: string = "/src/presentation/dice/skin.ts";
+      const {
+        installDiceSkin,
+      }: typeof import("../../src/presentation/dice/skin") = await import(
+        /* @vite-ignore */ skin
+      );
       const size = 512;
       return labels.map((label) => {
         const canvas = document.createElement("canvas");

@@ -58,7 +58,7 @@ function IconThumb({ slug, selected }: { slug: string; selected: boolean }) {
 
 export function IconBrowser({ cardId }: { cardId: string }) {
   const [query, setQuery] = useState("");
-  const [picked, setPicked] = useState<string | null>(
+  const [picked] = useState<string | null>(
     () => resolveImprint(cardId).icon,
   );
   const imprint = useMemo(() => resolveImprint(cardId), [cardId]);

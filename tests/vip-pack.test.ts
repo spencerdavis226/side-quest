@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { cards, packs, validateCatalog } from "../src/content/catalog";
+import { cards, packs } from "../src/content/catalog";
 
 const vip = packs.find((p) => p.id === "vip")!;
 const vipCards = cards.filter((c) => vip.cardIds.includes(c.id));

@@ -3,6 +3,10 @@ on:
   pull_request:
   push:
     branches: [main]
+    # Docs never reach the bundle, so a docs-only push skips the pipeline.
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
   workflow_dispatch:
     inputs:
       full_validation:
@@ -29,33 +33,72 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium webkit
       - run: npm test
+      - run: npm run lint
       - run: npm run build
-      - run: npm run test:release
-      - run: npm run test:update
-      - run: npm run test:e2e
-        if: github.event_name == 'workflow_dispatch' && inputs.full_validation
-      - run: npm run test:workshop -- --project=chromium
-        if: github.event_name == 'workflow_dispatch' && inputs.full_validation
-        env:
-          BASE_PATH: /
-      - run: npm run test:workshop -- --project=webkit
-        if: github.event_name == 'workflow_dispatch' && inputs.full_validation
-        env:
-          BASE_PATH: /
+      # The browser jobs test this exact build, and deploy publishes it.
       - uses: actions/upload-artifact@v4
-        if: always()
         with:
-          name: browser-failures
-          path: test-results/
+          name: dist
+          path: dist
       - uses: actions/upload-pages-artifact@v3
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         with:
           path: dist
+  browser:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      # WebKit runs about three times slower than Chromium here, so it is
+      # split across two shards to finish alongside the Chromium job.
+      matrix:
+        include:
+          - { project: chromium, shard: 1, shards: 1 }
+          - { project: webkit, shard: 1, shards: 2 }
+          - { project: webkit, shard: 2, shards: 2 }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Browser binaries are cached per Playwright version; their system
+      # libraries are not cacheable, so those install on every run.
+      - id: playwright
+        run: echo "version=$(node -p 'require("@playwright/test/package.json").version')" >> "$GITHUB_OUTPUT"
+      - id: browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ steps.playwright.outputs.version }}-${{ matrix.project }}
+      - if: steps.browsers.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps ${{ matrix.project }}
+      - if: steps.browsers.outputs.cache-hit == 'true'
+        run: npx playwright install-deps ${{ matrix.project }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - run: npm run test:release -- --project=${{ matrix.project }} --shard=${{ matrix.shard }}/${{ matrix.shards }}
+      # Two fresh builds on one origin, driven in Chromium.
+      - run: npm run test:update
+        if: matrix.project == 'chromium'
+      - run: npm run test:e2e -- --project=${{ matrix.project }} --shard=${{ matrix.shard }}/${{ matrix.shards }}
+        if: github.event_name == 'workflow_dispatch' && inputs.full_validation
+      - run: npm run test:workshop -- --project=${{ matrix.project }} --shard=${{ matrix.shard }}/${{ matrix.shards }}
+        if: github.event_name == 'workflow_dispatch' && inputs.full_validation
+        env:
+          BASE_PATH: /
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: browser-failures-${{ matrix.project }}-${{ matrix.shard }}
+          path: test-results/
   deploy:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-    needs: build
+    needs: [build, browser]
     runs-on: ubuntu-latest
     permissions:
       pages: write

@@ -114,6 +114,9 @@ export default function FullScreenDice({
     document.addEventListener("visibilitychange", onVisible);
     return () => {
       document.removeEventListener("visibilitychange", onVisible);
+      // generation is a counter, not a DOM node: bumping the live value is
+      // the point, so a roll still in flight sees it is stale.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       generation.current++;
       stage.current?.dispose();
       stage.current = null;

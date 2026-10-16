@@ -50,7 +50,7 @@ const rollTo = (s: SessionState, face: number) => {
 };
 const fight = (s: SessionState, face: number) =>
   advance(rollTo(advance(s), face));
-const fromStep = (s: SessionState, step: number) => ({
+const fromStep = (s: SessionState, step: number): SessionState => ({
   ...s,
   quest: { ...s.quest!, step },
   discarded: step,
