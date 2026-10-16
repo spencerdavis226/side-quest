@@ -21,7 +21,8 @@
     "generate:icons": "tsx scripts/icons.ts",
     "test:workshop": "playwright test --config playwright.workshop.config.ts",
     "test:update": "tsx scripts/check-update.ts",
-    "art:league": "tsx scripts/league-art.ts"
+    "art:league": "tsx scripts/league-art.ts",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@3d-dice/dice-box-threejs": "0.0.12",
@@ -29,15 +30,20 @@
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.55.0",
     "@types/node": "^22.0.0",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
     "@vitejs/plugin-react": "^4.5.0",
+    "eslint": "^10.12.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.13.0",
     "prettier": "^3.9.6",
     "sharp": "^0.35.4",
     "tsx": "^4.19.0",
     "typescript": "^5.8.0",
+    "typescript-eslint": "^8.71.2",
     "vite": "^6.3.0",
     "vite-plugin-pwa": "^1.0.0",
     "vitest": "^4.1.11"
