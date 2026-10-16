@@ -78,6 +78,15 @@ A quest with `party: { hearts }` is a crawl. Its `goal` is 0 and its stages are 
 - Never write hearts, items or curses into the rules: the card's seals show them in a crawl, and the plain modes would show nonsense. Write the drink instead (the drawer still drinks on a loss). Keep fight rules near 80 characters, since a Flee or Reroll plaque can cover the card's foot.
 - Tune with the constants in `dungeon.ts`, not card by card, and keep `tests/dungeon.test.ts` passing: it plays 4,000 seeded runs through the real engine, holds the win rate between 18% and 40%, and holds every omen and every route between 10% and 50%. It prints the rate for each, so a new omen or floor shows its effect at once.
 
+## Pokémon League (a journey crawl)
+Since 2026-10-16 the League is a crawl like Pub Crawl, and everything in the section above applies. Its cards live in `src/content/league/` and `pokemon-league.ts`:
+- **Starters** (`starters.ts`) are omens that may carry `evolves`: one or two later forms, each `{ title, rules, omen }`, whose effect *replaces* the one before (write each form's effect in full, hearts relative to the run's base). Give each starter a trade-off and let later forms shed it. Starters may name HP and items.
+- **Branching starters** (`branches: true`, Eevee) list up to three alternative forms in `evolves`; the evolve plaque splits into one plaque per form (four across with Press B) and `takeOffer`'s `branch` picks it. A branching starter evolves once.
+- **Evolution cards** carry an offer with `evolve: true` (validated on any crawl card); the engine refuses it once the starter is fully evolved, so pair it with a "Press B" heal plaque.
+- **Routes** (`routes.ts`) use the helpers in `journey.ts`: `wild`, `trainer`, `challenge` (Won/Lost), `hazard`, `catchable` (offers: a drink for a ball and HP back, or let it go), `gamble`, `item`, `center`, `mart`, `crossroads` and `ace` (the route's elites), `evolution`, `rival`, `grunt` and `villain`. Each route is its own pool: no card is in two stages.
+- **Gyms**: `gymTiers[k]` is every region's (k+1)th gym; a new region adds one leader to each tier. Every League boss is a `battle` with `encounter: "boss"` and `hits`/`damage` from `league/shared.ts`; leaders keep `quest: "pokemon"`, which counts them as badges. A boss's dice should win near the tier's odds: a 2-hit Legendary at 5% (as Mewtwo once was) makes a run unwinnable.
+- Tune with the constants, never card by card, and keep `tests/league.test.ts` passing; it prints each starter's and hideout's win rate.
+
 ## Secrets and timers
 
 A card may carry a `secret` (at most 120 characters) or a `timer`, or both, but never with `dice`. Validation lives in `src/content/validate.ts` and `src/game/timer.ts`.

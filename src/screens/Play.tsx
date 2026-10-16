@@ -6,7 +6,7 @@ import {
   useRef,
   type ReactNode,
 } from "react";
-import type { SessionState, CardDefinition, Loot } from "../game/types";
+import type { SessionState, CardDefinition, Loot, Offer } from "../game/types";
 import { diceResultText } from "../presentation/dice/result-text";
 import { diceNotation } from "../game/dice";
 import {
@@ -16,6 +16,7 @@ import {
   canTakeOffer,
   currentCard,
   hitsNeeded,
+  omenForm,
 } from "../game/engine";
 import type { Motion } from "../presentation/controller";
 import { cardPacks } from "../presentation/packs";
@@ -27,6 +28,7 @@ import {
   useCardActions,
 } from "../components/CardActions";
 import { LootPlaque, OfferPlaque, usableItems } from "../components/Crawl";
+import { crawlTheme } from "../components/crawlTheme";
 const FullScreenDice = lazy(() => import("../components/FullScreenDice"));
 export function Play({
   session,
@@ -51,7 +53,7 @@ export function Play({
   onChoose: (option: "skip" | "roll") => void;
   onSettle: (won: boolean) => void;
   onSpend?: (item: Loot) => void;
-  onOffer?: (index: number) => void;
+  onOffer?: (index: number, branch?: number) => void;
   onRevealRoll: () => void;
   onFinish: (id: number) => void;
   renderFace?: (card: CardDefinition) => ReactNode;
@@ -71,6 +73,22 @@ export function Play({
   // a loaded die after a lost roll. They join the card's own plaques.
   const items =
     !motion && session.phase === "revealed" ? usableItems(session) : [];
+  const crawl = crawlTheme(session.quest?.packId);
+  // A branching starter's evolution splits into one plaque per form.
+  const branches = omenForm(session.quest)?.branches;
+  const plaques = (offers ?? []).flatMap(
+    (
+      offer,
+      i,
+    ): {
+      offer: Offer;
+      i: number;
+      branch?: { name: string; index: number };
+    }[] =>
+      offer.evolve && branches
+        ? branches.map((name, index) => ({ offer, i, branch: { name, index } }))
+        : [{ offer, i, branch: undefined }],
+  );
   // Secret and timed cards: plaques once the card has landed face up; a timed
   // card stays on the table until its time is up.
   const actions = useCardActions(
@@ -245,6 +263,7 @@ export function Play({
                     shown={session.phase === "revealed" ? actions.shown : null}
                     party={session.quest?.party}
                     hits={hitsNeeded(session.quest, card)}
+                    crawl={crawl}
                   />
                 )}
               </span>
@@ -278,24 +297,31 @@ export function Play({
                 Lost
               </button>
               {items.map((item) => (
-                <LootPlaque key={item} item={item} onUse={onSpend} />
+                <LootPlaque
+                  key={item}
+                  item={item}
+                  onUse={onSpend}
+                  theme={crawl}
+                />
               ))}
             </div>
           )}
           {offers && (
             <div
               ref={choiceRef}
-              className={`card-choice offers plaques-${offers.length}`}
+              className={`card-choice offers plaques-${plaques.length}`}
               role="group"
               aria-label="Your choice"
             >
-              {offers.map((offer, i) => (
+              {plaques.map(({ offer, i, branch }) => (
                 <OfferPlaque
-                  key={i}
+                  key={`${i}-${branch?.index ?? ""}`}
                   offer={offer}
                   index={i}
                   can={canTakeOffer(session, i)}
                   onTake={onOffer}
+                  theme={crawl}
+                  branch={branch}
                 />
               ))}
             </div>
@@ -308,7 +334,12 @@ export function Play({
               aria-label="Satchel"
             >
               {items.map((item) => (
-                <LootPlaque key={item} item={item} onUse={onSpend} />
+                <LootPlaque
+                  key={item}
+                  item={item}
+                  onUse={onSpend}
+                  theme={crawl}
+                />
               ))}
             </div>
           )}

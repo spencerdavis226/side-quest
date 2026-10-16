@@ -1,5 +1,6 @@
 import { cards, packs } from "../../src/content/catalog";
 import { questStages } from "../../src/game/engine";
+import { workshopSession } from "../../src/workshop/session";
 
 /**
  * The cards that can actually break the shared card template: every card
@@ -37,3 +38,8 @@ export const stressCards = [
 /** The packs whose marks a card carries (a quest finale belongs by prefix). */
 export const packsOf = (id: string) =>
   packs.filter((p) => p.cardIds.includes(id) || id.startsWith(`${p.id}.`));
+
+/** The marks a card's preview shows: a crawl (Pub Crawl, Pokémon League)
+ * plays one pack, and its card foot carries seals instead of marks. */
+export const marksOf = (id: string) =>
+  workshopSession("stress", id).session.quest?.party ? [] : packsOf(id);

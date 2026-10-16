@@ -39,7 +39,7 @@ import { Completion } from "./screens/Completion";
 import { GameDialogs, type DialogName } from "./screens/GameDialogs";
 import { useWakeLock } from "./app/wakeLock";
 import { PortraitGate } from "./components/PortraitGate";
-import { StageBanner } from "./components/StageBanner";
+import { EvolutionBanner, StageBanner } from "./components/StageBanner";
 import { PartyPulse } from "./components/Crawl";
 import "./style.css";
 import "./presentation/theme.css";
@@ -218,6 +218,7 @@ function App() {
             count={display.discarded}
             record={questRecord(display)}
             league={display.quest?.packId === "pokemon"}
+            packId={display.quest?.packId}
             mode={
               packs.find((p) => p.id === display.quest?.packId)?.quest?.mode
             }
@@ -237,11 +238,12 @@ function App() {
               onChoose={(option) => controller.choose(option)}
               onSettle={(won) => controller.settle(won)}
               onSpend={(item) => controller.spend(item)}
-              onOffer={(index) => controller.offer(index)}
+              onOffer={(index, branch) => controller.offer(index, branch)}
               onRevealRoll={() => controller.revealRoll()}
               onFinish={finish}
             />
             <StageBanner session={display} />
+            <EvolutionBanner session={display} />
           </>
         )}
         {!active && !motion && updateReady && (

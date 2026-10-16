@@ -345,6 +345,12 @@ describe("choice cards", () => {
       ...[4, 8, 9, 23, 62].map(
         (row) => `house.sheet-0${String(row).padStart(2, "0")}`,
       ),
+      // Pokémon League finds: walk away, or roll for the item.
+      "pokemon.route-mystery-egg",
+      "pokemon.route-slots",
+      "pokemon.route-silph-scope",
+      "pokemon.route-missingno",
+      "pokemon.route-mew-truck",
       "cabin.mint-chev",
       "cabin.fourth-meal",
       // Sheet row 42, a CABIIN space, now plays in Cabin weekend.

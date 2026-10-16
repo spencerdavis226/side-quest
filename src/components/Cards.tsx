@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { CardDefinition, DiceRoll, PartyState } from "../game/types";
 import { CardStakes } from "./Crawl";
+import type { CrawlTheme } from "./crawlTheme";
 import { diceResultText } from "../presentation/dice/result-text";
 import { rollWins } from "../game/dice";
 import { CardPackMarks } from "./PackMarks";
@@ -13,6 +14,7 @@ export function CardFace({
   shown = null,
   party,
   hits = 0,
+  crawl,
 }: {
   card: CardDefinition;
   packIds?: readonly string[];
@@ -23,6 +25,8 @@ export function CardFace({
   party?: PartyState;
   /** Swings a crawl boss or ambush needs (`hitsNeeded`); 0 for others. */
   hits?: number;
+  /** The crawl's words and marks, with `party`. */
+  crawl?: CrawlTheme;
 }) {
   const gesture = useRef<{
     pointerId: number;
@@ -243,7 +247,9 @@ export function CardFace({
           )}
         </div>
         <div className="card-footer">
-          {party && <CardStakes card={card} party={party} hits={hits} />}
+          {party && crawl && (
+            <CardStakes card={card} party={party} hits={hits} theme={crawl} />
+          )}
           {/* A crawl plays one pack: its seals take the foot instead. */}
           {!party && <CardPackMarks cardId={card.id} packIds={packIds} />}
         </div>

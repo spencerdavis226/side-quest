@@ -153,11 +153,12 @@ export class PresentationController {
     this.transition(next, "discard", session);
     this.effect("discard");
   }
-  /** Take a merchant's ware or a fork's door; the card goes aside. */
-  offer(index: number) {
+  /** Take a merchant's ware or a fork's door (or evolve the starter into
+   * the `branch` picked); the card goes aside. */
+  offer(index: number, branch?: number) {
     const { session, motion } = this.state;
     if (!session || motion || !awaitingOffer(session)) return;
-    const next = takeOffer(session, index, this.random);
+    const next = takeOffer(session, index, this.random, branch);
     if (next === session) return;
     this.persist(next);
     this.transition(next, "discard", session);

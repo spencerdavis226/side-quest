@@ -82,6 +82,10 @@ export interface CardDefinition {
    * `evolve` moves the run to the next form, whose effect replaces the one
    * before it (`party.form`). */
   evolves?: Evolution[];
+  /** The `evolves` forms are alternatives, not a line: the first evolution
+   * picks one of them (Eevee: Vaporeon, Jolteon or Flareon), and that is
+   * its last. */
+  branches?: true;
 }
 /** One later form of a starter: its name, what it does (shown in the team
  * dialog) and the omen effect it holds while it is the current form. */

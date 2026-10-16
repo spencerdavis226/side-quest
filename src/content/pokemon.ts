@@ -4,8 +4,13 @@ import {
   champions,
   eliteFourMembers,
   gymLeaders,
+  gymTiers,
   legendaries,
 } from "./pokemon-league";
+import { hideoutCards, hideouts } from "./league/hideouts";
+import { ids } from "./league/journey";
+import { rivals, routeCards, routes, victory } from "./league/routes";
+import { starters } from "./league/starters";
 
 // Pokémon night: every playable moment from the three supplied board sheets
 // (Kanto, Johto, Hoenn), morphed from board spaces into shared-deck cards.
@@ -19,12 +24,14 @@ import {
 // reference/pokemon_board_spaces.json; never rewrite it to match this file.
 // Keep IDs stable: active sessions snapshot their text and order.
 //
-// Pokémon League mode (`pokemon-league.ts`): the 24 gym leaders play only in
-// that mode; each earns the table a badge, and the eighth badge starts the
-// gauntlet (a Legendary, four of the Elite Four, the Champion). Beating the
-// Champion ends the game. Eight leaders are spread through the
-// first 40 draws (`paceQuest` in the engine), so a run lasts about 30 to 40
-// cards. The regular deck below has no gym leaders.
+// Pokémon League (since 2026-10-16, owner): a crawl on the Pub Crawl engine
+// that plays this pack alone. A starter opens the run (`league/starters.ts`),
+// then eight routes of four cards (`league/routes.ts`), each closed by a gym
+// leader from that gym's tier (`pokemon-league.ts`: tier k holds every
+// region's kth gym), a villain hideout after the fourth badge
+// (`league/hideouts.ts`, one of nine teams), Victory Road, the rival, a
+// Legendary, four of the Elite Four and a Champion. The table shares Team HP.
+// The regular deck below plays only in the plain modes.
 const card = cardFactory("pokemon");
 
 const deck: CardDefinition[] = [
@@ -880,7 +887,40 @@ export const pokemonCards: CardDefinition[] = [
   ...legendaries,
   ...eliteFourMembers,
   ...champions,
+  ...starters,
+  ...routeCards,
+  ...hideoutCards,
 ];
+
+/** Team HP at the start of a run, before the starter. */
+const TEAM_HP = 17;
+
+// Eight routes, each closed by its gym; the hideout comes after the fourth.
+const journey = routes.flatMap((route, k) => [
+  {
+    label: route.label,
+    intro: route.intro,
+    pick: 4,
+    cardIds: ids(route.cards),
+    elite: ids(route.aces),
+  },
+  {
+    label: `Gym ${k + 1}`,
+    intro: `Gym ${k + 1}`,
+    pick: 1,
+    cardIds: ids(gymTiers[k]),
+  },
+  ...(k === 3
+    ? [
+        {
+          oneOf: hideouts.map((h) => [
+            { label: h.label, intro: h.intro, pick: 2, cardIds: ids(h.grunts) },
+            { label: `${h.label} boss`, pick: 1, cardIds: [h.boss.id] },
+          ]),
+        },
+      ]
+    : []),
+]);
 
 export const pokemonPack: PackDefinition = {
   version: 1,
@@ -893,31 +933,52 @@ export const pokemonPack: PackDefinition = {
   quest: {
     mode: "Pokémon League",
     mark: "art/packs/league.svg",
-    summary: "Earn 8 badges",
-    label: "Badges",
-    goal: 8,
-    length: 40,
-    cardIds: gymLeaders.map((card) => card.id),
-    // After the eighth badge: a Legendary, four of the Elite Four, then the
-    // Champion, picked at random when the game starts.
+    summary: "8 badges, then the League",
+    label: "Team HP",
+    goal: 0,
+    length: 1,
+    cardIds: [],
+    party: { hearts: TEAM_HP },
     finale: [
+      {
+        label: "Your starter",
+        intro: "A starter chooses you",
+        pick: 1,
+        cardIds: ids(starters),
+      },
+      ...journey,
+      {
+        label: victory.label,
+        intro: victory.intro,
+        pick: 2,
+        cardIds: ids(victory.cards),
+        elite: ids(victory.aces),
+      },
+      // The rival waits at the League's door, so the stages after it read
+      // "Pokémon League".
+      {
+        label: "Pokémon League",
+        intro: "Your rival blocks the way",
+        pick: 1,
+        cardIds: ids(rivals),
+      },
       {
         label: "Legendary",
         intro: "A Legendary appears",
         pick: 1,
-        cardIds: legendaries.map((c) => c.id),
+        cardIds: ids(legendaries),
       },
       {
         label: "Elite Four",
         intro: "The Elite Four await",
         pick: 4,
-        cardIds: eliteFourMembers.map((c) => c.id),
+        cardIds: ids(eliteFourMembers),
       },
       {
         label: "Champion",
         intro: "The Champion awaits",
         pick: 1,
-        cardIds: champions.map((c) => c.id),
+        cardIds: ids(champions),
       },
     ],
   },

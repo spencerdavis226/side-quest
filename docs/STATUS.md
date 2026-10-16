@@ -1,6 +1,81 @@
 # Current state and implementation plan
 
-Updated 2026-10-15. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
+Updated 2026-10-16. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
+
+## Pokémon League journey (2026-10-16, owner request; merged to `main` and deployed)
+
+**Owner request.** The dungeon crawl "is drastically more exciting" than Pokémon League. They asked for more leaders, Elite Four, Champions and Legendaries from many generations, plus simple new mechanics, and for the League to deal Pokémon cards only.
+
+**Owner decisions:**
+- Rebuild the League as a journey on the crawl engine.
+- Gyms are random, not in canonical order.
+- All nine regions.
+- Pokémon cards only.
+- Starters can evolve.
+- A run of about 60 draws.
+- The budget is changed (below).
+
+**Now.** The League is a crawl that plays its pack alone, with Team HP 17.
+- **Starter.** The run opens on 1 of 17 starters. Each is an omen with a trade-off.
+- **Routes and gyms.** Then come eight routes, each 4 cards drawn from 15. Each route is closed by a gym. Gym k is 1 of 9 leaders: every region's kth gym, so the order is random but difficulty still ramps up.
+- **Hideout.** After the fourth gym the run goes through one of 9 villain hideouts: 2 grunts, then a boss beaten twice.
+- **The end.** Then Victory Road, the rival (beaten twice), a Legendary (1 of 30, 2 hits), 4 of 36 Elite Four, and a Champion (1 of 13, 3 hits).
+- **Route cards:**
+  - wild Pokémon
+  - trainers (dice, or Won/Lost)
+  - hazards
+  - catches: a drink for a ball, and HP back
+  - items and risky finds
+  - a Pokémon Center (+2 HP)
+  - a Poké Mart
+  - a crossroads whose loud path deals one of the route's 2 Ace Trainers
+- **Starter evolution.** Five routes carry an evolution card. "Evolve · drink 3" moves the starter to its next form, whose effect replaces the last; "Press B" gives one HP. Pikachu refuses to evolve.
+- **Eevee branches** (owner follow-up). Its Evolve plaque splits into Vaporeon, Jolteon and Flareon. The table picks one, and that is Eevee's only evolution (`CardDefinition.branches`; `takeOffer`'s `branch`).
+- **Badges.** Badges fill a row in the team dialog, and a pearl banner announces each evolution.
+- **Cards.** 356 League-only cards; the catalog is 1,333. The 120 plain Pokémon cards are unchanged and play only in Short, Long and Infinite.
+
+**Engine.** All new fields are optional, so schema v2 is unchanged.
+- `CardDefinition.evolves` and `branches`, `Offer.evolve`, `PartyState.form`, and `takeOffer`'s `branch`.
+- `omenEffect` reads the current form, and `omenForm` describes it.
+- `questRecord` gains `form` and `badges`.
+- `parseSession` validates `form`.
+- Old meter-mode League saves still load and play to their end; that engine path stays.
+
+**UI.**
+- `crawlTheme.ts` gives each pack its words and marks: Team HP as Poké Balls, the Bag, Potion, Protect, X Attack, Escape Rope, Poisoned, Confused, Whited out, Hall of Fame. Icons are vendored in `public/art/league/`, with an egg for the starter.
+- `EvolutionBanner`, the evolution line and badge row in the team dialog, and an evolve plaque that says what it does.
+- The setup screen counts gyms ("17 HP · 8 gyms").
+
+**Budget (owner, 2026-10-16).** `check-budget.ts` now caps each lazy chunk at 200 KiB gzip instead of their sum: a game fetches only the packs it plays. The sum is still reported, and so is the largest chunk.
+- Totals now: 212.7 KiB lazy in all; the largest chunk is the dice library at 144 KiB.
+- The Pokémon chunk is 30.4 KiB.
+- Runtime is 3666 KiB of 4 MiB.
+
+**Balance.**
+- Tuning constants live in `league/journey.ts` (routes, hideouts, rival) and `league/shared.ts` (gyms, gauntlet).
+- Some old gauntlet cards could not be won as multi-hit bosses (Mewtwo, Lugia and Deoxys at 5%, Lance 10%, the Eon duo 17%, Blue 20%), so their winning bands were widened. The jokes stay.
+- **Harness.** `tests/league.test.ts` plays 4,000 runs:
+  - won: 23.1%
+  - by starter: Piplup and Treecko 14% to Mudkip 43% (Eevee 25%, picking forms at random)
+  - by hideout: 21% to 27%
+  - a won run takes 68 draws (10th to 90th percentile: 64 to 73)
+  - evolution: 74% of runs evolve at least once, and 37% reach the final form
+- **Length.** About half the bosses have no dice: the harness settles their Won/Lost plaques at 55%. So the run length bottoms out near 68 draws with four route cards per gym. The owner asked for "60 or so", and the harness holds 60 to 70.
+
+**Tests.**
+- `npm test`: 196 passed.
+- Lint and typecheck: clean.
+- Build: passed.
+- `tests/browser/quest.spec.ts` is rewritten for the journey: setup, starter, evolution, Press B, gym and badges, whiteout, Hall of Fame, face-down deal, the Ancient Mew pair, and every League card fitting at 375×667.
+- `quest` and `crawl` specs in Chromium: all passed except one crawl test that failed on its first attempt and passed on retry. In both runs it was the first test against a cold preview server.
+- `@release` suite in Chromium and WebKit: 34 passed each (the Eevee test after its banner fix). `npm run test:workshop`: 26 passed.
+
+**Not done or not verified:**
+- A physical device (new `docs/DEVICE_CHECKLIST.md` item).
+- The full E2E suite and workshop sweeps.
+- Route cards do not join the plain deck.
+
+**Next.** Play a real League run at the table and tune starters, HP and route odds from what the table feels.
 
 ## Pub Crawl replayability (2026-10-15, owner request; merged to `main` and deployed)
 

@@ -308,6 +308,17 @@ export function questRecord(s: SessionState) {
     party: q.party,
     /** Tonight's omen card, once put aside, and the satchel's size. */
     omen: q.party?.omen ? finaleCard(q, q.party.omen) : undefined,
+    /** The omen as it stands now: a starter's current form and its line. */
+    form: omenForm(q),
+    /** Pokémon League badges: the quest-tagged bosses put aside, of how
+     * many stages deal one. */
+    badges: {
+      earned: stages
+        .flatMap((st) => st.cards)
+        .filter((c) => c.quest === q.packId).length,
+      of: q.stages.filter((st) => st.cards.some((c) => c.quest === q.packId))
+        .length,
+    },
     satchel: satchelSize(q),
   };
 }
@@ -336,24 +347,38 @@ export function omenForm(quest: QuestState | undefined) {
   const card = id ? finaleCard(quest, id) : undefined;
   if (!card) return undefined;
   const form = quest?.party?.form ?? 0;
-  const now = form ? card.evolves?.[form - 1] : undefined;
+  const forms = card.evolves ?? [];
+  const now = form ? forms[form - 1] : undefined;
+  // A branching starter evolves once, into the form the table picks.
+  const branching = !!card.branches;
+  const canEvolve = branching
+    ? form === 0 && forms.length > 0
+    : form < forms.length;
   return {
     card,
     form,
     title: now?.title ?? card.title,
     rules: now?.rules ?? card.rules,
-    line: [card.title, ...(card.evolves ?? []).map((e) => e.title)],
-    canEvolve: form < (card.evolves?.length ?? 0),
+    line: branching
+      ? [card.title, now ? now.title : forms.map((e) => e.title).join(" / ")]
+      : [card.title, ...forms.map((e) => e.title)],
+    canEvolve,
+    /** The forms the table picks from, while a branching starter can
+     * still evolve. */
+    branches: branching && canEvolve ? forms.map((e) => e.title) : null,
+    /** How many later forms the card has. */
+    forms: forms.length,
   };
 }
 /** The starter's next form: its effect replaces the current one. The change
  * in hearts moves the maximum and the hearts left (never below one), the new
  * form's items join the satchel, and a smaller satchel drops its newest. */
-function evolve(party: PartyState, quest: QuestState): PartyState {
+function evolve(party: PartyState, quest: QuestState, branch = 0): PartyState {
   const now = omenForm(quest);
   if (!now?.canEvolve) return party;
+  const target = now.branches ? branch : now.form;
   const before = omenEffect(quest) ?? {};
-  const after = now.card.evolves![now.form].omen;
+  const after = now.card.evolves![target].omen;
   const delta = (after.hearts ?? 0) - (before.hearts ?? 0);
   const max = Math.max(1, party.max + delta);
   return {
@@ -361,7 +386,7 @@ function evolve(party: PartyState, quest: QuestState): PartyState {
     max,
     hearts: Math.min(max, Math.max(1, party.hearts + delta)),
     loot: [...party.loot, ...(after.loot ?? [])].slice(0, after.satchel ?? 3),
-    form: now.form + 1,
+    form: target + 1,
   };
 }
 /** How many items the satchel holds. */
@@ -429,18 +454,27 @@ export function canTakeOffer(s: SessionState, index: number): boolean {
     (!offer.evolve || !!omenForm(s.quest)?.canEvolve)
   );
 }
-/** Take a merchant's ware or a fork's door, and put the card aside. */
+/** Take a merchant's ware or a fork's door, and put the card aside. An
+ * evolution of a branching starter takes `branch`, the form picked. */
 export function takeOffer(
   s: SessionState,
   index: number,
   random: Random = Math.random,
+  branch = 0,
 ): SessionState {
   if (!canTakeOffer(s, index)) return s;
   const q = s.quest!;
   const offer = currentCard(s).offers![index];
+  const branches = omenForm(q)?.branches;
+  if (
+    offer.evolve &&
+    branches &&
+    !(Number.isSafeInteger(branch) && branch >= 0 && branch < branches.length)
+  )
+    return s;
   let party = { ...q.party! };
   if (offer.cost) party.hearts -= offer.cost;
-  if (offer.evolve) party = evolve(party, q);
+  if (offer.evolve) party = evolve(party, q, branch);
   // Healing and the satchel follow the form the starter is now.
   const now = { ...q, party };
   if (offer.heal)

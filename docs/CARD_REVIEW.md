@@ -233,7 +233,7 @@ the Review column is intentionally blank so you can mark it up.
 
 ## Pokémon night (`pokemon`)
 
-140 cards · 21 sip · 24 group · 5 category · 65 challenge · 25 rule · 36 dice
+476 cards · 44 sip · 47 group · 5 category · 338 challenge · 42 rule · 248 dice
 
 | Review | Title | ID | Cat | Rules | Dice, secret or timer |
 | --- | --- | --- | --- | --- | --- |
@@ -258,6 +258,29 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Jigglypuff | `pokemon.jigglypuff` | sip | Jigglypuff used Sing! Everyone else fell asleep. Take another card now. |  |
 | ☐ | Shroomish | `pokemon.shroomish` | sip | Shroomish used Leech Seed! Take a drink from somebody else's cup. |  |
 | ☐ | Koffing | `pokemon.koffing` | sip | Koffing used Haze! If there's anything nearby to smoke, smoke it to avoid 2 drinks. |  |
+| ☐ | Caterpie | `pokemon.route-caterpie` | sip | A Caterpie is just sitting there being a little guy. Will the table catch it? |  |
+| ☐ | Potion on the Ground | `pokemon.route-potion-ground` | sip | Someone dropped a Potion in the grass. Finders keepers. Everyone drinks 1 to celebrate. |  |
+| ☐ | Viridian Mart | `pokemon.route-viridian-mart` | sip | The clerk won't sell you anything until you deliver Oak's parcel. Fine. Here's the parcel. |  |
+| ☐ | Clefairy | `pokemon.route-clefairy` | sip | A Clefairy is dancing under the moon. It's beautiful. Wipe a tear and decide. |  |
+| ☐ | Pewter Mart | `pokemon.route-pewter-mart` | sip | The Pewter Mart only sells rocks, Potions and something called an Escape Rope. |  |
+| ☐ | Shiny Rock | `pokemon.route-moon-stone` | sip | You find a shiny rock and decide it's an X Attack now. The drawer gives 1. |  |
+| ☐ | Abra | `pokemon.route-abra` | sip | An Abra is asleep. It will teleport the second you move. Throw now? |  |
+| ☐ | Cerulean Mart | `pokemon.route-cerulean-mart` | sip | The bike shop wants a million for a bike. The Mart next door is reasonable. |  |
+| ☐ | Hidden Item | `pokemon.route-hidden-item` | sip | The Itemfinder beeps at a bush. Somebody kick it. The drawer gives 1. |  |
+| ☐ | Lapras | `pokemon.route-lapras` | sip | A man in Silph Co. gives you a Lapras for free. Don't ask why. Take it? |  |
+| ☐ | Celadon Department | `pokemon.route-celadon-dept` | sip | Five floors of shopping and a rooftop vending machine. The clerk is drunk. |  |
+| ☐ | Chansey | `pokemon.route-chansey` | sip | A Chansey in the Safari Zone. It's carrying an egg. It runs if you breathe. |  |
+| ☐ | Fuchsia Mart | `pokemon.route-fuchsia-mart` | sip | A Mart near the Safari Zone. Everything costs more because tourists. |  |
+| ☐ | Secret House | `pokemon.route-surf-hm` | sip | You find the Safari Zone's secret house. A man gives you something for no reason. |  |
+| ☐ | Dratini | `pokemon.route-dratini` | sip | A Dratini in the Safari Zone's deepest pond. It's worth every drink. |  |
+| ☐ | Saffron Mart | `pokemon.route-saffron-mart` | sip | A Mart in Silph's lobby, guarded by a Rocket who also works the register. |  |
+| ☐ | Silph Gift | `pokemon.route-silph-gift` | sip | The Silph Co. president gives you a gift for saving the building. The drawer gives 2. |  |
+| ☐ | Gift Eevee | `pokemon.route-eevee-gift` | sip | A man in a mansion gives you an Eevee and doesn't explain. Take it. |  |
+| ☐ | Cinnabar Mart | `pokemon.route-cinnabar-mart` | sip | The last Mart before a burned-down mansion. Prices are scorched. |  |
+| ☐ | Sleeping Snorlax | `pokemon.route-snorlax-catch` | sip | A Snorlax asleep on the road. It's huge. It's yours if you can carry it. |  |
+| ☐ | Last Mart | `pokemon.route-last-mart` | sip | The last Mart before the League. Everything is Full Restores and despair. |  |
+| ☐ | Max Revive | `pokemon.route-max-revive` | sip | A Max Revive in a hidden alcove. The drawer gives 2. |  |
+| ☐ | Indigo Mart | `pokemon.route-indigo-mart` | sip | The Indigo Plateau Mart. Last chance, highest prices. |  |
 | ☐ | Beedrill | `pokemon.beedrill` | group | Beedrill used Twinneedle! Pick two players. Both drink 2. |  |
 | ☐ | Gloom | `pokemon.gloom` | group | Gloom used Sludge Bomb! You and the two players beside you drink 4. |  |
 | ☐ | Meowth | `pokemon.meowth` | group | Meowth used Pay Day! Everyone but you drinks 1. |  |
@@ -282,6 +305,29 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Luvdisc | `pokemon.luvdisc` | group | Luvdisc used Splash! It's super effective: everyone finishes their drinks. |  |
 | ☐ | Pound | `pokemon.pound` | group | Jigglypuff used Pound! Everyone pounds the table. Last to pound drinks 2. |  |
 | ☐ | Battle of the Sexes | `pokemon.battle-of-sexes` | group | Your side drinks 2: guys if you're a guy, girls if you're a girl. The other side gives 1 each. |  |
+| ☐ | Viridian Center | `pokemon.route-viridian-center` | group | Nurse Joy takes your team and gives it back in five seconds. Everyone toasts Nurse Joy. |  |
+| ☐ | Two Paths | `pokemon.route-two-paths` | group | A short path through tall grass, or a long one past a kid yelling about his Pokémon. |  |
+| ☐ | Rare Candy | `pokemon.route-rare-candy-1` | group | A Rare Candy on the ground, a little linty. Your starter is staring at it. |  |
+| ☐ | Pewter Center | `pokemon.route-pewter-center` | group | The Pokémon Center smells like antiseptic and Brock's cologne. Everyone breathes in. |  |
+| ☐ | Mt. Moon Fork | `pokemon.route-mt-moon-fork` | group | Through the cave, or around it past a Super Nerd guarding a fossil. |  |
+| ☐ | What? It's Evolving! | `pokemon.route-evolving-1` | group | Your starter starts glowing in the middle of the road. Everyone hum the evolution music. |  |
+| ☐ | Cerulean Center | `pokemon.route-cerulean-center` | group | Nurse Joy. Again. Same face, different town. Everyone points at the drawer and asks who she is. |  |
+| ☐ | Nugget Bridge | `pokemon.route-nugget-bridge` | group | Cross the bridge with five trainers on it, or swim under it. |  |
+| ☐ | Evolution Stone | `pokemon.route-thunder-stone` | group | A shop sells evolution stones for the price of your dignity. Your starter wants one. |  |
+| ☐ | Celadon Center | `pokemon.route-celadon-center` | group | Celadon's Pokémon Center has a Game Corner next door. Everyone resists. Toast to resisting. |  |
+| ☐ | Game Corner | `pokemon.route-game-corner` | group | Walk past the Game Corner, or go in and find the poster behind the counter. |  |
+| ☐ | Fuchsia Center | `pokemon.route-fuchsia-center` | group | Fuchsia's Center is next to a zoo with no fences. Everyone makes an animal noise and drinks 1. |  |
+| ☐ | Cycling Road | `pokemon.route-cycling-road` | group | Walk the long way, or bike down Cycling Road where the gang hangs out. |  |
+| ☐ | Rare Candy Stash | `pokemon.route-rare-candy-2` | group | You find a Rare Candy behind a vending machine. Your starter is drooling. |  |
+| ☐ | Saffron Center | `pokemon.route-saffron-center` | group | Saffron's Center. A Psychic heals you with her mind. Everyone thinks a nice thought and drinks 1. |  |
+| ☐ | The Fighting Dojo | `pokemon.route-dojo` | group | Walk past the Fighting Dojo, or kick the door in and challenge the Karate King. |  |
+| ☐ | It's Evolving Again! | `pokemon.route-evolving-2` | group | Your starter is glowing mid-battle. Everyone hums the music again, louder. |  |
+| ☐ | Cinnabar Center | `pokemon.route-cinnabar-center` | group | A Pokémon Center on a volcano. Nurse Joy is sweating. Everyone wipes their brow. |  |
+| ☐ | Pokémon Mansion | `pokemon.route-mansion` | group | Go around the burned mansion, or read the diary inside that mentions Mew. |  |
+| ☐ | Last Center | `pokemon.route-last-center` | group | The last Pokémon Center before the League. Nurse Joy means it this time. Everyone toasts her. |  |
+| ☐ | The Badge Gate | `pokemon.route-ace-gate` | group | The gate guard checks your badges. Go quietly, or show off to the trainers waiting past it. |  |
+| ☐ | Indigo Plateau | `pokemon.route-indigo-center` | group | The Pokémon Center at the top of Victory Road. Nobody talks. Everyone drinks 1 in silence. |  |
+| ☐ | Two Ladders | `pokemon.route-victory-fork` | group | Two ladders. One leads up. The other leads to the Ace Trainers nobody warned you about. |  |
 | ☐ | Pokédex | `pokemon.pokedex` | category | Going clockwise, name Pokémon in Pokédex order. First to repeat or skip a number drinks 2. |  |
 | ☐ | Type Matchup | `pokemon.type-matchup` | category | Name a type. Going clockwise, name a Pokémon of that type. Repeat or blank: drink 2. |  |
 | ☐ | Who's That? | `pokemon.whos-that` | category | Describe a Pokémon without naming it. First to guess gives 2. Nobody guesses? Drink 2. |  |
@@ -332,15 +378,109 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Grimer | `pokemon.grimer` | challenge | Grimer used Sludge Bomb! Have every player combine their drinks in a glass, then finish it! |  |
 | ☐ | Pelipper | `pokemon.pelipper` | challenge | Pelipper used Stockpile! Mix a splash of everyone's drink. Roll d6. Even: swallow it. Odd: choose who drinks it. | 1d6 — 1-5: Spit Up! Choose who drinks it. 2-6: Swallow it. |
 | ☐ | Fiery Path | `pokemon.fiery-path` | challenge | Fiery Path! Take off an article of clothing. Drink 4 to stay hydrated. |  |
+| ☐ | Brock | `pokemon.gym-brock` | challenge | Brock is busy hitting on Nurse Joy. Hit on someone here for him, then roll d20. | 1d20 — 1-12: Onix flattens you. Drink 5. 13-19: You chip through. Drink 2. 20-20: Critical hit. Give 6. |
+| ☐ | Misty | `pokemon.gym-misty` | challenge | Misty's Cascade. Chug for 10 seconds without stopping. Stop early: drink 4 more. |  |
+| ☐ | Lt. Surge | `pokemon.gym-lt-surge` | challenge | Lt. Surge wants to see your service record. Salute him and roll 2d6. | 2d6 — 2-7: Shocked. Drink 4. 8-12: You ground him. Give 4. |
+| ☐ | Erika | `pokemon.gym-erika` | challenge | Erika's Sleep Powder. Roll d6. Fall asleep and your eyes stay shut until your next turn. | 1d6 — 1-1: Asleep. Drink 3, eyes shut. 2-2: Asleep. Drink 4, eyes shut. 3-3: Asleep. Drink 5, eyes shut. 4-4: Asleep. Drink 6, eyes shut. 5-6: You shake it off. Give 4. |
+| ☐ | Koga | `pokemon.gym-koga` | challenge | Ninja test: within 30 seconds, sip someone else's drink without them noticing. Caught: drink 5. |  |
+| ☐ | Sabrina | `pokemon.gym-sabrina` | challenge | Answer 3 yes-or-no questions from the table. Any pause or lie: drink 3. |  |
+| ☐ | Blaine | `pokemon.gym-blaine` | challenge | Quiz time! The table asks you 3 trivia questions. Get 2 right to win. Each miss: drink 3. |  |
+| ☐ | Giovanni | `pokemon.gym-giovanni` | challenge | The mob boss of Kanto runs a gym on the side. Kiss his ring, then roll d20. | 1d20 — 1-10: Team Rocket wins. Take a shot and drink 3. 11-19: You scrape by. Drink 4. 20-20: You beat the boss. Everyone else finishes their drink. |
+| ☐ | Falkner | `pokemon.gym-falkner` | challenge | Drink 3 standing on one foot. Touch down before you finish and you lose: drink 3 more. |  |
+| ☐ | Bugsy | `pokemon.gym-bugsy` | challenge | Bugsy's bugs got in your pants. Roll 3d6 and check your shorts. | 3d6 — 3-3: Bitten. Drink 2. 4-4: Bitten. Drink 2. 5-5: Bitten. Drink 3. 6-6: Bitten. Drink 3. 7-7: Bitten. Drink 4. 8-8: Bitten. Drink 4. 9-9: Bitten. Drink 5. 10-10: Bitten. Drink 5. 11-18: You squash them. Give 4. |
+| ☐ | Whitney | `pokemon.gym-whitney` | challenge | Whitney's Miltank used Rollout. It gets worse every hit. Roll d6. | 1d6 — 1-1: Rollout hits once. Drink 1. 2-2: Rollout hits twice. Drink 3. 3-3: Three hits. Drink 6. 4-4: Four hits. Drink 10. 5-6: Whitney bursts into tears. Give 5. |
+| ☐ | Morty | `pokemon.gym-morty` | challenge | Morty's Gastly stares you down. Staring contest with the player opposite. Blink first: drink 4. |  |
+| ☐ | Chuck | `pokemon.gym-chuck` | challenge | Arm-wrestle the strongest player. Loser drinks 6. If they refuse, they drink 6. |  |
+| ☐ | Jasmine | `pokemon.gym-jasmine` | challenge | Hold a full drink at arm's length for 30 seconds. Lower it: finish it. Make it: give 4. |  |
+| ☐ | Pryce | `pokemon.gym-pryce` | challenge | Pryce's ice bath. Chug a full glass of ice water without stopping. Stop for air: drink 5. |  |
+| ☐ | Clair | `pokemon.gym-clair` | challenge | Clair says you're too weak for dragons. Tell her she's right, then roll 2d6. | 2d6 — 2-7: Dragonbreath. Drink {total}. 8-12: You tame the dragon. Give {total}. |
+| ☐ | Roxanne | `pokemon.gym-roxanne` | challenge | Name 8 Pokémon types in 10 seconds. Drink 2 for each one you miss. |  |
+| ☐ | Brawly | `pokemon.gym-brawly` | challenge | Ten push-ups in 20 seconds. Fall short: drink 6. |  |
+| ☐ | Wattson | `pokemon.gym-wattson` | challenge | Wahahaha! Wattson licks a battery and dares you to do the same. Roll 2d6. | 2d6 — 2-7: Shocked. Drink {total}. 8-12: You lick it first. Give 5. |
+| ☐ | Flannery | `pokemon.gym-flannery` | challenge | Flannery is new and nervous and set the gym on fire. Roll d6. | 1d6 — 1-4: Burned. Take a high-proof or spicy shot. 5-6: You douse her. Give a shot. |
+| ☐ | Norman | `pokemon.gym-norman` | challenge | Norman is your dad and he's disappointed. Make the table laugh within 30 seconds or drink 6. |  |
+| ☐ | Winona | `pokemon.gym-winona` | challenge | Drink 4 standing on a chair, flapping like a bird. Wobble off or spill: finish your drink. |  |
+| ☐ | Tate & Liza | `pokemon.gym-tate-liza` | challenge | Creepy twins. Pick a partner and speak in unison while you roll 2d6. | 2d6 — 2-7: They outmatch you. You both drink 5. 8-12: You hold them off. You both drink 2. |
+| ☐ | Wallace | `pokemon.gym-wallace` | challenge | Cross the room heel to toe, drink balanced on your head. Spill or wobble: finish it. |  |
+| ☐ | Roark | `pokemon.gym-roark` | challenge | Roark shines his miner's headlamp right in your eyes. Squint at him, then roll d20. | 1d20 — 1-1: Black lung. Finish your drink. 2-3: Cave-in. Drink 4. 4-20: You strike coal. Give 3. |
+| ☐ | Gardenia | `pokemon.gym-gardenia` | challenge | Gardenia fears ghosts. Tell her a ghost story in 20 seconds. Table votes not scary: drink 4. |  |
+| ☐ | Maylene | `pokemon.gym-maylene` | challenge | Maylene fights barefoot. Shoes off, then thumb-wrestle your left neighbor. Lose: drink 5. |  |
+| ☐ | Crasher Wake | `pokemon.gym-crasher-wake` | challenge | Crasher Wake is a luchador. Put on an imaginary mask, flex at the table, and roll d20. | 1d20 — 1-1: Piledriver. Finish your drink. 2-6: Body slam. Drink 5. 7-19: You pin him for three. Give 5. 20-20: You unmask him. Give a shot. |
+| ☐ | Fantina | `pokemon.gym-fantina` | challenge | Fantina wants ze dance. Dance 15 seconds with no music. Table votes not magnifique: drink 5. |  |
+| ☐ | Byron | `pokemon.gym-byron` | challenge | Byron is Roark's dad and louder about it. Shout your biggest flex at the table, then roll d20. | 1d20 — 1-1: Steel beam to the face. Finish your drink. 2-7: Iron Defense. Drink 5. 8-19: You dent the old man. Give 5. 20-20: You bend his steel. Everyone else drinks 3. |
+| ☐ | Candice | `pokemon.gym-candice` | challenge | Candice says focus! Hold an ice cube in your bare fist for 30 seconds. Drop it: drink 6. |  |
+| ☐ | Volkner | `pokemon.gym-volkner` | challenge | Volkner is so bored he blacked out the city. Bore the table with a fun fact, then roll d20. | 1d20 — 1-1: Blackout. Finish your drink in the dark. 2-8: He yawns at you. Drink 6. 9-19: You spark him up. Give 6. 20-20: He's finally interested. Everyone else drinks 4. |
+| ☐ | Cilan, Chili & Cress | `pokemon.gym-striaton-trio` | challenge | Waiters' test: recite everyone's drink in seat order. Each miss: drink 2. Two misses lose. |  |
+| ☐ | Lenora | `pokemon.gym-lenora` | challenge | Lenora runs a museum and you're the exhibit. Hold a statue pose while you roll d20. | 1d20 — 1-4: Retaliate. Drink 4. 5-19: You beat the curator. Give 4. 20-20: Masterpiece. Give 8. |
+| ☐ | Burgh | `pokemon.gym-burgh` | challenge | Burgh is an artist. Draw a bug on your left neighbor's arm. Table can't name it: drink 4. |  |
+| ☐ | Elesa | `pokemon.gym-elesa` | challenge | Elesa wants a runway walk. Strut to the door and back. The table scores you; under 7 of 10: drink 5. |  |
+| ☐ | Clay | `pokemon.gym-clay` | challenge | Clay is a cowboy with a mine and no patience. Tip your hat, partner, and roll d20. | 1d20 — 1-1: Buried in the mine. Finish your drink. 2-6: Earthquake. Drink 5. 7-20: You strike gold. Give 5. |
+| ☐ | Skyla | `pokemon.gym-skyla` | challenge | Skyla is your pilot. Arms out, make engine noises, then roll d20 for turbulence. | 1d20 — 1-1: Nosedive. Finish your drink. 2-7: Turbulence. Drink 5. 8-19: Smooth landing. Give 5. 20-20: Mile-high club. You and a partner give 5 each. |
+| ☐ | Brycen | `pokemon.gym-brycen` | challenge | Brycen was a movie star. Act out a movie; the table has 20 seconds to name it. They can't: drink 6. |  |
+| ☐ | Drayden | `pokemon.gym-drayden` | challenge | Drayden is the mayor, ancient, and owns a dragon. Make the table a campaign promise, then roll d20. | 1d20 — 1-1: Impeached. Finish your drink. 2-8: Voted out. Drink 6. 9-19: You win the election. Give 6. 20-20: Landslide. Everyone else drinks 5. |
+| ☐ | Viola | `pokemon.gym-viola` | challenge | Viola's photo shoot: hold a pose for 30 seconds while the table heckles. Laugh: drink 4. |  |
+| ☐ | Grant | `pokemon.gym-grant` | challenge | Grant makes you climb. Crawl under the table and out the other side, then roll d20. | 1d20 — 1-4: You fall off the wall. Drink 4. 5-19: You top out. Give 4. 20-20: Free solo. Give 8. |
+| ☐ | Korrina | `pokemon.gym-korrina` | challenge | Korrina's on roller skates. Spin around 5 times, then walk a straight line. Wobble: drink 5. |  |
+| ☐ | Ramos | `pokemon.gym-ramos` | challenge | Ramos is 90 and tougher than you. Talk like a grumpy grandpa, then roll d20. | 1d20 — 1-1: Rototilled. Finish your drink. 2-6: Leech Seed. Drink 5. 7-20: You prune the old man. Give 5. |
+| ☐ | Clemont | `pokemon.gym-clemont` | challenge | Clemont's invention is about to blow. Shout "The future is now, thanks to science!" and roll d20. | 1d20 — 1-1: Singed afro. Finish your drink. 2-6: It explodes. Drink 5. 7-19: It works for once. Give 5. 20-20: Science! Everyone else drinks 3. |
+| ☐ | Valerie | `pokemon.gym-valerie` | challenge | Valerie's orders: swap a piece of clothing with your right neighbor. Either refuses: both drink 6. |  |
+| ☐ | Olympia | `pokemon.gym-olympia` | challenge | Olympia has seen your future and it's bleak. Stare into her eyes, then roll d20. | 1d20 — 1-1: Doomed. Finish your drink. 2-7: As foretold. Drink 6. 8-19: You change fate. Give 6. 20-20: You foresaw her loss. Everyone else drinks 4. |
+| ☐ | Wulfric | `pokemon.gym-wulfric` | challenge | Wulfric loves a bear hug. Bear-hug three players while holding your breath. Breathe early: drink 7. |  |
+| ☐ | Ilima | `pokemon.gym-ilima` | challenge | Ilima is pretty and knows it. Compliment yourself for 10 seconds straight, then roll d20. | 1d20 — 1-3: Totem Gumshoos. Drink 4. 4-19: Trial cleared. Give 3. 20-20: Prettier than Ilima. Give 6. |
+| ☐ | Hala | `pokemon.gym-hala` | challenge | Hala wants a sumo match. Palm-push your right neighbor; first to move a foot loses. Lose: drink 5. |  |
+| ☐ | Lana | `pokemon.gym-lana` | challenge | Lana lies about everything. Tell two truths and a lie. The table spots the lie: drink 5. |  |
+| ☐ | Kiawe | `pokemon.gym-kiawe` | challenge | Kiawe's fire dance. Shirt off or hips going, the table picks. Then roll d20. | 1d20 — 1-1: Third-degree burns. Take a spicy shot. 2-6: Burned. Drink 5. 7-19: Totem Marowak falls. Give 5. 20-20: Inferno Overdrive. Give a shot. |
+| ☐ | Mallow | `pokemon.gym-mallow` | challenge | Mallow's cooking: pour a splash of three players' drinks into yours, then down it. Gag: drink 6. |  |
+| ☐ | Olivia | `pokemon.gym-olivia` | challenge | Olivia just got dumped again. Tell her about your worst breakup, then roll d20. | 1d20 — 1-1: She dates your ex. Finish your drink. 2-7: She cries on you. Drink 6. 8-20: You cheer her up. Give 5. |
+| ☐ | Nanu | `pokemon.gym-nanu` | challenge | Nanu's a cop who can't be bothered. Get anyone here to confess a crime in 30 seconds or drink 6. |  |
+| ☐ | Hapu | `pokemon.gym-hapu` | challenge | Hapu's Mudsdale stomps. Stomp your feet like a horse, then roll d20. | 1d20 — 1-1: Buried in mud. Finish your drink. 2-8: Trampled. Drink 7. 9-19: You ride her horse. Give 6. 20-20: Island Kahuna. Everyone else drinks 4. |
+| ☐ | Milo | `pokemon.gym-milo` | challenge | Milo herds Wooloo. Baa like a sheep for 20 seconds. Nobody laughs: drink 4. |  |
+| ☐ | Nessa | `pokemon.gym-nessa` | challenge | Nessa is a model and you are not. Pout for the camera, then roll d20. | 1d20 — 1-1: Gigantamax Drednaw. Finish your drink. 2-4: Drowned in looks. Drink 4. 5-20: You make the cover. Give 4. |
+| ☐ | Kabu | `pokemon.gym-kabu` | challenge | Kabu jogs every morning. Do ten jumping jacks, then roll d20. | 1d20 — 1-1: Fire Spin. Take a spicy shot. 2-5: Burnt out. Drink 5. 6-20: You outlast the old man. Give 5. |
+| ☐ | Bea | `pokemon.gym-bea` | challenge | Bea trains hard. Hold a plank for 30 seconds. Drop early: drink 6. |  |
+| ☐ | Opal | `pokemon.gym-opal` | challenge | Opal wants a pink successor. Name 5 pink things in 10 seconds. Miss one: drink 5. |  |
+| ☐ | Gordie | `pokemon.gym-gordie` | challenge | Gordie's mom runs the next gym and he won't shut up about it. Yell "MOM!" then roll d20. | 1d20 — 1-1: Gigantamax Coalossal. Finish your drink. 2-7: Stealth Rock. Drink 5. 8-19: Mama's boy goes down. Give 5. 20-20: You call his mom. Everyone else drinks 3. |
+| ☐ | Piers | `pokemon.gym-piers` | challenge | Piers is a punk. Scream a verse of any song like you mean it. Table votes not punk enough: drink 6. |  |
+| ☐ | Raihan | `pokemon.gym-raihan` | challenge | Raihan takes a selfie mid-battle. Pose for his phone, then roll d20. | 1d20 — 1-1: Posted and roasted. Finish your drink. 2-8: Sandstorm. Drink 6. 9-19: You trend. Give 6. 20-20: Most-liked post ever. Everyone else drinks 4. |
+| ☐ | Katy | `pokemon.gym-katy` | challenge | Katy baked you a cake and her bugs got in the batter. Take a big bite of nothing, then roll d20. | 1d20 — 1-1: You found a leg. Finish your drink. 2-3: Sticky Web. Drink 4. 4-20: Sugar crash for Katy. Give 3. |
+| ☐ | Brassius | `pokemon.gym-brassius` | challenge | Brassius demands art. Sculpt a Pokémon from a napkin in 20 seconds. Table can't name it: drink 4. |  |
+| ☐ | Iono | `pokemon.gym-iono` | challenge | Iono is streaming this. Say hi to chat in your best influencer voice, then roll d20. | 1d20 — 1-1: Banned from chat. Finish your drink. 2-5: Chat hates you. Drink 4. 6-19: You're trending. Give 4. 20-20: Top donor. Give 8. |
+| ☐ | Kofu | `pokemon.gym-kofu` | challenge | Kofu sells fish. Sell your drink to the table in 20 seconds. Nobody buys it: drink 5. |  |
+| ☐ | Larry | `pokemon.gym-larry` | challenge | Larry is a tired salaryman. Do your saddest desk-job sigh, then roll d20. | 1d20 — 1-1: Performance review. Finish your drink. 2-6: Overtime. Drink 5. 7-19: You clock out early. Give 5. 20-20: Promoted. Give a shot. |
+| ☐ | Ryme | `pokemon.gym-ryme` | challenge | Ryme is a rapper. Freestyle four bars about your left neighbor. Table votes trash: drink 6. |  |
+| ☐ | Tulip | `pokemon.gym-tulip` | challenge | Tulip does your makeup. Shut your eyes while your left neighbor finger-paints your face. Roll d20. | 1d20 — 1-1: Clown face. Finish your drink. 2-7: Hideous. Drink 6. 8-19: Gorgeous. Give 6. 20-20: Supermodel. Everyone else drinks 4. |
+| ☐ | Grusha | `pokemon.gym-grusha` | challenge | Grusha wrecked his knees snowboarding. Wall-sit for 30 seconds. Drop early: drink 7. |  |
 | ☐ | Articuno | `pokemon.legendary-articuno` | challenge | Articuno freezes the table. Everyone shivers dramatically while you roll d20. | 1d20 — 1-13: Frozen. Everyone drinks 3. 14-20: Caught! Give 8. |
-| ☐ | Zapdos | `pokemon.legendary-zapdos` | challenge | Zapdos used Thunder. Hold hands with both neighbors to ground it, then roll 2d6. | 2d6 — 2-8: Struck. You and both neighbors drink {total}. 9-12: Caught! Give {total}. |
+| ☐ | Zapdos | `pokemon.legendary-zapdos` | challenge | Zapdos used Thunder. Hold hands with both neighbors to ground it, then roll 2d6. | 2d6 — 2-7: Struck. You and both neighbors drink {total}. 8-12: Caught! Give {total}. |
 | ☐ | Moltres | `pokemon.legendary-moltres` | challenge | Moltres is on fire and so is your throat. Roll d20. | 1d20 — 1-12: Scorched. Take a high-proof shot. 13-20: Caught! Give a shot. |
-| ☐ | Mewtwo | `pokemon.legendary-mewtwo` | challenge | Mewtwo reads your mind and tells the table your worst thought. Only a 20 catches it. Roll d20. | 1d20 — 1-15: Overpowered. Finish your drink. 16-19: You hold on. Drink 4. 20-20: Caught! Everyone else finishes their drink. |
-| ☐ | Lugia | `pokemon.legendary-lugia` | challenge | Lugia floods the table. Roll d20 for how long everyone drinks. | 1d20 — 1-19: Everyone drinks for {total} seconds. 20-20: Caught! Everyone else drinks for 20 seconds. |
+| ☐ | Mewtwo | `pokemon.legendary-mewtwo` | challenge | Mewtwo reads your mind and tells the table your worst thought. Roll d20. | 1d20 — 1-7: Overpowered. Finish your drink. 8-19: You hold on. Give 4. 20-20: Caught! Everyone else finishes their drink. |
+| ☐ | Mew | `pokemon.legendary-mew` | challenge | Mew is invisible, pink and giggling at you. Shut your eyes, point at a player, then roll d20. | 1d20 — 1-7: It giggles off. You and whoever you pointed at drink 3. 8-19: Got it by the tail. Give 4. 20-20: It was under the truck. Give 8. |
+| ☐ | Lugia | `pokemon.legendary-lugia` | challenge | Lugia floods the table. Roll d20; miss it and everyone drinks that many seconds. | 1d20 — 1-7: Everyone drinks for {total} seconds. 8-20: Caught! Everyone else drinks for 10 seconds. |
 | ☐ | Ho-Oh | `pokemon.legendary-ho-oh` | challenge | Ho-Oh used Sacred Fire. It burns going down and comes back twice as hot. Roll d6. | 1d6 — 1-1: Drink 1, then give 2. 2-2: Drink 2, then give 4. 3-3: Drink 3, then give 6. 4-4: Drink 4, then give 8. 5-5: Drink 5, then give 10. 6-6: Drink 6, then give 12. |
-| ☐ | Latias & Latios | `pokemon.legendary-eon-duo` | challenge | Pick a partner. Spoon them while you roll 2d6. Matching dice catches the pair. | 2d6 — 2-2: They slip away. You both drink 1. 3-3: They slip away. You both drink 2. 4-4: They slip away. You both drink 2. 5-5: They slip away. You both drink 3. 6-6: They slip away. You both drink 3. 7-7: They slip away. You both drink 4. 8-8: They slip away. You both drink 4. 9-9: They slip away. You both drink 5. 10-10: They slip away. You both drink 5. 11-11: They slip away. You both drink 6. 12-12: They slip away. You both drink 6. |
-| ☐ | Deoxys | `pokemon.legendary-deoxys` | challenge | A space virus with a laser. Only a 20 catches it. Roll d20. | 1d20 — 1-10: Psycho Boost lands. Drink 6. 11-19: Glancing blow. Drink 3. 20-20: Caught! Give 10. |
-| ☐ | Lorelei | `pokemon.elite-lorelei` | challenge | Chug a glass of ice water, then roll d6. Lorelei likes it cold. | 1d6 — 1-1: Brain freeze. Drink 1. 2-2: Brain freeze. Drink 2. 3-3: Brain freeze. Drink 3. 4-4: Brain freeze. Drink 4. 5-5: Brain freeze. Drink 5. 6-6: Brain freeze. Drink 6. |
+| ☐ | Raikou, Entei, Suicune | `pokemon.legendary-beasts` | challenge | Three dogs, and they run the moment you look at them. Point at the guiltiest player, then roll d20. | 1d20 — 1-1: All three bite. Finish your drink. 2-7: It ran away. Again. You and the guilty one drink 3. 8-20: Cornered one. Give 4. |
+| ☐ | Celebi | `pokemon.legendary-celebi` | challenge | Celebi travels in time. Relive your most regrettable night out for the table, then roll d20. | 1d20 — 1-7: It makes you live it again. Drink 5. 8-19: You rewrite history. Give 4. 20-20: That night never happened. Give 8. |
+| ☐ | Latias & Latios | `pokemon.legendary-eon-duo` | challenge | Pick a partner. Spoon them while you roll 2d6. 8 or more, or doubles, catches the pair. | 2d6 — 2-2: They slip away. You both drink 1. 3-3: They slip away. You both drink 2. 4-4: They slip away. You both drink 2. 5-5: They slip away. You both drink 3. 6-6: They slip away. You both drink 3. 7-7: They slip away. You both drink 4. 8-12: Caught both! You both give 6. |
+| ☐ | Deoxys | `pokemon.legendary-deoxys` | challenge | A space virus with a laser. Roll d20. | 1d20 — 1-7: Psycho Boost lands. Drink 6. 8-19: Caught! Give 6. 20-20: Caught clean! Give 10. |
+| ☐ | Groudon | `pokemon.legendary-groudon` | challenge | Groudon dried up the oceans, and now your drink. Drink 2, then roll d20. | 1d20 — 1-1: Precipice Blades. Take a spicy shot. 2-7: Drought. Drink 4. 8-20: You crack its crust. Give 5. |
+| ☐ | Kyogre | `pokemon.legendary-kyogre` | challenge | Kyogre is flooding the world. Everyone drinks 2 to lower the sea, then you roll d20. | 1d20 — 1-7: Tidal wave. Drink 5. 8-19: You surf it. Give 5. 20-20: You drain the ocean. Everyone else drinks 4. |
+| ☐ | Rayquaza | `pokemon.legendary-rayquaza` | challenge | Rayquaza came down from space to stop a fight. Name the two players likeliest to brawl. Roll d20. | 1d20 — 1-7: Dragon Ascent. You and both brawlers drink 3. 8-20: You ride the dragon. Give 5. |
+| ☐ | The Regi Trio | `pokemon.legendary-regi-trio` | challenge | Three golems behind a puzzle nobody solved without a guide. Admit you used one, then roll d20. | 1d20 — 1-1: Three Explosions. Finish your drink. 2-7: Explosion. Drink 5. 8-20: You crack the code. Give 5. |
+| ☐ | Dialga | `pokemon.legendary-dialga` | challenge | Dialga controls time. Drink for exactly 5 seconds, counted out loud by the table, then roll d20. | 1d20 — 1-7: Roar of Time. Drink 5. 8-19: Time is on your side. Give 5. 20-20: Time stops for you. Everyone else drinks 4. |
+| ☐ | Palkia | `pokemon.legendary-palkia` | challenge | Palkia bends space. Swap seats with the player farthest from you, then roll d20. | 1d20 — 1-7: Spacial Rend. Drink 5. 8-20: You close the rift. Give 5. |
+| ☐ | Giratina | `pokemon.legendary-giratina` | challenge | Giratina lives in a world turned backwards. Say your name backwards, then roll d20. | 1d20 — 1-1: Lost in the Distortion World. Finish your drink. 2-7: Shadow Force. Drink 5. 8-20: You drag it out. Give 5. |
+| ☐ | Darkrai | `pokemon.legendary-darkrai` | challenge | Darkrai feeds on nightmares. Tell the table your weirdest sex dream, then roll d20. | 1d20 — 1-1: Sleep paralysis. Finish your drink. 2-7: Bad dream. Drink 5. 8-20: You wake up. Give 5. |
+| ☐ | Arceus | `pokemon.legendary-arceus` | challenge | Arceus is literally God. Pray out loud for 5 seconds, then roll d20. | 1d20 — 1-1: Smited. Finish your drink. 2-7: Judgment. Drink 6. 8-19: God blinks. Give 6. 20-20: You caught God. Everyone else finishes their drink. |
+| ☐ | Reshiram | `pokemon.legendary-reshiram` | challenge | Reshiram seeks truth. Tell the table the truth about your last hookup, then roll d20. | 1d20 — 1-7: Blue Flare. Drink 5. 8-20: The truth wins. Give 5. |
+| ☐ | Zekrom | `pokemon.legendary-zekrom` | challenge | Zekrom seeks ideals. Toast your most delusional ambition, then roll d20. | 1d20 — 1-1: Fusion Bolt. Finish your drink. 2-7: Bolt Strike. Drink 5. 8-20: Your ideals win. Give 5. |
+| ☐ | Xerneas | `pokemon.legendary-xerneas` | challenge | Xerneas gives life. Give the sleepiest player a pep talk until they perk up, then roll d20. | 1d20 — 1-7: Geomancy. Drink 5. 8-20: Full of life. Give 5. |
+| ☐ | Yveltal | `pokemon.legendary-yveltal` | challenge | Yveltal drains life. Name the deadest-looking player; they drink 2. Then roll d20. | 1d20 — 1-1: Drained dry. Finish your drink. 2-7: Oblivion Wing. Drink 5. 8-20: You live. Give 5. |
+| ☐ | Tapu Koko | `pokemon.legendary-tapu-koko` | challenge | Tapu Koko guards the island and is an asshole about it. Bow to the island, then roll d20. | 1d20 — 1-7: Electric Terrain. Drink 5. 8-20: You earn its respect. Give 5. |
+| ☐ | Necrozma | `pokemon.legendary-necrozma` | challenge | Necrozma ate the light. Shut your eyes, then roll d20. | 1d20 — 1-1: Blinded. Finish your drink. 2-7: Prismatic Laser. Drink 6. 8-20: The light comes back. Give 5. |
+| ☐ | Zacian | `pokemon.legendary-zacian` | challenge | Zacian is a dog with a sword in its mouth. Bark, then roll d20. | 1d20 — 1-7: Behemoth Blade. Drink 5. 8-19: Good dog. Give 5. 20-20: Belly rubs. Give 8. |
+| ☐ | Eternatus | `pokemon.legendary-eternatus` | challenge | Eternatus is a giant space worm. Everyone looks up, then you roll d20. | 1d20 — 1-1: The Darkest Day. Finish your drink. 2-7: Eternabeam. Drink 6. 8-20: You end the Darkest Day. Give 5. |
+| ☐ | Koraidon | `pokemon.legendary-koraidon` | challenge | Koraidon is your motorcycle. Make engine noises and lean into a turn, then roll d20. | 1d20 — 1-1: Road rash. Finish your drink. 2-7: Wipeout. Drink 5. 8-20: Wheelie. Give 5. |
+| ☐ | Miraidon | `pokemon.legendary-miraidon` | challenge | Miraidon is a robot dragon bike from the future. Predict tomorrow's hangover, then roll d20. | 1d20 — 1-7: Electro Drift. Drink 5. 8-20: The future's bright. Give 5. |
+| ☐ | Lorelei | `pokemon.elite-lorelei` | challenge | Chug a glass of ice water, then roll d6. Lorelei likes it cold. | 1d6 — 1-1: Brain freeze. Drink 1. 2-2: Brain freeze. Drink 2. 3-3: Brain freeze. Drink 3. 4-4: Brain freeze. Drink 4. 5-5: You keep it down. Give 5. 6-6: You keep it down. Give 6. |
 | ☐ | Bruno | `pokemon.elite-bruno` | challenge | Arm-wrestle the two strongest players back to back. Each loss: drink 5. |  |
 | ☐ | Agatha | `pokemon.elite-agatha` | challenge | Drink 3. Until your next turn you can't say anyone's name. Each slip: drink 3. |  |
 | ☐ | Will | `pokemon.elite-will` | challenge | The table secretly picks a number from 1 to 10. Three guesses; each miss: drink 2. |  |
@@ -348,10 +488,189 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Sidney | `pokemon.elite-sidney` | challenge | Sidney thinks you're a little bitch. Prove him wrong: roll 2d6. | 2d6 — 2-6: Crunched. Finish your drink. 7-7: A standoff. Drink 7. 8-12: You beat him. Give 5. |
 | ☐ | Phoebe | `pokemon.elite-phoebe` | challenge | Eyes shut; someone swaps drinks with you. Guess who, or drink 4 of theirs. |  |
 | ☐ | Glacia | `pokemon.elite-glacia` | challenge | Glacia says your drink is warm and your heart is too. Roll d20. | 1d20 — 1-12: Sheer Cold. Drink 6. 13-19: You thaw out. Drink 3. 20-20: You shatter her ice. Give 8. |
-| ☐ | Drake | `pokemon.elite-drake` | challenge | Drake is a sailor. Drink like one. Roll 3d6. | 3d6 — 3-3: Drink 4. 4-4: Drink 4. 5-5: Drink 5. 6-6: Drink 5. 7-7: Drink 6. 8-8: Drink 6. 9-9: Drink 7. 10-10: Drink 7. 11-11: Drink 8. 12-12: Drink 8. 13-13: Drink 9. 14-14: Drink 9. 15-15: Drink 10. 16-16: Drink 10. 17-17: Drink 11. 18-18: Drink 11. |
-| ☐ | Blue | `pokemon.league-champion-blue` | challenge | Your rival got here first and smells like your mom's perfume. The whole table fights. Roll d20. | 1d20 — 1-8: Blue smells you. Everyone finishes their drink. 9-16: Close fight. Everyone drinks 4. 17-20: Champion! Hand out 10 and take a victory lap. |
-| ☐ | Lance | `pokemon.league-champion-lance` | challenge | Lance used Hyper Beam on the whole table. Roll d20. Pray for a 19. | 1d20 — 1-10: Hyper Beam sweeps the table. Everyone finishes their drink. 11-18: Close fight. Everyone drinks 3. 19-20: Hall of Fame! Make a rule for the rest of the night. |
-| ☐ | Steven | `pokemon.league-champion-steven` | challenge | Steven wants to show the whole table his rock collection. Roll 2d6 to escape. | 2d6 — 2-8: Meteor Mash. Everyone drinks {total}. 9-12: Champion! Give {total}, split however you like. |
+| ☐ | Drake | `pokemon.elite-drake` | challenge | Drake is a sailor. Drink like one. Roll 3d6. | 3d6 — 3-3: Drink 4. 4-4: Drink 4. 5-5: Drink 5. 6-6: Drink 5. 7-7: Drink 6. 8-8: Drink 6. 9-9: Drink 7. 10-10: Drink 7. 11-11: Drink 8. 12-18: You outdrink a sailor. Give 6. |
+| ☐ | Aaron | `pokemon.elite-aaron` | challenge | Aaron loves bugs. Eat a crumb off the floor, or fake it well, then roll d20. | 1d20 — 1-7: Bug Bite. Drink 5. 8-20: You squash his bugs. Give 5. |
+| ☐ | Bertha | `pokemon.elite-bertha` | challenge | Grandma Bertha asks about your love life. Answer every question for 20 seconds. Dodge one: drink 5. |  |
+| ☐ | Flint | `pokemon.elite-flint` | challenge | Flint's afro is on fire again. Fluff your hair at the table, then roll d20. | 1d20 — 1-1: Flare Blitz. Take a spicy shot. 2-7: Singed. Drink 5. 8-20: You put out the afro. Give 5. |
+| ☐ | Lucian | `pokemon.elite-lucian` | challenge | Lucian reads mid-battle. Read your last sent text aloud, dramatically. Refuse: finish your drink. |  |
+| ☐ | Shauntal | `pokemon.elite-shauntal` | challenge | Shauntal writes smut about trainers. Narrate 20 seconds of it about two players. Stop: drink 5. |  |
+| ☐ | Grimsley | `pokemon.elite-grimsley` | challenge | Grimsley bets your drink on this. Push it into the middle of the table, then roll d20. | 1d20 — 1-1: You lost the house. Finish your drink. 2-7: House wins. Drink 6. 8-19: Jackpot. Give 6. 20-20: Royal flush. Everyone else drinks 4. |
+| ☐ | Caitlin | `pokemon.elite-caitlin` | challenge | Caitlin naps mid-battle. Fake-snore through a whole sip. Laugh or spill: drink 5. |  |
+| ☐ | Marshal | `pokemon.elite-marshal` | challenge | Marshal trains under waterfalls. Flick some water on your own face, then roll d20. | 1d20 — 1-1: Black belt to the face. Finish your drink. 2-7: Close Combat. Drink 5. 8-20: You knock him out. Give 5. |
+| ☐ | Malva | `pokemon.elite-malva` | challenge | Malva reads the news. Break a scandal about a player in your anchor voice. Nobody laughs: drink 5. |  |
+| ☐ | Siebold | `pokemon.elite-siebold` | challenge | Siebold is a chef. Describe your drink's flavor like a snob critic, then roll d20. | 1d20 — 1-7: Sent back to the kitchen. Drink 5. 8-20: Michelin star. Give 5. |
+| ☐ | Wikstrom | `pokemon.elite-wikstrom` | challenge | Sir Wikstrom wants a duel. Straw-fence your right neighbor; first one poked loses. Lose: drink 5. |  |
+| ☐ | Drasna | `pokemon.elite-drasna` | challenge | Drasna is a sweet granny with four dragons. Kiss your left neighbor's cheek, then roll d20. | 1d20 — 1-1: Granny's dragon. Finish your drink. 2-7: Dragon Pulse. Drink 6. 8-20: Granny's proud of you. Give 5. |
+| ☐ | Acerola | `pokemon.elite-acerola` | challenge | Hide your drink. Acerola (your left neighbor) gets 15 seconds to find it. Found: drink 5. |  |
+| ☐ | Kahili | `pokemon.elite-kahili` | challenge | Kahili golfs. Flick a bottle cap into a cup across the table in 3 tries. Miss all three: drink 5. |  |
+| ☐ | Molayne | `pokemon.elite-molayne` | challenge | Molayne fixes computers. Let the table read your last web search, then roll d20. | 1d20 — 1-1: Clear your history. Finish your drink. 2-7: Flash Cannon. Drink 5. 8-20: You reboot him. Give 5. |
+| ☐ | Marnie | `pokemon.elite-marnie` | challenge | Lead the table in a Team Yell chant for Marnie. Anyone doesn't join in: you drink 5. |  |
+| ☐ | Hop | `pokemon.elite-hop` | challenge | Hop is Leon's little brother and he won't stop saying so. Say "Mate!" then roll d20. | 1d20 — 1-7: Still not Leon. Drink 5. 8-19: He cries to his brother. Give 5. 20-20: Unbeatable! Everyone else drinks 3. |
+| ☐ | Bede | `pokemon.elite-bede` | challenge | Bede is a spoiled brat. Throw a 10-second tantrum. Table votes not bratty enough: drink 5. |  |
+| ☐ | Allister | `pokemon.elite-allister` | challenge | Allister hides behind a mask. Cover your face with your hands, then roll d20. | 1d20 — 1-1: Gigantamax Gengar. Finish your drink. 2-7: Shadow Ball. Drink 5. 8-20: Peekaboo. Give 5. |
+| ☐ | Rika | `pokemon.elite-rika` | challenge | Rika runs the interview. Name your three worst habits in 10 seconds. Stall: drink 5. |  |
+| ☐ | Poppy | `pokemon.elite-poppy` | challenge | Poppy is eight and has a hammer. Let your left neighbor bonk your head, then roll d20. | 1d20 — 1-1: Bonked silly. Finish your drink. 2-7: Gigaton Hammer. Drink 5. 8-20: You take her toy. Give 5. |
+| ☐ | Larry | `pokemon.elite-larry` | challenge | It's Larry again. He's on unpaid overtime. Sigh with him, then roll d20. | 1d20 — 1-7: Unpaid overtime. Drink 6. 8-19: Larry gets to go home. Give 5. 20-20: Larry smiles. Everyone else drinks 4. |
+| ☐ | Hassel | `pokemon.elite-hassel` | challenge | Hassel weeps at art. Describe the table like a painting. Nobody laughs or tears up: drink 5. |  |
+| ☐ | Crispin | `pokemon.elite-crispin` | challenge | Crispin is on nine energy drinks. Talk at double speed for 10 seconds, then roll d20. | 1d20 — 1-1: Heart palpitations. Finish your drink. 2-7: Burnout. Drink 5. 8-20: He crashes. Give 5. |
+| ☐ | Amarys | `pokemon.elite-amarys` | challenge | Amarys doesn't do friends. Get your right neighbor to say "friend" in 30 seconds. Fail: drink 5. |  |
+| ☐ | Lacey | `pokemon.elite-lacey` | challenge | Lacey's quiz: spell your full name backwards in 10 seconds. Slip once: drink 5. |  |
+| ☐ | Drayton | `pokemon.elite-drayton` | challenge | Drayton couldn't be bothered to read this card. Neither could you. Roll d20. | 1d20 — 1-7: He beats you without trying. Drink 6. 8-20: You tried harder. Give 5. |
+| ☐ | Blue | `pokemon.league-champion-blue` | challenge | Your rival got here first and smells like your mom's perfume. The whole table fights. Roll d20. | 1d20 — 1-5: Blue smells you. Everyone finishes their drink. 6-10: Close fight. Everyone drinks 4. 11-20: Champion! Hand out 10 and take a victory lap. |
+| ☐ | Red | `pokemon.league-champion-red` | challenge | Red hasn't spoken in 25 years. The whole table fights in silence. Anyone talks: drink 2. Roll d20. | 1d20 — 1-1: Red says nothing. Everyone finishes their drink. 2-7: Pikachu Volt Tackles the table. Everyone drinks 4. 8-19: A hit on Mt. Silver. Give 4. 20-20: Red nods once. Give 10. |
+| ☐ | Lance | `pokemon.league-champion-lance` | challenge | Lance used Hyper Beam on the whole table. Roll d20 and pray. | 1d20 — 1-5: Hyper Beam sweeps the table. Everyone finishes their drink. 6-10: Close fight. Everyone drinks 3. 11-20: Hall of Fame! Make a rule for the rest of the night. |
+| ☐ | Steven | `pokemon.league-champion-steven` | challenge | Steven wants to show the whole table his rock collection. Roll 2d6 to escape. | 2d6 — 2-7: Meteor Mash. Everyone drinks {total}. 8-12: Champion! Give {total}, split however you like. |
+| ☐ | Wallace | `pokemon.league-champion-wallace` | challenge | Wallace demands a beautiful fight. The whole table strikes its most fabulous pose, then roll d20. | 1d20 — 1-1: Milotic sweeps. Everyone finishes their drink. 2-7: Ugly. Everyone drinks 3. 8-19: Stunning hit. Give 4. 20-20: Contest winner. Make a rule for the rest of the game. |
+| ☐ | Cynthia | `pokemon.league-champion-cynthia` | challenge | Cynthia's Garchomp has never lost. The whole table holds hands and prays, then roll d20. | 1d20 — 1-1: Garchomp sweeps the table. Everyone finishes their drink. 2-7: Earthquake. Everyone drinks 4. 8-19: Garchomp flinches. Give 4. 20-20: Cynthia drops her hair clip. Give 10. |
+| ☐ | Alder | `pokemon.league-champion-alder` | challenge | Alder skipped work to get drunk with you. The whole table cheers him, then you roll d20. | 1d20 — 1-1: He's still up at 4 a.m. Everyone finishes their drink. 2-7: Volcarona burns the table. Everyone drinks 3. 8-19: Alder spills his beer. Give 4. 20-20: Alder passes out. Give 10. |
+| ☐ | Iris | `pokemon.league-champion-iris` | challenge | Iris is the Champion and she's literally a child. The whole table fights a kid. Roll d20. | 1d20 — 1-1: Outrage. Everyone finishes their drink. 2-7: Beaten by a child. Everyone drinks 4. 8-19: You land one on a kid. Give 4. 20-20: She sends you to bed. Give 10. |
+| ☐ | Diantha | `pokemon.league-champion-diantha` | challenge | Diantha is a movie star. The whole table acts out a dramatic death, then you roll d20. | 1d20 — 1-1: Box-office flop. Everyone finishes their drink. 2-7: Moonblast. Everyone drinks 4. 8-19: An award-worthy hit. Give 4. 20-20: Standing ovation. Give 10. |
+| ☐ | Professor Kukui | `pokemon.league-champion-kukui` | challenge | Professor Kukui fights shirtless in a lab coat. The whole table yells "Woo!" Then roll d20. | 1d20 — 1-1: Lab coat to the face. Everyone finishes their drink. 2-7: Woo! Everyone drinks 3. 8-19: A hit, cousin! Give 4. 20-20: Woo! Give 10. |
+| ☐ | Leon | `pokemon.league-champion-leon` | challenge | Leon has never lost a battle or found a stadium. The whole table does the Charizard pose. Roll d20. | 1d20 — 1-1: Still undefeated. Everyone finishes their drink. 2-7: Max Wildfire. Everyone drinks 4. 8-19: Leon got lost. Give 4. 20-20: His cape falls off. Give 10. |
+| ☐ | Geeta | `pokemon.league-champion-geeta` | challenge | Geeta booked your fight in a meeting. The whole table says "per my last email." Roll d20. | 1d20 — 1-1: Mandatory overtime. Everyone finishes their drink. 2-7: Glimmora's Tera Blast. Everyone drinks 4. 8-19: Meeting ends early. Give 4. 20-20: You're the boss now. Give 10. |
+| ☐ | Nemona | `pokemon.league-champion-nemona` | challenge | Nemona wants to battle you again. And again. And again. The whole table fights. Roll d20. | 1d20 — 1-1: One more battle! Everyone finishes their drink. 2-7: Rematch! Everyone drinks 3. 8-19: She loves it. Give 4. 20-20: She finally needs a nap. Give 10. |
+| ☐ | Pidgey | `pokemon.route-pidgey` | challenge | Wild Pidgey appeared! It used Sand Attack, straight in your eyes. Roll d20. | 1d20 — 1-3: Blinded. Drink 2 with your eyes shut. 4-20: You punt it into the next town. Give 2. |
+| ☐ | Rattata | `pokemon.route-rattata` | challenge | Wild Rattata appeared! It is chewing on your shoelaces like it pays rent. Roll d20. | 1d20 — 1-3: It bites your ankle. Drink 2. 4-20: Evicted. Give 2. |
+| ☐ | Zigzagoon | `pokemon.route-zigzagoon` | challenge | Wild Zigzagoon is zigzagging toward you. Zigzag your head with it and roll d20. | 1d20 — 1-3: Dizzy. Drink 2. 4-20: You out-zag it. Give 2. |
+| ☐ | Bidoof | `pokemon.route-bidoof` | challenge | Wild Bidoof appeared! It has the dead eyes of a man on his fourth divorce. Roll d20. | 1d20 — 1-3: It stares into your soul. Drink 2. 4-20: Bidoof wanders off to find wife five. Give 2. |
+| ☐ | Wooloo | `pokemon.route-wooloo` | challenge | Wild Wooloo rolls at you like a drunk sheep down a hill. Roll d20. | 1d20 — 1-3: Bowled over. Drink 2. 4-19: You hop it like a hurdle. Give 2. 20-20: You shear it and keep the sweater. Give 4. |
+| ☐ | Lechonk | `pokemon.route-lechonk` | challenge | Wild Lechonk is snorting your snacks. Oink at it and roll d20. | 1d20 — 1-3: It eats the whole bag. Drink 2. 4-20: Bacon later. Give 2. |
+| ☐ | Youngster Joey | `pokemon.route-youngster-joey` | challenge | Joey says his Rattata is in the top percentage of Rattata. Prove him wrong. Roll d20. | 1d20 — 1-3: It was. Drink 3 and apologize to Joey. 4-20: Top percentage, bottom of the bracket. Give 2. |
+| ☐ | Bug Catcher | `pokemon.route-bug-catcher` | challenge | A bug catcher in short shorts bets you can't name five bug Pokémon in ten seconds. Lose: drink 2. |  |
+| ☐ | One-Way Ledge | `pokemon.route-ledge` | challenge | You hop the ledge and can never go back up. Your ankle has opinions. Roll d20. | 1d20 — 1-6: Rolled it. Drink 2. 7-20: Stuck the landing. Give 1. |
+| ☐ | Mystery Egg | `pokemon.route-mystery-egg` | challenge | A stranger in a trench coat hands you an egg. It's warm. Too warm. | 1d20 — 1-8: It hatches into a Togepi and pisses on you. Drink 3. 9-20: It's a pack of ammo for the bag. Give 2. |
+| ☐ | Ace Trainer Kenny | `pokemon.route-ace-rookie` | challenge | Kenny has trained since he was four and wants you to know about it. Roll d20. | 1d20 — 1-6: He tells you about it anyway. Drink 3. 7-20: Kenny cries. Give 3. |
+| ☐ | Lass Tiffany | `pokemon.route-ace-lass` | challenge | Lass Tiffany says you looked at her. Battle to prove you didn't. Roll d20. | 1d20 — 1-6: You did. Drink 3. 7-20: She leaves you a Protect out of respect. Give 3. |
+| ☐ | Spearow | `pokemon.route-spearow` | challenge | Wild Spearow is angrier than any bird has a right to be. Roll d20. | 1d20 — 1-4: Pecked bald. Drink 2. 5-20: It flies off to bother Ash. Give 2. |
+| ☐ | Ekans | `pokemon.route-ekans` | challenge | Wild Ekans wraps around your leg and hisses something filthy. Roll d20. | 1d20 — 1-4: Poison Sting. Drink 2. 5-20: You tie it in a knot. Give 2. |
+| ☐ | Wurmple | `pokemon.route-wurmple` | challenge | Wild Wurmple appeared! Nobody knows what it becomes. Not even Wurmple. Roll d20. | 1d20 — 1-4: Existential dread. Drink 2. 5-20: It becomes a footnote. Give 2. |
+| ☐ | Starly | `pokemon.route-starly` | challenge | A whole flock of Starly. Everyone flaps their arms. The drawer rolls d20. | 1d20 — 1-4: Swarmed. Drink 2. 5-20: They scatter. Give 2. |
+| ☐ | Lillipup | `pokemon.route-lillipup` | challenge | Wild Lillipup wants belly rubs. Rub the nearest belly at the table, then roll d20. | 1d20 — 1-4: It humps your leg. Drink 2. 5-20: Good dog. Give 2. |
+| ☐ | Yungoos | `pokemon.route-yungoos` | challenge | Wild Yungoos is a sausage with teeth and a bad attitude. Roll d20. | 1d20 — 1-4: It bites your sausage. Drink 3. 5-20: Sausage served. Give 2. |
+| ☐ | Hiker Dave | `pokemon.route-hiker` | challenge | Hiker Dave hasn't showered since Mt. Moon and wants a hug. Hug your left neighbor, roll d20. | 1d20 — 1-4: Geodude to the face. Drink 3. 5-20: Dave goes back up the mountain. Give 2. |
+| ☐ | Picnicker Gina | `pokemon.route-picnicker` | challenge | Picnicker Gina dares you to eat something off the floor. Do it or drink 3. |  |
+| ☐ | Zubat Cave | `pokemon.route-mt-moon-zubat` | challenge | Mt. Moon. No Repel. Zubat every step. Roll d20. | 1d20 — 1-7: Confused and bitten. Drink 2. 8-20: You sprint out. Give 1. |
+| ☐ | Super Nerd Miguel | `pokemon.route-ace-super-nerd` | challenge | Miguel will fight you for the Helix Fossil. He's been here for weeks. Roll d20. | 1d20 — 1-7: He wins and explains why for an hour. Drink 3. 8-20: You take the fossil. Praise Helix. Give 3. |
+| ☐ | Twins Amy & May | `pokemon.route-ace-twins` | challenge | Double battle. Both twins talk at the same time. Roll d20. | 1d20 — 1-7: Two against one. Drink 4. 8-20: Both twins cry in stereo. Give 3. |
+| ☐ | Psyduck | `pokemon.route-psyduck` | challenge | Wild Psyduck has a headache. So do you. Hold your head and roll d20. | 1d20 — 1-5: Confusion. Drink 3. 6-20: It waddles off, still confused. Give 2. |
+| ☐ | Machop | `pokemon.route-machop` | challenge | Wild Machop wants to arm-wrestle. Flex for the table, then roll d20. | 1d20 — 1-5: Karate Chop to the junk. Drink 3. 6-20: You flex harder. Give 2. |
+| ☐ | Shinx | `pokemon.route-shinx` | challenge | Wild Shinx sparks when it sees you. Every hair on your body stands up. Roll d20. | 1d20 — 1-5: Static shock. Drink 2. 6-20: You pet the spark out of it. Give 2. |
+| ☐ | Roggenrola | `pokemon.route-roggenrola` | challenge | Wild Roggenrola is a rock with an ear. It heard what you said about it. Roll d20. | 1d20 — 1-5: It tells everyone. Drink 2. 6-20: You skip it across a pond. Give 2. |
+| ☐ | Pikipek | `pokemon.route-pikipek` | challenge | Wild Pikipek is drilling into a tree. Then your skull. Knock on the table, roll d20. | 1d20 — 1-5: Woodpecked. Drink 3. 6-20: It finds a better tree. Give 2. |
+| ☐ | Nickit | `pokemon.route-nickit` | challenge | Wild Nickit steals the drink nearest the drawer. Roll d20 to get it back. | 1d20 — 1-5: It's gone. Finish whatever you have. 6-20: Recovered, with a tip. Give 3. |
+| ☐ | Swimmer Brad | `pokemon.route-swimmer` | challenge | Swimmer Brad is in a Speedo on dry land and won't explain. Roll d20. | 1d20 — 1-5: You looked. Drink 3. 6-20: He goes back to the sea. Give 2. |
+| ☐ | Juggler Rico | `pokemon.route-juggler` | challenge | Juggler Rico juggles three Voltorb. Juggle any two things for five seconds or drink 3. |  |
+| ☐ | Prepare for Trouble | `pokemon.route-team-rocket` | challenge | Jessie and James drop a net from a Meowth balloon. Recite their motto or roll d20. | 1d20 — 1-8: Netted. Drink 3. 9-20: They blast off again. Give 1. |
+| ☐ | The Recruiter | `pokemon.route-ace-rocket-recruiter` | challenge | The last guy on Nugget Bridge gives you a nugget, then asks you to join Team Rocket. Roll d20. | 1d20 — 1-8: You signed something. Drink 4. 9-20: You keep the nugget. Give 3. |
+| ☐ | Cooltrainer Ava | `pokemon.route-ace-cooltrainer` | challenge | Cooltrainer Ava has a full team of fully evolved Pokémon on Route 3. Rude. Roll d20. | 1d20 — 1-8: Swept. Drink 4. 9-20: You sweep her back. Give 3. |
+| ☐ | Ponyta | `pokemon.route-ponyta` | challenge | Wild Ponyta. A horse on fire. Gallop around your chair once, then roll d20. | 1d20 — 1-6: Trampled. Drink 3. 7-20: You ride it into the sunset. Give 3. |
+| ☐ | Sableye | `pokemon.route-sableye` | challenge | Wild Sableye stares at you with gem eyes from a cave. It's always staring. Roll d20. | 1d20 — 1-6: It steals your soul. Drink 3. 7-20: You stare back harder. Give 2. |
+| ☐ | Croagunk | `pokemon.route-croagunk` | challenge | Wild Croagunk pokes you in the kidney and laughs. Poke the drawer's right neighbor, roll d20. | 1d20 — 1-6: Poison Jab. Drink 3. 7-20: You poke back harder. Give 3. |
+| ☐ | Sandile | `pokemon.route-sandile` | challenge | Wild Sandile is wearing sunglasses and doesn't care about you. Roll d20. | 1d20 — 1-6: Sand in every crack. Drink 3. 7-20: You steal the sunglasses. Wear them and give 3. |
+| ☐ | Hawlucha | `pokemon.route-hawlucha` | challenge | Wild Hawlucha leaps off a tree and elbow-drops the table. Slam the table, roll d20. | 1d20 — 1-6: Flying Press. Drink 3. 7-20: You pin it for the three count. Give 3. |
+| ☐ | Mudbray | `pokemon.route-mudbray` | challenge | Wild Mudbray is a donkey covered in mud and it wants to share. Roll d20. | 1d20 — 1-6: Mud everywhere. Drink 3. 7-20: You hose it off. Give 2. |
+| ☐ | Biker Gang | `pokemon.route-biker` | challenge | A Biker on Cycling Road revs at you. Make the engine noise, roll d20. | 1d20 — 1-6: Run over. Drink 3. 7-20: He wipes out. Give 3. |
+| ☐ | Psychic Tyron | `pokemon.route-psychic` | challenge | Think of a number from 1 to 5. Psychic Tyron (your left neighbor) guesses it. Right: drink 3. |  |
+| ☐ | Snorlax Blocks the Way | `pokemon.route-snorlax` | challenge | A Snorlax is asleep across the road. Play the Poké Flute (hum loudly) and roll d20. | 1d20 — 1-9: It rolls onto you. Drink 3. 10-20: It wakes up and wanders off. Give 2. |
+| ☐ | Slot Machine | `pokemon.route-slots` | challenge | One more pull. You can feel it. Pull or walk? | 1d20 — 1-10: The house wins. Drink 4. 11-20: Jackpot. Give 4. |
+| ☐ | Rocket Executive | `pokemon.route-ace-rocket-boss` | challenge | Behind the poster: a Rocket executive with a Raticate the size of a dog. Roll d20. | 1d20 — 1-9: Hyper Fang. Drink 4. 10-20: He drops the Silph Scope. Give 4. |
+| ☐ | Gambler Lou | `pokemon.route-ace-gambler` | challenge | Gambler Lou bets his whole stack on one battle. Roll d20. | 1d20 — 1-9: You lose his money too. Drink 4. 10-19: You clean him out. Give 4. 20-20: He hands over his lucky coin too. Give 6. |
+| ☐ | Haunter | `pokemon.route-haunter` | challenge | Wild Haunter licks you. It's cold and it lingers. Lick your lips and roll d20. | 1d20 — 1-7: Lick. Drink 3. 8-20: It vanishes, giggling. Give 3. |
+| ☐ | Scyther | `pokemon.route-scyther` | challenge | Wild Scyther in the Safari Zone. It has knives for arms. Hold very still and roll d20. | 1d20 — 1-7: Sliced. Drink 4. 8-20: You slip past its blades. Give 3. |
+| ☐ | Tauros | `pokemon.route-tauros` | challenge | A herd of Tauros. Everyone at the table stomps. The drawer rolls d20. | 1d20 — 1-7: Stampeded. Drink 4. 8-20: You ride one out. Yeehaw. Give 3. |
+| ☐ | Bronzor | `pokemon.route-bronzor` | challenge | Wild Bronzor is a frying pan that floats. It hums. Hum back, roll d20. | 1d20 — 1-7: It hums louder. Drink 3. 8-20: You use it as a frying pan. Give 3. |
+| ☐ | Mimikyu | `pokemon.route-mimikyu` | challenge | Wild Mimikyu is wearing a Pikachu costume and does not want you to look under it. Roll d20. | 1d20 — 1-7: You looked. Drink 4. 8-20: You leave its secret alone. Give 3. |
+| ☐ | Toxtricity | `pokemon.route-toxtricity` | challenge | Wild Toxtricity air-guitars at you. Air-guitar back for five seconds, then roll d20. | 1d20 — 1-7: Booed off stage. Drink 3. 8-20: Encore! Give 3. |
+| ☐ | Beauty Cassandra | `pokemon.route-beauty` | challenge | Beauty Cassandra says you're not her type. Fight her about it. Roll d20. | 1d20 — 1-7: You're not. Drink 3. 8-20: She gives you her number. It's fake. Give 3. |
+| ☐ | Black Belt Kiyo | `pokemon.route-black-belt` | challenge | Black Belt Kiyo wants twenty push-ups. Everyone counts. Fall short: drink 3. |  |
+| ☐ | Safari Zone | `pokemon.route-safari` | challenge | Thirty Safari Balls and a rock. Toss a napkin at your left neighbor, then roll d20. | 1d20 — 1-10: Everything runs. Drink 3. 11-20: Something stays. Give 2. |
+| ☐ | Pokémon Tower | `pokemon.route-silph-scope` | challenge | The top floor is haunted by a ghost Marowak. Climb or leave? | 1d20 — 1-11: Get out... get out... Drink 4. 12-20: You put it to rest. Give 4. |
+| ☐ | Biker Boss | `pokemon.route-ace-biker-boss` | challenge | The gang's boss has a Weezing and a prison tattoo. Roll d20. | 1d20 — 1-10: Smog in the face. Drink 5. 11-20: He respects you now. Give 4. |
+| ☐ | Dragon Tamer | `pokemon.route-ace-dragon-tamer` | challenge | A Dragon Tamer in a cape on a bike path. A Dragonite in a hurry. Roll d20. | 1d20 — 1-10: Outrage. Drink 5. 11-20: Tamed. Give 4. |
+| ☐ | Gyarados | `pokemon.route-gyarados` | challenge | You fished for a Magikarp and got its angry dad. Roll d20. | 1d20 — 1-7: Hyper Beam. Drink 4. 8-20: It's yours. Somehow. Give 3. |
+| ☐ | Lucario | `pokemon.route-lucario` | challenge | Wild Lucario reads your aura. It knows what you did. Roll d20. | 1d20 — 1-7: Aura Sphere. Drink 4. 8-20: Your aura wins. Give 3. |
+| ☐ | Zoroark | `pokemon.route-zoroark` | challenge | Wild Zoroark is disguised as someone at this table. The drawer accuses someone, then rolls d20. | 1d20 — 1-7: Wrong person. Drink 4. 8-20: Caught it. The accused gives 3. |
+| ☐ | Goodra | `pokemon.route-goodra` | challenge | Wild Goodra wants a hug. It is entirely slime. Roll d20. | 1d20 — 1-7: Hugged. Drink 3. 8-20: You slip out. Give 3. |
+| ☐ | Tinkaton | `pokemon.route-tinkaton` | challenge | Wild Tinkaton has a hammer bigger than your car, and it wants your car. Roll d20. | 1d20 — 1-7: Totaled. Drink 4. 8-20: It hammers someone else's. Give 3. |
+| ☐ | Salandit | `pokemon.route-salandit` | challenge | Wild Salandit's gas is toxic and smells like your ex. Roll d20. | 1d20 — 1-7: Toxic. Drink 3. 8-20: You hold your breath and walk. Give 3. |
+| ☐ | Gentleman Alfred | `pokemon.route-gentleman` | challenge | Gentleman Alfred challenges you to a battle with his Growlithe and his monocle. Roll d20. | 1d20 — 1-7: Monocled. Drink 4. 8-20: He tips his hat. Give 3. |
+| ☐ | Fisherman Ned | `pokemon.route-fisherman` | challenge | Fisherman Ned tells a fish story. The drawer must top it, and the table votes. Lose: drink 4. |  |
+| ☐ | Silph Co. Maze | `pokemon.route-silph-maze` | challenge | Silph Co. Eleven floors of teleport pads. Spin in your chair twice, roll d20. | 1d20 — 1-11: Lost on floor 7. Drink 3. 12-20: Found the card key. Give 2. |
+| ☐ | The Karate King | `pokemon.route-ace-karate-king` | challenge | The Karate King has a Hitmonlee and a Hitmonchan and wants you to pick one. Roll d20. | 1d20 — 1-10: Picked wrong. Drink 5. 11-20: You take both home. Give 4. |
+| ☐ | Veteran Hugo | `pokemon.route-ace-veteran` | challenge | Veteran Hugo fought in a war nobody mentions. He has a Salamence. Roll d20. | 1d20 — 1-10: Flamethrower. Drink 5. 11-20: Hugo salutes you. Salute back and give 4. |
+| ☐ | Angry Snorlax | `pokemon.route-snorlax-awake` | challenge | A Snorlax woke up on the wrong side of the road. Roll d20. | 1d20 — 1-8: Body Slam. Drink 5. 9-20: It goes back to sleep. Give 3. |
+| ☐ | Gible's Dad | `pokemon.route-garchomp` | challenge | You poked a Gible. A Garchomp appeared behind it. Roll d20. | 1d20 — 1-8: Dragon Rush. Drink 4. 9-20: You apologize to the family. Give 3. |
+| ☐ | Hydreigon | `pokemon.route-hydreigon` | challenge | Wild Hydreigon. Three heads, all hungry, none of them friendly. Roll d20. | 1d20 — 1-8: Bitten three times. Drink 4. 9-20: The heads fight each other. Give 3. |
+| ☐ | Aegislash | `pokemon.route-aegislash` | challenge | Wild Aegislash is a sword that switches to a shield every time you swing. Roll d20. | 1d20 — 1-8: King's Shield. Drink 4. 9-20: You sheathe it. Give 3. |
+| ☐ | Dragapult | `pokemon.route-dragapult` | challenge | Wild Dragapult fires its babies at you like missiles. Roll d20. | 1d20 — 1-8: Direct hit. Drink 4. 9-20: You catch a baby. It's cute. Give 3. |
+| ☐ | Kingambit | `pokemon.route-kingambit` | challenge | Wild Kingambit demands you kneel. Kneel or roll d20. | 1d20 — 1-8: Sliced. Drink 4. 9-20: You don't kneel. Give 3. |
+| ☐ | Ninja Boy | `pokemon.route-ninja-boy` | challenge | A Ninja Boy jumps out of nowhere. Was he always under the table? Check, then roll d20. | 1d20 — 1-8: Shuriken. Drink 4. 9-20: He vanishes in smoke. Give 3. |
+| ☐ | Sage Li | `pokemon.route-sage` | challenge | Sage Li asks: what has keys but opens no locks? Answer in five seconds. Wrong: drink 4. |  |
+| ☐ | Seafoam Currents | `pokemon.route-seafoam` | challenge | Seafoam Islands. Boulders, currents and a freezing cave. Roll d20. | 1d20 — 1-11: Swept away. Drink 3. 12-20: You strength the boulder. Give 2. |
+| ☐ | MissingNo. | `pokemon.route-missingno` | challenge | A glitch flickers on the shore. Your bag could fill up. Or your save could die. | 1d20 — 1-12: Save corrupted. Drink 5. 13-20: Infinite items. Give 5. |
+| ☐ | Scientist Blaine Jr. | `pokemon.route-ace-scientist` | challenge | Blaine's nephew made a Mewtwo in a jar. He wants to test it on you. Roll d20. | 1d20 — 1-11: Psystrike. Drink 5. 12-20: The jar breaks. Run. Give 4. |
+| ☐ | Burglar Sid | `pokemon.route-ace-burglar` | challenge | Burglar Sid is robbing the mansion and you caught him. Roll d20. | 1d20 — 1-11: He robs you too. Drink 5. 12-20: He leaves the loot. Give 4. |
+| ☐ | Tyranitar | `pokemon.route-tyranitar` | challenge | Wild Tyranitar kicks up a sandstorm. Cover your drink and roll d20. | 1d20 — 1-8: Stone Edge. Drink 5. 9-20: You weather the storm. Give 4. |
+| ☐ | Metagross | `pokemon.route-metagross` | challenge | Wild Metagross is four brains in a steel X. It already knows your roll. Roll d20. | 1d20 — 1-8: It knew. Drink 5. 9-20: It miscounted. Give 4. |
+| ☐ | Volcarona | `pokemon.route-volcarona` | challenge | Wild Volcarona is a moth made of sun. Do a Quiver Dance and roll d20. | 1d20 — 1-8: Fiery Dance. Drink 4. 9-20: You out-dance it. Give 4. |
+| ☐ | Kommo-o | `pokemon.route-kommo-o` | challenge | Wild Kommo-o rattles its scales like a heavy metal concert. Headbang, roll d20. | 1d20 — 1-8: Clangorous Soul. Drink 5. 9-20: You crowd-surf away. Give 4. |
+| ☐ | Baxcalibur | `pokemon.route-baxcalibur` | challenge | Wild Baxcalibur has a sword for a spine and it is very cold. Roll d20. | 1d20 — 1-8: Glaive Rush. Drink 5. 9-20: It shatters. Give 4. |
+| ☐ | Gengar | `pokemon.route-gengar` | challenge | Wild Gengar is behind you. No, the other side. Turn around and roll d20. | 1d20 — 1-8: Shadow Ball. Drink 4. 9-20: It grins and fades. Give 4. |
+| ☐ | Cooltrainer Duo | `pokemon.route-cooltrainer-pair` | challenge | Two Cooltrainers with matching jackets and matching Dragonites. Roll d20. | 1d20 — 1-8: Double Outrage. Drink 5. 9-20: Their jackets are ruined. Give 4. |
+| ☐ | Pokémaniac Ed | `pokemon.route-pokemaniac` | challenge | Pokémaniac Ed wants the drawer to name ten Pokémon in fifteen seconds. Miss: drink 4. |  |
+| ☐ | The Waterfall | `pokemon.route-waterfall` | challenge | The only way up is Waterfall. Mime climbing a waterfall and roll d20. | 1d20 — 1-12: You fall. Drink 3. 13-20: You make it up. Give 2. |
+| ☐ | The Truck | `pokemon.route-mew-truck` | challenge | There's a truck by the S.S. Anne. Everyone knows Mew is under it. Strength it? | 1d20 — 1-13: Nothing there. You pulled a muscle. Drink 5. 14-20: Mew. Kind of. Give 5. |
+| ☐ | Ace Trainer Rex | `pokemon.route-ace-champion-wannabe` | challenge | Rex says he'd be Champion if he'd tried. He has a Garchomp. Roll d20. | 1d20 — 1-11: He tried. Drink 5. 12-20: Rex goes home to his mom. Give 5. |
+| ☐ | Elite Four Reject | `pokemon.route-ace-elite-reject` | challenge | An Elite Four member who got fired. Still bitter. Still good. Roll d20. | 1d20 — 1-11: Still good. Drink 5. 12-20: Still fired. Give 5. |
+| ☐ | Golurk | `pokemon.route-golurk` | challenge | A Golurk guards Victory Road. It's a robot made of clay and grudges. Roll d20. | 1d20 — 1-9: Hammer Arm. Drink 5. 10-20: It crumbles. Give 4. |
+| ☐ | Steelix | `pokemon.route-onix-victory` | challenge | A Steelix is the floor of the cave. You've been walking on it. Roll d20. | 1d20 — 1-9: It wakes up. Drink 5. 10-20: You tiptoe off it. Give 4. |
+| ☐ | Machamp | `pokemon.route-machamp` | challenge | Wild Machamp. Four arms, no shirt, very personal. Roll d20. | 1d20 — 1-9: Four punches at once. Drink 5. 10-20: You hug it into submission. Give 4. |
+| ☐ | Boulder Puzzle | `pokemon.route-boulder-puzzle` | challenge | Victory Road's boulder puzzle. You pushed one wrong and now you're stuck. Roll d20. | 1d20 — 1-12: Restart the puzzle. Drink 4. 13-20: Solved. Give 3. |
+| ☐ | Veteran Ada | `pokemon.route-veteran-victory` | challenge | Veteran Ada wants to see your badges. The drawer names all eight from this run. Miss one: drink 4. |  |
+| ☐ | Ace Trainer Ilse | `pokemon.route-ace-victory-1` | challenge | Ace Trainer Ilse has six Pokémon and no mercy. Roll d20. | 1d20 — 1-12: No mercy. Drink 5. 13-20: She has mercy. Give 5. |
+| ☐ | Ace Trainer Ben | `pokemon.route-ace-victory-2` | challenge | Ace Trainer Ben has been on Victory Road for nine years. Roll d20. | 1d20 — 1-12: Nine years of practice. Drink 5. 13-20: Ben finally goes home. Give 5. |
+| ☐ | Blue | `pokemon.rival-blue` | challenge | Smell ya later! Your rival shows up again with a full team and a haircut. Roll d20. | 1d20 — 1-8: He smells ya. Drink 5. 9-20: He cries to Grandpa. Give 4. |
+| ☐ | Silver | `pokemon.rival-silver` | challenge | Silver stole his starter and wants to steal yours. Roll d20. | 1d20 — 1-8: Stolen. Drink 5. 9-20: He learns to love his Pokémon. Give 4. |
+| ☐ | Wally | `pokemon.rival-wally` | challenge | Wally got healthy. Wally got strong. Wally has a Gallade. Roll d20. | 1d20 — 1-8: Wally is so strong now. Drink 5. 9-20: Wally needs a nap. Give 4. |
+| ☐ | Barry | `pokemon.rival-barry` | challenge | Barry runs into you and fines you ten million. Roll d20. | 1d20 — 1-8: Pay up. Drink 5. 9-20: He runs off to fine someone else. Give 4. |
+| ☐ | Hop | `pokemon.rival-hop` | challenge | Hop wants to beat you to impress his brother. Roll d20. | 1d20 — 1-8: Hop's brother claps. Drink 5. 9-20: Hop gets a pep talk. Give 4. |
+| ☐ | Nemona | `pokemon.rival-nemona` | challenge | Nemona just wants to battle. Again. And again. She loves this. Roll d20. | 1d20 — 1-8: She loves this. Drink 5. 9-20: She loves losing too. Give 4. |
+| ☐ | Rocket Grunt | `pokemon.rocket-grunt-slots` | challenge | A Rocket Grunt guards the basement under the Game Corner. He has a Zubat. Of course. Roll d20. | 1d20 — 1-7: Zubat. Drink 3. 8-20: He gives up the Lift Key. Give 3. |
+| ☐ | Slowpoke Tail Seller | `pokemon.rocket-grunt-slowpoke` | challenge | A Grunt is selling Slowpoke Tails. They're still twitching. Roll d20. | 1d20 — 1-7: You bought one. Drink 3. 8-20: You free the Slowpoke. Give 3. |
+| ☐ | Spinner Tiles | `pokemon.rocket-grunt-spinner` | challenge | The hideout floor is spinner tiles. A Grunt laughs while you spin. Spin in your chair, roll d20. | 1d20 — 1-7: Dizzy and beaten. Drink 3. 8-20: You spin into him. Give 3. |
+| ☐ | Giovanni | `pokemon.boss-giovanni` | challenge | Giovanni strokes his Persian and doesn't look up. Roll d20. | 1d20 — 1-7: He still doesn't look up. Drink 5. 8-20: Team Rocket disbands. For now. Give 4. |
+| ☐ | Magma Grunt | `pokemon.magma-grunt-hood` | challenge | A Magma Grunt in a red hood wants more land. Stand up and claim your chair. Roll d20. | 1d20 — 1-7: He claims your chair. Drink 3. 8-20: Your land now. Give 3. |
+| ☐ | Sweaty Grunt | `pokemon.magma-grunt-sweat` | challenge | A Grunt inside a volcano in a full hoodie. He is so sweaty. Roll d20. | 1d20 — 1-7: He hugs you. Drink 3. 8-20: He passes out from heat. Give 3. |
+| ☐ | Tabitha | `pokemon.magma-admin-tabitha` | challenge | Admin Tabitha laughs like a cartoon villain. Laugh back like one, then roll d20. | 1d20 — 1-7: His laugh wins. Drink 3. 8-20: Yours wins. Give 3. |
+| ☐ | Maxie | `pokemon.boss-maxie` | challenge | Maxie pushes up his glasses and wakes Groudon. The room heats up. Roll d20. | 1d20 — 1-7: Drought. Drink 5. 8-20: Groudon goes back to sleep. Give 4. |
+| ☐ | Aqua Grunt | `pokemon.aqua-grunt-bandana` | challenge | An Aqua Grunt in a bandana wants more sea. Spit your drink back in the glass. Roll d20. | 1d20 — 1-7: More sea for him. Drink 3. 8-20: You stay dry. Give 3. |
+| ☐ | Submarine Thief | `pokemon.aqua-grunt-submarine` | challenge | A Grunt is stealing a submarine. He asks you to look away. Roll d20. | 1d20 — 1-7: You looked away. Drink 3. 8-20: You sink his plan. Give 3. |
+| ☐ | Shelly | `pokemon.aqua-admin-shelly` | challenge | Admin Shelly yawns at you. Everyone yawns. Roll d20. | 1d20 — 1-7: Asleep. Drink 3. 8-20: Awake. Give 3. |
+| ☐ | Archie | `pokemon.boss-archie` | challenge | Archie rips his shirt open and wakes Kyogre. It starts raining indoors. Roll d20. | 1d20 — 1-7: Drenched. Drink 5. 8-20: Kyogre goes back to sleep. Give 4. |
+| ☐ | Galactic Grunt | `pokemon.galactic-grunt-bowl` | challenge | A Galactic Grunt with a bowl cut that's also a uniform. Roll d20. | 1d20 — 1-7: Bowl cut to the face. Drink 3. 8-20: You laugh at the haircut. Give 3. |
+| ☐ | Mars | `pokemon.galactic-commander-mars` | challenge | Commander Mars wants your Pokémon for science. Roll d20. | 1d20 — 1-7: For science. Drink 3. 8-20: Science denied. Give 3. |
+| ☐ | Charon | `pokemon.galactic-scientist-charon` | challenge | Charon the scientist cackles and points a ray gun at the drawer. Roll d20. | 1d20 — 1-7: Zapped. Drink 3. 8-20: The gun was a hairdryer. Give 3. |
+| ☐ | Cyrus | `pokemon.boss-cyrus` | challenge | Cyrus wants to erase all emotion. Everyone hold a straight face while the drawer rolls d20. | 1d20 — 1-7: Feelings erased. Drink 5. 8-20: Cyrus learns to feel. Give 4. |
+| ☐ | Plasma Grunt | `pokemon.plasma-grunt-knight` | challenge | A Plasma Grunt dressed as a knight tells you to free your Pokémon. Roll d20. | 1d20 — 1-7: Freed and beaten. Drink 3. 8-20: You keep them. Give 3. |
+| ☐ | Sage | `pokemon.plasma-sage` | challenge | One of the Seven Sages lectures you about Pokémon liberation. Roll d20. | 1d20 — 1-7: Lectured. Drink 3. 8-20: You walk out. Give 3. |
+| ☐ | N | `pokemon.plasma-n` | challenge | N talks very fast about truth and ideals. Repeat what he said or roll d20. | 1d20 — 1-7: You can't keep up. Drink 3. 8-20: N spins on a Ferris wheel. Give 3. |
+| ☐ | Ghetsis | `pokemon.boss-ghetsis` | challenge | Ghetsis, in a cape with eyes on it, calls you a worthless trash. Roll d20. | 1d20 — 1-7: Worthless. Drink 5. 8-20: His cape rips. Give 4. |
+| ☐ | Flare Grunt | `pokemon.flare-grunt-suit` | challenge | A Flare Grunt in a red suit says your outfit is ugly. Defend your outfit and roll d20. | 1d20 — 1-7: It's ugly. Drink 3. 8-20: Fashion wins. Give 3. |
+| ☐ | Flare Scientist | `pokemon.flare-scientist` | challenge | A Flare scientist with orange goggles shows you a doomsday weapon. Roll d20. | 1d20 — 1-7: It works. Drink 3. 8-20: It's a toaster. Give 3. |
+| ☐ | Flare Admin | `pokemon.flare-admin` | challenge | A Flare admin charges five million to join. Roll d20. | 1d20 — 1-7: You paid. Drink 3. 8-20: You talk her down. Give 3. |
+| ☐ | Lysandre | `pokemon.boss-lysandre` | challenge | Lysandre's hair is on fire, figuratively. He wants a beautiful world. Roll d20. | 1d20 — 1-7: Beautiful. Drink 5. 8-20: The ultimate weapon misfires. Give 4. |
+| ☐ | Skull Grunt | `pokemon.skull-grunt-yo` | challenge | A Skull Grunt does the Skull pose and says YO. Everyone does the pose. Roll d20. | 1d20 — 1-7: YO. Drink 3. 8-20: No YO. Give 3. |
+| ☐ | Rapping Grunt | `pokemon.skull-grunt-rap` | challenge | A Skull Grunt raps at you badly. Rap back four lines or roll d20. | 1d20 — 1-7: Bars. Drink 3. 8-20: No bars. Give 3. |
+| ☐ | Plumeria | `pokemon.skull-admin-plumeria` | challenge | Big sis Plumeria wants to know why you hurt her boys. Roll d20. | 1d20 — 1-7: She hurts you. Drink 3. 8-20: She respects you. Give 3. |
+| ☐ | Guzma | `pokemon.boss-guzma` | challenge | Guzma is the hated boss who beats you down. He says so himself. Roll d20. | 1d20 — 1-7: Beaten down. Drink 5. 8-20: Guzma what is you doing. Give 4. |
+| ☐ | Oleana | `pokemon.cosmos-oleana` | challenge | Oleana, Chairman Rose's secretary, has a meeting with you. Roll d20. | 1d20 — 1-7: Meeting ran long. Drink 3. 8-20: Meeting cancelled. Give 3. |
+| ☐ | Macro Intern | `pokemon.cosmos-intern` | challenge | An intern asks you to fill out a feedback survey before battling. Roll d20. | 1d20 — 1-7: Twenty questions. Drink 3. 8-20: You lie on the survey. Give 3. |
+| ☐ | Tower Security | `pokemon.cosmos-security` | challenge | Tower Security wants your badge. Not that badge, your ID badge. Roll d20. | 1d20 — 1-7: You don't have one. Drink 3. 8-20: You walk past. Give 3. |
+| ☐ | Chairman Rose | `pokemon.boss-rose` | challenge | Chairman Rose woke Eternatus to fix the energy crisis a thousand years early. Roll d20. | 1d20 — 1-7: Darkest Day. Drink 5. 8-20: The lights stay on. Give 4. |
+| ☐ | Star Grunt | `pokemon.star-grunt-dance` | challenge | A Team Star grunt does the Star Shuffle. Do it with her, then roll d20. | 1d20 — 1-7: Starstruck. Drink 3. 8-20: You shuffle past. Give 3. |
+| ☐ | Starmobile | `pokemon.star-car` | challenge | A boss revs a Starmobile, a car made of Revavroom. Rev with your mouth, roll d20. | 1d20 — 1-7: Run over. Drink 3. 8-20: It stalls. Give 3. |
+| ☐ | Star Squad | `pokemon.star-squad` | challenge | Thirty grunts. Thirty seconds. Everyone points at the drawer. Roll d20. | 1d20 — 1-7: Overrun. Drink 3. 8-20: Thirty down. Give 3. |
+| ☐ | Cassiopeia | `pokemon.boss-cassiopeia` | challenge | Cassiopeia was the Champion's classmate all along. Plot twist. Roll d20. | 1d20 — 1-7: Twist. Drink 5. 8-20: Team Star disbands. Give 4. |
 | ☐ | Lickitung | `pokemon.lickitung` | rule | Lickitung used Lick! Give 2 and keep your tongue out until your next turn. |  |
 | ☐ | Team Magma | `pokemon.team-magma` | rule | Team Magma recruited you! If you're on Team Magma, make a rule for the rest of the game. Otherwise, drink 7. |  |
 | ☐ | Team Aqua | `pokemon.team-aqua` | rule | Team Aqua recruited you! If you're on Team Aqua, make a rule for the rest of the game. Otherwise, drink 7. |  |
@@ -377,6 +696,23 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Barboach | `pokemon.barboach` | rule | Barboach used Mud-slap! Name a player. For the rest of the game, they may slap you once after a full drink. |  |
 | ☐ | Mawile | `pokemon.mawile` | rule | Mawile used Vicegrip! Until your next turn, grab a player and squeeze them. Drink 4 and apologize. |  |
 | ☐ | Relicanth | `pokemon.relicanth` | rule | Relicanth used Dive! Kneel under the table until your next turn. Surface early: drink 2. |  |
+| ☐ | Bulbasaur | `pokemon.starter-bulbasaur` | rule | Bulbasaur chose you. Two less HP, but every heal heals one more. Everyone sniff the bulb. |  |
+| ☐ | Charmander | `pokemon.starter-charmander` | rule | Charmander chose you. Wild fights hurt one less; bosses hurt one more. Keep its tail lit: nobody blow on a candle. |  |
+| ☐ | Squirtle | `pokemon.starter-squirtle` | rule | Squirtle chose you, in sunglasses. A Protect to start, but the bag holds only two. |  |
+| ☐ | Pikachu | `pokemon.starter-pikachu` | rule | Pikachu won't go in its ball and won't evolve. Ever. Two more HP and an X Attack. Everyone yells Pika. |  |
+| ☐ | Eevee | `pokemon.starter-eevee` | rule | Eevee chose you. Two less HP, but the bag holds four. It's waiting for the right stone. |  |
+| ☐ | Cyndaquil | `pokemon.starter-cyndaquil` | rule | Cyndaquil chose you, half asleep. One less HP, but an X Attack to start. |  |
+| ☐ | Totodile | `pokemon.starter-totodile` | rule | Totodile chose you by biting you. Three more HP, but wild fights hurt one more. |  |
+| ☐ | Treecko | `pokemon.starter-treecko` | rule | Treecko chose you, chewing a twig. An Escape Rope to start, but rivals and Ace Trainers hurt one more. |  |
+| ☐ | Torchic | `pokemon.starter-torchic` | rule | Torchic chose you. Two less HP, but rivals and Ace Trainers hurt one less. Everyone flap and peep. |  |
+| ☐ | Mudkip | `pokemon.starter-mudkip` | rule | So I herd u liek Mudkipz. Four less HP, but bosses hurt one less. |  |
+| ☐ | Piplup | `pokemon.starter-piplup` | rule | Piplup chose you and is very proud of it. Five more HP, but every boss takes a hit more. |  |
+| ☐ | Turtwig | `pokemon.starter-turtwig` | rule | Turtwig chose you, slowly. Four more HP, but the bag holds only two. |  |
+| ☐ | Oshawott | `pokemon.starter-oshawott` | rule | Oshawott chose you, scalchop out. Three less HP, but a Protect and an X Attack to start. |  |
+| ☐ | Froakie | `pokemon.starter-froakie` | rule | Froakie chose you, covered in bubbles. Two less HP, but two Escape Ropes to start. |  |
+| ☐ | Rowlet | `pokemon.starter-rowlet` | rule | Rowlet chose you and fell asleep on your head. One less HP, but hazards and finds hurt one less. |  |
+| ☐ | Scorbunny | `pokemon.starter-scorbunny` | rule | Scorbunny chose you, bouncing. Wild fights and trainers hurt one less, but the bag holds two. |  |
+| ☐ | Fuecoco | `pokemon.starter-fuecoco` | rule | Fuecoco chose you because you had snacks. Three less HP, but every heal heals two more. |  |
 
 ## Cabin weekend (`cabin`)
 

@@ -2,7 +2,6 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import type {
   CardDefinition,
-  Curse,
   Loot,
   Offer,
   PartyState,
@@ -18,46 +17,30 @@ import {
   questRecord,
 } from "../game/engine";
 import { asset } from "../presentation/theme";
+import {
+  crawlIconPath,
+  crawlTheme,
+  heartCount,
+  type CrawlIconName,
+  type CrawlTheme,
+} from "./crawlTheme";
 
 // Pub Crawl furniture: the party's hearts, the satchel, the floor's rooms and
 // the boss's wounds. Everything a crawl shows lives here; the engine decides.
-
-export const LOOT_INFO: Record<Loot, { name: string; does: string }> = {
-  draught: {
-    name: "Healing Draught",
-    does: "Down a fresh, full drink: +1 heart",
-  },
-  shield: { name: "Coaster Shield", does: "Blocks the next heart loss" },
-  die: { name: "Loaded Die", does: "Roll a lost fight again" },
-  smoke: { name: "Smoke Bomb", does: "Escape a room fight" },
-};
-export const CURSE_INFO: Record<Curse, { name: string; does: string }> = {
-  bleed: { name: "Bleeding", does: "Every heart loss costs one more" },
-  hex: { name: "Hexed", does: "The satchel is sealed" },
-};
-
-type IconName =
-  | Loot
-  | Curse
-  | "heart"
-  | "boss"
-  | "satchel"
-  | "wiped"
-  | "omen"
-  | "ambush"
-  | "elite"
-  | "door";
+// The words and marks are the pack's (`crawlTheme`).
 
 /** One of the crawl's single-colour marks, painted as a mask so it takes the
  * finish of wherever it sits. */
 export function CrawlIcon({
   name,
+  theme,
   className = "",
 }: {
-  name: IconName;
+  name: CrawlIconName;
+  theme: CrawlTheme;
   className?: string;
 }) {
-  const src = `url("${asset(`art/crawl/${name}.svg`)}")`;
+  const src = `url("${asset(crawlIconPath(theme, name))}")`;
   return (
     <span
       className={`crawl-icon icon-${name} ${className}`}
@@ -92,6 +75,7 @@ export function crawlPlace(quest: QuestState) {
  * card's ribbon and in the party dialog. */
 export function CrawlMeterFace({ quest }: { quest: QuestState }) {
   const party = quest.party!;
+  const theme = crawlTheme(quest.packId);
   const { pulse, delta } = useHeartPulse(party.hearts);
   return (
     <>
@@ -106,7 +90,7 @@ export function CrawlMeterFace({ quest }: { quest: QuestState }) {
         </span>
       )}
       <span className={`meter-heart ${pulse}`} key={`${party.hearts}-${pulse}`}>
-        <CrawlIcon name="heart" />
+        <CrawlIcon name="heart" theme={theme} />
         <strong className={party.hearts <= 3 ? "low" : undefined}>
           {party.hearts}
         </strong>
@@ -116,12 +100,12 @@ export function CrawlMeterFace({ quest }: { quest: QuestState }) {
           className={`meter-tag tag-curse curse-${party.curse}`}
           aria-hidden="true"
         >
-          <CrawlIcon name={party.curse} />
+          <CrawlIcon name={party.curse} theme={theme} />
         </span>
       )}
       {party.loot.length > 0 && (
         <span className="meter-tag tag-satchel" aria-hidden="true">
-          <CrawlIcon name="satchel" />
+          <CrawlIcon name="satchel" theme={theme} />
           {party.loot.length}
         </span>
       )}
@@ -131,12 +115,13 @@ export function CrawlMeterFace({ quest }: { quest: QuestState }) {
 export function crawlMeterLabel(quest: QuestState) {
   const party = quest.party!;
   const place = crawlPlace(quest);
+  const theme = crawlTheme(quest.packId);
   return [
-    `Hearts: ${party.hearts} of ${party.max}`,
+    `${theme.words.Hearts}: ${party.hearts} of ${party.max}`,
     place.name,
-    party.curse && CURSE_INFO[party.curse].name,
+    party.curse && theme.curses[party.curse].name,
     party.loot.length &&
-      `Satchel: ${party.loot.map((l) => LOOT_INFO[l].name).join(", ")}`,
+      `${theme.words.Satchel}: ${party.loot.map((l) => theme.loot[l].name).join(", ")}`,
   ]
     .filter(Boolean)
     .join(". ");
@@ -169,14 +154,16 @@ export function CrawlProgress({ quest }: { quest: QuestState }) {
   const party = quest.party!;
   const card = finaleCard(quest, quest.finale[quest.step]);
   const need = card ? hitsNeeded(quest, card) : 0;
+  const theme = crawlTheme(quest.packId);
+  const { words } = theme;
   if (place.omen)
     return (
       <div
         className="progress crawl-progress omen"
         role="img"
-        aria-label="Tonight's omen"
+        aria-label={words.omen}
       >
-        <CrawlIcon name="omen" />
+        <CrawlIcon name="omen" theme={theme} />
       </div>
     );
   if (need)
@@ -184,9 +171,9 @@ export function CrawlProgress({ quest }: { quest: QuestState }) {
       <div
         className={`progress crawl-progress boss ${place.boss ? "" : "ambush"}`}
         role="img"
-        aria-label={`${place.boss ? "Boss" : `Ambush in room ${place.room} of ${place.rooms}`}: ${party.hits} of ${need} hits`}
+        aria-label={`${place.boss ? words.Boss : `${words.Ambush} in ${words.Room.toLowerCase()} ${place.room} of ${place.rooms}`}: ${party.hits} of ${need} hits`}
       >
-        <CrawlIcon name={place.boss ? "boss" : "ambush"} />
+        <CrawlIcon name={place.boss ? "boss" : "ambush"} theme={theme} />
         <span className="boss-pips">
           {Array.from({ length: need }, (_, i) => (
             <i key={i} className={i < party.hits ? "hit" : undefined} />
@@ -198,7 +185,7 @@ export function CrawlProgress({ quest }: { quest: QuestState }) {
     <div
       className="progress crawl-progress"
       role="img"
-      aria-label={`Room ${place.room} of ${place.rooms}, ${place.name}`}
+      aria-label={`${words.Room} ${place.room} of ${place.rooms}, ${place.name}`}
     >
       <strong>{place.room}</strong>
       <span className="muted"> / {place.rooms}</span>
@@ -214,10 +201,12 @@ export function CardStakes({
   card,
   party,
   hits = 0,
+  theme,
 }: {
   card: CardDefinition;
   party: PartyState;
   hits?: number;
+  theme: CrawlTheme;
 }) {
   const damage = card.battle && card.damage;
   const gain = card.reward?.loot ?? (card.reward?.heal ? "heal" : null);
@@ -230,26 +219,26 @@ export function CardStakes({
         {damage ? (
           <span
             className="stake stake-loss"
-            aria-label={`Losing costs ${damage + bleed} ${damage + bleed === 1 ? "heart" : "hearts"}`}
+            aria-label={`Losing costs ${heartCount(theme, damage + bleed)}`}
           >
             <b>−{damage + bleed}</b>
-            <CrawlIcon name="heart" />
+            <CrawlIcon name="heart" theme={theme} />
           </span>
         ) : null}
         {card.curse && (
           <span
             className={`stake stake-curse curse-${card.curse}`}
-            aria-label={`${card.battle ? "Losing brings" : "Brings"} a curse: ${CURSE_INFO[card.curse].name}`}
+            aria-label={`${card.battle ? "Losing brings" : "Brings"} a ${theme.words.curse}: ${theme.curses[card.curse].name}`}
           >
-            <CrawlIcon name={card.curse} />
+            <CrawlIcon name={card.curse} theme={theme} />
           </span>
         )}
         {hits > 1 && (
           <span
             className="stake stake-hits"
-            aria-label={`${boss ? "A boss" : "An ambush"}: ${party.hits} of ${hits} hits landed`}
+            aria-label={`${boss ? theme.words.aBoss : theme.words.anAmbush}: ${party.hits} of ${hits} hits landed`}
           >
-            <CrawlIcon name={boss ? "boss" : "ambush"} />
+            <CrawlIcon name={boss ? "boss" : "ambush"} theme={theme} />
             <span className="stake-pips">
               {Array.from({ length: hits }, (_, i) => (
                 <i key={i} className={i < party.hits ? "hit" : undefined} />
@@ -262,18 +251,18 @@ export function CardStakes({
         {gain === "heal" ? (
           <span
             className="stake stake-heal"
-            aria-label={`Heals ${card.reward!.heal} hearts`}
+            aria-label={`Heals ${card.reward!.heal} ${theme.words.hearts}`}
           >
             <b>+{card.reward!.heal}</b>
-            <CrawlIcon name="heart" />
+            <CrawlIcon name="heart" theme={theme} />
           </span>
         ) : gain ? (
           <span
             className="stake stake-loot"
-            aria-label={`${card.battle ? "Winning finds" : "Finds"} a ${LOOT_INFO[gain].name}`}
+            aria-label={`${card.battle ? "Winning finds" : "Finds"} a ${theme.loot[gain].name}`}
           >
             <b>+</b>
-            <CrawlIcon name={gain} />
+            <CrawlIcon name={gain} theme={theme} />
           </span>
         ) : null}
       </span>
@@ -289,47 +278,65 @@ export function OfferPlaque({
   index,
   can,
   onTake,
+  theme,
+  branch,
 }: {
   offer: Offer;
   index: number;
   can: boolean;
-  onTake: (index: number) => void;
+  onTake: (index: number, branch?: number) => void;
+  theme: CrawlTheme;
+  /** One of a branching starter's forms, on its own evolve plaque. */
+  branch?: { name: string; index: number };
 }) {
-  const icon: IconName | null = offer.loot
+  // A branch plaque names its form; its price stays under the name.
+  const price = branch ? offer.label.split(" · ")[1] : undefined;
+  const icon: CrawlIconName | null = offer.loot
     ? offer.loot
     : offer.elite
       ? "elite"
-      : offer.heal
-        ? "heart"
-        : null;
+      : offer.evolve
+        ? "omen"
+        : offer.heal
+          ? "heart"
+          : null;
   const brings = offer.loot
-    ? `a ${LOOT_INFO[offer.loot].name}`
+    ? `a ${theme.loot[offer.loot].name}`
     : offer.elite
-      ? "the next room is an elite: harder, and it pays"
-      : offer.heal
-        ? `${offer.heal} hearts back`
-        : "nothing";
+      ? theme.words.elite
+      : offer.evolve
+        ? !can
+          ? "your starter is fully evolved"
+          : branch
+            ? `your starter evolves into ${branch.name}`
+            : "your starter evolves"
+        : offer.heal
+          ? `${offer.heal} ${theme.words.hearts} back`
+          : "nothing";
   return (
     <button
       className={`card-choice-option offer-plaque ${offer.elite ? "offer-loud" : icon ? "offer-buy" : "offer-pass"}`}
       style={{ animationDelay: `${index * 70}ms` }}
       disabled={!can}
-      aria-label={`${offer.label}${offer.cost ? `, ${offer.cost} ${offer.cost === 1 ? "heart" : "hearts"}` : ""}: ${brings}`}
-      onClick={() => onTake(index)}
+      aria-label={`${branch ? `${branch.name}${price ? ` · ${price}` : ""}` : offer.label}${offer.cost ? `, ${heartCount(theme, offer.cost)}` : ""}: ${brings}`}
+      onClick={() => onTake(index, branch?.index)}
     >
       <span className="offer-goods" aria-hidden="true">
         {icon ? (
-          <CrawlIcon name={icon} />
+          <CrawlIcon name={icon} theme={theme} />
         ) : (
-          <CrawlIcon name="door" className="offer-plain" />
+          <CrawlIcon name="door" theme={theme} className="offer-plain" />
         )}
         {offer.cost ? (
           <span className="offer-cost">
-            <CrawlIcon name="heart" />−{offer.cost}
+            <CrawlIcon name="heart" theme={theme} />−{offer.cost}
           </span>
         ) : null}
       </span>
-      <span className="offer-label">{offer.label}</span>
+      <span className="offer-label">
+        {branch ? branch.name : offer.label}
+        {price && <small className="offer-price">{price}</small>}
+      </span>
     </button>
   );
 }
@@ -343,18 +350,20 @@ export function usableItems(s: SessionState): Loot[] {
 export function LootPlaque({
   item,
   onUse,
+  theme,
 }: {
   item: Loot;
   onUse: (item: Loot) => void;
+  theme: CrawlTheme;
 }) {
   return (
     <button
       className={`card-choice-option loot-plaque loot-${item}`}
-      aria-label={`Use the ${LOOT_INFO[item].name}: ${LOOT_INFO[item].does}`}
+      aria-label={`Use the ${theme.loot[item].name}: ${theme.loot[item].does}`}
       onClick={() => onUse(item)}
     >
-      <CrawlIcon name={item} />
-      <span>{item === "smoke" ? "Flee" : "Reroll"}</span>
+      <CrawlIcon name={item} theme={theme} />
+      <span>{item === "smoke" ? theme.flee : theme.reroll}</span>
     </button>
   );
 }
@@ -366,14 +375,17 @@ type RunRecord = NonNullable<ReturnType<typeof questRecord>>;
  * with its rooms faced and its boss. */
 export function CrawlRecord({
   record,
+  theme,
   session,
   onUse,
 }: {
   record: RunRecord;
+  theme: CrawlTheme;
   session?: SessionState | null;
   onUse?: (item: Loot) => void;
 }) {
   const party = record.party!;
+  const { words } = theme;
   const floors: { name: string; rooms: number; of: number; boss?: string }[] =
     [];
   for (const stage of record.stages) {
@@ -392,7 +404,7 @@ export function CrawlRecord({
       <div
         className="crawl-hearts"
         role="img"
-        aria-label={`Hearts: ${party.hearts} of ${party.max}`}
+        aria-label={`${words.Hearts}: ${party.hearts} of ${party.max}`}
         // One row up to twelve; an omen's extra hearts split into two even
         // rows.
         style={
@@ -405,32 +417,62 @@ export function CrawlRecord({
           <CrawlIcon
             key={i}
             name="heart"
+            theme={theme}
             className={i < party.hearts ? "full" : "spent"}
           />
         ))}
       </div>
-      {record.omen && (
+      {record.form && (
         <p className="crawl-omen">
-          <CrawlIcon name="omen" />
-          <strong>{record.omen.title}</strong>
-          <span>{record.omen.rules}</span>
+          <CrawlIcon name="omen" theme={theme} />
+          <strong>{record.form.title}</strong>
+          <span>{record.form.rules}</span>
+          {record.form.line.length > 1 && (
+            // A starter's line, its current form marked.
+            <span className="crawl-evolution" aria-label="Evolution line">
+              {record.form.line.map((name, i) => (
+                <span key={name}>
+                  {i > 0 && " › "}
+                  {i === record.form!.form ? <b>{name}</b> : name}
+                </span>
+              ))}
+            </span>
+          )}
+        </p>
+      )}
+      {words.badges && record.badges.of > 0 && (
+        <p
+          className="crawl-badges"
+          role="img"
+          aria-label={`${words.badges}: ${record.badges.earned} of ${record.badges.of}`}
+        >
+          {Array.from({ length: record.badges.of }, (_, i) => (
+            <CrawlIcon
+              key={i}
+              name="boss"
+              theme={theme}
+              className={i < record.badges.earned ? "full" : "spent"}
+            />
+          ))}
         </p>
       )}
       {party.curse && (
         <p className={`crawl-curse curse-${party.curse}`}>
-          <CrawlIcon name={party.curse} />
-          <strong>{CURSE_INFO[party.curse].name}</strong>
-          <span>{CURSE_INFO[party.curse].does}, to the end of the floor</span>
+          <CrawlIcon name={party.curse} theme={theme} />
+          <strong>{theme.curses[party.curse].name}</strong>
+          <span>
+            {theme.curses[party.curse].does}, {words.curseLasts}
+          </span>
         </p>
       )}
       {!party.wiped && !record.won && (
-        <ul className="satchel" aria-label="Satchel">
+        <ul className="satchel" aria-label={words.Satchel}>
           {Array.from({ length: record.satchel }, (_, i) => {
             const item = party.loot[i];
             if (!item)
               return (
                 <li key={i} className="satchel-slot empty">
-                  <CrawlIcon name="satchel" />
+                  <CrawlIcon name="satchel" theme={theme} />
                   <span className="sr-only">Empty</span>
                 </li>
               );
@@ -441,14 +483,14 @@ export function CrawlRecord({
               canUseLoot(session, item);
             return (
               <li key={i} className="satchel-slot">
-                <CrawlIcon name={item} />
+                <CrawlIcon name={item} theme={theme} />
                 <span>
-                  <strong>{LOOT_INFO[item].name}</strong>
-                  <small>{LOOT_INFO[item].does}</small>
+                  <strong>{theme.loot[item].name}</strong>
+                  <small>{theme.loot[item].does}</small>
                 </span>
                 {usable && (
                   <button className="satchel-use" onClick={() => onUse!(item)}>
-                    Drink
+                    {theme.drink}
                   </button>
                 )}
               </li>
@@ -467,7 +509,7 @@ export function CrawlRecord({
             <strong>{floor.name}</strong>
             <span>
               {floor.rooms
-                ? `${floor.rooms} of ${floor.of} rooms`
+                ? `${floor.rooms} of ${floor.of} ${words.rooms}`
                 : "Not yet reached"}
               {floor.boss && (
                 <>
@@ -485,32 +527,32 @@ export function CrawlRecord({
           <div>
             <dt className="stake stake-loss">
               <b>−2</b>
-              <CrawlIcon name="heart" />
+              <CrawlIcon name="heart" theme={theme} />
             </dt>
-            <dd>Hearts the party loses if the fight is lost</dd>
+            <dd>{theme.legend[0]}</dd>
           </div>
           <div>
             <dt className="stake stake-curse curse-bleed">
-              <CrawlIcon name="bleed" />
+              <CrawlIcon name="bleed" theme={theme} />
             </dt>
-            <dd>A curse on a loss, until the floor's boss falls</dd>
+            <dd>{theme.legend[1]}</dd>
           </div>
           <div>
             <dt className="stake stake-hits">
-              <CrawlIcon name="boss" />
+              <CrawlIcon name="boss" theme={theme} />
               <span className="stake-pips">
                 <i className="hit" />
                 <i />
               </span>
             </dt>
-            <dd>Wins it takes: the next drawer swings again</dd>
+            <dd>{theme.legend[2]}</dd>
           </div>
           <div>
             <dt className="stake stake-loot">
               <b>+</b>
-              <CrawlIcon name="die" />
+              <CrawlIcon name="die" theme={theme} />
             </dt>
-            <dd>An item for the satchel, on a win</dd>
+            <dd>{theme.legend[3]}</dd>
           </div>
         </dl>
       )}

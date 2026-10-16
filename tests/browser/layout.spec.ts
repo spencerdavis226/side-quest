@@ -178,7 +178,8 @@ test("Previous Card owns the same 2:3 geometry as gameplay", async ({
 test("@release home fits Safari's visible height without moving Install into the status bar", async ({
   page,
 }) => {
-  // Match the owner's screenshot: League mode with Core, House, VIP and Pokémon.
+  // Match the owner's screenshot: League mode, with Core, House, VIP and
+  // Pokémon kept selected for the next plain game.
   await page.addInitScript(() => {
     localStorage.setItem(
       "side-quest.settings.v1",
@@ -204,7 +205,9 @@ test("@release home fits Safari's visible height without moving Install into the
     await page.setViewportSize({ width, height });
     await page.goto("./");
     await expect(page.locator(".setup")).toBeVisible();
-    await expect(page.locator(".pack-selector")).toContainText("350 cards");
+    // The League is a journey that plays its own pack: its brief stands in
+    // for the pack picker.
+    await expect(page.locator(".crawl-brief")).toContainText("17 HP · 8 gyms");
     await page.evaluate(() => document.fonts.ready);
     await page.addStyleTag({
       content: `:root { --top-safe: ${top}px; --bottom-safe: ${bottom}px }`,
@@ -261,6 +264,8 @@ test("@release home fits Safari's visible height without moving Install into the
       rootY: 0,
     });
   }
+  // The League plays its own pack; a plain mode brings the pack picker back.
+  await page.getByRole("button", { name: /^Short/ }).click();
   await page.getByRole("button", { name: /^Choose packs/ }).click();
   await expect(page.getByRole("dialog", { name: "Card packs" })).toBeVisible();
   await page.getByRole("button", { name: "Done", exact: true }).click();

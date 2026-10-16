@@ -2,6 +2,13 @@ import { test, expect } from "vitest";
 import { workshopSession, workshopCards } from "../src/workshop/session";
 import { cards, packs } from "../src/content/catalog";
 import { createSession, finaleCardIds, questStages } from "../src/game/engine";
+import {
+  champions,
+  eliteFourMembers,
+  gymLeaders,
+  gymTiers,
+  legendaries,
+} from "../src/content/pokemon-league";
 test("seeded workshop preserves the pool and reproduces order", () => {
   const a = workshopSession("a", "core.house-special").session;
   expect(a).toEqual(workshopSession("a", "core.house-special").session);
@@ -77,7 +84,26 @@ test("each supplied sheet row lands in the House deck, Cabin weekend or VIP nigh
   expect(vip.cardIds.slice(-4)).toEqual(
     [3, 4, 5, 6].map((row) => `vip.sheet-${String(row).padStart(3, "0")}`),
   );
-  expect(cards).toHaveLength(1021); // 96 core + 94 house + 16 vip + 120 Pokémon (+24 League-only gym leaders, 20 gauntlet cards) + 85 cabin + 250 likely + 150 secrets + 166 Dungeon night (118 fights, elites and bosses; 36 Pub Crawl finds, merchants and forks; 12 omens)
+  expect(cards).toHaveLength(1333); // 96 core + 94 house + 16 vip + 120 Pokémon (+72 League-only gym leaders, 79 gauntlet cards, 17 starters, 152 route, Victory Road and rival cards, 36 hideout cards) + 85 cabin + 250 likely + 150 secrets + 166 Dungeon night (118 fights, elites and bosses; 36 Pub Crawl finds, merchants and forks; 12 omens)
+});
+
+test("League gyms come in eight tiers, one leader per region in each", () => {
+  expect(gymTiers).toHaveLength(8);
+  const leaders = cards.filter((c) => c.quest === "pokemon");
+  expect(new Set(gymTiers.flat())).toEqual(new Set(leaders));
+  for (const tier of gymTiers) {
+    expect(tier).toHaveLength(9);
+    // Every boss in a tier hits as hard and lasts as long as the rest.
+    expect(new Set(tier.map((c) => c.damage)).size).toBe(1);
+    expect(new Set(tier.map((c) => c.hits)).size).toBe(1);
+  }
+  for (const c of [
+    ...gymLeaders,
+    ...legendaries,
+    ...eliteFourMembers,
+    ...champions,
+  ])
+    expect(c, c.id).toMatchObject({ battle: true, encounter: "boss" });
 });
 
 test("Cabin weekend owns its CABIIN cards and shares none", () => {
@@ -114,71 +140,58 @@ test("Most Likely To is 250 standalone vote cards", () => {
   }
 });
 
-test("the Pokémon League mode deals all 24 gym leaders and always reaches eight badges", () => {
+test("the Pokémon League is a crawl: 72 gym leaders in eight tiers, then the gauntlet", () => {
   const pokemon = packs.find((p) => p.id === "pokemon")!;
+  // Since 2026-10-16 the League plays on the crawl engine (Team HP); the
+  // journey itself is checked in tests/league.test.ts.
   expect(pokemon.quest).toMatchObject({
     mode: "Pokémon League",
-    goal: 8,
-    length: 40,
+    goal: 0,
+    cardIds: [],
+    party: { hearts: 17 },
   });
-  // After the eighth badge: 1 of 8 Legendaries, 4 of 9 Elite Four, 1 of 3
-  // Champions.
+  // The gauntlet: 1 of 30 Legendaries, 4 of 36 Elite Four, 1 of 13
+  // Champions, each stage with its own ribbon finish.
+  const stages = questStages(pokemon.quest!);
+  const gauntlet = stages.slice(-3);
   expect(
-    questStages(pokemon.quest!).map(({ label, pick, cardIds }) => [
-      label,
-      pick,
-      cardIds.length,
-    ]),
+    gauntlet.map(({ label, pick, cardIds }) => [label, pick, cardIds.length]),
   ).toEqual([
-    ["Legendary", 1, 8],
-    ["Elite Four", 4, 9],
-    ["Champion", 1, 3],
+    ["Legendary", 1, 30],
+    ["Elite Four", 4, 36],
+    ["Champion", 1, 13],
   ]);
-  // Each stage has its own ribbon finish; gym leaders keep the gold default.
   const tones = ["pearl", "violet", "crimson"];
-  for (const [i, stage] of questStages(pokemon.quest!).entries()) {
+  for (const [i, stage] of gauntlet.entries()) {
     expect(stage.intro).toBeTruthy();
     for (const id of stage.cardIds) {
       const card = cards.find((c) => c.id === id)!;
       expect(card.ribbon).toMatch(
-        /^(Legendary Encounter|Elite Four · \w+|Champion · \w+)$/,
+        /^(Legendary Encounter|(Elite Four|Champion Cup) · \w+|Champion · \w+)$/,
       );
       expect(card.ribbonTone).toBe(tones[i]);
     }
   }
   const leaders = cards.filter((c) => c.quest === "pokemon");
-  expect(leaders).toHaveLength(24);
-  expect(pokemon.quest!.cardIds).toEqual(leaders.map((c) => c.id));
+  expect(leaders).toHaveLength(72);
+  const gyms = stages.filter((st) => /^Gym \d$/.test(st.label));
+  expect(gyms.flatMap((st) => st.cardIds).sort()).toEqual(
+    leaders.map((c) => c.id).sort(),
+  );
   for (const leader of leaders) {
-    expect(leader.ribbon).toMatch(/^Gym Leader · \w+ Badge$/);
+    // Alola's island challenge pays Z-Crystals instead of badges.
+    expect(leader.ribbon).toMatch(
+      /^(Gym Leader · \w+ Badge|(Trial Captain|Kahuna) · \w+ Z)$/,
+    );
     expect(leader.ribbonTone).toBeUndefined();
     // Gym leaders are League-only: never in the regular Pokémon deck.
     expect(pokemon.cardIds).not.toContain(leader.id);
   }
-  const ids = new Set(leaders.map((c) => c.id));
+  const ids = new Set(finaleCardIds(pokemon.quest!));
   const regular = createSession(
     { version: 1, packIds: ["pokemon"], limit: 60 },
     cards,
     packs,
   );
   expect(regular.order.some((id) => ids.has(id))).toBe(false);
-  let seed = 11;
-  const random = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
-  for (let i = 0; i < 40; i++) {
-    const s = createSession(
-      {
-        version: 1,
-        packIds: ["core", "house", "pokemon"],
-        limit: null,
-        quest: "pokemon",
-      },
-      cards,
-      packs,
-      random,
-    );
-    expect(s.order.filter((id) => ids.has(id))).toHaveLength(24);
-    expect(
-      s.order.slice(0, 39).filter((id) => ids.has(id)).length,
-    ).toBeGreaterThanOrEqual(8);
-  }
 });

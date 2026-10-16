@@ -2,6 +2,7 @@ import { Button, Artwork } from "../components/UI";
 import { asset } from "../presentation/theme";
 import { QuestRecord } from "../components/QuestRecord";
 import { CrawlIcon, CrawlRecord } from "../components/Crawl";
+import { crawlTheme } from "../components/crawlTheme";
 import type { questRecord } from "../game/engine";
 /** The end of a game: a toast to the table, or, when a quest mode's finale is
  * beaten, the Hall of Fame with the run laid out. A crawl ends either way:
@@ -11,6 +12,7 @@ export function Completion({
   record,
   mode,
   league = false,
+  packId,
   celebrate,
   onReplay,
   onSetup,
@@ -21,6 +23,8 @@ export function Completion({
   /** The quest mode's name, e.g. "Pokémon League". */
   mode?: string;
   league?: boolean;
+  /** The quest's pack: a crawl's words and marks. */
+  packId?: string;
   celebrate: boolean;
   onReplay: () => void;
   onSetup: () => void;
@@ -28,6 +32,8 @@ export function Completion({
 }) {
   const crawl = record?.party;
   const wiped = !!crawl?.wiped;
+  const look = crawlTheme(packId);
+  const end = wiped ? look.wiped : look.won;
   return (
     <section
       className={`complete${record?.won ? ` hall-of-fame${league ? " painted-hall" : ""}` : ""}${crawl ? " crawl-end" : ""}${wiped ? " wiped" : ""}${celebrate ? " celebrate" : ""}`}
@@ -39,28 +45,17 @@ export function Completion({
         <>
           <CrawlIcon
             name={wiped ? "wiped" : "boss"}
+            theme={look}
             className="crawl-end-mark"
           />
           <p className="hall-kicker">{mode}</p>
-          {wiped ? (
-            <h1>
-              Party
-              <br />
-              <em>wiped.</em>
-            </h1>
-          ) : (
-            <h1>
-              Last call,
-              <br />
-              <em>survived.</em>
-            </h1>
-          )}
-          <p className="crawl-verdict">
-            {wiped
-              ? "Everyone finishes their drink."
-              : "Make a rule for the rest of the night."}
-          </p>
-          <CrawlRecord record={record} />
+          <h1>
+            {end.title[0]}
+            <br />
+            <em>{end.title[1]}</em>
+          </h1>
+          <p className="crawl-verdict">{end.verdict}</p>
+          <CrawlRecord record={record} theme={look} />
         </>
       ) : record?.won ? (
         <>

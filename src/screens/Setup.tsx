@@ -5,10 +5,12 @@ import {
   type Preferences,
 } from "../app/persistence";
 import type { PackDefinition } from "../game/types";
+import { questRoute } from "../game/engine";
 import { Button, DeckChoices, Modal, PackTile } from "../components/UI";
 import { PackLogo, ModeMark } from "../components/PackMarks";
 import { asset } from "../presentation/theme";
 import { CrawlIcon } from "../components/Crawl";
+import { crawlTheme } from "../components/crawlTheme";
 
 export function Setup({
   prefs,
@@ -39,12 +41,18 @@ export function Setup({
   // A crawl plays its own deck, so the pack picker steps aside.
   const crawlPack = packs.find((p) => p.id === questPack && p.quest?.party);
   const crawl = !!crawlPack;
+  const crawlLook = crawlTheme(crawlPack?.id);
   // A floor is a slot holding a stage of rooms (a run of several picks);
-  // tonight's omen and Last Call are single cards.
-  const crawlFloors =
-    crawlPack?.quest!.finale.filter((slot) =>
-      ("oneOf" in slot ? slot.oneOf.flat() : [slot]).some((st) => st.pick > 1),
-    ).length ?? 0;
+  // tonight's omen and Last Call are single cards. The League counts gyms.
+  const crawlFloors = !crawlPack
+    ? 0
+    : crawlLook.lengthOf
+      ? crawlLook.lengthOf(questRoute(crawlPack.quest!, () => 0))
+      : crawlPack.quest!.finale.filter((slot) =>
+          ("oneOf" in slot ? slot.oneOf.flat() : [slot]).some(
+            (st) => st.pick > 1,
+          ),
+        ).length;
   const chooseLength = (choice: DeckChoice) => {
     const { quest: _quest, ...config } = prefs.config;
     onChange({ ...prefs, choice, config });
@@ -158,19 +166,19 @@ export function Setup({
       {crawlPack && (
         <div className="setup-section setup-packs">
           <div className="section-label">
-            <h2>The crawl</h2>
+            <h2>{crawlLook.words.setupTitle}</h2>
           </div>
           <div
             className="crawl-brief"
             role="img"
-            aria-label={`${crawlPack.title}: ${crawlPack.quest!.party!.hearts} shared hearts, ${crawlFloors} floors, a boss on each, and a new omen every run`}
+            aria-label={`${crawlPack.title}: ${crawlLook.words.setupBrief(crawlPack.quest!.party!.hearts, crawlFloors)}`}
           >
             <PackLogo pack={crawlPack} decorative />
             <span>
               <strong>{crawlPack.title}</strong>
               <small>
-                <CrawlIcon name="heart" />
-                {crawlPack.quest!.party!.hearts} hearts · {crawlFloors} floors
+                <CrawlIcon name="heart" theme={crawlLook} />
+                {`${crawlPack.quest!.party!.hearts} ${crawlLook.words.setupHearts} · ${crawlFloors} ${crawlLook.words.setupFloors}`}
               </small>
             </span>
           </div>

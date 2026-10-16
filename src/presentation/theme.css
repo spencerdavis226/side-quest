@@ -1307,6 +1307,11 @@ button.quest-meter:active:not(:disabled) {
 .stage-banner strong {
   font: 700 clamp(26px, 8.5vw, 40px) / 1.05 var(--font-card-title);
 }
+/* An evolution sweeps across the top third, clear of a stage banner. */
+.evolution-banner {
+  place-items: start center;
+  padding-top: 16vh;
+}
 .banner-pearl .stage-banner-cloth {
   background: linear-gradient(180deg, #fbf7ee 0%, #d9d6e6 50%, #a7b7c9 100%);
   color: #2b2c40;

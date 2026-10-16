@@ -488,6 +488,16 @@
 .card-choice.offers.plaques-3 .offer-label {
   font-size: clamp(13px, 4.4cqw, max(19px, 4cqw));
 }
+/* Eevee's evolution: three forms and Press B, four across. */
+.card-choice.offers.plaques-4 .offer-label {
+  font-size: clamp(11px, 3.6cqw, max(16px, 3.4cqw));
+}
+.offer-price {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.78em;
+  opacity: 0.85;
+}
 /* A price the party can't pay: solid (the frame must not show through), but
    greyed and flat. */
 .offer-plaque:disabled {
@@ -556,6 +566,33 @@
 .crawl-omen span {
   color: #d9c7a4;
   font-size: 0.95rem;
+}
+.crawl-omen .crawl-evolution {
+  grid-column: 2;
+  color: #b9a7d8;
+  font-size: 0.85rem;
+}
+.crawl-omen .crawl-evolution b {
+  color: #fff0cf;
+}
+/* The badge case: one gold badge per gym, earned ones lit. */
+.crawl-badges {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin: 0;
+}
+.crawl-badges .crawl-icon {
+  width: clamp(20px, 6.5vw, 28px);
+  height: clamp(20px, 6.5vw, 28px);
+}
+.crawl-badges .full {
+  background: linear-gradient(160deg, #fff1b8 0%, #e2b54a 45%, #8a5f14 100%);
+  filter: drop-shadow(0 1px 0 #2a1a05);
+}
+.crawl-badges .spent {
+  background: #3b2a24;
+  opacity: 0.7;
 }
 .crawl-curse .crawl-icon {
   grid-row: span 2;

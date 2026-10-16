@@ -1,5 +1,7 @@
+import { useEffect, useRef, useState } from "react";
 import type { SessionState } from "../game/types";
-import { finaleStage, questStages } from "../game/engine";
+import { finaleStage, omenForm, questStages } from "../game/engine";
+import { crawlTheme } from "./crawlTheme";
 import { packs } from "../content/manifest.generated";
 import { stageArt } from "../presentation/league-art";
 
@@ -34,6 +36,44 @@ export function StageBanner({ session }: { session: SessionState }) {
         {banner && <img className="stage-banner-art" src={banner} alt="" />}
         <small>{rules?.mode}</small>
         <strong>{intro}</strong>
+      </div>
+    </div>
+  );
+}
+
+/** The banner when the starter evolves mid-run: "What? Charmander is
+ * evolving!" over its new form's name. Shown once per evolution, never on a
+ * resumed game; it sits high so a stage banner below it stays readable. */
+export function EvolutionBanner({ session }: { session: SessionState }) {
+  const quest = session.quest;
+  const form = quest?.party?.form ?? 0;
+  const seen = useRef(form);
+  const [shown, setShown] = useState<{ from: string; to: string } | null>(
+    null,
+  );
+  useEffect(() => {
+    if (form > seen.current) {
+      const now = omenForm(quest);
+      // A branching starter (Eevee) evolves straight from its base form.
+      const from =
+        form === 1 || now?.card.branches
+          ? now?.card.title
+          : now?.card.evolves?.[form - 2]?.title;
+      if (now && from) setShown({ from, to: now.title });
+    }
+    seen.current = form;
+  }, [form, quest]);
+  const evolving = crawlTheme(quest?.packId).words.evolving;
+  if (!shown || !evolving) return null;
+  return (
+    <div
+      key={shown.to}
+      className="stage-banner banner-pearl evolution-banner"
+      role="status"
+    >
+      <div className="stage-banner-cloth">
+        <small>{evolving(shown.from)}</small>
+        <strong>{shown.to}</strong>
       </div>
     </div>
   );

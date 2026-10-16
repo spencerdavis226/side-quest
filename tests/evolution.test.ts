@@ -101,7 +101,10 @@ const atCandy = () => {
 describe("starter evolution", () => {
   it("validates as content", () => {
     expect(() => validateCatalog(cards, [pack])).not.toThrow();
-    const bad = { ...starter, evolves: [{ ...starter.evolves![0], title: "" }] };
+    const bad = {
+      ...starter,
+      evolves: [{ ...starter.evolves![0], title: "" }],
+    };
     expect(() => validateCatalog([bad], [])).toThrow("Invalid evolves");
     const orphan = { ...filler, evolves: starter.evolves };
     expect(() => validateCatalog([orphan], [])).toThrow("Invalid evolves");
@@ -197,5 +200,63 @@ describe("starter evolution", () => {
     const old = structuredClone(s);
     delete old.quest!.party!.form;
     expect(omenForm(parseSession(JSON.stringify(old)).quest)!.form).toBe(0);
+  });
+
+  it("a branching starter evolves once, into the form the table picks", () => {
+    const eevee: CardDefinition = {
+      ...starter,
+      omen: { hearts: -2 },
+      evolves: [
+        { title: "Wet", rules: "Three more HP.", omen: { hearts: 3 } },
+        { title: "Zappy", rules: "An X Attack.", omen: { loot: ["die"] } },
+        { title: "Hot", rules: "A Protect.", omen: { loot: ["shield"] } },
+      ],
+      branches: true,
+    };
+    expect(() =>
+      validateCatalog(
+        cards.map((c) => (c.id === starter.id ? eevee : c)),
+        [pack],
+      ),
+    ).not.toThrow();
+    const at = () => {
+      const s = createSession(
+        config,
+        cards.map((c) => (c.id === starter.id ? eevee : c)),
+        [pack],
+        () => 0.5,
+      );
+      return advance(advance(advance(s)));
+    };
+    let s = at();
+    expect(omenForm(s.quest)).toMatchObject({
+      branches: ["Wet", "Zappy", "Hot"],
+      line: ["Sproutling", "Wet / Zappy / Hot"],
+      canEvolve: true,
+    });
+    // A branch out of range is refused.
+    expect(takeOffer(s, 0, Math.random, 3)).toBe(s);
+    s = takeOffer(s, 0, Math.random, 1);
+    expect(party(s)).toMatchObject({
+      // The base form's two fewer hearts give way to Zappy's effect.
+      form: 2,
+      hearts: 10,
+      max: 10,
+      loot: ["die"],
+    });
+    expect(omenForm(s.quest)).toMatchObject({
+      title: "Zappy",
+      line: ["Sproutling", "Zappy"],
+      canEvolve: false,
+      branches: null,
+    });
+    roundTrip(s);
+    // That was its one evolution: only Press B is left.
+    s = advance(s);
+    expect(canTakeOffer(s, 0)).toBe(false);
+    // Branches need forms, and `true`.
+    expect(() => validateCatalog([{ ...filler, branches: true }], [])).toThrow(
+      "Invalid branches",
+    );
   });
 });

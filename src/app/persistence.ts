@@ -143,7 +143,7 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
     (p.form !== undefined &&
       (!whole(p.form, 1) ||
         p.omen === undefined ||
-        p.form > (omenForm(s.quest)?.line.length ?? 1) - 1))
+        p.form > (omenForm(s.quest)?.forms ?? 0)))
   )
     throw Error("Invalid party");
 }

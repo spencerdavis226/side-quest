@@ -1,39 +1,81 @@
 import { test, expect, type Page } from "@playwright/test";
 import {
   advance,
+  awaitingChoice,
+  awaitingOffer,
+  awaitingVerdict,
+  canTakeOffer,
   createSession,
   currentCard,
   settleBattle,
   skipRoll,
+  takeOffer,
 } from "../../src/game/engine";
 import { returnToCard, rollDice } from "../../src/game/dice";
-import type { SessionState } from "../../src/game/types";
+import type { PartyState, SessionState } from "../../src/game/types";
 import { cards, packs } from "../../src/content/catalog";
 const key = "side-quest.session.v1";
 
-// A Pokémon League game one badge short, with a gym leader without dice
-// (Jasmine) revealed.
-async function seedOneBadgeShort(page: Page) {
-  const session = createSession(
-    { version: 1, packIds: ["pokemon"], limit: null, quest: "pokemon" },
+// Pokémon League plays on the crawl engine since 2026-10-16: a starter, eight
+// routes each closed by a gym, a villain hideout, Victory Road, the rival and
+// the League. The run's balance is tested in tests/league.test.ts.
+const league = {
+  version: 1,
+  packIds: ["pokemon"],
+  limit: null,
+  quest: "pokemon",
+} as const;
+
+// A League run with `id` in play at its stage's first step, the starter put
+// aside, and the party as given. `hideout` picks which villain team's route
+// (0 to 8) the run takes.
+function leagueAt(
+  id: string,
+  party: Partial<PartyState> = {},
+  hideout = 0,
+  starter = "pokemon.starter-charmander",
+): SessionState {
+  const draws = [(hideout + 0.5) / 9];
+  const s = createSession(
+    { ...league, packIds: [...league.packIds] },
     cards,
     packs,
+    () => (draws.length ? draws.shift()! : Math.random()),
   );
-  session.order = [
-    "pokemon.gym-jasmine",
-    ...session.order.filter((id) => id !== "pokemon.gym-jasmine"),
-  ];
-  session.phase = "revealed";
-  session.quest!.count = 7;
-  // A known gauntlet, so the first finale card is predictable.
-  session.quest!.finale = [
-    "pokemon.legendary-articuno",
-    "pokemon.elite-lorelei",
-    "pokemon.elite-bruno",
-    "pokemon.elite-agatha",
-    "pokemon.elite-will",
-    "pokemon.league-champion-blue",
-  ];
+  const q = s.quest!;
+  const finale = [...q.finale];
+  let step = 0;
+  let first = 0;
+  for (const stage of q.stages) {
+    if (stage.cards.some((c) => c.id === id)) step = first;
+    else if (stage.elite?.some((c) => c.id === id)) step = first + 1;
+    else {
+      first += stage.pick;
+      continue;
+    }
+    break;
+  }
+  const swap = (at: number, card: string) => {
+    const was = finale.indexOf(card);
+    if (was >= 0) finale[was] = finale[at];
+    finale[at] = card;
+  };
+  swap(0, starter);
+  if (step) swap(step, id);
+  return {
+    ...s,
+    discarded: step,
+    previousId: step ? finale[step - 1] : null,
+    quest: {
+      ...q,
+      finale,
+      step,
+      party: { ...q.party!, ...(step ? { omen: starter } : {}), ...party },
+    },
+  };
+}
+const reveal = (s: SessionState) => advance(s);
+async function seed(page: Page, session: SessionState) {
   await page.goto("./");
   await page.evaluate(
     ({ key, session }) => localStorage.setItem(key, JSON.stringify(session)),
@@ -41,105 +83,76 @@ async function seedOneBadgeShort(page: Page) {
   );
   await page.reload();
 }
+const saved = (page: Page) =>
+  page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), key);
+const meter = (page: Page) => page.locator(".crawl-meter");
+const plaques = (page: Page) =>
+  page.locator(".card-choice.offers .card-choice-option");
 
-for (const width of [320, 390])
-  test(`@release the badge meter fills and deals the League at ${width}px`, async ({
-    page,
-  }, info) => {
-    await page.setViewportSize({ width, height: 700 });
-    await seedOneBadgeShort(page);
-    const meter = page.locator(".quest-meter");
-    await expect(meter).toHaveAccessibleName("Badges: 7 of 8");
-    await expect(meter).not.toHaveClass(/due/);
-    // The meter shares the top row with the medallion without overlapping it.
-    const [left, middle] = await Promise.all([
-      meter.boundingBox(),
-      page.locator(".progress").boundingBox(),
-    ]);
-    expect(left!.x).toBeGreaterThanOrEqual(0);
-    expect(left!.x + left!.width).toBeLessThanOrEqual(middle!.x);
-    // A gym leader carries its ribbon and stays inside the card.
-    const ribbon = page.locator(".game-card .card-ribbon");
-    await expect(ribbon).toHaveText("Gym Leader · Mineral Badge");
-    const [card, banner] = await Promise.all([
-      page.locator(".game-card").boundingBox(),
-      ribbon.boundingBox(),
-    ]);
-    expect(banner!.x).toBeGreaterThan(card!.x);
-    expect(banner!.x + banner!.width).toBeLessThan(card!.x + card!.width);
-    await page.screenshot({ path: info.outputPath(`meter-${width}.png`) });
+// Play a League run through the engine, always evolving, walking past every
+// other offer and healing the team to full after each card, until `stop`.
+function playLeague(stop: (s: SessionState) => boolean) {
+  let s = createSession(
+    { ...league, packIds: [...league.packIds] },
+    cards,
+    packs,
+  );
+  for (let guard = 0; guard < 2000 && !stop(s); guard++) {
+    if (s.phase === "complete") break;
+    s = advance(s);
+    if (awaitingOffer(s)) {
+      const offers = currentCard(s).offers!;
+      const evolve = offers.findIndex((o) => o.evolve);
+      s = takeOffer(
+        s,
+        evolve >= 0 && canTakeOffer(s, evolve) ? evolve : offers.length - 1,
+      );
+    } else if (awaitingChoice(s)) s = skipRoll(s);
+    else if (awaitingVerdict(s)) s = settleBattle(s, true);
+    else {
+      if (currentCard(s).dice) s = returnToCard(rollDice(s));
+      s = advance(s);
+    }
+    const party = s.quest!.party!;
+    if (!party.wiped) party.hearts = party.max;
+  }
+  return s;
+}
 
-    // A gym leader without dice waits for the table's verdict: a stray tap
-    // on the card does nothing.
-    await page.locator(".game-card").click({ force: true });
-    await expect(meter).toHaveAccessibleName("Badges: 7 of 8");
-    await expect(
-      page.getByRole("button", { name: "Lost", exact: true }),
-    ).toBeVisible();
-    // The eighth badge opens the gauntlet: the Legendary comes first, under
-    // a pearl banner that never blocks the card.
-    await page.getByRole("button", { name: "Won", exact: true }).click();
-    await expect(meter).toHaveAccessibleName("Legendary");
-    await expect(meter).toHaveClass(/due/);
-    const stageBanner = page.locator(".stage-banner");
-    await expect(stageBanner).toHaveText(
-      /Pokémon League\s*A Legendary appears/,
-    );
-    await expect(stageBanner).toHaveClass(/banner-pearl/);
-    await page.screenshot({ path: info.outputPath(`banner-${width}.png`) });
-    await page.getByRole("button", { name: "Reveal card" }).click();
-    await expect(page.locator(".study-title h2")).toHaveText("Articuno");
-    await expect(ribbon).toHaveText("Legendary Encounter");
-    await expect(stageBanner).toHaveCount(0);
-    await expect(page.locator(".study-face")).toHaveClass(/tone-pearl/);
-    await expect(page.locator(".game-card")).toHaveAccessibleName(/^Roll /);
-
-    // The gauntlet survives a reload.
-    await page.reload();
-    await expect(page.locator(".study-title h2")).toHaveText("Articuno");
-    const saved = await page.evaluate(
-      (key) => JSON.parse(localStorage.getItem(key)!),
-      key,
-    );
-    expect(saved.quest).toMatchObject({ count: 8, due: true, step: 0 });
-  });
-
-test("@release Pokémon League is a mode that holds its pack on", async ({
+test("@release Pokémon League opens on a starter, then the first route", async ({
   page,
 }, info) => {
   await page.setViewportSize({ width: 320, height: 568 });
   await page.goto("./");
-  const mode = page.getByRole("button", {
-    name: "Pokémon League, Earn 8 badges",
-  });
-  await mode.click();
-  await expect(mode).toHaveAttribute("aria-pressed", "true");
-  await expect(
-    page.getByRole("button", { name: "Short, 30 cards" }),
-  ).toHaveAttribute("aria-pressed", "false");
+  await page.getByRole("button", { name: /^Pokémon League/ }).click();
+  const brief = page.locator(".crawl-brief");
+  await expect(brief).toContainText("Pokémon night");
+  await expect(brief).toContainText("17 HP · 8 gyms");
+  // The League plays its own pack alone: the pack picker steps aside.
+  await expect(page.getByRole("button", { name: /^Choose packs/ })).toHaveCount(
+    0,
+  );
   await page.screenshot({ path: info.outputPath("setup-320.png") });
-  // Its pack is on and cannot be switched off while the mode is chosen.
-  await page.getByRole("button", { name: "Choose packs" }).click();
-  const pokemon = page
-    .getByRole("dialog")
-    .getByRole("button", { name: /Pokémon night/ });
-  await expect(pokemon).toHaveAttribute("aria-pressed", "true");
-  await expect(pokemon).toHaveAttribute("aria-disabled", "true");
-  await page.getByRole("button", { name: "Done" }).click();
   await page.getByRole("button", { name: "Play", exact: true }).click();
-  await expect(page.locator(".progress")).toBeVisible();
-  await expect(page.locator(".quest-meter")).toHaveAccessibleName(
-    "Badges: 0 of 8",
+  await expect(meter(page)).toHaveAccessibleName(/^Team HP: 17 of 17/);
+  await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
+    "Your starter",
   );
-  const saved = await page.evaluate(
-    (key) => JSON.parse(localStorage.getItem(key)!),
-    key,
+  await expect(page.locator(".stage-banner")).toHaveText(
+    /Pokémon League\s*A starter chooses you/,
   );
-  expect(saved.config).toMatchObject({
-    packIds: ["core", "pokemon"],
-    limit: null,
-    quest: "pokemon",
-  });
+  await page.locator(".game-card").click();
+  await expect(page.locator(".game-card .card-ribbon")).toHaveText(
+    "Your starter",
+  );
+  await page.screenshot({ path: info.outputPath("starter-320.png") });
+  await page.locator(".game-card").click();
+  await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
+    "Battle 1 of 4, Route 1",
+  );
+  const s = await saved(page);
+  expect(s.config).toMatchObject({ packIds: ["pokemon"], quest: "pokemon" });
+  expect(s.quest.party.omen).toMatch(/^pokemon\.starter-/);
 });
 
 test("a plain mode plays the Pokémon pack without a meter", async ({
@@ -155,175 +168,139 @@ test("a plain mode plays the Pokémon pack without a meter", async ({
   await page.getByRole("button", { name: "Play", exact: true }).click();
   await expect(page.locator(".progress")).toBeVisible();
   await expect(page.locator(".quest-meter")).toHaveCount(0);
-  const saved = await page.evaluate(
-    (key) => JSON.parse(localStorage.getItem(key)!),
-    key,
-  );
-  expect(saved.config.quest).toBeUndefined();
-  expect(saved.quest).toBeUndefined();
+  const s = await saved(page);
+  expect(s.config.quest).toBeUndefined();
+  expect(s.quest).toBeUndefined();
 });
 
-test("the Elite Four count through the meter, and the Champion ends the run", async ({
+test("@release a starter evolves on a route, and the team dialog shows its line", async ({
   page,
-}) => {
-  const session = createSession(
-    { version: 1, packIds: ["pokemon"], limit: null, quest: "pokemon" },
-    cards,
-    packs,
+}, info) => {
+  await page.setViewportSize({ width: 375, height: 667 });
+  await seed(
+    page,
+    reveal(leagueAt("pokemon.route-rare-candy-1", { hearts: 9 })),
   );
-  // Mid-gauntlet: the Legendary and one Elite Four member are behind us.
-  Object.assign(session.quest!, {
-    count: 8,
-    due: true,
-    step: 2,
-    finale: [
-      "pokemon.legendary-mewtwo",
-      "pokemon.elite-karen",
-      "pokemon.elite-bruno",
-      "pokemon.elite-phoebe",
-      "pokemon.elite-drake",
-      "pokemon.league-champion-lance",
-    ],
-  });
-  session.discarded = 2;
-  session.previousId = "pokemon.elite-karen";
-  session.phase = "revealed";
-  await page.goto("./");
-  await page.evaluate(
-    ({ key, session }) => localStorage.setItem(key, JSON.stringify(session)),
-    { key, session },
+  await expect(plaques(page)).toHaveCount(2);
+  await expect(plaques(page).nth(0)).toHaveAccessibleName(
+    "Evolve · drink 3: your starter evolves",
   );
+  await expect(plaques(page).nth(1)).toHaveAccessibleName("Press B: 1 HP back");
+  await page.screenshot({ path: info.outputPath("evolution-card.png") });
+  await plaques(page).nth(0).click();
+  const banner = page.locator(".evolution-banner");
+  await expect(banner).toHaveText(
+    /What\? Charmander is evolving!\s*Charmeleon/,
+  );
+  await page.screenshot({ path: info.outputPath("evolution-banner.png") });
+  expect((await saved(page)).quest.party).toMatchObject({ form: 1 });
+  await meter(page).click();
+  const dialog = page.getByRole("dialog", { name: "The team" });
+  await expect(dialog.locator(".crawl-omen strong")).toHaveText("Charmeleon");
+  await expect(dialog.locator(".crawl-evolution")).toHaveText(
+    "Charmander › Charmeleon › Charizard",
+  );
+  await page.screenshot({ path: info.outputPath("team-dialog.png") });
+  // A reload keeps the form and does not replay the banner.
   await page.reload();
-  const meter = page.locator(".quest-meter");
-  await expect(meter).toHaveAccessibleName("Elite Four: 2 of 4");
-  await expect(page.locator(".study-title h2")).toHaveText("Bruno");
-  await expect(page.locator(".game-card .card-ribbon")).toHaveText(
-    "Elite Four · Fighting",
-  );
-  await page.locator(".game-card").click();
-  await expect(meter).toHaveAccessibleName("Elite Four: 3 of 4");
+  await expect(page.locator(".evolution-banner")).toHaveCount(0);
 });
 
-test("@release a lost gym leader earns nothing and goes back into the deck", async ({
-  page,
-}) => {
-  await seedOneBadgeShort(page);
-  const meter = page.locator(".quest-meter");
-  await page.getByRole("button", { name: "Lost", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Reveal card" })).toBeVisible();
-  await expect(meter).toHaveAccessibleName("Badges: 7 of 8");
-  await expect(meter).not.toHaveClass(/due/);
-  const saved = await page.evaluate(
-    (key) => JSON.parse(localStorage.getItem(key)!),
-    key,
-  );
-  expect(saved.quest).toMatchObject({ count: 7, due: false, lost: 1 });
-  expect(saved.position).toBe(0);
-  expect(saved.order.indexOf("pokemon.gym-jasmine")).toBeGreaterThan(0);
-});
-
-test("a lost Champion deals another Champion, and only a win ends the run", async ({
-  page,
-}) => {
-  const session = createSession(
-    { version: 1, packIds: ["pokemon"], limit: null, quest: "pokemon" },
-    cards,
-    packs,
-  );
-  Object.assign(session.quest!, {
-    count: 8,
-    due: true,
-    step: 5,
-    finale: [
-      "pokemon.legendary-mewtwo",
-      "pokemon.elite-karen",
-      "pokemon.elite-drake",
-      "pokemon.elite-phoebe",
-      "pokemon.elite-bruno",
-      "pokemon.league-champion-lance",
-    ],
-  });
-  session.discarded = 5;
-  session.previousId = "pokemon.elite-bruno";
-  // Lance, rolled and lost (a 1), back on the card.
-  session.phase = "revealed";
-  let s = returnToCard(rollDice(session, () => 0));
-  await seed(page, s);
-  await expect(page.locator(".study-face")).toHaveClass(/battle-lost/);
-  await page.locator(".game-card").click();
-  await expect(page.getByRole("button", { name: "Reveal card" })).toBeVisible();
-  await page.getByRole("button", { name: "Reveal card" }).click();
-  await expect(page.locator(".game-card .card-ribbon")).toHaveText(
-    /^Champion · (Kanto|Hoenn)$/,
-  );
-  await expect(page.locator(".quest-meter")).toHaveAccessibleName("Champion");
-  s = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), key);
-  expect(s.phase).toBe("revealed");
-  expect(s.quest).toMatchObject({ step: 5, lost: 1 });
-  expect(s.quest!.finale[5]).not.toBe("pokemon.league-champion-lance");
-});
-
-async function seed(page: Page, session: SessionState) {
-  await page.goto("./");
-  await page.evaluate(
-    ({ key, session }) => localStorage.setItem(key, JSON.stringify(session)),
-    { key, session },
-  );
-  await page.reload();
-}
-// Play a League game through the engine: gyms first, rolling every dice card,
-// until `stop` says when to hand it to the browser.
-function playLeague(stop: (s: SessionState) => boolean) {
-  let s = createSession(
-    { version: 1, packIds: ["pokemon"], limit: null, quest: "pokemon" },
-    cards,
-    packs,
-  );
-  const gyms = s.order.filter((id) => id.startsWith("pokemon.gym-"));
-  s.order = [...gyms, ...s.order.filter((id) => !gyms.includes(id))];
-  while (!stop(s)) {
-    s = advance(s);
-    const card = currentCard(s);
-    if (card.dice?.choice) s = skipRoll(s);
-    else if (card.battle && !card.dice) s = settleBattle(s, true);
-    else {
-      if (card.dice) s = returnToCard(rollDice(s));
-      s = advance(s);
-    }
-  }
-  return s;
-}
-
-test("the badge case opens from the meter and names the leaders beaten", async ({
+test("@release Eevee's evolution lets the table pick its form", async ({
   page,
 }, info) => {
   await page.setViewportSize({ width: 320, height: 568 });
-  const session = playLeague((s) => s.quest!.count === 5);
-  await seed(page, session);
-  const meter = page.locator(".quest-meter");
-  await expect(meter).toHaveAccessibleName("Badges: 5 of 8");
-  await meter.click();
-  const dialog = page.getByRole("dialog", { name: "Badges" });
-  await expect(dialog).toBeVisible();
-  const slots = dialog.locator(".badge-slot");
-  await expect(slots).toHaveCount(8);
-  await expect(dialog.locator(".badge-slot.earned")).toHaveCount(5);
-  const first = cards.find((c) => c.id === session.order[0])!;
-  await expect(slots.first()).toContainText(first.title);
-  // The gauntlet is not spoiled.
-  await expect(dialog.locator(".stage-record dd")).toHaveText([
-    "Not yet faced",
-    "Not yet faced",
-    "Not yet faced",
+  await seed(
+    page,
+    reveal(
+      leagueAt(
+        "pokemon.route-rare-candy-1",
+        { hearts: 9 },
+        0,
+        "pokemon.starter-eevee",
+      ),
+    ),
+  );
+  // Evolve splits into the three forms; Press B stays.
+  await expect(plaques(page)).toHaveCount(4);
+  await expect(plaques(page).nth(0)).toHaveAccessibleName(
+    "Vaporeon · drink 3: your starter evolves into Vaporeon",
+  );
+  await expect(plaques(page).nth(3)).toHaveAccessibleName("Press B: 1 HP back");
+  // Four plaques fit inside the card on a small phone.
+  const [card, last] = await Promise.all([
+    page.locator(".game-card").boundingBox(),
+    plaques(page).nth(3).boundingBox(),
   ]);
-  // Fits a small phone without the page scrolling sideways.
+  expect(last!.x + last!.width).toBeLessThanOrEqual(card!.x + card!.width);
+  await page.screenshot({ path: info.outputPath("eevee-320.png") });
+  await plaques(page).nth(1).click();
+  await expect(page.locator(".evolution-banner")).toHaveText(
+    /What\? Eevee is evolving!\s*Jolteon/,
+  );
+  expect((await saved(page)).quest.party).toMatchObject({ form: 2 });
+  await meter(page).click();
+  const dialog = page.getByRole("dialog", { name: "The team" });
+  await expect(dialog.locator(".crawl-evolution")).toHaveText(
+    "Eevee › Jolteon",
+  );
+});
+
+test("a fully evolved starter can only press B", async ({ page }) => {
+  await seed(
+    page,
+    reveal(leagueAt("pokemon.route-rare-candy-1", { form: 2, hearts: 9 })),
+  );
+  await expect(plaques(page).nth(0)).toBeDisabled();
+  await expect(plaques(page).nth(0)).toHaveAccessibleName(
+    "Evolve · drink 3: your starter is fully evolved",
+  );
+  await plaques(page).nth(1).click();
+  expect((await saved(page)).quest.party).toMatchObject({
+    hearts: 10,
+    form: 2,
+  });
+});
+
+test("@release a gym leader is a boss battle, and beating it earns a badge", async ({
+  page,
+}, info) => {
+  await page.setViewportSize({ width: 320, height: 568 });
+  // Jasmine, Johto's sixth gym, has no dice: the table settles it.
+  await seed(page, reveal(leagueAt("pokemon.gym-jasmine")));
+  await expect(page.locator(".game-card .card-ribbon")).toHaveText(
+    "Gym Leader · Mineral Badge",
+  );
+  await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
+    /^Boss battle/,
+  );
+  await page.screenshot({ path: info.outputPath("gym-320.png") });
+  // A stray tap does nothing; the verdict decides.
+  await page.locator(".game-card").click({ force: true });
+  await expect(
+    page.getByRole("button", { name: "Lost", exact: true }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Won", exact: true }).click();
+  await meter(page).click();
+  const dialog = page.getByRole("dialog", { name: "The team" });
+  // The five gyms before it count as beaten in this seeded run.
+  await expect(dialog.locator(".crawl-badges")).toHaveAccessibleName(
+    "Badges: 6 of 8",
+  );
+  await expect(dialog.locator(".crawl-badges .full")).toHaveCount(6);
   const box = await dialog.boundingBox();
   expect(box!.x).toBeGreaterThanOrEqual(0);
   expect(box!.x + box!.width).toBeLessThanOrEqual(320);
-  await page.screenshot({ path: info.outputPath("badge-case-320.png") });
-  await dialog.getByRole("button", { name: "Back to game" }).click();
-  await expect(dialog).toHaveCount(0);
-  await expect(meter).toBeFocused();
+  await page.screenshot({ path: info.outputPath("badges-320.png") });
+});
+
+test("losing the last HP whites the team out", async ({ page }, info) => {
+  await seed(page, reveal(leagueAt("pokemon.gym-jasmine", { hearts: 1 })));
+  await page.getByRole("button", { name: "Lost", exact: true }).click();
+  await expect(page.locator(".crawl-end.wiped h1")).toHaveText(
+    /Whited\s*out\./,
+  );
+  await page.screenshot({ path: info.outputPath("whited-out.png") });
 });
 
 test("@release beating the Champion opens the Hall of Fame", async ({
@@ -331,15 +308,12 @@ test("@release beating the Champion opens the Hall of Fame", async ({
 }, info) => {
   await page.setViewportSize({ width: 320, height: 568 });
   const session = playLeague((s) => s.phase === "complete");
-  const champion = session.quest!.finale.at(-1)!;
+  expect(session.quest!.party!.wiped).toBe(false);
   await seed(page, session);
-  const hall = page.locator(".hall-of-fame");
-  await expect(hall.locator("h1")).toHaveText(/Hall of\s*Fame\./);
-  await expect(hall.locator(".hall-kicker")).toHaveText("Pokémon League");
-  await expect(hall.locator(".badge-slot.earned")).toHaveCount(8);
-  await expect(hall.locator(".stage-record > div.cleared")).toHaveCount(3);
-  const name = cards.find((c) => c.id === champion)!.title;
-  await expect(hall.locator(".stage-record dd").last()).toHaveText(name);
+  await expect(page.locator(".crawl-end h1")).toHaveText(/Hall of\s*Fame\./);
+  await expect(page.locator(".crawl-badges")).toHaveAccessibleName(
+    "Badges: 8 of 8",
+  );
   await page.screenshot({
     path: info.outputPath("hall-of-fame-320.png"),
     fullPage: true,
@@ -347,17 +321,16 @@ test("@release beating the Champion opens the Hall of Fame", async ({
   await expect(page.getByRole("button", { name: "Play again" })).toBeVisible();
 });
 
-test("a finale card is dealt face down without turning the last one back over", async ({
+test("a League card is dealt face down without turning the last one back over", async ({
   page,
 }) => {
-  // The finale deals between deck cards without moving the deck, so the
-  // next card shares the last one's deck position.
   const session = playLeague(
     (s) =>
-      !!s.quest?.due &&
       s.phase === "hidden" &&
-      s.quest.step < s.quest.finale.length - 1 &&
-      !currentCard(s).dice,
+      s.quest!.step > 2 &&
+      s.quest!.step < s.quest!.finale.length - 1 &&
+      !currentCard(s).dice &&
+      !currentCard(s).offers,
   );
   await seed(page, session);
   const card = page.locator(".game-card");
@@ -366,7 +339,9 @@ test("a finale card is dealt face down without turning the last one back over", 
   await page.locator(".card-rotator").evaluate((el) => {
     (window as unknown as { __rotator?: Element }).__rotator = el;
   });
-  await card.click();
+  if (currentCard(advance(session)).battle)
+    await page.getByRole("button", { name: "Won", exact: true }).click();
+  else await card.click();
   await expect(page.locator(".card-stage")).not.toHaveClass(/discard/);
   expect(
     await page.locator(".card-rotator").evaluate((el) => ({
@@ -415,4 +390,49 @@ test("@release every card of a League game wears the Ancient Mew pair", async ({
   await page.locator(".game-card").click();
   await expect(page.locator(".card-stage")).not.toHaveClass(/flip/);
   expect(await bg(".game-card .study-face")).not.toContain("league-front");
+});
+
+test("every League card fits its face with its plaques at 375x667", async ({
+  page,
+}) => {
+  test.setTimeout(300000);
+  await page.setViewportSize({ width: 375, height: 667 });
+  const pack = packs.find((p) => p.id === "pokemon")!;
+  const deck = new Set(pack.cardIds);
+  const ids = cards
+    .filter((c) => c.id.startsWith("pokemon.") && !deck.has(c.id))
+    .map((c) => c.id);
+  // Which villain route holds a hideout card.
+  const hideoutOf = (id: string) => {
+    for (let h = 0; h < 9; h++)
+      if (
+        leagueAt(id, {}, h).quest!.stages.some((st) =>
+          st.cards.some((c) => c.id === id),
+        )
+      )
+        return h;
+    return 0;
+  };
+  const overflowing: string[] = [];
+  await page.goto("./");
+  for (const id of ids) {
+    const starter = id.startsWith("pokemon.starter-");
+    // An Escape Rope in the bag puts its plaque on every route fight.
+    const s = reveal(
+      starter
+        ? leagueAt(id, {}, 0, id)
+        : leagueAt(id, { loot: ["smoke"] }, hideoutOf(id)),
+    );
+    await page.evaluate(
+      ({ key, session }) => localStorage.setItem(key, JSON.stringify(session)),
+      { key, session: s },
+    );
+    await page.reload();
+    const rules = page.locator(".game-card .study-rules");
+    await expect(rules).toBeVisible();
+    await page.evaluate(() => document.fonts.ready);
+    if ((await rules.getAttribute("data-overflow")) !== "none")
+      overflowing.push(id);
+  }
+  expect(overflowing).toEqual([]);
 });

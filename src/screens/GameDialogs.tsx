@@ -6,6 +6,7 @@ import { selectedPacks } from "../presentation/packs";
 import { findCard, questRecord } from "../game/engine";
 import { QuestRecord } from "../components/QuestRecord";
 import { CrawlRecord } from "../components/Crawl";
+import { crawlTheme } from "../components/crawlTheme";
 import { CardFrame } from "../components/Cards";
 import { theme } from "../presentation/theme";
 export type DialogName =
@@ -128,13 +129,24 @@ export function GameDialogs({
       </Modal>
     );
   const record = session && questRecord(session);
-  if (displayed === "badges" && record?.party)
+  if (displayed === "badges" && record?.party) {
+    const crawl = crawlTheme(session?.quest?.packId);
     return (
-      <Modal title="The party" onClose={() => setModal(null)} exiting={exiting}>
-        <CrawlRecord record={record} session={session} onUse={onSpend} />
+      <Modal
+        title={crawl.words.party}
+        onClose={() => setModal(null)}
+        exiting={exiting}
+      >
+        <CrawlRecord
+          record={record}
+          theme={crawl}
+          session={session}
+          onUse={onSpend}
+        />
         <Button onClick={() => setModal(null)}>Back to game</Button>
       </Modal>
     );
+  }
   if (displayed === "badges" && record)
     return (
       <Modal

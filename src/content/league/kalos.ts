@@ -1,0 +1,173 @@
+import {
+  CHAMPION_NEED,
+  champion,
+  d20,
+  ELITE_NEED,
+  eliteFour,
+  GYM_NEED,
+  LEGENDARY_NEED,
+  leader,
+  legendary,
+  type Region,
+} from "./shared";
+
+// Kalos (2026-10-16), gyms in X and Y's order.
+export const kalos: Region = {
+  gyms: [
+    leader(
+      0,
+      "viola",
+      "Viola",
+      "Bug",
+      "Viola's photo shoot: hold a pose for 30 seconds while the table heckles. Laugh: drink 4.",
+    ),
+    leader(
+      1,
+      "grant",
+      "Grant",
+      "Cliff",
+      "Grant makes you climb. Crawl under the table and out the other side, then roll d20.",
+      d20(
+        GYM_NEED[1],
+        "You fall off the wall. Drink 4.",
+        "You top out. Give 4.",
+        {
+          crit: "Free solo. Give 8.",
+        },
+      ),
+    ),
+    leader(
+      2,
+      "korrina",
+      "Korrina",
+      "Rumble",
+      "Korrina's on roller skates. Spin around 5 times, then walk a straight line. Wobble: drink 5.",
+    ),
+    leader(
+      3,
+      "ramos",
+      "Ramos",
+      "Plant",
+      "Ramos is 90 and tougher than you. Talk like a grumpy grandpa, then roll d20.",
+      d20(
+        GYM_NEED[3],
+        "Leech Seed. Drink 5.",
+        "You prune the old man. Give 5.",
+        {
+          fumble: "Rototilled. Finish your drink.",
+        },
+      ),
+    ),
+    leader(
+      4,
+      "clemont",
+      "Clemont",
+      "Voltage",
+      'Clemont\'s invention is about to blow. Shout "The future is now, thanks to science!" and roll d20.',
+      d20(GYM_NEED[4], "It explodes. Drink 5.", "It works for once. Give 5.", {
+        crit: "Science! Everyone else drinks 3.",
+        fumble: "Singed afro. Finish your drink.",
+      }),
+    ),
+    leader(
+      5,
+      "valerie",
+      "Valerie",
+      "Fairy",
+      "Valerie's orders: swap a piece of clothing with your right neighbor. Either refuses: both drink 6.",
+    ),
+    leader(
+      6,
+      "olympia",
+      "Olympia",
+      "Psychic",
+      "Olympia has seen your future and it's bleak. Stare into her eyes, then roll d20.",
+      d20(GYM_NEED[6], "As foretold. Drink 6.", "You change fate. Give 6.", {
+        crit: "You foresaw her loss. Everyone else drinks 4.",
+        fumble: "Doomed. Finish your drink.",
+      }),
+    ),
+    leader(
+      7,
+      "wulfric",
+      "Wulfric",
+      "Iceberg",
+      "Wulfric loves a bear hug. Bear-hug three players while holding your breath. Breathe early: drink 7.",
+    ),
+  ],
+
+  eliteFour: [
+    eliteFour(
+      "malva",
+      "Malva",
+      "Fire",
+      "Malva reads the news. Break a scandal about a player in your anchor voice. Nobody laughs: drink 5.",
+    ),
+    eliteFour(
+      "siebold",
+      "Siebold",
+      "Water",
+      "Siebold is a chef. Describe your drink's flavor like a snob critic, then roll d20.",
+      d20(
+        ELITE_NEED,
+        "Sent back to the kitchen. Drink 5.",
+        "Michelin star. Give 5.",
+      ),
+    ),
+    eliteFour(
+      "wikstrom",
+      "Wikstrom",
+      "Steel",
+      "Sir Wikstrom wants a duel. Straw-fence your right neighbor; first one poked loses. Lose: drink 5.",
+    ),
+    eliteFour(
+      "drasna",
+      "Drasna",
+      "Dragon",
+      "Drasna is a sweet granny with four dragons. Kiss your left neighbor's cheek, then roll d20.",
+      d20(
+        ELITE_NEED,
+        "Dragon Pulse. Drink 6.",
+        "Granny's proud of you. Give 5.",
+        {
+          fumble: "Granny's dragon. Finish your drink.",
+        },
+      ),
+    ),
+  ],
+
+  champions: [
+    champion(
+      "diantha",
+      "Diantha",
+      "Kalos",
+      "Diantha is a movie star. The whole table acts out a dramatic death, then you roll d20.",
+      d20(
+        CHAMPION_NEED,
+        "Moonblast. Everyone drinks 4.",
+        "An award-worthy hit. Give 4.",
+        {
+          crit: "Standing ovation. Give 10.",
+          fumble: "Box-office flop. Everyone finishes their drink.",
+        },
+      ),
+    ),
+  ],
+
+  legendaries: [
+    legendary(
+      "xerneas",
+      "Xerneas",
+      "Xerneas gives life. Give the sleepiest player a pep talk until they perk up, then roll d20.",
+      d20(LEGENDARY_NEED, "Geomancy. Drink 5.", "Full of life. Give 5."),
+    ),
+    legendary(
+      "yveltal",
+      "Yveltal",
+      "Yveltal drains life. Name the deadest-looking player; they drink 2. Then roll d20.",
+      d20(LEGENDARY_NEED, "Oblivion Wing. Drink 5.", "You live. Give 5.", {
+        fumble: "Drained dry. Finish your drink.",
+      }),
+    ),
+  ],
+};

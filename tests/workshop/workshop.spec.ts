@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { packsOf, stressCards } from "./stress-set";
+import { marksOf, stressCards } from "./stress-set";
 const preview = (page: import("@playwright/test").Page) =>
   page.frameLocator("iframe");
 // Changing card/text size navigates the preview iframe. Wait for the requested
@@ -148,17 +148,20 @@ for (const size of [
           ).toBeLessThanOrEqual(1);
         }
         await expect(frame.locator(".study-category")).toHaveCount(0);
-        // A shared card carries every pack it belongs to, in catalog order.
+        // A shared card carries every pack it belongs to, in catalog order
+        // (a crawl's card carries its seals instead).
         await expect
-          .poll(() =>
-            frame
-              .locator(".card-pack-marks .pack-logo")
-              .evaluateAll((marks) =>
-                marks.map((m) => m.getAttribute("data-seal")),
-              ),
+          .poll(
+            () =>
+              frame
+                .locator(".card-pack-marks .pack-logo")
+                .evaluateAll((marks) =>
+                  marks.map((m) => m.getAttribute("data-seal")),
+                ),
+            { message: id },
           )
           .toEqual(
-            packsOf(id).map((pack) =>
+            marksOf(id).map((pack) =>
               expect.stringMatching(
                 new RegExp(`art\\/packs\\/${pack.id}\\.svg$`),
               ),

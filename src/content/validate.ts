@@ -124,7 +124,7 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
       (c.omen === undefined ||
         !Array.isArray(c.evolves) ||
         c.evolves.length < 1 ||
-        c.evolves.length > 2 ||
+        c.evolves.length > (c.branches ? 3 : 2) ||
         c.evolves.some(
           (e) =>
             !e ||
@@ -136,6 +136,8 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         ))
     )
       fail(`Invalid evolves: ${c.id}`);
+    if (c.branches !== undefined && (c.branches !== true || !c.evolves))
+      fail(`Invalid branches: ${c.id}`);
     for (const o of [
       ...(c.omen !== undefined ? [c.omen] : []),
       ...(Array.isArray(c.evolves) ? c.evolves.map((e) => e.omen) : []),
