@@ -1,7 +1,14 @@
 import { packs } from "../content/manifest.generated";
 import { validateCatalog } from "../content/validate";
 import { validateRoll } from "../game/dice";
-import { currentCard, findCard, validConfig } from "../game/engine";
+import {
+  currentCard,
+  findCard,
+  hitsNeeded,
+  omenEffect,
+  satchelSize,
+  validConfig,
+} from "../game/engine";
 import type { GameConfig, PartyState, SessionState } from "../game/types";
 import { CURSES, LOOT } from "../game/types";
 export const SAVE_KEY = "side-quest.session.v1";
@@ -58,21 +65,30 @@ function validateQuest(s: SessionState) {
   if (!q) return;
   if (!Array.isArray(q.stages) || !q.stages.length || !Array.isArray(q.finale))
     throw Error("Invalid quest");
-  const pool = q.stages.flatMap((stage) =>
-    Array.isArray(stage?.cards) ? stage.cards : [],
-  );
+  const pool = q.stages.flatMap((stage) => [
+    ...(Array.isArray(stage?.cards) ? stage.cards : []),
+    ...(Array.isArray(stage?.elite) ? stage.elite : []),
+  ]);
   validateCatalog(pool, []);
-  // The finale is each stage's picks, in stage order, with no repeats.
+  // The finale is each stage's picks, in stage order, with no repeats; a
+  // crawl floor's fork may have swapped one of its later rooms for an elite.
   let at = 0;
   for (const stage of q.stages) {
     const picks = q.finale.slice(at, at + stage.pick);
+    const elite = stage.elite;
     if (
       typeof stage.label !== "string" ||
       !stage.label.trim() ||
       !whole(stage.pick, 1) ||
       stage.pick > stage.cards.length ||
       picks.length !== stage.pick ||
-      picks.some((id) => !stage.cards.some((c) => c.id === id))
+      (elite !== undefined &&
+        (!q.party || !Array.isArray(elite) || !elite.length)) ||
+      picks.some(
+        (id, i) =>
+          !stage.cards.some((c) => c.id === id) &&
+          !(i > 0 && elite?.some((c) => c.id === id)),
+      )
     )
       throw Error("Invalid quest");
     at += stage.pick;
@@ -109,14 +125,19 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
     !whole(p.hearts, 0) ||
     p.hearts > p.max ||
     !Array.isArray(p.loot) ||
-    p.loot.length > 3 ||
+    p.loot.length > satchelSize(s.quest) ||
     p.loot.some((item) => !LOOT.includes(item)) ||
     !(p.curse === null || CURSES.includes(p.curse)) ||
     !whole(p.hits, 0) ||
     !whole(p.rounds, 0) ||
     typeof p.wiped !== "boolean" ||
     p.wiped !== (p.hearts === 0) ||
-    (p.wiped && s.phase !== "complete")
+    (p.wiped && s.phase !== "complete") ||
+    // Tonight's omen is a card already dealt.
+    (p.omen !== undefined &&
+      (typeof p.omen !== "string" ||
+        !s.quest!.finale.slice(0, s.quest!.step + 1).includes(p.omen) ||
+        !omenEffect(s.quest)))
   )
     throw Error("Invalid party");
 }
@@ -206,7 +227,7 @@ export function parseSession(raw: string): SessionState {
     throw Error("Invalid count");
   const current = currentCard(s);
   const previous = findCard(s, s.previousId);
-  if (q?.party && q.party.hits >= (current.hits ?? 1))
+  if (q?.party && q.party.hits >= (hitsNeeded(q, current) || 1))
     throw Error("Invalid party");
   validateRoll(s.roll, current.dice);
   validateRoll(s.previousRoll, previous?.dice);

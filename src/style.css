@@ -345,6 +345,17 @@ p {
   flex: 1;
   padding-top: 10px;
 }
+/* On a tall phone the card is width-limited and height is left over: a
+   third of it goes above the card and the rest below, so the card sits up
+   under the top row instead of floating mid-table. */
+.table:before,
+.table:after {
+  content: "";
+  flex: 1 1 0;
+}
+.table:after {
+  flex-grow: 2;
+}
 .muted {
   color: #ac9472;
 }
@@ -365,7 +376,7 @@ p {
     )
   );
   min-height: 0;
-  margin: auto 0;
+  flex: none;
   aspect-ratio: 2/3;
   display: grid;
   transform: rotate(-0.65deg);

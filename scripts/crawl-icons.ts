@@ -18,6 +18,10 @@ const picks: Record<string, string> = {
   "crawl/boss": "lorc/crowned-skull",
   "crawl/satchel": "lorc/knapsack",
   "crawl/wiped": "lorc/candle-skull",
+  "crawl/omen": "lorc/crystal-ball",
+  "crawl/ambush": "lorc/two-shadows",
+  "crawl/elite": "lorc/crossed-swords",
+  "crawl/door": "lorc/wooden-door",
 };
 
 await mkdir("public/art/crawl", { recursive: true });

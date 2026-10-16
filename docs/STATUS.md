@@ -2,6 +2,88 @@
 
 Updated 2026-10-15. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Pub Crawl replayability (2026-10-15, owner request; merged to `main` and deployed)
+
+**Owner request.** "How else can we improve it? … more random scenarios, cards … more replayability without the same experience." The owner picked three features: floor variants, run omens and new room types. More cards and a UI polish pass came with them.
+
+**Before.** Room order was already random (7 of 17 per floor), but the run's shape was fixed: the same three floors, only six bosses (each met every other run), and the same rules every time.
+
+**Now.**
+- **Tonight's omen.** Every run opens on 1 of 12 omen cards. Each has a typed effect that holds for the run (`party.omen`):
+  - starting hearts
+  - starting items
+  - satchel size
+  - extra damage by room kind
+  - extra healing
+  - extra boss hits
+
+  Two of the omens are table rules only.
+- **Floor variants.** At each depth the run is one of two floors: Cellar or Wine Cellar, Catacombs or Sewers, Drowned Taproom or Kitchen. That makes 8 dungeons. Each floor has 21 rooms and 3 bosses, and Last Call has 4.
+- **New rooms.**
+  - **Ambushes** (`hits: 2`): beaten twice.
+  - **Merchants:** `offers` plaques. Each plaque has a drink price or a heart price; a heart price is never the last heart.
+  - **Forks:** the loud door swaps the floor's next room for one of its 2 elites.
+  - **Elites:** harder, cost a heart more, and always pay an item.
+- **Cards.** Dungeon night grew from 57 to 166 cards: 118 deck cards plus 48 crawl-only. The library is now 1,021 cards.
+- **Play again** after a crawl deals a fresh omen and fresh floors.
+- **Tuning.** Catacombs bosses now need 10 and Last Call 11 (was 9 and 10). The extra finds had lifted the win rate to 34%.
+
+**UI.**
+- **Medallion:** shows the omen's crystal ball and ambush pips.
+- **Card plaques:** merchant and fork plaques show their icon, heart-price seal and label. They fit three across at 320px, and an unaffordable one is greyed but solid.
+- **Party dialog:**
+  - shows tonight's omen;
+  - gives the satchel as many slots as the omen allows;
+  - lays out hearts in balanced rows (no more 11 + 1);
+  - has a legend for the card seals, because the seals' hover tooltips never worked on touch. A tap-to-explain seal wasn't possible: the seals sit inside the card's button.
+- **Setup:** counts floors from the quest.
+- **Icons:** 4 new, from the vendored game-icons set (`scripts/crawl-icons.ts`).
+
+**UI pass (same day, owner: "non-cohesive and clunky"; "the green cellar icon … looks terrible and also clips").**
+- **Hearts meter:** now a brass medallion matching the room medallion and the menu. It is the same size as the menu button, so the top row is symmetric. The hearts left sit inside a large heart, like a Hearthstone health gem; the full count (e.g. 12) is in the party dialog. Satchel and curse studs sit on the rim.
+  - The floor name moved out of the meter: it is on every card's ribbon and in the party dialog.
+  - The meter no longer crowds the medallion at 320px.
+- **Card seals:** one pill style for every seal.
+  - Risks on the left: −hearts, the curse, and a boss's or ambush's swings shown as pips (new).
+  - Gains on the right: +item, +hearts.
+  - In a crawl the seals replace the pack mark, which collided with the boss's hits seal.
+- **Flee and Reroll:** now violet, the item colour used everywhere else.
+- **Party dialog:** the seal legend matches the new seals.
+- **Damage numbers:** a red "−2" or gold "+2" pops on the hearts medallion, drifts toward the card and fades (it only fades with reduced motion). The full-screen flush stays.
+- **Card position:** on tall phones the card sits higher. The spare height is split one third above and two thirds below, instead of centring the card. This applies to every mode.
+  - I tried widening the card, but `game.spec.ts` enforces 23px of edge clearance at 320px, so the size is unchanged.
+- **Ribbon colours, one meaning each:** gold for a fight, violet for anything found or chosen (treasure, relic, shrine, merchant, fork), crimson for a boss, pearl only for tonight's omen. Shrines and forks were pearl.
+- **Flaky tests:** two browser tests failed intermittently under the full parallel run ("reduced motion and keyboard play", "badge case opens"). Each passed 5 of 5 alone, both with and without these changes.
+
+**Engine.** Everything is optional, so schema v2 is unchanged and older saves load. A test covers loading a pre-omen crawl save.
+- `QuestSlot`, `questRoute` and `questStages`
+- `QuestStage.elite`
+- `Offer`, `awaitingOffer`, `canTakeOffer` and `takeOffer`
+- `OmenEffect`, `omenEffect`, `satchelSize` and `hitsNeeded`
+- `encounter` and `isBossCard`
+- `pickFinale` never deals a fork last on its floor.
+- `parseSession` checks:
+  - the elite swaps;
+  - that the omen is a dealt omen card;
+  - satchel size against the omen.
+
+**Test harness fix.** The seeded random generator in `tests/dungeon.test.ts` took tiny first draws from small seeds, so it could never pick the second floor in a slot. It now scrambles the seed first. It plays 4,000 runs.
+
+**Verified.**
+- `npm test`: 179 passed.
+- **Harness:** won 27.7%. By omen, 17% (Lock-In) to 36% (The Regulars); by dungeon, 22% to 30%. Every group is held between 10% and 50%.
+- **Build and budgets passed:**
+  - runtime 3563 KiB of 4 MiB;
+  - lazy JS 191.6 of 200 KiB gzip (was 184.5);
+  - initial JS 100.0 KiB.
+
+  **Watch the lazy cap:** only 8.4 KiB of headroom is left.
+- **Playwright:** `crawl`, `game`, `layout` and `quest` specs in Chromium and WebKit: 110 passed, 2 intentional skips. The crawl spec has new tests for the omen opening, merchant, fork and elite, ambush, and the omen in the party dialog. Every one of the 166 cards fits its face at 375×667.
+- `npm run test:workshop`: 26 passed. The workshop preview now finds a crawl card's route and deals elites where a loud door would. The stress set includes merchants and forks.
+- **Screenshots reviewed** at 320 and 375: omen, merchant, fork, elite, ambush and party dialog.
+- **Not verified:** a physical device (new `docs/DEVICE_CHECKLIST.md` item), and the full E2E suite (only the four specs above were run).
+
+**Next.** Physical-device check (`docs/DEVICE_CHECKLIST.md`), then play-testing the omen and floor balance at a real table.
 ## Tooling: lint, test typechecking, faster CI (2026-10-15, branch `optimize`)
 
 **Owner request.** "Let's do it all" after a review of speed and practices.

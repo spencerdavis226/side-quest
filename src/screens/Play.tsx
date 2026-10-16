@@ -9,7 +9,14 @@ import {
 import type { SessionState, CardDefinition, Loot } from "../game/types";
 import { diceResultText } from "../presentation/dice/result-text";
 import { diceNotation } from "../game/dice";
-import { awaitingChoice, awaitingVerdict, currentCard } from "../game/engine";
+import {
+  awaitingChoice,
+  awaitingOffer,
+  awaitingVerdict,
+  canTakeOffer,
+  currentCard,
+  hitsNeeded,
+} from "../game/engine";
 import type { Motion } from "../presentation/controller";
 import { cardPacks } from "../presentation/packs";
 import { CardFace } from "../components/Cards";
@@ -19,7 +26,7 @@ import {
   hasActions,
   useCardActions,
 } from "../components/CardActions";
-import { LootPlaque, usableItems } from "../components/Crawl";
+import { LootPlaque, OfferPlaque, usableItems } from "../components/Crawl";
 const FullScreenDice = lazy(() => import("../components/FullScreenDice"));
 export function Play({
   session,
@@ -30,6 +37,7 @@ export function Play({
   onChoose,
   onSettle,
   onSpend = () => {},
+  onOffer = () => {},
   onRevealRoll,
   onFinish,
   renderFace,
@@ -43,6 +51,7 @@ export function Play({
   onChoose: (option: "skip" | "roll") => void;
   onSettle: (won: boolean) => void;
   onSpend?: (item: Loot) => void;
+  onOffer?: (index: number) => void;
   onRevealRoll: () => void;
   onFinish: (id: number) => void;
   renderFace?: (card: CardDefinition) => ReactNode;
@@ -56,6 +65,8 @@ export function Play({
   const choice = !motion && awaitingChoice(session) ? card.dice!.choice! : null;
   // A battle without dice: the table says whether it won.
   const verdict = !motion && awaitingVerdict(session);
+  // A crawl's merchant or fork: one of its offers puts it aside.
+  const offers = !motion && awaitingOffer(session) ? card.offers! : null;
   // A crawl's items that work on this card: a smoke bomb before a room fight,
   // a loaded die after a lost roll. They join the card's own plaques.
   const items =
@@ -149,7 +160,7 @@ export function Play({
             : ""}
         </span>
         <div
-          className={`card-stage ${motion ?? ""} ${choice || verdict || acting || items.length ? "choosing" : ""}`}
+          className={`card-stage ${motion ?? ""} ${choice || verdict || offers || acting || items.length ? "choosing" : ""}`}
         >
           <div className="deck-under" aria-hidden="true" />
           <button
@@ -161,7 +172,7 @@ export function Play({
                 !!session.roll &&
                 !session.roll.returned &&
                 motion !== "roll";
-              if (choice || verdict || blocked) {
+              if (choice || verdict || offers || blocked) {
                 // Point at the plaques instead of acting on a stray tap.
                 if (!matchMedia("(prefers-reduced-motion: reduce)").matches)
                   choiceRef.current?.animate(
@@ -177,6 +188,7 @@ export function Play({
             aria-disabled={
               !!choice ||
               verdict ||
+              !!offers ||
               blocked ||
               (!!motion && motion !== "roll") ||
               (!!card.dice &&
@@ -191,22 +203,24 @@ export function Play({
                   ? `${card.title}. ${card.rules} Choose ${choice.skip} or ${choice.roll}.`
                   : verdict
                     ? `${card.title}. ${card.rules} Choose Won or Lost.`
-                    : blocked
-                      ? `${card.title}. ${card.rules} ${card.timer!.kind === "fuse" ? "Light the fuse" : "Start the clock"}, or skip it.`
-                      : actions.shown === "end"
-                        ? `${card.title}. ${card.timer!.end} Tap to put this card aside.`
-                        : card.dice && !session.roll?.returned
-                          ? session.roll
-                            ? motion === "roll"
-                              ? "Finish dice roll"
-                              : "Revealing dice result"
-                            : `Roll ${diceNotation(card.dice)}. ${card.rules}`
-                          : `${card.title}. ${session.roll?.returned ? `Rolled ${session.roll.total}. ${diceResultText(card, session.roll)}` : card.rules} ${cardPacks(
-                              card.id,
-                              session.config.packIds,
-                            )
-                              .map((pack) => pack.title)
-                              .join(", ")}. Tap to put this card aside.`
+                    : offers
+                      ? `${card.title}. ${card.rules} Choose ${offers.map((o) => o.label).join(", or ")}.`
+                      : blocked
+                        ? `${card.title}. ${card.rules} ${card.timer!.kind === "fuse" ? "Light the fuse" : "Start the clock"}, or skip it.`
+                        : actions.shown === "end"
+                          ? `${card.title}. ${card.timer!.end} Tap to put this card aside.`
+                          : card.dice && !session.roll?.returned
+                            ? session.roll
+                              ? motion === "roll"
+                                ? "Finish dice roll"
+                                : "Revealing dice result"
+                              : `Roll ${diceNotation(card.dice)}. ${card.rules}`
+                            : `${card.title}. ${session.roll?.returned ? `Rolled ${session.roll.total}. ${diceResultText(card, session.roll)}` : card.rules} ${cardPacks(
+                                card.id,
+                                session.config.packIds,
+                              )
+                                .map((pack) => pack.title)
+                                .join(", ")}. Tap to put this card aside.`
             }
           >
             <span
@@ -230,6 +244,7 @@ export function Play({
                     roll={session.roll}
                     shown={session.phase === "revealed" ? actions.shown : null}
                     party={session.quest?.party}
+                    hits={hitsNeeded(session.quest, card)}
                   />
                 )}
               </span>
@@ -264,6 +279,24 @@ export function Play({
               </button>
               {items.map((item) => (
                 <LootPlaque key={item} item={item} onUse={onSpend} />
+              ))}
+            </div>
+          )}
+          {offers && (
+            <div
+              ref={choiceRef}
+              className={`card-choice offers plaques-${offers.length}`}
+              role="group"
+              aria-label="Your choice"
+            >
+              {offers.map((offer, i) => (
+                <OfferPlaque
+                  key={i}
+                  offer={offer}
+                  index={i}
+                  can={canTakeOffer(session, i)}
+                  onTake={onOffer}
+                />
               ))}
             </div>
           )}

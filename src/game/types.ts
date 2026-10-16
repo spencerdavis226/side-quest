@@ -68,6 +68,54 @@ export interface CardDefinition {
   /** Pub Crawl: a curse on the party to the end of the floor (a battle's
    * only when lost). */
   curse?: Curse;
+  /** Pub Crawl: what kind of room the card is, so an omen can single out
+   * traps or monsters. A boss is told apart from an ambush (both have
+   * `hits`) only by this; saves from before it have no ambushes. */
+  encounter?: Encounter;
+  /** Pub Crawl: a merchant's wares or a fork's doors. The card is put aside
+   * only by taking one of these (two or three) plaques. */
+  offers?: Offer[];
+  /** Pub Crawl: tonight's omen, dealt first. Its effect holds for the run
+   * once the card is put aside. */
+  omen?: OmenEffect;
+}
+export const ENCOUNTERS = [
+  "monster",
+  "elite",
+  "ambush",
+  "trap",
+  "trial",
+  "relic",
+  "treasure",
+  "shrine",
+  "boss",
+  "merchant",
+  "fork",
+  "omen",
+] as const;
+export type Encounter = (typeof ENCOUNTERS)[number];
+/** One plaque on a merchant or a fork. `cost` is hearts paid outright (no
+ * shield blocks a price, and it cannot be paid with the last heart); `loot`
+ * and `heal` are what it brings; `elite` swaps the next room on this floor
+ * for one of the floor's elites. */
+export interface Offer {
+  label: string;
+  cost?: number;
+  loot?: Loot;
+  heal?: number;
+  elite?: true;
+}
+/** What an omen changes for the run. `hearts` moves the party's maximum and
+ * current hearts; `loot` goes into the satchel; `satchel` is its size;
+ * `hurt` adds hearts to every loss on that kind of room; `heal` adds to
+ * every heal a card brings; `bossHits` adds swings to every boss. */
+export interface OmenEffect {
+  hearts?: number;
+  loot?: Loot[];
+  satchel?: number;
+  hurt?: Partial<Record<Encounter, number>>;
+  heal?: number;
+  bossHits?: number;
 }
 /** Pub Crawl items, carried in the party's satchel (at most three).
  * `draught`: down a fresh, full drink to heal a heart. `shield`: the next
@@ -96,7 +144,13 @@ export interface QuestStage {
   intro?: string;
   pick: number;
   cardIds: string[];
+  /** Pub Crawl: the floor's elites, dealt only through a fork's loud door
+   * (never picked, never in `cardIds`). */
+  elite?: string[];
 }
+/** A run's place in the finale: one stage, or `oneOf` a set of routes (each
+ * a list of stages, such as a floor and its boss), one picked per game. */
+export type QuestSlot = QuestStage | { oneOf: QuestStage[][] };
 /** A pack's game mode: a table-wide meter that, on reaching its goal, deals
  * the finale stages one card at a time between deck cards, and the game ends
  * when the last is put aside. Finale cards are authored with the pack's cards
@@ -114,7 +168,7 @@ export interface PackQuest {
   length: number;
   /** Cards that only play in this mode (not in `cardIds`). */
   cardIds: string[];
-  finale: QuestStage[];
+  finale: QuestSlot[];
   /** The mode's own mark on the setup screen and meter (single-colour SVG),
    * when it differs from the pack's. */
   mark?: string;
@@ -135,7 +189,13 @@ export interface QuestState {
   length: number;
   count: number;
   due: boolean;
-  stages: { label: string; pick: number; cards: CardDefinition[] }[];
+  stages: {
+    label: string;
+    pick: number;
+    cards: CardDefinition[];
+    /** A crawl floor's elites (`QuestStage.elite`); older saves omit it. */
+    elite?: CardDefinition[];
+  }[];
   finale: string[];
   step: number;
   /** Battles lost so far. Each was a draw that took no deck position or
@@ -157,6 +217,9 @@ export interface PartyState {
   rounds: number;
   /** The hearts ran out; the game ended in defeat. */
   wiped: boolean;
+  /** The id of tonight's omen card once it is put aside; older saves and
+   * runs without an omen omit it. */
+  omen?: string;
 }
 export interface PackDefinition {
   version: 1;

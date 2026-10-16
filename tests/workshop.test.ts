@@ -1,7 +1,7 @@
 import { test, expect } from "vitest";
 import { workshopSession, workshopCards } from "../src/workshop/session";
 import { cards, packs } from "../src/content/catalog";
-import { createSession, finaleCardIds } from "../src/game/engine";
+import { createSession, finaleCardIds, questStages } from "../src/game/engine";
 test("seeded workshop preserves the pool and reproduces order", () => {
   const a = workshopSession("a", "core.house-special").session;
   expect(a).toEqual(workshopSession("a", "core.house-special").session);
@@ -77,7 +77,7 @@ test("each supplied sheet row lands in the House deck, Cabin weekend or VIP nigh
   expect(vip.cardIds.slice(-4)).toEqual(
     [3, 4, 5, 6].map((row) => `vip.sheet-${String(row).padStart(3, "0")}`),
   );
-  expect(cards).toHaveLength(912); // 96 core + 94 house + 16 vip + 120 Pokémon (+24 League-only gym leaders, 20 gauntlet cards) + 85 cabin + 250 likely + 150 secrets + 57 Dungeon night (48 rooms and bosses, 9 Pub Crawl finds)
+  expect(cards).toHaveLength(1021); // 96 core + 94 house + 16 vip + 120 Pokémon (+24 League-only gym leaders, 20 gauntlet cards) + 85 cabin + 250 likely + 150 secrets + 166 Dungeon night (118 fights, elites and bosses; 36 Pub Crawl finds, merchants and forks; 12 omens)
 });
 
 test("Cabin weekend owns its CABIIN cards and shares none", () => {
@@ -124,7 +124,7 @@ test("the Pokémon League mode deals all 24 gym leaders and always reaches eight
   // After the eighth badge: 1 of 8 Legendaries, 4 of 9 Elite Four, 1 of 3
   // Champions.
   expect(
-    pokemon.quest!.finale.map(({ label, pick, cardIds }) => [
+    questStages(pokemon.quest!).map(({ label, pick, cardIds }) => [
       label,
       pick,
       cardIds.length,
@@ -136,7 +136,7 @@ test("the Pokémon League mode deals all 24 gym leaders and always reaches eight
   ]);
   // Each stage has its own ribbon finish; gym leaders keep the gold default.
   const tones = ["pearl", "violet", "crimson"];
-  for (const [i, stage] of pokemon.quest!.finale.entries()) {
+  for (const [i, stage] of questStages(pokemon.quest!).entries()) {
     expect(stage.intro).toBeTruthy();
     for (const id of stage.cardIds) {
       const card = cards.find((c) => c.id === id)!;

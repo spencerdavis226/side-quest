@@ -1,7 +1,7 @@
 import { validateDice } from "../game/dice";
 import { validateTimer } from "../game/timer";
-import type { CardDefinition, PackDefinition } from "../game/types";
-import { CURSES, LOOT, RIBBON_TONES } from "../game/types";
+import type { CardDefinition, PackDefinition, QuestStage } from "../game/types";
+import { CURSES, ENCOUNTERS, LOOT, RIBBON_TONES } from "../game/types";
 
 // Structural validation for cards and packs. Kept apart from `catalog.ts` so
 // saved-session parsing can use it without pulling card content into the
@@ -90,6 +90,62 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
       fail(`Invalid reward: ${c.id}`);
     if (c.curse !== undefined && !CURSES.includes(c.curse))
       fail(`Invalid curse: ${c.id}`);
+    if (c.encounter !== undefined && !ENCOUNTERS.includes(c.encounter))
+      fail(`Invalid encounter: ${c.id}`);
+    // A merchant's wares or a fork's doors: two or three plaques, on a card
+    // with no other way to be put aside.
+    if (
+      c.offers !== undefined &&
+      (!Array.isArray(c.offers) ||
+        c.offers.length < 2 ||
+        c.offers.length > 3 ||
+        c.battle ||
+        c.dice ||
+        c.timer ||
+        c.secret ||
+        c.reward ||
+        c.offers.some(
+          (o) =>
+            !o ||
+            typeof o.label !== "string" ||
+            !o.label.trim() ||
+            o.label.length > 18 ||
+            (o.cost !== undefined && !count(o.cost, 5)) ||
+            (o.heal !== undefined && !count(o.heal, 5)) ||
+            (o.loot !== undefined && !LOOT.includes(o.loot)) ||
+            (o.elite !== undefined && o.elite !== true),
+        ))
+    )
+      fail(`Invalid offers: ${c.id}`);
+    if (c.omen !== undefined) {
+      const o = c.omen;
+      const step = (n: unknown, lo: number, hi: number) =>
+        n === undefined ||
+        (Number.isSafeInteger(n) && (n as number) >= lo && (n as number) <= hi);
+      if (
+        !o ||
+        c.battle ||
+        c.dice ||
+        c.offers ||
+        c.reward ||
+        !step(o.hearts, -6, 6) ||
+        !step(o.satchel, 1, 5) ||
+        !step(o.heal, -2, 3) ||
+        !step(o.bossHits, -1, 2) ||
+        (o.loot !== undefined &&
+          (!Array.isArray(o.loot) ||
+            o.loot.length > (o.satchel ?? 3) ||
+            o.loot.some((item) => !LOOT.includes(item)))) ||
+        (o.hurt !== undefined &&
+          (!o.hurt ||
+            typeof o.hurt !== "object" ||
+            Object.entries(o.hurt).some(
+              ([kind, n]) =>
+                !ENCOUNTERS.includes(kind as never) || !step(n, -2, 3),
+            )))
+      )
+        fail(`Invalid omen: ${c.id}`);
+    }
   }
   const packIds = new Set<string>();
   for (const p of ps) {
@@ -138,11 +194,27 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
       // A crawl deals its stages from the first card, and its rooms may be
       // the pack's own deck cards.
       const crawl = party !== undefined;
-      const finaleIds = Array.isArray(finale)
-        ? finale.flatMap((stage) =>
-            Array.isArray(stage?.cardIds) ? stage.cardIds : [],
-          )
-        : [];
+      // Each slot is a stage, or `oneOf` a set of routes of stages.
+      const slots = Array.isArray(finale) ? finale : [];
+      const badSlot = slots.some(
+        (slot) =>
+          !slot ||
+          ("oneOf" in slot &&
+            (!Array.isArray(slot.oneOf) ||
+              slot.oneOf.length < 2 ||
+              slot.oneOf.some(
+                (route) => !Array.isArray(route) || !route.length,
+              ))),
+      );
+      const stages: QuestStage[] = badSlot
+        ? []
+        : slots.flatMap((slot) =>
+            "oneOf" in slot ? slot.oneOf.flat() : [slot],
+          );
+      const finaleIds = stages.flatMap((stage) => [
+        ...(Array.isArray(stage?.cardIds) ? stage.cardIds : []),
+        ...(Array.isArray(stage?.elite) ? stage.elite : []),
+      ]);
       const playable = [...p.cardIds, ...(cardIds ?? [])];
       const advancing = cs.filter(
         (c) => c.quest === p.id && playable.includes(c.id),
@@ -168,7 +240,8 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         cardIds.some((id) => !ids.has(id) || p.cardIds.includes(id)) ||
         !Array.isArray(finale) ||
         !finale.length ||
-        finale.some(
+        badSlot ||
+        stages.some(
           (stage) =>
             typeof stage?.label !== "string" ||
             !stage.label.trim() ||
@@ -179,7 +252,9 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
             !Number.isSafeInteger(stage.pick) ||
             stage.pick < 1 ||
             !Array.isArray(stage.cardIds) ||
-            stage.pick > stage.cardIds.length,
+            stage.pick > stage.cardIds.length ||
+            (stage.elite !== undefined &&
+              (!crawl || !Array.isArray(stage.elite) || !stage.elite.length)),
         ) ||
         new Set(finaleIds).size !== finaleIds.length ||
         finaleIds.some(

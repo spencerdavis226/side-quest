@@ -37,6 +37,9 @@ describe("card logic sweep", () => {
   it("gives every lasting rule a whole-game or next-turn horizon", () => {
     for (const card of cards.filter((c) => c.category === "rule")) {
       if (DURATION_EXCEPTIONS.has(card.id)) continue;
+      // A Pub Crawl omen is the run's first card and holds for the whole
+      // crawl; its ribbon, "Tonight's omen", is its horizon.
+      if (card.omen) continue;
       expect(textOf(card), card.id).toMatch(
         /next turn|rest of the game|end of the game/i,
       );

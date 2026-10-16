@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { packs } from "./content/manifest.generated";
 import { loadedPackCards, loadPackCards } from "./content/loaders";
 import { createSession, questRecord, replaySession } from "./game/engine";
+import type { SessionState } from "./game/types";
 import {
   loadPreferences,
   loadSession,
@@ -126,6 +127,17 @@ function App() {
       .catch(() => setLoadFailed(true))
       .finally(() => setStarting(false));
   };
+  // Play again. A crawl draws a fresh omen and fresh floors from its pack,
+  // so the next run is a different dungeon; anything else replays its own
+  // snapshot (and so does a crawl whose cards can't load).
+  const replay = (s: SessionState) => {
+    if (!s.quest?.party) return controller.start(replaySession(s));
+    const ready = loadedPackCards(s.config.packIds);
+    if (ready) return controller.start(createSession(s.config, ready, packs));
+    loadPackCards(s.config.packIds)
+      .then((cards) => controller.start(createSession(s.config, cards, packs)))
+      .catch(() => controller.start(replaySession(s)));
+  };
   const finish = (id: number) => controller.finish(id);
   return (
     <>
@@ -210,7 +222,7 @@ function App() {
               packs.find((p) => p.id === display.quest?.packId)?.quest?.mode
             }
             celebrate={motion === "complete"}
-            onReplay={() => controller.start(replaySession(display))}
+            onReplay={() => replay(display)}
             onSetup={() => controller.clear()}
             onFinish={() => finish(transition)}
           />
@@ -225,6 +237,7 @@ function App() {
               onChoose={(option) => controller.choose(option)}
               onSettle={(won) => controller.settle(won)}
               onSpend={(item) => controller.spend(item)}
+              onOffer={(index) => controller.offer(index)}
               onRevealRoll={() => controller.revealRoll()}
               onFinish={finish}
             />

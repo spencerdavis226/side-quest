@@ -39,6 +39,12 @@ export function Setup({
   // A crawl plays its own deck, so the pack picker steps aside.
   const crawlPack = packs.find((p) => p.id === questPack && p.quest?.party);
   const crawl = !!crawlPack;
+  // A floor is a slot holding a stage of rooms (a run of several picks);
+  // tonight's omen and Last Call are single cards.
+  const crawlFloors =
+    crawlPack?.quest!.finale.filter((slot) =>
+      ("oneOf" in slot ? slot.oneOf.flat() : [slot]).some((st) => st.pick > 1),
+    ).length ?? 0;
   const chooseLength = (choice: DeckChoice) => {
     const { quest: _quest, ...config } = prefs.config;
     onChange({ ...prefs, choice, config });
@@ -157,15 +163,14 @@ export function Setup({
           <div
             className="crawl-brief"
             role="img"
-            aria-label={`${crawlPack.title}: ${crawlPack.quest!.party!.hearts} shared hearts, 3 floors, a boss on each`}
+            aria-label={`${crawlPack.title}: ${crawlPack.quest!.party!.hearts} shared hearts, ${crawlFloors} floors, a boss on each, and a new omen every run`}
           >
             <PackLogo pack={crawlPack} decorative />
             <span>
               <strong>{crawlPack.title}</strong>
               <small>
                 <CrawlIcon name="heart" />
-                {crawlPack.quest!.party!.hearts} hearts ·{" "}
-                {Math.ceil(crawlPack.quest!.finale.length / 2)} floors
+                {crawlPack.quest!.party!.hearts} hearts · {crawlFloors} floors
               </small>
             </span>
           </div>

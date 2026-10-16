@@ -7,6 +7,8 @@ import {
   settleBattle,
   skipRoll,
   spendLoot,
+  awaitingOffer,
+  takeOffer,
   type Random,
 } from "../game/engine";
 import type { Loot, SessionState } from "../game/types";
@@ -98,7 +100,12 @@ export class PresentationController {
     }
     if (!session || motion || session.phase === "complete") return;
     // A choice card only moves through choose(); a stray tap must never roll.
-    if (awaitingChoice(session) || awaitingVerdict(session)) return;
+    if (
+      awaitingChoice(session) ||
+      awaitingVerdict(session) ||
+      awaitingOffer(session)
+    )
+      return;
     if (
       session.phase === "revealed" &&
       currentCard(session).dice &&
@@ -142,6 +149,16 @@ export class PresentationController {
     const { session, motion } = this.state;
     if (!session || motion || !awaitingVerdict(session)) return;
     const next = settleBattle(session, won, this.random);
+    this.persist(next);
+    this.transition(next, "discard", session);
+    this.effect("discard");
+  }
+  /** Take a merchant's ware or a fork's door; the card goes aside. */
+  offer(index: number) {
+    const { session, motion } = this.state;
+    if (!session || motion || !awaitingOffer(session)) return;
+    const next = takeOffer(session, index, this.random);
+    if (next === session) return;
     this.persist(next);
     this.transition(next, "discard", session);
     this.effect("discard");

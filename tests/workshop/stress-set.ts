@@ -1,4 +1,5 @@
 import { cards, packs } from "../../src/content/catalog";
+import { questStages } from "../../src/game/engine";
 
 /**
  * The cards that can actually break the shared card template: every card
@@ -16,13 +17,15 @@ export const stressCards = [
       ...longest("rules", 12),
       ...longest("title", 6),
       ...cards.filter((c) => c.dice?.choice),
+      // A crawl's merchants and forks: their offer plaques do the same.
+      ...cards.filter((c) => c.offers),
       ...[...cards]
         .filter((c) => c.dice)
         .sort((a, b) => b.dice!.count - a.dice!.count)
         .slice(0, 3),
-      // One card of each finale stage.
+      // One card of each finale stage, on every route.
       ...packs.flatMap((p) =>
-        (p.quest?.finale ?? []).map((stage) =>
+        (p.quest ? questStages(p.quest) : []).map((stage) =>
           cards.find((c) => c.id === stage.cardIds[0])!,
         ),
       ),

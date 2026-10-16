@@ -15,21 +15,66 @@
 
 /* --- The meter: hearts, curse, satchel ----------------------------------- */
 
-.crawl-meter {
+/* The hearts meter is a brass medallion like the room's and the menu's:
+   the heart with the hearts left inside it, the full count under it, and
+   studs on the rim for the satchel (top) and a curse (bottom). */
+.quest-meter.crawl-meter {
   position: relative;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
+  width: 54px;
+  height: 54px;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: url("/art/bezel.webp") center / 119% no-repeat #16312e;
+  box-shadow:
+    0 3px 0 #150e09,
+    0 7px 12px #000a;
+}
+.crawl-meter.curse-bleed {
+  box-shadow:
+    0 0 0 2px rgb(224 53 42 / 0.55),
+    0 3px 0 #150e09,
+    0 7px 14px #000a;
+}
+.crawl-meter.curse-hex {
+  box-shadow:
+    0 0 0 2px rgb(138 79 224 / 0.6),
+    0 3px 0 #150e09,
+    0 7px 14px #000a;
 }
 .meter-heart {
   position: relative;
   display: grid;
   place-items: center;
-  width: 30px;
-  height: 30px;
+  width: 38px;
+  height: 35px;
 }
 .meter-heart .icon-heart {
-  width: 28px;
-  height: 28px;
+  grid-area: 1 / 1;
+  width: 38px;
+  height: 35px;
   background: linear-gradient(160deg, #ff8f7a 0%, #d7382d 45%, #7d1410 100%);
   filter: drop-shadow(0 1px 0 #2a0605) drop-shadow(0 0 5px rgb(215 56 45 / 0.4));
+}
+.crawl-meter .meter-heart strong {
+  grid-area: 1 / 1;
+  /* Above the heart, whose drop-shadow filter paints it as its own layer. */
+  position: relative;
+  z-index: 1;
+  margin-top: -2px;
+  color: #fff7e6;
+  font: 700 18px/1 var(--font-card-title);
+  font-variant-numeric: lining-nums;
+  text-shadow:
+    0 0 2px #5a0b07,
+    0 1px 2px #5a0b07;
+}
+.crawl-meter .meter-heart strong.low {
+  color: #fff;
 }
 .crawl-meter.low .meter-heart .icon-heart {
   animation: heart-beat 1.1s ease-in-out infinite;
@@ -40,46 +85,140 @@
 .meter-heart.heal .icon-heart {
   animation: heart-heal 800ms ease-out;
 }
-.meter-curse {
+/* A heart change floats off the meter, like a damage number: it pops on
+   the heart, then drifts down toward the card and fades. */
+.heart-splat {
   position: absolute;
-  right: -5px;
-  bottom: -3px;
-  width: 15px;
-  height: 15px;
-}
-.curse-bleed .meter-curse {
-  color: #ff6a5a;
-  filter: drop-shadow(0 0 3px #e0352a);
-}
-.curse-hex .meter-curse {
-  color: #c79bff;
-  filter: drop-shadow(0 0 3px #8a4fe0);
-}
-.crawl-meter strong.low {
-  color: #ff9b8c;
-}
-.crawl-meter.cursed {
-  border-color: #6b3c52;
-}
-.crawl-meter.curse-hex {
-  border-color: #6a4a92;
-}
-/* The satchel's count, a brass stud pinned to the heart's shoulder. */
-.meter-satchel {
-  position: absolute;
-  top: -7px;
-  left: -7px;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
   display: grid;
   place-items: center;
-  min-width: 20px;
-  height: 20px;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 6px;
+  border-radius: 17px;
+  font: 800 20px/1 var(--font-card-title);
+  font-variant-numeric: lining-nums;
+  pointer-events: none;
+  animation: heart-splat 1250ms cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+.splat-hurt {
+  color: #fff3e6;
+  background: radial-gradient(circle at 35% 30%, #ff6b57, #b3221a 70%);
+  border: 2px solid #ffd0b8;
+  box-shadow:
+    0 0 14px rgb(255 70 50 / 0.7),
+    0 3px 6px #000a;
+}
+.splat-heal {
+  color: #3a1405;
+  background: radial-gradient(circle at 35% 30%, #fff1b8, #d9a542 70%);
+  border: 2px solid #fff6d6;
+  box-shadow:
+    0 0 14px rgb(255 214 120 / 0.7),
+    0 3px 6px #000a;
+}
+@keyframes heart-splat {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.25);
+  }
+  30% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  70% {
+    opacity: 1;
+    transform: translate(-50%, 40%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, 90%) scale(0.9);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .heart-splat {
+    animation: heart-splat-fade 1250ms ease-out both;
+  }
+  @keyframes heart-splat-fade {
+    0%,
+    70% {
+      opacity: 1;
+      transform: translate(-50%, -50%);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(-50%, -50%);
+    }
+  }
+}
+.quest-meter > .meter-tag {
+  display: inline-flex;
+}
+.meter-tag {
+  position: absolute;
+  right: -6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 22px;
+  height: 18px;
   padding: 0 5px;
-  border: 1px solid #f6dc9c;
-  border-radius: 10px;
+  border: 1px solid rgb(255 236 190 / 0.55);
+  border-radius: 9px;
+  font: 700 12px/1 var(--font-card-title);
+  font-variant-numeric: lining-nums;
+  box-shadow:
+    inset 0 1px rgb(255 255 255 / 0.25),
+    0 2px 4px #000a;
+}
+.meter-tag .crawl-icon {
+  width: 12px;
+  height: 12px;
+}
+.tag-satchel {
+  top: -4px;
   background: linear-gradient(180deg, #e9c477, #a77232);
   color: #2b1806;
-  font: 700 12px/1 var(--font-tavern);
-  box-shadow: 0 2px 4px #000a;
+}
+.tag-curse {
+  bottom: -4px;
+}
+.tag-curse.curse-bleed {
+  background: radial-gradient(circle at 30% 25%, #6a3247, #2a0f1a 75%);
+  color: #ff8a7a;
+}
+.tag-curse.curse-hex {
+  background: radial-gradient(circle at 30% 25%, #5b3b8a, #1f1236 75%);
+  color: #e0c8ff;
+}
+@media (min-width: 700px) {
+  .quest-meter.crawl-meter {
+    width: 64px;
+    height: 64px;
+  }
+  .meter-heart,
+  .meter-heart .icon-heart {
+    width: 44px;
+    height: 41px;
+  }
+  .crawl-meter .meter-heart strong {
+    font-size: 21px;
+  }
+  .meter-tag {
+    height: 21px;
+    min-width: 28px;
+    font-size: 14px;
+  }
+  .meter-tag .crawl-icon {
+    width: 15px;
+    height: 15px;
+  }
 }
 @keyframes heart-beat {
   0%,
@@ -136,6 +275,18 @@
   background: linear-gradient(180deg, #ffe7a8, #c9893b);
   filter: drop-shadow(0 1px 1px #000c);
 }
+/* An ambush wears two shadows in place of the crown; the omen, its ball. */
+.crawl-progress .icon-ambush,
+.crawl-progress .icon-omen {
+  width: 30px;
+  height: 30px;
+  background: linear-gradient(180deg, #f3dfb0, #b48a4b);
+  filter: drop-shadow(0 1px 1px #000c);
+}
+.crawl-progress .icon-omen {
+  background: radial-gradient(circle at 40% 30%, #f2e9ff, #a58ad6 55%, #5b3f8c);
+  filter: drop-shadow(0 0 6px rgb(190 160 255 / 0.55));
+}
 .boss-pips {
   display: flex;
   gap: 4px;
@@ -159,11 +310,6 @@
   }
 }
 @media (min-width: 700px) {
-  .meter-heart,
-  .meter-heart .icon-heart {
-    width: 34px;
-    height: 34px;
-  }
   .crawl-progress .icon-boss {
     width: 38px;
     height: 38px;
@@ -174,7 +320,9 @@
   }
 }
 
-/* --- Stakes: wax seals in the card's foot --------------------------------- */
+/* --- Stakes: wax seals in the card's foot ---------------------------------
+   One pill for every seal: risks on the left (hearts lost, a curse, a boss's
+   swings), gains on the right, each number marked − or +. */
 
 .card-stakes {
   position: absolute;
@@ -184,7 +332,7 @@
   justify-content: space-between;
   pointer-events: none;
 }
-.stake-gains {
+.stake-group {
   display: flex;
   gap: max(4px, 1cqw);
 }
@@ -192,12 +340,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: max(2px, 0.4cqw);
-  min-width: max(30px, 6.6cqw);
+  gap: max(2px, 0.5cqw);
+  min-width: max(34px, 7.4cqw);
   height: max(26px, 5.6cqw);
-  padding: 0 max(6px, 1.3cqw);
+  padding: 0 max(7px, 1.5cqw);
   border-radius: max(13px, 2.8cqw);
-  font: 700 max(13px, 2.9cqw) / 1 var(--font-card-title);
+  font: 700 max(14px, 3.1cqw) / 1 var(--font-card-title);
   font-variant-numeric: lining-nums;
   box-shadow:
     inset 0 1px rgb(255 255 255 / 0.35),
@@ -205,8 +353,8 @@
     0 1px 2px rgb(40 20 8 / 0.5);
 }
 .stake .crawl-icon {
-  width: max(14px, 3cqw);
-  height: max(14px, 3cqw);
+  width: max(16px, 3.5cqw);
+  height: max(16px, 3.5cqw);
 }
 .stake-loss {
   background: radial-gradient(circle at 30% 25%, #c2473b, #7c1712 75%);
@@ -222,18 +370,33 @@
 .stake-loot {
   background: radial-gradient(circle at 30% 25%, #a98bd9, #4b2d80 75%);
   color: #fbefff;
-  padding: 0;
-  width: max(30px, 6.6cqw);
 }
 .stake-curse {
-  padding: 0;
-  width: max(30px, 6.6cqw);
   color: #ffd9d3;
   background: radial-gradient(circle at 30% 25%, #6a3247, #2a0f1a 75%);
 }
 .stake-curse.curse-hex {
   color: #e7d3ff;
   background: radial-gradient(circle at 30% 25%, #5b3b8a, #1f1236 75%);
+}
+/* A boss's or an ambush's swings, as pips beside its mark. */
+.stake-hits {
+  background: radial-gradient(circle at 30% 25%, #4a3a2a, #1b1310 75%);
+  color: #f3d68f;
+}
+.stake-pips {
+  display: inline-flex;
+  gap: max(2px, 0.5cqw);
+}
+.stake-pips i {
+  width: max(7px, 1.5cqw);
+  height: max(7px, 1.5cqw);
+  border: 1px solid #e0b866;
+  border-radius: 50%;
+}
+.stake-pips i.hit {
+  background: radial-gradient(circle at 35% 35%, #ff9b8c, #b3221a);
+  border-color: #ffcfb0;
 }
 
 /* --- Plaques: Flee and Reroll join the card's own -------------------------- */
@@ -263,13 +426,77 @@
 .card-choice.items .loot-plaque {
   animation-delay: 0ms;
 }
-.loot-smoke {
-  color: #eef0ee;
-  background: linear-gradient(145deg, #6c7578, #353d40);
+/* Items are violet everywhere: their seals, the merchant's wares, and the
+   Flee and Reroll plaques. */
+.loot-plaque {
+  color: #fbefff;
+  background: linear-gradient(145deg, #6c4ea3, #35205e);
 }
-.loot-die {
+
+/* --- Offers: a merchant's wares, a fork's doors ---------------------------
+   What it brings and its price in hearts sit above the label, so three fit
+   across a 320px card. */
+
+.offer-plaque {
+  gap: max(3px, 0.8cqw);
+  padding: 0 4px;
   color: #2f1e0e;
-  background: linear-gradient(145deg, #fbf3df, #cdb98e);
+  background: linear-gradient(145deg, #ead39e, #c9a86a);
+}
+.offer-plaque.offer-buy {
+  color: #fbefff;
+  background: linear-gradient(145deg, #6c4ea3, #35205e);
+}
+.offer-plaque.offer-loud {
+  color: #ffe2c9;
+  background: linear-gradient(145deg, #8a2e26, #4a1714);
+}
+.offer-goods {
+  display: inline-flex;
+  align-items: center;
+  gap: max(4px, 1cqw);
+}
+.offer-goods > .crawl-icon {
+  width: max(20px, 4.6cqw);
+  height: max(20px, 4.6cqw);
+}
+.offer-plain {
+  opacity: 0.7;
+}
+.offer-cost {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  padding: 1px max(5px, 1cqw);
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 25%, #c2473b, #7c1712 75%);
+  color: #ffe2c9;
+  font: 700 max(12px, 2.6cqw) / 1.1 var(--font-card-title);
+  font-variant-numeric: lining-nums;
+}
+.offer-cost .crawl-icon {
+  width: max(11px, 2.4cqw);
+  height: max(11px, 2.4cqw);
+}
+.offer-label {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  text-align: center;
+  font-size: 0.82em;
+  line-height: 1;
+}
+.card-choice.offers.plaques-3 .offer-label {
+  font-size: clamp(13px, 4.4cqw, max(19px, 4cqw));
+}
+/* A price the party can't pay: solid (the frame must not show through), but
+   greyed and flat. */
+.offer-plaque:disabled {
+  color: #c9bfae;
+  background: linear-gradient(145deg, #5d554b, #3a342d);
+  box-shadow: inset 0 1px rgb(255 255 255 / 0.12);
+}
+.offer-plaque:disabled .offer-cost {
+  background: #6b2a24;
 }
 
 /* --- The run: hearts, curse, satchel, floors ------------------------------ */
@@ -281,15 +508,15 @@
   text-align: left;
 }
 .crawl-hearts {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(var(--per-row, 12), auto);
   justify-content: center;
   gap: 3px;
 }
 /* Twelve to a row on the narrowest phone. */
 .crawl-hearts .crawl-icon {
-  width: clamp(16px, 5.4vw, 26px);
-  height: clamp(16px, 5.4vw, 26px);
+  width: clamp(15px, 5vw, 24px);
+  height: clamp(15px, 5vw, 24px);
 }
 .crawl-hearts .full {
   background: linear-gradient(160deg, #ff8f7a 0%, #d7382d 45%, #7d1410 100%);
@@ -299,6 +526,7 @@
   background: #3b2a24;
   opacity: 0.7;
 }
+.crawl-omen,
 .crawl-curse {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -310,6 +538,24 @@
   border-radius: 10px;
   background: rgb(60 12 20 / 0.45);
   font-size: 1rem;
+}
+.crawl-omen {
+  border-color: #6d5a9a;
+  background: rgb(36 24 64 / 0.45);
+}
+.crawl-omen .crawl-icon {
+  grid-row: span 2;
+  width: 26px;
+  height: 26px;
+  color: #cdb8ff;
+}
+.crawl-omen strong {
+  color: #fff0cf;
+  font-family: var(--font-tavern);
+}
+.crawl-omen span {
+  color: #d9c7a4;
+  font-size: 0.95rem;
 }
 .crawl-curse .crawl-icon {
   grid-row: span 2;
@@ -539,4 +785,36 @@
 }
 .suspended .crawl-meter .icon-heart {
   animation-play-state: paused;
+}
+
+/* The seals, explained: touch has no hover. */
+.crawl-legend {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+.crawl-legend > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.crawl-legend dt {
+  flex: none;
+  min-width: 58px;
+  height: 28px;
+  font-size: 15px;
+}
+.crawl-legend dt .crawl-icon {
+  width: 17px;
+  height: 17px;
+}
+.crawl-legend .stake-pips i {
+  width: 7px;
+  height: 7px;
+}
+.crawl-legend dd {
+  margin: 0;
+  color: #d9c7a4;
+  font-size: 0.95rem;
+  line-height: 1.2;
 }

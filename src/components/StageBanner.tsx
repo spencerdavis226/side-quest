@@ -1,5 +1,5 @@
 import type { SessionState } from "../game/types";
-import { finaleStage } from "../game/engine";
+import { finaleStage, questStages } from "../game/engine";
 import { packs } from "../content/manifest.generated";
 import { stageArt } from "../presentation/league-art";
 
@@ -17,7 +17,9 @@ export function StageBanner({ session }: { session: SessionState }) {
   const pool = quest.stages[stage.stage].cards;
   if (pool.some((c) => c.id === session.previousId)) return null;
   const rules = packs.find((p) => p.id === quest.packId)?.quest;
-  const intro = rules?.finale[stage.stage]?.intro ?? stage.label;
+  const intro =
+    (rules && questStages(rules).find((s) => s.label === stage.label)?.intro) ??
+    stage.label;
   // The banner takes the stage's ribbon finish (pearl, violet, crimson).
   const tone = quest.stages[stage.stage].cards[0]?.ribbonTone ?? "gold";
   const banner = quest.packId === "pokemon" ? stageArt(tone) : undefined;

@@ -12,6 +12,7 @@ export function CardFace({
   roll = null,
   shown = null,
   party,
+  hits = 0,
 }: {
   card: CardDefinition;
   packIds?: readonly string[];
@@ -20,6 +21,8 @@ export function CardFace({
   shown?: "secret" | "end" | null;
   /** A crawl's party: the card shows what it puts on the line. */
   party?: PartyState;
+  /** Swings a crawl boss or ambush needs (`hitsNeeded`); 0 for others. */
+  hits?: number;
 }) {
   const gesture = useRef<{
     pointerId: number;
@@ -240,8 +243,9 @@ export function CardFace({
           )}
         </div>
         <div className="card-footer">
-          {party && <CardStakes card={card} party={party} />}
-          <CardPackMarks cardId={card.id} packIds={packIds} />
+          {party && <CardStakes card={card} party={party} hits={hits} />}
+          {/* A crawl plays one pack: its seals take the foot instead. */}
+          {!party && <CardPackMarks cardId={card.id} packIds={packIds} />}
         </div>
       </div>
     </div>

@@ -25,24 +25,44 @@ export function workshopSession(seed: string, first: string, revealed = true) {
       (p.quest.cardIds.includes(first) ||
         finaleCardIds(p.quest).includes(first)),
   )?.id;
-  const session = createSession(
-    {
-      version: 1,
-      packIds: packs.map((p) => p.id),
-      limit: null,
-      ...(quest ? { quest } : {}),
-    },
-    workshopCards,
-    workshopPacks,
-    random,
-  );
+  const config = {
+    version: 1 as const,
+    packIds: packs.map((p) => p.id),
+    limit: null,
+    ...(quest ? { quest } : {}),
+  };
+  // A crawl picks one of two floors at each depth: deal until the route
+  // holds the card (a floor's elites count; they wait behind its fork).
+  const holds = (s: ReturnType<typeof createSession>) =>
+    !s.quest ||
+    s.quest.stages.some((st) =>
+      [...st.cards, ...(st.elite ?? [])].some((c) => c.id === first),
+    );
+  let session = createSession(config, workshopCards, workshopPacks, random);
+  for (let i = 1; i < 64 && !holds(session); i++)
+    session = createSession(
+      config,
+      workshopCards,
+      workshopPacks,
+      seededRandom(`${seed}/${i}`),
+    );
   if (session.order.includes(first))
     session.order = [first, ...session.order.filter((id) => id !== first)];
   // A finale card previews as dealt: swap it into its own stage's picks and
   // make that the step in play.
   const q = session.quest;
   const stage = q?.stages.findIndex((s) => s.cards.some((c) => c.id === first));
-  if (q && stage !== undefined && stage >= 0) {
+  const eliteStage = q?.stages.findIndex((s) =>
+    s.elite?.some((c) => c.id === first),
+  );
+  if (q && eliteStage !== undefined && eliteStage >= 0) {
+    // An elite previews as a loud door deals it: the floor's second room.
+    const at =
+      q.stages.slice(0, eliteStage).reduce((sum, s) => sum + s.pick, 0) + 1;
+    const finale = [...q.finale];
+    finale[at] = first;
+    Object.assign(q, { finale, step: at });
+  } else if (q && stage !== undefined && stage >= 0) {
     const start = q.stages.slice(0, stage).reduce((sum, s) => sum + s.pick, 0);
     const picks = q.finale.slice(start, start + q.stages[stage].pick);
     const rest = picks.filter((id) => id !== first);

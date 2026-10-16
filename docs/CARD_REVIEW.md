@@ -886,16 +886,39 @@ the Review column is intentionally blank so you can mark it up.
 
 ## Dungeon night (`dungeon`)
 
-57 cards · 3 sip · 3 group · 0 category · 51 challenge · 0 rule · 42 dice
+166 cards · 16 sip · 13 group · 0 category · 125 challenge · 12 rule · 107 dice
 
 | Review | Title | ID | Cat | Rules | Dice, secret or timer |
 | --- | --- | --- | --- | --- | --- |
 | ☐ | Lost and Found | `dungeon.lost-and-found` | sip | Everything anyone lost down here, plus a coaster that looks bulletproof. Drink 1. |  |
+| ☐ | The Tip Jar | `dungeon.tip-jar` | sip | A tip jar lost under the shelves since 2011. A loaded die rattles in the coins. Drink 1. |  |
+| ☐ | Rat Fence | `dungeon.rat-fence` | sip | A rat in a tiny vest is selling whatever fell behind the bar. He takes drinks, or blood. |  |
+| ☐ | Cellar Master's Coat | `dungeon.cellar-masters-coat` | sip | A coat on a hook with full pockets: a corkscrew and a smoke bomb. Drink 1. |  |
+| ☐ | The Magnum | `dungeon.the-magnum` | sip | A magnum of something nice behind the racks. Everyone gets a splash; save a swig. Drink 1. |  |
+| ☐ | The Cellar Cat | `dungeon.cellar-cat` | sip | A cat in a sommelier's chain trades mouse-bitten goods. It takes drinks, or blood. |  |
 | ☐ | The Bone Pile | `dungeon.bone-pile` | sip | Under the bones: a smoke bomb and a stranger's fake ID. Keep both. Drink 1. |  |
+| ☐ | The Grave Robber | `dungeon.grave-robber` | sip | A grave robber with a cart of stolen goods and no questions asked. Prices are firm. |  |
+| ☐ | Flushed Purse | `dungeon.flushed-purse` | sip | A purse dropped down a toilet, somehow dry: lipstick, a lighter, a smoke bomb. Drink 1. |  |
+| ☐ | Maintenance Locker | `dungeon.maintenance-locker` | sip | A hard hat and a thermos of something brown. Wear one, drink from the other. Drink 1. |  |
+| ☐ | The Mole Man | `dungeon.mole-man` | sip | A man who lives down here sells whatever washes past. He takes drinks, or blood. |  |
 | ☐ | Message in a Bottle | `dungeon.message-bottle` | sip | It says drink me. Of course it does. Drink 1, and keep the bottle. |  |
+| ☐ | The Pearl Diver | `dungeon.pearl-diver` | sip | A diver in a rusted helmet trades whatever he finds at the bottom of the bar. |  |
+| ☐ | Staff Meal | `dungeon.staff-meal` | sip | Fries, pickles, and a shot the cooks hid for you. Drink 1, and pocket a smoke bomb. |  |
+| ☐ | Knife Roll | `dungeon.knife-roll` | sip | A chef's knife roll left on the pass, something heavy in the end pocket. Drink 1. |  |
+| ☐ | The Dishwasher | `dungeon.the-dishwasher` | sip | The dishwasher has seen everything, and he'll sell you some of it, for drinks or blood. |  |
 | ☐ | Wishing Drain | `dungeon.wishing-drain` | group | A floor drain full of coins and one fry. Toss something in. Everyone toasts the drain. |  |
+| ☐ | Two Hatches | `dungeon.two-hatches` | group | Two hatches in the floor. One is quiet. The other is playing Nickelback, loud, on purpose. |  |
+| ☐ | The Tasting Room | `dungeon.tasting-room` | group | Cheese, crackers, and one clean glass. Everyone toasts the cheese. |  |
+| ☐ | Red or White | `dungeon.red-or-white` | group | Two aisles. White is quiet. Red is where the screaming is coming from. |  |
 | ☐ | Candlelit Alcove | `dungeon.candlelit-alcove` | group | Someone left candles and a case of water down here. Everyone drinks water. Yes, really. |  |
+| ☐ | The Split | `dungeon.the-split` | group | The tunnel splits. Left: silence. Right: drums, chanting, and what might be a conga line. |  |
+| ☐ | Storm Drain Skylight | `dungeon.storm-drain-skylight` | group | A grate overhead and real moonlight. Everyone looks up and makes a wish. |  |
+| ☐ | Two Pipes | `dungeon.two-pipes` | group | Two pipes, big enough to crawl. One drips. The other gurgles, and it sounds like laughing. |  |
 | ☐ | The Air Pocket | `dungeon.air-pocket` | group | A pocket of air and a jukebox that still works. Everyone sings a chorus, any chorus. |  |
+| ☐ | The Last Dry Booth | `dungeon.dry-booth` | group | One booth the water never reached. Sit. Breathe. Everyone toasts dry socks. |  |
+| ☐ | Two Taps | `dungeon.two-taps` | group | Two taps behind the bar. One pours water. The other pours something that screams. |  |
+| ☐ | The Break Room | `dungeon.break-room` | group | A couch, a microwave, and twelve minutes of peace. Everyone sits down and sips. |  |
+| ☐ | The Pass | `dungeon.the-pass` | group | Two ways out: the quiet back door, or straight through the line in the dinner rush. |  |
 | ☐ | Gelatinous Shot | `dungeon.gelatinous-shot` | challenge | A wobbling cube of jello shots. Something's floating in it. A tooth? Roll d20. | 1d20 — 1-5: It engulfs you. Drink 3. 6-19: You eat your way out. Give 3. 20-20: You eat the whole thing. Give 6. |
 | ☐ | Rats in a Coat | `dungeon.rat-trench-coat` | challenge | Nine rats in a trench coat are trying to order a drink. Card them. Roll d20. | 1d20 — 1-5: They swarm your ankles. Drink 3. 6-20: Bounced. Give 3. |
 | ☐ | Mold Elemental | `dungeon.mold-elemental` | challenge | The thing growing behind the ice machine has feelings and a mouth. Roll d20. | 1d20 — 1-1: It moves into your lungs. Drink 5. 2-5: You breathe it in. Drink 3. 6-20: Bleach. So much bleach. Give 3. |
@@ -910,8 +933,32 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Sticky Floor | `dungeon.sticky-floor` | challenge | Your shoes are glued to forty years of spilled lager. Roll d20 to pull free. | 1d20 — 1-7: You leave a shoe behind. Drink 2. 8-20: You peel free. Give 2. |
 | ☐ | Tripwire | `dungeon.christmas-lights` | challenge | Someone strung Christmas lights across the stairs at shin height. Roll d20. | 1d20 — 1-7: You eat the stairs. Drink 2. 8-20: You hop it. Give 2. |
 | ☐ | Rolling Kegs | `dungeon.rolling-kegs` | challenge | The keg rack groans. Then it lets go. Roll d20 to dive. | 1d20 — 1-7: Flattened. Drink 3. 8-20: You dive clear. Give 2. |
+| ☐ | Lost Bridesmaids | `dungeon.lost-bridesmaids` | challenge | Two bridesmaids looking for the bathroom found you instead. They want a photo. Roll d20. | 1d20 — 1-5: You're in forty photos. Drink 2. 6-20: You point them upstairs. Give 2. |
+| ☐ | Grease Trap Horror | `dungeon.grease-trap-horror` | challenge | The grease trap has been fed fries for twenty years. Now it's hungry. Roll d20. | 1d20 — 1-8: It slurps you in. Drink 4. 9-20: You seal the lid. Inside: a pizza pan that makes a fine shield. Give 4. |
+| ☐ | The Health Inspector | `dungeon.health-inspector` | challenge | Clipboard, hairnet, no soul. He's here to shut the cellar down. Roll d20. | 1d20 — 1-8: Violation. Drink 4. 9-20: You bribe him with a keg. He leaves his lucky die. Give 4. |
 | ☐ | Keg Golem | `dungeon.keg-golem` | challenge | It's 800 pounds of lager and it's been tapped. Everyone drinks 1, then you roll d20. | 1d20 — 1-7: It sits on you. Drink 4. 8-19: You pull its plug. Give 5. 20-20: You drink it dry. Everyone else drinks 3. |
 | ☐ | The Rat King | `dungeon.rat-king` | challenge | Forty rats in one crown, holding court in the grease trap. Bow, then roll d20. | 1d20 — 1-1: The court finds you delicious. Finish your drink. 2-7: The court finds you guilty. Drink 4. 8-20: You dethrone him. Give 5. |
+| ☐ | The Landlord | `dungeon.the-landlord` | challenge | He wants three months' rent and he's taking it out of your drink. Roll d20. | 1d20 — 1-1: Evicted. Finish your drink. 2-7: Late fee. Drink 4. 8-20: You find a code violation. Give 5. |
+| ☐ | Boxed Wine Golem | `dungeon.boxed-wine-golem` | challenge | A golem made of boxed wine, slapping its own bag. Roll d20. | 1d20 — 1-5: It slaps you with the bag. Drink 3. 6-19: You pop the spout. Give 3. 20-20: You drink the bag dry. Give 6. |
+| ☐ | Cork Imp | `dungeon.cork-imp` | challenge | A tiny imp popping corks at eye level and laughing about it. Roll d20. | 1d20 — 1-5: Right in the eye. Drink 3. 6-20: You cork him. Give 3. |
+| ☐ | Zombie Sommelier | `dungeon.zombie-sommelier` | challenge | Brains? No. He wants to describe the finish. It takes eleven minutes. Roll d20. | 1d20 — 1-5: Notes of oak. Drink 3. 6-20: You spit in his bucket. Give 3. |
+| ☐ | Wine Mom Banshee | `dungeon.wine-mom-banshee` | challenge | She screams that it's five o'clock somewhere, and she means here. Roll d20. | 1d20 — 1-1: She adopts you. Drink 5. 2-5: It's five o'clock. Drink 3. 6-20: You take her glass away. Give 3. |
+| ☐ | Rosé Slime | `dungeon.rose-slime` | challenge | Pink, sticky, and it says it's not like other slimes. Roll d20. | 1d20 — 1-5: It's exactly like other slimes. Drink 3. 6-20: You pop it. It leaves pink smoke behind. Give 2. |
+| ☐ | Ghost in the Decanter | `dungeon.decanter-ghost` | challenge | It's been breathing for a hundred years. So has the wine. Roll d20. | 1d20 — 1-5: It breathes on you. Drink 3. 6-20: You jam the stopper in. Give 3. |
+| ☐ | Barrel Mimic | `dungeon.barrel-mimic` | challenge | Barrel 14 has teeth. Barrel 15 looks nervous. Roll d20. | 1d20 — 1-5: Barrel 14 wins. Drink 4. 6-20: You tap it. It whimpers. Give 3. |
+| ☐ | Corkscrew Crab | `dungeon.corkscrew-crab` | challenge | A crab with corkscrews for claws, opening anything. Including you. Roll d20. | 1d20 — 1-5: Uncorked. Drink 3. 6-19: You flip it on its back. Give 3. 20-20: You open a bottle with it. Give 5. |
+| ☐ | Fruit Fly Swarm | `dungeon.fruit-fly-swarm` | challenge | A cloud of fruit flies off the dump bucket, and they brought friends. Roll d20. | 1d20 — 1-5: In your mouth. Drink 2. 6-20: Swatted. Give 2. |
+| ☐ | Blind Tasting | `dungeon.blind-tasting` | challenge | Eyes shut. Your left neighbor hands you someone's drink. Name whose it is. Wrong: drink 3. |  |
+| ☐ | Coaster on the Nose | `dungeon.coaster-nose` | challenge | Balance a coaster on your nose for 10 seconds. It falls: drink 3. |  |
+| ☐ | Swirl, Sniff, Lie | `dungeon.swirl-sniff-lie` | challenge | Describe your drink like a sommelier for 15 seconds without laughing. Laugh: drink 3. |  |
+| ☐ | Falling Rack | `dungeon.falling-rack` | challenge | The wine rack tips, one bottle at a time, like dominoes. Roll d20. | 1d20 — 1-7: Domino'd. Drink 3. 8-20: You catch the last one. Give 2. |
+| ☐ | Merlot Stairs | `dungeon.merlot-stairs` | challenge | The stairs are slick with spilled merlot. Roll d20. | 1d20 — 1-7: Down on your ass, in red. Drink 2. 8-20: Not a drop on you. Give 2. |
+| ☐ | Sulfite Cloud | `dungeon.sulfite-cloud` | challenge | A cracked cask puffs out a cloud of sulfites. Instant headache. Roll d20. | 1d20 — 1-7: Migraine. Drink 2. 8-20: You duck under it. Give 2. |
+| ☐ | The Wine Snob | `dungeon.wine-snob` | challenge | He swirls, he sniffs, he says you'd like something approachable. Roll d20. | 1d20 — 1-8: Approachable. Drink 4. 9-20: You pour his '82 into a Solo cup. He drops a loaded die. Give 4. |
+| ☐ | Grape Elemental | `dungeon.grape-elemental` | challenge | Two tons of grapes, stomped into rage. Roll d20. | 1d20 — 1-8: Stomped. Drink 4. 9-20: Raisin. It leaves a draught behind. Give 4. |
+| ☐ | Count Corkula | `dungeon.count-corkula` | challenge | He does not drink... blood. He drinks pinot. Yours. Roll d20. | 1d20 — 1-7: He drains your glass. Drink 4. 8-19: A stake through the cork. Give 5. 20-20: Sunlight. Everyone else drinks 3. |
+| ☐ | The Cask Queen | `dungeon.cask-queen` | challenge | She sits on a throne of barrels and judges your palate. Curtsy, then roll d20. | 1d20 — 1-1: Off with your glass. Finish your drink. 2-7: Your palate is basic. Drink 4. 8-20: You knock out a barrel. She tumbles. Give 5. |
+| ☐ | Château Ghoul | `dungeon.chateau-ghoul` | challenge | A ghoul in a beret who thinks your wine is beneath you. Roll d20. | 1d20 — 1-7: He sneers you to death. Drink 4. 8-20: You hand him a White Claw. He dissolves. Give 5. |
 | ☐ | Bachelor Ghosts | `dungeon.bachelor-ghosts` | challenge | The ghosts of a 1998 bachelor party want one more round. Roll d20. | 1d20 — 1-7: You're in the round. Drink 4. 8-20: You exorcise them with karaoke. Give 4. |
 | ☐ | The Ex Wraith | `dungeon.ex-wraith` | challenge | A wraith with your ex's face reads your old texts aloud, with feeling. Roll d20. | 1d20 — 1-1: It reads the drafts. Finish your drink. 2-7: Every word lands. Drink 4. 8-20: You read theirs back. Give 4. |
 | ☐ | Bone Sommelier | `dungeon.bone-sommelier` | challenge | A skeleton swirls a glass, sniffs yours, and calls it cute. Roll d20. | 1d20 — 1-7: Shamed. Drink 4. 8-20: You pour his on the floor. Give 4. |
@@ -926,8 +973,32 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Collapsing Floor | `dungeon.collapsing-floor` | challenge | The floor gives way under you. Roll d20 to grab the edge. | 1d20 — 1-9: You fall a whole floor. Drink 3. 10-20: You hang on. Give 2. |
 | ☐ | Dart Wall | `dungeon.dart-wall` | challenge | Little holes in both walls. Then a click. Roll d20. | 1d20 — 1-9: Darted, in the ass. Drink 3. 10-20: You limbo under them. Give 2. |
 | ☐ | Fog of Regret | `dungeon.fog-of-regret` | challenge | A green fog that smells like the tequila from your 21st. Roll d20. | 1d20 — 1-9: Flashbacks. Drink 3. 10-20: You hold your breath. Give 2. |
-| ☐ | Hangover Hydra | `dungeon.hangover-hydra` | challenge | Every head you cut off grows back with a headache. Roll d20. | 1d20 — 1-8: It breathes regret. Drink 5. 9-19: A head comes off. Give 4. 20-20: Clean through the neck. Everyone else drinks 3. |
-| ☐ | The Bouncer | `dungeon.the-bouncer` | challenge | Seven feet of door guy in a tight black tee. Nobody gets past him. Roll d20. | 1d20 — 1-1: He throws you out. Finish your drink. 2-8: He throws you down the stairs. Drink 5. 9-20: You get past one arm. Give 4. |
+| ☐ | Skeleton Crew | `dungeon.skeleton-crew` | challenge | A skeleton bachelorette party wants you to do a shot off a femur. Roll d20. | 1d20 — 1-7: Off the femur. Drink 3. 8-20: You knock their bones loose. Give 3. |
+| ☐ | The Crypt Keeper's Mom | `dungeon.crypt-keepers-mom` | challenge | She's been waiting up. Do you know what time it is? Roll d20. | 1d20 — 1-10: Grounded, in a tomb. Drink 5. 11-20: You hug her. She packs you a draught for the road. Give 5. |
+| ☐ | Death's Intern | `dungeon.deaths-intern` | challenge | Death's unpaid intern is behind on quota, and you'll do. Roll d20. | 1d20 — 1-10: Filed. Drink 5. 11-20: You fill out his forms wrong. He drops a smoke bomb and runs. Give 5. |
+| ☐ | Hangover Hydra | `dungeon.hangover-hydra` | challenge | Every head you cut off grows back with a headache. Roll d20. | 1d20 — 1-9: It breathes regret. Drink 5. 10-19: A head comes off. Give 4. 20-20: Clean through the neck. Everyone else drinks 3. |
+| ☐ | The Bouncer | `dungeon.the-bouncer` | challenge | Seven feet of door guy in a tight black tee. Nobody gets past him. Roll d20. | 1d20 — 1-1: He throws you out. Finish your drink. 2-9: He throws you down the stairs. Drink 5. 10-20: You get past one arm. Give 4. |
+| ☐ | DJ Ossuary | `dungeon.dj-ossuary` | challenge | A skeleton DJ who only plays the Macarena. Everyone does the Macarena, then you roll d20. | 1d20 — 1-9: He drops the bass on you. Drink 5. 10-19: You yank a cable. Give 4. 20-20: You steal the aux. Everyone else drinks 3. |
+| ☐ | Gator Junior | `dungeon.gator-junior` | challenge | Someone flushed a baby gator in 1995. He is not a baby. Roll d20. | 1d20 — 1-7: Chomp. Drink 4. 8-20: You give him a belly rub. Give 4. |
+| ☐ | Toilet Mimic | `dungeon.toilet-mimic` | challenge | The only toilet down here is licking its lips. Roll d20. | 1d20 — 1-1: The full swirlie. Finish your drink. 2-7: Swirlie. Drink 4. 8-20: You flush it. Give 4. |
+| ☐ | Hazmat Goblin | `dungeon.hazmat-goblin` | challenge | A goblin in a hazmat suit who loves it down here. Loves it. Roll d20. | 1d20 — 1-7: He hugs you. Drink 4. 8-20: You pull his air hose. He drops a smoke bomb. Give 3. |
+| ☐ | Sludge Bro | `dungeon.sludge-bro` | challenge | A pile of sludge in a muscle shirt asks if you even lift. Roll d20. | 1d20 — 1-7: You don't. Drink 4. 8-20: You lift him, into the drain. Give 4. |
+| ☐ | Pizza Rat Prime | `dungeon.pizza-rat-prime` | challenge | The original pizza rat, nine feet tall now and still dragging the slice. Roll d20. | 1d20 — 1-7: Slice to the face. Drink 4. 8-19: You take the slice. Give 4. 20-20: You take the slice and eat it. Give 6. |
+| ☐ | The Drain Witch | `dungeon.drain-witch` | challenge | She brews in the runoff, and she's offering you a sip. Roll d20. | 1d20 — 1-7: You sip. Drink 3. 8-20: You pour it back. Give 4. |
+| ☐ | Fatberg Spawn | `dungeon.fatberg-spawn` | challenge | A baby fatberg made of wet wipes and grease. It wants its mom. Roll d20. | 1d20 — 1-7: It clings. Drink 3. 8-20: You flush it. Give 4. |
+| ☐ | Sewer Mutant | `dungeon.sewer-mutant` | challenge | A mutant with three arms and a fourth beer wants to arm-wrestle. Roll 2d6. | 2d6 — 2-6: It has three arms. Drink 4. 7-12: You win, somehow. Give 4. |
+| ☐ | Roach Conga | `dungeon.roach-conga` | challenge | The roaches are doing a conga line, and now you're in it. Roll d20. | 1d20 — 1-7: You conga'd. Drink 3. 8-20: You break the line. Give 3. |
+| ☐ | The Smell | `dungeon.the-smell` | challenge | Hold your nose and talk normally about your day for 30 seconds. Let go: drink 4. |  |
+| ☐ | The Pipe | `dungeon.the-pipe` | challenge | Crawl under the table and out the other side without touching a leg. Touch one: drink 4. |  |
+| ☐ | The Echo | `dungeon.the-echo` | challenge | Talk for 30 seconds while everyone repeats your last word back at you. Stop: drink 4. |  |
+| ☐ | The Big Flush | `dungeon.big-flush` | challenge | Somewhere above, a whole bar flushes at once. Roll d20. | 1d20 — 1-9: Swept down the pipe. Drink 3. 10-20: You grab a ladder. Give 2. |
+| ☐ | Loose Grate | `dungeon.loose-grate` | challenge | The grate under your foot isn't attached to anything. Roll d20. | 1d20 — 1-9: One leg down a drain. Drink 3. 10-20: You hop off. Give 2. |
+| ☐ | Swamp Gas | `dungeon.swamp-gas` | challenge | Somebody lit a cigarette. Down here. Roll d20. | 1d20 — 1-9: Eyebrows gone. Drink 3. 10-20: You dive into the sludge. Give 2. |
+| ☐ | Clog Beast | `dungeon.clog-beast` | challenge | Everything anyone ever flushed, fused into one angry clog. Roll d20. | 1d20 — 1-10: It backs up on you. Drink 5. 11-20: You plunge it. Inside: a shield. Don't ask. Give 5. |
+| ☐ | Rat Captain | `dungeon.rat-captain` | challenge | A rat in a captain's hat with a tiny cutlass and a big grudge. Roll d20. | 1d20 — 1-10: Keelhauled. Drink 5. 11-20: You take his hat, and his loaded die. Give 5. |
+| ☐ | The Fatberg | `dungeon.the-fatberg` | challenge | A hundred tons of grease and wet wipes the size of a bus, and it's angry. Roll d20. | 1d20 — 1-9: It absorbs a bit of you. Drink 5. 10-20: A chunk comes off. Give 4. |
+| ☐ | Alligator Al | `dungeon.alligator-al` | challenge | A twelve-foot gator in a bowling shirt who runs the sewer's only bar. Roll d20. | 1d20 — 1-9: Al doesn't like your face. Drink 5. 10-19: You bowl him a strike. Give 4. 20-20: Gutter ball, and he's in it. Everyone else drinks 3. |
+| ☐ | The Plumber King | `dungeon.plumber-king` | challenge | Crowned in a toilet seat with a plunger for a scepter. He demands tribute. Roll d20. | 1d20 — 1-1: He crowns you with the seat. Finish your drink. 2-9: Plunged. Drink 5. 10-20: You snap the plunger. Give 4. |
 | ☐ | Sommelier Kraken | `dungeon.sommelier-kraken` | challenge | Eight arms, eight wine glasses, and every one of them is yours. Roll d20. | 1d20 — 1-9: Squeezed. Drink 5. 10-20: Calamari. Give 5. |
 | ☐ | Last Orders Siren | `dungeon.last-orders-siren` | challenge | A siren sings one more drink, and it's beautiful. Roll d20 to resist. | 1d20 — 1-9: You swim to her. Finish half your drink. 10-20: You stuff your ears with limes. Give 5. |
 | ☐ | The Drowned Regular | `dungeon.drowned-regular` | challenge | He's been at the bottom of the bar since 1987 and you're on his stool. Roll d20. | 1d20 — 1-9: He takes it back. Drink 5. 10-20: You buy him one. He fades away. Give 5. |
@@ -942,11 +1013,49 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Rip Current | `dungeon.rip-current` | challenge | The floor is a river now. Roll d20 to swim for it. | 1d20 — 1-11: Swept away. Drink 4. 12-20: You ride it out. Give 3. |
 | ☐ | Barnacle Stool | `dungeon.barnacle-stool` | challenge | You sat down. Now you can't stand up. Roll d20. | 1d20 — 1-11: Fused to it. Drink 4. 12-20: You rip free, mostly. Give 3. |
 | ☐ | Undertow Tap | `dungeon.undertow-tap` | challenge | You lean in for a pour and the tap pulls you under. Roll d20. | 1d20 — 1-11: Swallowed. Drink 4. 12-20: You kick off the bar. Give 3. |
-| ☐ | The Last Call Lich | `dungeon.last-call-lich` | challenge | Lights up. Music off. It's last call forever unless you kill it. Roll d20. | 1d20 — 1-9: Closing time. Everyone drinks 4. 10-19: It flickers. Give 5. 20-20: The music comes back on. Everyone else drinks 4. |
-| ☐ | The Bartender Below | `dungeon.bartender-below` | challenge | It knows your usual. It knows what you did. Roll d20. | 1d20 — 1-9: It cuts you off. Drink 6. 10-19: You tip it. It staggers. Give 5. 20-20: You rob the tip jar. Everyone else drinks 4. |
+| ☐ | Happy Hour Eels | `dungeon.happy-hour-eels` | challenge | Two eels in party hats want to buy you a drink. You know what that means. Roll d20. | 1d20 — 1-9: Bitten, twice. Drink 4. 10-20: You tie them in a knot. Give 4. |
+| ☐ | Sea Hag of Table Six | `dungeon.sea-hag` | challenge | She's run a tab since the flood, and she's settling it on you. Roll d20. | 1d20 — 1-12: Settled. Drink 6. 13-20: She pays you in pearls and a shield. Give 6. |
+| ☐ | Shark Bartender | `dungeon.shark-bartender` | challenge | A shark in a vest, polishing glasses with its teeth, is cutting someone off. Roll d20. | 1d20 — 1-12: It's you. Drink 6. 13-20: You punch it on the nose, like the documentaries said. It coughs up a loaded die. Give 6. |
+| ☐ | Deep Fryer Demon | `dungeon.deep-fryer-demon` | challenge | It'll fry anything. It's looking at your hand. Roll d20. | 1d20 — 1-9: Battered. Drink 5. 10-20: You throw ice in it. Give 5. |
+| ☐ | Line Cook Golem | `dungeon.line-cook-golem` | challenge | Seven feet of burns and tattoos, ten tickets deep, and you're in the way. Roll d20. | 1d20 — 1-9: Behind! Drink 5. 10-20: You run his food. He respects you. Give 5. |
+| ☐ | Sentient Sourdough | `dungeon.sentient-sourdough` | challenge | The starter has been fed for forty years. It wants more. Roll d20. | 1d20 — 1-9: It rises over you. Drink 5. 10-20: You punch it down. Give 5. |
+| ☐ | Garlic Breath Wraith | `dungeon.garlic-wraith` | challenge | A wraith that only ever exhales. Roll d20. | 1d20 — 1-9: It breathes on you. Drink 4. 10-20: You hold your breath. Give 5. |
+| ☐ | The Expo | `dungeon.the-expo` | challenge | The expo is screaming for hands, and you have hands. Roll d20. | 1d20 — 1-9: Plates everywhere. Drink 5. 10-20: Order up. Give 5. |
+| ☐ | Food Critic Ghoul | `dungeon.food-critic-ghoul` | challenge | A ghoul with a notebook. One star, and he hasn't eaten yet. Roll d20. | 1d20 — 1-9: One star. Drink 5. 10-20: You comp his meal. He leaves a draught as a tip. Give 4. |
+| ☐ | Walk-In Yeti | `dungeon.walk-in-yeti` | challenge | Something lives in the walk-in, and it ate the shrimp. Roll d20. | 1d20 — 1-1: It locks you in. Finish your drink. 2-9: Cold hug. Drink 5. 10-20: You lock it in. Give 5. |
+| ☐ | Dish Pit Horror | `dungeon.dish-pit-horror` | challenge | Something under the dish pit water has been eating forks. Roll 3d6. | 3d6 — 3-10: It eats your fork. Drink 5. 11-18: You pull the plug. Give 5. |
+| ☐ | Raccoon Crew | `dungeon.raccoon-crew` | challenge | Two raccoons in chef's hats are stealing the bread. Roll d20. | 1d20 — 1-9: They take your fries too. Drink 4. 10-20: You chase them out. Give 4. |
+| ☐ | Yes, Chef | `dungeon.yes-chef` | challenge | For 30 seconds, answer everything anyone says with 'Yes, chef!' Miss one: drink 5. |  |
+| ☐ | Four Plates | `dungeon.four-plates` | challenge | Carry four empties on one arm across the room and back. Drop one: drink 5. |  |
+| ☐ | The Hot Sauce Wall | `dungeon.hot-sauce` | challenge | Name ten hot sauces, real or made up, in 20 seconds. Stumble: drink 5. |  |
+| ☐ | Grease Fire | `dungeon.grease-fire` | challenge | Somebody threw water on it. Roll d20. | 1d20 — 1-11: Singed. Drink 4. 12-20: You smother it with a lid. Give 3. |
+| ☐ | Wet Floor | `dungeon.wet-floor` | challenge | There was a sign. You ignored it. Roll d20. | 1d20 — 1-11: Down. Drink 4. 12-20: You skate it. Give 3. |
+| ☐ | The Swinging Door | `dungeon.swinging-door` | challenge | One door, in and out, and a server is coming through with a full tray. Roll d20. | 1d20 — 1-11: Tray to the face. Drink 4. 12-20: You spin past. Give 3. |
+| ☐ | The Head Chef | `dungeon.head-chef` | challenge | He's thrown a pan at everyone tonight. You're next. Roll d20. | 1d20 — 1-12: The pan. Drink 6. 13-20: You say 'Heard, chef.' He's moved, and hands you his lucky die. Give 6. |
+| ☐ | The Butcher | `dungeon.the-butcher` | challenge | The butcher is sharpening, and sharpening, and sharpening. Roll d20. | 1d20 — 1-12: Filleted. Drink 6. 13-20: You take his apron. It's basically armor. Give 6. |
+| ☐ | The Last Call Lich | `dungeon.last-call-lich` | challenge | Lights up. Music off. It's last call forever unless you kill it. Roll d20. | 1d20 — 1-10: Closing time. Everyone drinks 4. 11-19: It flickers. Give 5. 20-20: The music comes back on. Everyone else drinks 4. |
+| ☐ | The Bartender Below | `dungeon.bartender-below` | challenge | It knows your usual. It knows what you did. Roll d20. | 1d20 — 1-10: It cuts you off. Drink 6. 11-19: You tip it. It staggers. Give 5. 20-20: You rob the tip jar. Everyone else drinks 4. |
+| ☐ | The Final Tab | `dungeon.final-tab` | challenge | Every drink you've ever ordered, itemized, four feet long, and it has teeth. Roll d20. | 1d20 — 1-10: Itemized. Drink 5. 11-19: You dispute a charge. Give 5. 20-20: Comped. Everyone else drinks 4. |
+| ☐ | The House Lights | `dungeon.house-lights` | challenge | The lights come up, and everyone looks like that. Roll d20. | 1d20 — 1-10: You saw yourself. Drink 6. 11-19: You smash a bulb. Give 5. 20-20: Darkness again. Everyone else drinks 4. |
 | ☐ | Mimic Cooler | `dungeon.mimic-cooler` | challenge | A cooler in the corner is humming to itself. Open it, or walk away. | 1d20 — 1-10: It bites. Drink 4. 11-20: Cold ones, and something useful. Give 3. |
+| ☐ | The Dusty Bottle | `dungeon.dusty-bottle` | challenge | A bottle older than the bar, label in Latin. Uncork it, or leave it. | 1d20 — 1-10: Vinegar, with feelings. Drink 4. 11-20: Perfect. And a shield in the crate. Give 3. |
 | ☐ | Cursed Idol | `dungeon.cursed-idol` | challenge | A gold idol on a plinth. Nothing bad could possibly happen. Grab it, or leave it. | 1d20 — 1-11: The plinth bleeds. So do you. Drink 3. 12-20: Real gold, and something rattling inside. Give 4. |
+| ☐ | Bone Vending Machine | `dungeon.bone-vending` | challenge | A vending machine full of teeth and, at the back, one draught. Shake it, or leave it. | 1d20 — 1-11: It tips onto you. Drink 4. 12-20: Clunk. Give 3. |
+| ☐ | Glint in the Drain | `dungeon.glint-in-the-drain` | challenge | Something gold is down the drain. Reach in, or don't. | 1d20 — 1-11: Something reaches back. Drink 4. 12-20: A ring, and a draught still sealed. Give 4. |
 | ☐ | Sunken Chest | `dungeon.sunken-chest` | challenge | A chest under the bar, chained shut, still dry inside. Pry it open, or leave it. | 1d20 — 1-12: Eels. Drink 5. 13-20: Bone dry, and worth it. Give 5. |
+| ☐ | The Back Burner | `dungeon.back-burner` | challenge | A pot that's been simmering since the flood. Taste it, or leave it. | 1d20 — 1-12: Fish heads. Drink 5. 13-20: Best soup of your life, and a draught for later. Give 5. |
+| ☐ | Flooded Stairs | `dungeon.omen-flooded-stairs` | rule | The stairs are underwater. Every trap costs one more heart. Take a smoke bomb down. |  |
+| ☐ | Happy Hour | `dungeon.omen-happy-hour` | rule | Two for one, all the way down. Every shrine heals one more heart. Everyone drinks 1. |  |
+| ☐ | Running a Tab | `dungeon.omen-running-a-tab` | rule | You start two hearts short, but the bar put a shield and a draught on your tab. |  |
+| ☐ | The Lock-In | `dungeon.omen-lock-in` | rule | Locked in until sunrise. Every boss takes one more hit to fall. Have a loaded die for it. |  |
+| ☐ | Cargo Shorts | `dungeon.omen-cargo-shorts` | rule | Somebody wore cargo shorts. The satchel holds four tonight, and one pocket has a draught. |  |
+| ☐ | Butterfingers | `dungeon.omen-butterfingers` | rule | Everyone's already a bit gone. The satchel holds only two, but you get two more hearts. |  |
+| ☐ | Blood Moon | `dungeon.omen-blood-moon` | rule | Blood on the moon. Every monster costs one more heart, but you start with two more. |  |
+| ☐ | Lefty Night | `dungeon.omen-lefty-night` | rule | Drink with your off hand all crawl. Caught using the other: drink 1. That's all. Probably. |  |
+| ☐ | Karaoke Night | `dungeon.omen-karaoke-night` | rule | Before every boss swing, the drawer sings one line of anything. Refuse: drink 2. |  |
+| ☐ | The Regulars | `dungeon.omen-the-regulars` | rule | The bartender likes you. You start with two more hearts. |  |
+| ☐ | Thin Walls | `dungeon.omen-thin-walls` | rule | Every trial costs one more heart tonight, but every shrine heals one more. |  |
+| ☐ | Cold Open | `dungeon.omen-cold-open` | rule | Everyone drinks before the first door. Start a heart short, with a loaded die and shield. |  |
 
 ## Notes for review
 

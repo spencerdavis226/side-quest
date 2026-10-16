@@ -2,9 +2,11 @@ import type {
   CardDefinition,
   GameConfig,
   Loot,
+  OmenEffect,
   PackDefinition,
   PackQuest,
   PartyState,
+  QuestStage,
   QuestState,
   SessionState,
 } from "./types";
@@ -131,15 +133,20 @@ export function createSession(
   if (config.quest) {
     const rules = packs.find((p) => p.id === config.quest)?.quest;
     if (!rules) throw new Error("This pack has no quest.");
-    const stages = rules.finale.map(({ label, pick, cardIds }) => {
-      const pool = cardIds.map((id) => catalog.find((c) => c.id === id));
-      if (pool.some((c) => !c)) throw new Error("A finale card is missing.");
-      return {
+    const snapshot = (ids: string[]) =>
+      ids.map((id) => {
+        const card = catalog.find((c) => c.id === id);
+        if (!card) throw new Error("A finale card is missing.");
+        return structuredClone(card);
+      });
+    const stages = questRoute(rules, random).map(
+      ({ label, pick, cardIds, elite }) => ({
         label,
         pick,
-        cards: (pool as CardDefinition[]).map((c) => structuredClone(c)),
-      };
-    });
+        cards: snapshot(cardIds),
+        ...(elite?.length ? { elite: snapshot(elite) } : {}),
+      }),
+    );
     const { label, goal, length } = rules;
     quest = {
       packId: config.quest,
@@ -200,21 +207,55 @@ export function packCardIds(pack: PackDefinition): string[] {
     ]),
   ];
 }
-/** Every card a quest's finale stages can deal. */
-export function finaleCardIds(rules: PackQuest): string[] {
-  return rules.finale.flatMap((stage) => stage.cardIds);
+/** Every stage a quest's finale can deal, on every route. */
+export function questStages(rules: PackQuest): QuestStage[] {
+  return rules.finale.flatMap((slot) =>
+    "oneOf" in slot ? slot.oneOf.flat() : [slot],
+  );
 }
-/** Draw each stage's cards at random, in stage order. */
+/** One game's stages: each `oneOf` slot's route is picked at random. */
+export function questRoute(
+  rules: PackQuest,
+  random: Random = Math.random,
+): QuestStage[] {
+  return rules.finale.flatMap((slot) =>
+    "oneOf" in slot
+      ? slot.oneOf[Math.floor(random() * slot.oneOf.length)]
+      : [slot],
+  );
+}
+/** Every card a quest's finale stages can deal, elites included. */
+export function finaleCardIds(rules: PackQuest): string[] {
+  return questStages(rules).flatMap((stage) => [
+    ...stage.cardIds,
+    ...(stage.elite ?? []),
+  ]);
+}
+/** Draw each stage's cards at random, in stage order. A fork is never the
+ * last room of its floor, so its loud door always has a room to swap. */
 export function pickFinale(
   stages: QuestState["stages"],
   random: Random = Math.random,
 ): string[] {
-  return stages.flatMap(({ pick, cards }) =>
-    shuffle(
+  return stages.flatMap(({ pick, cards }) => {
+    const picks = shuffle(
       cards.map((c) => c.id),
       random,
-    ).slice(0, pick),
-  );
+    ).slice(0, pick);
+    const fork = (id: string) =>
+      cards.find((c) => c.id === id)?.encounter === "fork";
+    const last = picks.length - 1;
+    if (last > 0 && fork(picks[last])) {
+      const rooms = picks
+        .slice(0, last)
+        .flatMap((id, i) => (fork(id) ? [] : [i]));
+      if (rooms.length) {
+        const j = rooms[Math.floor(random() * rooms.length)];
+        [picks[j], picks[last]] = [picks[last], picks[j]];
+      }
+    }
+    return picks;
+  });
 }
 /** The stage a finale card belongs to (`stage` counts from 0), and its place
  * within that stage. */
@@ -252,9 +293,10 @@ export function questRecord(s: SessionState) {
       .slice(first, Math.min(first + stage.pick, beaten))
       .map((id) => finaleCard(q, id)!);
     first += stage.pick;
-    // A crawl's boss stages close its floors.
-    const boss = stage.cards.some((c) => !!c.hits);
-    return { label: stage.label, size: stage.pick, cards, boss };
+    // A crawl's boss stages close its floors; its omen stage opens the run.
+    const boss = stage.cards.some(isBossCard);
+    const omen = stage.cards.every((c) => c.encounter === "omen");
+    return { label: stage.label, size: stage.pick, cards, boss, omen };
   });
   return {
     label: q.label,
@@ -264,10 +306,39 @@ export function questRecord(s: SessionState) {
     stages,
     won,
     party: q.party,
+    /** Tonight's omen card, once put aside, and the satchel's size. */
+    omen: q.party?.omen ? finaleCard(q, q.party.omen) : undefined,
+    satchel: satchelSize(q),
   };
 }
-const finaleCard = (quest: QuestState, id: string) =>
-  quest.stages.flatMap((stage) => stage.cards).find((c) => c.id === id);
+export const finaleCard = (quest: QuestState, id: string) =>
+  quest.stages
+    .flatMap((stage) => [...stage.cards, ...(stage.elite ?? [])])
+    .find((c) => c.id === id);
+/** A crawl boss. An ambush also has `hits`; cards saved before encounters
+ * existed had hits only on bosses. */
+export const isBossCard = (c: CardDefinition) =>
+  c.encounter ? c.encounter === "boss" : !!c.hits;
+/** Tonight's omen, once its card is put aside. */
+export function omenEffect(
+  quest: QuestState | undefined,
+): OmenEffect | undefined {
+  const id = quest?.party?.omen;
+  return id ? finaleCard(quest, id)?.omen : undefined;
+}
+/** How many items the satchel holds. */
+export const satchelSize = (quest: QuestState | undefined) =>
+  omenEffect(quest)?.satchel ?? 3;
+/** Swings a boss or an ambush needs; 0 for any other card. */
+export function hitsNeeded(
+  quest: QuestState | undefined,
+  card: CardDefinition,
+): number {
+  if (!card.hits) return 0;
+  return (
+    card.hits + (isBossCard(card) ? (omenEffect(quest)?.bossHits ?? 0) : 0)
+  );
+}
 /** Finale cards are dealt between deck cards and take no deck position. */
 export function currentCard(s: SessionState) {
   return s.quest?.due
@@ -298,7 +369,54 @@ export function advance(
   if (s.phase === "hidden") return { ...s, phase: "revealed" };
   if (currentCard(s).dice && !s.roll?.returned) return s;
   if (awaitingVerdict(s)) return s;
+  if (awaitingOffer(s)) return s;
   return discard(s, random);
+}
+/** A revealed merchant or fork in a crawl: one of its offers puts it aside. */
+export function awaitingOffer(s: SessionState) {
+  return (
+    !!s.quest?.party &&
+    s.phase === "revealed" &&
+    !!currentCard(s).offers?.length
+  );
+}
+/** Whether offer `index` can be taken now: a price in hearts is never paid
+ * with the last heart. */
+export function canTakeOffer(s: SessionState, index: number): boolean {
+  if (!awaitingOffer(s)) return false;
+  const offer = currentCard(s).offers![index];
+  return !!offer && (!offer.cost || s.quest!.party!.hearts > offer.cost);
+}
+/** Take a merchant's ware or a fork's door, and put the card aside. */
+export function takeOffer(
+  s: SessionState,
+  index: number,
+  random: Random = Math.random,
+): SessionState {
+  if (!canTakeOffer(s, index)) return s;
+  const q = s.quest!;
+  const offer = currentCard(s).offers![index];
+  const party = { ...q.party! };
+  if (offer.cost) party.hearts -= offer.cost;
+  if (offer.heal)
+    party.hearts = Math.min(
+      party.max,
+      party.hearts + offer.heal + (omenEffect(q)?.heal ?? 0),
+    );
+  if (offer.loot && party.loot.length < satchelSize(q))
+    party.loot = [...party.loot, offer.loot];
+  let finale = q.finale;
+  // The loud door: the next room on this floor becomes one of its elites.
+  if (offer.elite) {
+    const { stage, index: room, size } = finaleStage(q);
+    const taken = new Set(finale);
+    const fresh = (q.stages[stage].elite ?? []).filter((c) => !taken.has(c.id));
+    if (room + 1 < size && fresh.length) {
+      finale = [...finale];
+      finale[q.step + 1] = fresh[Math.floor(random() * fresh.length)].id;
+    }
+  }
+  return discard({ ...s, quest: { ...q, finale, party } }, random);
 }
 /** Take the no-roll option of a choice card: it is put aside unrolled (a
  * battle walked away from is neither won nor lost). */
@@ -383,20 +501,42 @@ function hurt(party: PartyState, damage: number): PartyState {
   return { ...party, hearts: Math.max(0, party.hearts - loss) };
 }
 /** What a card brings: its reward (a battle's only on a win) and its curse
- * (a battle's only on a loss). */
+ * (a battle's only on a loss), bent by tonight's omen. The omen card itself
+ * sets the omen and its hearts and items. */
 function settleParty(
   party: PartyState,
   card: CardDefinition,
   outcome: Outcome | null,
+  quest: QuestState,
 ): PartyState {
+  const omen = omenEffect(quest);
+  const size = satchelSize(quest);
   let next = party;
-  if (outcome === "lost") next = hurt(next, card.damage ?? 0);
+  if (outcome === "lost" && card.damage)
+    next = hurt(
+      next,
+      card.damage + (card.encounter ? (omen?.hurt?.[card.encounter] ?? 0) : 0),
+    );
   if (outcome === null || outcome === "won") {
     const { loot, heal } = card.reward ?? {};
-    if (loot && next.loot.length < 3)
+    if (loot && next.loot.length < size)
       next = { ...next, loot: [...next.loot, loot] };
     if (heal)
-      next = { ...next, hearts: Math.min(next.max, next.hearts + heal) };
+      next = {
+        ...next,
+        hearts: Math.min(next.max, next.hearts + heal + (omen?.heal ?? 0)),
+      };
+  }
+  if (card.omen && outcome === null) {
+    const { hearts = 0, loot = [], satchel = 3 } = card.omen;
+    const max = Math.max(1, next.max + hearts);
+    next = {
+      ...next,
+      max,
+      hearts: Math.min(max, Math.max(1, next.hearts + hearts)),
+      loot: [...next.loot, ...loot].slice(0, satchel),
+      omen: card.id,
+    };
   }
   if (card.curse && (outcome === null || outcome === "lost"))
     next = { ...next, curse: card.curse };
@@ -424,7 +564,7 @@ function discard(
   const party = s.quest?.party;
   if (s.quest?.due && party) {
     const q = s.quest;
-    let next = settleParty(party, card, outcome);
+    let next = settleParty(party, card, outcome, q);
     // The hearts ran out: the party wipes and the game ends on this card.
     if (next.hearts === 0)
       return {
@@ -435,10 +575,12 @@ function discard(
         previousId,
         quest: { ...q, party: { ...next, wiped: true } },
       };
-    // A boss is dealt again, to the next drawer, until it falls.
-    if (card.hits && outcome !== "fled") {
+    // A boss (or an ambush) is dealt again, to the next drawer, until it
+    // falls.
+    const need = hitsNeeded(q, card);
+    if (need && outcome !== "fled") {
       const hits = next.hits + (outcome === "won" ? 1 : 0);
-      if (hits < card.hits)
+      if (hits < need)
         return {
           ...s,
           ...history,
@@ -456,7 +598,7 @@ function discard(
           },
         };
       // The floor's boss falls: its curse lifts with it.
-      next = { ...next, hits: 0, curse: null };
+      next = { ...next, hits: 0, ...(isBossCard(card) ? { curse: null } : {}) };
     }
     s = { ...s, quest: { ...q, party: next } };
   }
@@ -584,7 +726,13 @@ export function replaySession(
             due: s.quest.goal === 0,
             step: 0,
             lost: 0,
-            ...(s.quest.party ? { party: newParty(s.quest.party.max) } : {}),
+            ...(s.quest.party
+              ? {
+                  party: newParty(
+                    s.quest.party.max - (omenEffect(s.quest)?.hearts ?? 0),
+                  ),
+                }
+              : {}),
           },
         }
       : {}),
