@@ -8,10 +8,12 @@
     />
     <meta name="theme-color" content="#271c11" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta
-      name="apple-mobile-web-app-status-bar-style"
-      content="black-translucent"
-    />
+    <!-- No apple-mobile-web-app-status-bar-style (2026-10-17): with
+         black-translucent the page runs under the status bar and iOS 26+
+         blurs its top ~40pt, header included; no CSS removes that. Without
+         it the installed app starts below an opaque status bar tinted by
+         theme-color. iOS reads this only when the app is added to the Home
+         Screen, so an existing install must be removed and re-added. -->
     <meta name="apple-mobile-web-app-title" content="Side Quest" />
     <link rel="apple-touch-icon" href="%BASE_URL%apple-touch-icon.png" />
     <link

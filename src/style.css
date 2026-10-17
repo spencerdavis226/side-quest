@@ -51,16 +51,14 @@ html.standalone {
 html.standalone body {
   height: 100lvh;
 }
-/* The status-bar edge (installed app only). iOS 26+ draws a soft "scroll
-   edge" blur under the status bar and about 40pt down over the page unless
-   WebKit finds, 4px inside the top edge, a position: fixed (or sticky)
-   box at least 90% of the viewport wide and over 10px tall with a visible
-   background colour; then it uses that colour instead of the blur
-   (LocalFrameView::fixedContainerEdges in WebKit). This strip is that box:
-   exactly the inset tall, the page's chrome colour, and painted with the
-   table backdrop at the same place as body:before so it reads as the same
-   wood. Owner report 2026-10-17,
-   iPhone 15 Pro; not verified on the device yet. */
+/* The status-bar edge (installed app only). Apps added to the Home Screen
+   before 2026-10-17 still run under the status bar (black-translucent),
+   where iOS 26+ blurs the top of the page. This strip, exactly the inset
+   tall with a solid colour, is the fixed box WebKit samples there
+   (LocalFrameView::fixedContainerEdges), so the area behind the clock takes
+   the chrome colour; on the owner's iPhone 15 Pro the header below it
+   stayed blurred, so index.html now drops black-translucent. In a fresh
+   install the top inset is 0 and the strip has no height. */
 .status-edge {
   display: none;
 }
