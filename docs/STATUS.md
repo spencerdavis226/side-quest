@@ -2,6 +2,25 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Starter revision pass (2026-10-17, owner request; local)
+
+**Owner request.** Make the starter powers and evolutions unique and logically worded. New items are allowed if they help. Does evolution actually do anything? (A Bulbasaur evolved at the table and it was unclear what happened.) Show only the current Pokémon's name in the team dialog, not the whole line.
+
+**Finding.** Evolution always worked in the engine, but the screen only said "What? Bulbasaur is evolving! Ivysaur". Ivysaur gave just +2 max HP, and its text said "Full HP back", which was wrong (max and current HP each rose by 2). Several forms changed one small thing, and the wording mixed "two less HP" with powers written relative to the base.
+
+**Now.**
+- `src/game/omenText.ts` writes every power from the numbers. The starter card is a flavor sentence plus its power ("Max HP 15. Every heal heals 1 more."), and each form's rules are its power.
+- The evolution banner adds what changed ("Max HP 15 → 17. Gets a Potion.") and holds 5.2 s.
+- The evolve plaque names the next form ("Ivysaur · drink 3").
+- The team dialog shows only the current name and power; the evolution line is gone.
+- Every starter has one signature, and every evolution is a visible upgrade: Ivysaur brings a Potion, Charmeleon +1 HP, Combusken an X Attack, Marshtomp a Protect, Grotle a bigger bag, Dartrix a Potion, Raboot and Cinderace HP, and Empoleon "Bosses hurt 1 less".
+- Two new items, only from starters: **Revive** (saves one white-out at half max HP; Fuecoco's Crocalor) and **Rare Candy** (use it from the bag to evolve now; Froakie starts with one). Icons are drawn in-house at `public/art/league/revive.svg` and `rare-candy.svg`, with copies in `art/crawl/`.
+- `tests/starters.test.ts`: unique power lines, a non-empty change for every evolution, the theme's item names, candy and Revive in the engine.
+
+**Harness.** League won 23.8%. Starters 17% (Treecko, Oshawott) to 39% (Mudkip); hideouts in band. Evolution 76% / 39%.
+
+**Tests.** `npm test` 204 passed (with `--testTimeout=300000`, as before). Lint, typecheck and build passed. Browser: see below.
+
 ## League variety pass and natural 20/1 (2026-10-17, owner request; pushed to `main` for deploy)
 
 **Owner request.** League cards were "a lot of roll d20 then give/drink 3": make challenges, outcomes and specificity more varied. Add a standing rule for Pokémon League and Pub Crawl: a natural 20 doubles the good outcome (drinks given, HP gained, whatever applies) and a natural 1 doubles the bad.

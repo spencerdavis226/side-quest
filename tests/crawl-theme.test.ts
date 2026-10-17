@@ -12,6 +12,8 @@ const marks: CrawlIconName[] = [
   "shield",
   "die",
   "smoke",
+  "revive",
+  "candy",
   "bleed",
   "hex",
   "heart",

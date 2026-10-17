@@ -101,7 +101,8 @@ describe("Pokémon League journey", () => {
 // route fight it can, finds opened above 5 HP, trainers' challenges won a
 // little over half the time, a Mart's drink-priced item whenever the bag has
 // room (an HP price only above 10), the loud path above 9 HP, always
-// evolving, and catching whenever the team is hurt. Real cards, real engine.
+// evolving (a Rare Candy at once), and catching whenever the team is hurt.
+// Real cards, real engine.
 function playRun(seed: number) {
   const random = seeded(seed);
   let s = createSession(league, cards, packs, random);
@@ -112,6 +113,7 @@ function playRun(seed: number) {
     s = advance(s, random);
     const card = currentCard(s);
     if (party(s).hearts <= 4) use("draught");
+    use("candy"); // A Rare Candy is eaten the moment it can be.
     if (awaitingOffer(s)) {
       const offers = card.offers!;
       const p = party(s);

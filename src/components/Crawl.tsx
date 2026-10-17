@@ -425,19 +425,9 @@ export function CrawlRecord({
       {record.form && (
         <p className="crawl-omen">
           <CrawlIcon name="omen" theme={theme} />
+          {/* Only the starter it is now (owner, 2026-10-17), with its power. */}
           <strong>{record.form.title}</strong>
           <span>{record.form.rules}</span>
-          {record.form.line.length > 1 && (
-            // A starter's line, its current form marked.
-            <span className="crawl-evolution" aria-label="Evolution line">
-              {record.form.line.map((name, i) => (
-                <span key={name}>
-                  {i > 0 && " › "}
-                  {i === record.form!.form ? <b>{name}</b> : name}
-                </span>
-              ))}
-            </span>
-          )}
         </p>
       )}
       {words.badges && record.badges.of > 0 && (
@@ -476,10 +466,12 @@ export function CrawlRecord({
                   <span className="sr-only">Empty</span>
                 </li>
               );
+            // The draught and the candy are used from here; the others work
+            // on the card in play, or on their own.
             const usable =
               !!session &&
               !!onUse &&
-              item === "draught" &&
+              (item === "draught" || item === "candy") &&
               canUseLoot(session, item);
             return (
               <li key={i} className="satchel-slot">
@@ -490,7 +482,7 @@ export function CrawlRecord({
                 </span>
                 {usable && (
                   <button className="satchel-use" onClick={() => onUse!(item)}>
-                    {theme.drink}
+                    {item === "candy" ? theme.eat : theme.drink}
                   </button>
                 )}
               </li>

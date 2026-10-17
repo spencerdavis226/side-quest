@@ -369,6 +369,11 @@ export function omenForm(quest: QuestState | undefined) {
     branches: branching && canEvolve ? forms.map((e) => e.title) : null,
     /** How many later forms the card has. */
     forms: forms.length,
+    /** The form an evolution brings next, while one evolves in a line. */
+    next: !branching && canEvolve ? forms[form].title : null,
+    /** The effect of the form before this one (for what an evolution
+     * changed); the card's own for its first form. */
+    before: form > 1 && !branching ? forms[form - 2].omen : card.omen,
   };
 }
 /** The starter's next form: its effect replaces the current one. The change
@@ -554,7 +559,12 @@ export function canUseLoot(s: SessionState, item: Loot): boolean {
         !card.dice?.choice
       );
     case "shield":
-      return false; // It blocks the next heart loss on its own.
+    case "revive":
+      return false; // Each works on its own, when it is needed.
+    case "candy": {
+      const form = omenForm(s.quest);
+      return !!form?.canEvolve && !form.branches;
+    }
   }
 }
 /** Use one of the satchel's items. Returns the session unchanged when the
@@ -577,6 +587,11 @@ export function spendLoot(
       return { ...used, roll: null };
     case "smoke":
       return discard(used, random, "fled");
+    case "candy":
+      return {
+        ...used,
+        quest: { ...used.quest, party: evolve(used.quest.party!, used.quest) },
+      };
     default:
       return s;
   }
@@ -665,6 +680,14 @@ function discard(
     const q = s.quest;
     const nat = natural(card, s.roll);
     let next = settleParty(party, card, outcome, q, nat);
+    // A Revive in the satchel saves the run once: back at half the maximum.
+    const revive = next.curse === "hex" ? -1 : next.loot.indexOf("revive");
+    if (next.hearts === 0 && revive >= 0)
+      next = {
+        ...next,
+        hearts: Math.ceil(next.max / 2),
+        loot: next.loot.filter((_, i) => i !== revive),
+      };
     // The hearts ran out: the party wipes and the game ends on this card.
     if (next.hearts === 0)
       return {

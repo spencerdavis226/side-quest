@@ -74,8 +74,11 @@ export function Play({
   const items =
     !motion && session.phase === "revealed" ? usableItems(session) : [];
   const crawl = crawlTheme(session.quest?.packId);
-  // A branching starter's evolution splits into one plaque per form.
-  const branches = omenForm(session.quest)?.branches;
+  // A branching starter's evolution splits into one plaque per form; a line
+  // names the form it brings next ("Ivysaur · drink 3").
+  const form = omenForm(session.quest);
+  const branches = form?.branches;
+  const next = form?.next;
   const plaques = (offers ?? []).flatMap(
     (
       offer,
@@ -87,7 +90,9 @@ export function Play({
     }[] =>
       offer.evolve && branches
         ? branches.map((name, index) => ({ offer, i, branch: { name, index } }))
-        : [{ offer, i, branch: undefined }],
+        : offer.evolve && next
+          ? [{ offer, i, branch: { name: next, index: 0 } }]
+          : [{ offer, i, branch: undefined }],
   );
   // Secret and timed cards: plaques once the card has landed face up; a timed
   // card stays on the table until its time is up.

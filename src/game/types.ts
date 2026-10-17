@@ -138,8 +138,18 @@ export interface OmenEffect {
 /** Pub Crawl items, carried in the party's satchel (at most three).
  * `draught`: down a fresh, full drink to heal a heart. `shield`: the next
  * heart loss is blocked, on its own. `die`: roll a lost fight again.
- * `smoke`: escape a room fight before it starts (never a boss). */
-export const LOOT = ["draught", "shield", "die", "smoke"] as const;
+ * `smoke`: escape a room fight before it starts (never a boss). `revive`
+ * (2026-10-17): when the hearts run out, the party is back at half its
+ * maximum instead, on its own. `candy` (2026-10-17): the starter evolves
+ * now (never a branching one, which picks its form on an evolution card). */
+export const LOOT = [
+  "draught",
+  "shield",
+  "die",
+  "smoke",
+  "revive",
+  "candy",
+] as const;
 export type Loot = (typeof LOOT)[number];
 /** Pub Crawl curses, to the end of the floor. `bleed`: every heart loss
  * costs one more. `hex`: the satchel is sealed (no items, no shield). */

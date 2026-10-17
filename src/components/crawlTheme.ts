@@ -1,4 +1,5 @@
 import type { Curse, Loot, QuestStage } from "../game/types";
+import { leagueOmenWords, type OmenWords } from "../game/omenText";
 
 // What a crawl is called, per pack: the same engine is a dungeon crawl in
 // Dungeon night and a journey in Pokémon League. Display only; the engine
@@ -24,6 +25,11 @@ export interface CrawlTheme {
   reroll: string;
   /** Drink the draught from the satchel dialog. */
   drink: string;
+  /** Use the candy from the satchel dialog. */
+  eat: string;
+  /** Pokémon League: its starters' powers and evolutions are written from
+   * their numbers in these words (`game/omenText.ts`). */
+  omenWords?: OmenWords;
   /** `public/<folder>/<file>.svg` for a mark; a mark not listed is the
    * crawl's own (`art/crawl/<name>.svg`). */
   icons: { folder: string; files: Partial<Record<CrawlIconName, string>> };
@@ -86,6 +92,12 @@ const dungeon: CrawlTheme = {
     shield: { name: "Coaster Shield", does: "Blocks the next heart loss" },
     die: { name: "Loaded Die", does: "Roll a lost fight again" },
     smoke: { name: "Smoke Bomb", does: "Escape a room fight" },
+    // Only the League's starters bring these; named for completeness.
+    revive: {
+      name: "Second Wind",
+      does: "When the hearts run out: back to half",
+    },
+    candy: { name: "Odd Candy", does: "Tonight's omen grows" },
   },
   curses: {
     bleed: { name: "Bleeding", does: "Every heart loss costs one more" },
@@ -93,6 +105,7 @@ const dungeon: CrawlTheme = {
   },
   flee: "Flee",
   reroll: "Reroll",
+  eat: "Eat",
   drink: "Drink",
   icons: { folder: "art/crawl", files: {} },
   words: {
@@ -150,6 +163,11 @@ const league: CrawlTheme = {
       name: "Escape Rope",
       does: "Escape a wild or trainer battle, never a gym",
     },
+    revive: {
+      name: "Revive",
+      does: "When Team HP runs out: back to half instead",
+    },
+    candy: { name: "Rare Candy", does: "Your starter evolves now" },
   },
   curses: {
     bleed: { name: "Poisoned", does: "Every HP loss costs one more" },
@@ -158,6 +176,8 @@ const league: CrawlTheme = {
   flee: "Escape",
   reroll: "Reroll",
   drink: "Use",
+  eat: "Use",
+  omenWords: leagueOmenWords,
   icons: {
     folder: "art/league",
     files: {
@@ -166,6 +186,8 @@ const league: CrawlTheme = {
       shield: "protect",
       die: "x-attack",
       smoke: "escape-rope",
+      revive: "revive",
+      candy: "rare-candy",
       bleed: "poison",
       hex: "confused",
       boss: "badge",

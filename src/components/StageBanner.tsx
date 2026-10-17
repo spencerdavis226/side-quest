@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { SessionState } from "../game/types";
-import { finaleStage, omenForm, questStages } from "../game/engine";
+import { finaleStage, omenEffect, omenForm, questStages } from "../game/engine";
+import { describeChange } from "../game/omenText";
 import { crawlTheme } from "./crawlTheme";
 import { packs } from "../content/manifest.generated";
 import { stageArt } from "../presentation/league-art";
@@ -48,9 +49,11 @@ export function EvolutionBanner({ session }: { session: SessionState }) {
   const quest = session.quest;
   const form = quest?.party?.form ?? 0;
   const seen = useRef(form);
-  const [shown, setShown] = useState<{ from: string; to: string } | null>(
-    null,
-  );
+  const [shown, setShown] = useState<{
+    from: string;
+    to: string;
+    change: string;
+  } | null>(null);
   useEffect(() => {
     if (form > seen.current) {
       const now = omenForm(quest);
@@ -59,7 +62,15 @@ export function EvolutionBanner({ session }: { session: SessionState }) {
         form === 1 || now?.card.branches
           ? now?.card.title
           : now?.card.evolves?.[form - 2]?.title;
-      if (now && from) setShown({ from, to: now.title });
+      // What the evolution did, from the numbers: "Max HP 15 → 17."
+      const words = crawlTheme(quest?.packId).omenWords;
+      const after = omenEffect(quest) ?? {};
+      const base = (quest?.party?.max ?? 0) - (after.hearts ?? 0);
+      const change =
+        words && now?.before
+          ? describeChange(now.before, after, words, base)
+          : "";
+      if (now && from) setShown({ from, to: now.title, change });
     }
     seen.current = form;
   }, [form, quest]);
@@ -74,6 +85,7 @@ export function EvolutionBanner({ session }: { session: SessionState }) {
       <div className="stage-banner-cloth">
         <small>{evolving(shown.from)}</small>
         <strong>{shown.to}</strong>
+        {shown.change && <span>{shown.change}</span>}
       </div>
     </div>
   );

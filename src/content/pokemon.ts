@@ -8,7 +8,7 @@ import {
   legendaries,
 } from "./pokemon-league";
 import { hideoutCards, hideouts } from "./league/hideouts";
-import { ids } from "./league/journey";
+import { ids, TEAM_HP } from "./league/journey";
 import { rivals, routeCards, routes, victory } from "./league/routes";
 import { starters } from "./league/starters";
 
@@ -900,7 +900,6 @@ export const pokemonCards: CardDefinition[] = [
 ];
 
 /** Team HP at the start of a run, before the starter. */
-const TEAM_HP = 17;
 
 // Eight routes, each closed by its gym; the hideout comes after the fourth.
 const journey = routes.flatMap((route, k) => [

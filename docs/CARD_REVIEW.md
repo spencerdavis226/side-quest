@@ -696,23 +696,23 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Barboach | `pokemon.barboach` | rule | Barboach used Mud-slap! Name a player. For the rest of the game, they may slap you once after a full drink. |  |
 | ☐ | Mawile | `pokemon.mawile` | rule | Mawile used Vicegrip! Until your next turn, grab a player and squeeze them. Drink 4 and apologize. |  |
 | ☐ | Relicanth | `pokemon.relicanth` | rule | Relicanth used Dive! Kneel under the table until your next turn. Surface early: drink 2. |  |
-| ☐ | Bulbasaur | `pokemon.starter-bulbasaur` | rule | Bulbasaur chose you. Two less HP, but every heal heals one more. Everyone sniff the bulb. |  |
-| ☐ | Charmander | `pokemon.starter-charmander` | rule | Charmander chose you. Wild fights hurt one less, bosses one more. Keep its tail lit. |  |
-| ☐ | Squirtle | `pokemon.starter-squirtle` | rule | Squirtle chose you, in sunglasses. A Protect to start, but the bag holds only two. |  |
-| ☐ | Pikachu | `pokemon.starter-pikachu` | rule | Pikachu won't go in its ball and won't evolve. Ever. Two more HP and an X Attack. Everyone yells Pika. |  |
-| ☐ | Eevee | `pokemon.starter-eevee` | rule | Eevee chose you. Two less HP, a bag of four, and the table picks what it evolves into. |  |
-| ☐ | Cyndaquil | `pokemon.starter-cyndaquil` | rule | Cyndaquil chose you, half asleep. One less HP, but an X Attack to start. |  |
-| ☐ | Totodile | `pokemon.starter-totodile` | rule | Totodile chose you by biting you. Three more HP, but wild fights hurt one more. |  |
-| ☐ | Treecko | `pokemon.starter-treecko` | rule | Treecko chose you. An Escape Rope to start; rivals and Ace Trainers hurt one more. |  |
-| ☐ | Torchic | `pokemon.starter-torchic` | rule | Torchic chose you. Two less HP, but rivals and Ace Trainers hurt one less. Everyone flap and peep. |  |
-| ☐ | Mudkip | `pokemon.starter-mudkip` | rule | So I herd u liek Mudkipz. Four less HP, but bosses hurt one less. |  |
-| ☐ | Piplup | `pokemon.starter-piplup` | rule | Piplup chose you and is very proud of it. Six more HP and a Protect, but every boss takes a hit more. |  |
-| ☐ | Turtwig | `pokemon.starter-turtwig` | rule | Turtwig chose you, slowly. Four more HP, but the bag holds only two. |  |
-| ☐ | Oshawott | `pokemon.starter-oshawott` | rule | Oshawott chose you, scalchop out. Three less HP, but a Protect and an X Attack to start. |  |
-| ☐ | Froakie | `pokemon.starter-froakie` | rule | Froakie chose you, covered in bubbles. Two less HP, but two Escape Ropes to start. |  |
-| ☐ | Rowlet | `pokemon.starter-rowlet` | rule | Rowlet chose you and fell asleep on your head. One less HP, but hazards and finds hurt one less. |  |
-| ☐ | Scorbunny | `pokemon.starter-scorbunny` | rule | Scorbunny chose you, bouncing. Wild fights and trainers hurt one less, but the bag holds two. |  |
-| ☐ | Fuecoco | `pokemon.starter-fuecoco` | rule | Fuecoco chose you because you had snacks. Three less HP, but every heal heals two more. |  |
+| ☐ | Bulbasaur | `pokemon.starter-bulbasaur` | rule | Bulbasaur chose you. Everyone sniff the bulb. Max HP 15. Every heal heals 1 more. |  |
+| ☐ | Charmander | `pokemon.starter-charmander` | rule | Charmander chose you. Keep its tail lit. Route battles hurt 1 less. Bosses hurt 1 more. |  |
+| ☐ | Squirtle | `pokemon.starter-squirtle` | rule | Squirtle chose you, in sunglasses. The bag holds 2. Starts with a Protect. |  |
+| ☐ | Pikachu | `pokemon.starter-pikachu` | rule | Pikachu won't go in its ball and won't evolve. Ever. Everyone yells Pika. Max HP 19. Starts with an X Attack. |  |
+| ☐ | Eevee | `pokemon.starter-eevee` | rule | Eevee chose you. The table picks what it evolves into. Max HP 15. The bag holds 4. |  |
+| ☐ | Cyndaquil | `pokemon.starter-cyndaquil` | rule | Cyndaquil chose you, half asleep. Max HP 16. Starts with an X Attack. |  |
+| ☐ | Totodile | `pokemon.starter-totodile` | rule | Totodile chose you by biting you. Max HP 20. Route battles hurt 1 more. |  |
+| ☐ | Treecko | `pokemon.starter-treecko` | rule | Treecko chose you, chewing a twig. Ace Trainers and rivals hurt 1 more. Starts with an Escape Rope. |  |
+| ☐ | Torchic | `pokemon.starter-torchic` | rule | Torchic chose you. Everyone flap and peep. Max HP 15. Ace Trainers and rivals hurt 1 less. |  |
+| ☐ | Mudkip | `pokemon.starter-mudkip` | rule | So I herd u liek Mudkipz. Max HP 12. Bosses hurt 1 less. |  |
+| ☐ | Piplup | `pokemon.starter-piplup` | rule | Piplup chose you and is very proud of it. Max HP 23. Bosses take 1 more hit. Starts with a Protect. |  |
+| ☐ | Turtwig | `pokemon.starter-turtwig` | rule | Turtwig chose you, slowly. Max HP 21. The bag holds 2. |  |
+| ☐ | Oshawott | `pokemon.starter-oshawott` | rule | Oshawott chose you, scalchop out. Max HP 14. Starts with a Protect and an X Attack. |  |
+| ☐ | Froakie | `pokemon.starter-froakie` | rule | Froakie chose you, covered in bubbles. Use the candy from the bag any time. Max HP 15. Starts with a Rare Candy. |  |
+| ☐ | Rowlet | `pokemon.starter-rowlet` | rule | Rowlet chose you and fell asleep on your head. Max HP 16. Hazards and finds hurt 1 less. |  |
+| ☐ | Scorbunny | `pokemon.starter-scorbunny` | rule | Scorbunny chose you, bouncing. Route battles and trainer challenges hurt 1 less. The bag holds 2. |  |
+| ☐ | Fuecoco | `pokemon.starter-fuecoco` | rule | Fuecoco chose you because you had snacks. Starts with 2 Potions. |  |
 
 ## Cabin weekend (`cabin`)
 

@@ -11,6 +11,7 @@ import type {
 } from "../../game/types";
 import { cardFactory, choice, rollTable } from "../author";
 import { withNaturals } from "../naturals";
+import { describeOmen, leagueOmenWords } from "../../game/omenText";
 
 // Pokémon League's journey (owner, 2026-10-16): a run is a crawl. A starter
 // opens it, then eight routes of four random cards, each closed by a gym
@@ -421,23 +422,43 @@ export const villain = (
   ...(curse ? { curse } : {}),
 });
 
+/** Team HP at the start of a League run, before the starter. */
+export const TEAM_HP = 17;
+
 /** A starter: the run's first card. Its effect holds for the run and grows
  * as it evolves (`evolves`, each form replacing the one before). With
- * `branches` the forms are alternatives the table picks between (Eevee). */
+ * `branches` the forms are alternatives the table picks between (Eevee).
+ * Every power is written from its numbers (`game/omenText.ts`), so the card
+ * says exactly what the engine does: `flavor` leads the card, and each
+ * form's rules are its power alone. */
 export const starter = (
   id: string,
   title: string,
-  rules: string,
+  flavor: string,
   effect: OmenEffect,
-  evolves: Evolution[] = [],
+  evolves: { title: string; omen: OmenEffect }[] = [],
   branches = false,
 ): CardDefinition => ({
-  ...card(`starter-${id}`, title, "rule", rules),
+  ...card(
+    `starter-${id}`,
+    title,
+    "rule",
+    `${flavor} ${describeOmen(effect, leagueOmenWords, TEAM_HP)}`,
+  ),
   ribbon: "Your starter",
   ribbonTone: "pearl",
   encounter: "omen",
   omen: effect,
-  ...(evolves.length ? { evolves } : {}),
+  ...(evolves.length
+    ? {
+        evolves: evolves.map(
+          (e): Evolution => ({
+            ...e,
+            rules: describeOmen(e.omen, leagueOmenWords, TEAM_HP, false),
+          }),
+        ),
+      }
+    : {}),
   ...(branches ? { branches: true as const } : {}),
 });
 

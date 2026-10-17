@@ -571,14 +571,6 @@
   color: #d9c7a4;
   font-size: 0.95rem;
 }
-.crawl-omen .crawl-evolution {
-  grid-column: 2;
-  color: #b9a7d8;
-  font-size: 0.85rem;
-}
-.crawl-omen .crawl-evolution b {
-  color: #fff0cf;
-}
 /* The badge case: one gold badge per gym, earned ones lit. */
 .crawl-badges {
   display: flex;

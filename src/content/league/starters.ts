@@ -2,315 +2,253 @@ import type { CardDefinition } from "../../game/types";
 import { starter } from "./journey";
 
 // The run's first card: one starter of seventeen, from every generation.
-// Each holds a trade-off for the run, and each later form (reached through
-// the routes' evolution cards) replaces it with a stronger one. Eevee
-// branches: its one evolution is Vaporeon, Jolteon or Flareon, the table's
-// pick. Pikachu refuses to evolve. Starters may name Team HP and items: they only play in
-// the League. Check every starter's own win rate in `tests/league.test.ts`.
+// Each has one signature (healing, Protects, X Attacks, Escape Ropes, a big
+// HP pool, a weak spot it grows out of...), and each later form, reached
+// through the routes' evolution cards or a Rare Candy, is strictly better
+// in a way the evolution banner can name. Eevee branches: its one evolution
+// is Vaporeon, Jolteon or Flareon, the table's pick. Pikachu never evolves.
+// The powers are written from the numbers (`starter` in `journey.ts`), so
+// the flavor here is only the first sentence. Starters may name Team HP and
+// items: they only play in the League. Check every starter's own win rate
+// in `tests/league.test.ts`.
 
 export const starters: CardDefinition[] = [
+  // Healing: every heal heals more.
   starter(
     "bulbasaur",
     "Bulbasaur",
-    "Bulbasaur chose you. Two less HP, but every heal heals one more. Everyone sniff the bulb.",
+    "Bulbasaur chose you. Everyone sniff the bulb.",
     { hearts: -2, heal: 1 },
     [
-      {
-        title: "Ivysaur",
-        rules: "Full HP back, and every heal heals one more.",
-        omen: { heal: 1 },
-      },
-      {
-        title: "Venusaur",
-        rules: "Two more HP, and every heal heals two more.",
-        omen: { hearts: 2, heal: 2 },
-      },
+      { title: "Ivysaur", omen: { heal: 1, loot: ["draught"] } },
+      { title: "Venusaur", omen: { hearts: 2, heal: 2 } },
     ],
   ),
+  // Strong on the road, weak to bosses until it grows.
   starter(
     "charmander",
     "Charmander",
-    "Charmander chose you. Wild fights hurt one less, bosses one more. Keep its tail lit.",
+    "Charmander chose you. Keep its tail lit.",
     { hurt: { monster: -1, boss: 1 } },
     [
-      {
-        title: "Charmeleon",
-        rules: "Wild fights hurt one less, and bosses hurt as written.",
-        omen: { hurt: { monster: -1 } },
-      },
+      { title: "Charmeleon", omen: { hearts: 1, hurt: { monster: -1 } } },
       {
         title: "Charizard",
-        rules:
-          "Wild fights and bosses both hurt one less. It still won't listen.",
-        omen: { hurt: { monster: -1, boss: -1 } },
+        omen: { hearts: 2, hurt: { monster: -1, boss: -1 } },
       },
     ],
   ),
+  // Protects, and a bag that grows.
   starter(
     "squirtle",
     "Squirtle",
-    "Squirtle chose you, in sunglasses. A Protect to start, but the bag holds only two.",
+    "Squirtle chose you, in sunglasses.",
     { satchel: 2, loot: ["shield"] },
     [
-      {
-        title: "Wartortle",
-        rules: "Another Protect, and the bag holds three.",
-        omen: { satchel: 3, loot: ["shield"] },
-      },
-      {
-        title: "Blastoise",
-        rules: "Another Protect, and the bag holds four. Cannons out.",
-        omen: { satchel: 4, loot: ["shield"] },
-      },
+      { title: "Wartortle", omen: { satchel: 3, loot: ["shield"] } },
+      { title: "Blastoise", omen: { satchel: 4, loot: ["shield"] } },
     ],
   ),
+  // Never evolves: strong from the first card.
   starter(
     "pikachu",
     "Pikachu",
-    "Pikachu won't go in its ball and won't evolve. Ever. Two more HP and an X Attack. Everyone yells Pika.",
+    "Pikachu won't go in its ball and won't evolve. Ever. Everyone yells Pika.",
     { hearts: 2, loot: ["die"] },
   ),
+  // A big bag, and the table picks what it becomes.
   starter(
     "eevee",
     "Eevee",
-    "Eevee chose you. Two less HP, a bag of four, and the table picks what it evolves into.",
+    "Eevee chose you. The table picks what it evolves into.",
     { hearts: -2, satchel: 4 },
     [
-      {
-        title: "Vaporeon",
-        rules: "Three more HP, a bag of four, and every heal heals one more.",
-        omen: { hearts: 3, satchel: 4, heal: 1 },
-      },
+      { title: "Vaporeon", omen: { hearts: 3, satchel: 4, heal: 1 } },
       {
         title: "Jolteon",
-        rules:
-          "A bag of four with an Escape Rope, and wild fights and trainers hurt one less.",
-        omen: { satchel: 4, loot: ["smoke"], hurt: { monster: -1, trial: -1 } },
+        omen: {
+          satchel: 4,
+          loot: ["smoke"],
+          hurt: { monster: -1, trial: -1 },
+        },
       },
       {
         title: "Flareon",
-        rules: "One more HP, a bag of four and two X Attacks.",
         omen: { hearts: 1, satchel: 4, loot: ["die", "die"] },
       },
     ],
     true,
   ),
+  // X Attacks: one more with every form.
   starter(
     "cyndaquil",
     "Cyndaquil",
-    "Cyndaquil chose you, half asleep. One less HP, but an X Attack to start.",
+    "Cyndaquil chose you, half asleep.",
     { hearts: -1, loot: ["die"] },
     [
-      {
-        title: "Quilava",
-        rules: "Full HP, and another X Attack.",
-        omen: { loot: ["die"] },
-      },
-      {
-        title: "Typhlosion",
-        rules: "Two more HP, and another X Attack. Don't ask about the lore.",
-        omen: { hearts: 2, loot: ["die"] },
-      },
+      { title: "Quilava", omen: { loot: ["die"] } },
+      { title: "Typhlosion", omen: { hearts: 2, loot: ["die"] } },
     ],
   ),
+  // The tank: big HP, but route battles bite.
   starter(
     "totodile",
     "Totodile",
-    "Totodile chose you by biting you. Three more HP, but wild fights hurt one more.",
+    "Totodile chose you by biting you.",
     { hearts: 3, hurt: { monster: 1 } },
     [
-      {
-        title: "Croconaw",
-        rules: "Four more HP, and wild fights still hurt one more.",
-        omen: { hearts: 4, hurt: { monster: 1 } },
-      },
-      {
-        title: "Feraligatr",
-        rules: "Five more HP, and wild fights hurt as written.",
-        omen: { hearts: 5 },
-      },
+      { title: "Croconaw", omen: { hearts: 5, hurt: { monster: 1 } } },
+      { title: "Feraligatr", omen: { hearts: 6 } },
     ],
   ),
+  // Escape Ropes, and a bag to carry them.
   starter(
     "treecko",
     "Treecko",
-    "Treecko chose you. An Escape Rope to start; rivals and Ace Trainers hurt one more.",
+    "Treecko chose you, chewing a twig.",
     { loot: ["smoke"], hurt: { ambush: 1, elite: 1 } },
     [
-      {
-        title: "Grovyle",
-        rules:
-          "Another Escape Rope, and rivals and Ace Trainers hurt as written.",
-        omen: { loot: ["smoke"] },
-      },
+      { title: "Grovyle", omen: { hearts: 1, loot: ["smoke"] } },
       {
         title: "Sceptile",
-        rules: "An X Attack too. Leaf Blade.",
-        omen: { loot: ["die"] },
+        omen: { hearts: 2, satchel: 4, loot: ["smoke"] },
       },
     ],
   ),
+  // Rival and Ace Trainer killer.
   starter(
     "torchic",
     "Torchic",
-    "Torchic chose you. Two less HP, but rivals and Ace Trainers hurt one less. Everyone flap and peep.",
+    "Torchic chose you. Everyone flap and peep.",
     { hearts: -2, hurt: { ambush: -1, elite: -1 } },
     [
       {
         title: "Combusken",
-        rules: "Full HP, and rivals and Ace Trainers hurt one less.",
-        omen: { hurt: { ambush: -1, elite: -1 } },
+        omen: { hurt: { ambush: -1, elite: -1 }, loot: ["die"] },
       },
       {
         title: "Blaziken",
-        rules:
-          "Two more HP. Rivals, Ace Trainers and wild fights hurt one less.",
         omen: { hearts: 2, hurt: { ambush: -1, elite: -1, monster: -1 } },
       },
     ],
   ),
+  // Boss killer on a small HP pool.
   starter(
     "mudkip",
     "Mudkip",
-    "So I herd u liek Mudkipz. Four less HP, but bosses hurt one less.",
-    { hearts: -4, hurt: { boss: -1 } },
+    "So I herd u liek Mudkipz.",
+    { hearts: -5, hurt: { boss: -1 } },
     [
       {
         title: "Marshtomp",
-        rules: "Two less HP, and bosses hurt one less.",
-        omen: { hearts: -2, hurt: { boss: -1 } },
+        omen: { hearts: -3, hurt: { boss: -1 }, loot: ["shield"] },
       },
-      {
-        title: "Swampert",
-        rules: "One more HP, and bosses hurt one less.",
-        omen: { hearts: 1, hurt: { boss: -1 } },
-      },
+      { title: "Swampert", omen: { hearts: 0, hurt: { boss: -1 } } },
     ],
   ),
+  // Huge HP, too proud to finish bosses quickly until it grows up.
   starter(
     "piplup",
     "Piplup",
-    "Piplup chose you and is very proud of it. Six more HP and a Protect, but every boss takes a hit more.",
+    "Piplup chose you and is very proud of it.",
     { hearts: 6, bossHits: 1, loot: ["shield"] },
     [
       {
         title: "Prinplup",
-        rules: "Six more HP and a Protect, but bosses still take a hit more.",
         omen: { hearts: 6, bossHits: 1, loot: ["shield"] },
       },
-      {
-        title: "Empoleon",
-        rules: "Six more HP, and bosses fall as written. Too proud to lose.",
-        omen: { hearts: 6 },
-      },
+      { title: "Empoleon", omen: { hearts: 6, hurt: { boss: -1 } } },
     ],
   ),
+  // Big HP, small bag.
   starter(
     "turtwig",
     "Turtwig",
-    "Turtwig chose you, slowly. Four more HP, but the bag holds only two.",
+    "Turtwig chose you, slowly.",
     { hearts: 4, satchel: 2 },
     [
-      {
-        title: "Grotle",
-        rules: "Five more HP, and the bag still holds two.",
-        omen: { hearts: 5, satchel: 2 },
-      },
-      {
-        title: "Torterra",
-        rules:
-          "Six more HP, and the bag holds three. There's a tree on its back.",
-        omen: { hearts: 6, satchel: 3 },
-      },
+      { title: "Grotle", omen: { hearts: 5, satchel: 3 } },
+      { title: "Torterra", omen: { hearts: 6, satchel: 4 } },
     ],
   ),
+  // A bit of everything on a thin HP pool.
   starter(
     "oshawott",
     "Oshawott",
-    "Oshawott chose you, scalchop out. Three less HP, but a Protect and an X Attack to start.",
+    "Oshawott chose you, scalchop out.",
     { hearts: -3, loot: ["shield", "die"] },
     [
-      {
-        title: "Dewott",
-        rules: "One less HP, and another Protect.",
-        omen: { hearts: -1, loot: ["shield"] },
-      },
+      { title: "Dewott", omen: { hearts: -1, loot: ["shield"] } },
       {
         title: "Samurott",
-        rules: "One more HP, an X Attack, and Ace Trainers hurt one less.",
         omen: { hearts: 1, loot: ["die"], hurt: { elite: -1 } },
       },
     ],
   ),
+  // Grows up fast: a Rare Candy to start.
   starter(
     "froakie",
     "Froakie",
-    "Froakie chose you, covered in bubbles. Two less HP, but two Escape Ropes to start.",
-    { hearts: -2, loot: ["smoke", "smoke"] },
+    "Froakie chose you, covered in bubbles. Use the candy from the bag any time.",
+    { hearts: -2, loot: ["candy"] },
     [
-      {
-        title: "Frogadier",
-        rules: "One less HP, and another Escape Rope.",
-        omen: { hearts: -1, loot: ["smoke"] },
-      },
+      { title: "Frogadier", omen: { hearts: -1, loot: ["smoke"] } },
       {
         title: "Greninja",
-        rules: "An X Attack, and wild fights hurt one less. Ninja.",
-        omen: { loot: ["die"], hurt: { monster: -1 } },
+        omen: { hearts: 1, loot: ["smoke"], hurt: { monster: -1 } },
       },
     ],
   ),
+  // Hazards and finds barely touch it.
   starter(
     "rowlet",
     "Rowlet",
-    "Rowlet chose you and fell asleep on your head. One less HP, but hazards and finds hurt one less.",
+    "Rowlet chose you and fell asleep on your head.",
     { hearts: -1, hurt: { trap: -1, relic: -1 } },
     [
       {
         title: "Dartrix",
-        rules: "Full HP, and hazards and finds hurt one less.",
-        omen: { hurt: { trap: -1, relic: -1 } },
+        omen: { hurt: { trap: -1, relic: -1 }, loot: ["draught"] },
       },
       {
         title: "Decidueye",
-        rules: "Two more HP and an X Attack. Hazards and finds hurt one less.",
         omen: { hearts: 2, loot: ["die"], hurt: { trap: -1, relic: -1 } },
       },
     ],
   ),
+  // Light on its feet: route battles and challenges, small bag.
   starter(
     "scorbunny",
     "Scorbunny",
-    "Scorbunny chose you, bouncing. Wild fights and trainers hurt one less, but the bag holds two.",
+    "Scorbunny chose you, bouncing.",
     { satchel: 2, hurt: { monster: -1, trial: -1 } },
     [
       {
         title: "Raboot",
-        rules: "The bag holds three. Wild fights and trainers hurt one less.",
-        omen: { satchel: 3, hurt: { monster: -1, trial: -1 } },
+        omen: { hearts: 1, satchel: 3, hurt: { monster: -1, trial: -1 } },
       },
       {
         title: "Cinderace",
-        rules: "An X Attack too. Wild fights and trainers hurt one less.",
-        omen: { satchel: 3, loot: ["die"], hurt: { monster: -1, trial: -1 } },
+        omen: {
+          hearts: 2,
+          satchel: 3,
+          loot: ["die"],
+          hurt: { monster: -1, trial: -1 },
+        },
       },
     ],
   ),
+  // Snacks: Potions, a Revive, then more Potions.
   starter(
     "fuecoco",
     "Fuecoco",
-    "Fuecoco chose you because you had snacks. Three less HP, but every heal heals two more.",
-    { hearts: -3, heal: 2 },
+    "Fuecoco chose you because you had snacks.",
+    { loot: ["draught", "draught"] },
     [
-      {
-        title: "Crocalor",
-        rules: "One less HP, and every heal heals two more.",
-        omen: { hearts: -1, heal: 2 },
-      },
+      { title: "Crocalor", omen: { hearts: 1, loot: ["revive"] } },
       {
         title: "Skeledirge",
-        rules: "One more HP, and every heal heals two more. It sings.",
-        omen: { hearts: 1, heal: 2 },
+        omen: { hearts: 3, loot: ["draught", "draught"] },
       },
     ],
   ),

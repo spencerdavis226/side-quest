@@ -173,7 +173,7 @@ test("a plain mode plays the Pokémon pack without a meter", async ({
   expect(s.quest).toBeUndefined();
 });
 
-test("@release a starter evolves on a route, and the team dialog shows its line", async ({
+test("@release a starter evolves on a route, and the banner says what changed", async ({
   page,
 }, info) => {
   await page.setViewportSize({ width: 375, height: 667 });
@@ -182,23 +182,25 @@ test("@release a starter evolves on a route, and the team dialog shows its line"
     reveal(leagueAt("pokemon.route-rare-candy-1", { hearts: 9 })),
   );
   await expect(plaques(page)).toHaveCount(2);
+  // The plaque names the form it brings.
   await expect(plaques(page).nth(0)).toHaveAccessibleName(
-    "Evolve · drink 3: your starter evolves",
+    "Charmeleon · drink 3: your starter evolves into Charmeleon",
   );
   await expect(plaques(page).nth(1)).toHaveAccessibleName("Press B: 1 HP back");
   await page.screenshot({ path: info.outputPath("evolution-card.png") });
   await plaques(page).nth(0).click();
   const banner = page.locator(".evolution-banner");
   await expect(banner).toHaveText(
-    /What\? Charmander is evolving!\s*Charmeleon/,
+    /What\? Charmander is evolving!\s*Charmeleon\s*Max HP 17 → 18\. Bosses now hurt as written\./,
   );
   await page.screenshot({ path: info.outputPath("evolution-banner.png") });
   expect((await saved(page)).quest.party).toMatchObject({ form: 1 });
   await meter(page).click();
   const dialog = page.getByRole("dialog", { name: "The team" });
+  // Only the starter it is now, and its power.
   await expect(dialog.locator(".crawl-omen strong")).toHaveText("Charmeleon");
-  await expect(dialog.locator(".crawl-evolution")).toHaveText(
-    "Charmander › Charmeleon › Charizard",
+  await expect(dialog.locator(".crawl-omen span")).toHaveText(
+    "Max HP 18. Route battles hurt 1 less.",
   );
   await page.screenshot({ path: info.outputPath("team-dialog.png") });
   // A reload keeps the form and does not replay the banner.
@@ -241,9 +243,28 @@ test("@release Eevee's evolution lets the table pick its form", async ({
   expect((await saved(page)).quest.party).toMatchObject({ form: 2 });
   await meter(page).click();
   const dialog = page.getByRole("dialog", { name: "The team" });
-  await expect(dialog.locator(".crawl-evolution")).toHaveText(
-    "Eevee › Jolteon",
+  await expect(dialog.locator(".crawl-omen strong")).toHaveText("Jolteon");
+});
+
+test("a Rare Candy evolves the starter from the bag", async ({ page }) => {
+  await seed(
+    page,
+    leagueAt(
+      "pokemon.route-pidgey",
+      { hearts: 9, loot: ["candy"] },
+      0,
+      "pokemon.starter-froakie",
+    ),
   );
+  await meter(page).click();
+  const dialog = page.getByRole("dialog", { name: "The team" });
+  await expect(dialog.locator(".satchel-slot")).toContainText("Rare Candy");
+  await dialog.getByRole("button", { name: "Use" }).click();
+  expect((await saved(page)).quest.party).toMatchObject({
+    form: 1,
+    loot: ["smoke"],
+  });
+  await expect(dialog.locator(".crawl-omen strong")).toHaveText("Frogadier");
 });
 
 test("a fully evolved starter can only press B", async ({ page }) => {
