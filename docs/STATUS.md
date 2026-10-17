@@ -2,7 +2,7 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## The Quaff costs 6 drinks (2026-10-17; branch `quaff-six`)
+## The Quaff costs 6 drinks (2026-10-17; pushed to `main`, PR #17)
 
 - **Owner:** change the Quaff to 6. `QUAFF_DRINKS` in `src/content/dungeon/shared.ts` is now 6 (was 3); the manifest is regenerated, so the button ("drink 6 · reroll"), the Quaff chip and dialog, and How to play follow it. Saves keep the cost they started with (`party.quaff` is snapshotted at game start), so a run in progress stays at 3.
 - **Balance:** unchanged; `tests/dungeon.test.ts` counts hearts, not drinks.
