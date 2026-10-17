@@ -12,7 +12,7 @@ Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Ol
 - **Dialogs:** hearts → the party (hearts, adventurer or starter, boons, badges); satchel chip → Satchel/Bag (with Drink/Use); any effect chip → Effects (Quaff state, curse, jinx, the Cup). End screens still show everything. Old rim tags removed.
 - **Card size:** `.crawl-deck` adds `--hud-strip` (44 px, 54 px on iPad) to `--play-chrome`, so crawl cards on short screens are about 29 px narrower; every Dungeon night and League card still fits (both sweeps passed).
 - **Tests:** crawl and League specs updated for the chips and split dialogs; the old "four studs share the top row" test now checks the row and the strip at 320 and 390 px with all five chips showing.
-- **Verification:** see the commit message.
+- **Verification:** `npm test` 228 passed; lint, typecheck, build passed. Chromium: all browser tests except the two fit sweeps, 128 passed and 1 failed under 3 workers (`reduced motion and keyboard play`: Escape didn't close the pause menu; passed 3 of 3 run alone); both fit sweeps passed run alone (6.8 min); after the last CSS change, crawl, quest and layout specs 44 passed. Screenshots checked at 320, 390 and 820 px in every mode. WebKit not run locally; no device check.
 
 ## How to play, clearer plaques, the Cup explained (2026-10-17; branch `offer-plaque-hints`, PR #12)
 
