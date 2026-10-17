@@ -2,7 +2,7 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Starters you feel, Bidoof, themed dice (2026-10-17, owner request; local)
+## Starters you feel, Bidoof, themed dice (2026-10-17, owner request; pushed to `main` for deploy)
 
 **Owner request.** Starters and evolutions should be felt heavily. Add a Bidoof starter that is the worst, with an evolution that is worse, plus a few more bad or neutral starters. Theme the dice to the starter, and to the omen in Pub Crawl. The owner picked roll bonuses (B) and natural-range tweaks (E) from the proposal, plus the listed perks without any table-behaviour rules (no sunglasses, no blowing on drinks, no Pika naming).
 
@@ -44,9 +44,13 @@ Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Ol
 - League: won 24.4%. Starters 15% (Charmander, Oshawott, Wooper) to 42% (Mudkip); Squirtle 32%, Magikarp 23%.
 - Bidoof, measured on its own over 600 forced runs, is 4% (the test holds it 1% to 8% and below every other starter).
 
-**Tests.** `npm test` 208 passed (with the long timeout). Lint, typecheck and build passed (runtime 3696 KiB). Browser: see the result below.
+**Tests.**
+- `npm test` 208 passed (with the long timeout). Lint, typecheck and build passed (runtime 3696 KiB).
+- Browser, Chromium: `quest.spec.ts` and `crawl.spec.ts` passed, including both 375×667 fit sweeps. A retry flake in the crawl smoke-bomb test happened because the random next room was an ambush; it is unrelated to this change.
+- `tests/workshop/dice-texture.spec.ts` fails in this container ("numeral 7 horizontal centre (was 69.5)"). It fails identically on `8c90cbc`, before any dice change, so it is the container's font, not this change. It was not run in CI (workshop runs only on manual full validation).
+- WebKit and a physical device: not checked.
 
-## Starter revision pass (2026-10-17, owner request; local)
+## Starter revision pass (2026-10-17, owner request; pushed to `main` for deploy)
 
 **Owner request.** Make the starter powers and evolutions unique and logically worded. New items are allowed if they help. Does evolution actually do anything? (A Bulbasaur evolved at the table and it was unclear what happened.) Show only the current Pokémon's name in the team dialog, not the whole line.
 
