@@ -2,6 +2,14 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Status-bar blur: a fixed strip WebKit can sample (2026-10-17; branch `status-edge`)
+
+- **Owner:** the soft blur over the header's top edge was still there in the installed app (iPhone 15 Pro) after PR #14's no-scroller change, which this branch reverts (it had no effect).
+- **Research:** iOS 26+ draws a "scroll edge" blur under the status bar and about 40pt down; no CSS or meta switch turns it off. WebKit skips it when, 4px inside the top edge, it finds a `position: fixed` or `sticky` box at least 90% of the viewport wide, over 10px tall and at most 105% of its height, with a visible background colour, and uses that colour instead (`LocalFrameView::fixedContainerEdges`: `sampleRectMargin = 4`, `minimumRatio = 0.9`, `maximumRatio = 1.05`, `thinBorderWidth = 10`; a `backdrop-filter` makes it glass). Several projects report the same fix (herdr-web-ui #106, discpress #24, kp-rueck #143); none of them, nor this, is verified on a device in what I read.
+- **Change:** `index.html` gains `<div class="status-edge">` before `#root`; in the installed app (`html.standalone`) it is fixed at the top, full width, `--top-safe` tall, `background-color: var(--chrome)` (#271c11) and the table backdrop painted at the same place as `body:before`, so it reads as the same wood. No `pointer-events: none` (WebKit's sampling hit test may honour it). The status-bar meta stays `black-translucent`, so no reinstall should be needed.
+- **Tests:** `layout.spec.ts`'s installed-app test poses a 59px inset and checks the strip is fixed, full width, 59px tall, #271c11, the element at the sampling point, and seamless with the wood below it.
+- **Verification:** lint, typecheck, build passed; Chromium browser suite (minus the two card-fit sweeps) 130 passed. **Not verified on the device.**
+
 ## How to play in two places only (2026-10-17; pushed to `main`, PR #14)
 
 - **Owner:** too many How to play buttons. Now only the pause menu in a game, and "How to play ›" on setup's "How long?" heading (every mode; it explains the mode chosen: a crawl's rows, or the basics). Removed: the link in the party, satchel and chip dialogs, and the crawl heading's "How it works ›".

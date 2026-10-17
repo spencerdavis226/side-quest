@@ -51,14 +51,37 @@ html.standalone {
 html.standalone body {
   height: 100lvh;
 }
-/* The installed play screen always fits, so #root need not scroll there.
-   iOS 26+ draws a soft blur over the top edge of scrolling content under
-   the status bar; with no scroller on the play screen there is nothing for
-   it to blur (owner report 2026-10-17, iPhone 15 Pro; not yet verified on
-   the device). Setup, which can overflow at large text sizes, still
-   scrolls. */
-html.standalone:has(.playing) #root {
-  overflow: hidden;
+/* The status-bar edge (installed app only). iOS 26+ draws a soft "scroll
+   edge" blur under the status bar and about 40pt down over the page unless
+   WebKit finds, 4px inside the top edge, a position: fixed (or sticky)
+   box at least 90% of the viewport wide and over 10px tall with a visible
+   background colour; then it uses that colour instead of the blur
+   (LocalFrameView::fixedContainerEdges in WebKit). This strip is that box:
+   exactly the inset tall, the page's chrome colour, and painted with the
+   table backdrop at the same place as body:before so it reads as the same
+   wood. Owner report 2026-10-17,
+   iPhone 15 Pro; not verified on the device yet. */
+.status-edge {
+  display: none;
+}
+html.standalone .status-edge {
+  display: block;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  height: var(--top-safe);
+  background:
+    radial-gradient(ellipse at 50% 40%, #110c0760, #100c0ac9) 0 0 / 100%
+      var(--backdrop-height) no-repeat,
+    url("/art/table.webp") center
+      calc((var(--backdrop-height) - max(150vw, var(--backdrop-height))) / 2) /
+      max(100vw, calc(var(--backdrop-height) * 2 / 3))
+      max(150vw, var(--backdrop-height)) no-repeat;
+  background-color: var(--chrome);
+  /* No pointer-events: none: WebKit's sampling hit test may honour it and
+     skip the strip. Nothing tappable sits under the inset. */
 }
 * {
   box-sizing: border-box;

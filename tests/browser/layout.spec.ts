@@ -450,26 +450,21 @@ test("@release the installed app lays out at the full screen height and never sc
         pageScroll: html.scrollHeight - html.clientHeight,
       };
     });
-  const check = (
-    m: Awaited<ReturnType<typeof measure>>,
-    rootOverflow: "auto" | "hidden",
-  ) => {
+  const check = (m: Awaited<ReturnType<typeof measure>>) => {
     expect(m.screenHeight).toBe(852);
     // The document, the scroller, the layout and both backdrop layers all end
     // on the last row of the screen.
     for (const value of [m.html, m.root, m.app, m.backdrop, m.atmosphere])
       expect(value).toBeCloseTo(m.screenHeight, 0);
-    // The root cannot scroll or be dragged off the top; tall setup content
-    // scrolls inside #root, and the play screen, which always fits, has no
-    // scroller at all (so iOS has no scroll edge to blur under the status
-    // bar).
+    // The root cannot scroll or be dragged off the top; tall content scrolls
+    // inside #root instead.
     expect(m.htmlOverflow).toBe("hidden");
     expect(m.bodyOverflow).toBe("hidden");
-    expect(m.rootOverflow).toBe(rootOverflow);
+    expect(m.rootOverflow).toBe("auto");
     expect(m.pageScroll).toBe(0);
     expect(m.scrollY).toBe(0);
   };
-  check(await measure(), "auto");
+  check(await measure());
   // The bottom row is wood, not a flat fill.
   const { data, info } = await sharp(
     await page.screenshot({ animations: "disabled" }),
@@ -481,9 +476,42 @@ test("@release the installed app lays out at the full screen height and never sc
     lastRow.add(data[((info.height - 1) * info.width + x) * info.channels]);
   expect(lastRow.size).toBeGreaterThan(4);
 
+  // The status-bar edge: iOS 26+ blurs under the status bar unless WebKit
+  // finds a full-width fixed box with a solid colour 4px inside the top
+  // edge. Pose an iPhone 15 Pro inset: the strip must be that box, exactly
+  // the inset tall, and paint the same wood as the backdrop beneath it.
+  await page.addStyleTag({ content: ":root { --top-safe: 59px }" });
+  const edge = await page.evaluate(() => {
+    const strip = document.querySelector(".status-edge")!;
+    const style = getComputedStyle(strip);
+    const box = strip.getBoundingClientRect();
+    return {
+      position: style.position,
+      color: style.backgroundColor,
+      box: { x: box.x, y: box.y, width: box.width, height: box.height },
+      hit: document.elementFromPoint(innerWidth / 2, 4) === strip,
+      viewport: innerWidth,
+    };
+  });
+  expect(edge.position).toBe("fixed");
+  expect(edge.color).toBe("rgb(39, 28, 17)");
+  expect(edge.box).toEqual({ x: 0, y: 0, width: edge.viewport, height: 59 });
+  expect(edge.hit).toBe(true);
+  const shot = await sharp(await page.screenshot({ animations: "disabled" }))
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  const rowAverage = (y: number) => {
+    let sum = 0;
+    for (let x = 0; x < shot.info.width; x++)
+      sum += shot.data[(y * shot.info.width + x) * shot.info.channels];
+    return sum / shot.info.width;
+  };
+  // No seam at the strip's lower edge: the rows either side match.
+  expect(Math.abs(rowAverage(57) - rowAverage(61))).toBeLessThan(6);
+
   await seed(page, revealed(longestRule));
   await expect(page.locator(".study-rules p")).toBeVisible();
-  check(await measure(), "hidden");
+  check(await measure());
   const card = (await page.locator(".game-card").boundingBox())!;
   expect(Math.abs(card.width / card.height - 2 / 3)).toBeLessThan(0.01);
   expect(card.y + card.height).toBeLessThanOrEqual(852);
