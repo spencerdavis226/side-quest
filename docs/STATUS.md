@@ -2,7 +2,7 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Two plain lengths: Standard (50) and Infinite (2026-10-17; not pushed)
+## Two plain lengths: Standard (50) and Infinite (2026-10-17; pushed to `main`)
 
 - **Request (owner):** the plain modes are now only Standard (50 cards) and Infinite. Short (30) and Long (60) are gone; the quest modes are unchanged.
 - **Code:** `DeckChoice` is `"standard" | "infinite" | "quest"` and `MODE_LIMITS.standard` is 50 (`src/app/persistence.ts`); the default preference is Standard. `DeckChoices` (`src/components/UI.tsx`) shows two buttons; `.lengths` is flex, so no CSS changed.
@@ -12,7 +12,7 @@ Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Ol
 - **Verification:**
   - `npm test`: 226 passed. Lint, typecheck and build passed (runtime 3,801 KiB).
   - Chromium `game.spec.ts`, `layout.spec.ts`, `title-fit.spec.ts`: 31 passed. WebKit not run locally.
-- **Next:** owner approval to push to `main` (it deploys).
+- **CI (PR #11):** build, Chromium and three WebKit release shards passed.
 
 ## Polish: prop audit and device checklist (2026-10-17; pushed to `main`)
 
