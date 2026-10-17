@@ -52,6 +52,12 @@
   width: 38px;
   height: 35px;
 }
+/* Optical centring: a heart's lobes carry its weight, so centred by its box
+   it reads high in the stud (owner, 2026-10-17). The League's Poke Ball is
+   round and stays put. */
+.meter-heart.heart-shape {
+  top: 2px;
+}
 .meter-heart .icon-heart {
   grid-area: 1 / 1;
   width: 38px;

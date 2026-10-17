@@ -91,7 +91,10 @@ export function CrawlMeterFace({ quest }: { quest: QuestState }) {
           {delta > 0 ? `+${delta}` : `−${-delta}`}
         </span>
       )}
-      <span className={`meter-heart ${pulse}`} key={`${party.hearts}-${pulse}`}>
+      <span
+        className={`meter-heart ${pulse}${theme.icons.files.heart ? "" : " heart-shape"}`}
+        key={`${party.hearts}-${pulse}`}
+      >
         <CrawlIcon name="heart" theme={theme} />
         <strong className={party.hearts <= 3 ? "low" : undefined}>
           {party.hearts}

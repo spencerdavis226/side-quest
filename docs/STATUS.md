@@ -2,6 +2,11 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Hearts stud: optical centring (2026-10-17; branch `heart-optical`)
+
+- **Owner (iPhone screenshot):** the heart is not centred in the top-left stud. Measured: its box is centred to within 1px; it reads high because the lobes carry its weight. `.meter-heart.heart-shape` sits 2px lower (`src/presentation/crawl.css`); `CrawlMeterFace` adds `heart-shape` only when the theme keeps the stock heart, so the League's round Poke Ball is unchanged.
+- **Verification:** `npm test` 229 passed; typecheck, lint, build passed; Chromium `crawl.spec.ts` (minus the fit sweep) 20 passed. Not checked on a device.
+
 ## Top-edge blur: strip reaches past the status bar, bar blends into the wood (2026-10-17; pushed to `main`, PR #19)
 
 - **Owner (iOS 27, iPhone 15 Pro), after PR #18:** the header top and "YOUR STARTER" are still blurred, identical to before. The header sits at inset + 20px in both screenshots, so the app still draws under the status bar on iOS 27 (top inset 59pt) and the strip was already 59pt tall; PR #18's 14px minimum changed nothing there.
