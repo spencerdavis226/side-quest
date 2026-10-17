@@ -61,7 +61,8 @@ html.standalone body {
    draws the app under the status bar either way, and a strip exactly the
    inset tall left the header blurred. So the strip runs 14px past the inset,
    inside the 20px the play screen keeps above the header, painting the
-   backdrop's own wood; its colour is the wood's, for the status bar. */
+   backdrop's own wood; its colour is the wood's at the edge (#18110c, as theme-color), which iOS
+   paints flat behind the clock. */
 .status-edge {
   display: none;
 }
@@ -80,7 +81,7 @@ html.standalone .status-edge {
       calc((var(--backdrop-height) - max(150vw, var(--backdrop-height))) / 2) /
       max(100vw, calc(var(--backdrop-height) * 2 / 3))
       max(150vw, var(--backdrop-height)) no-repeat;
-  background-color: #211810;
+  background-color: #18110c;
   /* No pointer-events: none: WebKit's sampling hit test may honour it and
      skip the strip. Nothing tappable sits under the inset. */
 }

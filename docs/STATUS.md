@@ -7,7 +7,8 @@ Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Ol
 - **Owner (iOS 27, iPhone 15 Pro), after PR #18:** the header top and "YOUR STARTER" are still blurred, identical to before. The header sits at inset + 20px in both screenshots, so the app still draws under the status bar on iOS 27 (top inset 59pt) and the strip was already 59pt tall; PR #18's 14px minimum changed nothing there.
 - **Hypothesis:** WebKit samples 4px inside the *unobscured* edge, the bottom of the status bar (63pt), where the strip did not reach; the projects whose fixes worked pad a sticky header under the clock, so their box spans that point.
 - **Fix:** `.status-edge` is `calc(var(--top-safe) + 14px)` tall (inside the 20px above the header; nothing on setup or play sits there), background colour `#211810` (the wood's, as iOS may paint it in the status bar). `layout.spec.ts` hit-tests at inset + 4.
-- **Owner's fallback (2026-10-17):** if this does not fix it, drop the solid colour/strip and keep wood texture in the status bar, accepting the blur.
+- **Owner, after re-adding the app (fresh install, PR #18 live):** the header is sharp; the blur is fixed. But the opaque status bar is flat #271c11 (theme-color), lighter than the wood under it (~#18110c), and looks bad. The meta `theme-color` and the strip's colour are now #18110c, the wood at the edge; the manifest keeps #271c11 (its theme, background and the html root must agree, `pages.spec.ts`). Whether iOS picks up a changed theme-color without a re-add is not known.
+- **Owner's fallback (2026-10-17, superseded: the fix worked):** if this did not fix it, drop the solid colour/strip and keep wood texture in the status bar, accepting the blur.
 - **Verification:** `npm test` 229 passed; lint, typecheck, build passed; Chromium `@release` (minus fit sweeps) 37 passed. Not verified on a device.
 
 ## Top-edge blur: keep the strip in a fresh install (2026-10-17; pushed to `main`, PR #18; owner on iOS 27)

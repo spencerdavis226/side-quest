@@ -515,7 +515,7 @@ test("@release the installed app lays out at the full screen height and never sc
   await page.addStyleTag({ content: ":root { --top-safe: 59px }" });
   const edge = await edgeOf(59);
   expect(edge.position).toBe("fixed");
-  expect(edge.color).toBe("rgb(33, 24, 16)");
+  expect(edge.color).toBe("rgb(24, 17, 12)");
   expect(edge.box).toEqual({ x: 0, y: 0, width: edge.viewport, height: 73 });
   expect(edge.hit).toBe(true);
   const rowAverage = await shotRows();

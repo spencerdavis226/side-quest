@@ -7,6 +7,6 @@ describe("index.html", () => {
     // blurs the top of it (owner's iPhone 15 Pro, 2026-10-17).
     const html = readFileSync("index.html", "utf8");
     expect(html).not.toMatch(/<meta[^>]+apple-mobile-web-app-status-bar-style/);
-    expect(html).toMatch(/<meta name="theme-color" content="#271c11"/);
+    expect(html).toMatch(/<meta name="theme-color" content="#18110c"/);
   });
 });
