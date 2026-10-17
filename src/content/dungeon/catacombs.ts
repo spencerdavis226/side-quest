@@ -318,7 +318,10 @@ export const catacombs: FloorCards = {
       "She's been waiting up. Do you know what time it is? Roll d20.",
       "Grounded, in a tomb. Drink 5, then text your mom.",
       "You hug her. She packs you something for the road. Give 5.",
-      trinket("Mom's Packed Lunch", { heal: 1, loot: ["draught"] }),
+      [
+        trinket("Mom's Packed Lunch", { heal: 1, loot: ["draught"] }),
+        trinket("Mom's Cardigan", { hearts: 2 }),
+      ],
     ),
     elite(
       1,
@@ -327,7 +330,10 @@ export const catacombs: FloorCards = {
       "Death's unpaid intern is behind on quota, and you'll do. Roll d20.",
       "Filed. Drink 5.",
       "You fill out his forms wrong. He runs, and drops his badge. Give 5.",
-      trinket("Death's Lanyard", { loot: ["revive"] }),
+      [
+        trinket("Death's Lanyard", { loot: ["revive"] }),
+        trinket("Death's Timesheet", { roll: { elite: 1, boss: 1 } }),
+      ],
     ),
     elite(
       1,
@@ -336,7 +342,10 @@ export const catacombs: FloorCards = {
       "A dragon skeleton with a tiny hat, guarding a pile of bottle caps. Roll d20.",
       "It sits on you. Drink 5.",
       "You take the hat. It deflates. Give 5.",
-      trinket("The Tiny Hat", { roll: { all: 1 } }),
+      [
+        trinket("The Tiny Hat", { roll: { all: 1 } }),
+        trinket("Dragon Bone", { hearts: 3, hurt: { trap: 1 } }),
+      ],
     ),
   ],
   bosses: [
@@ -351,7 +360,12 @@ export const catacombs: FloorCards = {
         "A head comes off. Give 4.",
         { crit: "Clean through the neck. Everyone else drinks 3." },
       ),
-      { drops: trinket("Hydra Tooth", { roll: { boss: 2 } }) },
+      {
+        drops: [
+          trinket("Hydra Tooth", { roll: { boss: 2 } }),
+          trinket("Hydra Scale", { hearts: 2 }),
+        ],
+      },
     ),
     boss(
       1,
@@ -369,7 +383,12 @@ export const catacombs: FloorCards = {
           name: "No First Names",
           rule: "Nobody says a first name. Slip: drink 1.",
         },
-        drops: trinket("VIP Wristband", { hearts: 2, hurt: { ambush: -1 } }),
+        drops: [
+          trinket("VIP Wristband", { hearts: 2, hurt: { ambush: -1 } }),
+          trinket("Bouncer's Flashlight", {
+            roll: { monster: 1, trap: 1, relic: 1 },
+          }),
+        ],
       },
     ),
     boss(
@@ -383,7 +402,12 @@ export const catacombs: FloorCards = {
         "You yank a cable. Give 4.",
         { crit: "You steal the aux. Everyone else drinks 3." },
       ),
-      { drops: trinket("The Aux Cord", { crit: 19, heal: 1 }) },
+      {
+        drops: [
+          trinket("The Aux Cord", { crit: 19, heal: 1 }),
+          trinket("DJ's Headphones", { hurt: { monster: -1 } }),
+        ],
+      },
     ),
     boss(
       1,
@@ -398,7 +422,10 @@ export const catacombs: FloorCards = {
       ),
       {
         curse: "hex",
-        drops: trinket("Phylactery Shot", { loot: ["revive"], hearts: -1 }),
+        drops: [
+          trinket("Phylactery Shot", { loot: ["revive"], hearts: -1 }),
+          trinket("Lich's Crown", { roll: { boss: 1 }, crit: 19 }),
+        ],
       },
     ),
     boss(
@@ -414,7 +441,10 @@ export const catacombs: FloorCards = {
       ),
       {
         curse: "bleed",
-        drops: trinket("Last Receipt", { hurt: { boss: -1 } }),
+        drops: [
+          trinket("Last Receipt", { hurt: { boss: -1 } }),
+          trinket("Lost Tab", { loot: ["die", "shield"] }),
+        ],
       },
     ),
   ],

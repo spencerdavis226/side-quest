@@ -31,6 +31,9 @@ const picks: Record<string, string> = {
   "crawl/quaff": "lorc/beer-stein",
   "crawl/rest": "lorc/campfire",
   "crawl/jinx": "delapouite/tongue",
+  // A Bar Tab, and the League's Baton Pass.
+  "crawl/round": "delapouite/beer-bottle",
+  "league/baton-pass": "skoll/baton",
   // Pokémon League (src/components/crawlTheme.ts maps them to the crawl's
   // marks).
   "league/potion": "lorc/spray",

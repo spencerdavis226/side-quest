@@ -297,7 +297,10 @@ export const taproom: FloorCards = {
       "She's run a tab since the flood, and she's settling it on you. Roll d20.",
       "Settled. Drink 6.",
       "She pays you in pearls. Give 6.",
-      trinket("Sea Hag's Pearl", { heal: 1, hearts: 1 }),
+      [
+        trinket("Sea Hag's Pearl", { heal: 1, hearts: 1 }),
+        trinket("Hag's Tab", { roll: { boss: 1 }, loot: ["die"] }),
+      ],
     ),
     elite(
       2,
@@ -306,7 +309,10 @@ export const taproom: FloorCards = {
       "A shark in a vest, polishing glasses with its teeth, is cutting someone off. Roll d20.",
       "It's you. Drink 6.",
       "You punch it on the nose, like the documentaries said. Give 6.",
-      trinket("Shark Tooth", { roll: { boss: 2 } }),
+      [
+        trinket("Shark Tooth", { roll: { boss: 2 } }),
+        trinket("Shark Vest", { hearts: 2 }),
+      ],
     ),
     elite(
       2,
@@ -315,7 +321,10 @@ export const taproom: FloorCards = {
       "Something under the bar has been drinking every spill for a century. Roll d20.",
       "It drinks you a bit. Drink 6.",
       "You pour it a pint. It sinks back, happy. Give 6.",
-      trinket("The Deep Pint", { heal: 1, hurt: { ambush: -1 } }),
+      [
+        trinket("The Deep Pint", { heal: 1, hurt: { ambush: -1 } }),
+        trinket("Deep One's Eye", { crit: 19 }),
+      ],
     ),
   ],
   bosses: [],

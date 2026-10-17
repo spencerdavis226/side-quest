@@ -238,8 +238,8 @@ export const sewers: FloorCards = {
       4,
       "flushed-purse",
       "Flushed Purse",
-      "A purse dropped down a toilet, somehow dry: lipstick, a lighter, a smoke bomb. Drink 1.",
-      "smoke",
+      "A purse dropped down a toilet, somehow dry: lipstick, a lighter, an open bar tab. Drink 1.",
+      "round",
     ),
     treasure(
       4,
@@ -305,7 +305,10 @@ export const sewers: FloorCards = {
       "Everything anyone ever flushed, fused into one angry clog. Roll d20.",
       "It backs up on you. Drink 5.",
       "You plunge it. Inside: something shiny. Don't ask. Give 5.",
-      trinket("Golden Plunger", { roll: { ambush: 2, boss: 1 } }),
+      [
+        trinket("Golden Plunger", { roll: { ambush: 2, boss: 1 } }),
+        trinket("Clog Core", { hearts: 2 }),
+      ],
     ),
     elite(
       4,
@@ -314,7 +317,10 @@ export const sewers: FloorCards = {
       "A rat in a captain's hat with a tiny cutlass and a big grudge. Roll d20.",
       "Keelhauled. Drink 5, and say 'aye aye, captain'.",
       "You take his hat. Give 5.",
-      trinket("Captain's Hat", { satchel: 4, loot: ["die"] }),
+      [
+        trinket("Captain's Hat", { satchel: 4, loot: ["die"] }),
+        trinket("Tiny Cutlass", { roll: { monster: 2 } }),
+      ],
     ),
     elite(
       4,
@@ -323,7 +329,13 @@ export const sewers: FloorCards = {
       "He runs every pipe from here to the river, and he's heard about you. Roll d20.",
       "You owe him now. Drink 5.",
       "You flip him. He works for you now. Give 5.",
-      trinket("Kingpin's Ring", { hearts: 2, roll: { monster: 1 } }),
+      [
+        trinket("Kingpin's Ring", { hearts: 2, roll: { monster: 1 } }),
+        trinket("Kingpin's Rolodex", {
+          satchel: 4,
+          loot: ["smoke", "draught"],
+        }),
+      ],
     ),
   ],
   bosses: [
@@ -338,7 +350,13 @@ export const sewers: FloorCards = {
         "A chunk comes off. Give 4.",
         { crit: "You blast it with a fire hose. Everyone else drinks 3." },
       ),
-      { curse: "bleed", drops: trinket("Fatberg Heart", { hearts: 3 }) },
+      {
+        curse: "bleed",
+        drops: [
+          trinket("Fatberg Heart", { hearts: 3 }),
+          trinket("Wet Wipe Cape", { hurt: { monster: -1, trap: -1 } }),
+        ],
+      },
     ),
     boss(
       4,
@@ -352,7 +370,10 @@ export const sewers: FloorCards = {
         { crit: "Gutter ball, and he's in it. Everyone else drinks 3." },
       ),
       {
-        drops: trinket("Al's Bowling Shirt", { hearts: 1, roll: { trap: 2 } }),
+        drops: [
+          trinket("Al's Bowling Shirt", { hearts: 1, roll: { trap: 2 } }),
+          trinket("Al's Bowling Ball", { roll: { boss: 2 } }),
+        ],
       },
     ),
     boss(
@@ -368,10 +389,13 @@ export const sewers: FloorCards = {
           name: "Plunger Hands",
           rule: "Nobody points at anything. Slip: drink 1.",
         },
-        drops: trinket("Royal Wrench", {
-          hurt: { trap: -1 },
-          loot: ["shield"],
-        }),
+        drops: [
+          trinket("Royal Wrench", {
+            hurt: { trap: -1 },
+            loot: ["shield"],
+          }),
+          trinket("Throne Seat", { hearts: 2 }),
+        ],
       },
     ),
     boss(
@@ -385,7 +409,12 @@ export const sewers: FloorCards = {
         "You apologise to her face. She weeps. Give 4.",
         { fumble: "She adopts you. Finish your drink, then call her mom." },
       ),
-      { drops: trinket("Mama's Scale", { hurt: { monster: -1, ambush: -1 } }) },
+      {
+        drops: [
+          trinket("Mama's Scale", { hurt: { monster: -1, ambush: -1 } }),
+          trinket("Mama's Lullaby", { heal: 1, loot: ["draught"] }),
+        ],
+      },
     ),
     boss(
       4,
@@ -400,7 +429,10 @@ export const sewers: FloorCards = {
       ),
       {
         curse: "hex",
-        drops: trinket("Worm Lure", { roll: { elite: 2, relic: 2 } }),
+        drops: [
+          trinket("Worm Lure", { roll: { elite: 2, relic: 2 } }),
+          trinket("Worm Ring", { hearts: 1, roll: { monster: 1 } }),
+        ],
       },
     ),
   ],

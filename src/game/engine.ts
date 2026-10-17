@@ -390,9 +390,11 @@ export function formEffect(
 /** The boons the party keeps (tonight's omen, trinkets), in the order they
  * came, with the card that brought each. */
 export function partyBoons(quest: QuestState | undefined) {
-  return (quest?.party?.boons ?? []).flatMap((id) => {
+  return (quest?.party?.boons ?? []).flatMap((key) => {
+    const [id, pick] = key.split("#");
     const card = quest ? finaleCard(quest, id) : undefined;
-    return card?.boon ? [{ card, boon: card.boon }] : [];
+    const boon = pick === undefined ? card?.boon : card?.spoils?.[Number(pick)];
+    return card && boon ? [{ card, boon, key }] : [];
   });
 }
 const add = (a = 0, b = 0) => a + b || undefined;
@@ -526,6 +528,34 @@ export function findCard(s: SessionState, id: string | null) {
     (s.quest && id !== null ? finaleCard(s.quest, id) : undefined)
   );
 }
+/** A crawl fight just won whose spoils wait to be picked: an elite's win,
+ * or a boss's felling swing. Picking one puts the card aside. */
+export function awaitingSpoils(s: SessionState): boolean {
+  const party = s.quest?.party;
+  if (!party || !s.quest?.due || s.phase !== "revealed") return false;
+  const card = currentCard(s);
+  if (!card.spoils?.length || !card.dice || !s.roll?.returned) return false;
+  if (!rollWins(card.dice, s.roll.values, s.roll)) return false;
+  const need = hitsNeeded(s.quest, card);
+  const swing = natural(card, s.roll) === 20 ? 2 : 1;
+  return !need || party.hits + swing >= need;
+}
+/** Take spoil `index` of the fight just won, and put the card aside. */
+export function takeSpoils(
+  s: SessionState,
+  index: number,
+  random: Random = Math.random,
+): SessionState {
+  const card = currentCard(s);
+  if (
+    !awaitingSpoils(s) ||
+    !Number.isSafeInteger(index) ||
+    index < 0 ||
+    index >= card.spoils!.length
+  )
+    return s;
+  return discard(s, random, undefined, index);
+}
 /** A revealed choice card whose option has not been picked yet. */
 export function awaitingChoice(s: SessionState) {
   return s.phase === "revealed" && !s.roll && !!currentCard(s).dice?.choice;
@@ -544,6 +574,7 @@ export function advance(
   if (currentCard(s).dice && !s.roll?.returned) return s;
   if (awaitingVerdict(s)) return s;
   if (awaitingOffer(s)) return s;
+  if (awaitingSpoils(s)) return s;
   return discard(s, random);
 }
 /** A revealed merchant or fork in a crawl: one of its offers puts it aside. */
@@ -639,6 +670,13 @@ export function natural(
   if (roll.bonus !== undefined) return roll.natural ?? null;
   return roll.values[0] === 20 ? 20 : roll.values[0] === 1 ? 1 : null;
 }
+/** A lost fight's roll is on the card. */
+const lostRoll = (s: SessionState, card: CardDefinition) =>
+  s.phase === "revealed" &&
+  !!card.battle &&
+  !!card.dice &&
+  !!s.roll?.returned &&
+  !rollWins(card.dice, s.roll.values, s.roll);
 /** Whether the party can use the satchel's item `item` now. */
 export function canUseLoot(s: SessionState, item: Loot): boolean {
   const party = s.quest?.party;
@@ -650,13 +688,10 @@ export function canUseLoot(s: SessionState, item: Loot): boolean {
       return party.hearts < party.max;
     case "die":
       // A lost fight's result is on the card: roll it again.
-      return (
-        s.phase === "revealed" &&
-        !!card.battle &&
-        !!card.dice &&
-        !!s.roll?.returned &&
-        !rollWins(card.dice, s.roll.values, s.roll)
-      );
+      return lostRoll(s, card);
+    case "round":
+      // Its drinks go to someone else, once.
+      return lostRoll(s, card) && party.passed !== s.discarded;
     case "smoke":
       // Slip past a room fight before it starts; a boss blocks the stairs.
       return (
@@ -700,6 +735,14 @@ export function spendLoot(
         ...used,
         quest: { ...used.quest, party: evolve(used.quest.party!, used.quest) },
       };
+    case "round":
+      return {
+        ...used,
+        quest: {
+          ...used.quest,
+          party: { ...used.quest.party!, passed: s.discarded },
+        },
+      };
     default:
       return s;
   }
@@ -740,11 +783,15 @@ function gainBoon(
   party: PartyState,
   card: CardDefinition,
   quest: QuestState,
+  spoil?: number,
 ): PartyState {
-  if (!card.boon || party.boons?.includes(card.id)) return party;
-  const { hearts = 0, loot = [] } = card.boon.effect;
+  const boon = spoil === undefined ? card.boon : card.spoils?.[spoil];
+  const key = spoil === undefined ? card.id : `${card.id}#${spoil}`;
+  if (!boon || party.boons?.some((k) => k.split("#")[0] === card.id))
+    return party;
+  const { hearts = 0, loot = [] } = boon.effect;
   const max = Math.max(1, party.max + hearts);
-  const next = { ...party, max, boons: [...(party.boons ?? []), card.id] };
+  const next = { ...party, max, boons: [...(party.boons ?? []), key] };
   const size = satchelSize({ ...quest, party: next });
   return {
     ...next,
@@ -771,6 +818,7 @@ function settleParty(
   outcome: Outcome | null,
   quest: QuestState,
   nat: 20 | 1 | null = null,
+  spoil?: number,
 ): PartyState {
   const omen = omenEffect(quest);
   const size = satchelSize(quest);
@@ -817,13 +865,14 @@ function settleParty(
     next = { ...next, cup: next.cup + 1 };
   // A boss's or an ambush's boon comes when it falls (`discard`).
   if (!card.hits && (outcome === null || outcome === "won"))
-    next = gainBoon(next, card, quest);
+    next = gainBoon(next, card, quest, spoil);
   return next;
 }
 function discard(
   s: SessionState,
   random: Random,
   verdict?: Outcome,
+  spoil?: number,
 ): SessionState {
   const history = { previousRoll: s.roll, roll: null };
   const card = currentCard(s);
@@ -843,7 +892,7 @@ function discard(
   if (s.quest?.due && party) {
     const q = s.quest;
     const nat = natural(card, s.roll);
-    let next = settleParty(party, card, outcome, q, nat);
+    let next = settleParty(party, card, outcome, q, nat, spoil);
     // A Revive in the satchel saves the run once: back at half the maximum.
     const revive = next.curse === "hex" ? -1 : next.loot.indexOf("revive");
     if (next.hearts === 0 && revive >= 0)
@@ -895,7 +944,7 @@ function discard(
         delete next.jinx;
         delete next.quaffed;
       }
-      next = gainBoon(next, card, q);
+      next = gainBoon(next, card, q, spoil);
       // A badge restocks the starter's item, room permitting; in a crawl
       // without badges (Pub Crawl), any boss does.
       const restock = omenEffect(q)?.restock;

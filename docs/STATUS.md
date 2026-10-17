@@ -2,6 +2,17 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Choose your spoils and the Bar Tab (2026-10-17; pushed to `main`)
+
+- **Spoils.** All 38 bosses and elites now offer two trinkets when they fall: their signature and a contrasting alternative, such as the Hydra Tooth (+2 to boss rolls) or the Hydra Scale (+2 max hearts).
+  - The table picks on a plaque, which puts the card aside.
+  - Engine: `card.spoils`, `awaitingSpoils`, `takeSpoils`, and boons kept as `id#index`. Saves validate the index and allow one pick per card.
+- **Bar Tab** (League: Baton Pass, `round` loot): passes a lost fight's drinks to someone else, once per draw (`party.passed`). A banner says "Point at someone".
+- **Balance:** won 30.9%. Every adventurer, omen and route is in band; the Plus-One is 7%.
+- **Verification:**
+  - `npm test`: 225 passed. Lint, typecheck and build passed (runtime 3,761 KiB).
+  - Chromium `crawl.spec.ts` and `quest.spec.ts`: 32 passed. New tests cover the spoils plaques (a stray tap does nothing) and the Bar Tab.
+
 ## Table-rule pass (2026-10-17, owner request; pushed to `main`)
 
 **Owner direction.** Jinxes and table-behaviour rules are welcome "within reason": no props (Squirtle's sunglasses were cut because a bar may have none), and no work without a payoff or a laugh (the Pikachu naming rule). This also applies to the League.

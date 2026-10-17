@@ -244,6 +244,7 @@ function App() {
               onSpend={(item) => controller.spend(item)}
               onOffer={(index, branch) => controller.offer(index, branch)}
               onQuaff={() => controller.quaff()}
+              onSpoils={(index) => controller.spoils(index)}
               onRevealRoll={() => controller.revealRoll()}
               onFinish={finish}
             />

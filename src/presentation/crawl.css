@@ -969,3 +969,20 @@
   font: 600 15px/1.2 var(--font-tavern);
   opacity: 0.9;
 }
+/* A won fight's spoils: two trinkets, green like the trinket seal, with
+   the power under the name. */
+.offer-plaque.spoils-plaque,
+.spoils-plaque {
+  gap: max(3px, 0.8cqw);
+  padding: 2px 6px;
+  color: #effff8;
+  background: linear-gradient(145deg, #2f8a6c, #14473a);
+}
+.spoils-plaque .offer-label {
+  font-size: clamp(13px, 4.2cqw, max(19px, 4cqw));
+}
+.spoils-plaque .offer-price {
+  font-family: var(--font-tavern);
+  font-size: 0.72em;
+  line-height: 1.1;
+}

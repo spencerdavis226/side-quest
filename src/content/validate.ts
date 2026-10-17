@@ -165,6 +165,32 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         typeof c.boon.effect !== "object")
     )
       fail(`Invalid boon: ${c.id}`);
+    // Spoils: two or three boons offered by a dice fight when it is won.
+    const goodBoon = (b: unknown) => {
+      const boon = b as { name?: unknown; rules?: unknown; effect?: unknown };
+      return (
+        !!boon &&
+        typeof boon.name === "string" &&
+        !!boon.name.trim() &&
+        boon.name.length <= 24 &&
+        typeof boon.rules === "string" &&
+        !!boon.rules.trim() &&
+        !!boon.effect &&
+        typeof boon.effect === "object"
+      );
+    };
+    if (
+      c.spoils !== undefined &&
+      (!Array.isArray(c.spoils) ||
+        c.spoils.length < 2 ||
+        c.spoils.length > 3 ||
+        !c.battle ||
+        !c.dice ||
+        c.boon !== undefined ||
+        c.omen !== undefined ||
+        !c.spoils.every(goodBoon))
+    )
+      fail(`Invalid spoils: ${c.id}`);
     if (
       c.jinx !== undefined &&
       (!c.jinx ||
@@ -180,7 +206,11 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
       ...(c.omen !== undefined ? [c.omen] : []),
       ...(Array.isArray(c.evolves) ? c.evolves.map((e) => e.omen) : []),
     ];
-    for (const o of [...omens, ...(c.boon ? [c.boon.effect] : [])]) {
+    for (const o of [
+      ...omens,
+      ...(c.boon ? [c.boon.effect] : []),
+      ...(Array.isArray(c.spoils) ? c.spoils.map((b) => b?.effect) : []),
+    ]) {
       const step = (n: unknown, lo: number, hi: number) =>
         n === undefined ||
         (Number.isSafeInteger(n) && (n as number) >= lo && (n as number) <= hi);

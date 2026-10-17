@@ -145,12 +145,21 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
     (p.boons !== undefined &&
       (!Array.isArray(p.boons) ||
         new Set(p.boons).size !== p.boons.length ||
-        p.boons.some(
-          (id) =>
-            typeof id !== "string" ||
-            !dealt.includes(id) ||
-            !finaleCard(s.quest!, id)?.boon,
-        ))) ||
+        p.boons.some((key) => {
+          if (typeof key !== "string") return true;
+          // A spoil is kept as "<card id>#<index>".
+          const [id, pick, extra] = key.split("#");
+          const card = dealt.includes(id) ? finaleCard(s.quest!, id) : null;
+          return (
+            !card ||
+            extra !== undefined ||
+            (pick === undefined
+              ? !card.boon
+              : !/^\d$/.test(pick) || !card.spoils?.[Number(pick)])
+          );
+        }) ||
+        new Set(p.boons.map((k) => k.split("#")[0])).size !==
+          p.boons.length)) ||
     (p.jinx !== undefined &&
       (typeof p.jinx !== "string" ||
         !dealt.includes(p.jinx) ||
@@ -159,6 +168,8 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
     (p.quaffed !== undefined &&
       (p.quaffed !== true || p.quaff === undefined)) ||
     (p.cup !== undefined && !whole(p.cup, 0)) ||
+    (p.passed !== undefined &&
+      (!whole(p.passed, 0) || p.passed > s.discarded)) ||
     // The starter's form: a later form it has, once the omen is set.
     (p.form !== undefined &&
       (!whole(p.form, 1) ||

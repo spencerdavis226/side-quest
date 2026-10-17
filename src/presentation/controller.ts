@@ -9,7 +9,9 @@ import {
   quaff,
   spendLoot,
   awaitingOffer,
+  awaitingSpoils,
   takeOffer,
+  takeSpoils,
   type Random,
 } from "../game/engine";
 import type { Loot, SessionState } from "../game/types";
@@ -180,6 +182,16 @@ export class PresentationController {
       this.transition(next, null);
       this.effect("press");
     }
+  }
+  /** Take one of a won fight's spoils; the card goes aside. */
+  spoils(index: number) {
+    const { session, motion } = this.state;
+    if (!session || motion || !awaitingSpoils(session)) return;
+    const next = takeSpoils(session, index, this.random);
+    if (next === session) return;
+    this.persist(next);
+    this.transition(next, "discard", session);
+    this.effect("discard");
   }
   /** Quaff: the drawer drinks for another go at a lost roll, which clears
    * it so the card can be rolled again. */

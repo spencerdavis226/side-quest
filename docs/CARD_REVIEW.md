@@ -1244,7 +1244,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | The Offering Bowl | `dungeon.offering-bowl` | sip | A bowl of coins left for the dead, and a draught nobody touched. Take it. Drink 1. |  |
 | ☐ | The Grave Robber | `dungeon.grave-robber` | sip | A grave robber with a cart of stolen goods and no questions asked. Prices are firm. |  |
 | ☐ | The Undertaker | `dungeon.the-undertaker` | sip | He measures you for a coffin while he sells you things. He's very thorough. |  |
-| ☐ | Flushed Purse | `dungeon.flushed-purse` | sip | A purse dropped down a toilet, somehow dry: lipstick, a lighter, a smoke bomb. Drink 1. |  |
+| ☐ | Flushed Purse | `dungeon.flushed-purse` | sip | A purse dropped down a toilet, somehow dry: lipstick, a lighter, an open bar tab. Drink 1. |  |
 | ☐ | Maintenance Locker | `dungeon.maintenance-locker` | sip | A hard hat and a thermos of something brown. Wear one, drink from the other. Drink 1. |  |
 | ☐ | The Mole Man | `dungeon.mole-man` | sip | A man who lives down here sells whatever washes past. He takes drinks, or blood. |  |
 | ☐ | The Rat Pharmacist | `dungeon.rat-pharmacist` | sip | A rat in a white coat with a briefcase of pills, potions and one very old book. |  |

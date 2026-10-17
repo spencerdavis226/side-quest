@@ -302,9 +302,12 @@ export const trinket = (name: string, effect: OmenEffect) => ({
   effect,
 });
 export type Trinket = ReturnType<typeof trinket>;
+/** What a boss or an elite offers when it falls: its signature trinket and
+ * an alternative, and the table picks one. */
+export type Spoils = [signature: Trinket, alternative: Trinket];
 
 /** A boss: dealt again, to the next drawer, until it has been beaten
- * `hits` times, then it drops its trinket. Last Call's bosses close both
+ * `hits` times, then it offers its spoils. Last Call's bosses close both
  * third floors and drop nothing. A boss's curse lands on a missed swing
  * and lifts when it falls. */
 export const boss = (
@@ -313,7 +316,7 @@ export const boss = (
   title: string,
   rules: string,
   dice: DiceDefinition,
-  more: { curse?: Curse; jinx?: Jinx; drops?: Trinket } = {},
+  more: { curse?: Curse; jinx?: Jinx; drops?: Spoils } = {},
 ): CardDefinition => ({
   ...card(id, title, "challenge", rules, dice),
   ribbon: tier(floor) === 2 ? "Last Call · Boss" : `${FLOORS[floor]} · Boss`,
@@ -324,12 +327,12 @@ export const boss = (
   damage: BOSS_HURT[tier(floor)],
   ...(more.curse ? { curse: more.curse } : {}),
   ...(more.jinx ? { jinx: more.jinx } : {}),
-  ...(more.drops ? { boon: more.drops } : {}),
+  ...(more.drops ? { spoils: more.drops } : {}),
 });
 
 /** An elite: dealt only behind a fork's loud door in Pub Crawl (and as an
- * ordinary fight in the plain modes). Harder, dearer, and a win drops its
- * trinket. */
+ * ordinary fight in the plain modes). Harder, dearer, and a win offers its
+ * spoils. */
 export const elite = (
   floor: Floor,
   id: string,
@@ -337,7 +340,7 @@ export const elite = (
   rules: string,
   lose: string,
   win: string,
-  drops: Trinket,
+  drops: Spoils,
   extra: { crit?: string; fumble?: string; roll?: Roll } = {},
 ): CardDefinition => {
   const need = ELITE_NEED[tier(floor)];
@@ -352,7 +355,7 @@ export const elite = (
     ),
     battle: true,
     damage: ELITE_HURT[tier(floor)],
-    boon: drops,
+    spoils: drops,
   };
 };
 

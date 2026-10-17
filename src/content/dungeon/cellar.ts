@@ -275,7 +275,7 @@ export const cellar: FloorCards = {
       "The Old Regular",
       "He's been down here since the cellar was a bar. He'll trade a story for a story.",
       [
-        { label: "Tell one · drink 2", loot: "smoke" },
+        { label: "Tell one · drink 2", loot: "round" },
         { label: "Bleed for it", cost: 2, loot: "candy" },
         { label: "Walk on" },
       ],
@@ -302,7 +302,10 @@ export const cellar: FloorCards = {
       "The grease trap has been fed fries for twenty years. Now it's hungry. Roll d20.",
       "It slurps you in. Drink 4, then wash your hands in shame.",
       "You seal the lid. Something shiny's stuck to it. Give 4.",
-      trinket("Grease-Proof Apron", { hurt: { trap: -1 } }),
+      [
+        trinket("Grease-Proof Apron", { hurt: { trap: -1 } }),
+        trinket("Deep-Fried Snack", { heal: 1 }),
+      ],
     ),
     elite(
       0,
@@ -311,7 +314,10 @@ export const cellar: FloorCards = {
       "Clipboard, hairnet, no soul. He's here to shut the cellar down. Roll d20.",
       "Violation. Drink 4 and name three things wrong with this room.",
       "You bribe him with a keg. He leaves his lucky pen. Give 4.",
-      trinket("Inspector's Pen", { roll: { trap: 2 } }),
+      [
+        trinket("Inspector's Pen", { roll: { trap: 2 } }),
+        trinket("Hairnet", { hearts: 1 }),
+      ],
     ),
     elite(
       0,
@@ -320,7 +326,13 @@ export const cellar: FloorCards = {
       "Every keg in the rack opens one eye. The big one in the middle opens two. Roll d20.",
       "The whole rack bites. Drink 4.",
       "You tap the queen. The rack goes quiet. Give 4.",
-      trinket("Queen's Tap", { hearts: 1, heal: 1 }),
+      [
+        trinket("Queen's Tap", { hearts: 1, heal: 1 }),
+        trinket("Royal Jelly Shot", {
+          roll: { monster: 1 },
+          loot: ["draught"],
+        }),
+      ],
     ),
   ],
   bosses: [
@@ -335,7 +347,12 @@ export const cellar: FloorCards = {
         "You pull its plug. Give 5.",
         { crit: "You drink it dry. Everyone else drinks 3." },
       ),
-      { drops: trinket("Golem's Spigot", { hearts: 2 }) },
+      {
+        drops: [
+          trinket("Golem's Spigot", { hearts: 2 }),
+          trinket("Keg Plug", { roll: { boss: 1 }, loot: ["shield"] }),
+        ],
+      },
     ),
     boss(
       0,
@@ -353,7 +370,10 @@ export const cellar: FloorCards = {
           name: "Royal Decree",
           rule: "Everyone calls the jinxed player Your Majesty. Slip: drink 1.",
         },
-        drops: trinket("Crown of Tails", { satchel: 4 }),
+        drops: [
+          trinket("Crown of Tails", { satchel: 4 }),
+          trinket("Rat Tooth", { roll: { monster: 2 } }),
+        ],
       },
     ),
     boss(
@@ -369,7 +389,10 @@ export const cellar: FloorCards = {
       ),
       {
         curse: "hex",
-        drops: trinket("The Master Key", { roll: { relic: 3 } }),
+        drops: [
+          trinket("The Master Key", { roll: { relic: 3 } }),
+          trinket("Eviction Notice", { hurt: { monster: -1 } }),
+        ],
       },
     ),
     boss(
@@ -383,7 +406,12 @@ export const cellar: FloorCards = {
         "You eat through the armor. Give 5.",
         { crit: "You eat the armor and the rat. Everyone else drinks 3." },
       ),
-      { drops: trinket("Lucky Rind", { crit: 19 }) },
+      {
+        drops: [
+          trinket("Lucky Rind", { crit: 19 }),
+          trinket("Cheese Wheel", { hearts: 2 }),
+        ],
+      },
     ),
     boss(
       0,
@@ -398,7 +426,10 @@ export const cellar: FloorCards = {
       ),
       {
         curse: "bleed",
-        drops: trinket("Organ Stop", { hurt: { monster: -1 } }),
+        drops: [
+          trinket("Organ Stop", { hurt: { monster: -1 } }),
+          trinket("Pipe Whistle", { roll: { ambush: 2 }, loot: ["smoke"] }),
+        ],
       },
     ),
   ],

@@ -33,6 +33,8 @@ export interface CrawlTheme {
   /** The card plaques for an item used on the card in play. */
   flee: string;
   reroll: string;
+  /** The plaque that passes a lost fight's drinks on (`round`). */
+  pass: string;
   /** Drink the draught from the satchel dialog. */
   drink: string;
   /** Use the candy from the satchel dialog. */
@@ -130,6 +132,10 @@ const dungeon: CrawlTheme = {
       does: "When the hearts run out: back to half",
     },
     candy: { name: "Dog-Eared Tome", does: "Your adventurer levels up now" },
+    round: {
+      name: "Bar Tab",
+      does: "A lost fight's drinks go to someone else",
+    },
   },
   curses: {
     bleed: { name: "Bleeding", does: "Every heart loss costs one more" },
@@ -137,6 +143,7 @@ const dungeon: CrawlTheme = {
   },
   flee: "Flee",
   reroll: "Reroll",
+  pass: "Pass it",
   eat: "Read",
   drink: "Drink",
   omenWords: dungeonOmenWords,
@@ -228,6 +235,10 @@ const league: CrawlTheme = {
       does: "When Team HP runs out: back to half instead",
     },
     candy: { name: "Rare Candy", does: "Your starter evolves now" },
+    round: {
+      name: "Baton Pass",
+      does: "A lost battle's drinks go to someone else",
+    },
   },
   curses: {
     bleed: { name: "Poisoned", does: "Every HP loss costs one more" },
@@ -235,6 +246,7 @@ const league: CrawlTheme = {
   },
   flee: "Escape",
   reroll: "Reroll",
+  pass: "Pass it",
   drink: "Use",
   eat: "Use",
   omenWords: leagueOmenWords,
@@ -248,6 +260,7 @@ const league: CrawlTheme = {
       smoke: "escape-rope",
       revive: "revive",
       candy: "rare-candy",
+      round: "baton-pass",
       bleed: "poison",
       hex: "confused",
       boss: "badge",

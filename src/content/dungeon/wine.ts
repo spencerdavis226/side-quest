@@ -261,7 +261,7 @@ export const wine: FloorCards = {
       "The Cellar Cat",
       "A cat in a sommelier's chain trades mouse-bitten goods. It takes drinks, or blood.",
       [
-        { label: "Drink 3", loot: "smoke" },
+        { label: "Drink 3", loot: "round" },
         { label: "Bleed for it", cost: 1, loot: "shield" },
         { label: "Walk on" },
       ],
@@ -300,7 +300,10 @@ export const wine: FloorCards = {
       "He swirls, he sniffs, he says you'd like something approachable. Roll d20.",
       "Approachable. Drink 4, and say it's 'fun'.",
       "You pour his '82 into a Solo cup. Give 4.",
-      trinket("Solo Cup of the '82", { roll: { boss: 1 } }),
+      [
+        trinket("Solo Cup of the '82", { roll: { boss: 1 } }),
+        trinket("Snob's Corkscrew", { heal: 1 }),
+      ],
     ),
     elite(
       3,
@@ -309,7 +312,10 @@ export const wine: FloorCards = {
       "Two tons of grapes, stomped into rage. Roll d20.",
       "Stomped. Drink 4, then stomp your feet for 5 seconds.",
       "Raisin. Give 4.",
-      trinket("Raisin Heart", { hearts: 2, hurt: { trap: 1 } }),
+      [
+        trinket("Raisin Heart", { hearts: 2, hurt: { trap: 1 } }),
+        trinket("Grape Stomp", { roll: { monster: 1, ambush: 1 } }),
+      ],
     ),
     elite(
       3,
@@ -318,7 +324,10 @@ export const wine: FloorCards = {
       "He knows every bottle, and you broke one. Roll d20.",
       "He makes you sweep. Drink 4.",
       "You blame the cat. He believes you. Give 4.",
-      trinket("Cellar Master's Keys", { satchel: 4, loot: ["shield"] }),
+      [
+        trinket("Cellar Master's Keys", { satchel: 4, loot: ["shield"] }),
+        trinket("Master's Ledger", { crit: 19 }),
+      ],
     ),
   ],
   bosses: [
@@ -333,7 +342,13 @@ export const wine: FloorCards = {
         "A stake through the cork. Give 5.",
         { crit: "Sunlight. Everyone else drinks 3." },
       ),
-      { curse: "bleed", drops: trinket("Corkula's Cape", { heal: 1 }) },
+      {
+        curse: "bleed",
+        drops: [
+          trinket("Corkula's Cape", { heal: 1 }),
+          trinket("Corkula's Fang", { roll: { boss: 2 } }),
+        ],
+      },
     ),
     boss(
       3,
@@ -351,7 +366,10 @@ export const wine: FloorCards = {
           name: "Curtsy Court",
           rule: "The jinxed player curtsies before every drink. Forget: drink 1.",
         },
-        drops: trinket("Barrel Crown", { hearts: 1, satchel: 4 }),
+        drops: [
+          trinket("Barrel Crown", { hearts: 1, satchel: 4 }),
+          trinket("Queen's Scepter", { roll: { elite: 2, boss: 1 } }),
+        ],
       },
     ),
     boss(
@@ -365,7 +383,12 @@ export const wine: FloorCards = {
         "You hand him a White Claw. He dissolves. Give 5.",
         { crit: "He dissolves into a nice rosé. Everyone else drinks 3." },
       ),
-      { drops: trinket("The Beret", { roll: { monster: 1, trap: 1 } }) },
+      {
+        drops: [
+          trinket("The Beret", { roll: { monster: 1, trap: 1 } }),
+          trinket("Château Reserve", { hearts: 2 }),
+        ],
+      },
     ),
     boss(
       3,
@@ -378,7 +401,12 @@ export const wine: FloorCards = {
         "He calls your boxed wine a Bordeaux. Give 5.",
         { fumble: "He spits your drink back in your glass. Drink 7." },
       ),
-      { drops: trinket("Tastevin", { roll: { elite: 1, boss: 1 } }) },
+      {
+        drops: [
+          trinket("Tastevin", { roll: { elite: 1, boss: 1 } }),
+          trinket("Spit Bucket", { hurt: { boss: -1 } }),
+        ],
+      },
     ),
     boss(
       3,
@@ -393,7 +421,10 @@ export const wine: FloorCards = {
       ),
       {
         curse: "hex",
-        drops: trinket("Bung Mallet", { loot: ["die", "draught"] }),
+        drops: [
+          trinket("Bung Mallet", { loot: ["die", "draught"] }),
+          trinket("Barrel Stave", { hearts: 1, hurt: { trap: -1 } }),
+        ],
       },
     ),
   ],

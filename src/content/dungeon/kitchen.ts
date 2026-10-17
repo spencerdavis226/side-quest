@@ -275,7 +275,7 @@ export const kitchen: FloorCards = {
       "The Sous Chef",
       "The sous chef is selling the head chef's stash, quietly, out the back.",
       [
-        { label: "Drink 5", loot: "die" },
+        { label: "Drink 5", loot: "round" },
         { label: "Bleed for it", cost: 2, loot: "revive" },
         { label: "Walk on" },
       ],
@@ -303,7 +303,10 @@ export const kitchen: FloorCards = {
       "He's thrown a pan at everyone tonight. You're next. Roll d20.",
       "The pan. Drink 6.",
       "You say 'Heard, chef.' He's moved, and hands you his lucky knife. Give 6.",
-      trinket("Chef's Lucky Knife", { roll: { monster: 2 } }),
+      [
+        trinket("Chef's Lucky Knife", { roll: { monster: 2 } }),
+        trinket("Chef's Whites", { hearts: 2 }),
+      ],
     ),
     elite(
       5,
@@ -312,7 +315,10 @@ export const kitchen: FloorCards = {
       "The butcher is sharpening, and sharpening, and sharpening. Roll d20.",
       "Filleted. Drink 6.",
       "You take his apron. It's basically armor. Give 6.",
-      trinket("Butcher's Apron", { hearts: 2, hurt: { boss: -1 } }),
+      [
+        trinket("Butcher's Apron", { hearts: 2, hurt: { boss: -1 } }),
+        trinket("Cleaver", { roll: { boss: 2 } }),
+      ],
     ),
     elite(
       5,
@@ -321,10 +327,13 @@ export const kitchen: FloorCards = {
       "He's back from his third divorce and he's doing the books tonight. Roll d20.",
       "He blames you for the books. Drink 6.",
       "You find the money. He makes you a partner. Give 6.",
-      trinket("Partner's Keyring", {
-        satchel: 4,
-        loot: ["draught", "draught"],
-      }),
+      [
+        trinket("Partner's Keyring", {
+          satchel: 4,
+          loot: ["draught", "draught"],
+        }),
+        trinket("Owner's Comp Card", { heal: 1, roll: { ambush: 1 } }),
+      ],
     ),
   ],
   bosses: [],

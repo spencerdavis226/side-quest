@@ -12,6 +12,7 @@ import { diceNotation } from "../game/dice";
 import {
   awaitingChoice,
   awaitingOffer,
+  awaitingSpoils,
   awaitingVerdict,
   canQuaff,
   canTakeOffer,
@@ -32,6 +33,7 @@ import {
   LootPlaque,
   OfferPlaque,
   QuaffPlaque,
+  SpoilsPlaque,
   usableItems,
 } from "../components/Crawl";
 import { crawlTheme } from "../components/crawlTheme";
@@ -47,6 +49,7 @@ export function Play({
   onSpend = () => {},
   onOffer = () => {},
   onQuaff = () => {},
+  onSpoils = () => {},
   onRevealRoll,
   onFinish,
   renderFace,
@@ -62,6 +65,7 @@ export function Play({
   onSpend?: (item: Loot) => void;
   onOffer?: (index: number, branch?: number) => void;
   onQuaff?: () => void;
+  onSpoils?: (index: number) => void;
   onRevealRoll: () => void;
   onFinish: (id: number) => void;
   renderFace?: (card: CardDefinition) => ReactNode;
@@ -81,6 +85,8 @@ export function Play({
   // a loaded die after a lost roll. They join the card's own plaques.
   const items =
     !motion && session.phase === "revealed" ? usableItems(session) : [];
+  // A won boss or elite: its spoils, one plaque each.
+  const spoils = !motion && awaitingSpoils(session) ? card.spoils! : null;
   // Pub Crawl's Quaff: drinks for another go at a lost roll.
   const quaffable = !motion && canQuaff(session);
   const extras = items.length + (quaffable ? 1 : 0);
@@ -194,7 +200,7 @@ export function Play({
             : ""}
         </span>
         <div
-          className={`card-stage ${motion ?? ""} ${choice || verdict || offers || acting || extras ? "choosing" : ""}`}
+          className={`card-stage ${motion ?? ""} ${choice || verdict || offers || spoils || acting || extras ? "choosing" : ""}`}
         >
           <div className="deck-under" aria-hidden="true" />
           <button
@@ -206,7 +212,7 @@ export function Play({
                 !!session.roll &&
                 !session.roll.returned &&
                 motion !== "roll";
-              if (choice || verdict || offers || blocked) {
+              if (choice || verdict || offers || spoils || blocked) {
                 // Point at the plaques instead of acting on a stray tap.
                 if (!matchMedia("(prefers-reduced-motion: reduce)").matches)
                   choiceRef.current?.animate(
@@ -223,6 +229,7 @@ export function Play({
               !!choice ||
               verdict ||
               !!offers ||
+              !!spoils ||
               blocked ||
               (!!motion && motion !== "roll") ||
               (!!card.dice &&
@@ -239,22 +246,24 @@ export function Play({
                     ? `${card.title}. ${card.rules} Choose Won or Lost.`
                     : offers
                       ? `${card.title}. ${card.rules} Choose ${offers.map((o) => o.label).join(", or ")}.`
-                      : blocked
-                        ? `${card.title}. ${card.rules} ${card.timer!.kind === "fuse" ? "Light the fuse" : "Start the clock"}, or skip it.`
-                        : actions.shown === "end"
-                          ? `${card.title}. ${card.timer!.end} Tap to put this card aside.`
-                          : card.dice && !session.roll?.returned
-                            ? session.roll
-                              ? motion === "roll"
-                                ? "Finish dice roll"
-                                : "Revealing dice result"
-                              : `Roll ${diceNotation(card.dice)}. ${card.rules}`
-                            : `${card.title}. ${session.roll?.returned ? `Rolled ${session.roll.total}. ${diceResultText(card, session.roll)}` : card.rules} ${cardPacks(
-                                card.id,
-                                session.config.packIds,
-                              )
-                                .map((pack) => pack.title)
-                                .join(", ")}. Tap to put this card aside.`
+                      : spoils
+                        ? `${card.title}. ${diceResultText(card, session.roll!)} Take a trinket: ${spoils.map((b) => b.name).join(", or ")}.`
+                        : blocked
+                          ? `${card.title}. ${card.rules} ${card.timer!.kind === "fuse" ? "Light the fuse" : "Start the clock"}, or skip it.`
+                          : actions.shown === "end"
+                            ? `${card.title}. ${card.timer!.end} Tap to put this card aside.`
+                            : card.dice && !session.roll?.returned
+                              ? session.roll
+                                ? motion === "roll"
+                                  ? "Finish dice roll"
+                                  : "Revealing dice result"
+                                : `Roll ${diceNotation(card.dice)}. ${card.rules}`
+                              : `${card.title}. ${session.roll?.returned ? `Rolled ${session.roll.total}. ${diceResultText(card, session.roll)}` : card.rules} ${cardPacks(
+                                  card.id,
+                                  session.config.packIds,
+                                )
+                                  .map((pack) => pack.title)
+                                  .join(", ")}. Tap to put this card aside.`
             }
           >
             <span
@@ -342,7 +351,26 @@ export function Play({
               ))}
             </div>
           )}
-          {!verdict && !choice && !acting && extras > 0 && (
+          {spoils && (
+            <div
+              ref={choiceRef}
+              className={`card-choice offers spoils plaques-${spoils.length}`}
+              role="group"
+              aria-label="Take a trinket"
+            >
+              {spoils.map((boon, i) => (
+                <SpoilsPlaque
+                  key={boon.name}
+                  name={boon.name}
+                  rules={boon.rules}
+                  index={i}
+                  onTake={onSpoils}
+                  theme={crawl}
+                />
+              ))}
+            </div>
+          )}
+          {!verdict && !choice && !acting && !spoils && extras > 0 && (
             <div
               ref={choiceRef}
               className={`card-choice items plaques-${extras}`}

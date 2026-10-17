@@ -250,8 +250,13 @@ export function CardStakes({
 }) {
   const damage = card.battle && card.damage;
   const gain = card.reward?.loot ?? (card.reward?.heal ? "heal" : null);
-  // Tonight's omen is a boon too, but its card says so in words.
-  const trinket = card.encounter !== "omen" ? card.boon : undefined;
+  // Tonight's omen is a boon too, but its card says so in words; a boss or
+  // an elite offers its spoils.
+  const trinket = card.spoils?.length
+    ? card.spoils.map((b) => b.name).join(" or ")
+    : card.encounter !== "omen"
+      ? card.boon?.name
+      : undefined;
   const jinx = card.jinx;
   if (!damage && !gain && !card.curse && !hits && !trinket && !jinx)
     return null;
@@ -320,7 +325,7 @@ export function CardStakes({
         {trinket && (
           <span
             className="stake stake-trinket"
-            aria-label={`${hits > 1 ? "Felling it drops" : card.battle ? "Winning drops" : "Brings"} a trinket: ${trinket.name}`}
+            aria-label={`${hits > 1 ? "Felling it offers" : card.battle ? "Winning offers" : "Brings"} a trinket: ${trinket}`}
           >
             <b>+</b>
             <CrawlIcon name="trinket" theme={theme} />
@@ -406,7 +411,9 @@ export function OfferPlaque({
  * card's foot: a smoke bomb before a room fight, a loaded die after a lost
  * roll. The draught waits in the satchel (the meter). */
 export function usableItems(s: SessionState): Loot[] {
-  return (["smoke", "die"] as const).filter((item) => canUseLoot(s, item));
+  return (["smoke", "die", "round"] as const).filter((item) =>
+    canUseLoot(s, item),
+  );
 }
 export function LootPlaque({
   item,
@@ -424,7 +431,13 @@ export function LootPlaque({
       onClick={() => onUse(item)}
     >
       <CrawlIcon name={item} theme={theme} />
-      <span>{item === "smoke" ? theme.flee : theme.reroll}</span>
+      <span>
+        {item === "smoke"
+          ? theme.flee
+          : item === "round"
+            ? theme.pass
+            : theme.reroll}
+      </span>
     </button>
   );
 }
@@ -453,6 +466,39 @@ export function QuaffPlaque({
       <span>
         {theme.words.quaff}
         <small className="offer-price">drink {drinks}</small>
+      </span>
+    </button>
+  );
+}
+
+/** A won fight's spoils, one plaque each: the trinket's mark, its name and
+ * its power. Taking one puts the card aside. */
+export function SpoilsPlaque({
+  name,
+  rules,
+  index,
+  onTake,
+  theme,
+}: {
+  name: string;
+  rules: string;
+  index: number;
+  onTake: (index: number) => void;
+  theme: CrawlTheme;
+}) {
+  return (
+    <button
+      className="card-choice-option spoils-plaque"
+      style={{ animationDelay: `${index * 70}ms` }}
+      aria-label={`Take the ${name}: ${rules}`}
+      onClick={() => onTake(index)}
+    >
+      <span className="offer-goods" aria-hidden="true">
+        <CrawlIcon name="trinket" theme={theme} />
+      </span>
+      <span className="offer-label">
+        {name}
+        <small className="offer-price">{rules}</small>
       </span>
     </button>
   );
@@ -549,9 +595,9 @@ export function CrawlRecord({
       )}
       {record.boons.length > 0 && (
         <ul className="crawl-boons" aria-label={words.trinkets}>
-          {record.boons.map(({ card, boon }) => (
+          {record.boons.map(({ card, boon, key }) => (
             <li
-              key={card.id}
+              key={key}
               className={`crawl-omen ${card.encounter === "omen" ? "boon-omen" : "boon-trinket"}`}
             >
               <CrawlIcon

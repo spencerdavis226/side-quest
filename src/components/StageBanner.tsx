@@ -5,6 +5,7 @@ import {
   finaleStage,
   formEffect,
   omenForm,
+  partyBoons,
   questStages,
   wantedBoss,
 } from "../game/engine";
@@ -109,7 +110,8 @@ export function EvolutionBanner({ session }: { session: SessionState }) {
 }
 
 /** Pub Crawl's news, swept across the top third like an evolution: a
- * trinket found (its name and power), a jinx laid (its rule) or lifted.
+ * trinket found (its name and power), a jinx laid (its rule) or lifted, a
+ * lost fight's drinks passed on.
  * Shown once per change, never on a resumed game. Tonight's omen is a
  * boon too, but its own card has just said so. */
 export function PartyNewsBanner({ session }: { session: SessionState }) {
@@ -117,7 +119,8 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
   const party = quest?.party;
   const boons = party?.boons?.length ?? 0;
   const jinx = party?.jinx;
-  const seen = useRef({ boons, jinx });
+  const passed = party?.passed;
+  const seen = useRef({ boons, jinx, passed });
   const [shown, setShown] = useState<{
     key: string;
     kicker: string;
@@ -128,18 +131,30 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
   const words = crawlTheme(quest?.packId).words;
   useEffect(() => {
     const before = seen.current;
-    seen.current = { boons, jinx };
+    seen.current = { boons, jinx, passed };
     if (!quest || !party) return;
+    if (passed !== undefined && passed !== before.passed) {
+      const item = crawlTheme(quest.packId).loot.round;
+      setShown({
+        key: `passed-${passed}`,
+        kicker: item.name,
+        title: "Point at someone",
+        line: "This fight's drinks are theirs.",
+        tone: "violet",
+      });
+      return;
+    }
     if (boons > before.boons) {
-      const card = finaleCard(quest, party.boons![boons - 1]);
-      if (card?.boon && card.encounter !== "omen" && words.trinketFound) {
+      const found = partyBoons(quest).at(-1);
+      const card = found?.card;
+      if (found && card?.encounter !== "omen" && words.trinketFound) {
         // A boss that falls can lift a jinx in the same breath.
         const lifted = before.jinx && !jinx && words.jinx;
         setShown({
-          key: `boon-${card.id}`,
+          key: `boon-${found.key}`,
           kicker: words.trinketFound,
-          title: card.boon.name,
-          line: [card.boon.rules, lifted ? `${words.jinx!.lifted}.` : ""]
+          title: found.boon.name,
+          line: [found.boon.rules, lifted ? `${words.jinx!.lifted}.` : ""]
             .filter(Boolean)
             .join(" "),
           tone: "violet",
@@ -165,7 +180,7 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
         line: "",
         tone: "pearl",
       });
-  }, [boons, jinx, quest, party, words]);
+  }, [boons, jinx, passed, quest, party, words]);
   if (!shown) return null;
   return (
     <div

@@ -104,6 +104,11 @@ export interface CardDefinition {
    * elite drops. Boons stack with each other and with the adventurer's
    * omen (`party.boons`). */
   boon?: Boon;
+  /** Pub Crawl (2026-10-17): the trinkets a boss or an elite offers when it
+   * falls (two). The table picks one on the winning roll, and that pick
+   * puts the card aside (`takeSpoils`); it is kept as `<card id>#<index>`
+   * in `party.boons`. Never beside `boon`. */
+  spoils?: Boon[];
   /** Pub Crawl (2026-10-17): a spoken rule the table keeps until the
    * floor's boss falls, laid when the card is put aside (a battle only when
    * lost). The app shows it and lifts it; nobody has to remember. */
@@ -197,7 +202,9 @@ export interface OmenEffect {
  * `smoke`: escape a room fight before it starts (never a boss). `revive`
  * (2026-10-17): when the hearts run out, the party is back at half its
  * maximum instead, on its own. `candy` (2026-10-17): the starter evolves
- * now (never a branching one, which picks its form on an evolution card). */
+ * now (never a branching one, which picks its form on an evolution card).
+ * `round` (2026-10-17): on a lost roll, the drawer hands that fight's drinks
+ * to someone else; the party still loses the hearts. */
 export const LOOT = [
   "draught",
   "shield",
@@ -205,6 +212,8 @@ export const LOOT = [
   "smoke",
   "revive",
   "candy",
+  // A lost fight's drinks go to someone else (2026-10-17).
+  "round",
 ] as const;
 export type Loot = (typeof LOOT)[number];
 /** Pub Crawl curses, to the end of the floor. `bleed`: every heart loss
@@ -320,6 +329,9 @@ export interface PartyState {
   quaffed?: true;
   /** Splashes in the Cup, when the crawl keeps one: one per lost fight. */
   cup?: number;
+  /** The draw (`SessionState.discarded`) whose lost drinks were passed on
+   * with a `round`, so it is passed once. */
+  passed?: number;
 }
 export interface PackDefinition {
   version: 1;

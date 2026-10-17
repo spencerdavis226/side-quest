@@ -1184,7 +1184,7 @@ pack,id,title,category,rules,dice,review
 "dungeon","dungeon.offering-bowl","The Offering Bowl","sip","A bowl of coins left for the dead, and a draught nobody touched. Take it. Drink 1.","",""
 "dungeon","dungeon.grave-robber","The Grave Robber","sip","A grave robber with a cart of stolen goods and no questions asked. Prices are firm.","",""
 "dungeon","dungeon.the-undertaker","The Undertaker","sip","He measures you for a coffin while he sells you things. He's very thorough.","",""
-"dungeon","dungeon.flushed-purse","Flushed Purse","sip","A purse dropped down a toilet, somehow dry: lipstick, a lighter, a smoke bomb. Drink 1.","",""
+"dungeon","dungeon.flushed-purse","Flushed Purse","sip","A purse dropped down a toilet, somehow dry: lipstick, a lighter, an open bar tab. Drink 1.","",""
 "dungeon","dungeon.maintenance-locker","Maintenance Locker","sip","A hard hat and a thermos of something brown. Wear one, drink from the other. Drink 1.","",""
 "dungeon","dungeon.mole-man","The Mole Man","sip","A man who lives down here sells whatever washes past. He takes drinks, or blood.","",""
 "dungeon","dungeon.rat-pharmacist","The Rat Pharmacist","sip","A rat in a white coat with a briefcase of pills, potions and one very old book.","",""

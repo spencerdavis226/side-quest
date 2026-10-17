@@ -3,6 +3,7 @@ import {
   advance,
   awaitingChoice,
   awaitingOffer,
+  awaitingSpoils,
   awaitingVerdict,
   canQuaff,
   canTakeOffer,
@@ -23,6 +24,7 @@ import {
   spendLoot,
   stackEffects,
   takeOffer,
+  takeSpoils,
   wantedBoss,
   type Random,
 } from "../src/game/engine";
@@ -167,10 +169,10 @@ describe("Pub Crawl", () => {
     expect(at(STEP.closing)).toMatchObject({ encounter: "ambush", hits: 2 });
     for (const step of [STEP.landing1, STEP.landing2])
       expect(at(step).encounter).toBe("rest");
-    // The first two floors' bosses drop trinkets; Last Call drops nothing.
-    expect(at(STEP.boss1).boon).toBeDefined();
-    expect(at(STEP.boss2).boon).toBeDefined();
-    expect(at(STEP.lastCall).boon).toBeUndefined();
+    // The first two floors' bosses offer two trinkets; Last Call nothing.
+    expect(at(STEP.boss1).spoils).toHaveLength(2);
+    expect(at(STEP.boss2).spoils).toHaveLength(2);
+    expect(at(STEP.lastCall).spoils).toBeUndefined();
     roundTrip(s);
     expect(make(OTHER).quest!.stages.map((st) => st.label)).toEqual([
       "Your adventurer",
@@ -283,14 +285,22 @@ describe("Pub Crawl", () => {
     expect(party(s)).toMatchObject({ hits: 1, rounds: 1, curse: "hex" });
     expect(party(s).boons).toBeUndefined();
     roundTrip(s);
-    s = fight(s, 14); // and the other
+    s = fight(s, 14); // and the other: it falls, and offers its spoils
+    expect(awaitingSpoils(s)).toBe(true);
+    expect(advance(s)).toBe(s);
+    expect(currentCard(s).spoils!.map((b) => b.name)).toEqual([
+      "Hydra Tooth",
+      "Hydra Scale",
+    ]);
+    roundTrip(s);
+    s = takeSpoils(s, 0);
     expect(s.quest!.step).toBe(STEP.landing2);
     expect(finaleStage(s.quest!).label).toBe("The Lower Landing");
     expect(party(s)).toMatchObject({
       hits: 0,
       rounds: 1,
       curse: null,
-      boons: ["dungeon.hangover-hydra"],
+      boons: ["dungeon.hangover-hydra#0"],
     });
     expect(party(s).quaffed).toBeUndefined();
     // The Hydra Tooth: +2 to boss rolls from now on.
@@ -313,10 +323,12 @@ describe("Pub Crawl", () => {
     expect(party(fight(goblin, 20)).loot).toEqual(["smoke", "smoke"]);
     // A trinket comes once, natural or not.
     const s = takeOffer(advance(deal(start(), "dungeon.two-hatches")), 1);
-    expect(party(fight(s, 20)).boons).toEqual([currentCard(s).id]);
+    expect(party(takeSpoils(fight(s, 20), 0)).boons).toEqual([
+      `${currentCard(s).id}#0`,
+    ]);
     // A boss takes two swings from a natural 20.
     let b = deal(fromStep(start(), STEP.boss2), "dungeon.hangover-hydra");
-    b = fight(b, 20);
+    b = takeSpoils(fight(b, 20), 1);
     expect(b.quest!.step).toBe(STEP.landing2);
     expect(party(b)).toMatchObject({ hits: 0, rounds: 0 });
     roundTrip(b);
@@ -438,7 +450,7 @@ describe("Pub Crawl", () => {
     s = deal(s, "dungeon.rat-king");
     s = fight(s, 2);
     expect(party(s).jinx).toBe("dungeon.rat-king");
-    s = fight(s, 15);
+    s = takeSpoils(fight(s, 15), 0);
     expect(party(s).jinx).toBeUndefined();
     roundTrip(s);
   });
@@ -602,17 +614,82 @@ describe("Pub Crawl", () => {
       "dungeon.keg-mimic-queen",
     ]).toContain(elite.id);
     roundTrip(loud);
-    const won = fight(loud, 19);
-    expect(party(won).boons).toEqual([elite.id]);
+    const won = takeSpoils(fight(loud, 19), 1);
+    expect(party(won).boons).toEqual([`${elite.id}#1`]);
     expect(questRecord(won)!.boons.map((b) => b.boon.name)).toEqual([
-      elite.boon!.name,
+      elite.spoils![1].name,
     ]);
     roundTrip(won);
     // A lost elite drops nothing.
     expect(party(fight(loud, 2)).boons).toBeUndefined();
     // The Queen's Tap: a heart more, now and for good.
-    const queen = fight(deal(start(), "dungeon.keg-mimic-queen"), 19);
+    const queen = takeSpoils(
+      fight(deal(start(), "dungeon.keg-mimic-queen"), 19),
+      0,
+    );
     expect(party(queen)).toMatchObject({ hearts: H + 1, max: H + 1 });
+  });
+
+  it("a won fight's spoils wait for the table to pick one", () => {
+    // An elite is never a floor's first room: a fork comes before it.
+    let s = advance(
+      deal(fromStep(start(), STEP.floor1 + 1), "dungeon.keg-mimic-queen"),
+    );
+    // A lost elite offers nothing, and the table can't pick early.
+    expect(awaitingSpoils(rollTo(s, 2))).toBe(false);
+    expect(takeSpoils(s, 0)).toBe(s);
+    s = rollTo(s, 19);
+    expect(awaitingSpoils(s)).toBe(true);
+    expect(takeSpoils(s, 2)).toBe(s);
+    expect(takeSpoils(s, -1)).toBe(s);
+    const alt = takeSpoils(s, 1);
+    expect(party(alt)).toMatchObject({
+      boons: ["dungeon.keg-mimic-queen#1"],
+      loot: ["draught"],
+    });
+    expect(alt.quest!.step).toBe(STEP.floor1 + 2);
+    roundTrip(alt);
+    // A boss offers nothing until its last swing lands.
+    let b = advance(
+      deal(fromStep(start(), STEP.boss2), "dungeon.hangover-hydra"),
+    );
+    b = rollTo(b, 15);
+    expect(awaitingSpoils(b)).toBe(false);
+    // In the plain modes a won elite is just put aside.
+    const plain = createSession(
+      { version: 1, packIds: ["dungeon"], limit: 30 },
+      cards,
+      packs,
+      seeded(3),
+    );
+    const at = plain.order.indexOf("dungeon.keg-mimic-queen");
+    const p = {
+      ...plain,
+      order: [
+        "dungeon.keg-mimic-queen",
+        ...plain.order.filter((_, i) => i !== at),
+      ],
+    };
+    const won = advance(rollTo(advance(p), 19));
+    expect(won.discarded).toBe(1);
+  });
+
+  it("a Bar Tab passes a lost fight's drinks on, once; the hearts still go", () => {
+    let s = advance(deal(start(), "dungeon.gelatinous-shot"));
+    s.quest!.party!.loot = ["round", "round"];
+    expect(canUseLoot(s, "round")).toBe(false); // nothing lost yet
+    s = rollTo(s, 2);
+    expect(canUseLoot(s, "round")).toBe(true);
+    s = spendLoot(s, "round");
+    expect(party(s)).toMatchObject({ loot: ["round"], passed: s.discarded });
+    expect(canUseLoot(s, "round")).toBe(false); // once a fight
+    roundTrip(s);
+    s = advance(s);
+    expect(party(s).hearts).toBe(H - 1);
+    // A save can't pass a draw that hasn't happened.
+    const forged = structuredClone(s);
+    forged.quest!.party!.passed = forged.discarded + 1;
+    expect(() => parseSession(JSON.stringify(forged))).toThrow();
   });
 
   it("the wanted poster names the floor's boss", () => {
@@ -701,7 +778,10 @@ describe("Pub Crawl", () => {
 
   it("replay starts a fresh crawl, with a fresh Quaff and an empty Cup", () => {
     let s = fight(deal(start(), "dungeon.tab-goblin"), 1);
-    s = fight(deal(fromStep(s, STEP.boss1), "dungeon.keg-golem"), 15);
+    s = takeSpoils(
+      fight(deal(fromStep(s, STEP.boss1), "dungeon.keg-golem"), 15),
+      0,
+    );
     s.quest!.party!.quaffed = true;
     s = replaySession(s, seeded(9));
     expect(s.quest).toMatchObject({ due: true, step: 0, lost: 0 });
@@ -788,6 +868,21 @@ describe("Pub Crawl", () => {
       tamper((q) => (q.quest!.party!.jinx = q.quest!.finale[STEP.lastCall])),
     ).toThrow();
     expect(tamper((q) => (q.quest!.party!.cup = -1))).toThrow();
+    // A spoil the boss doesn't offer, or taken twice.
+    expect(
+      tamper(
+        (q) => (q.quest!.party!.boons = [`${q.quest!.finale[STEP.boss1]}#7`]),
+      ),
+    ).toThrow();
+    expect(
+      tamper(
+        (q) =>
+          (q.quest!.party!.boons = [
+            `${q.quest!.finale[STEP.boss1]}#0`,
+            `${q.quest!.finale[STEP.boss1]}#1`,
+          ]),
+      ),
+    ).toThrow();
     expect(tamper((q) => (q.quest!.party!.quaffed = false as never))).toThrow();
     expect(
       tamper((q) => {
@@ -901,6 +996,12 @@ function playRun(seed: number, adventurer?: string) {
         if (s.roll && canQuaff(s)) s = quaff(s);
         if (!s.roll) s = returnToCard(rollDice(s, random));
       }
+    }
+    // Spoils: the table picks either trinket, at random.
+    if (awaitingSpoils(s)) {
+      s = takeSpoils(s, random() < 0.5 ? 0 : 1, random);
+      if (party(s).hearts <= 3) use("draught");
+      continue;
     }
     s = advance(s, random);
     if (party(s).hearts <= 3) use("draught");

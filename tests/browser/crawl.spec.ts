@@ -197,6 +197,28 @@ test("@release the Quaff rerolls a lost fight for drinks, once until a boss fall
   await expect(page.getByRole("button", { name: /^Quaff/ })).toHaveCount(0);
 });
 
+test("a Bar Tab passes a lost fight's drinks to someone else", async ({
+  page,
+}, info) => {
+  await seed(
+    page,
+    rolled(
+      reveal(crawlAt("dungeon.ex-wraith", STEP.floor2, { loot: ["round"] })),
+      2,
+    ),
+  );
+  const pass = page.getByRole("button", { name: /^Use the Bar Tab/ });
+  await expect(pass).toHaveText("Pass it");
+  await page.screenshot({ path: info.outputPath("bar-tab.png") });
+  await pass.click();
+  await expect(page.locator(".news-banner")).toHaveText(
+    /Bar Tab\s*Point at someone\s*This fight's drinks are theirs\./,
+  );
+  await expect(pass).toHaveCount(0);
+  const s = await saved(page);
+  expect(s.quest.party).toMatchObject({ loot: [], passed: STEP.floor2 });
+});
+
 test("@release a trial is settled with plaques; a loss costs hearts and pours into the Cup", async ({
   page,
 }, info) => {
@@ -228,12 +250,21 @@ test("a boss shows its wounds, its trinket, and comes back until it falls", asyn
     "Catacombs · Boss",
   );
   await expect(page.locator(".game-card .stake-trinket")).toHaveAccessibleName(
-    "Felling it drops a trinket: Hydra Tooth",
+    "Felling it offers a trinket: Hydra Tooth or Hydra Scale",
   );
   await page.screenshot({ path: info.outputPath("boss.png") });
-  // The last swing lands: the trinket sweeps in, then the landing.
+  // The last swing lands: the table picks a trinket, and it sweeps in.
   await seed(page, rolled(s, 18));
-  await page.locator(".game-card").click();
+  const spoils = page.locator(".card-choice.spoils .card-choice-option");
+  await expect(spoils).toHaveCount(2);
+  await expect(spoils.nth(1)).toHaveAccessibleName(
+    "Take the Hydra Scale: +2 max hearts.",
+  );
+  // A stray tap on the card does nothing; the plaques decide.
+  await page.locator(".game-card").click({ force: true });
+  expect((await saved(page)).quest.step).toBe(STEP.boss2);
+  await page.screenshot({ path: info.outputPath("spoils.png") });
+  await spoils.nth(0).click();
   await expect(page.locator(".news-banner")).toHaveText(
     /Trinket found\s*Hydra Tooth\s*\+2 to boss rolls\./,
   );
@@ -242,7 +273,7 @@ test("a boss shows its wounds, its trinket, and comes back until it falls", asyn
   );
   await page.screenshot({ path: info.outputPath("trinket.png") });
   expect((await saved(page)).quest.party.boons).toEqual([
-    "dungeon.hangover-hydra",
+    "dungeon.hangover-hydra#0",
   ]);
 });
 
@@ -502,7 +533,7 @@ test("a fork's loud door deals one of the floor's elites, which drops a trinket"
     "Losing costs 2 hearts",
   );
   await expect(page.locator(".game-card .stake-trinket")).toHaveAccessibleName(
-    /^Winning drops a trinket: /,
+    /^Winning offers a trinket: .+ or .+$/,
   );
   await page.screenshot({ path: info.outputPath("elite.png") });
 });
