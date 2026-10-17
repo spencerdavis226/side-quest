@@ -79,7 +79,7 @@ test("@release legacy finite game, rapid taps, restore, previous card, replay an
     "border-top-width",
     "0px",
   );
-  await page.getByRole("button", { name: "Back to game" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Close" }).click();
   await expect(page.locator(".progress")).toContainText("2 / 2");
   await page.getByRole("button", { name: "Reveal card" }).click();
   await ready(page);

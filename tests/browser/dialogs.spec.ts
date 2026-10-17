@@ -142,7 +142,7 @@ test("How to play explains every card from the pause menu", async ({
   // A plain game has no crawl rows, only the basics.
   await expect(guide.locator(".guide-rows")).toHaveCount(0);
   await expect(guide.locator(".guide-basics dt")).toHaveCount(5);
-  await guide.getByRole("button", { name: "Back to game" }).click();
+  await guide.getByRole("button", { name: "Close" }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
 });
 
@@ -165,9 +165,7 @@ test("Escape closes the menu and restores focus to its opener", async ({
   ).toBe("none");
 });
 
-test("menu → Previous card → Back to game returns to play", async ({
-  page,
-}) => {
+test("menu → Previous card → Close returns to play", async ({ page }) => {
   const session = withHistory();
   await seed(page, session);
   await page.getByRole("button", { name: "Open game menu" }).click();
@@ -177,7 +175,7 @@ test("menu → Previous card → Back to game returns to play", async ({
   const dialog = page.getByRole("dialog");
   await expect(dialog).toContainText("Previous card");
   await expect(page.locator(".previous-card .study-face")).toBeVisible();
-  await page.getByRole("button", { name: "Back to game" }).click();
+  await dialog.getByRole("button", { name: "Close" }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(page.locator(".game-card")).toBeVisible();
 });

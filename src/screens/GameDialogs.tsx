@@ -19,7 +19,7 @@ export type DialogName =
   | "satchel"
   | "effects"
   | "guide"
-  // The previous card opened from the header's stud: it closes to the game.
+  // The previous card opened from the header's stud.
   | "recap"
   | null;
 // Unmount just after the shared exit animation finishes. The timer is the
@@ -134,7 +134,7 @@ export function GameDialogs({
     return (
       <Modal
         title="Previous card"
-        onClose={() => setModal(displayed === "recap" ? null : "menu")}
+        onClose={() => setModal(null)}
         exiting={exiting}
       >
         <CardFrame
@@ -142,7 +142,6 @@ export function GameDialogs({
           packIds={session.config.packIds}
           card={findCard(session, session.previousId)!}
         />
-        <Button onClick={() => setModal(null)}>Back to game</Button>
       </Modal>
     );
   const record = session && questRecord(session);
@@ -180,7 +179,6 @@ export function GameDialogs({
           onUse={onSpend}
           part={part}
         />
-        <Button onClick={() => setModal(null)}>Back to game</Button>
         <Button variant="text-button" onClick={() => setModal("guide")}>
           How to play
         </Button>
@@ -192,7 +190,7 @@ export function GameDialogs({
     return (
       <Modal
         title="How to play"
-        onClose={() => setModal("menu")}
+        onClose={() => setModal(null)}
         exiting={exiting}
       >
         <Guide
@@ -207,7 +205,6 @@ export function GameDialogs({
               : undefined
           }
         />
-        <Button onClick={() => setModal(null)}>Back to game</Button>
       </Modal>
     );
   }
@@ -222,7 +219,6 @@ export function GameDialogs({
           record={record}
           league={session?.quest?.packId === "pokemon"}
         />
-        <Button onClick={() => setModal(null)}>Back to game</Button>
       </Modal>
     );
   if (displayed === "end")

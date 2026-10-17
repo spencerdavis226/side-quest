@@ -199,7 +199,6 @@ export function Setup({
               cup: !!crawlPack.quest!.party!.cup,
             }}
           />
-          <Button onClick={() => setGuideOpen(false)}>Got it</Button>
         </Modal>
       )}
       {limit !== null && cardCount > 0 && cardCount < limit && (

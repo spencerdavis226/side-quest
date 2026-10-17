@@ -169,9 +169,10 @@ test("Previous Card owns the same 2:3 geometry as gameplay", async ({
   ).toBeVisible();
   await page.setViewportSize({ width: 320, height: 568 });
   const back = await page
-    .getByRole("button", { name: "Back to game" })
+    .getByRole("dialog")
+    .getByRole("button", { name: "Close" })
     .boundingBox();
-  expect(back, "Back to game stays visible on a short phone").not.toBeNull();
+  expect(back, "Close stays visible on a short phone").not.toBeNull();
   expect(back!.y).toBeGreaterThanOrEqual(0);
   expect(back!.y + back!.height).toBeLessThanOrEqual(568);
 });
