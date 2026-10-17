@@ -2,7 +2,7 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Status-bar blur: a fixed strip WebKit can sample (2026-10-17; branch `status-edge`)
+## Status-bar blur: a fixed strip WebKit can sample (2026-10-17; pushed to `main`, PR #15)
 
 - **Owner:** the soft blur over the header's top edge was still there in the installed app (iPhone 15 Pro) after PR #14's no-scroller change, which this branch reverts (it had no effect).
 - **Research:** iOS 26+ draws a "scroll edge" blur under the status bar and about 40pt down; no CSS or meta switch turns it off. WebKit skips it when, 4px inside the top edge, it finds a `position: fixed` or `sticky` box at least 90% of the viewport wide, over 10px tall and at most 105% of its height, with a visible background colour, and uses that colour instead (`LocalFrameView::fixedContainerEdges`: `sampleRectMargin = 4`, `minimumRatio = 0.9`, `maximumRatio = 1.05`, `thinBorderWidth = 10`; a `backdrop-filter` makes it glass). Several projects report the same fix (herdr-web-ui #106, discpress #24, kp-rueck #143); none of them, nor this, is verified on a device in what I read.
