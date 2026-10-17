@@ -9,7 +9,7 @@ Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Ol
 - **How to play (`src/components/Guide.tsx`):** pause menu row "How to play" in every game, a "How to play" link in the party dialog, and "How it works ›" on the crawl's heading row at setup. A crawl shows its goal, one row per mechanic (`guide` in `crawlTheme.ts`: Pub Crawl 8 rows with the Quaff and the Cup, the League 6), the seals legend (moved here from the party dialog as `SealLegend`), then every game's basics (draw, dice, buttons, secrets, previous card). A plain game shows only the basics. `tests/crawl-theme.test.ts` holds the guide's numbers to `PARTY_HEARTS`, `QUAFF_DRINKS`, `LEVEL_DRINK` and `LANDING_HEAL`.
 - **The Cup:** the drawer pours (owner's call was open; the guide, the party dialog and a new first-splash banner now say so). `PartyNewsBanner` shows "The Cup / Pour a splash in" (amber) once per screen on the first splash it sees; a jinx laid by the same loss wins the banner.
 - **Party dialog:** the floors list and the seals legend are gone; the floors list stays on the end screens.
-- **Verification:** see the commit message.
+- **Verification:** `npm test` 228 passed; lint, typecheck, build passed. Chromium, all 131 browser tests: 129 passed with 3 workers; the two card-fit sweeps timed out under that load (the Dungeon one on a page reload at its 400 s limit, the League one at 300 s) and both passed run alone (7.0 min). Screenshots checked: every plaque type, the guide, the Cup banner, the party dialog, setup at 320, 375 and 390 px. WebKit not run locally.
 
 ## Head-to-head cards get a real opponent (2026-10-17; pushed to `main`)
 
