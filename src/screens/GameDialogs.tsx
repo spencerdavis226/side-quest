@@ -177,9 +177,6 @@ export function GameDialogs({
           onUse={onSpend}
           part={part}
         />
-        <Button variant="text-button" onClick={() => setModal("guide")}>
-          How to play
-        </Button>
       </Modal>
     );
   }

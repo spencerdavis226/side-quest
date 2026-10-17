@@ -132,6 +132,21 @@ test("an exiting dialog is inert and cannot trigger its controls", async ({
   await expect(page.getByRole("dialog")).toHaveCount(0);
 });
 
+test("home has one How to play, for the mode chosen", async ({ page }) => {
+  await page.goto("./");
+  await expect(page.getByRole("button", { name: /How to play/ })).toHaveCount(
+    1,
+  );
+  await page.getByRole("button", { name: /How to play/ }).click();
+  let guide = page.getByRole("dialog", { name: "How to play" });
+  await expect(guide.locator(".guide-rows")).toHaveCount(0);
+  await page.keyboard.press("Escape");
+  await page.locator(".quest-mode").filter({ hasText: "Pub Crawl" }).click();
+  await page.getByRole("button", { name: /How to play/ }).click();
+  guide = page.getByRole("dialog", { name: "How to play" });
+  await expect(guide.locator(".guide-rows li")).toHaveCount(8);
+});
+
 test("How to play explains every card from the pause menu", async ({
   page,
 }) => {

@@ -105,8 +105,13 @@ export function Setup({
         </h1>
       </div>
       <div className="setup-section">
+        {/* The one way into How to play before a game; in a game it is in
+            the pause menu. It explains the mode chosen. */}
         <div className="section-label">
           <h2>How long?</h2>
+          <button className="guide-link" onClick={() => setGuideOpen(true)}>
+            How to play ›
+          </button>
         </div>
         <DeckChoices value={prefs.choice} onChange={chooseLength} />
         <div className="lengths quest-modes" role="group" aria-label="Modes">
@@ -169,9 +174,6 @@ export function Setup({
         <div className="setup-section setup-packs">
           <div className="section-label">
             <h2>{crawlLook.words.setupTitle}</h2>
-            <button className="guide-link" onClick={() => setGuideOpen(true)}>
-              How it works ›
-            </button>
           </div>
           <div
             className="crawl-brief"
@@ -189,15 +191,17 @@ export function Setup({
           </div>
         </div>
       )}
-      {guideOpen && crawlPack && (
+      {guideOpen && (
         <Modal title="How to play" onClose={() => setGuideOpen(false)}>
           <Guide
-            crawl={{
-              packId: crawlPack.id,
-              hearts: crawlPack.quest!.party!.hearts,
-              quaff: crawlPack.quest!.party!.quaff,
-              cup: !!crawlPack.quest!.party!.cup,
-            }}
+            crawl={
+              crawlPack && {
+                packId: crawlPack.id,
+                hearts: crawlPack.quest!.party!.hearts,
+                quaff: crawlPack.quest!.party!.quaff,
+                cup: !!crawlPack.quest!.party!.cup,
+              }
+            }
           />
         </Modal>
       )}

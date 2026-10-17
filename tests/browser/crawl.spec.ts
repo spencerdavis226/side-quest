@@ -463,9 +463,13 @@ test("the party dialog lays out the run: adventurer, boons, jinx and the Cup", a
   await satchel.getByRole("button", { name: "Drink" }).click();
   await expect(meter(page)).toHaveAccessibleName(/^Hearts: 6 of /);
   await expect(satchel.getByRole("button", { name: "Drink" })).toHaveCount(0);
-  const dialogForGuide = satchel;
-  // How to play, from any of them: the run's rules and the seals.
-  await dialogForGuide.getByRole("button", { name: "How to play" }).click();
+  // How to play lives in the pause menu, not in these dialogs.
+  await expect(
+    satchel.getByRole("button", { name: "How to play" }),
+  ).toHaveCount(0);
+  await page.keyboard.press("Escape");
+  await page.getByRole("button", { name: "Open game menu" }).click();
+  await page.getByRole("button", { name: "How to play" }).click();
   const guide = page.getByRole("dialog", { name: "How to play" });
   await expect(guide.locator(".guide-rows li")).toHaveCount(8);
   await expect(guide.locator(".guide-rows")).toContainText(

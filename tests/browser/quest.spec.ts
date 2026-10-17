@@ -203,8 +203,11 @@ test("@release a starter evolves on a route, and the banner says what changed", 
     dialog.locator(".crawl-omen > span:not(.crawl-icon)"),
   ).toHaveText("Max HP 18. +2 to route battle rolls.");
   await page.screenshot({ path: info.outputPath("team-dialog.png") });
-  // How to play speaks the League's words: no Quaff, no Cup.
-  await dialog.getByRole("button", { name: "How to play" }).click();
+  // How to play, from the pause menu, speaks the League's words: no Quaff,
+  // no Cup.
+  await page.keyboard.press("Escape");
+  await page.getByRole("button", { name: "Open game menu" }).click();
+  await page.getByRole("button", { name: "How to play" }).click();
   const guide = page.getByRole("dialog", { name: "How to play" });
   await expect(guide.locator(".guide-rows li")).toHaveCount(6);
   await expect(guide.locator(".guide-rows")).toContainText("Team HP");
