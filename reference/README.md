@@ -54,7 +54,8 @@ material, not game content:
   `pokemon-league.ts`) are original rather than from the sheets; at the
   owner's request (2026-10-17, "less same-y") their roll results were
   rewritten so fewer read as a bare "Drink N / Give N", and every League
-  d20 gained a natural 20 and natural 1. The 120 sheet cards are unchanged.
+  d20 gained a natural 20 and natural 1. Of the 120 sheet cards only
+  Missingno changed: its roll of 1 is now "Natural 1!", everyone drinks 6.
 
 ## Adding a new reference file
 

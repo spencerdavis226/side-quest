@@ -13,6 +13,7 @@ Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Ol
 - Text (`src/content/naturals.ts`, `withNaturals`): every League and Dungeon d20 has its own 20 and 1 outcome, with "Natural 20!" or "Natural 1!" and the drinks doubled. Applied in `league/shared.ts` (`boss`), `league/journey.ts` (`spot`, `rival`, `villain`) and at `dungeonCards`. Dungeon cards keep the text in the plain modes too. The 120 plain Pokémon sheet cards are unchanged.
 - The party dialog legend gains two lines (`crawlTheme.naturals`, `.stake-natural`).
 - `tests/naturals.test.ts`: every crawl d20 has single-face 20 and 1 outcomes, and neither reads like the roll beside it.
+- Owner follow-up: "same for all cards with d20". Only 7 other d20 cards exist. Fuck Around and Nat One already had their own 1 and 20, so they gained the "Natural" lead. Missingno (a plain Pokémon card) gained a natural 1 ("everyone drinks 6"); it has no good roll for a 20 to double. Four cards where the roll is the amount stay as written: God's Drunkest Soldier (odd/even; a doubled 20 would be "Give 40"), Body Count, House row 8 ("drink 1d20") and Maddy Booty. Owner to confirm.
 
 **Variety pass.**
 - Fight helpers take a `Roll` (`vs` d20, `moves` six named moves on a d6, `pair` 2d6 with a winning pair), all derived from the leg's need so the constants still tune everything. A retune that moves a d6 split throws at load.
@@ -24,9 +25,11 @@ Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Ol
 - League: won 22.0% (was 23.1%). A won run takes 67.1 draws. Starters 12% (Piplup) to 41% (Mudkip). Hideouts 17% to 25%. Evolution 74% / 37%.
 - Pub Crawl: won 25.1%. Omens 17% to 32%.
 
-**Tests.** `npm test` 199 passed, but only with `--testTimeout=300000`: in this container both harness tests time out at the default 5 s even before the change (imports take about 70 s here). Lint, typecheck and `BASE_PATH=/side-quest/ npm run build` passed. Budgets: Pokémon chunk 36.6 KiB gzip (was 30.4), runtime 3686 KiB. `npm run cards:review` regenerated.
+**Tests.** `npm test` 200 passed, but only with `--testTimeout=300000`: in this container both harness tests time out at the default 5 s even before the change (imports take about 70 s here). Lint, typecheck and `BASE_PATH=/side-quest/ npm run build` passed. Budgets: Pokémon chunk 36.6 KiB gzip (was 30.4), runtime 3686 KiB. `npm run cards:review` regenerated.
 
-**Not done or not verified:** browser specs (see the result below), WebKit (not installed in this container), a physical device, and a table playtest of the new outcomes.
+- Browser, Chromium only: `quest.spec.ts` and `crawl.spec.ts` passed, 26 of 26, including the legend and both 375×667 fit sweeps. The two sweeps exceed their 120 s timeout on this container, so they were rerun with `--timeout=900000`. The container's Chromium differs from the pinned Playwright build, so the run used an untracked `playwright.local.config.ts` that sets `executablePath: /opt/pw-browsers/chromium`.
+
+**Not done or not verified:** WebKit (not installed in this container), a physical device, and a table playtest of the new outcomes.
 
 **Next.** Push after owner approval. Then playtest a League run and a Pub Crawl run and cut any outcome that slows the table down.
 

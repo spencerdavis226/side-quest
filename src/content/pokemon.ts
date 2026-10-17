@@ -524,7 +524,14 @@ const deck: CardDefinition[] = [
     "challenge",
     "A wild Missingno glitched in! Roll d20. 1-5: the game breaks; everyone drinks 3. Higher: drink 2.",
     rollTable(1, 20, [
-      { min: 1, max: 5, instruction: "The game breaks. Everyone drinks 3." },
+      // The standing natural 1 (owner, 2026-10-17); Missingno has no good
+      // roll for a natural 20 to double.
+      {
+        min: 1,
+        max: 1,
+        instruction: "Natural 1! The game breaks hard. Everyone drinks 6.",
+      },
+      { min: 2, max: 5, instruction: "The game breaks. Everyone drinks 3." },
       { min: 6, max: 20, instruction: "Drink 2." },
     ]),
   ),

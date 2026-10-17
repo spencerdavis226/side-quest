@@ -58,7 +58,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Give a Shit | `core.give-a-shit` | challenge | Roll d6. Give that many to whoever you'd least want to see naked. | 1d6 — Give {total} to whoever you'd least want to see naked. |
 | ☐ | Big Dick Energy | `core.high-roller` | challenge | Roll d6. That's your size. | 1d6 — 1-2: Two inches. Drink 4 and sit quietly. 3-4: Average. Drink 2. Nobody's impressed. 5-6: Hung. Give 5 and adjust yourself. |
 | ☐ | Same Shit | `core.same-shit` | challenge | Roll 2d6. Matching dice means you're exactly as basic as we thought. | 2d6 — 2-12: Weirdly original. Give 3. |
-| ☐ | Fuck Around & Find Out | `core.fuck-around` | challenge | Roll d20 and find out. | 1d20 — 1-1: Take a shot and tell us your worst hookup. 2-19: Drink 2. You found out nothing. 20-20: Give a shot. Smug bastard. |
+| ☐ | Fuck Around & Find Out | `core.fuck-around` | challenge | Roll d20 and find out. | 1d20 — 1-1: Natural 1! Take a shot and tell us your worst hookup. 2-19: Drink 2. You found out nothing. 20-20: Natural 20! Give a shot. Smug bastard. |
 | ☐ | God's Drunkest Soldier | `core.chosen-one` | challenge | Roll d20. Odd: drink it. Even: give it. God gave you this burden. | 1d20 — 1-19: Drink {total}. 2-20: Give {total}. |
 | ☐ | Rock Paper Drink | `core.rock-paper-drink` | challenge | Rock paper scissors anyone you want. Loser drinks 3 and calls the winner daddy. |  |
 | ☐ | Four Is Floor | `core.kings-four` | challenge | Everyone touches the floor. Last one down drinks 2. |  |
@@ -72,7 +72,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Gas Station Sushi | `core.gas-station-sushi` | challenge | You ate the gas station sushi. Roll d6. | 1d6 — 1-1: You shit yourself. Finish your drink. 2-3: Cold sweats. Drink 3. 4-5: Rumbling, but holding. Drink 2. 6-6: Iron gut. Give 4. |
 | ☐ | Lap Dance Roulette | `core.lap-dance` | challenge | Roll d6 and count that many seats to your left. That's who gets a 10-second lap dance. | 1d6 — {total} seats left. Dance for them or drink 5. |
 | ☐ | Hot Seat | `core.hot-seat` | challenge | Roll d6. That many players each ask you a yes-or-no question. Lie and the table knows. | 1d6 — {total} questions. Each lie: drink 3. |
-| ☐ | Nat One | `core.nat-one` | challenge | Roll d20. Pray. | 1d20 — 1-1: Critical fail. Finish your drink and confess your worst hookup. 2-19: Drink 3. The gods are bored. 20-20: Natural 20. Make anyone finish their drink. |
+| ☐ | Nat One | `core.nat-one` | challenge | Roll d20. Pray. | 1d20 — 1-1: Natural 1! Critical fail. Finish your drink and confess your worst hookup. 2-19: Drink 3. The gods are bored. 20-20: Natural 20! Make anyone finish their drink. |
 | ☐ | Hostage Video | `core.hostage-video` | challenge | Film a hostage video begging your mom for bail. Show the table. Weak acting: drink 3. |  |
 | ☐ | Dramatic Reading | `core.dramatic-reading` | challenge | Your left neighbor picks one of your texts. Read it aloud like erotica. Refuse: drink 4. |  |
 | ☐ | Search History | `core.search-history` | challenge | Read your last three searches aloud. Each one you won't read: drink 2. |  |
@@ -360,7 +360,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Chansey | `pokemon.chansey` | challenge | Chansey hands you her egg. Don't ask where it came from. Roll d6. | 1d6 — 1-2: You drop it. Drink 3, egg murderer. 3-5: She takes it back. Drink 1. 6-6: Lucky Egg! Give 4. |
 | ☐ | Poké Ball | `pokemon.pokeball` | challenge | Throw a Poké Ball! Roll d6. | 1d6 — 1-2: You nail the trainer in the balls. You both drink 2. 3-4: It flees. Drink 3. 5-6: Caught it! Give 3 and name it after someone here. |
 | ☐ | Supersonic | `pokemon.supersonic` | challenge | Tentacool used Supersonic! You're confused. Roll d6. | 1d6 — 1-2: You hurt yourself in confusion. Drink 4. 3-4: Drink 2 with your other hand. 5-6: You snap out of it. Give 2. |
-| ☐ | Missingno | `pokemon.missingno` | challenge | A wild Missingno glitched in! Roll d20. 1-5: the game breaks; everyone drinks 3. Higher: drink 2. | 1d20 — 1-5: The game breaks. Everyone drinks 3. 6-20: Drink 2. |
+| ☐ | Missingno | `pokemon.missingno` | challenge | A wild Missingno glitched in! Roll d20. 1-5: the game breaks; everyone drinks 3. Higher: drink 2. | 1d20 — 1-1: Natural 1! The game breaks hard. Everyone drinks 6. 2-5: The game breaks. Everyone drinks 3. 6-20: Drink 2. |
 | ☐ | Tentacool | `pokemon.tentacool` | challenge | Tentacool used Constrict! Drink 2 and hold your drink until you finish it. |  |
 | ☐ | Machoke | `pokemon.machoke` | challenge | Machoke used Submission! Do anything the group tells you now, or drink 4. |  |
 | ☐ | Marill | `pokemon.marill` | challenge | Rain Dance! Perform a song and dance the group chooses, or drink 3. |  |

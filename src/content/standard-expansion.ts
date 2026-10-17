@@ -93,13 +93,13 @@ const drafts: Draft[] = [
         min: 1,
         max: 1,
         instruction:
-          "Critical fail. Finish your drink and confess your worst hookup.",
+          "Natural 1! Critical fail. Finish your drink and confess your worst hookup.",
       },
       { min: 2, max: 19, instruction: "Drink 3. The gods are bored." },
       {
         min: 20,
         max: 20,
-        instruction: "Natural 20. Make anyone finish their drink.",
+        instruction: "Natural 20! Make anyone finish their drink.",
       },
     ]),
   ],

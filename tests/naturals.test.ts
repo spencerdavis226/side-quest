@@ -61,4 +61,32 @@ describe("natural 20 and natural 1", () => {
     // the card its own crit or fumble.
     expect(flat).toEqual([]);
   });
+
+  it("leads every other d20 card's own 1 and 20 too", () => {
+    // The roll is the amount on these, so neither end is good or bad.
+    const amount = new Set([
+      "core.chosen-one",
+      "core.body-count",
+      "house.sheet-008",
+      "cabin.maddy-booty",
+    ]);
+    const others = cards.filter(
+      (c) =>
+        c.dice?.count === 1 &&
+        c.dice.sides === 20 &&
+        !crawlD20s.includes(c) &&
+        !amount.has(c.id),
+    );
+    expect(others.map((c) => c.id).sort()).toEqual([
+      "core.fuck-around",
+      "core.nat-one",
+      "pokemon.missingno",
+    ]);
+    for (const c of others) {
+      expect(face(c.dice!, 1), c.id).toMatch(/^Natural 1! /);
+      // Missingno has no good roll for a natural 20 to double.
+      if (c.id !== "pokemon.missingno")
+        expect(face(c.dice!, 20), c.id).toMatch(/^Natural 20! /);
+    }
+  });
 });

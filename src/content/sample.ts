@@ -129,10 +129,14 @@ export const sampleCards: CardDefinition[] = [
       {
         min: 1,
         max: 1,
-        instruction: "Take a shot and tell us your worst hookup.",
+        instruction: "Natural 1! Take a shot and tell us your worst hookup.",
       },
       { min: 2, max: 19, instruction: "Drink 2. You found out nothing." },
-      { min: 20, max: 20, instruction: "Give a shot. Smug bastard." },
+      {
+        min: 20,
+        max: 20,
+        instruction: "Natural 20! Give a shot. Smug bastard.",
+      },
     ]),
   ),
   card(
