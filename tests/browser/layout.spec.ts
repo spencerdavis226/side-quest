@@ -450,21 +450,26 @@ test("@release the installed app lays out at the full screen height and never sc
         pageScroll: html.scrollHeight - html.clientHeight,
       };
     });
-  const check = (m: Awaited<ReturnType<typeof measure>>) => {
+  const check = (
+    m: Awaited<ReturnType<typeof measure>>,
+    rootOverflow: "auto" | "hidden",
+  ) => {
     expect(m.screenHeight).toBe(852);
     // The document, the scroller, the layout and both backdrop layers all end
     // on the last row of the screen.
     for (const value of [m.html, m.root, m.app, m.backdrop, m.atmosphere])
       expect(value).toBeCloseTo(m.screenHeight, 0);
-    // The root cannot scroll or be dragged off the top; tall content scrolls
-    // inside #root instead.
+    // The root cannot scroll or be dragged off the top; tall setup content
+    // scrolls inside #root, and the play screen, which always fits, has no
+    // scroller at all (so iOS has no scroll edge to blur under the status
+    // bar).
     expect(m.htmlOverflow).toBe("hidden");
     expect(m.bodyOverflow).toBe("hidden");
-    expect(m.rootOverflow).toBe("auto");
+    expect(m.rootOverflow).toBe(rootOverflow);
     expect(m.pageScroll).toBe(0);
     expect(m.scrollY).toBe(0);
   };
-  check(await measure());
+  check(await measure(), "auto");
   // The bottom row is wood, not a flat fill.
   const { data, info } = await sharp(
     await page.screenshot({ animations: "disabled" }),
@@ -478,7 +483,7 @@ test("@release the installed app lays out at the full screen height and never sc
 
   await seed(page, revealed(longestRule));
   await expect(page.locator(".study-rules p")).toBeVisible();
-  check(await measure());
+  check(await measure(), "hidden");
   const card = (await page.locator(".game-card").boundingBox())!;
   expect(Math.abs(card.width / card.height - 2 / 3)).toBeLessThan(0.01);
   expect(card.y + card.height).toBeLessThanOrEqual(852);

@@ -6,6 +6,7 @@ Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Ol
 
 - **Owner:** too many How to play buttons. Now only the pause menu in a game, and "How to play ›" on setup's "How long?" heading (every mode; it explains the mode chosen: a crawl's rows, or the basics). Removed: the link in the party, satchel and chip dialogs, and the crawl heading's "How it works ›".
 - **Verification:** lint, typecheck, build passed. Chromium browser suite (all but the two fit sweeps, which this does not touch): 132 passed. Setup checked at 320 and 390 px.
+- **Top-edge blur (same PR):** the owner saw a soft blur over the header's top edge in the installed app (iPhone 15 Pro). Likely iOS 26+'s scroll-edge effect over `#root`, which was a scroller on every screen. In the installed app the play screen's `#root` is now `overflow: hidden` (it always fits); setup still scrolls. `layout.spec.ts`'s installed-app test expects `auto` on setup and `hidden` in play (34 passed in layout, game and orientation specs). **Unverified:** no device or simulator here; checklist item added.
 
 ## Header redesign (2026-10-17; pushed to `main`, PR #13)
 

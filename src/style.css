@@ -51,6 +51,15 @@ html.standalone {
 html.standalone body {
   height: 100lvh;
 }
+/* The installed play screen always fits, so #root need not scroll there.
+   iOS 26+ draws a soft blur over the top edge of scrolling content under
+   the status bar; with no scroller on the play screen there is nothing for
+   it to blur (owner report 2026-10-17, iPhone 15 Pro; not yet verified on
+   the device). Setup, which can overflow at large text sizes, still
+   scrolls. */
+html.standalone:has(.playing) #root {
+  overflow: hidden;
+}
 * {
   box-sizing: border-box;
 }
