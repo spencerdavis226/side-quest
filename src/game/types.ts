@@ -109,6 +109,10 @@ export interface CardDefinition {
    * puts the card aside (`takeSpoils`); it is kept as `<card id>#<index>`
    * in `party.boons`. Never beside `boon`. */
   spoils?: Boon[];
+  /** Pub Crawl (2026-10-17): push your luck. Each won roll banks the next
+   * prize and offers Cash out or Again; each Again rolls 2 lower; a loss
+   * forfeits everything banked. A single-d20 battle only. */
+  press?: { prizes: Loot[] };
   /** Pub Crawl (2026-10-17): a spoken rule the table keeps until the
    * floor's boss falls, laid when the card is put aside (a battle only when
    * lost). The app shows it and lifts it; nobody has to remember. */
@@ -329,6 +333,9 @@ export interface PartyState {
   quaffed?: true;
   /** Splashes in the Cup, when the crawl keeps one: one per lost fight. */
   cup?: number;
+  /** Pulls already won on the push-your-luck card in play (`press`); the
+   * roll on the card now is the next. Absent is 0. */
+  press?: number;
   /** The draw (`SessionState.discarded`) whose lost drinks were passed on
    * with a `round`, so it is passed once. */
   passed?: number;

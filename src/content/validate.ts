@@ -191,6 +191,23 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         !c.spoils.every(goodBoon))
     )
       fail(`Invalid spoils: ${c.id}`);
+    // Push your luck: one to three prizes, on a plain single-d20 battle.
+    if (
+      c.press !== undefined &&
+      (!c.press ||
+        !Array.isArray(c.press.prizes) ||
+        c.press.prizes.length < 1 ||
+        c.press.prizes.length > 3 ||
+        c.press.prizes.some((item) => !LOOT.includes(item)) ||
+        !c.battle ||
+        c.dice?.count !== 1 ||
+        c.dice.sides !== 20 ||
+        c.dice.choice ||
+        c.hits ||
+        c.reward ||
+        c.spoils)
+    )
+      fail(`Invalid press: ${c.id}`);
     if (
       c.jinx !== undefined &&
       (!c.jinx ||

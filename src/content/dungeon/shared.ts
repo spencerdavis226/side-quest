@@ -57,6 +57,9 @@ export const QUEUE_NEED = 8;
 export const QUEUE_HURT = 1;
 export const CLOSING_NEED = 12;
 export const CLOSING_HURT = 3;
+/** A push-your-luck room's first pull, depth by depth; each pull after is
+ * 2 harder (`PRESS_STEP` in the engine). */
+export const GAMBLE_NEED = [7, 8, 9] as const;
 /** The hidden room behind the bookcase, between the first landing and the
  * second floor: its guards (two of three) and its keeper, beaten twice. */
 export const GUARD_NEED = 8;
@@ -265,6 +268,33 @@ export const relic = (
   battle: true,
   damage: 1,
   ...stakes(more),
+});
+
+/** Push your luck: each won roll banks the next prize and offers Cash out
+ * or Again, each Again 2 harder; a loss forfeits the lot and costs a heart.
+ * Counts as a relic for roll bonuses. Pub Crawl only. */
+export const gamble = (
+  floor: Floor,
+  id: string,
+  title: string,
+  rules: string,
+  lose: string,
+  win: string,
+  prizes: Loot[],
+): CardDefinition => ({
+  ...card(
+    id,
+    title,
+    "challenge",
+    rules,
+    d20(GAMBLE_NEED[tier(floor)], lose, win),
+  ),
+  ribbon: `${FLOORS[floor]} · Gamble`,
+  ribbonTone: "violet",
+  encounter: "relic",
+  battle: true,
+  damage: 1,
+  press: { prizes },
 });
 
 export const treasure = (

@@ -986,3 +986,14 @@
   font-size: 0.72em;
   line-height: 1.1;
 }
+/* Push your luck: the prizes on the seal, the banked ones lit. */
+.stake-prizes .crawl-icon {
+  opacity: 0.55;
+}
+.stake-prizes .crawl-icon.banked {
+  opacity: 1;
+  color: #ffe9a8;
+}
+.press-again .offer-price {
+  opacity: 0.9;
+}

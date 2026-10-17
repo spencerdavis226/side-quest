@@ -2,6 +2,21 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Push your luck (2026-10-17; pushed to `main`)
+
+- **One gamble room per floor** (6 cards):
+  - The One-Armed Bandit, Wine Roulette, The Bone Dice, Fishing the Drain, The Claw Machine, Hot Sauce Ladder.
+  - Each win banks the next of three prizes and shows **Cash out** / **Again**. Each Again rolls 2 lower. A loss forfeits the lot, costs a heart and pours into the Cup.
+  - The card's seal shows the prizes, with the banked ones lit.
+- **Engine:** `card.press`, `party.press`, `awaitingPress`, `pressOn`, `cashOut`, `PRESS_STEP`.
+  - No smoke bomb out of a push under way.
+  - It counts as a relic for roll bonuses, so the Rogue's perk applies.
+- **Balance:** won 30.0%. Adventurers 23–41%, the Plus-One 6%, Lock-In 18%.
+- **Totals:** Dungeon night 295 cards; the catalog 1,468.
+- **Verification:**
+  - `npm test`: 226 passed. Lint, typecheck and build passed (runtime 3,773 KiB).
+  - Chromium `crawl.spec.ts` and `quest.spec.ts`: 33 passed, including a new Cash out / Again test.
+
 ## Behind the Bookcase, and the Pokémon sheet table-rule pass (2026-10-17; pushed to `main`)
 
 **Hidden rooms** (`src/content/dungeon/bookcase.ts`): the League's villain hideouts done as a bar.

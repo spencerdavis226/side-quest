@@ -9,6 +9,8 @@ import type {
   SessionState,
 } from "../game/types";
 import {
+  currentCard as currentCardOf,
+  PRESS_STEP,
   canQuaff,
   canUseLoot,
   finaleCard,
@@ -258,7 +260,8 @@ export function CardStakes({
       ? card.boon?.name
       : undefined;
   const jinx = card.jinx;
-  if (!damage && !gain && !card.curse && !hits && !trinket && !jinx)
+  const prizes = card.press?.prizes;
+  if (!damage && !gain && !card.curse && !hits && !trinket && !jinx && !prizes)
     return null;
   const bleed = party.curse === "bleed" ? 1 : 0;
   const boss = isBossCard(card);
@@ -322,6 +325,23 @@ export function CardStakes({
             <CrawlIcon name={gain} theme={theme} />
           </span>
         ) : null}
+        {prizes && (
+          // Push your luck: every prize, the ones banked lit.
+          <span
+            className="stake stake-loot stake-prizes"
+            aria-label={`Prizes, one a win: ${prizes.map((p) => theme.loot[p].name).join(", then ")}; ${party.press ?? 0} banked`}
+          >
+            <b>+</b>
+            {prizes.map((p, i) => (
+              <CrawlIcon
+                key={i}
+                name={p}
+                theme={theme}
+                className={i < (party.press ?? 0) ? "banked" : undefined}
+              />
+            ))}
+          </span>
+        )}
         {trinket && (
           <span
             className="stake stake-trinket"
@@ -468,6 +488,54 @@ export function QuaffPlaque({
         <small className="offer-price">drink {drinks}</small>
       </span>
     </button>
+  );
+}
+
+/** A push-your-luck win: cash out with every prize banked, or go again,
+ * harder. */
+export function PressPlaques({
+  session,
+  onCashOut,
+  onPress,
+  theme,
+}: {
+  session: SessionState;
+  onCashOut: () => void;
+  onPress: () => void;
+  theme: CrawlTheme;
+}) {
+  const card = currentCardOf(session);
+  const banked = (session.quest?.party?.press ?? 0) + 1;
+  const prizes = card.press!.prizes.slice(0, banked);
+  const names = prizes.map((p) => theme.loot[p].name).join(", ");
+  return (
+    <>
+      <button
+        className="card-choice-option offer-plaque offer-buy press-cash"
+        aria-label={`Cash out: ${names}`}
+        onClick={onCashOut}
+      >
+        <span className="offer-goods" aria-hidden="true">
+          {prizes.map((p, i) => (
+            <CrawlIcon key={i} name={p} theme={theme} />
+          ))}
+        </span>
+        <span className="offer-label">Cash out</span>
+      </button>
+      <button
+        className="card-choice-option offer-plaque offer-loud press-again"
+        aria-label={`Again: roll for the next prize, ${PRESS_STEP} lower. Lose and it all goes.`}
+        onClick={onPress}
+      >
+        <span className="offer-goods" aria-hidden="true">
+          <CrawlIcon name={card.press!.prizes[banked]} theme={theme} />
+        </span>
+        <span className="offer-label">
+          Again
+          <small className="offer-price">−{PRESS_STEP} to the roll</small>
+        </span>
+      </button>
+    </>
   );
 }
 

@@ -1,4 +1,5 @@
 import {
+  gamble,
   ambush,
   elite,
   fork,
@@ -204,6 +205,15 @@ export const taproom: FloorCards = {
     ),
   ],
   finds: [
+    gamble(
+      2,
+      "claw-machine",
+      "The Claw Machine",
+      "Half underwater and still taking coins. Win, then cash out or play again. Roll d20.",
+      "The claw drops it. Again. Drink 5.",
+      "It holds. Give 4.",
+      ["draught", "shield", "candy"],
+    ),
     relic(
       2,
       "sunken-chest",

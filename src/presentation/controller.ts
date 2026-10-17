@@ -9,7 +9,10 @@ import {
   quaff,
   spendLoot,
   awaitingOffer,
+  awaitingPress,
   awaitingSpoils,
+  cashOut,
+  pressOn,
   takeOffer,
   takeSpoils,
   type Random,
@@ -182,6 +185,24 @@ export class PresentationController {
       this.transition(next, null);
       this.effect("press");
     }
+  }
+  /** Push your luck: bank the win and roll again, harder. */
+  press() {
+    const { session, motion } = this.state;
+    if (!session || motion || !awaitingPress(session)) return;
+    const next = pressOn(session);
+    this.persist(next);
+    this.transition(next, null);
+    this.effect("press");
+  }
+  /** Push your luck: take the prizes banked; the card goes aside. */
+  cashOut() {
+    const { session, motion } = this.state;
+    if (!session || motion || !awaitingPress(session)) return;
+    const next = cashOut(session, this.random);
+    this.persist(next);
+    this.transition(next, "discard", session);
+    this.effect("discard");
   }
   /** Take one of a won fight's spoils; the card goes aside. */
   spoils(index: number) {

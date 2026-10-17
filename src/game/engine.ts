@@ -540,6 +540,40 @@ export function awaitingSpoils(s: SessionState): boolean {
   const swing = natural(card, s.roll) === 20 ? 2 : 1;
   return !need || party.hits + swing >= need;
 }
+/** Each pull on a push-your-luck card rolls this much lower. */
+export const PRESS_STEP = 2;
+/** A push-your-luck roll just won with prizes still to win: the table
+ * cashes out or goes again. */
+export function awaitingPress(s: SessionState): boolean {
+  const party = s.quest?.party;
+  if (!party || !s.quest?.due || s.phase !== "revealed") return false;
+  const card = currentCard(s);
+  if (!card.press || !card.dice || !s.roll?.returned) return false;
+  return (
+    rollWins(card.dice, s.roll.values, s.roll) &&
+    (party.press ?? 0) + 1 < card.press.prizes.length
+  );
+}
+/** Bank the pull just won and roll again, harder. */
+export function pressOn(s: SessionState): SessionState {
+  if (!awaitingPress(s)) return s;
+  const party = s.quest!.party!;
+  return {
+    ...s,
+    roll: null,
+    quest: {
+      ...s.quest!,
+      party: { ...party, press: (party.press ?? 0) + 1 },
+    },
+  };
+}
+/** Stop pushing: take every prize won and put the card aside. */
+export function cashOut(
+  s: SessionState,
+  random: Random = Math.random,
+): SessionState {
+  return awaitingPress(s) ? discard(s, random) : s;
+}
 /** Take spoil `index` of the fight just won, and put the card aside. */
 export function takeSpoils(
   s: SessionState,
@@ -575,6 +609,7 @@ export function advance(
   if (awaitingVerdict(s)) return s;
   if (awaitingOffer(s)) return s;
   if (awaitingSpoils(s)) return s;
+  if (awaitingPress(s)) return s;
   return discard(s, random);
 }
 /** A revealed merchant or fork in a crawl: one of its offers puts it aside. */
@@ -693,13 +728,15 @@ export function canUseLoot(s: SessionState, item: Loot): boolean {
       // Its drinks go to someone else, once.
       return lostRoll(s, card) && party.passed !== s.discarded;
     case "smoke":
-      // Slip past a room fight before it starts; a boss blocks the stairs.
+      // Slip past a room fight before it starts; a boss blocks the stairs,
+      // and a push already under way is seen through.
       return (
         s.phase === "revealed" &&
         !!card.battle &&
         !card.hits &&
         !s.roll &&
-        !card.dice?.choice
+        !card.dice?.choice &&
+        !party.press
       );
     case "shield":
     case "revive":
@@ -863,6 +900,19 @@ function settleParty(
   // Every lost fight pours a splash into the Cup.
   if (outcome === "lost" && next.cup !== undefined)
     next = { ...next, cup: next.cup + 1 };
+  // Push your luck: a win takes every prize banked and this one; a loss
+  // forfeits them. The count clears either way.
+  if (card.press && outcome !== null) {
+    if (outcome === "won") {
+      const won = card.press.prizes.slice(0, (next.press ?? 0) + 1);
+      next = {
+        ...next,
+        loot: [...next.loot, ...won].slice(0, satchelSize(quest)),
+      };
+    }
+    next = { ...next };
+    delete next.press;
+  }
   // A boss's or an ambush's boon comes when it falls (`discard`).
   if (!card.hits && (outcome === null || outcome === "won"))
     next = gainBoon(next, card, quest, spoil);

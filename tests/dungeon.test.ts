@@ -3,9 +3,12 @@ import {
   advance,
   awaitingChoice,
   awaitingOffer,
+  awaitingPress,
   awaitingSpoils,
   awaitingVerdict,
   canQuaff,
+  cashOut,
+  pressOn,
   canTakeOffer,
   canUseLoot,
   createSession,
@@ -686,6 +689,44 @@ describe("Pub Crawl", () => {
     expect(won.discarded).toBe(1);
   });
 
+  it("pushing your luck banks a prize a win, rolls lower each time, and a loss loses the lot", () => {
+    // The One-Armed Bandit: a die, a draught, a shield.
+    const bandit = () =>
+      advance(
+        deal(fromStep(start(), STEP.floor1 + 1), "dungeon.one-armed-bandit"),
+      );
+    let s = rollTo(bandit(), 15);
+    expect(awaitingPress(s)).toBe(true);
+    expect(advance(s)).toBe(s);
+    // Cash out at once: the first prize.
+    expect(party(cashOut(s))).toMatchObject({ loot: ["die"] });
+    expect(party(cashOut(s)).press).toBeUndefined();
+    // Again: banked, rolled 2 lower.
+    s = pressOn(s);
+    expect(s.roll).toBeNull();
+    expect(party(s).press).toBe(1);
+    roundTrip(s);
+    s = rollTo(s, 15);
+    expect(s.roll).toMatchObject({ bonus: -2 });
+    expect(party(cashOut(s)).loot).toEqual(["die", "draught"]);
+    // The third win is the last prize: it cashes out on a tap.
+    s = rollTo(pressOn(s), 15);
+    expect(s.roll).toMatchObject({ bonus: -4 });
+    expect(awaitingPress(s)).toBe(false);
+    expect(party(advance(s))).toMatchObject({
+      loot: ["die", "draught", "shield"],
+    });
+    // A loss forfeits everything banked and costs a heart.
+    const lost = advance(rollTo(pressOn(rollTo(bandit(), 15)), 2));
+    expect(party(lost)).toMatchObject({ loot: [], hearts: H - 1, cup: 1 });
+    expect(party(lost).press).toBeUndefined();
+    roundTrip(lost);
+    // No smoke bomb out of a push under way.
+    const midway = pressOn(rollTo(bandit(), 15));
+    midway.quest!.party!.loot = ["smoke"];
+    expect(canUseLoot(midway, "smoke")).toBe(false);
+  });
+
   it("a Bar Tab passes a lost fight's drinks on, once; the hearts still go", () => {
     let s = advance(deal(start(), "dungeon.gelatinous-shot"));
     s.quest!.party!.loot = ["round", "round"];
@@ -1008,6 +1049,14 @@ function playRun(seed: number, adventurer?: string) {
         if (s.roll && canQuaff(s)) s = quaff(s);
         if (!s.roll) s = returnToCard(rollDice(s, random));
       }
+    }
+    // Push your luck: one more pull when healthy, then cash out.
+    if (awaitingPress(s)) {
+      s =
+        party(s).hearts > 6 && !party(s).press
+          ? pressOn(s)
+          : cashOut(s, random);
+      continue;
     }
     // Spoils: the table picks either trinket, at random.
     if (awaitingSpoils(s)) {

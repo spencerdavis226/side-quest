@@ -207,6 +207,33 @@ test("@release the Quaff rerolls a lost fight for drinks, once until a boss fall
   await expect(page.getByRole("button", { name: /^Quaff/ })).toHaveCount(0);
 });
 
+test("@release pushing your luck: cash out, or go again for the next prize", async ({
+  page,
+}, info) => {
+  const won = rolled(
+    reveal(crawlAt("dungeon.one-armed-bandit", STEP.floor1 + 1)),
+    15,
+  );
+  await seed(page, won);
+  const plaques = page.locator(".card-choice.press .card-choice-option");
+  await expect(plaques).toHaveCount(2);
+  await expect(plaques.nth(0)).toHaveAccessibleName("Cash out: Loaded Die");
+  await expect(page.locator(".game-card .stake-prizes")).toHaveAccessibleName(
+    "Prizes, one a win: Loaded Die, then Healing Draught, then Coaster Shield; 0 banked",
+  );
+  await page.screenshot({ path: info.outputPath("press.png") });
+  await plaques.nth(1).click();
+  await expect(page.locator(".game-card")).toHaveAccessibleName(/^Roll 1d20/);
+  expect((await saved(page)).quest.party.press).toBe(1);
+  // Cashing out takes the prize and moves on.
+  await seed(page, won);
+  await plaques.nth(0).click();
+  await expect(page.locator(".tag-satchel")).toHaveText("1");
+  const s = await saved(page);
+  expect(s.quest.party.loot).toEqual(["die"]);
+  expect(s.quest.step).toBe(STEP.floor1 + 2);
+});
+
 test("a Bar Tab passes a lost fight's drinks to someone else", async ({
   page,
 }, info) => {

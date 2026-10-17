@@ -12,6 +12,7 @@ import { diceNotation } from "../game/dice";
 import {
   awaitingChoice,
   awaitingOffer,
+  awaitingPress,
   awaitingSpoils,
   awaitingVerdict,
   canQuaff,
@@ -32,6 +33,7 @@ import {
 import {
   LootPlaque,
   OfferPlaque,
+  PressPlaques,
   QuaffPlaque,
   SpoilsPlaque,
   usableItems,
@@ -50,6 +52,8 @@ export function Play({
   onOffer = () => {},
   onQuaff = () => {},
   onSpoils = () => {},
+  onCashOut = () => {},
+  onPress = () => {},
   onRevealRoll,
   onFinish,
   renderFace,
@@ -66,6 +70,8 @@ export function Play({
   onOffer?: (index: number, branch?: number) => void;
   onQuaff?: () => void;
   onSpoils?: (index: number) => void;
+  onCashOut?: () => void;
+  onPress?: () => void;
   onRevealRoll: () => void;
   onFinish: (id: number) => void;
   renderFace?: (card: CardDefinition) => ReactNode;
@@ -87,6 +93,8 @@ export function Play({
     !motion && session.phase === "revealed" ? usableItems(session) : [];
   // A won boss or elite: its spoils, one plaque each.
   const spoils = !motion && awaitingSpoils(session) ? card.spoils! : null;
+  // A push-your-luck win: cash out or go again.
+  const press = !motion && awaitingPress(session);
   // Pub Crawl's Quaff: drinks for another go at a lost roll.
   const quaffable = !motion && canQuaff(session);
   const extras = items.length + (quaffable ? 1 : 0);
@@ -200,7 +208,7 @@ export function Play({
             : ""}
         </span>
         <div
-          className={`card-stage ${motion ?? ""} ${choice || verdict || offers || spoils || acting || extras ? "choosing" : ""}`}
+          className={`card-stage ${motion ?? ""} ${choice || verdict || offers || spoils || press || acting || extras ? "choosing" : ""}`}
         >
           <div className="deck-under" aria-hidden="true" />
           <button
@@ -212,7 +220,7 @@ export function Play({
                 !!session.roll &&
                 !session.roll.returned &&
                 motion !== "roll";
-              if (choice || verdict || offers || spoils || blocked) {
+              if (choice || verdict || offers || spoils || press || blocked) {
                 // Point at the plaques instead of acting on a stray tap.
                 if (!matchMedia("(prefers-reduced-motion: reduce)").matches)
                   choiceRef.current?.animate(
@@ -230,6 +238,7 @@ export function Play({
               verdict ||
               !!offers ||
               !!spoils ||
+              press ||
               blocked ||
               (!!motion && motion !== "roll") ||
               (!!card.dice &&
@@ -248,22 +257,24 @@ export function Play({
                       ? `${card.title}. ${card.rules} Choose ${offers.map((o) => o.label).join(", or ")}.`
                       : spoils
                         ? `${card.title}. ${diceResultText(card, session.roll!)} Take a trinket: ${spoils.map((b) => b.name).join(", or ")}.`
-                        : blocked
-                          ? `${card.title}. ${card.rules} ${card.timer!.kind === "fuse" ? "Light the fuse" : "Start the clock"}, or skip it.`
-                          : actions.shown === "end"
-                            ? `${card.title}. ${card.timer!.end} Tap to put this card aside.`
-                            : card.dice && !session.roll?.returned
-                              ? session.roll
-                                ? motion === "roll"
-                                  ? "Finish dice roll"
-                                  : "Revealing dice result"
-                                : `Roll ${diceNotation(card.dice)}. ${card.rules}`
-                              : `${card.title}. ${session.roll?.returned ? `Rolled ${session.roll.total}. ${diceResultText(card, session.roll)}` : card.rules} ${cardPacks(
-                                  card.id,
-                                  session.config.packIds,
-                                )
-                                  .map((pack) => pack.title)
-                                  .join(", ")}. Tap to put this card aside.`
+                        : press
+                          ? `${card.title}. ${diceResultText(card, session.roll!)} Cash out or go again.`
+                          : blocked
+                            ? `${card.title}. ${card.rules} ${card.timer!.kind === "fuse" ? "Light the fuse" : "Start the clock"}, or skip it.`
+                            : actions.shown === "end"
+                              ? `${card.title}. ${card.timer!.end} Tap to put this card aside.`
+                              : card.dice && !session.roll?.returned
+                                ? session.roll
+                                  ? motion === "roll"
+                                    ? "Finish dice roll"
+                                    : "Revealing dice result"
+                                  : `Roll ${diceNotation(card.dice)}. ${card.rules}`
+                                : `${card.title}. ${session.roll?.returned ? `Rolled ${session.roll.total}. ${diceResultText(card, session.roll)}` : card.rules} ${cardPacks(
+                                    card.id,
+                                    session.config.packIds,
+                                  )
+                                    .map((pack) => pack.title)
+                                    .join(", ")}. Tap to put this card aside.`
             }
           >
             <span
@@ -370,30 +381,50 @@ export function Play({
               ))}
             </div>
           )}
-          {!verdict && !choice && !acting && !spoils && extras > 0 && (
+          {press && (
             <div
               ref={choiceRef}
-              className={`card-choice items plaques-${extras}`}
+              className="card-choice offers press plaques-2"
               role="group"
-              aria-label="Satchel"
+              aria-label="Cash out or go again"
             >
-              {items.map((item) => (
-                <LootPlaque
-                  key={item}
-                  item={item}
-                  onUse={onSpend}
-                  theme={crawl}
-                />
-              ))}
-              {quaffable && (
-                <QuaffPlaque
-                  session={session}
-                  onQuaff={onQuaff}
-                  theme={crawl}
-                />
-              )}
+              <PressPlaques
+                session={session}
+                onCashOut={onCashOut}
+                onPress={onPress}
+                theme={crawl}
+              />
             </div>
           )}
+          {!verdict &&
+            !choice &&
+            !acting &&
+            !spoils &&
+            !press &&
+            extras > 0 && (
+              <div
+                ref={choiceRef}
+                className={`card-choice items plaques-${extras}`}
+                role="group"
+                aria-label="Satchel"
+              >
+                {items.map((item) => (
+                  <LootPlaque
+                    key={item}
+                    item={item}
+                    onUse={onSpend}
+                    theme={crawl}
+                  />
+                ))}
+                {quaffable && (
+                  <QuaffPlaque
+                    session={session}
+                    onQuaff={onQuaff}
+                    theme={crawl}
+                  />
+                )}
+              </div>
+            )}
           {choice && (
             <div
               ref={choiceRef}

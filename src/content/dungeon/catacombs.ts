@@ -1,4 +1,5 @@
 import {
+  gamble,
   ambush,
   boss,
   d20,
@@ -214,6 +215,15 @@ export const catacombs: FloorCards = {
     ),
   ],
   finds: [
+    gamble(
+      1,
+      "bone-dice",
+      "The Bone Dice",
+      "A skeleton rattles a cup of finger bones at you. Win, then cash out or go again. Roll d20.",
+      "Snake eyes. Drink 4.",
+      "He clacks his jaw. Give 3.",
+      ["die", "smoke", "revive"],
+    ),
     relic(
       1,
       "cursed-idol",

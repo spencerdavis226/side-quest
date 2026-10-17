@@ -1,4 +1,5 @@
 import {
+  gamble,
   ambush,
   boss,
   d20,
@@ -206,6 +207,15 @@ export const sewers: FloorCards = {
     ),
   ],
   finds: [
+    gamble(
+      4,
+      "fishing-the-drain",
+      "Fishing the Drain",
+      "A rod, a hook and the big drain. Catch, then keep it or cast again, harder. Roll d20.",
+      "You hook a rat. Drink 4.",
+      "Something shiny. Give 3.",
+      ["smoke", "round", "shield"],
+    ),
     relic(
       4,
       "glint-in-the-drain",

@@ -1,4 +1,5 @@
 import {
+  gamble,
   ambush,
   elite,
   fork,
@@ -210,6 +211,15 @@ export const kitchen: FloorCards = {
     ),
   ],
   finds: [
+    gamble(
+      5,
+      "hot-sauce-ladder",
+      "Hot Sauce Ladder",
+      "Each rung is a hotter sauce. Win, then cash out or climb again, harder. Roll d20.",
+      "Your mouth is on fire. Drink 5.",
+      "You don't blink once. Give 4.",
+      ["draught", "die", "revive"],
+    ),
     relic(
       5,
       "back-burner",

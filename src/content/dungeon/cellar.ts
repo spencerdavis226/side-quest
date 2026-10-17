@@ -1,4 +1,5 @@
 import {
+  gamble,
   boss,
   d20,
   elite,
@@ -210,6 +211,15 @@ export const cellar: FloorCards = {
     ),
   ],
   finds: [
+    gamble(
+      0,
+      "one-armed-bandit",
+      "The One-Armed Bandit",
+      "A slot machine older than the bar. Win, then cash out or pull again, harder. Roll d20.",
+      "Bust. Drink 3.",
+      "Cherries. Give 2.",
+      ["die", "draught", "shield"],
+    ),
     relic(
       0,
       "mimic-cooler",

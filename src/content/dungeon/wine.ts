@@ -1,4 +1,5 @@
 import {
+  gamble,
   ambush,
   boss,
   d20,
@@ -201,6 +202,15 @@ export const wine: FloorCards = {
     ),
   ],
   finds: [
+    gamble(
+      3,
+      "wine-roulette",
+      "Wine Roulette",
+      "Six glasses, one of them corked. Win, then cash out or pick again, harder. Roll d20.",
+      "Corked. Drink 3.",
+      "Lovely. Give 2.",
+      ["draught", "draught", "shield"],
+    ),
     relic(
       3,
       "dusty-bottle",

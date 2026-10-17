@@ -4,7 +4,7 @@ import type {
   DiceRoll,
   SessionState,
 } from "./types";
-import { currentCard, omenEffect, type Random } from "./engine";
+import { currentCard, omenEffect, PRESS_STEP, type Random } from "./engine";
 
 /** How a committed roll is read: a crawl d20's omen bonus, and whether it
  * counts as a natural. Absent on every other roll. */
@@ -176,9 +176,12 @@ export function rollDice(
       flinched = true;
     }
     const face = values[0];
+    // Each pull on a push-your-luck card rolls lower.
+    const pulls = card.press ? (session.quest!.party!.press ?? 0) : 0;
     const bonus =
       (effect.roll?.all ?? 0) +
-      (card.encounter ? (effect.roll?.[card.encounter] ?? 0) : 0);
+      (card.encounter ? (effect.roll?.[card.encounter] ?? 0) : 0) -
+      PRESS_STEP * pulls;
     const natural =
       face >= (effect.crit ?? 20)
         ? 20

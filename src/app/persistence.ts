@@ -168,6 +168,10 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
     (p.quaffed !== undefined &&
       (p.quaffed !== true || p.quaff === undefined)) ||
     (p.cup !== undefined && !whole(p.cup, 0)) ||
+    (p.press !== undefined &&
+      (!whole(p.press, 1) ||
+        s.phase !== "revealed" ||
+        p.press >= (currentCard(s).press?.prizes.length ?? 0))) ||
     (p.passed !== undefined &&
       (!whole(p.passed, 0) || p.passed > s.discarded)) ||
     // The starter's form: a later form it has, once the omen is set.
