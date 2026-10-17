@@ -54,7 +54,7 @@ material, not game content:
   `docs/CARD_VOICE_REFERENCE.md`) turned eleven prop, chore or dead rules into
   one-time actions: Egg (no object to hold), Lickitung, Psyduck, Ditto,
   Murkrow, Mawile, Relicanth, Farfetch'd, Vulpix, and Team Magma and Aqua
-  (there are no teams, so whoever wears red or blue joins). Board-only plumbing (squares, lights, turn order, extra turns) is
+  (there are no teams, so whoever wears red or blue joins). Hoothoot's "wear shades" became a hoot, and the League's Candice holds a wall sit instead of an ice cube, so nothing needs a prop. Board-only plumbing (squares, lights, turn order, extra turns) is
   intentionally not carried over. The League's cards (`src/content/league/`,
   `pokemon-league.ts`) are original rather than from the sheets; at the
   owner's request (2026-10-17, "less same-y") their roll results were

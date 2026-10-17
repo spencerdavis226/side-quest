@@ -541,7 +541,7 @@ const authored: CardDefinition[] = [
     "ohio",
     "Ohio",
     "rule",
-    "That sucks. Drink 2 and wear something stupid until your next turn.",
+    "That sucks. Drink 2, and until your next turn answer everything with 'It's not that bad.'",
   ),
   card(
     "part-of-the-crew",
@@ -564,8 +564,8 @@ const authored: CardDefinition[] = [
   card(
     "christmas",
     "3rd World Christmas",
-    "rule",
-    "Give someone a gift. They wear or use it for the rest of the game.",
+    "challenge",
+    "Give someone an imaginary gift and describe it. They act thrilled, or drink 3.",
   ),
 ];
 

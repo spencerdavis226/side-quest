@@ -239,7 +239,7 @@ the Review column is intentionally blank so you can mark it up.
 | --- | --- | --- | --- | --- | --- |
 | ☐ | Smeargle | `pokemon.smeargle` | sip | Smeargle used Sketch! Switch drinks with another player. |  |
 | ☐ | Magikarp | `pokemon.magikarp` | sip | Magikarp used Splash! ...but nothing happened. |  |
-| ☐ | Hoothoot | `pokemon.hoothoot` | sip | Hoothoot only comes out at night. If it's dark outside, give 2. Otherwise, wear shades and drink 2. |  |
+| ☐ | Hoothoot | `pokemon.hoothoot` | sip | Hoothoot only comes out at night. If it's dark outside, give 2. Otherwise, hoot like an owl and drink 2. |  |
 | ☐ | Castform | `pokemon.castform` | sip | Castform used Weather Ball! Look outside. Clear: drink 2. Cloudy: give 2. Rain or snow: drink 3. |  |
 | ☐ | Tauros | `pokemon.tauros` | sip | A wild Tauros appeared and instantly fled. Drink 2 for being too slow. |  |
 | ☐ | Pikachu | `pokemon.pikachu` | sip | You caught a Pikachu! Drink 2 and name your new starter. Electric typing included. |  |
@@ -419,7 +419,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Crasher Wake | `pokemon.gym-crasher-wake` | challenge | Crasher Wake is a luchador. Put on an imaginary mask, flex at the table, and roll d20. | 1d20 — 1-1: Natural 1! Piledriver. Finish your drink. 2-6: Body slam. Drink 5, then flex again. 7-19: You pin him for three. Give 5. 20-20: Natural 20! You unmask him. Give a shot. |
 | ☐ | Fantina | `pokemon.gym-fantina` | challenge | Fantina wants ze dance. Dance 15 seconds with no music. Table votes not magnifique: drink 5. |  |
 | ☐ | Byron | `pokemon.gym-byron` | challenge | Byron is Roark's dad and louder about it. Shout your biggest flex at the table, then roll d20. | 1d20 — 1-1: Natural 1! Steel beam to the face. Finish your drink. 2-7: Iron Defense. Drink 5, and the table rates your flex out of 10. 8-19: You dent the old man. Give 5. 20-20: Natural 20! You bend his steel. Everyone else drinks 3. |
-| ☐ | Candice | `pokemon.gym-candice` | challenge | Candice says focus! Hold an ice cube in your bare fist for 30 seconds. Drop it: drink 6. |  |
+| ☐ | Candice | `pokemon.gym-candice` | challenge | Candice says focus! Hold a wall sit for 30 seconds while the table heckles. Drop: drink 6. |  |
 | ☐ | Volkner | `pokemon.gym-volkner` | challenge | Volkner is so bored he blacked out the city. Bore the table with a fun fact, then roll d20. | 1d20 — 1-1: Natural 1! Blackout. Finish your drink in the dark. 2-8: He yawns at you. Drink 6 and tell another fun fact. 9-19: You spark him up. Whoever yawned during your fact drinks 4. 20-20: Natural 20! He's finally interested. Everyone else drinks 4. |
 | ☐ | Cilan, Chili & Cress | `pokemon.gym-striaton-trio` | challenge | Waiters' test: recite everyone's drink in seat order. Each miss: drink 2. Two misses lose. |  |
 | ☐ | Lenora | `pokemon.gym-lenora` | challenge | Lenora runs a museum and you're the exhibit. Hold a statue pose while you roll d20. | 1d20 — 1-1: Natural 1! Retaliate. Drink 8 without breaking the pose. 2-4: Retaliate. Drink 4 without breaking the pose. 5-19: You beat the curator. Give 4. 20-20: Natural 20! Masterpiece. Give 8. |
@@ -722,7 +722,7 @@ the Review column is intentionally blank so you can mark it up.
 
 ## Cabin weekend (`cabin`)
 
-85 cards · 22 sip · 11 group · 0 category · 34 challenge · 18 rule · 23 dice
+85 cards · 22 sip · 11 group · 0 category · 35 challenge · 17 rule · 23 dice
 
 | Review | Title | ID | Cat | Rules | Dice, secret or timer |
 | --- | --- | --- | --- | --- | --- |
@@ -791,6 +791,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | What Is? Give | `cabin.what-is-give` | challenge | Have someone get you the drink they have. Roll d6. You both drink your roll minus 3. | 1d6 — 1-3: Nobody drinks. 4-4: You both drink 1. 5-5: You both drink 2. 6-6: You both drink 3. |
 | ☐ | Kadabra | `cabin.kadabra` | challenge | Abra's dumbass brother. Swap seats with anyone. |  |
 | ☐ | It's Gotta Go | `cabin.its-gotta-go` | challenge | Finish your drink. |  |
+| ☐ | 3rd World Christmas | `cabin.christmas` | challenge | Give someone an imaginary gift and describe it. They act thrilled, or drink 3. |  |
 | ☐ | Maddy Booty | `cabin.maddy-booty` | challenge | Roll 1d20. You drink until the group counts to it, or you finish your drink. | 1d20 — Drink until the group counts to {total}, or finish your drink. |
 | ☐ | Pet that dog | `cabin.pet-that-dog` | challenge | Better pet any dog in the room, or take 1d6 | 1d6 — Drink {total}. |
 | ☐ | Bitch Babe | `cabin.bitch-babe` | rule | Give 2. Until your next turn, call your left neighbor babe and everyone else bitch. |  |
@@ -803,11 +804,10 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Like I Said | `cabin.like-i-said` | rule | Drink 2. Until your next turn, mimic the next player. |  |
 | ☐ | Steve's Spyder Beanie | `cabin.steves-beanie` | rule | Until your next turn, send every drink given to you back to the sender. |  |
 | ☐ | Deez Nuts | `cabin.deez-nuts` | rule | You are Deez for the rest of the game. Fall for a deez nuts joke: drink 3. |  |
-| ☐ | Ohio | `cabin.ohio` | rule | That sucks. Drink 2 and wear something stupid until your next turn. |  |
+| ☐ | Ohio | `cabin.ohio` | rule | That sucks. Drink 2, and until your next turn answer everything with 'It's not that bad.' |  |
 | ☐ | Part of the Crew | `cabin.part-of-the-crew` | rule | Pick up to 3 crew. Until your next turn, when one of you drinks, all of you drink. |  |
 | ☐ | Dream Team | `cabin.dream-team` | rule | Until your next turn, you may split your drinks with anyone beside you. |  |
 | ☐ | President | `cabin.president` | rule | Until your next turn, give anyone orders. Refuse: drink 2. |  |
-| ☐ | 3rd World Christmas | `cabin.christmas` | rule | Give someone a gift. They wear or use it for the rest of the game. |  |
 | ☐ | Wench | `cabin.wench` | rule | You are the drink wench until your next turn |  |
 | ☐ | Pokemon | `cabin.first-name-only` | rule | Speak only your first name until your next turn |  |
 | ☐ | Abra like a Slut | `cabin.abra-like-a-slut` | rule | Reverse the turn order for the rest of the game |  |

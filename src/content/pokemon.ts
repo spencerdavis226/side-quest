@@ -90,7 +90,7 @@ const deck: CardDefinition[] = [
     "hoothoot",
     "Hoothoot",
     "sip",
-    "Hoothoot only comes out at night. If it's dark outside, give 2. Otherwise, wear shades and drink 2.",
+    "Hoothoot only comes out at night. If it's dark outside, give 2. Otherwise, hoot like an owl and drink 2.",
   ),
   card(
     "castform",

@@ -87,7 +87,7 @@ export const sinnoh: Region = {
       "candice",
       "Candice",
       "Icicle",
-      "Candice says focus! Hold an ice cube in your bare fist for 30 seconds. Drop it: drink 6.",
+      "Candice says focus! Hold a wall sit for 30 seconds while the table heckles. Drop: drink 6.",
     ),
     leader(
       7,

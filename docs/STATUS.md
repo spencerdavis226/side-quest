@@ -2,6 +2,22 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Polish: prop audit and device checklist (2026-10-17; pushed to `main`)
+
+- **Prop audit, all packs.** I scanned every card for props and lasting chores and rewrote four:
+  - Hoothoot: "wear shades" became "hoot like an owl".
+  - Candice: the ice cube became a 30-second wall sit.
+  - Cabin's Ohio: "wear something stupid" became answering everything with "It's not that bad".
+  - Cabin's 3rd World Christmas: a real gift worn all game became an imaginary gift the receiver must act thrilled about (now a challenge).
+- **Left as they are:** Becca's glasses (a House in-joke with a Refuse option), the Weatherman (a one-time forecast), and the classic until-your-next-turn rules.
+- **Device checklist:** one new unverified item covers everything Pub Crawl added on 2026-10-17.
+- **Not done, by choice:**
+  - A boss trophy row: the party dialog's floor list already names each beaten boss.
+  - Art prompts: they need the owner's image tool.
+- **Verification:**
+  - `npm test`: 226 passed. Lint, typecheck and build passed.
+  - Chromium `quest.spec.ts`: 12 passed.
+
 ## A third floor at every depth (2026-10-17; pushed to `main`)
 
 - **Three new floors** (112 cards), so each depth is one of three and a run is one of 27 dungeons (135 with the hidden rooms):
