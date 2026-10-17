@@ -2,6 +2,13 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Top-edge blur: keep the strip in a fresh install (2026-10-17; branch `status-edge-fresh`)
+
+- **Owner's iPhone 15 Pro screenshot after re-adding the app:** the status bar is now solid (flat #201710 for the top ~177px, so dropping black-translucent took), but a band about 30pt below it is still blurred before the wood grain returns. That is iOS 26's top edge effect (status bar plus about 40pt).
+- **Cause:** with no inset, `.status-edge` was `height: var(--top-safe)` = 0, so WebKit found no fixed box at the top edge (it needs one more than 10px tall) and drew the blur.
+- **Fix:** `src/style.css` `.status-edge` height is `max(14px, var(--top-safe))`; it paints the backdrop's wood inside the play screen's 16px top padding. `tests/browser/layout.spec.ts` checks the fresh-install case (14px, hit 4px in, no seam) beside the 59px inset.
+- **Verification:** `npm test` 229 passed; lint, typecheck, build passed; Chromium `layout.spec.ts` 13 passed; Chromium `@release` (minus fit sweeps) 37 passed. Not verified on a device: emulation cannot show the iOS edge effect.
+
 ## The Quaff costs 6 drinks (2026-10-17; pushed to `main`, PR #17)
 
 - **Owner:** change the Quaff to 6. `QUAFF_DRINKS` in `src/content/dungeon/shared.ts` is now 6 (was 3); the manifest is regenerated, so the button ("drink 6 · reroll"), the Quaff chip and dialog, and How to play follow it. Saves keep the cost they started with (`party.quaff` is snapshotted at game start), so a run in progress stays at 3.

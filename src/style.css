@@ -51,14 +51,16 @@ html.standalone {
 html.standalone body {
   height: 100lvh;
 }
-/* The status-bar edge (installed app only). Apps added to the Home Screen
-   before 2026-10-17 still run under the status bar (black-translucent),
-   where iOS 26+ blurs the top of the page. This strip, exactly the inset
-   tall with a solid colour, is the fixed box WebKit samples there
-   (LocalFrameView::fixedContainerEdges), so the area behind the clock takes
-   the chrome colour; on the owner's iPhone 15 Pro the header below it
-   stayed blurred, so index.html now drops black-translucent. In a fresh
-   install the top inset is 0 and the strip has no height. */
+/* The status-bar edge (installed app only). iOS 26+ draws a blur over the
+   top of an installed web app, from the status bar to about 40pt below it,
+   unless WebKit finds a fixed box with a solid colour at the top edge
+   (LocalFrameView::fixedContainerEdges: hit-tested 4px inside the edge, at
+   least 90% of the width, more than 10px tall, no backdrop-filter). It then
+   uses that box's colour instead. This strip is that box: the status-bar
+   inset tall under black-translucent (installs before 2026-10-17), and 14px
+   in a fresh install, where the inset is 0 (the owner's iPhone 15 Pro still
+   showed the band below an opaque status bar). It paints the backdrop's own
+   wood, inside the 16px the play screen keeps above the header. */
 .status-edge {
   display: none;
 }
@@ -69,7 +71,7 @@ html.standalone .status-edge {
   right: 0;
   left: 0;
   z-index: 1;
-  height: var(--top-safe);
+  height: max(14px, var(--top-safe));
   background:
     radial-gradient(ellipse at 50% 40%, #110c0760, #100c0ac9) 0 0 / 100%
       var(--backdrop-height) no-repeat,
