@@ -2,7 +2,7 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Header redesign (2026-10-17; branch `hud-redesign`)
+## Header redesign (2026-10-17; pushed to `main`, PR #13)
 
 - **Owner ask:** the top row wasted its middle and crammed everything into the hearts stud's rim; make it clear at a glance and from a distance in all three modes, and split the single hearts dialog into dedicated ones.
 - **Layout (`TopBar.tsx`):** a brass stud each side and a teal plaque between (capped at 300 px, 420 px on iPad).
