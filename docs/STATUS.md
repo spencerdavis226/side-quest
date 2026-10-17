@@ -2,7 +2,7 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Hearts stud: optical centring (2026-10-17; branch `heart-optical`)
+## Hearts stud: optical centring (2026-10-17; pushed to `main`, PR #20)
 
 - **Owner (iPhone screenshot):** the heart is not centred in the top-left stud. Measured: its box is centred to within 1px; it reads high because the lobes carry its weight. `.meter-heart.heart-shape` sits 2px lower (`src/presentation/crawl.css`); `CrawlMeterFace` adds `heart-shape` only when the theme keeps the stock heart, so the League's round Poke Ball is unchanged.
 - **Verification:** `npm test` 229 passed; typecheck, lint, build passed; Chromium `crawl.spec.ts` (minus the fit sweep) 20 passed. Not checked on a device.
