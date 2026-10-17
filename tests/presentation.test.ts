@@ -95,7 +95,7 @@ describe("presentation transactions", () => {
   });
 });
 describe("preferences compatibility", () => {
-  it("maps legacy finite choices to the nearest mode and keeps selected packs selectable", () => {
+  it("maps legacy finite choices to Standard and keeps selected packs selectable", () => {
     const old = {
       config: { version: 1, packIds: ["vip"], limit: 37 },
       sound: true,
@@ -106,22 +106,17 @@ describe("preferences compatibility", () => {
     };
     vi.stubGlobal("localStorage", { getItem: () => JSON.stringify(old) });
     expect(loadPreferences()).toEqual({
-      config: { version: 1, packIds: ["vip"], limit: 30 },
-      choice: "short",
+      config: { version: 1, packIds: ["vip"], limit: 50 },
+      choice: "standard",
     });
-    for (const [size, choice, limit] of [
-      [46, "long", 60],
-      [20, "short", 30],
-    ] as const) {
+    for (const choice of ["short", "long", "20", "60"]) {
       vi.stubGlobal("localStorage", {
-        getItem: () =>
-          JSON.stringify({
-            ...old,
-            choice: "custom",
-            customSize: String(size),
-          }),
+        getItem: () => JSON.stringify({ ...old, choice }),
       });
-      expect(loadPreferences()).toMatchObject({ choice, config: { limit } });
+      expect(loadPreferences()).toMatchObject({
+        choice: "standard",
+        config: { limit: 50 },
+      });
     }
   });
   it("maps Endless to Infinite while leaving active saves outside preferences", () => {

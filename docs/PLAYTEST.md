@@ -4,19 +4,19 @@ Status: **prepared, no results recorded.** Kit prepared 2026-09-21 at commit `3e
 
 ## How to run
 
-- Two sessions, ideally one group. Session A is Short (30 cards) with the Core deck. Session B is Infinite with the House deck and VIP night, with a guest of honor; use more sessions to cover the deck.
+- Two sessions, ideally one group. Session A is Standard (50 cards) with the Core deck. Session B is Infinite with the House deck and VIP night, with a guest of honor; use more sessions to cover the deck.
 - Dice cards are spread across the packs (36 in Core, 19 in House, 21 in Pokémon plus 12 League-only gym leaders, 19 in Cabin weekend). Packs are opt-in; select as many as the table wants.
 - Use the game without coaching beyond choosing a first drawer and clockwise turns. Record confusion rather than steering players to the intended answer.
 - Place the phone where the group will actually play. Ask people across the table and at side angles to read each revealed rule without passing the phone; note when they must lean in, turn the phone, or scroll.
 - After each session ask: which cards would you remove, which do you want more of, and was the next action ever unclear?
 - Keep automation results separate from these observations. Do not mark a check passed from an emulated screenshot.
 
-## Session A — Short (30, Core)
+## Session A — Standard (50, Core)
 
 - Date / build commit:
 - Device / OS / Safari or installed Home Screen:
 - People / approximate session length:
-- Deck: Short, Core only (30 cards from the 105-card pool).
+- Deck: Standard, Core only (50 cards from the 105-card pool).
 
 ## Session B — Infinite, then VIP night
 

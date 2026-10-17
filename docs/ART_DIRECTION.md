@@ -24,7 +24,7 @@ The title safe zone is x17–83% and y11–24.5% of the 2:3 card. Start at `clam
 
 ## Launch setup, controls, and dice
 
-Setup offers Short (30 cards), Long (60 cards), and Infinite. A Card packs dialog toggles the four opt-in packs (Core, House, VIP, Pokémon); a game needs at least one. Selections persist for the next game, while an active game's card order and text remain its saved snapshot. The setup selector, dialogs, completion, pause, install, recovery, and update surfaces share the same quiet walnut, bronze, and teal control language, clear focus treatment, and reachable targets.
+Setup offers Standard (50 cards) and Infinite. A Card packs dialog toggles the four opt-in packs (Core, House, VIP, Pokémon); a game needs at least one. Selections persist for the next game, while an active game's card order and text remain its saved snapshot. The setup selector, dialogs, completion, pause, install, recovery, and update surfaces share the same quiet walnut, bronze, and teal control language, clear focus treatment, and reachable targets.
 
 Mobile play is portrait-only by user decision. If a phone or tablet presents a landscape viewport, a painted rotate prompt blocks interaction while the game and any open menu stay mounted. It disappears on return to portrait. Desktop remains usable in landscape. This is an intentional accessibility tradeoff against WCAG 1.3.4; do not claim orientation accessibility compliance.
 

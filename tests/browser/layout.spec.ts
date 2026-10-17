@@ -265,7 +265,7 @@ test("@release home fits Safari's visible height without moving Install into the
     });
   }
   // The League plays its own pack; a plain mode brings the pack picker back.
-  await page.getByRole("button", { name: /^Short/ }).click();
+  await page.getByRole("button", { name: /^Standard/ }).click();
   await page.getByRole("button", { name: /^Choose packs/ }).click();
   await expect(page.getByRole("dialog", { name: "Card packs" })).toBeVisible();
   await page.getByRole("button", { name: "Done", exact: true }).click();

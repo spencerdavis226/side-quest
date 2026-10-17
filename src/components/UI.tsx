@@ -116,8 +116,7 @@ export function DeckChoices({
   return (
     <div className="lengths" role="group" aria-label="Game length">
       {[
-        ["short", "Short", "30 cards"],
-        ["long", "Long", "60 cards"],
+        ["standard", "Standard", "50 cards"],
         ["infinite", "Infinite", "Keeps going"],
       ].map(([id, label, detail]) => (
         <Button

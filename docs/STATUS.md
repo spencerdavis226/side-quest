@@ -2,6 +2,18 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Two plain lengths: Standard (50) and Infinite (2026-10-17; not pushed)
+
+- **Request (owner):** the plain modes are now only Standard (50 cards) and Infinite. Short (30) and Long (60) are gone; the quest modes are unchanged.
+- **Code:** `DeckChoice` is `"standard" | "infinite" | "quest"` and `MODE_LIMITS.standard` is 50 (`src/app/persistence.ts`); the default preference is Standard. `DeckChoices` (`src/components/UI.tsx`) shows two buttons; `.lengths` is flex, so no CSS changed.
+- **Migration:** saved preferences of Short, Long and the older 20/40/60/custom lengths load as Standard; Endless still loads as Infinite. Active saves keep their own `config.limit` (30, 60 or anything else), so a game in progress plays to its original length. Session schema unchanged.
+- **Tests:** `tests/presentation.test.ts` (legacy choices map to Standard), `tests/browser/game.spec.ts` (two lengths, 50-card limit, the persistence test now uses Infinite), `layout.spec.ts`, `title-fit.spec.ts`.
+- **Docs:** README, AGENTS.md, `src/screens/CLAUDE.md`, ART_DIRECTION, AUTHORING, GAME_DESIGN, PLAYTEST, DEVICE_CHECKLIST (the setup item stays unchecked).
+- **Verification:**
+  - `npm test`: 226 passed. Lint, typecheck and build passed (runtime 3,801 KiB).
+  - Chromium `game.spec.ts`, `layout.spec.ts`, `title-fit.spec.ts`: 31 passed. WebKit not run locally.
+- **Next:** owner approval to push to `main` (it deploys).
+
 ## Polish: prop audit and device checklist (2026-10-17; pushed to `main`)
 
 - **Prop audit, all packs.** I scanned every card for props and lasting chores and rewrote four:

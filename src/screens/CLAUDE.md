@@ -1,6 +1,6 @@
 # src/screens — Setup, Play, Completion, dialogs
 
-- `Setup.tsx`: length (Short 30 / Long 60 / Infinite) and an opt-in pack dialog; at least one pack is required. Pack selection never mutates a running game.
+- `Setup.tsx`: length (Standard 50 / Infinite) and an opt-in pack dialog; at least one pack is required. Pack selection never mutates a running game.
 - `Play.tsx`: the table. It paints front or back by actual rotation angle (WebKit workaround), forwards animation end events to the controller, and mounts the lazy dice overlay only while a dice card is revealed and unreturned. A choice card (`dice.choice`) shows two `.card-choice` plaque buttons as siblings of the card once it lands face up; the card button is inert until one is picked. A quest battle without dice shows Won and Lost plaques (`.card-choice.verdict`) the same way. A secret or timed card shows `CardActions` plaques in the same slot; a timed card's button stays inert (and nudges the plaques) until its time is up; its Skip plaque puts it aside early. The card is a single `<button>` whose `aria-label` changes with state; keep it accurate when adding states.
 - `Completion.tsx`: end screen; its celebration `onAnimationEnd` calls the controller `finish`. A won quest shows the Hall of Fame (`QuestRecord`) instead of the tankard; a crawl ends on "Last call, survived." or "Party wiped." with its `CrawlRecord`.
 - `Setup.tsx` also lists quest modes (one per row, with `quest.mark`); choosing a crawl replaces the pack picker with the crawl in brief, since it plays its own pack alone.

@@ -17,7 +17,7 @@ Automated browser emulation is not evidence of actual iOS Home Screen behavior. 
 - [ ] Reveal a card, switch apps, lock/unlock, and reopen. Same card and count persist.
 - [ ] Rapidly tap during reveal and discard. Exactly one action occurs per transition.
 - [ ] Interrupt a transition by closing the app. It restores the latest committed stable state, never a broken animation.
-- [ ] Check Short (30), Long (60), Infinite, both quest modes, and the eight opt-in pack toggles in the pack dialog. Confirm an existing custom-length active save retains its original limit.
+- [ ] Check Standard (50), Infinite, both quest modes, and the eight opt-in pack toggles in the pack dialog. Confirm an existing custom-length active save retains its original limit.
 - [ ] Confirm final card stays visible until dismissed; replay starts a fresh shuffle with the same setup.
 - [ ] Previous Card is read-only; menu close restores focus; End Game can be canceled.
 - [ ] Enlarge text and zoom, enable Reduce Motion and VoiceOver. Read full rules and operate all controls.
@@ -49,7 +49,7 @@ Sound has been removed; there are no audio checks. Verify the visual and dice it
 Automated evidence is recorded in `docs/STATUS.md`. Keep the following pending until observed on physical hardware:
 
 - [ ] Approve the short, long, and temporary-rule front studies on an iPhone and iPad.
-- [ ] Play Short (30 cards from the 105-card Core deck) using the playtest record, then sample more cards in Infinite with the House deck. Engine tests cover the full shuffle cycle.
+- [ ] Play Standard (50 cards from the 105-card Core deck) using the playtest record, then sample more cards in Infinite with the House deck. Engine tests cover the full shuffle cycle.
 - [ ] Verify the published `/side-quest/` URL, Home Screen installation, offline relaunch, and updates on iOS.
 - [ ] Evaluate the approved frame and live title sharpness, scrolling with enlarged text, and flip smoothness on physical devices.
 - [ ] Secrets & fuses (2026-10-06, unverified): hold Hold to read with a thumb; the secret shows only while held, with no text-selection loupe or callout, and hides on release, on app switch and on lock. Forehead: start the clock, hold the plaque with the phone on a forehead; the table can read the word and the counter. Light a fuse with the phone flat on the table while a beer goes round: stray taps on the card do nothing, the BOOM is unmistakable from every seat in bright and dim light, and the card goes aside afterwards. Skip puts a timed card aside before or during its timer, and the three plaques on a Forehead card are easy to hit with a thumb. Background the app mid-fuse and return: it goes off at once if its time passed.

@@ -49,7 +49,7 @@ The release smoke suite exercises the main flow, pack selection, card reading an
 - `src/main.tsx`: saved preferences, visibility handling, and PWA orchestration.
 - `public/art`: bundled original placeholder artwork; no remote asset dependency.
 
-Setup offers Short (30 draws), Long (60 draws), and Infinite. All six packs are opt-in in the Card packs dialog — the generated main deck, the supplied House deck, VIP night, the Pokémon deck, Cabin weekend, and Most Likely To — and any combination of at least one pack starts a game. Every shuffle cycle exhausts the selected unique cards before repeating, including when Long exceeds the catalog. Infinite cycles have bounded storage. Existing active saves keep their original length, including older custom limits. The group handles turns and ongoing rules. All cards have equal frequency per cycle.
+Setup offers Standard (50 draws) and Infinite. All six packs are opt-in in the Card packs dialog — the generated main deck, the supplied House deck, VIP night, the Pokémon deck, Cabin weekend, and Most Likely To — and any combination of at least one pack starts a game. Every shuffle cycle exhausts the selected unique cards before repeating, including when Standard exceeds the selected packs. Infinite cycles have bounded storage. Existing active saves keep their original length, including older custom limits. The group handles turns and ongoing rules. All cards have equal frequency per cycle.
 
 Mobile play is portrait-only. A rotate prompt blocks phone and tablet interaction in landscape without clearing the current game; desktop landscape remains available.
 

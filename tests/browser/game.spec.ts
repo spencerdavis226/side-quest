@@ -97,16 +97,16 @@ test("@release legacy finite game, rapid taps, restore, previous card, replay an
   await expect(page.locator(".game-card")).toBeVisible();
   expect(errors).toEqual([]);
 });
-test("three lengths and the quest modes appear, and every pack can be toggled", async ({
+test("two lengths and the quest modes appear, and every pack can be toggled", async ({
   page,
 }) => {
   await page.goto("./");
   await expect(
     page.getByRole("group", { name: "Game length" }).getByRole("button"),
-  ).toHaveCount(3);
+  ).toHaveCount(2);
   await expect(page.locator(".quest-mode")).toHaveCount(2);
   await expect(
-    page.getByRole("button", { name: "Short, 30 cards" }),
+    page.getByRole("button", { name: "Standard, 50 cards" }),
   ).toHaveAttribute("aria-pressed", "true");
   await page.getByRole("button", { name: "Choose packs" }).click();
   const dialog = page.getByRole("dialog");
@@ -126,7 +126,7 @@ test("three lengths and the quest modes appear, and every pack can be toggled", 
     page.getByRole("button", { name: "Play", exact: true }),
   ).toBeEnabled();
 });
-test("Short and Infinite create the advertised limits", async ({ page }) => {
+test("Standard and Infinite create the advertised limits", async ({ page }) => {
   await page.goto("./");
   await page.getByRole("button", { name: "Play", exact: true }).click();
   await expect(page.locator(".progress")).toBeVisible();
@@ -135,7 +135,7 @@ test("Short and Infinite create the advertised limits", async ({ page }) => {
       (k) => JSON.parse(localStorage.getItem(k)!).config.limit,
       key,
     ),
-  ).toBe(30);
+  ).toBe(50);
   await ready(page);
   await page.getByRole("button", { name: "Open game menu" }).click();
   await page.getByRole("button", { name: "End game", exact: true }).click();
@@ -453,13 +453,13 @@ test("mode and add-ons persist while interruption restores a stable card", async
   page,
 }) => {
   await page.goto("./");
-  await page.getByRole("button", { name: "Long, 60 cards" }).click();
+  await page.getByRole("button", { name: "Infinite, Keeps going" }).click();
   await page.getByRole("button", { name: "Choose packs" }).click();
   await page.getByRole("button", { name: /VIP night/ }).click();
   await page.getByRole("button", { name: "Done" }).click();
   await page.reload();
   await expect(
-    page.getByRole("button", { name: "Long, 60 cards" }),
+    page.getByRole("button", { name: "Infinite, Keeps going" }),
   ).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator(".pack-selector")).toHaveAccessibleName(
     /VIP night/,
@@ -470,7 +470,7 @@ test("mode and add-ons persist while interruption restores a stable card", async
     (k) => JSON.parse(localStorage.getItem(k)!).config,
     key,
   );
-  expect(config).toEqual({ version: 1, packIds: ["core", "vip"], limit: 60 });
+  expect(config).toEqual({ version: 1, packIds: ["core", "vip"], limit: null });
   await forcePlainFirst(page, 1);
   await page.getByRole("button", { name: "Reveal card" }).click();
   await page.reload();
@@ -522,7 +522,7 @@ test("minimal interface and a real two-sided flip", async ({ page }) => {
     "aria-hidden",
     "true",
   );
-  await expect(page.locator(".progress")).toContainText("2 / 30");
+  await expect(page.locator(".progress")).toContainText("2 / 50");
 });
 
 test("legacy audio and atmosphere preferences are ignored and toggles are gone", async ({
@@ -577,7 +577,7 @@ test("canceled animations and backgrounding settle without additional draws", as
   await expect(page.locator(".card-stage")).not.toHaveClass(
     /flip|discard|settle|deal/,
   );
-  await expect(page.locator(".progress")).toContainText("2 / 30");
+  await expect(page.locator(".progress")).toContainText("2 / 50");
   await expect(page.locator(".atmosphere")).toHaveClass(/suspended/);
   await page.evaluate(() => {
     Object.defineProperty(document, "hidden", {
@@ -586,9 +586,9 @@ test("canceled animations and backgrounding settle without additional draws", as
     });
     document.dispatchEvent(new Event("visibilitychange"));
   });
-  await expect(page.locator(".progress")).toContainText("2 / 30");
+  await expect(page.locator(".progress")).toContainText("2 / 50");
   await page.reload();
-  await expect(page.locator(".progress")).toContainText("2 / 30");
+  await expect(page.locator(".progress")).toContainText("2 / 50");
 });
 test("offline uses local Grenze and painted controls", async ({
   page,

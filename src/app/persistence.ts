@@ -38,10 +38,9 @@ export function migrateStorageKeys(storage?: KeyStore) {
   }
 }
 /** A length, or a pack's quest mode (`config.quest` names the pack). */
-export type DeckChoice = "short" | "long" | "infinite" | "quest";
+export type DeckChoice = "standard" | "infinite" | "quest";
 export const MODE_LIMITS: Record<DeckChoice, number | null> = {
-  short: 30,
-  long: 60,
+  standard: 50,
   infinite: null,
   quest: null,
 };
@@ -50,8 +49,8 @@ export interface Preferences {
   choice: DeckChoice;
 }
 export const defaults: Preferences = {
-  config: { version: 1, packIds: ["core"], limit: 30 },
-  choice: "short",
+  config: { version: 1, packIds: ["core"], limit: 50 },
+  choice: "standard",
 };
 /** Keep only installed packs; never let a stale selection empty the deck. */
 const knownPackIds = (ids: readonly string[]) => {
@@ -323,18 +322,16 @@ export function loadPreferences(): Preferences {
           config: { ...config, packIds: knownPackIds(config.packIds), quest },
           choice: "quest",
         };
-      } else if (["short", "long", "infinite"].includes(p.choice)) {
-        choice = p.choice;
-      } else if (p.choice === "endless") {
+      } else if (p.choice === "infinite" || p.choice === "endless") {
         choice = "infinite";
-      } else if (["20", "40", "60", "custom"].includes(p.choice)) {
-        const size =
-          p.choice === "custom" ? Number(p.customSize) : Number(p.choice);
-        const finite =
-          Number.isInteger(size) && size >= 1 && size <= 500
-            ? size
-            : p.config.limit;
-        choice = finite === null ? "infinite" : finite <= 45 ? "short" : "long";
+      } else if (
+        // Short and Long (until 2026-10-17) and the older fixed and custom
+        // lengths all become Standard.
+        ["standard", "short", "long", "20", "40", "60", "custom"].includes(
+          p.choice,
+        )
+      ) {
+        choice = "standard";
       } else {
         return defaults;
       }
