@@ -156,7 +156,9 @@ test("@release a monster shows its stakes; a smoke bomb flees it", async ({
   );
   const flee = page.getByRole("button", { name: /^Use the Smoke Bomb/ });
   await expect(flee).toBeVisible();
-  await expect(page.locator(".tag-satchel")).toHaveText("1");
+  await expect(page.locator(".tag-satchel")).toHaveAccessibleName(
+    "Satchel: Smoke Bomb",
+  );
   await page.screenshot({ path: info.outputPath("monster.png") });
   await flee.click();
   await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
@@ -211,7 +213,9 @@ test("@release the Quaff rerolls a lost fight for drinks, once until a boss fall
   await expect(
     page.getByRole("button", { name: /^Use the Loaded Die/ }),
   ).toBeVisible();
-  await expect(page.getByRole("button", { name: /^Quaff/ })).toHaveCount(0);
+  await expect(page.locator(".quaff-plaque")).toHaveCount(0);
+  // The strip's Quaff chip goes dark until the boss falls.
+  await expect(page.locator(".tag-quaff")).toHaveClass(/spent/);
 });
 
 test("@release pushing your luck: cash out, or go again for the next prize", async ({
@@ -235,7 +239,9 @@ test("@release pushing your luck: cash out, or go again for the next prize", asy
   // Cashing out takes the prize and moves on.
   await seed(page, won);
   await plaques.nth(0).click();
-  await expect(page.locator(".tag-satchel")).toHaveText("1");
+  await expect(page.locator(".tag-satchel")).toHaveAccessibleName(
+    "Satchel: Loaded Die",
+  );
   const s = await saved(page);
   expect(s.quest.party.loot).toEqual(["die"]);
   expect(s.quest.step).toBe(STEP.floor1 + 2);
@@ -417,27 +423,46 @@ test("the party dialog lays out the run: adventurer, boons, jinx and the Cup", a
       },
     },
   });
+  // The strip under the top row carries the party's things at a glance.
+  await expect(page.locator(".hud-strip .hud-chip")).toHaveCount(5);
+  await expect(page.locator(".tag-cup")).toHaveAccessibleName(
+    "The Cup: 4 splashes",
+  );
+  await expect(page.locator(".tag-quaff")).toHaveClass(/ready/);
+  await page.screenshot({ path: info.outputPath("strip.png") });
+  // The hearts open the party: hearts, adventurer, boons, and nothing else.
   await meter(page).click();
   const dialog = page.getByRole("dialog", { name: "The party" });
   await expect(dialog.locator(".crawl-omen").first()).toContainText("Rogue");
   await expect(dialog.locator(".crawl-boons li")).toHaveCount(1);
-  await expect(dialog.locator(".crawl-curse.curse-bleed")).toContainText(
+  await expect(
+    dialog.locator(".satchel, .crawl-curse, .crawl-cup, .crawl-floors"),
+  ).toHaveCount(0);
+  await page.screenshot({ path: info.outputPath("party.png") });
+  await page.keyboard.press("Escape");
+  // A curse or jinx chip opens the effects on the party.
+  await page.locator(".tag-jinx").click();
+  const effects = page.getByRole("dialog", { name: "Effects" });
+  await expect(effects.locator(".crawl-curse.curse-bleed")).toContainText(
     "Bleeding",
   );
-  await expect(dialog.locator(".crawl-jinx")).toContainText("Goblin Tongue");
-  await expect(dialog.locator(".crawl-cup")).toContainText("4 splashes");
-  // The Rogue's satchel holds four.
-  await expect(dialog.locator(".satchel-slot")).toHaveCount(4);
-  // The floors and the seals moved out: the guide explains the seals.
-  await expect(dialog.locator(".crawl-floors, .crawl-legend")).toHaveCount(0);
-  await page.screenshot({ path: info.outputPath("party.png") });
-  await dialog.getByRole("button", { name: "Drink" }).click();
-  await expect(dialog.locator(".crawl-hearts")).toHaveAccessibleName(
-    `Hearts: 6 of ${H}`,
+  await expect(effects.locator(".crawl-jinx")).toContainText("Goblin Tongue");
+  await expect(effects.locator(".crawl-quaff")).toContainText("Quaff: ready");
+  await expect(effects.locator(".crawl-cup").last()).toContainText(
+    "4 splashes",
   );
-  await expect(dialog.getByRole("button", { name: "Drink" })).toHaveCount(0);
-  // How to play, from the party dialog: the run's rules and the seals.
-  await dialog.getByRole("button", { name: "How to play" }).click();
+  await page.screenshot({ path: info.outputPath("effects.png") });
+  await page.keyboard.press("Escape");
+  // The satchel chip opens the satchel; the Rogue's holds four.
+  await page.locator(".tag-satchel").click();
+  const satchel = page.getByRole("dialog", { name: "Satchel" });
+  await expect(satchel.locator(".satchel-slot")).toHaveCount(4);
+  await satchel.getByRole("button", { name: "Drink" }).click();
+  await expect(meter(page)).toHaveAccessibleName(/^Hearts: 6 of /);
+  await expect(satchel.getByRole("button", { name: "Drink" })).toHaveCount(0);
+  const dialogForGuide = satchel;
+  // How to play, from any of them: the run's rules and the seals.
+  await dialogForGuide.getByRole("button", { name: "How to play" }).click();
   const guide = page.getByRole("dialog", { name: "How to play" });
   await expect(guide.locator(".guide-rows li")).toHaveCount(8);
   await expect(guide.locator(".guide-rows")).toContainText(
@@ -506,7 +531,7 @@ test("felling the Last Call boss wins the crawl", async ({ page }, info) => {
 });
 
 for (const width of [320, 390])
-  test(`the party meter and all four studs share the top row at ${width}px`, async ({
+  test(`the header's row and its strip fit a ${width}px phone with everything showing`, async ({
     page,
   }, info) => {
     await page.setViewportSize({ width, height: 640 });
@@ -533,19 +558,31 @@ for (const width of [320, 390])
         },
       }),
     );
-    const [left, middle, card, stakes, cup, jinx] = await Promise.all([
+    const [left, middle, menu, card, stakes] = await Promise.all([
       page.locator(".crawl-meter").boundingBox(),
       page.locator(".crawl-progress").boundingBox(),
+      page.getByRole("button", { name: "Open game menu" }).boundingBox(),
       page.locator(".game-card").boundingBox(),
       page.locator(".game-card .card-stakes").boundingBox(),
-      page.locator(".tag-cup").boundingBox(),
-      page.locator(".tag-jinx").boundingBox(),
     ]);
+    // One row: the hearts, the plaque and the menu, left to right.
     expect(left!.x).toBeGreaterThanOrEqual(0);
-    expect(cup!.x).toBeGreaterThanOrEqual(0);
-    expect(jinx!.x).toBeGreaterThanOrEqual(0);
     expect(left!.x + left!.width).toBeLessThanOrEqual(middle!.x);
-    expect(cup!.x + cup!.width).toBeLessThanOrEqual(middle!.x);
+    expect(middle!.x + middle!.width).toBeLessThanOrEqual(menu!.x);
+    expect(menu!.x + menu!.width).toBeLessThanOrEqual(width);
+    const centre = (b: { y: number; height: number }) => b.y + b.height / 2;
+    expect(Math.abs(centre(left!) - centre(middle!))).toBeLessThan(2);
+    expect(Math.abs(centre(menu!) - centre(middle!))).toBeLessThan(2);
+    // The strip: five chips under the row, inside the screen, above the card.
+    const chips = page.locator(".hud-strip .hud-chip");
+    await expect(chips).toHaveCount(5);
+    for (const chip of await chips.all()) {
+      const b = (await chip.boundingBox())!;
+      expect(b.x).toBeGreaterThanOrEqual(0);
+      expect(b.x + b.width).toBeLessThanOrEqual(width);
+      expect(b.y).toBeGreaterThan(middle!.y + middle!.height);
+      expect(b.y + b.height).toBeLessThan(card!.y);
+    }
     expect(stakes!.x).toBeGreaterThan(card!.x);
     expect(stakes!.x + stakes!.width).toBeLessThan(card!.x + card!.width);
     await page.screenshot({ path: info.outputPath(`meter-${width}.png`) });
@@ -567,7 +604,9 @@ test("a merchant sells on plaques, and a price in hearts needs a spare heart", a
   await page.locator(".game-card").click({ force: true });
   expect((await saved(page)).quest.step).toBe(at);
   await plaques.nth(0).click();
-  await expect(page.locator(".tag-satchel")).toHaveText("1");
+  await expect(page.locator(".tag-satchel")).toHaveAccessibleName(
+    "Satchel: Healing Draught",
+  );
   const s = await saved(page);
   expect(s.quest.party).toMatchObject({ hearts: 1, loot: ["draught"] });
   expect(s.quest.step).toBe(at + 1);
@@ -640,8 +679,9 @@ test("tonight's omen is kept in the party dialog", async ({ page }, info) => {
   await expect(dialog.locator(".crawl-boons")).toContainText(
     "Bosses take 1 more hit.",
   );
-  await expect(dialog.locator(".satchel-slot").first()).toContainText(
-    "Loaded Die",
+  // The Lock-In's Loaded Die is in the satchel, on the strip.
+  await expect(page.locator(".tag-satchel")).toHaveAccessibleName(
+    "Satchel: Loaded Die",
   );
   await page.screenshot({ path: info.outputPath("omen-party.png") });
 });

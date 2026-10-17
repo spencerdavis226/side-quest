@@ -335,8 +335,17 @@ p {
      never scrolls. */
   --play-chrome: calc(
     max(16px, var(--top-safe)) + min(20px, var(--top-safe)) +
-      max(24px, var(--bottom-safe)) + 112px
+      max(24px, var(--bottom-safe)) + 112px + var(--hud-strip, 0px)
   );
+}
+/* A crawl's header carries the strip of the party's chips. */
+.playing.crawl-deck {
+  --hud-strip: 44px;
+}
+@media (min-width: 700px) {
+  .playing.crawl-deck {
+    --hud-strip: 54px;
+  }
 }
 .table {
   display: flex;
@@ -647,7 +656,7 @@ dialog p {
   .playing {
     --play-chrome: calc(
       max(26px, var(--top-safe)) + min(20px, var(--top-safe)) +
-        max(24px, var(--bottom-safe)) + 138px
+        max(24px, var(--bottom-safe)) + 138px + var(--hud-strip, 0px)
     );
   }
   .playing .table {

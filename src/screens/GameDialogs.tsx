@@ -11,7 +11,17 @@ import { crawlTheme } from "../components/crawlTheme";
 import { CardFrame } from "../components/Cards";
 import { theme } from "../presentation/theme";
 export type DialogName =
-  "menu" | "previous" | "end" | "install" | "badges" | "guide" | null;
+  | "menu"
+  | "previous"
+  | "end"
+  | "install"
+  | "badges"
+  | "satchel"
+  | "effects"
+  | "guide"
+  // The previous card opened from the header's stud: it closes to the game.
+  | "recap"
+  | null;
 // Unmount just after the shared exit animation finishes. The timer is the
 // bounded fallback, so a missing/again-changing animation can never strand the
 // dialog open.
@@ -117,11 +127,14 @@ export function GameDialogs({
         </Button>
       </Modal>
     );
-  if (displayed === "previous" && session?.previousId)
+  if (
+    (displayed === "previous" || displayed === "recap") &&
+    session?.previousId
+  )
     return (
       <Modal
         title="Previous card"
-        onClose={() => setModal("menu")}
+        onClose={() => setModal(displayed === "recap" ? null : "menu")}
         exiting={exiting}
       >
         <CardFrame
@@ -133,11 +146,30 @@ export function GameDialogs({
       </Modal>
     );
   const record = session && questRecord(session);
-  if (displayed === "badges" && record?.party) {
+  if (
+    (displayed === "badges" ||
+      displayed === "satchel" ||
+      displayed === "effects") &&
+    record?.party
+  ) {
     const crawl = crawlTheme(session?.quest?.packId);
+    // The hearts open the party; the strip's chips open the satchel and the
+    // effects on the party, each its own dialog.
+    const part =
+      displayed === "badges"
+        ? "party"
+        : displayed === "satchel"
+          ? "satchel"
+          : "effects";
     return (
       <Modal
-        title={crawl.words.party}
+        title={
+          part === "party"
+            ? crawl.words.party
+            : part === "satchel"
+              ? crawl.words.Satchel
+              : "Effects"
+        }
         onClose={() => setModal(null)}
         exiting={exiting}
       >
@@ -146,6 +178,7 @@ export function GameDialogs({
           theme={crawl}
           session={session}
           onUse={onSpend}
+          part={part}
         />
         <Button onClick={() => setModal(null)}>Back to game</Button>
         <Button variant="text-button" onClick={() => setModal("guide")}>

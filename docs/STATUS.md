@@ -2,6 +2,18 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Header redesign (2026-10-17; branch `hud-redesign`)
+
+- **Owner ask:** the top row wasted its middle and crammed everything into the hearts stud's rim; make it clear at a glance and from a distance in all three modes, and split the single hearts dialog into dedicated ones.
+- **Layout (`TopBar.tsx`):** a brass stud each side and a teal plaque between (capped at 300 px, 420 px on iPad).
+  - Plain games: left stud "Show the last card" (previous card, closes straight back to play), plaque "Card · 12 / 50" over a gold deck bar ("Endless" or "Round N" in Infinite), menu.
+  - Crawls: hearts stud (opens the party), plaque `CrawlProgress` (floor name and N/8 over room pips; a boss under its own stage name with hit pips: "Gym 6", "Catacombs boss", "Elite Four 2/4"; an ambush; the omen's or a landing's mark), menu, and `CrawlStrip` underneath: satchel slots with their items, League badges N/8, the Quaff (amber when ready, dark when drunk), the Cup's splashes, a curse and a jinx by name.
+  - Narrow phones (≤360 px) and a curse plus a jinx together: chips keep marks and numbers, names move to the dialogs; the plaque drops the "· N/8" its pips already show.
+- **Dialogs:** hearts → the party (hearts, adventurer or starter, boons, badges); satchel chip → Satchel/Bag (with Drink/Use); any effect chip → Effects (Quaff state, curse, jinx, the Cup). End screens still show everything. Old rim tags removed.
+- **Card size:** `.crawl-deck` adds `--hud-strip` (44 px, 54 px on iPad) to `--play-chrome`, so crawl cards on short screens are about 29 px narrower; every Dungeon night and League card still fits (both sweeps passed).
+- **Tests:** crawl and League specs updated for the chips and split dialogs; the old "four studs share the top row" test now checks the row and the strip at 320 and 390 px with all five chips showing.
+- **Verification:** see the commit message.
+
 ## How to play, clearer plaques, the Cup explained (2026-10-17; branch `offer-plaque-hints`, PR #12)
 
 - **Owner asks:** the landing plaques didn't say what they did; the Quaff and the Cup were never explained; a simple TLDR of the special mechanics (Pub Crawl and the League), separate from the inventory; drop the floors list from the party dialog; plaque text looked cramped and cheap.

@@ -181,6 +181,8 @@ function App() {
             disabled={!!motion}
             onOpenMeter={() => setModal("badges")}
             onOpenMenu={() => setModal("menu")}
+            onOpenPrevious={() => setModal("recap")}
+            onOpenStrip={setModal}
           />
         )}
         {notice && (

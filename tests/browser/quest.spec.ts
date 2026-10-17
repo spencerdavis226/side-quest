@@ -264,16 +264,21 @@ test("a Rare Candy evolves the starter from the bag", async ({ page }) => {
       "pokemon.starter-froakie",
     ),
   );
-  await meter(page).click();
-  const dialog = page.getByRole("dialog", { name: "The team" });
-  await expect(dialog.locator(".satchel-slot").first()).toContainText(
+  // The bag chip on the strip opens the bag.
+  await page.locator(".tag-satchel").click();
+  const bag = page.getByRole("dialog", { name: "Bag" });
+  await expect(bag.locator(".satchel-slot").first()).toContainText(
     "Rare Candy",
   );
-  await dialog.getByRole("button", { name: "Use" }).click();
+  await bag.getByRole("button", { name: "Use" }).click();
   expect((await saved(page)).quest.party).toMatchObject({
     form: 1,
     loot: ["smoke"],
   });
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await meter(page).click();
+  const dialog = page.getByRole("dialog", { name: "The team" });
   await expect(dialog.locator(".crawl-omen strong")).toHaveText("Frogadier");
 });
 

@@ -72,11 +72,9 @@ export function crawlPlace(quest: QuestState) {
   };
 }
 
-/** The meter's crawl face, a brass medallion like the room's: the heart with
- * the hearts left inside it (the full count is in the party dialog), sized
- * like the menu button so the top row is symmetric, and studs on the
- * rim for the curse and the satchel's count. The floor's name is on every
- * card's ribbon and in the party dialog. */
+/** The meter's crawl face, a brass medallion: the heart with the hearts
+ * left inside it, sized like the menu stud so the top row is symmetric.
+ * Everything else the party carries is on the strip under the top row. */
 export function CrawlMeterFace({ quest }: { quest: QuestState }) {
   const party = quest.party!;
   const theme = crawlTheme(quest.packId);
@@ -99,36 +97,6 @@ export function CrawlMeterFace({ quest }: { quest: QuestState }) {
           {party.hearts}
         </strong>
       </span>
-      {party.curse && (
-        <span
-          className={`meter-tag tag-curse curse-${party.curse}`}
-          aria-hidden="true"
-        >
-          <CrawlIcon name={party.curse} theme={theme} />
-        </span>
-      )}
-      {party.loot.length > 0 && (
-        <span className="meter-tag tag-satchel" aria-hidden="true">
-          <CrawlIcon name="satchel" theme={theme} />
-          {party.loot.length}
-        </span>
-      )}
-      {party.jinx && (
-        <span className="meter-tag tag-jinx" aria-hidden="true">
-          <CrawlIcon name="jinx" theme={theme} />
-        </span>
-      )}
-      {!!party.cup && (
-        // Keyed by the count so each splash replays the tip.
-        <span
-          className="meter-tag tag-cup"
-          key={`cup-${party.cup}`}
-          aria-hidden="true"
-        >
-          <CrawlIcon name="cup" theme={theme} />
-          {party.cup}
-        </span>
-      )}
     </>
   );
 }
@@ -172,8 +140,10 @@ function useHeartPulse(hearts: number) {
   return change;
 }
 
-/** The brass medallion during a crawl: tonight's omen, the room on this
- * floor, or a boss (or an ambush) with a pip for each swing it has to take. */
+/** The top row's centre plaque during a crawl (2026-10-17): where the
+ * party is, in words, over a track that reads from across the table: the
+ * floor's rooms as pips, a boss's or an ambush's swings, or the mark of
+ * tonight's omen or a landing. */
 export function CrawlProgress({ quest }: { quest: QuestState }) {
   const place = crawlPlace(quest);
   const party = quest.party!;
@@ -181,56 +151,212 @@ export function CrawlProgress({ quest }: { quest: QuestState }) {
   const need = card ? hitsNeeded(quest, card) : 0;
   const theme = crawlTheme(quest.packId);
   const { words } = theme;
-  if (place.omen)
-    return (
-      <div
-        className="progress crawl-progress omen"
-        role="img"
-        aria-label={place.kind === "adventurer" ? words.adventurer : words.omen}
-      >
-        <CrawlIcon
-          name={place.kind === "adventurer" ? "adventurer" : "omen"}
-          theme={theme}
-        />
-      </div>
+  const plaque = (
+    kind: string,
+    label: React.ReactNode,
+    spoken: string,
+    track: React.ReactNode,
+  ) => (
+    <div
+      className={`progress crawl-progress hud-plaque ${kind}`}
+      role="img"
+      aria-label={spoken}
+    >
+      <small className="plaque-label">{label}</small>
+      <span className="plaque-track">{track}</span>
+    </div>
+  );
+  if (place.omen) {
+    const label = place.kind === "adventurer" ? words.adventurer : words.omen;
+    return plaque(
+      "omen",
+      label,
+      label,
+      <CrawlIcon
+        name={place.kind === "adventurer" ? "adventurer" : "omen"}
+        theme={theme}
+      />,
     );
+  }
   // A landing, or a lone set piece without swings (the queue).
   if (place.kind === "rest" || (place.kind === "set-piece" && !need))
-    return (
-      <div
-        className={`progress crawl-progress omen ${place.kind}`}
-        role="img"
-        aria-label={place.name}
-      >
-        <CrawlIcon
-          name={place.kind === "rest" ? "rest" : "ambush"}
-          theme={theme}
-        />
-      </div>
+    return plaque(
+      `omen ${place.kind}`,
+      place.name,
+      place.name,
+      <CrawlIcon
+        name={place.kind === "rest" ? "rest" : "ambush"}
+        theme={theme}
+      />,
     );
-  if (need)
-    return (
-      <div
-        className={`progress crawl-progress boss ${place.boss ? "" : "ambush"}`}
-        role="img"
-        aria-label={`${place.boss ? words.Boss : place.kind === "set-piece" ? `${words.Ambush}, ${place.name}` : `${words.Ambush} in ${words.Room.toLowerCase()} ${place.room} of ${place.rooms}`}: ${party.hits} of ${need} hits`}
-      >
+  if (need) {
+    // A boss is named by its own stage (Gym 6, Brewery boss, Elite Four
+    // 2/4); an ambush by the room it waits in.
+    const at = finaleStage(quest);
+    const stage = quest.stages[at.stage].label;
+    return plaque(
+      `boss ${place.boss ? "" : "ambush"}`,
+      place.boss
+        ? at.size > 1
+          ? `${stage} · ${at.index + 1}/${at.size}`
+          : stage
+        : place.kind === "set-piece"
+          ? place.name
+          : `${words.Ambush} · ${place.room}/${place.rooms}`,
+      `${place.boss ? words.Boss : place.kind === "set-piece" ? `${words.Ambush}, ${place.name}` : `${words.Ambush} in ${words.Room.toLowerCase()} ${place.room} of ${place.rooms}`}: ${party.hits} of ${need} hits`,
+      <>
         <CrawlIcon name={place.boss ? "boss" : "ambush"} theme={theme} />
         <span className="boss-pips">
           {Array.from({ length: need }, (_, i) => (
             <i key={i} className={i < party.hits ? "hit" : undefined} />
           ))}
         </span>
-      </div>
+      </>,
     );
-  return (
-    <div
-      className="progress crawl-progress"
-      role="img"
-      aria-label={`${words.Room} ${place.room} of ${place.rooms}, ${place.name}`}
+  }
+  return plaque(
+    "rooms",
+    <>
+      {place.name}
+      <span className="label-count">
+        {" "}
+        · {place.room}/{place.rooms}
+      </span>
+    </>,
+    `${words.Room} ${place.room} of ${place.rooms}, ${place.name}`,
+    <span className="room-pips">
+      {Array.from({ length: place.rooms }, (_, i) => (
+        <i
+          key={i}
+          className={
+            i < place.room - 1 ? "done" : i === place.room - 1 ? "here" : ""
+          }
+        />
+      ))}
+    </span>,
+  );
+}
+
+/** What the strip opens: the satchel, the party's effects (the Quaff, the
+ * Cup, a curse, a jinx), or the party itself (the League's badges). */
+export type StripDialog = "satchel" | "effects" | "badges";
+
+/** The strip under the top row in a crawl (2026-10-17): everything the party
+ * carries, each a chip that reads at a glance and opens its own dialog. The
+ * satchel's slots show their items; the League's badges fill a row; the
+ * Quaff lights while it can be drunk; the Cup counts its splashes; a curse
+ * or a jinx names itself. */
+export function CrawlStrip({
+  session,
+  disabled,
+  onOpen,
+}: {
+  session: SessionState;
+  disabled: boolean;
+  onOpen: (dialog: StripDialog) => void;
+}) {
+  const quest = session.quest!;
+  const party = quest.party!;
+  const record = questRecord(session)!;
+  const theme = crawlTheme(quest.packId);
+  const { words } = theme;
+  const jinx = party.jinx ? finaleCard(quest, party.jinx)?.jinx : undefined;
+  const quaffReady = party.quaff !== undefined && !party.quaffed;
+  const chip = (
+    className: string,
+    label: string,
+    dialog: StripDialog,
+    children: React.ReactNode,
+  ) => (
+    <button
+      type="button"
+      className={`hud-chip ${className}`}
+      aria-label={label}
+      aria-haspopup="dialog"
+      disabled={disabled}
+      onClick={(event) => {
+        // Safari does not focus a tapped button; the dialog gives focus back.
+        event.currentTarget.focus();
+        onOpen(dialog);
+      }}
     >
-      <strong>{place.room}</strong>
-      <span className="muted"> / {place.rooms}</span>
+      {children}
+    </button>
+  );
+  return (
+    // A curse and a jinx together leave no room for their names: they keep
+    // their marks, and the effects dialog names them.
+    <div
+      className={`hud-strip${party.curse && jinx ? " tight" : ""}`}
+      role="group"
+      aria-label={words.party}
+    >
+      {chip(
+        "tag-satchel",
+        `${words.Satchel}: ${party.loot.length ? party.loot.map((l) => theme.loot[l].name).join(", ") : "empty"}`,
+        "satchel",
+        Array.from({ length: record.satchel }, (_, i) =>
+          party.loot[i] ? (
+            <CrawlIcon key={i} name={party.loot[i]} theme={theme} />
+          ) : (
+            <i key={i} className="slot-empty" />
+          ),
+        ),
+      )}
+      {words.badges &&
+        record.badges.of > 0 &&
+        chip(
+          "tag-badges",
+          `${words.badges}: ${record.badges.earned} of ${record.badges.of}`,
+          "badges",
+          <>
+            <CrawlIcon name="boss" theme={theme} />
+            <b>
+              {record.badges.earned}/{record.badges.of}
+            </b>
+          </>,
+        )}
+      {words.quaff &&
+        party.quaff !== undefined &&
+        chip(
+          `tag-quaff${quaffReady ? " ready" : " spent"}`,
+          `${words.quaff}: ${quaffReady ? `ready, drink ${party.quaff} to reroll a lost d20` : "drunk, back when the boss falls"}`,
+          "effects",
+          <CrawlIcon name="quaff" theme={theme} />,
+        )}
+      {words.cup &&
+        party.cup !== undefined &&
+        chip(
+          `tag-cup${party.cup ? "" : " empty"}`,
+          `${words.cup.name}: ${party.cup} ${party.cup === 1 ? "splash" : "splashes"}`,
+          "effects",
+          <>
+            <CrawlIcon name="cup" theme={theme} />
+            {/* Keyed by the count so each splash replays the tip. */}
+            <b key={party.cup}>{party.cup}</b>
+          </>,
+        )}
+      {party.curse &&
+        chip(
+          `tag-curse curse-${party.curse}`,
+          `${theme.curses[party.curse].name}: ${theme.curses[party.curse].does}`,
+          "effects",
+          <>
+            <CrawlIcon name={party.curse} theme={theme} />
+            <span className="chip-name">{theme.curses[party.curse].name}</span>
+          </>,
+        )}
+      {jinx &&
+        words.jinx &&
+        chip(
+          "tag-jinx",
+          `${words.jinx.name}: ${jinx.name}`,
+          "effects",
+          <>
+            <CrawlIcon name="jinx" theme={theme} />
+            <span className="chip-name">{jinx.name}</span>
+          </>,
+        )}
     </div>
   );
 }
@@ -590,12 +716,19 @@ export function CrawlRecord({
   theme,
   session,
   onUse,
+  part,
 }: {
   record: RunRecord;
   theme: CrawlTheme;
   session?: SessionState | null;
   onUse?: (item: Loot) => void;
+  /** In play, each dialog shows its own part: the party (hearts, the
+   * adventurer or starter, boons, badges), the satchel, or the effects on
+   * the party (the Quaff, the Cup, a curse, a jinx). The end screens show
+   * everything. */
+  part?: "party" | "satchel" | "effects";
 }) {
+  const show = (p: "party" | "satchel" | "effects") => !part || part === p;
   const party = record.party!;
   const { words } = theme;
   const quest = session?.quest;
@@ -640,28 +773,31 @@ export function CrawlRecord({
   const jinx = record.jinx?.jinx;
   return (
     <div className="crawl-record">
-      <div
-        className="crawl-hearts"
-        role="img"
-        aria-label={`${words.Hearts}: ${party.hearts} of ${party.max}`}
-        // One row up to twelve; an omen's extra hearts split into two even
-        // rows.
-        style={
-          {
-            "--per-row": party.max > 12 ? Math.ceil(party.max / 2) : party.max,
-          } as CSSProperties
-        }
-      >
-        {Array.from({ length: party.max }, (_, i) => (
-          <CrawlIcon
-            key={i}
-            name="heart"
-            theme={theme}
-            className={i < party.hearts ? "full" : "spent"}
-          />
-        ))}
-      </div>
-      {record.form && (
+      {show("party") && (
+        <div
+          className="crawl-hearts"
+          role="img"
+          aria-label={`${words.Hearts}: ${party.hearts} of ${party.max}`}
+          // One row up to twelve; an omen's extra hearts split into two even
+          // rows.
+          style={
+            {
+              "--per-row":
+                party.max > 12 ? Math.ceil(party.max / 2) : party.max,
+            } as CSSProperties
+          }
+        >
+          {Array.from({ length: party.max }, (_, i) => (
+            <CrawlIcon
+              key={i}
+              name="heart"
+              theme={theme}
+              className={i < party.hearts ? "full" : "spent"}
+            />
+          ))}
+        </div>
+      )}
+      {show("party") && record.form && (
         <p className="crawl-omen">
           <CrawlIcon name="adventurer" theme={theme} />
           {/* Only the starter it is now (owner, 2026-10-17), with its power. */}
@@ -669,7 +805,7 @@ export function CrawlRecord({
           <span>{record.form.rules}</span>
         </p>
       )}
-      {record.boons.length > 0 && (
+      {show("party") && record.boons.length > 0 && (
         <ul className="crawl-boons" aria-label={words.trinkets}>
           {record.boons.map(({ card, boon, key }) => (
             <li
@@ -686,7 +822,7 @@ export function CrawlRecord({
           ))}
         </ul>
       )}
-      {words.badges && record.badges.of > 0 && (
+      {show("party") && words.badges && record.badges.of > 0 && (
         <p
           className="crawl-badges"
           role="img"
@@ -702,7 +838,20 @@ export function CrawlRecord({
           ))}
         </p>
       )}
-      {party.curse && (
+      {part === "effects" && words.quaff && party.quaff !== undefined && (
+        <p className={`crawl-cup crawl-quaff${party.quaffed ? " spent" : ""}`}>
+          <CrawlIcon name="quaff" theme={theme} />
+          <strong>
+            {words.quaff}: {party.quaffed ? "drunk" : "ready"}
+          </strong>
+          <span>
+            {party.quaffed
+              ? "Back when the floor's boss falls."
+              : `Lost a d20? Drink ${party.quaff} to roll it again. Once per boss.`}
+          </span>
+        </p>
+      )}
+      {show("effects") && party.curse && (
         <p className={`crawl-curse curse-${party.curse}`}>
           <CrawlIcon name={party.curse} theme={theme} />
           <strong>{theme.curses[party.curse].name}</strong>
@@ -711,7 +860,7 @@ export function CrawlRecord({
           </span>
         </p>
       )}
-      {jinx && words.jinx && !record.won && !party.wiped && (
+      {show("effects") && jinx && words.jinx && !record.won && !party.wiped && (
         <p className="crawl-curse crawl-jinx">
           <CrawlIcon name="jinx" theme={theme} />
           <strong>
@@ -722,7 +871,7 @@ export function CrawlRecord({
           </span>
         </p>
       )}
-      {party.cup !== undefined && words.cup && (
+      {show("effects") && party.cup !== undefined && words.cup && (
         <p className="crawl-cup">
           <CrawlIcon name="cup" theme={theme} />
           <strong>
@@ -738,7 +887,10 @@ export function CrawlRecord({
           </span>
         </p>
       )}
-      {!party.wiped && !record.won && (
+      {part === "effects" && !party.curse && !jinx && !words.cup && (
+        <p className="crawl-none">Nothing on the team right now.</p>
+      )}
+      {show("satchel") && !party.wiped && !record.won && (
         <ul className="satchel" aria-label={words.Satchel}>
           {Array.from({ length: record.satchel }, (_, i) => {
             const item = party.loot[i];
