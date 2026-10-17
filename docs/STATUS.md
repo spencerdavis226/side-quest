@@ -2,7 +2,7 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## League variety pass and natural 20/1 (2026-10-17, owner request; local, not yet pushed)
+## League variety pass and natural 20/1 (2026-10-17, owner request; pushed to `main` for deploy)
 
 **Owner request.** League cards were "a lot of roll d20 then give/drink 3": make challenges, outcomes and specificity more varied. Add a standing rule for Pokémon League and Pub Crawl: a natural 20 doubles the good outcome (drinks given, HP gained, whatever applies) and a natural 1 doubles the bad.
 
@@ -31,7 +31,7 @@ Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Ol
 
 **Not done or not verified:** WebKit (not installed in this container), a physical device, and a table playtest of the new outcomes.
 
-**Next.** Push after owner approval. Then playtest a League run and a Pub Crawl run and cut any outcome that slows the table down.
+**Next.** Playtest a League run and a Pub Crawl run and cut any outcome that slows the table down.
 
 ## Pokémon League journey (2026-10-16, owner request; merged to `main` and deployed)
 
