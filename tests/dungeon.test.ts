@@ -56,11 +56,14 @@ const seeded = (seed: number): Random => {
   };
 };
 // The first four draws pick the route, in run order (floor 1, the hidden
-// room, floor 2, floor 3): below 0.5 the original floors (the Cellar, the
-// Catacombs, the Drowned Taproom) and the first room (the Speakeasy), above
-// it the other floors and the last room (the Basement).
+// room, floor 2, floor 3). Each depth has three floors: ORIGINAL takes the
+// first (the Cellar, the Catacombs, the Drowned Taproom) and the first room
+// (the Speakeasy), OTHER the second floors and the last room (the
+// Basement), NEW the third floors (the Brewery, the Walk-in Freezer, the
+// Rooftop Bar) and the middle room (the Back Office).
 const ORIGINAL = [0.1, 0.1, 0.1, 0.1];
-const OTHER = [0.9, 0.9, 0.9, 0.9];
+const OTHER = [0.5, 0.9, 0.5, 0.5];
+const NEW = [0.9, 0.5, 0.9, 0.9];
 const make = (floors = ORIGINAL, seed = 1) => {
   const rest = seeded(seed);
   const queue = [...floors];
@@ -203,20 +206,42 @@ describe("Pub Crawl", () => {
       "Last call",
     ]);
     roundTrip(make(OTHER));
+    const fresh = make(NEW);
+    expect(fresh.quest!.stages.map((st) => st.label)).toEqual([
+      "Your adventurer",
+      "Tonight's omen",
+      "The Queue",
+      "The Brewery",
+      "Brewery boss",
+      "The Landing",
+      "The Back Office",
+      "Back Office boss",
+      "The Walk-in Freezer",
+      "Freezer boss",
+      "The Lower Landing",
+      "The Rooftop Bar",
+      "Closing Time",
+      "Last call",
+    ]);
+    roundTrip(fresh);
   });
 
-  it("deals all eight dungeons, every adventurer and every omen across runs", () => {
-    const routes = new Set<string>();
+  it("deals all nine floors, every hidden room, adventurer and omen across runs", () => {
+    const floors = [0, 1, 2].map(() => new Set<string>());
+    const rooms = new Set<string>();
     const adventurers = new Set<string>();
     const omens = new Set<string>();
     for (let seed = 1; seed <= 400; seed++) {
       const s = createSession(crawl, cards, packs, seeded(seed));
-      routes.add(s.quest!.stages.map((st) => st.label).join("/"));
+      const labels = s.quest!.stages.map((st) => st.label);
+      [labels[3], labels[8], labels[11]].forEach((l, i) => floors[i].add(l));
+      rooms.add(labels[6]);
       adventurers.add(s.quest!.finale[STEP.adventurer]);
       omens.add(s.quest!.finale[STEP.omen]);
     }
-    // Eight dungeons, each with one of five hidden rooms.
-    expect(routes.size).toBe(40);
+    // Three floors at each depth, and one of five hidden rooms: 135 routes.
+    expect(floors.map((f) => f.size)).toEqual([3, 3, 3]);
+    expect(rooms.size).toBe(5);
     expect(adventurers.size).toBe(12);
     expect(omens.size).toBe(12);
   });
@@ -860,7 +885,7 @@ describe("Pub Crawl", () => {
       seeded(3),
     );
     expect(s.quest).toBeUndefined();
-    expect(s.cards).toHaveLength(166);
+    expect(s.cards).toHaveLength(245);
     expect(s.cards.some((c) => c.reward && !c.battle)).toBe(false);
     expect(
       s.cards.some(
@@ -1093,11 +1118,15 @@ it("a crawl is hard: the party wins about a quarter of its runs", () => {
   const wipes = new Map<string, number>();
   for (const s of runs.filter((s) => party(s).wiped)) {
     const label = finaleStage(s.quest!)
-      .label.replace(/^The (Cellar|Wine Cellar)$/, "Floor 1")
-      .replace(/^The (Catacombs|Sewers)$/, "Floor 2")
-      .replace(/^The (Drowned Taproom|Kitchen)$/, "Floor 3")
+      .label.replace(/^The (Cellar|Wine Cellar|Brewery)$/, "Floor 1")
+      .replace(/^The (Catacombs|Sewers|Walk-in Freezer)$/, "Floor 2")
+      .replace(/^The (Drowned Taproom|Kitchen|Rooftop Bar)$/, "Floor 3")
       .replace(/^.* boss$/, (l) =>
-        /Cellar/.test(l) ? "Floor 1 boss" : "Floor 2 boss",
+        /Cellar|Brewery/.test(l)
+          ? "Floor 1 boss"
+          : /Catacombs|Sewers|Freezer/.test(l)
+            ? "Floor 2 boss"
+            : "Hidden room boss",
       );
     wipes.set(label, (wipes.get(label) ?? 0) + 1);
   }
@@ -1143,21 +1172,19 @@ it("no adventurer, omen or dungeon makes a crawl a walkover or hopeless", () => 
     s.quest!.finale[STEP.omen].replace("dungeon.omen-", ""),
   );
   const rooms = by((s) => s.quest!.stages[6].label);
-  const dungeons = by((s) =>
-    s
-      .quest!.stages.filter((st) => st.pick === 8)
-      .map((st) => st.label.replace("The ", ""))
-      .join(" > "),
+  // Each floor on its own (27 whole routes are too thin to measure).
+  const dungeons = [3, 8, 11].flatMap((i) =>
+    by((s) => s.quest!.stages[i].label.replace("The ", "")),
   );
   console.log(
     `adventurers: ${adventurers.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}\n` +
       `omens: ${omens.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}\n` +
       `hidden rooms: ${rooms.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}\n` +
-      `dungeons: ${dungeons.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}`,
+      `floors: ${dungeons.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}`,
   );
   expect(adventurers).toHaveLength(12);
   expect(omens).toHaveLength(12);
-  expect(dungeons).toHaveLength(8);
+  expect(dungeons).toHaveLength(9);
   expect(rooms).toHaveLength(5);
   // The Plus-One is the worst by design, measured on its own below.
   for (const [name, r] of [...adventurers, ...omens, ...rooms, ...dungeons]) {

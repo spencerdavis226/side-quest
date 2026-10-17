@@ -25,7 +25,7 @@ export const card = cardFactory("dungeon");
 
 /** A floor: its ribbon name and its index; `tier(floor)` is its depth
  * (0 to 2), which sets the odds. */
-export type Floor = 0 | 1 | 2 | 3 | 4 | 5;
+export type Floor = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 export const FLOORS = [
   "Cellar",
   "Catacombs",
@@ -33,6 +33,10 @@ export const FLOORS = [
   "Wine Cellar",
   "Sewers",
   "Kitchen",
+  // The third way down at each depth (2026-10-17).
+  "Brewery",
+  "Freezer",
+  "Rooftop",
 ] as const;
 export const tier = (floor: Floor) => (floor % 3) as 0 | 1 | 2;
 

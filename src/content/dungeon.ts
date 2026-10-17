@@ -1,13 +1,16 @@
 import type { CardDefinition, PackDefinition } from "../game/types";
 import { withNaturals } from "./naturals";
 import { hiddenRoomCards, hiddenRooms } from "./dungeon/bookcase";
+import { brewery } from "./dungeon/brewery";
 import { catacombs } from "./dungeon/catacombs";
 import { cellar } from "./dungeon/cellar";
 import { classes } from "./dungeon/classes";
+import { freezer } from "./dungeon/freezer";
 import { kitchen } from "./dungeon/kitchen";
 import { closingCards, lastCallBosses, queueCards } from "./dungeon/lastcall";
 import { lowerLandings, upperLandings } from "./dungeon/landings";
 import { omens } from "./dungeon/omens";
+import { rooftop } from "./dungeon/rooftop";
 import { sewers } from "./dungeon/sewers";
 import { PARTY_HEARTS, QUAFF_DRINKS, type FloorCards } from "./dungeon/shared";
 import { taproom } from "./dungeon/taproom";
@@ -24,7 +27,9 @@ import { wine } from "./dungeon/wine";
 // drink.
 //
 // Replayability (2026-10-15): each depth is one of two floors (Cellar or
-// Wine Cellar, Catacombs or Sewers, Drowned Taproom or Kitchen).
+// Wine Cellar, Catacombs or Sewers, Drowned Taproom or Kitchen); a third
+// at each since 2026-10-17 (the Brewery, the Walk-in Freezer, the Rooftop
+// Bar).
 //
 // The crawl at League depth (2026-10-17, owner: "bring it up to Pokémon
 // League tier"): a run opens on an adventurer (`dungeon/classes.ts`, the
@@ -46,6 +51,9 @@ const floors: Record<string, FloorCards> = {
   sewers,
   taproom,
   kitchen,
+  brewery,
+  freezer,
+  rooftop,
 };
 
 /** Fights and bosses play as ordinary cards in the plain modes; finds,
@@ -109,7 +117,7 @@ export const dungeonPack: PackDefinition = {
     length: 1,
     cardIds: [],
     party: { hearts: PARTY_HEARTS, quaff: QUAFF_DRINKS, cup: true },
-    // The adventurer and tonight's omen, the queue, then one of two floors
+    // The adventurer and tonight's omen, the queue, then one of three floors
     // at each depth (eight rooms, and a boss on the first two) with a
     // landing after each boss, then closing time and Last Call.
     finale: [
@@ -125,6 +133,10 @@ export const dungeonPack: PackDefinition = {
           [
             floor("The Wine Cellar", "Down into the Wine Cellar", wine),
             one("Wine Cellar boss", "Something uncorks itself", wine.bosses),
+          ],
+          [
+            floor("The Brewery", "Down into the Brewery", brewery),
+            one("Brewery boss", "Something is fermenting", brewery.bosses),
           ],
         ],
       },
@@ -149,6 +161,10 @@ export const dungeonPack: PackDefinition = {
             floor("The Sewers", "Down into the Sewers", sewers),
             one("Sewers boss", "Something big in the pipes", sewers.bosses),
           ],
+          [
+            floor("The Walk-in Freezer", "Into the Walk-in Freezer", freezer),
+            one("Freezer boss", "The light goes out", freezer.bosses),
+          ],
         ],
       },
       one("The Lower Landing", "One last breather", lowerLandings),
@@ -156,6 +172,7 @@ export const dungeonPack: PackDefinition = {
         oneOf: [
           [floor("The Drowned Taproom", "The Drowned Taproom", taproom)],
           [floor("The Kitchen", "Through the swinging door", kitchen)],
+          [floor("The Rooftop Bar", "Out onto the roof", rooftop)],
         ],
       },
       one("Closing Time", "The Quarter-Zips are back", closingCards),

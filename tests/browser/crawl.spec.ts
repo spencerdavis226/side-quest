@@ -27,23 +27,30 @@ const STEP = {
 };
 
 // A Pub Crawl seeded at `step` with `id` in play, the party as given. The
-// floors are the original three (the Cellar, the Catacombs, the Drowned
-// Taproom) and the Speakeasy, unless `other` picks the other three and the
-// Basement. With `adventurer`, that
-// class was dealt and put aside first.
+// floors are the first at each depth (the Cellar, the Catacombs, the Drowned
+// Taproom) and the Speakeasy, unless `other` picks the second three (the
+// Wine Cellar, the Sewers, the Kitchen) and the Basement, or `route` picks
+// floors by index (2: the Brewery, the Walk-in Freezer, the Rooftop Bar).
+// With `adventurer`, that class was dealt and put aside first.
 function crawlAt(
   id: string,
   step = 0,
   party: Partial<PartyState> = {},
   {
     other = false,
+    route = other ? 1 : 0,
     adventurer,
     room = other ? 4 : 0,
-  }: { other?: boolean; adventurer?: string; room?: number } = {},
+  }: {
+    other?: boolean;
+    route?: number;
+    adventurer?: string;
+    room?: number;
+  } = {},
 ): SessionState {
   // The route draws come in run order: floor 1, the hidden room (0 to 4),
   // floor 2, floor 3.
-  const f = other ? 0.9 : 0.1;
+  const f = (route + 0.5) / 3;
   const floors = [f, (room + 0.5) / 5, f, f];
   let s = createSession(
     { version: 1, packIds: ["dungeon"], limit: null, quest: "dungeon" },
@@ -626,26 +633,26 @@ test("tonight's omen is kept in the party dialog", async ({ page }, info) => {
 test("every Dungeon night card fits its face with its plaques at 375x667", async ({
   page,
 }) => {
-  test.setTimeout(240000);
+  test.setTimeout(400000);
   await page.setViewportSize({ width: 375, height: 667 });
   const ids = cards.filter((c) => c.id.startsWith("dungeon.")).map((c) => c.id);
   // Where each card is dealt: its stage's first step on the route that has
   // it (an elite, behind a fork, one room later).
-  const routes = [true, false].flatMap((other) =>
+  const routes = [0, 1, 2].flatMap((route) =>
     [0, 1, 2, 3, 4].map((room) => ({
-      other,
+      route,
       room,
-      base: crawlAt(ids[0], 0, {}, { other, room }),
+      base: crawlAt(ids[0], 0, {}, { route, room }),
     })),
   );
   const placeOf = (id: string) => {
-    for (const { other, room, base } of routes) {
+    for (const { route, room, base } of routes) {
       let first = 0;
       for (const stage of base.quest!.stages) {
         if (stage.cards.some((c) => c.id === id))
-          return { step: first, other, room };
+          return { step: first, route, room };
         if (stage.elite?.some((c) => c.id === id))
-          return { step: first + 1, other, room };
+          return { step: first + 1, route, room };
         first += stage.pick;
       }
     }
@@ -655,8 +662,8 @@ test("every Dungeon night card fits its face with its plaques at 375x667", async
   await page.goto("./");
   for (const id of ids) {
     // A smoke bomb in the satchel puts the Flee plaque on every room fight.
-    const { step, other, room } = placeOf(id);
-    const s = reveal(crawlAt(id, step, { loot: ["smoke"] }, { other, room }));
+    const { step, route, room } = placeOf(id);
+    const s = reveal(crawlAt(id, step, { loot: ["smoke"] }, { route, room }));
     await page.evaluate(
       ({ key, session }) => localStorage.setItem(key, JSON.stringify(session)),
       { key, session: s },

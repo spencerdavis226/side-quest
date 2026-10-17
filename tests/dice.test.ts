@@ -369,6 +369,12 @@ describe("choice cards", () => {
       "dungeon.the-cash-register",
       "dungeon.back-burner",
       "dungeon.the-mystery-meat",
+      "dungeon.experimental-batch",
+      "dungeon.cold-room",
+      "dungeon.frozen-in-the-ice",
+      "dungeon.the-chest-freezer",
+      "dungeon.the-telescope",
+      "dungeon.the-water-tower",
     ]);
     for (const choice of [
       {},

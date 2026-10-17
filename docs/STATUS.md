@@ -2,6 +2,21 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## A third floor at every depth (2026-10-17; pushed to `main`)
+
+- **Three new floors** (112 cards), so each depth is one of three and a run is one of 27 dungeons (135 with the hidden rooms):
+  - `dungeon/brewery.ts` (depth 1): Hop Goblin, the Craft Bro, the Brewer's Ghost (jinx Second Opinion), Tap Roulette, elites the Brewmaster, Barrel-Aged Horror and the Hostile Takeover, bosses the Fermenter, King Hop, the Beer Snob Lich (jinx A Belgian), the Keg Kraken and the Brewery Owner.
+  - `dungeon/freezer.ts` (depth 2): Freezer Burn, the Frozen Bachelor, the Ice Sculpture (jinx Frozen), the Penguin Gang, the Ice Bucket Challenge, elites the Ice Queen, the Abominable Barback and the Enforcer, bosses the Walk-In, the Snow Bartender, Absolute Zero (jinx Chattering), the Ice Cream Man and the Frozen Ex.
+  - `dungeon/rooftop.ts` (depth 3, no boss: Last Call closes it): the Pigeon King, the Rooftop DJ, the Neighbor (jinx Indoor Voices, the jinxed player whispers), the Proposal, Ring Toss, elites the Penthouse Owner, the Gargoyle King and the Storm Chaser.
+  - Each floor follows the existing pattern: 20 fights (10 monsters, 4 trials, 4 traps, 2 ambushes), 11 finds (a gamble, 2 relics, 2 treasures, 2 shrines, 2 merchants, 2 forks), 3 elites with spoils, and 5 bosses with spoils on depths 1 and 2.
+- `FLOORS` runs 0 to 8; `tier = floor % 3`. No tuning constant changed.
+- **Balance:** won 27.5%. Every floor is 26–30% (Brewery 27%, Walk-in Freezer 27%, Rooftop Bar 26%). Adventurers 23–45% (the Paladin highest), the Plus-One 6%, omens 18–34%, hidden rooms 24–33%. A won run takes 46.6 draws.
+- **Tests:** the harness now checks each of the 9 floors in band instead of whole routes. The route test checks 3 floors per depth and 5 rooms. Seeds: `ORIGINAL`, `OTHER` (second floors, the Basement) and `NEW` (third floors, the Back Office). The browser fit sweep covers 15 route and room combinations, and its timeout went from 240 s to 400 s for 407 cards (the first run timed out at 240 s and passed on retry).
+- **Totals:** Dungeon night 407 cards (245 in every mode); the catalog 1,580.
+- **Verification:**
+  - `npm test`: 226 passed. Lint, typecheck and build passed (runtime 3,801 KiB).
+  - Chromium `crawl.spec.ts` and `quest.spec.ts`: 33 passed (the fit sweep timed out once at its old 240 s limit; alone with no retries it passes in 2.9 min). WebKit not run locally.
+
 ## Push your luck (2026-10-17; pushed to `main`)
 
 - **One gamble room per floor** (6 cards):
