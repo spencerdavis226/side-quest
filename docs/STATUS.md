@@ -2,7 +2,7 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Status-bar blur: drop black-translucent (2026-10-17; branch `opaque-status-bar`)
+## Status-bar blur: drop black-translucent (2026-10-17; pushed to `main`, PR #16)
 
 - **Owner:** the blur remained after PR #15's strip (iPhone 15 Pro, installed app).
 - **Research:** herdr-web-ui #199 tested on a physical iPhone (iOS 27): "added with black-translucent, the header is blurred; added with the default style, it is sharp"; their fixed/sticky-header fix (#106, like PR #15) "only fixes the color there: the header's text and icons stay blurred". taOS #3427, SCRKPR #52 and coder/xum #5656 make the same change.
