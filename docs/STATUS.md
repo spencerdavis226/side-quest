@@ -2,7 +2,7 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Top-edge blur: keep the strip in a fresh install (2026-10-17; branch `status-edge-fresh`)
+## Top-edge blur: keep the strip in a fresh install (2026-10-17; pushed to `main`, PR #18; owner on iOS 27)
 
 - **Owner's iPhone 15 Pro screenshot after re-adding the app:** the status bar is now solid (flat #201710 for the top ~177px, so dropping black-translucent took), but a band about 30pt below it is still blurred before the wood grain returns. That is iOS 26's top edge effect (status bar plus about 40pt).
 - **Cause:** with no inset, `.status-edge` was `height: var(--top-safe)` = 0, so WebKit found no fixed box at the top edge (it needs one more than 10px tall) and drew the blur.
