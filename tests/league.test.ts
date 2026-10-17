@@ -268,4 +268,5 @@ it("Bidoof is the worst starter, and still wins now and then", () => {
   console.log(`bidoof (600 runs) ${pct(bidoof)}; next worst ${pct(worst)}`);
   expect(bidoof).toBeGreaterThan(0.01);
   expect(bidoof).toBeLessThan(Math.min(0.08, worst));
-});
+  // 600 more runs: about 7 s on CI, past the 5 s default.
+}, 30_000);
