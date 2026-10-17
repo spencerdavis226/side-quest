@@ -482,9 +482,12 @@
 .crawl-quaff.spent {
   opacity: 0.7;
 }
-.crawl-none {
-  margin: 0;
+/* The line under the League's badges: what they are for. */
+.crawl-note {
+  margin: -6px 0 0;
   color: #d9c7a4;
+  font-size: 0.95rem;
+  line-height: 1.3;
   text-align: center;
 }
 

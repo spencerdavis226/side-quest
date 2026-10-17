@@ -102,7 +102,7 @@ test("rotation over the pause menu restores that menu", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.getByRole("alertdialog")).toHaveCount(0);
   await expect(page.getByRole("dialog", { name: "Paused" })).toBeVisible();
-  await page.getByRole("button", { name: "Resume game" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Close" }).click();
   await expect(page.locator(".game-card")).toBeVisible();
 });
 

@@ -440,19 +440,22 @@ test("the party dialog lays out the run: adventurer, boons, jinx and the Cup", a
   ).toHaveCount(0);
   await page.screenshot({ path: info.outputPath("party.png") });
   await page.keyboard.press("Escape");
-  // A curse or jinx chip opens the effects on the party.
-  await page.locator(".tag-jinx").click();
-  const effects = page.getByRole("dialog", { name: "Effects" });
-  await expect(effects.locator(".crawl-curse.curse-bleed")).toContainText(
-    "Bleeding",
-  );
-  await expect(effects.locator(".crawl-jinx")).toContainText("Goblin Tongue");
-  await expect(effects.locator(".crawl-quaff")).toContainText("Quaff: ready");
-  await expect(effects.locator(".crawl-cup").last()).toContainText(
-    "4 splashes",
-  );
-  await page.screenshot({ path: info.outputPath("effects.png") });
-  await page.keyboard.press("Escape");
+  // Each chip opens its own thing, and only that.
+  for (const [chip, title, text] of [
+    [".tag-jinx", "Jinx", "Goblin Tongue"],
+    [".tag-curse", "Curse", "Bleeding"],
+    [".tag-quaff", "The Quaff", "Quaff: ready"],
+    [".tag-cup", "The Cup", "4 splashes"],
+  ]) {
+    await page.locator(chip).click();
+    const one = page.getByRole("dialog", { name: title });
+    await expect(one.locator(".crawl-curse, .crawl-cup")).toHaveCount(1);
+    await expect(one.locator(".crawl-curse, .crawl-cup")).toContainText(text);
+    if (chip === ".tag-jinx")
+      await page.screenshot({ path: info.outputPath("jinx.png") });
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+  }
   // The satchel chip opens the satchel; the Rogue's holds four.
   await page.locator(".tag-satchel").click();
   const satchel = page.getByRole("dialog", { name: "Satchel" });

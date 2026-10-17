@@ -327,6 +327,7 @@ test("@release a gym leader is a boss battle, and beating it earns a badge", asy
   const box = await dialog.boundingBox();
   expect(box!.x).toBeGreaterThanOrEqual(0);
   expect(box!.x + box!.width).toBeLessThanOrEqual(320);
+  await expect(dialog).toContainText("One for each gym beaten.");
   await page.screenshot({ path: info.outputPath("badges-320.png") });
 });
 

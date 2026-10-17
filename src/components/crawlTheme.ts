@@ -85,6 +85,8 @@ export interface CrawlTheme {
     setupFloors: string;
     /** A row of badges in the party dialog, when the crawl earns them. */
     badges?: string;
+    /** The party dialog's line under the badges: what they are for. */
+    badgesNote?: string;
     /** The banner when the starter evolves: "What? Charmander is evolving!" */
     evolving?: (from: string) => string;
     /** The run's own omen in the party dialog and the medallion: "Your
@@ -368,6 +370,8 @@ const league: CrawlTheme = {
     setupHearts: "HP",
     setupFloors: "gyms",
     badges: "Badges",
+    badgesNote:
+      "One for each gym beaten. All eight open Victory Road and the League.",
     evolving: (from) => `What? ${from} is evolving!`,
     adventurer: "Your starter",
     grows: { who: "your starter", verb: "evolves", done: "fully evolved" },

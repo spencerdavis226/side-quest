@@ -203,7 +203,7 @@ test("@release cancelling End game keeps the active session", async ({
 test("a dialog can be reopened after it fully closes", async ({ page }) => {
   await seed(page, game());
   await page.getByRole("button", { name: "Open game menu" }).click();
-  await page.getByRole("button", { name: "Resume game" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Close" }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await page.getByRole("button", { name: "Open game menu" }).click();
   const dialog = page.getByRole("dialog");

@@ -17,7 +17,10 @@ export type DialogName =
   | "install"
   | "badges"
   | "satchel"
-  | "effects"
+  | "quaff"
+  | "cup"
+  | "curse"
+  | "jinx"
   | "guide"
   // The previous card opened from the header's stud.
   | "recap"
@@ -97,7 +100,6 @@ export function GameDialogs({
   if (displayed === "menu")
     return (
       <Modal title="Paused" onClose={() => setModal(null)} exiting={exiting}>
-        <Button onClick={() => setModal(null)}>Resume game</Button>
         {session?.previousId && (
           <Button variant="menu-row" onClick={() => setModal("previous")}>
             Previous card
@@ -148,30 +150,26 @@ export function GameDialogs({
   if (
     (displayed === "badges" ||
       displayed === "satchel" ||
-      displayed === "effects") &&
+      displayed === "quaff" ||
+      displayed === "cup" ||
+      displayed === "curse" ||
+      displayed === "jinx") &&
     record?.party
   ) {
     const crawl = crawlTheme(session?.quest?.packId);
-    // The hearts open the party; the strip's chips open the satchel and the
-    // effects on the party, each its own dialog.
-    const part =
-      displayed === "badges"
-        ? "party"
-        : displayed === "satchel"
-          ? "satchel"
-          : "effects";
+    const { words } = crawl;
+    // The hearts open the party; each chip on the strip opens its own thing.
+    const part = displayed === "badges" ? "party" : displayed;
+    const title = {
+      party: words.party,
+      satchel: words.Satchel,
+      quaff: `The ${words.quaff ?? "Quaff"}`,
+      cup: words.cup?.name ?? "The Cup",
+      curse: words.curse[0].toUpperCase() + words.curse.slice(1),
+      jinx: words.jinx?.name ?? "Jinx",
+    }[part];
     return (
-      <Modal
-        title={
-          part === "party"
-            ? crawl.words.party
-            : part === "satchel"
-              ? crawl.words.Satchel
-              : "Effects"
-        }
-        onClose={() => setModal(null)}
-        exiting={exiting}
-      >
+      <Modal title={title} onClose={() => setModal(null)} exiting={exiting}>
         <CrawlRecord
           record={record}
           theme={crawl}

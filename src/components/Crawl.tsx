@@ -237,9 +237,10 @@ export function CrawlProgress({ quest }: { quest: QuestState }) {
   );
 }
 
-/** What the strip opens: the satchel, the party's effects (the Quaff, the
- * Cup, a curse, a jinx), or the party itself (the League's badges). */
-export type StripDialog = "satchel" | "effects" | "badges";
+/** What the strip opens: the satchel, the party itself (the League's
+ * badges), or one thing on the party, on its own. */
+export type StripDialog =
+  "satchel" | "badges" | "quaff" | "cup" | "curse" | "jinx";
 
 /** The strip under the top row in a crawl (2026-10-17): everything the party
  * carries, each a chip that reads at a glance and opens its own dialog. The
@@ -321,7 +322,7 @@ export function CrawlStrip({
         chip(
           `tag-quaff${quaffReady ? " ready" : " spent"}`,
           `${words.quaff}: ${quaffReady ? `ready, drink ${party.quaff} to reroll a lost d20` : "drunk, back when the boss falls"}`,
-          "effects",
+          "quaff",
           <CrawlIcon name="quaff" theme={theme} />,
         )}
       {words.cup &&
@@ -329,7 +330,7 @@ export function CrawlStrip({
         chip(
           `tag-cup${party.cup ? "" : " empty"}`,
           `${words.cup.name}: ${party.cup} ${party.cup === 1 ? "splash" : "splashes"}`,
-          "effects",
+          "cup",
           <>
             <CrawlIcon name="cup" theme={theme} />
             {/* Keyed by the count so each splash replays the tip. */}
@@ -340,7 +341,7 @@ export function CrawlStrip({
         chip(
           `tag-curse curse-${party.curse}`,
           `${theme.curses[party.curse].name}: ${theme.curses[party.curse].does}`,
-          "effects",
+          "curse",
           <>
             <CrawlIcon name={party.curse} theme={theme} />
             <span className="chip-name">{theme.curses[party.curse].name}</span>
@@ -351,7 +352,7 @@ export function CrawlStrip({
         chip(
           "tag-jinx",
           `${words.jinx.name}: ${jinx.name}`,
-          "effects",
+          "jinx",
           <>
             <CrawlIcon name="jinx" theme={theme} />
             <span className="chip-name">{jinx.name}</span>
@@ -707,6 +708,9 @@ export function SpoilsPlaque({
 }
 
 type RunRecord = NonNullable<ReturnType<typeof questRecord>>;
+/** One dialog's share of the run (`CrawlRecord`'s `part`). */
+export type RecordPart =
+  "party" | "satchel" | Exclude<StripDialog, "satchel" | "badges">;
 
 /** The run so far, for the satchel dialog and the end screens: the hearts,
  * the satchel (a draught can be drunk from here), the curse, and on the end
@@ -723,12 +727,12 @@ export function CrawlRecord({
   session?: SessionState | null;
   onUse?: (item: Loot) => void;
   /** In play, each dialog shows its own part: the party (hearts, the
-   * adventurer or starter, boons, badges), the satchel, or the effects on
-   * the party (the Quaff, the Cup, a curse, a jinx). The end screens show
+   * adventurer or starter, boons, badges), the satchel, or one thing on the
+   * party (the Quaff, the Cup, a curse, a jinx). The end screens show
    * everything. */
-  part?: "party" | "satchel" | "effects";
+  part?: RecordPart;
 }) {
-  const show = (p: "party" | "satchel" | "effects") => !part || part === p;
+  const show = (p: RecordPart) => !part || part === p;
   const party = record.party!;
   const { words } = theme;
   const quest = session?.quest;
@@ -838,7 +842,10 @@ export function CrawlRecord({
           ))}
         </p>
       )}
-      {part === "effects" && words.quaff && party.quaff !== undefined && (
+      {show("party") && words.badgesNote && record.badges.of > 0 && (
+        <p className="crawl-note">{words.badgesNote}</p>
+      )}
+      {part === "quaff" && words.quaff && party.quaff !== undefined && (
         <p className={`crawl-cup crawl-quaff${party.quaffed ? " spent" : ""}`}>
           <CrawlIcon name="quaff" theme={theme} />
           <strong>
@@ -851,7 +858,7 @@ export function CrawlRecord({
           </span>
         </p>
       )}
-      {show("effects") && party.curse && (
+      {show("curse") && party.curse && (
         <p className={`crawl-curse curse-${party.curse}`}>
           <CrawlIcon name={party.curse} theme={theme} />
           <strong>{theme.curses[party.curse].name}</strong>
@@ -860,7 +867,7 @@ export function CrawlRecord({
           </span>
         </p>
       )}
-      {show("effects") && jinx && words.jinx && !record.won && !party.wiped && (
+      {show("jinx") && jinx && words.jinx && !record.won && !party.wiped && (
         <p className="crawl-curse crawl-jinx">
           <CrawlIcon name="jinx" theme={theme} />
           <strong>
@@ -871,7 +878,7 @@ export function CrawlRecord({
           </span>
         </p>
       )}
-      {show("effects") && party.cup !== undefined && words.cup && (
+      {show("cup") && party.cup !== undefined && words.cup && (
         <p className="crawl-cup">
           <CrawlIcon name="cup" theme={theme} />
           <strong>
@@ -886,9 +893,6 @@ export function CrawlRecord({
                 : `${words.cup.pour}. ${words.cup.won}`}
           </span>
         </p>
-      )}
-      {part === "effects" && !party.curse && !jinx && !words.cup && (
-        <p className="crawl-none">Nothing on the team right now.</p>
       )}
       {show("satchel") && !party.wiped && !record.won && (
         <ul className="satchel" aria-label={words.Satchel}>
