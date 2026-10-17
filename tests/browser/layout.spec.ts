@@ -478,11 +478,11 @@ test("@release the installed app lays out at the full screen height and never sc
 
   // The status-bar edge: iOS 26+ blurs the top of the app unless WebKit
   // finds a full-width fixed box with a solid colour 4px inside the top
-  // edge. In a fresh install (no inset) the strip must still be that box,
-  // more than 10px tall; under an iPhone 15 Pro inset it is the inset tall.
-  // Either way it paints the same wood as the backdrop beneath it.
-  const edgeOf = () =>
-    page.evaluate(() => {
+  // edge, which is the bottom of the status bar (iOS 27 on the owner's
+  // iPhone 15 Pro). The strip must reach 14px past the inset, be hit 4px
+  // below it, and paint the same wood as the backdrop beneath it.
+  const edgeOf = (inset: number) =>
+    page.evaluate((inset) => {
       const strip = document.querySelector(".status-edge")!;
       const style = getComputedStyle(strip);
       const box = strip.getBoundingClientRect();
@@ -490,10 +490,10 @@ test("@release the installed app lays out at the full screen height and never sc
         position: style.position,
         color: style.backgroundColor,
         box: { x: box.x, y: box.y, width: box.width, height: box.height },
-        hit: document.elementFromPoint(innerWidth / 2, 4) === strip,
+        hit: document.elementFromPoint(innerWidth / 2, inset + 4) === strip,
         viewport: innerWidth,
       };
-    });
+    }, inset);
   const shotRows = async () => {
     const shot = await sharp(await page.screenshot({ animations: "disabled" }))
       .raw()
@@ -506,21 +506,21 @@ test("@release the installed app lays out at the full screen height and never sc
     };
   };
   await page.addStyleTag({ content: ":root { --top-safe: 0px }" });
-  const fresh = await edgeOf();
+  const fresh = await edgeOf(0);
   expect(fresh.box).toEqual({ x: 0, y: 0, width: fresh.viewport, height: 14 });
   expect(fresh.hit).toBe(true);
   const freshRow = await shotRows();
   expect(Math.abs(freshRow(12) - freshRow(16))).toBeLessThan(6);
 
   await page.addStyleTag({ content: ":root { --top-safe: 59px }" });
-  const edge = await edgeOf();
+  const edge = await edgeOf(59);
   expect(edge.position).toBe("fixed");
-  expect(edge.color).toBe("rgb(39, 28, 17)");
-  expect(edge.box).toEqual({ x: 0, y: 0, width: edge.viewport, height: 59 });
+  expect(edge.color).toBe("rgb(33, 24, 16)");
+  expect(edge.box).toEqual({ x: 0, y: 0, width: edge.viewport, height: 73 });
   expect(edge.hit).toBe(true);
   const rowAverage = await shotRows();
   // No seam at the strip's lower edge: the rows either side match.
-  expect(Math.abs(rowAverage(57) - rowAverage(61))).toBeLessThan(6);
+  expect(Math.abs(rowAverage(71) - rowAverage(75))).toBeLessThan(6);
 
   await seed(page, revealed(longestRule));
   await expect(page.locator(".study-rules p")).toBeVisible();

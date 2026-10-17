@@ -56,11 +56,12 @@ html.standalone body {
    unless WebKit finds a fixed box with a solid colour at the top edge
    (LocalFrameView::fixedContainerEdges: hit-tested 4px inside the edge, at
    least 90% of the width, more than 10px tall, no backdrop-filter). It then
-   uses that box's colour instead. This strip is that box: the status-bar
-   inset tall under black-translucent (installs before 2026-10-17), and 14px
-   in a fresh install, where the inset is 0 (the owner's iPhone 15 Pro still
-   showed the band below an opaque status bar). It paints the backdrop's own
-   wood, inside the 16px the play screen keeps above the header. */
+   uses that box's colour instead. The edge it samples is the bottom of the
+   status bar, not the screen's top: the owner's iPhone 15 Pro (iOS 27)
+   draws the app under the status bar either way, and a strip exactly the
+   inset tall left the header blurred. So the strip runs 14px past the inset,
+   inside the 20px the play screen keeps above the header, painting the
+   backdrop's own wood; its colour is the wood's, for the status bar. */
 .status-edge {
   display: none;
 }
@@ -71,7 +72,7 @@ html.standalone .status-edge {
   right: 0;
   left: 0;
   z-index: 1;
-  height: max(14px, var(--top-safe));
+  height: calc(var(--top-safe) + 14px);
   background:
     radial-gradient(ellipse at 50% 40%, #110c0760, #100c0ac9) 0 0 / 100%
       var(--backdrop-height) no-repeat,
@@ -79,7 +80,7 @@ html.standalone .status-edge {
       calc((var(--backdrop-height) - max(150vw, var(--backdrop-height))) / 2) /
       max(100vw, calc(var(--backdrop-height) * 2 / 3))
       max(150vw, var(--backdrop-height)) no-repeat;
-  background-color: var(--chrome);
+  background-color: #211810;
   /* No pointer-events: none: WebKit's sampling hit test may honour it and
      skip the strip. Nothing tappable sits under the inset. */
 }

@@ -2,6 +2,14 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Top-edge blur: strip reaches past the status bar (2026-10-17; branch `status-edge-below`)
+
+- **Owner (iOS 27, iPhone 15 Pro), after PR #18:** the header top and "YOUR STARTER" are still blurred, identical to before. The header sits at inset + 20px in both screenshots, so the app still draws under the status bar on iOS 27 (top inset 59pt) and the strip was already 59pt tall; PR #18's 14px minimum changed nothing there.
+- **Hypothesis:** WebKit samples 4px inside the *unobscured* edge, the bottom of the status bar (63pt), where the strip did not reach; the projects whose fixes worked pad a sticky header under the clock, so their box spans that point.
+- **Fix:** `.status-edge` is `calc(var(--top-safe) + 14px)` tall (inside the 20px above the header; nothing on setup or play sits there), background colour `#211810` (the wood's, as iOS may paint it in the status bar). `layout.spec.ts` hit-tests at inset + 4.
+- **Owner's fallback (2026-10-17):** if this does not fix it, drop the solid colour/strip and keep wood texture in the status bar, accepting the blur.
+- **Verification:** `npm test` 229 passed; lint, typecheck, build passed; Chromium `@release` (minus fit sweeps) 37 passed. Not verified on a device.
+
 ## Top-edge blur: keep the strip in a fresh install (2026-10-17; pushed to `main`, PR #18; owner on iOS 27)
 
 - **Owner's iPhone 15 Pro screenshot after re-adding the app:** the status bar is now solid (flat #201710 for the top ~177px, so dropping black-translucent took), but a band about 30pt below it is still blurred before the wood grain returns. That is iOS 26's top edge effect (status bar plus about 40pt).
