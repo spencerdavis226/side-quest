@@ -197,7 +197,7 @@ test("@release the Quaff rerolls a lost fight for drinks, once until a boss fall
       2,
     ),
   );
-  const quaff = page.getByRole("button", { name: /^Quaff: drink 3/ });
+  const quaff = page.getByRole("button", { name: /^Quaff: drink 6/ });
   await expect(quaff).toBeVisible();
   await expect(
     page.locator(".card-choice.items .card-choice-option"),
@@ -473,7 +473,7 @@ test("the party dialog lays out the run: adventurer, boons, jinx and the Cup", a
   const guide = page.getByRole("dialog", { name: "How to play" });
   await expect(guide.locator(".guide-rows li")).toHaveCount(8);
   await expect(guide.locator(".guide-rows")).toContainText(
-    "Lost a d20? Drink 3 to roll it again.",
+    "Lost a d20? Drink 6 to roll it again.",
   );
   await expect(guide.locator(".crawl-legend dd")).toHaveCount(8);
   await expect(guide.locator(".crawl-legend")).toContainText(

@@ -35,7 +35,11 @@ import { returnToCard, rollDice, rollWins } from "../src/game/dice";
 import { parseSession } from "../src/app/persistence";
 import { cards, packs } from "../src/content/catalog";
 import type { GameConfig, Loot, SessionState } from "../src/game/types";
-import { BOSS_NEED, PARTY_HEARTS } from "../src/content/dungeon/shared";
+import {
+  BOSS_NEED,
+  PARTY_HEARTS,
+  QUAFF_DRINKS,
+} from "../src/content/dungeon/shared";
 
 // The party's starting hearts, before any adventurer or omen.
 const H = PARTY_HEARTS;
@@ -143,7 +147,7 @@ describe("Pub Crawl", () => {
       hits: 0,
       rounds: 0,
       wiped: false,
-      quaff: 3,
+      quaff: QUAFF_DRINKS,
       cup: 0,
     });
     expect(s.quest!.stages.map((st) => [st.label, st.pick])).toEqual([
@@ -871,7 +875,7 @@ describe("Pub Crawl", () => {
       hits: 0,
       rounds: 0,
       wiped: false,
-      quaff: 3,
+      quaff: QUAFF_DRINKS,
       cup: 0,
     });
     roundTrip(s);
