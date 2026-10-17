@@ -1,9 +1,13 @@
 import DiceBox from "@3d-dice/dice-box-threejs";
 import { installTrajectoryPlayback } from "./trajectory";
 import { installDiceSkin } from "./skin";
+import { diceColors } from "./palette";
+import type { DicePalette } from "../../game/types";
 
-/** Single upstream renderer, with a recorded physical throw and local materials. */
-export async function createDiceStage(selector: string) {
+/** Single upstream renderer, with a recorded physical throw and local
+ * materials, painted in the run's colours when it has a starter or omen. */
+export async function createDiceStage(selector: string, palette?: DicePalette) {
+  const colors = diceColors(palette);
   const container = document.querySelector<HTMLElement>(selector)!;
   const shortSide = Math.min(container.clientWidth, container.clientHeight);
   const scale = Math.min(150, Math.max(90, shortSide * 0.34));
@@ -16,11 +20,12 @@ export async function createDiceStage(selector: string) {
     light_intensity: 0.7,
     color_spotlight: 0xffedce,
     theme_customColorset: {
-      name: "Side Quest brass and enamel",
-      foreground: "#fff0c9",
-      background: "#123f45",
+      // One colorset per palette, so the library's cache never mixes them.
+      name: `Side Quest ${colors.body[1]} ${colors.metal[1]}`,
+      foreground: colors.ink,
+      background: colors.body[1],
       outline: "none",
-      edge: "#bd8b48",
+      edge: colors.trim,
       texture: "none",
       material: "none",
     },
@@ -111,13 +116,13 @@ export async function createDiceStage(selector: string) {
     );
     box.camera.lookAt(0, 0, 0);
     box.camera.updateMatrixWorld();
-    installDiceSkin(box.DiceFactory);
+    installDiceSkin(box.DiceFactory, colors);
     const materials = box.DiceFactory.createMaterials.bind(box.DiceFactory);
     box.DiceFactory.createMaterials = (...args: unknown[]) => {
       const result = materials(...args);
       for (const [index, material] of result.entries()) {
         material.color.set("#ffffff");
-        material.specular?.set(index === 0 ? "#604324" : "#142221");
+        material.specular?.set(colors.specular[index === 0 ? 0 : 1]);
         material.shininess = index === 0 ? 70 : 100;
         // Readable painted inlays; no mismatched numeral bump beneath d6 pips.
         material.bumpScale = 0;

@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import type { CardDefinition, DiceRoll } from "../game/types";
+import type { CardDefinition, DicePalette, DiceRoll } from "../game/types";
 import { forceMotion } from "../presentation/motion";
 import "./fullscreen-dice.css";
 
@@ -17,9 +17,12 @@ export default function FullScreenDice({
   onTap,
   onReveal,
   onFinish,
+  palette,
 }: {
   card: CardDefinition;
   roll: DiceRoll | null;
+  /** The run's starter or omen colours; the house brass and teal without. */
+  palette?: DicePalette;
   rolling: boolean;
   finishing: boolean;
   onTap(): void;
@@ -28,6 +31,9 @@ export default function FullScreenDice({
 }) {
   const stageId = `dice-stage-${useId().replace(/:/g, "")}`;
   const callbacks = useRef({ onTap, onReveal, onFinish });
+  // Read when a stage is built: a palette change never rebuilds one mid-roll.
+  const colors = useRef(palette);
+  colors.current = palette;
   callbacks.current = { onTap, onReveal, onFinish };
   const stage = useRef<Stage | null>(null);
   const ready = useRef<Promise<Stage | null> | null>(null);
@@ -57,7 +63,9 @@ export default function FullScreenDice({
     setStopReason("");
     ready.current = import("../presentation/dice/library")
       .then(({ createDiceStage }) =>
-        current() ? createDiceStage(`#${CSS.escape(stageId)}`) : null,
+        current()
+          ? createDiceStage(`#${CSS.escape(stageId)}`, colors.current)
+          : null,
       )
       .then((created) => {
         if (!current()) {

@@ -397,6 +397,7 @@ export function Play({
               onTap={onTap}
               onReveal={onRevealRoll}
               onFinish={() => onFinish(transition)}
+              palette={form?.palette}
             />
           </Suspense>
         )}

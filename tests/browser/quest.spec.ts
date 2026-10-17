@@ -199,9 +199,9 @@ test("@release a starter evolves on a route, and the banner says what changed", 
   const dialog = page.getByRole("dialog", { name: "The team" });
   // Only the starter it is now, and its power.
   await expect(dialog.locator(".crawl-omen strong")).toHaveText("Charmeleon");
-  await expect(dialog.locator(".crawl-omen span")).toHaveText(
-    "Max HP 18. Route battles hurt 1 less.",
-  );
+  await expect(
+    dialog.locator(".crawl-omen > span:not(.crawl-icon)"),
+  ).toHaveText("Max HP 18. Route battles hurt 1 less.");
   await page.screenshot({ path: info.outputPath("team-dialog.png") });
   // A reload keeps the form and does not replay the banner.
   await page.reload();
@@ -258,7 +258,9 @@ test("a Rare Candy evolves the starter from the bag", async ({ page }) => {
   );
   await meter(page).click();
   const dialog = page.getByRole("dialog", { name: "The team" });
-  await expect(dialog.locator(".satchel-slot")).toContainText("Rare Candy");
+  await expect(dialog.locator(".satchel-slot").first()).toContainText(
+    "Rare Candy",
+  );
   await dialog.getByRole("button", { name: "Use" }).click();
   expect((await saved(page)).quest.party).toMatchObject({
     form: 1,

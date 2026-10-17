@@ -443,7 +443,9 @@ export const starter = (
     `starter-${id}`,
     title,
     "rule",
-    `${flavor} ${describeOmen(effect, leagueOmenWords, TEAM_HP)}`,
+    [flavor, describeOmen(effect, leagueOmenWords, TEAM_HP)]
+      .filter(Boolean)
+      .join(" "),
   ),
   ribbon: "Your starter",
   ribbonTone: "pearl",
@@ -451,12 +453,10 @@ export const starter = (
   omen: effect,
   ...(evolves.length
     ? {
-        evolves: evolves.map(
-          (e): Evolution => ({
-            ...e,
-            rules: describeOmen(e.omen, leagueOmenWords, TEAM_HP, false),
-          }),
-        ),
+        evolves: evolves.map((e): Evolution => ({
+          ...e,
+          rules: describeOmen(e.omen, leagueOmenWords, TEAM_HP, false),
+        })),
       }
     : {}),
   ...(branches ? { branches: true as const } : {}),

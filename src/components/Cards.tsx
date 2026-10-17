@@ -3,7 +3,7 @@ import type { CardDefinition, DiceRoll, PartyState } from "../game/types";
 import { CardStakes } from "./Crawl";
 import type { CrawlTheme } from "./crawlTheme";
 import { diceResultText } from "../presentation/dice/result-text";
-import { rollWins } from "../game/dice";
+import { readTotal, rollWins } from "../game/dice";
 import { CardPackMarks } from "./PackMarks";
 import { badgeArt } from "../presentation/league-art";
 type Overflow = "none" | "top" | "bottom" | "both";
@@ -62,7 +62,7 @@ export function CardFace({
     resolved &&
     !!card.battle &&
     !!card.dice &&
-    !rollWins(card.dice, roll!.values);
+    !rollWins(card.dice, roll!.values, roll!);
   useLayoutEffect(() => {
     const title = titleRef.current;
     const heading = title?.querySelector<HTMLElement>("h2");
@@ -204,6 +204,10 @@ export function CardFace({
                 className="dice-result-equation"
                 aria-label={`Rolled ${roll!.values.join(" plus ")}${
                   roll!.values.length > 1 ? `, total ${roll!.total}` : ""
+                }${
+                  roll!.bonus
+                    ? `, ${roll!.bonus < 0 ? "minus" : "plus"} ${Math.abs(roll!.bonus)}, reads ${readTotal(card.dice!, roll!.values, roll!)}`
+                    : ""
                 }`}
               >
                 <span className="dice-result-faces" aria-hidden="true">
@@ -213,6 +217,20 @@ export function CardFace({
                     </span>
                   ))}
                 </span>
+                {/* A starter's bonus on a crawl d20: the face, the bonus, and
+                    the total the card reads. */}
+                {!!roll!.bonus && (
+                  <span className="dice-result-total" aria-hidden="true">
+                    <span className="dice-result-bonus">
+                      {roll!.bonus < 0 ? "−" : "+"}
+                      {Math.abs(roll!.bonus)}
+                    </span>
+                    <span>=</span>
+                    <strong>
+                      {readTotal(card.dice!, roll!.values, roll!)}
+                    </strong>
+                  </span>
+                )}
                 {roll!.values.length > 1 && (
                   <span className="dice-result-total" aria-hidden="true">
                     <span>=</span>
@@ -220,6 +238,9 @@ export function CardFace({
                   </span>
                 )}
               </div>
+              {roll!.flinched && (
+                <p className="dice-result-flinch">A 20 was rerolled.</p>
+              )}
               <p className="resolved-instruction">
                 {diceResultText(card, roll!)
                   .split(/(\d+)/)

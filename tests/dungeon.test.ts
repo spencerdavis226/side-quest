@@ -559,7 +559,7 @@ function playRun(seed: number) {
     if (card.dice) {
       if (!s.roll) s = rollDice(s, random);
       s = returnToCard(s);
-      if (card.battle && !rollWins(card.dice, s.roll!.values)) {
+      if (card.battle && !rollWins(card.dice, s.roll!.values, s.roll!)) {
         use("die");
         if (!s.roll) s = returnToCard(rollDice(s, random));
       }

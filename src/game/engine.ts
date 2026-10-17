@@ -369,6 +369,8 @@ export function omenForm(quest: QuestState | undefined) {
     branches: branching && canEvolve ? forms.map((e) => e.title) : null,
     /** How many later forms the card has. */
     forms: forms.length,
+    /** The dice colours of the form it is now. */
+    palette: now ? (now.palette ?? card.palette) : card.palette,
     /** The form an evolution brings next, while one evolves in a line. */
     next: !branching && canEvolve ? forms[form].title : null,
     /** The effect of the form before this one (for what an evolution
@@ -529,6 +531,9 @@ export function natural(
   roll: DiceRoll | null,
 ): 20 | 1 | null {
   if (card.dice?.count !== 1 || card.dice.sides !== 20 || !roll) return null;
+  // A roll made under an omen carries its own natural (a widened range);
+  // older rolls read the face.
+  if (roll.bonus !== undefined) return roll.natural ?? null;
   return roll.values[0] === 20 ? 20 : roll.values[0] === 1 ? 1 : null;
 }
 /** Whether the party can use the satchel's item `item` now. */
@@ -547,7 +552,7 @@ export function canUseLoot(s: SessionState, item: Loot): boolean {
         !!card.battle &&
         !!card.dice &&
         !!s.roll?.returned &&
-        !rollWins(card.dice, s.roll.values)
+        !rollWins(card.dice, s.roll.values, s.roll)
       );
     case "smoke":
       // Slip past a room fight before it starts; a boss blocks the stairs.
@@ -670,7 +675,7 @@ function discard(
     !s.quest || !card.battle
       ? null
       : (verdict ??
-        (card.dice && s.roll && rollWins(card.dice, s.roll.values)
+        (card.dice && s.roll && rollWins(card.dice, s.roll.values, s.roll)
           ? "won"
           : "lost"));
   const lost = outcome === "lost";
@@ -725,6 +730,14 @@ function discard(
         };
       // The floor's boss falls: its curse lifts with it.
       next = { ...next, hits: 0, ...(isBossCard(card) ? { curse: null } : {}) };
+      // A badge restocks the starter's item, room permitting.
+      const restock = omenEffect(q)?.restock;
+      if (
+        restock &&
+        card.quest === q.packId &&
+        next.loot.length < satchelSize(q)
+      )
+        next = { ...next, loot: [...next.loot, restock] };
     }
     s = { ...s, quest: { ...q, party: next } };
   }

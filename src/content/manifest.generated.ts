@@ -400,6 +400,12 @@ export const packs: PackDefinition[] = [
             "pokemon.starter-rowlet",
             "pokemon.starter-scorbunny",
             "pokemon.starter-fuecoco",
+            "pokemon.starter-bidoof",
+            "pokemon.starter-magikarp",
+            "pokemon.starter-wooper",
+            "pokemon.starter-sunkern",
+            "pokemon.starter-slowpoke",
+            "pokemon.starter-psyduck",
           ],
         },
         {

@@ -2,6 +2,50 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Starters you feel, Bidoof, themed dice (2026-10-17, owner request; local)
+
+**Owner request.** Starters and evolutions should be felt heavily. Add a Bidoof starter that is the worst, with an evolution that is worse, plus a few more bad or neutral starters. Theme the dice to the starter, and to the omen in Pub Crawl. The owner picked roll bonuses (B) and natural-range tweaks (E) from the proposal, plus the listed perks without any table-behaviour rules (no sunglasses, no blowing on drinks, no Pika naming).
+
+**Engine (all fields optional; schema v2 unchanged).**
+- `OmenEffect` gains:
+  - `roll`: a bonus by kind, or `all`, added to single-d20 battle rolls.
+  - `crit` (the lowest face that counts as a natural 20) and `fumble` (the highest that counts as a natural 1).
+  - `reroll20`: a 20 is rolled again.
+  - `restock`: an item back when a gym falls.
+- `DiceRoll` gains `bonus`, `natural` and `flinched`.
+- `rollDice` reads the omen for a crawl's single-d20 battle. `readTotal` reads a natural as the die's own 20 or 1, and holds any other bonused roll between 2 and 19, so a bonus never makes or breaks a natural. `resolveInstruction`, `rollWins` and `validateRoll` take the reading.
+- d6 and 2d6 fights take no bonus.
+- The card shows "17 +2 = 19", and "A 20 was rerolled." for Bidoof.
+
+**Roster: 23 starters.**
+- The 17 gained felt perks:
+  - Charmander: +2 to route battle rolls.
+  - Pikachu: +1 to every roll, and a natural 20 on 19 or 20.
+  - Squirtle line: a Protect back at every gym from Wartortle.
+  - Bulbasaur: heals +2.
+  - Torchic: +2 to Ace Trainer and rival rolls.
+  - Also natural-20-on-19 for Flareon, Samurott, Greninja and Cinderace, and restocks for Typhlosion and Sceptile.
+- New:
+  - **Bidoof**: Max HP 15, −1 to boss rolls, every 20 rerolled, bag of 2. Its evolution, Bibarel, drops to Max HP 14.
+  - Magikarp, bad until Gyarados.
+  - Wooper and Quagsire, nothing but a Potion.
+  - Sunkern, Max HP 15, then Sunflora 16.
+  - Slowpoke: heals +2, but bosses take a hit more.
+  - Psyduck: natural 1 on 1 or 2, until Golduck.
+- Roll bonuses are strong: −1 on every roll made Bidoof unwinnable (under 1%), so it is −1 on boss rolls only.
+
+**Dice palettes.**
+- `DicePalette { primary, secondary }` sits on omen cards and starter forms: 62 starter forms and 12 Pub Crawl omens, each a distinct pair.
+- `presentation/dice/palette.ts` derives the whole skin (enamel stops, metal, trim, ring, ink, shadow, specular). Numerals are cream on darker enamel and dark on light enamel, and the enamel steps darker or lighter until the numerals reach 4.5:1 (`tests/dice-palette.test.ts`).
+- Without a palette the dice are exactly the house brass and teal. The stage builds its skin from `omenForm(...).palette` when a roll starts.
+- Checked by eye on painted face textures for 11 palettes; not checked on the live WebGL stage or a device.
+
+**Harness.**
+- League: won 24.4%. Starters 15% (Charmander, Oshawott, Wooper) to 42% (Mudkip); Squirtle 32%, Magikarp 23%.
+- Bidoof, measured on its own over 600 forced runs, is 4% (the test holds it 1% to 8% and below every other starter).
+
+**Tests.** `npm test` 208 passed (with the long timeout). Lint, typecheck and build passed (runtime 3696 KiB). Browser: see the result below.
+
 ## Starter revision pass (2026-10-17, owner request; local)
 
 **Owner request.** Make the starter powers and evolutions unique and logically worded. New items are allowed if they help. Does evolution actually do anything? (A Bulbasaur evolved at the table and it was unclear what happened.) Show only the current Pokémon's name in the team dialog, not the whole line.

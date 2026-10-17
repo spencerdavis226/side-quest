@@ -1868,6 +1868,27 @@ const deck = [
   ...lastCallBosses,
 ];
 
+// Tonight's dice (2026-10-17): each omen's colours, the enamel then the
+// metal; without an omen the dice keep the house brass and teal.
+const OMEN_DICE: Record<string, [primary: string, secondary: string]> = {
+  "flooded-stairs": ["#1f5f73", "#9fd0c8"],
+  "happy-hour": ["#a8651a", "#e9b56a"],
+  "running-a-tab": ["#2f5f45", "#d8b45a"],
+  "lock-in": ["#2e3238", "#a9b2bc"],
+  "cargo-shorts": ["#5f5a34", "#d8c79a"],
+  butterfingers: ["#e8c24a", "#8a5a2a"],
+  "blood-moon": ["#7e1e24", "#4a3d40"],
+  "lefty-night": ["#4b3a7c", "#c9c4d8"],
+  "karaoke-night": ["#a82c68", "#f4d35e"],
+  "the-regulars": ["#6e3a24", "#d2a65f"],
+  "thin-walls": ["#625d53", "#c9a878"],
+  "cold-open": ["#35627f", "#dfeef5"],
+};
+for (const o of omens) {
+  const [primary, secondary] = OMEN_DICE[o.id.replace("dungeon.omen-", "")];
+  o.palette = { primary, secondary };
+}
+
 // Every d20 here carries the crawls' natural 20 and natural 1
 // (`naturals.ts`), in Pub Crawl and in the plain modes alike.
 export const dungeonCards: CardDefinition[] = [

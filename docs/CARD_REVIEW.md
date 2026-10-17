@@ -233,7 +233,7 @@ the Review column is intentionally blank so you can mark it up.
 
 ## Pokémon night (`pokemon`)
 
-476 cards · 44 sip · 47 group · 5 category · 338 challenge · 42 rule · 248 dice
+482 cards · 44 sip · 47 group · 5 category · 338 challenge · 48 rule · 248 dice
 
 | Review | Title | ID | Cat | Rules | Dice, secret or timer |
 | --- | --- | --- | --- | --- | --- |
@@ -696,23 +696,29 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Barboach | `pokemon.barboach` | rule | Barboach used Mud-slap! Name a player. For the rest of the game, they may slap you once after a full drink. |  |
 | ☐ | Mawile | `pokemon.mawile` | rule | Mawile used Vicegrip! Until your next turn, grab a player and squeeze them. Drink 4 and apologize. |  |
 | ☐ | Relicanth | `pokemon.relicanth` | rule | Relicanth used Dive! Kneel under the table until your next turn. Surface early: drink 2. |  |
-| ☐ | Bulbasaur | `pokemon.starter-bulbasaur` | rule | Bulbasaur chose you. Everyone sniff the bulb. Max HP 15. Every heal heals 1 more. |  |
-| ☐ | Charmander | `pokemon.starter-charmander` | rule | Charmander chose you. Keep its tail lit. Route battles hurt 1 less. Bosses hurt 1 more. |  |
+| ☐ | Bulbasaur | `pokemon.starter-bulbasaur` | rule | Bulbasaur chose you. Everyone sniff the bulb. Max HP 15. Every heal heals 2 more. |  |
+| ☐ | Charmander | `pokemon.starter-charmander` | rule | Charmander chose you. Keep its tail lit. +2 to route battle rolls. Bosses hurt 1 more. |  |
 | ☐ | Squirtle | `pokemon.starter-squirtle` | rule | Squirtle chose you, in sunglasses. The bag holds 2. Starts with a Protect. |  |
-| ☐ | Pikachu | `pokemon.starter-pikachu` | rule | Pikachu won't go in its ball and won't evolve. Ever. Everyone yells Pika. Max HP 19. Starts with an X Attack. |  |
+| ☐ | Pikachu | `pokemon.starter-pikachu` | rule | Pikachu won't evolve. Ever. Max HP 18. +1 to every battle roll. Natural 20 on a 19 or 20. |  |
 | ☐ | Eevee | `pokemon.starter-eevee` | rule | Eevee chose you. The table picks what it evolves into. Max HP 15. The bag holds 4. |  |
 | ☐ | Cyndaquil | `pokemon.starter-cyndaquil` | rule | Cyndaquil chose you, half asleep. Max HP 16. Starts with an X Attack. |  |
 | ☐ | Totodile | `pokemon.starter-totodile` | rule | Totodile chose you by biting you. Max HP 20. Route battles hurt 1 more. |  |
 | ☐ | Treecko | `pokemon.starter-treecko` | rule | Treecko chose you, chewing a twig. Ace Trainers and rivals hurt 1 more. Starts with an Escape Rope. |  |
-| ☐ | Torchic | `pokemon.starter-torchic` | rule | Torchic chose you. Everyone flap and peep. Max HP 15. Ace Trainers and rivals hurt 1 less. |  |
-| ☐ | Mudkip | `pokemon.starter-mudkip` | rule | So I herd u liek Mudkipz. Max HP 12. Bosses hurt 1 less. |  |
+| ☐ | Torchic | `pokemon.starter-torchic` | rule | Torchic chose you. Everyone flap and peep. Max HP 15. +2 to Ace Trainer and rival rolls. |  |
+| ☐ | Mudkip | `pokemon.starter-mudkip` | rule | So I herd u liek Mudkipz. Max HP 11. Bosses hurt 1 less. |  |
 | ☐ | Piplup | `pokemon.starter-piplup` | rule | Piplup chose you and is very proud of it. Max HP 23. Bosses take 1 more hit. Starts with a Protect. |  |
 | ☐ | Turtwig | `pokemon.starter-turtwig` | rule | Turtwig chose you, slowly. Max HP 21. The bag holds 2. |  |
 | ☐ | Oshawott | `pokemon.starter-oshawott` | rule | Oshawott chose you, scalchop out. Max HP 14. Starts with a Protect and an X Attack. |  |
-| ☐ | Froakie | `pokemon.starter-froakie` | rule | Froakie chose you, covered in bubbles. Use the candy from the bag any time. Max HP 15. Starts with a Rare Candy. |  |
+| ☐ | Froakie | `pokemon.starter-froakie` | rule | Froakie chose you, covered in bubbles. Max HP 15. Starts with a Rare Candy. |  |
 | ☐ | Rowlet | `pokemon.starter-rowlet` | rule | Rowlet chose you and fell asleep on your head. Max HP 16. Hazards and finds hurt 1 less. |  |
 | ☐ | Scorbunny | `pokemon.starter-scorbunny` | rule | Scorbunny chose you, bouncing. Route battles and trainer challenges hurt 1 less. The bag holds 2. |  |
 | ☐ | Fuecoco | `pokemon.starter-fuecoco` | rule | Fuecoco chose you because you had snacks. Starts with 2 Potions. |  |
+| ☐ | Bidoof | `pokemon.starter-bidoof` | rule | Nobody chooses Bidoof. Max HP 15. −1 to boss rolls. Every 20 is rerolled. The bag holds 2. |  |
+| ☐ | Magikarp | `pokemon.starter-magikarp` | rule | Magikarp chose you. It used Splash. Nothing happened. Max HP 15. −1 to every battle roll. |  |
+| ☐ | Wooper | `pokemon.starter-wooper` | rule | Wooper chose you. It does nothing, but it's very happy to be here. |  |
+| ☐ | Sunkern | `pokemon.starter-sunkern` | rule | Sunkern chose you. It is a seed with a face. Max HP 15. |  |
+| ☐ | Slowpoke | `pokemon.starter-slowpoke` | rule | Slowpoke chose you. Eventually. Every heal heals 2 more. Bosses take 1 more hit. |  |
+| ☐ | Psyduck | `pokemon.starter-psyduck` | rule | Psyduck chose you. It has a headache. So do you. Max HP 20. Natural 1 on a 1 or 2. |  |
 
 ## Cabin weekend (`cabin`)
 

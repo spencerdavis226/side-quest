@@ -22,6 +22,12 @@ test("dice face numerals paint on the face centre in every engine", async ({
       }: typeof import("../../src/presentation/dice/skin") = await import(
         /* @vite-ignore */ skin
       );
+      const colors: string = "/src/presentation/dice/palette.ts";
+      const {
+        houseDice,
+      }: typeof import("../../src/presentation/dice/palette") = await import(
+        /* @vite-ignore */ colors
+      );
       const size = 512;
       return labels.map((label) => {
         const canvas = document.createElement("canvas");
@@ -33,7 +39,7 @@ test("dice face numerals paint on the face centre in every engine", async ({
           chamfer_geom: () => ({}),
           createTextMaterial: () => texture,
         };
-        installDiceSkin(factory);
+        installDiceSkin(factory, houseDice);
         // A d20 label array has two leading blanks; index 2 is the first face.
         factory.createTextMaterial({ shape: "d20" }, ["", "", label], 2);
         const pixels = canvas

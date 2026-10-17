@@ -222,6 +222,15 @@
   gap: clamp(5px, 2cqw, max(8px, 1.7cqw));
   font: 700 clamp(18px, 6cqw, max(25px, 5.32cqw)) / 1 var(--font-card-title);
 }
+/* A starter's roll bonus, between the face and the total it reads. */
+.dice-result-bonus {
+  color: #6b3f12;
+}
+.dice-result-flinch {
+  margin: 0;
+  color: #6b4a2a;
+  font: italic 600 clamp(13px, 3.6cqw, 16px) / 1.2 var(--font-tavern);
+}
 .dice-result-total strong {
   min-width: clamp(38px, 13cqw, max(50px, 10.64cqw));
   color: #2f1e0e;

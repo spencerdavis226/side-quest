@@ -92,7 +92,7 @@ describe("Pokémon League journey", () => {
       const at = s.quest!.stages.findIndex((st) => st.label === "Gym 4");
       hideouts.add(s.quest!.stages[at + 1].label);
     }
-    expect(starters.size).toBe(17);
+    expect(starters.size).toBe(23);
     expect(hideouts.size).toBe(9);
   });
 });
@@ -103,9 +103,10 @@ describe("Pokémon League journey", () => {
 // room (an HP price only above 10), the loud path above 9 HP, always
 // evolving (a Rare Candy at once), and catching whenever the team is hurt.
 // Real cards, real engine.
-function playRun(seed: number) {
+function playRun(seed: number, starter?: string) {
   const random = seeded(seed);
   let s = createSession(league, cards, packs, random);
+  if (starter) s.quest!.finale[0] = `pokemon.starter-${starter}`;
   const use = (item: Loot) => {
     if (canUseLoot(s, item)) s = spendLoot(s, item, random);
   };
@@ -166,7 +167,7 @@ function playRun(seed: number) {
     if (card.dice) {
       if (!s.roll) s = rollDice(s, random);
       s = returnToCard(s);
-      if (card.battle && !rollWins(card.dice, s.roll!.values)) {
+      if (card.battle && !rollWins(card.dice, s.roll!.values, s.roll!)) {
         use("die");
         if (!s.roll) s = returnToCard(rollDice(s, random));
       }
@@ -244,10 +245,27 @@ it("no starter and no hideout makes the League a walkover or hopeless", () => {
     `starters: ${starters.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}\n` +
       `hideouts: ${hideouts.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}`,
   );
-  expect(starters).toHaveLength(17);
+  expect(starters).toHaveLength(23);
   expect(hideouts).toHaveLength(9);
-  for (const [, r] of [...starters, ...hideouts]) {
-    expect(r).toBeGreaterThan(0.1);
-    expect(r).toBeLessThan(0.5);
+  // Bidoof is the worst starter by design (owner, 2026-10-17), measured on
+  // its own below: a 23rd of the runs is too few to read it here.
+  for (const [name, r] of [...starters, ...hideouts]) {
+    if (name === "bidoof") continue;
+    expect(r, name).toBeGreaterThan(0.1);
+    expect(r, name).toBeLessThan(0.5);
   }
+});
+
+it("Bidoof is the worst starter, and still wins now and then", () => {
+  const bidoof = rate(
+    Array.from({ length: 600 }, (_, i) => playRun(i + 1, "bidoof")),
+  );
+  const worst = Math.min(
+    ...by((s) => s.quest!.finale[0])
+      .filter(([n]) => !n.endsWith("bidoof"))
+      .map(([, r]) => r),
+  );
+  console.log(`bidoof (600 runs) ${pct(bidoof)}; next worst ${pct(worst)}`);
+  expect(bidoof).toBeGreaterThan(0.01);
+  expect(bidoof).toBeLessThan(Math.min(0.08, worst));
 });

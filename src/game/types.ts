@@ -28,6 +28,16 @@ export interface DiceRoll {
   total: number;
   instruction: string;
   returned: boolean;
+  /** A crawl's single d20 battle (2026-10-17): the omen's bonus added to the
+   * face before the outcome is read (0 when there is none). Its presence
+   * marks a roll whose `natural` was decided when it was rolled; older saves
+   * omit both and read naturals from the face. */
+  bonus?: number;
+  /** The roll counts as a natural 20 or 1: its face, or a face inside the
+   * omen's widened range (`OmenEffect.crit`, `fumble`). */
+  natural?: 20 | 1;
+  /** A 20 was rolled and rerolled away (`OmenEffect.reroll20`). */
+  flinched?: true;
 }
 export interface CardDefinition {
   version: 1;
@@ -86,6 +96,8 @@ export interface CardDefinition {
    * picks one of them (Eevee: Vaporeon, Jolteon or Flareon), and that is
    * its last. */
   branches?: true;
+  /** A crawl omen's dice colours while it holds (`DicePalette`). */
+  palette?: DicePalette;
 }
 /** One later form of a starter: its name, what it does (shown in the team
  * dialog) and the omen effect it holds while it is the current form. */
@@ -93,6 +105,13 @@ export interface Evolution {
   title: string;
   rules: string;
   omen: OmenEffect;
+  palette?: DicePalette;
+}
+/** A crawl omen's (or a starter form's) dice colours: `primary` is the
+ * enamel, `secondary` the metal and trim (2026-10-17). Display only. */
+export interface DicePalette {
+  primary: string;
+  secondary: string;
 }
 export const ENCOUNTERS = [
   "monster",
@@ -134,6 +153,18 @@ export interface OmenEffect {
   hurt?: Partial<Record<Encounter, number>>;
   heal?: number;
   bossHits?: number;
+  /** Added to every single-d20 battle roll (`all`) or to one kind's
+   * (2026-10-17). A bonus never makes a natural: the face (and `crit`,
+   * `fumble`) decides those. */
+  roll?: Partial<Record<Encounter | "all", number>>;
+  /** The lowest face that counts as a natural 20 (19: on 19 or 20). */
+  crit?: number;
+  /** The highest face that counts as a natural 1 (2: on 1 or 2). */
+  fumble?: number;
+  /** A natural 20 is rolled again until it isn't one (Bidoof). */
+  reroll20?: true;
+  /** An item back in the bag each time a gym (a badge boss) falls. */
+  restock?: Loot;
 }
 /** Pub Crawl items, carried in the party's satchel (at most three).
  * `draught`: down a fresh, full drink to heal a heart. `shield`: the next

@@ -34,7 +34,12 @@ const zero: Random = () => 0;
 function withStarter(id: string, room?: string) {
   let s = createSession(league, cards, packs, () => 0.5);
   s.quest!.finale[0] = `pokemon.starter-${id}`;
-  if (room) s.quest!.finale[1] = room;
+  if (room) {
+    // Swap it in, so the run's picks stay a valid save.
+    const at = s.quest!.finale.indexOf(room);
+    if (at >= 0) s.quest!.finale[at] = s.quest!.finale[1];
+    s.quest!.finale[1] = room;
+  }
   s = advance(advance(s, zero), zero);
   expect(s.quest!.party!.omen).toBe(`pokemon.starter-${id}`);
   return s;
@@ -65,7 +70,7 @@ describe("League starters", () => {
         );
       });
     }
-    expect(seen.size).toBe(17);
+    expect(seen.size).toBe(23);
   });
 
   it("writes powers in the League theme's own item names", () => {
@@ -120,5 +125,49 @@ describe("League starters", () => {
     });
     hexed = advance(returnToCard(rollDice(advance(hexed, zero), zero)), zero);
     expect(party(hexed).wiped).toBe(true);
+  });
+
+  it("reads a roll through the starter: bonus, natural range, a flinch", () => {
+    // A face as a random draw: 1 + floor(r × 20).
+    const face =
+      (n: number): Random =>
+      () =>
+        (n - 1) / 20 + 0.001;
+    const fight = (id: string, faces: number[]) => {
+      const draws = faces.map(face);
+      let s = withStarter(id, "pokemon.route-rattata");
+      s = advance(s, zero);
+      return rollDice(s, () => draws.shift()!());
+    };
+    // Pikachu: +1 to every roll, and a 19 is a natural 20.
+    let s = fight("pikachu", [19]);
+    expect(s.roll).toMatchObject({ values: [19], bonus: 1, natural: 20 });
+    expect(s.roll!.instruction).toMatch(/^Natural 20! /);
+    // A bonus never makes a natural: an 18 + 1 reads as 19.
+    s = fight("pikachu", [18]);
+    expect(s.roll).toMatchObject({ values: [18], bonus: 1 });
+    expect(s.roll!.natural).toBeUndefined();
+    expect(s.roll!.instruction).not.toMatch(/^Natural/);
+    // Bidoof flinches at a 20 and rolls again.
+    s = fight("bidoof", [20, 20, 7]);
+    expect(s.roll).toMatchObject({ values: [7], flinched: true });
+    // The reading survives a save.
+    expect(parseSession(JSON.stringify(s))).toEqual(s);
+  });
+
+  it("restocks the starter's item when a gym falls", () => {
+    let s = withStarter("cyndaquil");
+    s.quest!.party!.form = 2; // Typhlosion: a fresh X Attack at every gym
+    s.quest!.party!.loot = [];
+    // Brock, the first gym, rolled at a 20.
+    const gym = s.quest!.finale.findIndex((id) =>
+      id.startsWith("pokemon.gym-"),
+    );
+    s.quest!.finale[gym] = "pokemon.gym-brock";
+    s.quest!.step = gym;
+    s = advance(s, zero);
+    expect(currentCard(s).id).toBe("pokemon.gym-brock");
+    s = advance(returnToCard(rollDice(s, () => 0.999)), zero);
+    expect(party(s).loot).toEqual(["die"]);
   });
 });

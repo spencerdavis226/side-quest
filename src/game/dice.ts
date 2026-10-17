@@ -4,7 +4,26 @@ import type {
   DiceRoll,
   SessionState,
 } from "./types";
-import { currentCard, type Random } from "./engine";
+import { currentCard, omenEffect, type Random } from "./engine";
+
+/** How a committed roll is read: a crawl d20's omen bonus, and whether it
+ * counts as a natural. Absent on every other roll. */
+export type RollReading = Pick<DiceRoll, "bonus" | "natural">;
+
+/** The total a table reads. A natural reads as the die's own 20 or 1; any
+ * other single-d20 roll with a bonus is held between 2 and 19, so a bonus
+ * never makes (or unmakes) a natural. */
+export function readTotal(
+  dice: DiceDefinition,
+  values: number[],
+  reading?: RollReading,
+) {
+  const total = values.reduce((a, b) => a + b, 0);
+  if (reading?.bonus === undefined) return total;
+  if (reading.natural === 20) return dice.sides;
+  if (reading.natural === 1) return 1;
+  return Math.min(dice.sides - 1, Math.max(2, total + reading.bonus));
+}
 
 // `{total}` is the sum of the committed faces; `{first}` … `{fourth}` are the
 // individual dice, so cards that hand out one die and drink another can still
@@ -98,8 +117,9 @@ export const diceNotation = (dice: DiceDefinition) =>
 export function resolveInstruction(
   dice: DiceDefinition,
   values: number[],
+  reading?: RollReading,
 ): string {
-  const total = values.reduce((a, b) => a + b, 0);
+  const total = readTotal(dice, values, reading);
   const doubles =
     values.length > 1 && values.every((value) => value === values[0]);
   const text =
@@ -116,8 +136,12 @@ export function resolveInstruction(
     .replaceAll("{fourth}", String(values[3]));
 }
 /** Whether a committed roll is one of a battle's winning outcomes. */
-export function rollWins(dice: DiceDefinition, values: number[]): boolean {
-  const total = values.reduce((a, b) => a + b, 0);
+export function rollWins(
+  dice: DiceDefinition,
+  values: number[],
+  reading?: RollReading,
+): boolean {
+  const total = readTotal(dice, values, reading);
   const doubles =
     values.length > 1 && values.every((value) => value === values[0]);
   if (doubles && dice.doubles) return !!dice.doublesWin;
@@ -128,22 +152,51 @@ export function rollDice(
   session: SessionState,
   random: Random = Math.random,
 ): SessionState {
-  const dice = currentCard(session).dice;
+  const card = currentCard(session);
+  const dice = card.dice;
   if (!dice || session.phase !== "revealed" || session.roll) return session;
-  const values = Array.from({ length: dice.count }, () => {
-    const sample = random();
-    if (!Number.isFinite(sample) || sample < 0 || sample >= 1)
+  const sample = () => {
+    const n = random();
+    if (!Number.isFinite(n) || n < 0 || n >= 1)
       throw Error("Invalid dice randomness");
-    return 1 + Math.floor(sample * dice.sides);
-  });
+    return 1 + Math.floor(n * dice.sides);
+  };
+  let values = Array.from({ length: dice.count }, sample);
+  // A crawl's single d20 battle reads tonight's omen: its bonus, its
+  // natural range, and a Bidoof's flinch at every 20.
+  const effect =
+    session.quest?.party && card.battle && dice.count === 1 && dice.sides === 20
+      ? (omenEffect(session.quest) ?? {})
+      : null;
+  let reading: RollReading | undefined;
+  let flinched = false;
+  if (effect) {
+    for (let i = 0; effect.reroll20 && values[0] === 20 && i < 50; i++) {
+      values = [sample()];
+      flinched = true;
+    }
+    const face = values[0];
+    const bonus =
+      (effect.roll?.all ?? 0) +
+      (card.encounter ? (effect.roll?.[card.encounter] ?? 0) : 0);
+    const natural =
+      face >= (effect.crit ?? 20)
+        ? 20
+        : face <= (effect.fumble ?? 1)
+          ? 1
+          : null;
+    reading = { bonus, ...(natural ? { natural } : {}) };
+  }
   const total = values.reduce((a, b) => a + b, 0);
   return {
     ...session,
     roll: {
       values,
       total,
-      instruction: resolveInstruction(dice, values),
+      instruction: resolveInstruction(dice, values, reading),
       returned: false,
+      ...reading,
+      ...(flinched ? { flinched: true as const } : {}),
     },
   };
 }
@@ -164,8 +217,18 @@ export function validateRoll(
     roll.values.length !== dice.count ||
     roll.values.some((v) => !Number.isInteger(v) || v < 1 || v > dice.sides) ||
     roll.total !== roll.values.reduce((a, b) => a + b, 0) ||
-    roll.instruction !== resolveInstruction(dice, roll.values) ||
-    typeof roll.returned !== "boolean"
+    roll.instruction !== resolveInstruction(dice, roll.values, roll) ||
+    typeof roll.returned !== "boolean" ||
+    // An omen's reading belongs only on a single d20.
+    ((roll.bonus !== undefined ||
+      roll.natural !== undefined ||
+      roll.flinched !== undefined) &&
+      (dice.count !== 1 ||
+        dice.sides !== 20 ||
+        !Number.isSafeInteger(roll.bonus) ||
+        Math.abs(roll.bonus!) > 6 ||
+        (roll.natural !== undefined && ![20, 1].includes(roll.natural)) ||
+        (roll.flinched !== undefined && roll.flinched !== true)))
   )
     throw Error("Invalid saved dice result");
 }

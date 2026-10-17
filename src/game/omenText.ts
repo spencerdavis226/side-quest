@@ -16,6 +16,8 @@ export interface OmenWords {
   /** The kinds an omen can single out, as written mid-sentence ("route
    * battles", "Ace Trainers"), in the order they are listed. */
   kinds: Partial<Record<Encounter, string>>;
+  /** The same kinds before "rolls": "route battle", "Ace Trainer". */
+  rollKinds: Partial<Record<Encounter, string>>;
 }
 
 const join = (parts: string[]) =>
@@ -59,6 +61,46 @@ function hurtSentences(
   });
 }
 
+const signed = (n: number) => `${n < 0 ? "−" : "+"}${Math.abs(n)}`;
+/** "+1 to every battle roll. +2 to rolls against route battles." */
+function rollSentences(roll: OmenEffect["roll"], words: OmenWords) {
+  const out: string[] = [];
+  if (roll?.all) out.push(`${signed(roll.all)} to every battle roll`);
+  const byValue = new Map<number, string[]>();
+  for (const kind of Object.keys(words.rollKinds) as Encounter[]) {
+    const n = roll?.[kind] ?? 0;
+    if (n) byValue.set(n, [...(byValue.get(n) ?? []), words.rollKinds[kind]!]);
+  }
+  for (const [n, kinds] of byValue)
+    out.push(`${signed(n)} to ${join(kinds)} rolls`);
+  return out;
+}
+const critSentence = (crit = 20) =>
+  crit >= 20
+    ? "Natural 20s on a 20 only"
+    : crit === 19
+      ? "Natural 20 on a 19 or 20"
+      : `Natural 20 on ${crit} to 20`;
+const fumbleSentence = (fumble = 1) =>
+  fumble <= 1
+    ? "Natural 1s on a 1 only"
+    : fumble === 2
+      ? "Natural 1 on a 1 or 2"
+      : `Natural 1 on 1 to ${fumble}`;
+const restockSentence = (item: Loot, words: OmenWords) =>
+  `A fresh ${words.items[item][0]} at every gym`;
+const sameRoll = (a: OmenEffect["roll"], b: OmenEffect["roll"]) =>
+  JSON.stringify(
+    Object.entries(a ?? {})
+      .filter(([, n]) => n)
+      .sort(),
+  ) ===
+  JSON.stringify(
+    Object.entries(b ?? {})
+      .filter(([, n]) => n)
+      .sort(),
+  );
+
 const healSentence = (heal = 0) =>
   heal ? `Every heal heals ${heal} more` : "Heals heal as written";
 const bagSentence = (words: OmenWords, size = 3) =>
@@ -82,8 +124,13 @@ export function describeOmen(
   // A later form always says its HP, so its power never reads empty.
   if (effect.hearts || !start)
     out.push(`${words.max} ${base + (effect.hearts ?? 0)}`);
+  out.push(...rollSentences(effect.roll, words));
+  if ((effect.crit ?? 20) < 20) out.push(critSentence(effect.crit));
+  if ((effect.fumble ?? 1) > 1) out.push(fumbleSentence(effect.fumble));
+  if (effect.reroll20) out.push("Every 20 is rerolled");
   if (effect.heal) out.push(healSentence(effect.heal));
   out.push(...hurtSentences(effect.hurt, words));
+  if (effect.restock) out.push(restockSentence(effect.restock, words));
   if (effect.bossHits) out.push(bossSentence(effect.bossHits));
   if ((effect.satchel ?? 3) !== 3) out.push(bagSentence(words, effect.satchel));
   if (start && effect.loot?.length)
@@ -105,6 +152,16 @@ export function describeChange(
   const out: string[] = [];
   const [h0, h1] = [before.hearts ?? 0, after.hearts ?? 0];
   if (h0 !== h1) out.push(`${words.max} ${base + h0} → ${base + h1}`);
+  if (!sameRoll(before.roll, after.roll)) {
+    const roll = rollSentences(after.roll, words);
+    out.push(...(roll.length ? roll : ["No roll bonus"]));
+  }
+  if ((before.crit ?? 20) !== (after.crit ?? 20))
+    out.push(critSentence(after.crit));
+  if ((before.fumble ?? 1) !== (after.fumble ?? 1))
+    out.push(fumbleSentence(after.fumble));
+  if (!!before.reroll20 !== !!after.reroll20)
+    out.push(after.reroll20 ? "Every 20 is rerolled" : "A 20 stands again");
   if ((before.heal ?? 0) !== (after.heal ?? 0))
     out.push(healSentence(after.heal));
   const changed = new Set(
@@ -117,6 +174,8 @@ export function describeChange(
     out.push(bossSentence(after.bossHits));
   if ((before.satchel ?? 3) !== (after.satchel ?? 3))
     out.push(bagSentence(words, after.satchel));
+  if (before.restock !== after.restock && after.restock)
+    out.push(restockSentence(after.restock, words));
   if (after.loot?.length) out.push(`Gets ${itemList(after.loot, words)}`);
   return out.map((s) => `${s}.`).join(" ");
 }
@@ -142,5 +201,13 @@ export const leagueOmenWords: OmenWords = {
     elite: "Ace Trainers",
     ambush: "rivals",
     boss: "bosses",
+  },
+  rollKinds: {
+    monster: "route battle",
+    trap: "hazard",
+    relic: "find",
+    elite: "Ace Trainer",
+    ambush: "rival",
+    boss: "boss",
   },
 };

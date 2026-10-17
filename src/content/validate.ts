@@ -136,6 +136,18 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         ))
     )
       fail(`Invalid evolves: ${c.id}`);
+    // Dice colours: two hex colours, on an omen or a starter's form.
+    const hexColor = (v: unknown) =>
+      typeof v === "string" && /^#[0-9a-f]{6}$/i.test(v);
+    for (const p of [
+      c.palette,
+      ...(Array.isArray(c.evolves) ? c.evolves.map((e) => e.palette) : []),
+    ])
+      if (
+        p !== undefined &&
+        (!c.omen || !p || !hexColor(p.primary) || !hexColor(p.secondary))
+      )
+        fail(`Invalid palette: ${c.id}`);
     if (c.branches !== undefined && (c.branches !== true || !c.evolves))
       fail(`Invalid branches: ${c.id}`);
     for (const o of [
@@ -165,7 +177,19 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
             Object.entries(o.hurt).some(
               ([kind, n]) =>
                 !ENCOUNTERS.includes(kind as never) || !step(n, -2, 3),
-            )))
+            ))) ||
+        (o.roll !== undefined &&
+          (!o.roll ||
+            typeof o.roll !== "object" ||
+            Object.entries(o.roll).some(
+              ([kind, n]) =>
+                (kind !== "all" && !ENCOUNTERS.includes(kind as never)) ||
+                !step(n, -3, 3),
+            ))) ||
+        !step(o.crit, 17, 20) ||
+        !step(o.fumble, 1, 3) ||
+        (o.reroll20 !== undefined && o.reroll20 !== true) ||
+        (o.restock !== undefined && !LOOT.includes(o.restock))
       )
         fail(`Invalid omen: ${c.id}`);
     }

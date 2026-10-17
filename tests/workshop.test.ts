@@ -84,7 +84,7 @@ test("each supplied sheet row lands in the House deck, Cabin weekend or VIP nigh
   expect(vip.cardIds.slice(-4)).toEqual(
     [3, 4, 5, 6].map((row) => `vip.sheet-${String(row).padStart(3, "0")}`),
   );
-  expect(cards).toHaveLength(1333); // 96 core + 94 house + 16 vip + 120 Pokémon (+72 League-only gym leaders, 79 gauntlet cards, 17 starters, 152 route, Victory Road and rival cards, 36 hideout cards) + 85 cabin + 250 likely + 150 secrets + 166 Dungeon night (118 fights, elites and bosses; 36 Pub Crawl finds, merchants and forks; 12 omens)
+  expect(cards).toHaveLength(1339); // 96 core + 94 house + 16 vip + 120 Pokémon (+72 League-only gym leaders, 79 gauntlet cards, 23 starters, 152 route, Victory Road and rival cards, 36 hideout cards) + 85 cabin + 250 likely + 150 secrets + 166 Dungeon night (118 fights, elites and bosses; 36 Pub Crawl finds, merchants and forks; 12 omens)
 });
 
 test("League gyms come in eight tiers, one leader per region in each", () => {
