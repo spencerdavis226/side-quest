@@ -9,12 +9,15 @@ import type {
   SessionState,
 } from "../game/types";
 import {
+  canQuaff,
   canUseLoot,
   finaleCard,
   finaleStage,
   hitsNeeded,
   isBossCard,
   questRecord,
+  stageKind,
+  wantedBoss,
 } from "../game/engine";
 import { asset } from "../presentation/theme";
 import {
@@ -54,15 +57,14 @@ export function CrawlIcon({
  * card in play is the floor's boss, and the room within the floor. */
 export function crawlPlace(quest: QuestState) {
   const at = finaleStage(quest);
-  const cards = (stage: number) => quest.stages[stage]?.cards ?? [];
-  const isBoss = (stage: number) => cards(stage).some(isBossCard);
-  const omen = cards(at.stage).every((c) => c.encounter === "omen");
+  const kind = stageKind(quest.stages[at.stage]);
   let rooms = at.stage;
-  while (rooms > 0 && isBoss(rooms)) rooms--;
+  while (rooms > 0 && stageKind(quest.stages[rooms]) === "boss") rooms--;
   return {
     name: quest.stages[rooms].label,
-    omen,
-    boss: isBoss(at.stage),
+    kind,
+    omen: kind === "omen" || kind === "adventurer",
+    boss: kind === "boss",
     room: at.index + 1,
     rooms: at.size,
   };
@@ -109,6 +111,22 @@ export function CrawlMeterFace({ quest }: { quest: QuestState }) {
           {party.loot.length}
         </span>
       )}
+      {party.jinx && (
+        <span className="meter-tag tag-jinx" aria-hidden="true">
+          <CrawlIcon name="jinx" theme={theme} />
+        </span>
+      )}
+      {!!party.cup && (
+        // Keyed by the count so each splash replays the tip.
+        <span
+          className="meter-tag tag-cup"
+          key={`cup-${party.cup}`}
+          aria-hidden="true"
+        >
+          <CrawlIcon name="cup" theme={theme} />
+          {party.cup}
+        </span>
+      )}
     </>
   );
 }
@@ -116,12 +134,17 @@ export function crawlMeterLabel(quest: QuestState) {
   const party = quest.party!;
   const place = crawlPlace(quest);
   const theme = crawlTheme(quest.packId);
+  const jinx = party.jinx ? finaleCard(quest, party.jinx)?.jinx : undefined;
   return [
     `${theme.words.Hearts}: ${party.hearts} of ${party.max}`,
     place.name,
     party.curse && theme.curses[party.curse].name,
     party.loot.length &&
       `${theme.words.Satchel}: ${party.loot.map((l) => theme.loot[l].name).join(", ")}`,
+    jinx && theme.words.jinx && `${theme.words.jinx.name}: ${jinx.name}`,
+    !!party.cup &&
+      theme.words.cup &&
+      `${theme.words.cup.name}: ${party.cup} ${party.cup === 1 ? "splash" : "splashes"}`,
   ]
     .filter(Boolean)
     .join(". ");
@@ -161,9 +184,26 @@ export function CrawlProgress({ quest }: { quest: QuestState }) {
       <div
         className="progress crawl-progress omen"
         role="img"
-        aria-label={words.omen}
+        aria-label={place.kind === "adventurer" ? words.adventurer : words.omen}
       >
-        <CrawlIcon name="omen" theme={theme} />
+        <CrawlIcon
+          name={place.kind === "adventurer" ? "adventurer" : "omen"}
+          theme={theme}
+        />
+      </div>
+    );
+  // A landing, or a lone set piece without swings (the queue).
+  if (place.kind === "rest" || (place.kind === "set-piece" && !need))
+    return (
+      <div
+        className={`progress crawl-progress omen ${place.kind}`}
+        role="img"
+        aria-label={place.name}
+      >
+        <CrawlIcon
+          name={place.kind === "rest" ? "rest" : "ambush"}
+          theme={theme}
+        />
       </div>
     );
   if (need)
@@ -171,7 +211,7 @@ export function CrawlProgress({ quest }: { quest: QuestState }) {
       <div
         className={`progress crawl-progress boss ${place.boss ? "" : "ambush"}`}
         role="img"
-        aria-label={`${place.boss ? words.Boss : `${words.Ambush} in ${words.Room.toLowerCase()} ${place.room} of ${place.rooms}`}: ${party.hits} of ${need} hits`}
+        aria-label={`${place.boss ? words.Boss : place.kind === "set-piece" ? `${words.Ambush}, ${place.name}` : `${words.Ambush} in ${words.Room.toLowerCase()} ${place.room} of ${place.rooms}`}: ${party.hits} of ${need} hits`}
       >
         <CrawlIcon name={place.boss ? "boss" : "ambush"} theme={theme} />
         <span className="boss-pips">
@@ -210,7 +250,11 @@ export function CardStakes({
 }) {
   const damage = card.battle && card.damage;
   const gain = card.reward?.loot ?? (card.reward?.heal ? "heal" : null);
-  if (!damage && !gain && !card.curse && !hits) return null;
+  // Tonight's omen is a boon too, but its card says so in words.
+  const trinket = card.encounter !== "omen" ? card.boon : undefined;
+  const jinx = card.jinx;
+  if (!damage && !gain && !card.curse && !hits && !trinket && !jinx)
+    return null;
   const bleed = party.curse === "bleed" ? 1 : 0;
   const boss = isBossCard(card);
   return (
@@ -231,6 +275,14 @@ export function CardStakes({
             aria-label={`${card.battle ? "Losing brings" : "Brings"} a ${theme.words.curse}: ${theme.curses[card.curse].name}`}
           >
             <CrawlIcon name={card.curse} theme={theme} />
+          </span>
+        )}
+        {jinx && (
+          <span
+            className="stake stake-jinx"
+            aria-label={`${card.battle ? "Losing lays" : "Lays"} a jinx: ${jinx.name}`}
+          >
+            <CrawlIcon name="jinx" theme={theme} />
           </span>
         )}
         {hits > 1 && (
@@ -265,6 +317,15 @@ export function CardStakes({
             <CrawlIcon name={gain} theme={theme} />
           </span>
         ) : null}
+        {trinket && (
+          <span
+            className="stake stake-trinket"
+            aria-label={`${hits > 1 ? "Felling it drops" : card.battle ? "Winning drops" : "Brings"} a trinket: ${trinket.name}`}
+          >
+            <b>+</b>
+            <CrawlIcon name="trinket" theme={theme} />
+          </span>
+        )}
       </span>
     </span>
   );
@@ -296,7 +357,7 @@ export function OfferPlaque({
     : offer.elite
       ? "elite"
       : offer.evolve
-        ? "omen"
+        ? "adventurer"
         : offer.heal
           ? "heart"
           : null;
@@ -306,10 +367,10 @@ export function OfferPlaque({
       ? theme.words.elite
       : offer.evolve
         ? !can
-          ? "your starter is fully evolved"
+          ? `${theme.words.grows.who} is ${theme.words.grows.done}`
           : branch
-            ? `your starter evolves into ${branch.name}`
-            : "your starter evolves"
+            ? `${theme.words.grows.who} ${theme.words.grows.verb} into ${branch.name}`
+            : `${theme.words.grows.who} ${theme.words.grows.verb}`
         : offer.heal
           ? `${offer.heal} ${theme.words.hearts} back`
           : "nothing";
@@ -368,6 +429,35 @@ export function LootPlaque({
   );
 }
 
+/** The Quaff, beside Reroll on a lost roll: drinks for another go, once
+ * until the next boss falls. */
+export function QuaffPlaque({
+  session,
+  onQuaff,
+  theme,
+}: {
+  session: SessionState;
+  onQuaff: () => void;
+  theme: CrawlTheme;
+}) {
+  const drinks = session.quest?.party?.quaff;
+  if (!theme.words.quaff || drinks === undefined || !canQuaff(session))
+    return null;
+  return (
+    <button
+      className="card-choice-option loot-plaque quaff-plaque"
+      aria-label={`${theme.words.quaff}: drink ${drinks} and roll again, once until the next boss falls`}
+      onClick={onQuaff}
+    >
+      <CrawlIcon name="quaff" theme={theme} />
+      <span>
+        {theme.words.quaff}
+        <small className="offer-price">drink {drinks}</small>
+      </span>
+    </button>
+  );
+}
+
 type RunRecord = NonNullable<ReturnType<typeof questRecord>>;
 
 /** The run so far, for the satchel dialog and the end screens: the hearts,
@@ -386,12 +476,38 @@ export function CrawlRecord({
 }) {
   const party = record.party!;
   const { words } = theme;
-  const floors: { name: string; rooms: number; of: number; boss?: string }[] =
-    [];
-  for (const stage of record.stages) {
-    if (stage.omen) continue;
-    if (stage.boss && floors.length)
-      floors[floors.length - 1].boss = stage.cards[0]?.title;
+  const quest = session?.quest;
+  // The boss waiting at the bottom of this floor, while the run is on.
+  const wanted =
+    quest && !party.wiped && !record.won && words.wanted
+      ? wantedBoss(quest)
+      : undefined;
+  const floors: {
+    name: string;
+    rooms: number;
+    of: number;
+    boss?: string;
+    wanted?: string;
+    piece?: string;
+  }[] = [];
+  for (const [i, stage] of record.stages.entries()) {
+    const kind = stage.kind;
+    // A run's omens open it and a landing is a pause: neither is a floor.
+    if (stage.omen || kind === "rest") continue;
+    const last = floors[floors.length - 1];
+    // A boss closes the floor before it; one that follows a set piece or
+    // another boss (Last Call, the League's gauntlet) stands on its own.
+    if (stage.boss && last && !last.piece && !last.boss && !last.wanted) {
+      last.boss = stage.cards[0]?.title;
+      if (!last.boss && wanted && quest!.stages[i].cards.includes(wanted))
+        last.wanted = wanted.title;
+    } else if (stage.size === 1 && (stage.boss || kind === "set-piece"))
+      floors.push({
+        name: stage.label,
+        rooms: stage.cards.length,
+        of: 1,
+        piece: stage.cards[0]?.title ?? "Not yet reached",
+      });
     else
       floors.push({
         name: stage.label,
@@ -399,6 +515,7 @@ export function CrawlRecord({
         of: stage.size,
       });
   }
+  const jinx = record.jinx?.jinx;
   return (
     <div className="crawl-record">
       <div
@@ -424,11 +541,28 @@ export function CrawlRecord({
       </div>
       {record.form && (
         <p className="crawl-omen">
-          <CrawlIcon name="omen" theme={theme} />
+          <CrawlIcon name="adventurer" theme={theme} />
           {/* Only the starter it is now (owner, 2026-10-17), with its power. */}
           <strong>{record.form.title}</strong>
           <span>{record.form.rules}</span>
         </p>
+      )}
+      {record.boons.length > 0 && (
+        <ul className="crawl-boons" aria-label={words.trinkets}>
+          {record.boons.map(({ card, boon }) => (
+            <li
+              key={card.id}
+              className={`crawl-omen ${card.encounter === "omen" ? "boon-omen" : "boon-trinket"}`}
+            >
+              <CrawlIcon
+                name={card.encounter === "omen" ? "omen" : "trinket"}
+                theme={theme}
+              />
+              <strong>{boon.name}</strong>
+              <span>{boon.rules}</span>
+            </li>
+          ))}
+        </ul>
       )}
       {words.badges && record.badges.of > 0 && (
         <p
@@ -452,6 +586,33 @@ export function CrawlRecord({
           <strong>{theme.curses[party.curse].name}</strong>
           <span>
             {theme.curses[party.curse].does}, {words.curseLasts}
+          </span>
+        </p>
+      )}
+      {jinx && words.jinx && !record.won && !party.wiped && (
+        <p className="crawl-curse crawl-jinx">
+          <CrawlIcon name="jinx" theme={theme} />
+          <strong>
+            {words.jinx.name}: {jinx.name}
+          </strong>
+          <span>
+            {jinx.rule} Lasts {words.jinx.lasts}.
+          </span>
+        </p>
+      )}
+      {party.cup !== undefined && words.cup && (
+        <p className="crawl-cup">
+          <CrawlIcon name="cup" theme={theme} />
+          <strong>
+            {words.cup.name}: {party.cup}{" "}
+            {party.cup === 1 ? "splash" : "splashes"}
+          </strong>
+          <span>
+            {record.won
+              ? words.cup.won
+              : party.wiped
+                ? words.cup.wiped
+                : `${words.cup.pour}. ${words.cup.won}`}
           </span>
         </p>
       )}
@@ -500,13 +661,23 @@ export function CrawlRecord({
           >
             <strong>{floor.name}</strong>
             <span>
-              {floor.rooms
-                ? `${floor.rooms} of ${floor.of} ${words.rooms}`
-                : "Not yet reached"}
+              {floor.piece
+                ? floor.piece
+                : floor.rooms
+                  ? `${floor.rooms} of ${floor.of} ${words.rooms}`
+                  : "Not yet reached"}
               {floor.boss && (
                 <>
                   {" · "}
                   <em>{floor.boss}</em>
+                </>
+              )}
+              {floor.wanted && words.wanted && (
+                <>
+                  {" · "}
+                  <span className="crawl-wanted">
+                    {words.wanted}: {floor.wanted}
+                  </span>
                 </>
               )}
             </span>
@@ -546,6 +717,23 @@ export function CrawlRecord({
             </dt>
             <dd>{theme.legend[3]}</dd>
           </div>
+          {theme.legendMore && (
+            <>
+              <div>
+                <dt className="stake stake-trinket">
+                  <b>+</b>
+                  <CrawlIcon name="trinket" theme={theme} />
+                </dt>
+                <dd>{theme.legendMore.trinket}</dd>
+              </div>
+              <div>
+                <dt className="stake stake-jinx">
+                  <CrawlIcon name="jinx" theme={theme} />
+                </dt>
+                <dd>{theme.legendMore.jinx}</dd>
+              </div>
+            </>
+          )}
           {/* The standing rule on a d20, the crawl's natural 20 and 1. */}
           <div>
             <dt className="stake stake-natural">

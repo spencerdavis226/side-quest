@@ -160,7 +160,14 @@ export function createSession(
       stages,
       finale: pickFinale(stages, random),
       step: 0,
-      ...(rules.party ? { party: newParty(rules.party.hearts) } : {}),
+      ...(rules.party
+        ? {
+            party: newParty(rules.party.hearts, {
+              quaff: rules.party.quaff,
+              cup: rules.party.cup ? 0 : undefined,
+            }),
+          }
+        : {}),
     };
   }
   return {
@@ -186,7 +193,10 @@ export function createSession(
     ...(quest ? { quest } : {}),
   };
 }
-const newParty = (hearts: number): PartyState => ({
+const newParty = (
+  hearts: number,
+  { quaff, cup }: { quaff?: number; cup?: number } = {},
+): PartyState => ({
   hearts,
   max: hearts,
   loot: [],
@@ -194,6 +204,8 @@ const newParty = (hearts: number): PartyState => ({
   hits: 0,
   rounds: 0,
   wiped: false,
+  ...(quaff !== undefined ? { quaff } : {}),
+  ...(cup !== undefined ? { cup } : {}),
 });
 /** Every card a pack can deal: its deck, its quest-only cards and its
  * quest's finale. */
@@ -297,7 +309,8 @@ export function questRecord(s: SessionState) {
     // A crawl's boss stages close its floors; its omen stage opens the run.
     const boss = stage.cards.some(isBossCard);
     const omen = stage.cards.every((c) => c.encounter === "omen");
-    return { label: stage.label, size: stage.pick, cards, boss, omen };
+    const kind = stageKind(stage);
+    return { label: stage.label, size: stage.pick, cards, boss, omen, kind };
   });
   return {
     label: q.label,
@@ -321,7 +334,39 @@ export function questRecord(s: SessionState) {
         .length,
     },
     satchel: satchelSize(q),
+    /** Pub Crawl: tonight's omen and the trinkets, in the order they came. */
+    boons: partyBoons(q),
+    /** The jinx holding now, with the card that laid it. */
+    jinx: q.party?.jinx ? finaleCard(q, q.party.jinx) : undefined,
   };
+}
+/** The boss waiting at the bottom of the floor in play (picked when the
+ * game started), for the wanted poster; none past the last boss or in a
+ * floor that ends on no boss. */
+export function wantedBoss(quest: QuestState): CardDefinition | undefined {
+  const { stage } = finaleStage(quest);
+  let first = 0;
+  for (const [i, st] of quest.stages.entries()) {
+    if (i === stage || i === stage + 1) {
+      const card = finaleCard(quest, quest.finale[first]);
+      if (st.pick === 1 && card && isBossCard(card)) return card;
+    }
+    first += st.pick;
+  }
+  return undefined;
+}
+/** What a stage is, from its cards: the run's own omen (a starter, an
+ * adventurer), tonight's omen, a landing, a boss, a lone set piece (the
+ * queue, closing time, the League's rival), or a floor of rooms. */
+export type StageKind =
+  "adventurer" | "omen" | "rest" | "boss" | "set-piece" | "floor";
+export function stageKind(stage: QuestState["stages"][number]): StageKind {
+  const { cards, pick } = stage;
+  if (cards.every((c) => c.encounter === "omen"))
+    return cards.some((c) => c.omen) ? "adventurer" : "omen";
+  if (cards.every((c) => c.encounter === "rest")) return "rest";
+  if (cards.some(isBossCard)) return "boss";
+  return pick === 1 ? "set-piece" : "floor";
 }
 export const finaleCard = (quest: QuestState, id: string) =>
   quest.stages
@@ -331,15 +376,72 @@ export const finaleCard = (quest: QuestState, id: string) =>
  * existed had hits only on bosses. */
 export const isBossCard = (c: CardDefinition) =>
   c.encounter ? c.encounter === "boss" : !!c.hits;
-/** Tonight's omen, once its card is put aside: its current form's effect
- * when the starter has evolved. */
-export function omenEffect(
+/** The run's omen alone (the League's starter, Pub Crawl's adventurer),
+ * once its card is put aside: its current form's effect when it has
+ * evolved. */
+export function formEffect(
   quest: QuestState | undefined,
 ): OmenEffect | undefined {
   const id = quest?.party?.omen;
   const card = id ? finaleCard(quest, id) : undefined;
   const form = quest?.party?.form ?? 0;
   return form ? card?.evolves?.[form - 1]?.omen : card?.omen;
+}
+/** The boons the party keeps (tonight's omen, trinkets), in the order they
+ * came, with the card that brought each. */
+export function partyBoons(quest: QuestState | undefined) {
+  return (quest?.party?.boons ?? []).flatMap((id) => {
+    const card = quest ? finaleCard(quest, id) : undefined;
+    return card?.boon ? [{ card, boon: card.boon }] : [];
+  });
+}
+const add = (a = 0, b = 0) => a + b || undefined;
+/** Effects stacked: numbers add up, a natural widens to the widest, and a
+ * boon's `satchel` moves the size by its difference from three. The
+ * starting items are not carried (each arrived once, when it was gained). */
+export function stackEffects(
+  base: OmenEffect,
+  boons: OmenEffect[],
+): OmenEffect {
+  if (!boons.length) return base;
+  const out: OmenEffect = { ...base };
+  const bump = <K extends string>(
+    into: Partial<Record<K, number>> | undefined,
+    from: Partial<Record<K, number>> | undefined,
+  ) => {
+    const next: Partial<Record<K, number>> = { ...into };
+    for (const [kind, n] of Object.entries(from ?? {}) as [K, number][])
+      next[kind] = (next[kind] ?? 0) + n;
+    return Object.keys(next).length ? next : undefined;
+  };
+  let satchel = base.satchel ?? 3;
+  for (const b of boons) {
+    out.hearts = add(out.hearts, b.hearts);
+    out.heal = add(out.heal, b.heal);
+    out.bossHits = add(out.bossHits, b.bossHits);
+    out.hurt = bump(out.hurt, b.hurt);
+    out.roll = bump(out.roll, b.roll);
+    if (b.crit !== undefined) out.crit = Math.min(out.crit ?? 20, b.crit);
+    if (b.fumble !== undefined)
+      out.fumble = Math.max(out.fumble ?? 1, b.fumble);
+    if (b.reroll20) out.reroll20 = true;
+    out.restock ??= b.restock;
+    satchel += (b.satchel ?? 3) - 3;
+  }
+  out.satchel = Math.max(1, satchel);
+  for (const key of Object.keys(out) as (keyof OmenEffect)[])
+    if (out[key] === undefined) delete out[key];
+  return out;
+}
+/** Everything that holds for the run: the omen's current form and every
+ * boon kept, stacked. */
+export function omenEffect(
+  quest: QuestState | undefined,
+): OmenEffect | undefined {
+  const form = formEffect(quest);
+  const boons = partyBoons(quest).map((b) => b.boon.effect);
+  if (!boons.length) return form;
+  return stackEffects(form ?? {}, boons);
 }
 /** Tonight's omen as it stands: its card, the current form's name and
  * rules, and the forms still to come. */
@@ -385,16 +487,17 @@ function evolve(party: PartyState, quest: QuestState, branch = 0): PartyState {
   const now = omenForm(quest);
   if (!now?.canEvolve) return party;
   const target = now.branches ? branch : now.form;
-  const before = omenEffect(quest) ?? {};
+  const before = formEffect(quest) ?? {};
   const after = now.card.evolves![target].omen;
   const delta = (after.hearts ?? 0) - (before.hearts ?? 0);
   const max = Math.max(1, party.max + delta);
+  const next = { ...party, max, form: target + 1 };
+  // The satchel follows the new form, with every boon still on it.
+  const size = satchelSize({ ...quest, party: next });
   return {
-    ...party,
-    max,
+    ...next,
     hearts: Math.min(max, Math.max(1, party.hearts + delta)),
-    loot: [...party.loot, ...(after.loot ?? [])].slice(0, after.satchel ?? 3),
-    form: target + 1,
+    loot: [...party.loot, ...(after.loot ?? [])].slice(0, size),
   };
 }
 /** How many items the satchel holds. */
@@ -601,6 +704,54 @@ export function spendLoot(
       return s;
   }
 }
+/** Whether the drawer can Quaff now: the crawl has one, it hasn't been
+ * drunk since the last boss fell, and a lost fight's roll is on the card.
+ * A hex seals the satchel, not the drawer's throat. */
+export function canQuaff(s: SessionState): boolean {
+  const party = s.quest?.party;
+  const card = s.quest?.due ? currentCard(s) : undefined;
+  return (
+    !!party &&
+    !!card &&
+    party.quaff !== undefined &&
+    !party.quaffed &&
+    s.phase === "revealed" &&
+    !!card.battle &&
+    !!card.dice &&
+    !!s.roll?.returned &&
+    !rollWins(card.dice, s.roll.values, s.roll)
+  );
+}
+/** Down the Quaff's drinks and roll the lost fight again. It comes back
+ * when the next boss falls. */
+export function quaff(s: SessionState): SessionState {
+  if (!canQuaff(s)) return s;
+  const party = s.quest!.party!;
+  return {
+    ...s,
+    roll: null,
+    quest: { ...s.quest!, party: { ...party, quaffed: true } },
+  };
+}
+/** A boon joins the party: its hearts move the maximum and the hearts left
+ * (never below one), its items go into the satchel, and a smaller satchel
+ * drops its newest. */
+function gainBoon(
+  party: PartyState,
+  card: CardDefinition,
+  quest: QuestState,
+): PartyState {
+  if (!card.boon || party.boons?.includes(card.id)) return party;
+  const { hearts = 0, loot = [] } = card.boon.effect;
+  const max = Math.max(1, party.max + hearts);
+  const next = { ...party, max, boons: [...(party.boons ?? []), card.id] };
+  const size = satchelSize({ ...quest, party: next });
+  return {
+    ...next,
+    hearts: Math.min(max, Math.max(1, party.hearts + hearts)),
+    loot: [...party.loot, ...loot].slice(0, size),
+  };
+}
 /** A heart loss: the shield takes it whole unless the satchel is hexed, and
  * bleeding costs one more. */
 function hurt(party: PartyState, damage: number): PartyState {
@@ -659,6 +810,14 @@ function settleParty(
   }
   if (card.curse && (outcome === null || outcome === "lost"))
     next = { ...next, curse: card.curse };
+  if (card.jinx && (outcome === null || outcome === "lost"))
+    next = { ...next, jinx: card.id };
+  // Every lost fight pours a splash into the Cup.
+  if (outcome === "lost" && next.cup !== undefined)
+    next = { ...next, cup: next.cup + 1 };
+  // A boss's or an ambush's boon comes when it falls (`discard`).
+  if (!card.hits && (outcome === null || outcome === "won"))
+    next = gainBoon(next, card, quest);
   return next;
 }
 function discard(
@@ -728,14 +887,25 @@ function discard(
             },
           },
         };
-      // The floor's boss falls: its curse lifts with it.
-      next = { ...next, hits: 0, ...(isBossCard(card) ? { curse: null } : {}) };
-      // A badge restocks the starter's item, room permitting.
+      // The floor's boss falls: its curse and the jinx lift with it, and
+      // the Quaff comes back.
+      next = { ...next, hits: 0 };
+      if (isBossCard(card)) {
+        next = { ...next, curse: null };
+        delete next.jinx;
+        delete next.quaffed;
+      }
+      next = gainBoon(next, card, q);
+      // A badge restocks the starter's item, room permitting; in a crawl
+      // without badges (Pub Crawl), any boss does.
       const restock = omenEffect(q)?.restock;
+      const badges = q.stages.some((st) =>
+        st.cards.some((c) => c.quest === q.packId),
+      );
       if (
         restock &&
-        card.quest === q.packId &&
-        next.loot.length < satchelSize(q)
+        (badges ? card.quest === q.packId : isBossCard(card)) &&
+        next.loot.length < satchelSize({ ...q, party: next })
       )
         next = { ...next, loot: [...next.loot, restock] };
     }
@@ -869,6 +1039,10 @@ export function replaySession(
               ? {
                   party: newParty(
                     s.quest.party.max - (omenEffect(s.quest)?.hearts ?? 0),
+                    {
+                      quaff: s.quest.party.quaff,
+                      cup: s.quest.party.cup === undefined ? undefined : 0,
+                    },
                   ),
                 }
               : {}),

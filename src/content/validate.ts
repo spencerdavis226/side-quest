@@ -150,19 +150,43 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         fail(`Invalid palette: ${c.id}`);
     if (c.branches !== undefined && (c.branches !== true || !c.evolves))
       fail(`Invalid branches: ${c.id}`);
-    for (const o of [
+    // A boon: a name, its rules, and an effect like an omen's. It may sit on
+    // a fight (a trinket a boss drops), never beside an omen.
+    if (
+      c.boon !== undefined &&
+      (!c.boon ||
+        c.omen !== undefined ||
+        typeof c.boon.name !== "string" ||
+        !c.boon.name.trim() ||
+        c.boon.name.length > 24 ||
+        typeof c.boon.rules !== "string" ||
+        !c.boon.rules.trim() ||
+        !c.boon.effect ||
+        typeof c.boon.effect !== "object")
+    )
+      fail(`Invalid boon: ${c.id}`);
+    if (
+      c.jinx !== undefined &&
+      (!c.jinx ||
+        typeof c.jinx.name !== "string" ||
+        !c.jinx.name.trim() ||
+        c.jinx.name.length > 22 ||
+        typeof c.jinx.rule !== "string" ||
+        !c.jinx.rule.trim() ||
+        c.jinx.rule.length > 110)
+    )
+      fail(`Invalid jinx: ${c.id}`);
+    const omens = [
       ...(c.omen !== undefined ? [c.omen] : []),
       ...(Array.isArray(c.evolves) ? c.evolves.map((e) => e.omen) : []),
-    ]) {
+    ];
+    for (const o of [...omens, ...(c.boon ? [c.boon.effect] : [])]) {
       const step = (n: unknown, lo: number, hi: number) =>
         n === undefined ||
         (Number.isSafeInteger(n) && (n as number) >= lo && (n as number) <= hi);
       if (
         !o ||
-        c.battle ||
-        c.dice ||
-        c.offers ||
-        c.reward ||
+        (omens.includes(o) && (c.battle || c.dice || c.offers || c.reward)) ||
         !step(o.hearts, -6, 6) ||
         !step(o.satchel, 1, 5) ||
         !step(o.heal, -2, 3) ||
@@ -276,7 +300,12 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
           (goal !== 0 ||
             !Number.isSafeInteger(party?.hearts) ||
             party!.hearts < 1 ||
-            party!.hearts > 30)) ||
+            party!.hearts > 30 ||
+            (party!.quaff !== undefined &&
+              (!Number.isSafeInteger(party!.quaff) ||
+                party!.quaff < 1 ||
+                party!.quaff > 6)) ||
+            (party!.cup !== undefined && party!.cup !== true))) ||
         (mark !== undefined &&
           (typeof mark !== "string" ||
             !/^art\/[a-zA-Z0-9/_-]+\.svg$/.test(mark))) ||

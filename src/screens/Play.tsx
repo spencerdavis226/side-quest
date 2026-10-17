@@ -13,6 +13,7 @@ import {
   awaitingChoice,
   awaitingOffer,
   awaitingVerdict,
+  canQuaff,
   canTakeOffer,
   currentCard,
   hitsNeeded,
@@ -27,7 +28,12 @@ import {
   hasActions,
   useCardActions,
 } from "../components/CardActions";
-import { LootPlaque, OfferPlaque, usableItems } from "../components/Crawl";
+import {
+  LootPlaque,
+  OfferPlaque,
+  QuaffPlaque,
+  usableItems,
+} from "../components/Crawl";
 import { crawlTheme } from "../components/crawlTheme";
 const FullScreenDice = lazy(() => import("../components/FullScreenDice"));
 export function Play({
@@ -40,6 +46,7 @@ export function Play({
   onSettle,
   onSpend = () => {},
   onOffer = () => {},
+  onQuaff = () => {},
   onRevealRoll,
   onFinish,
   renderFace,
@@ -54,6 +61,7 @@ export function Play({
   onSettle: (won: boolean) => void;
   onSpend?: (item: Loot) => void;
   onOffer?: (index: number, branch?: number) => void;
+  onQuaff?: () => void;
   onRevealRoll: () => void;
   onFinish: (id: number) => void;
   renderFace?: (card: CardDefinition) => ReactNode;
@@ -73,6 +81,9 @@ export function Play({
   // a loaded die after a lost roll. They join the card's own plaques.
   const items =
     !motion && session.phase === "revealed" ? usableItems(session) : [];
+  // Pub Crawl's Quaff: drinks for another go at a lost roll.
+  const quaffable = !motion && canQuaff(session);
+  const extras = items.length + (quaffable ? 1 : 0);
   const crawl = crawlTheme(session.quest?.packId);
   // A branching starter's evolution splits into one plaque per form; a line
   // names the form it brings next ("Ivysaur · drink 3").
@@ -183,7 +194,7 @@ export function Play({
             : ""}
         </span>
         <div
-          className={`card-stage ${motion ?? ""} ${choice || verdict || offers || acting || items.length ? "choosing" : ""}`}
+          className={`card-stage ${motion ?? ""} ${choice || verdict || offers || acting || extras ? "choosing" : ""}`}
         >
           <div className="deck-under" aria-hidden="true" />
           <button
@@ -331,10 +342,10 @@ export function Play({
               ))}
             </div>
           )}
-          {!verdict && !choice && !acting && items.length > 0 && (
+          {!verdict && !choice && !acting && extras > 0 && (
             <div
               ref={choiceRef}
-              className={`card-choice items plaques-${items.length}`}
+              className={`card-choice items plaques-${extras}`}
               role="group"
               aria-label="Satchel"
             >
@@ -346,6 +357,13 @@ export function Play({
                   theme={crawl}
                 />
               ))}
+              {quaffable && (
+                <QuaffPlaque
+                  session={session}
+                  onQuaff={onQuaff}
+                  theme={crawl}
+                />
+              )}
             </div>
           )}
           {choice && (

@@ -24,6 +24,12 @@ const marks: CrawlIconName[] = [
   "ambush",
   "elite",
   "door",
+  "adventurer",
+  "trinket",
+  "cup",
+  "quaff",
+  "rest",
+  "jinx",
 ];
 
 describe("crawl themes", () => {
@@ -44,6 +50,8 @@ describe("crawl themes", () => {
     expect(dungeon.curses.bleed.name).toBe("Bleeding");
     expect(heartCount(dungeon, 1)).toBe("1 heart");
     expect(heartCount(dungeon, 2)).toBe("2 hearts");
+    expect(dungeon.loot.candy.name).toBe("Dog-Eared Tome");
+    expect(dungeon.words.evolving!("Bard")).toBe("Bard levels up!");
   });
 
   it("names the League's journey", () => {

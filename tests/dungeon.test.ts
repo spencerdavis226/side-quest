@@ -4,6 +4,7 @@ import {
   awaitingChoice,
   awaitingOffer,
   awaitingVerdict,
+  canQuaff,
   canTakeOffer,
   canUseLoot,
   createSession,
@@ -11,18 +12,28 @@ import {
   findCard,
   finaleStage,
   hitsNeeded,
+  omenEffect,
+  omenForm,
+  quaff,
   questRecord,
   replaySession,
+  satchelSize,
   settleBattle,
   skipRoll,
   spendLoot,
+  stackEffects,
   takeOffer,
+  wantedBoss,
   type Random,
 } from "../src/game/engine";
 import { returnToCard, rollDice, rollWins } from "../src/game/dice";
 import { parseSession } from "../src/app/persistence";
 import { cards, packs } from "../src/content/catalog";
 import type { GameConfig, Loot, SessionState } from "../src/game/types";
+import { BOSS_NEED, PARTY_HEARTS } from "../src/content/dungeon/shared";
+
+// The party's starting hearts, before any adventurer or omen.
+const H = PARTY_HEARTS;
 
 const crawl: GameConfig = {
   version: 1,
@@ -50,9 +61,26 @@ const make = (floors = ORIGINAL, seed = 1) => {
     queue.length ? queue.shift()! : rest(),
   );
 };
-// The run past tonight's omen, on the original floors: step 1 is the
-// Cellar's first room.
-const start = (seed = 1) => fromStep(make(ORIGINAL, seed), 1);
+// Where the run is, step by step: the adventurer, tonight's omen, the
+// queue, the first floor's eight rooms and its boss, a landing, the second
+// floor and its boss, a landing, the third floor, closing time, Last Call.
+const STEP = {
+  adventurer: 0,
+  omen: 1,
+  queue: 2,
+  floor1: 3,
+  boss1: 11,
+  landing1: 12,
+  floor2: 13,
+  boss2: 21,
+  landing2: 22,
+  floor3: 23,
+  closing: 31,
+  lastCall: 32,
+};
+// The run past the door, with no adventurer or omen: the Cellar's first
+// room.
+const start = (seed = 1) => fromStep(make(ORIGINAL, seed), STEP.floor1);
 const roundTrip = (s: SessionState) =>
   expect(parseSession(JSON.stringify(s))).toEqual(s);
 const party = (s: SessionState) => s.quest!.party!;
@@ -79,78 +107,122 @@ function fromStep(s: SessionState, step: number): SessionState {
     previousId: step ? s.quest!.finale[step - 1] : null,
   };
 }
+// The adventurer (and tonight's omen) put aside from a fresh run, then the
+// run moved on to `step`.
+const adventure = (
+  id: string,
+  omen?: string,
+  step: number = STEP.floor1,
+): SessionState => {
+  let s = advance(advance(deal(make(), `dungeon.class-${id}`)));
+  if (omen) s = advance(advance(deal(s, `dungeon.omen-${omen}`)));
+  return fromStep(s, step);
+};
 
 describe("Pub Crawl", () => {
-  it("opens on an omen, then three floors, each closed by a boss, for 12 shared hearts", () => {
+  it("opens on an adventurer, an omen and the queue, then three floors of eight rooms, for the shared hearts", () => {
     const s = make();
     expect(s.quest).toMatchObject({ due: true, goal: 0, step: 0 });
     expect(party(s)).toEqual({
-      hearts: 12,
-      max: 12,
+      hearts: H,
+      max: H,
       loot: [],
       curse: null,
       hits: 0,
       rounds: 0,
       wiped: false,
+      quaff: 3,
+      cup: 0,
     });
     expect(s.quest!.stages.map((st) => [st.label, st.pick])).toEqual([
+      ["Your adventurer", 1],
       ["Tonight's omen", 1],
-      ["The Cellar", 7],
+      ["The Queue", 1],
+      ["The Cellar", 8],
       ["Cellar boss", 1],
-      ["The Catacombs", 7],
+      ["The Landing", 1],
+      ["The Catacombs", 8],
       ["Catacombs boss", 1],
-      ["The Drowned Taproom", 7],
+      ["The Lower Landing", 1],
+      ["The Drowned Taproom", 8],
+      ["Closing Time", 1],
       ["Last call", 1],
     ]);
-    expect(currentCard(s).encounter).toBe("omen");
-    const bosses = [8, 16, 24].map((step) =>
-      findCard(s, s.quest!.finale[step])!,
-    );
-    expect(bosses.map((b) => [b.encounter, b.hits])).toEqual([
+    expect(s.quest!.finale).toHaveLength(33);
+    expect(currentCard(s).omen).toBeDefined();
+    const at = (step: number) => findCard(s, s.quest!.finale[step])!;
+    expect(at(STEP.omen).boon).toBeDefined();
+    expect(at(STEP.queue)).toMatchObject({ encounter: "ambush", battle: true });
+    expect(at(STEP.queue).hits).toBeUndefined();
+    expect(
+      [STEP.boss1, STEP.boss2, STEP.lastCall].map((step) => [
+        at(step).encounter,
+        at(step).hits,
+      ]),
+    ).toEqual([
       ["boss", 1],
       ["boss", 2],
       ["boss", 3],
     ]);
+    expect(at(STEP.closing)).toMatchObject({ encounter: "ambush", hits: 2 });
+    for (const step of [STEP.landing1, STEP.landing2])
+      expect(at(step).encounter).toBe("rest");
+    // The first two floors' bosses drop trinkets; Last Call drops nothing.
+    expect(at(STEP.boss1).boon).toBeDefined();
+    expect(at(STEP.boss2).boon).toBeDefined();
+    expect(at(STEP.lastCall).boon).toBeUndefined();
     roundTrip(s);
     expect(make(OTHER).quest!.stages.map((st) => st.label)).toEqual([
+      "Your adventurer",
       "Tonight's omen",
+      "The Queue",
       "The Wine Cellar",
       "Wine Cellar boss",
+      "The Landing",
       "The Sewers",
       "Sewers boss",
+      "The Lower Landing",
       "The Kitchen",
+      "Closing Time",
       "Last call",
     ]);
     roundTrip(make(OTHER));
   });
 
-  it("deals all eight dungeons and every omen across runs", () => {
+  it("deals all eight dungeons, every adventurer and every omen across runs", () => {
     const routes = new Set<string>();
+    const adventurers = new Set<string>();
     const omens = new Set<string>();
     for (let seed = 1; seed <= 400; seed++) {
       const s = createSession(crawl, cards, packs, seeded(seed));
       routes.add(s.quest!.stages.map((st) => st.label).join("/"));
-      omens.add(s.quest!.finale[0]);
+      adventurers.add(s.quest!.finale[STEP.adventurer]);
+      omens.add(s.quest!.finale[STEP.omen]);
     }
     expect(routes.size).toBe(8);
+    expect(adventurers.size).toBe(12);
     expect(omens.size).toBe(12);
   });
 
-  it("a lost room fight costs the party hearts and the run moves on", () => {
+  it("a lost room fight costs the party hearts, pours into the Cup, and the run moves on", () => {
     let s = deal(start(), "dungeon.gelatinous-shot");
     s = fight(s, 3);
-    expect(party(s).hearts).toBe(11);
-    expect(s.quest!.step).toBe(2);
+    expect(party(s)).toMatchObject({ hearts: H - 1, cup: 1 });
+    expect(s.quest!.step).toBe(STEP.floor1 + 1);
     expect(s.quest!.lost ?? 0).toBe(0);
     roundTrip(s);
+    // A win pours nothing.
+    expect(party(fight(deal(start(), "dungeon.gelatinous-shot"), 15)).cup).toBe(
+      0,
+    );
   });
 
   it("a won fight earns its loot; a lost one its curse", () => {
     let s = deal(start(), "dungeon.drunk-goblin");
     s = fight(s, 15);
     expect(party(s).loot).toEqual(["smoke"]);
-    s = fight(deal(fromStep(start(), 9), "dungeon.leech-swarm"), 2);
-    expect(party(s)).toMatchObject({ curse: "bleed", hearts: 10 });
+    s = fight(deal(fromStep(start(), STEP.floor2), "dungeon.leech-swarm"), 2);
+    expect(party(s)).toMatchObject({ curse: "bleed", hearts: H - 2 });
     roundTrip(s);
   });
 
@@ -163,23 +235,23 @@ describe("Pub Crawl", () => {
 
   it("a shrine heals, never past the party's full hearts", () => {
     let s = deal(start(), "dungeon.wishing-drain");
-    s.quest!.party!.hearts = 9;
+    s.quest!.party!.hearts = H - 3;
     s = advance(advance(s));
-    expect(party(s).hearts).toBe(11);
+    expect(party(s).hearts).toBe(H - 1);
     s = deal(s, "dungeon.lost-and-found");
-    s.quest!.party!.hearts = 12;
+    s.quest!.party!.hearts = H;
     expect(
       party(advance(advance(deal(s, "dungeon.wishing-drain")))).hearts,
-    ).toBe(12);
+    ).toBe(H);
   });
 
-  it("a trial waits for Won or Lost", () => {
+  it("a trial waits for Won or Lost, and a lost one pours into the Cup", () => {
     let s = advance(deal(start(), "dungeon.riddling-tap"));
     expect(awaitingVerdict(s)).toBe(true);
     expect(advance(s)).toBe(s);
-    expect(party(settleBattle(s, true)).hearts).toBe(12);
+    expect(party(settleBattle(s, true))).toMatchObject({ hearts: H, cup: 0 });
     s = settleBattle(s, false);
-    expect(party(s).hearts).toBe(11);
+    expect(party(s)).toMatchObject({ hearts: H - 1, cup: 1 });
     roundTrip(s);
   });
 
@@ -187,67 +259,71 @@ describe("Pub Crawl", () => {
     let s = advance(deal(start(), "dungeon.mimic-cooler"));
     expect(awaitingChoice(s)).toBe(true);
     s = skipRoll(s);
-    expect(party(s)).toMatchObject({ hearts: 12, loot: [] });
-    expect(s.quest!.step).toBe(2);
+    expect(party(s)).toMatchObject({ hearts: H, loot: [], cup: 0 });
+    expect(s.quest!.step).toBe(STEP.floor1 + 1);
     roundTrip(s);
   });
 
-  it("a boss is dealt again until it has taken its hits, and its curse lifts with it", () => {
-    let s = fromStep(start(), 16);
+  it("a boss is dealt again until it falls; then its curse and the jinx lift, the Quaff comes back, and it drops its trinket", () => {
+    let s = fromStep(start(), STEP.boss2);
     s = deal(s, "dungeon.hangover-hydra");
-    s.quest!.party!.curse = "hex";
+    Object.assign(s.quest!.party!, { curse: "hex", quaffed: true });
     s = fight(s, 2); // a miss
     expect(currentCard(s).id).toBe("dungeon.hangover-hydra");
-    expect(party(s)).toMatchObject({ hearts: 10, hits: 0, rounds: 0 });
+    expect(party(s)).toMatchObject({
+      hearts: H - 2,
+      hits: 0,
+      rounds: 0,
+      cup: 1,
+    });
     expect(s.quest!.lost).toBe(1);
     roundTrip(s);
     s = fight(s, 14); // one head off
     expect(currentCard(s).id).toBe("dungeon.hangover-hydra");
     expect(party(s)).toMatchObject({ hits: 1, rounds: 1, curse: "hex" });
+    expect(party(s).boons).toBeUndefined();
     roundTrip(s);
     s = fight(s, 14); // and the other
-    expect(s.quest!.step).toBe(17);
-    expect(finaleStage(s.quest!).label).toBe("The Drowned Taproom");
-    expect(party(s)).toMatchObject({ hits: 0, rounds: 1, curse: null });
+    expect(s.quest!.step).toBe(STEP.landing2);
+    expect(finaleStage(s.quest!).label).toBe("The Lower Landing");
+    expect(party(s)).toMatchObject({
+      hits: 0,
+      rounds: 1,
+      curse: null,
+      boons: ["dungeon.hangover-hydra"],
+    });
+    expect(party(s).quaffed).toBeUndefined();
+    // The Hydra Tooth: +2 to boss rolls from now on.
+    expect(omenEffect(s.quest)).toMatchObject({ roll: { boss: 2 } });
     roundTrip(s);
   });
 
   it("a natural 20 doubles what a win brings; a natural 1 doubles a loss's cost", () => {
-    // A room: 2 hearts on a loss (floor 1), 4 on a natural 1.
-    const room = () => deal(fromStep(start(), 9), "dungeon.bachelor-ghosts");
-    expect(party(fight(room(), 2)).hearts).toBe(10);
-    expect(party(fight(room(), 1)).hearts).toBe(8);
+    // A room: 2 hearts on a loss (floor 2), 4 on a natural 1.
+    const room = () =>
+      deal(fromStep(start(), STEP.floor2), "dungeon.bachelor-ghosts");
+    expect(party(fight(room(), 2)).hearts).toBe(H - 2);
+    expect(party(fight(room(), 1)).hearts).toBe(H - 4);
     // A shield still takes the whole doubled loss.
     const shielded = room();
     shielded.quest!.party!.loot = ["shield"];
-    expect(party(fight(shielded, 1))).toMatchObject({ hearts: 12, loot: [] });
-    // An elite's item comes twice on a natural 20, room permitting.
+    expect(party(fight(shielded, 1))).toMatchObject({ hearts: H, loot: [] });
+    // A room's item comes twice on a natural 20, room permitting.
+    const goblin = deal(start(), "dungeon.drunk-goblin");
+    expect(party(fight(goblin, 20)).loot).toEqual(["smoke", "smoke"]);
+    // A trinket comes once, natural or not.
     const s = takeOffer(advance(deal(start(), "dungeon.two-hatches")), 1);
-    const loot = currentCard(s).reward!.loot!;
-    expect(party(fight(s, 20)).loot).toEqual([loot, loot]);
-    const full = structuredClone(s);
-    full.quest!.party!.loot = ["smoke", "smoke"];
-    expect(party(fight(full, 20)).loot).toEqual(["smoke", "smoke", loot]);
+    expect(party(fight(s, 20)).boons).toEqual([currentCard(s).id]);
     // A boss takes two swings from a natural 20.
-    let b = deal(fromStep(start(), 16), "dungeon.hangover-hydra");
+    let b = deal(fromStep(start(), STEP.boss2), "dungeon.hangover-hydra");
     b = fight(b, 20);
-    expect(b.quest!.step).toBe(17);
+    expect(b.quest!.step).toBe(STEP.landing2);
     expect(party(b)).toMatchObject({ hits: 0, rounds: 0 });
     roundTrip(b);
-    // A heal doubles too.
-    const healer = cards.find(
-      (c) => c.id.startsWith("dungeon.") && c.battle && c.reward?.heal,
-    );
-    if (healer) {
-      const h = deal(start(), healer.id);
-      h.quest!.party!.hearts = 4;
-      const once = party(fight(structuredClone(h), 19)).hearts;
-      expect(party(fight(h, 20)).hearts - 4).toBe((once - 4) * 2);
-    }
   });
 
   it("the last boss falling wins the crawl", () => {
-    let s = deal(fromStep(start(), 24), "dungeon.last-call-lich");
+    let s = deal(fromStep(start(), STEP.lastCall), "dungeon.last-call-lich");
     for (let i = 0; i < 3; i++) s = fight(s, 15);
     expect(s.phase).toBe("complete");
     expect(questRecord(s)!.won).toBe(true);
@@ -259,11 +335,11 @@ describe("Pub Crawl", () => {
     s.quest!.party!.hearts = 1;
     s = fight(s, 1);
     expect(s.phase).toBe("complete");
-    expect(party(s)).toMatchObject({ hearts: 0, wiped: true });
+    expect(party(s)).toMatchObject({ hearts: 0, wiped: true, cup: 1 });
     expect(questRecord(s)!.won).toBe(false);
     roundTrip(s);
     // Wiping on a boss mid-fight is the end too.
-    let b = deal(fromStep(start(), 8), "dungeon.keg-golem");
+    let b = deal(fromStep(start(), STEP.boss1), "dungeon.keg-golem");
     b.quest!.party!.hearts = 2;
     b = fight(b, 1);
     expect(b.phase).toBe("complete");
@@ -272,14 +348,14 @@ describe("Pub Crawl", () => {
 
   it("the shield takes a loss whole; bleeding costs one more; a hex seals the satchel", () => {
     const at = (loot: Loot[], curse: "bleed" | "hex" | null) => {
-      const s = deal(fromStep(start(), 9), "dungeon.bachelor-ghosts");
+      const s = deal(fromStep(start(), STEP.floor2), "dungeon.bachelor-ghosts");
       Object.assign(s.quest!.party!, { loot, curse });
       return party(fight(s, 2));
     };
-    expect(at(["shield"], null)).toMatchObject({ hearts: 12, loot: [] });
-    expect(at([], "bleed")).toMatchObject({ hearts: 9 });
+    expect(at(["shield"], null)).toMatchObject({ hearts: H, loot: [] });
+    expect(at([], "bleed")).toMatchObject({ hearts: H - 3 });
     expect(at(["shield"], "hex")).toMatchObject({
-      hearts: 10,
+      hearts: H - 2,
       loot: ["shield"],
     });
   });
@@ -288,9 +364,9 @@ describe("Pub Crawl", () => {
     let s = deal(start(), "dungeon.gelatinous-shot");
     s.quest!.party!.loot = ["draught", "die", "smoke"];
     expect(canUseLoot(s, "draught")).toBe(false); // full hearts
-    s.quest!.party!.hearts = 8;
+    s.quest!.party!.hearts = H - 4;
     s = spendLoot(s, "draught");
-    expect(party(s)).toMatchObject({ hearts: 9, loot: ["die", "smoke"] });
+    expect(party(s)).toMatchObject({ hearts: H - 3, loot: ["die", "smoke"] });
     s = advance(s);
     expect(canUseLoot(s, "die")).toBe(false);
     s = rollTo(s, 2);
@@ -301,15 +377,17 @@ describe("Pub Crawl", () => {
     expect(party(s).loot).toEqual(["smoke"]);
     roundTrip(s);
     s = advance(rollTo(s, 18));
-    expect(party(s).hearts).toBe(9);
+    expect(party(s).hearts).toBe(H - 3);
     // Smoke: past a room before it is rolled, never past a boss.
     s = advance(deal(s, "dungeon.keg-spider"));
     expect(canUseLoot(s, "smoke")).toBe(true);
     const fled = spendLoot(s, "smoke");
     expect(fled.quest!.step).toBe(s.quest!.step + 1);
-    expect(party(fled)).toMatchObject({ hearts: 9, loot: [] });
+    expect(party(fled)).toMatchObject({ hearts: H - 3, loot: [], cup: 0 });
     roundTrip(fled);
-    const boss = advance(deal(fromStep(start(), 8), "dungeon.keg-golem"));
+    const boss = advance(
+      deal(fromStep(start(), STEP.boss1), "dungeon.keg-golem"),
+    );
     boss.quest!.party!.loot = ["smoke"];
     expect(canUseLoot(boss, "smoke")).toBe(false);
     // A hex seals every item.
@@ -317,88 +395,148 @@ describe("Pub Crawl", () => {
     expect(canUseLoot(s, "smoke")).toBe(false);
   });
 
-  it("replay starts a fresh crawl", () => {
-    let s = fight(deal(start(), "dungeon.tab-goblin"), 1);
-    s = replaySession(s, seeded(9));
-    expect(s.quest).toMatchObject({ due: true, step: 0, lost: 0 });
-    expect(party(s)).toMatchObject({ hearts: 12, loot: [], wiped: false });
+  it("the Quaff rerolls a lost fight for drinks, once until the next boss falls", () => {
+    let s = advance(deal(start(), "dungeon.gelatinous-shot"));
+    expect(canQuaff(s)).toBe(false); // nothing rolled yet
+    s = rollTo(s, 15);
+    expect(canQuaff(s)).toBe(false); // a win needs no Quaff
+    s = { ...s, roll: null };
+    s = rollTo(s, 2);
+    // A hex seals the satchel, not the Quaff.
+    s.quest!.party!.curse = "hex";
+    expect(canQuaff(s)).toBe(true);
+    s = quaff(s);
+    expect(s.roll).toBeNull();
+    expect(party(s)).toMatchObject({ quaffed: true, hearts: H });
+    roundTrip(s);
+    s = rollTo(s, 3);
+    expect(canQuaff(s)).toBe(false);
+    expect(quaff(s)).toBe(s);
+    s = advance(s);
+    expect(party(s)).toMatchObject({ hearts: H - 1, quaffed: true });
+    // A boss falling brings it back (the previous test); an ambush doesn't.
+    let a = deal(start(), "dungeon.lost-bridesmaids");
+    a.quest!.party!.quaffed = true;
+    a = fight(fight(a, 15), 15);
+    expect(party(a).quaffed).toBe(true);
+    // A trial has no roll to Quaff.
+    const t = advance(deal(start(), "dungeon.riddling-tap"));
+    expect(canQuaff(t)).toBe(false);
+  });
+
+  it("a jinx lands on a loss and holds until the floor's boss falls", () => {
+    let s = fight(deal(start(), "dungeon.goblin-shaman"), 2);
+    expect(party(s).jinx).toBe("dungeon.goblin-shaman");
+    expect(questRecord(s)!.jinx?.jinx?.name).toBe("Goblin Tongue");
+    roundTrip(s);
+    // A win lays nothing.
+    expect(
+      party(fight(deal(start(), "dungeon.goblin-shaman"), 15)).jinx,
+    ).toBeUndefined();
+    // A newer jinx replaces the old one; an ambush's fall keeps it.
+    s = fromStep(s, STEP.boss1);
+    s = deal(s, "dungeon.rat-king");
+    s = fight(s, 2);
+    expect(party(s).jinx).toBe("dungeon.rat-king");
+    s = fight(s, 15);
+    expect(party(s).jinx).toBeUndefined();
     roundTrip(s);
   });
 
-  it("the plain modes play the rooms as ordinary cards, without the finds", () => {
-    const s = createSession(
-      { version: 1, packIds: ["dungeon"], limit: 30 },
-      cards,
-      packs,
-      seeded(3),
-    );
-    expect(s.quest).toBeUndefined();
-    expect(s.cards).toHaveLength(118);
-    expect(s.cards.some((c) => c.reward && !c.battle)).toBe(false);
-    expect(s.cards.some((c) => c.offers || c.omen)).toBe(false);
-    // A trial is put aside with a tap, no verdict.
-    const trial = {
-      ...s,
-      order: [
-        "dungeon.riddling-tap",
-        ...s.order.filter((id) => id !== "dungeon.riddling-tap"),
-      ],
-    };
-    expect(advance(advance(trial)).discarded).toBe(1);
+  it("the adventurer is put aside first, sets the party's power and the dice colours", () => {
+    let s = advance(advance(deal(make(), "dungeon.class-paladin")));
+    expect(party(s)).toMatchObject({
+      hearts: H + 1,
+      max: H + 1,
+      loot: ["shield"],
+      omen: "dungeon.class-paladin",
+    });
+    expect(omenForm(s.quest)).toMatchObject({
+      title: "Paladin",
+      next: "Crusader",
+      palette: { primary: "#2f5a8c" },
+    });
+    roundTrip(s);
+    // Rolls feel the adventurer: a Barbarian is +2 against a boss.
+    s = adventure("barbarian", undefined, STEP.boss1);
+    s = rollTo(advance(deal(s, "dungeon.keg-golem")), BOSS_NEED[0] - 2);
+    expect(s.roll).toMatchObject({ bonus: 2 });
+    expect(rollWins(currentCard(s).dice!, s.roll!.values, s.roll!)).toBe(true);
   });
 
-  it("rejects saves whose party does not add up", () => {
-    const s = fight(deal(fromStep(start(), 16), "dungeon.hangover-hydra"), 14);
-    const tamper = (change: (q: SessionState) => void) => {
-      const copy = structuredClone(s);
-      change(copy);
-      return () => parseSession(JSON.stringify(copy));
-    };
-    expect(tamper(() => {})).not.toThrow();
-    expect(tamper((q) => (q.quest!.party!.hearts = 13))).toThrow();
-    expect(tamper((q) => (q.quest!.party!.hits = 2))).toThrow();
-    expect(tamper((q) => (q.quest!.party!.rounds = 0))).toThrow();
-    expect(tamper((q) => (q.quest!.party!.wiped = true))).toThrow();
-    expect(tamper((q) => (q.quest!.party!.loot = ["beer" as Loot]))).toThrow();
-    expect(
-      tamper((q) => (q.quest!.party!.loot = ["die", "die", "die", "die"])),
-    ).toThrow();
-    expect(tamper((q) => delete q.quest!.party)).toThrow();
+  it("a landing levels the adventurer up for drinks, or rests", () => {
+    const at = (id: string) =>
+      advance(
+        deal(
+          adventure(id, undefined, STEP.landing1),
+          "dungeon.landing-stairwell",
+        ),
+      );
+    const s = at("barbarian");
+    expect(awaitingOffer(s)).toBe(true);
+    expect(currentCard(s).offers!.map((o) => o.label)).toEqual([
+      "Level up · drink 3",
+      "Rest",
+    ]);
+    const up = takeOffer(s, 0);
+    expect(party(up)).toMatchObject({ form: 1, max: H + 2, hearts: H + 2 });
+    expect(omenForm(up.quest)).toMatchObject({
+      title: "Berserker",
+      next: "Warlord",
+    });
+    expect(up.quest!.step).toBe(STEP.floor2);
+    roundTrip(up);
+    s.quest!.party!.hearts = H - 4;
+    expect(party(takeOffer(s, 1))).toMatchObject({ hearts: H - 1 });
+    // A fully levelled adventurer can only rest.
+    s.quest!.party!.form = 2;
+    expect(canTakeOffer(s, 0)).toBe(false);
+    expect(canTakeOffer(s, 1)).toBe(true);
+    // The Plus-One levels up into something worse.
+    const plus = takeOffer(at("plus-one"), 0);
+    expect(party(plus)).toMatchObject({ max: H - 4, form: 1 });
+    expect(satchelSize(plus.quest)).toBe(2);
   });
 
-  it("tonight's omen is put aside first, and holds for the run", () => {
-    const tonight = (id: string) => {
-      const s = deal(make(), `dungeon.omen-${id}`);
-      return advance(advance(s));
-    };
+  it("a Dog-Eared Tome levels the adventurer up on the spot", () => {
+    const s = adventure("wizard");
+    s.quest!.party!.loot = [...party(s).loot, "candy"];
+    expect(canUseLoot(s, "candy")).toBe(true);
+    const read = spendLoot(s, "candy");
+    expect(party(read)).toMatchObject({ form: 1, max: H - 1 });
+    expect(party(read).loot).toEqual(["die", "die", "die"]);
+    roundTrip(read);
+  });
+
+  it("tonight's omen is a boon that stacks with the adventurer", () => {
+    const tonight = (id: string) =>
+      advance(advance(deal(fromStep(make(), STEP.omen), `dungeon.omen-${id}`)));
     // Starting hearts and items.
     let s = tonight("running-a-tab");
     expect(party(s)).toMatchObject({
-      hearts: 10,
-      max: 10,
+      hearts: H - 2,
+      max: H - 2,
       loot: ["shield", "draught"],
-      omen: "dungeon.omen-running-a-tab",
+      boons: ["dungeon.omen-running-a-tab"],
     });
-    expect(s.quest!.step).toBe(1);
+    expect(party(s).omen).toBeUndefined();
+    expect(s.quest!.step).toBe(STEP.queue);
     roundTrip(s);
     // A bigger satchel.
     s = tonight("cargo-shorts");
-    s.quest!.party!.loot = ["draught", "die", "smoke"];
-    s = advance(advance(deal(s, "dungeon.lost-and-found")));
-    expect(party(s).loot).toHaveLength(4);
-    roundTrip(s);
+    expect(satchelSize(s.quest)).toBe(4);
     // A smaller one: a save holding more than it fits is rejected.
     s = tonight("butterfingers");
-    expect(party(s)).toMatchObject({ hearts: 14, max: 14 });
+    expect(party(s)).toMatchObject({ hearts: H + 2, max: H + 2 });
     const over = structuredClone(s);
     over.quest!.party!.loot = ["die", "die", "die"];
     expect(() => parseSession(JSON.stringify(over))).toThrow();
     // Dearer monsters, but not traps.
-    s = tonight("blood-moon");
-    expect(party(fight(deal(s, "dungeon.gelatinous-shot"), 3)).hearts).toBe(12);
-    expect(party(fight(deal(s, "dungeon.sticky-floor"), 3)).hearts).toBe(13);
-    // Kinder shrines.
-    s = tonight("happy-hour");
+    s = fromStep(tonight("blood-moon"), STEP.floor1);
+    expect(party(fight(deal(s, "dungeon.gelatinous-shot"), 3)).hearts).toBe(H);
+    expect(party(fight(deal(s, "dungeon.sticky-floor"), 3)).hearts).toBe(H + 1);
+    // Kinder heals.
+    s = fromStep(tonight("happy-hour"), STEP.floor1);
     s.quest!.party!.hearts = 6;
     expect(
       party(advance(advance(deal(s, "dungeon.wishing-drain")))).hearts,
@@ -411,9 +549,100 @@ describe("Pub Crawl", () => {
     );
     // A table rule changes nothing in the engine.
     expect(party(tonight("lefty-night"))).toMatchObject({
-      hearts: 12,
+      hearts: H,
       loot: [],
     });
+    // Stacked: a Rogue's extra slot and the cargo shorts' make five; a
+    // Paladin with the regulars has fifteen hearts.
+    expect(satchelSize(adventure("rogue", "cargo-shorts").quest)).toBe(5);
+    expect(party(adventure("paladin", "the-regulars")).max).toBe(H + 3);
+    // Levelling up keeps the omen's hearts.
+    const up = takeOffer(
+      advance(
+        deal(
+          adventure("paladin", "the-regulars", STEP.landing1),
+          "dungeon.landing-stairwell",
+        ),
+      ),
+      0,
+    );
+    expect(party(up).max).toBe(H + 3);
+    roundTrip(up);
+  });
+
+  it("stacks effects: numbers add, naturals widen, a boon's satchel moves the size", () => {
+    expect(
+      stackEffects({ roll: { boss: 2 }, satchel: 4, crit: 19 }, [
+        { roll: { boss: 1, trap: 2 }, satchel: 4, hearts: 2 },
+        { satchel: 2, crit: 18, fumble: 2, hurt: { monster: 1 } },
+      ]),
+    ).toEqual({
+      roll: { boss: 3, trap: 2 },
+      satchel: 4,
+      crit: 18,
+      fumble: 2,
+      hearts: 2,
+      hurt: { monster: 1 },
+    });
+    const base = { heal: 1 };
+    expect(stackEffects(base, [])).toBe(base);
+  });
+
+  it("an elite's trinket comes with the win and holds for the run", () => {
+    const loud = takeOffer(
+      advance(deal(start(), "dungeon.two-hatches")),
+      1,
+      seeded(4),
+    );
+    const elite = currentCard(loud);
+    expect(elite.encounter).toBe("elite");
+    expect([
+      "dungeon.grease-trap-horror",
+      "dungeon.health-inspector",
+      "dungeon.keg-mimic-queen",
+    ]).toContain(elite.id);
+    roundTrip(loud);
+    const won = fight(loud, 19);
+    expect(party(won).boons).toEqual([elite.id]);
+    expect(questRecord(won)!.boons.map((b) => b.boon.name)).toEqual([
+      elite.boon!.name,
+    ]);
+    roundTrip(won);
+    // A lost elite drops nothing.
+    expect(party(fight(loud, 2)).boons).toBeUndefined();
+    // The Queen's Tap: a heart more, now and for good.
+    const queen = fight(deal(start(), "dungeon.keg-mimic-queen"), 19);
+    expect(party(queen)).toMatchObject({ hearts: H + 1, max: H + 1 });
+  });
+
+  it("the wanted poster names the floor's boss", () => {
+    const s = start();
+    expect(wantedBoss(s.quest!)!.id).toBe(s.quest!.finale[STEP.boss1]);
+    expect(wantedBoss(fromStep(s, STEP.boss1).quest!)!.id).toBe(
+      s.quest!.finale[STEP.boss1],
+    );
+    expect(wantedBoss(fromStep(s, STEP.floor2).quest!)!.id).toBe(
+      s.quest!.finale[STEP.boss2],
+    );
+    // The third floor ends at closing time, not a boss.
+    expect(wantedBoss(fromStep(s, STEP.floor3).quest!)).toBeUndefined();
+  });
+
+  it("the queue is one fight against the rival party; a loss can jinx", () => {
+    let s = fromStep(make(), STEP.queue);
+    s = fight(deal(s, "dungeon.queue-group-name"), 2);
+    expect(party(s)).toMatchObject({
+      hearts: H - 1,
+      cup: 1,
+      jinx: "dungeon.queue-group-name",
+    });
+    expect(s.quest!.step).toBe(STEP.floor1);
+    roundTrip(s);
+    const won = fight(
+      deal(fromStep(make(), STEP.queue), "dungeon.queue-group-name"),
+      15,
+    );
+    expect(party(won)).toMatchObject({ hearts: H, loot: ["die"] });
   });
 
   it("a merchant sells for drinks or hearts, never the last heart", () => {
@@ -421,34 +650,24 @@ describe("Pub Crawl", () => {
     expect(awaitingOffer(s)).toBe(true);
     expect(advance(s)).toBe(s);
     const bought = takeOffer(s, 0);
-    expect(party(bought)).toMatchObject({ hearts: 12, loot: ["draught"] });
-    expect(bought.quest!.step).toBe(2);
+    expect(party(bought)).toMatchObject({ hearts: H, loot: ["draught"] });
+    expect(bought.quest!.step).toBe(STEP.floor1 + 1);
     roundTrip(bought);
     expect(party(takeOffer(s, 1))).toMatchObject({
-      hearts: 11,
+      hearts: H - 1,
       loot: ["shield"],
     });
-    expect(party(takeOffer(s, 2))).toMatchObject({ hearts: 12, loot: [] });
+    expect(party(takeOffer(s, 2))).toMatchObject({ hearts: H, loot: [] });
     s.quest!.party!.hearts = 1;
     expect(canTakeOffer(s, 1)).toBe(false);
     expect(takeOffer(s, 1)).toBe(s);
     expect(canTakeOffer(s, 3)).toBe(false);
   });
 
-  it("a fork's loud door turns the next room into an elite; the quiet one doesn't", () => {
+  it("a fork's quiet door changes nothing", () => {
     const s = advance(deal(start(), "dungeon.two-hatches"));
-    const next = s.quest!.finale[2];
-    expect(takeOffer(s, 0).quest!.finale[2]).toBe(next);
-    const loud = takeOffer(s, 1, seeded(4));
-    const elite = currentCard(loud);
-    expect(elite.encounter).toBe("elite");
-    expect([
-      "dungeon.grease-trap-horror",
-      "dungeon.health-inspector",
-    ]).toContain(elite.id);
-    roundTrip(loud);
-    // A won elite pays its loot.
-    expect(party(fight(loud, 19)).loot).toEqual([elite.reward!.loot]);
+    const next = s.quest!.finale[STEP.floor1 + 1];
+    expect(takeOffer(s, 0).quest!.finale[STEP.floor1 + 1]).toBe(next);
   });
 
   it("a fork is never the last room of its floor", () => {
@@ -471,28 +690,141 @@ describe("Pub Crawl", () => {
     expect(party(s)).toMatchObject({ hits: 1, rounds: 1 });
     roundTrip(s);
     s = fight(s, 2); // a miss: one heart, and one more for bleeding
-    expect(party(s)).toMatchObject({ hearts: 10, hits: 1 });
+    expect(party(s)).toMatchObject({ hearts: H - 2, hits: 1 });
     s = fight(s, 15);
-    expect(s.quest!.step).toBe(2);
+    expect(s.quest!.step).toBe(STEP.floor1 + 1);
     expect(party(s)).toMatchObject({ hits: 0, curse: "bleed" });
     roundTrip(s);
     // The record keeps it among the floor's rooms, not as a boss.
-    expect(questRecord(s)!.stages[1]).toMatchObject({ boss: false });
+    expect(questRecord(s)!.stages[3]).toMatchObject({ boss: false });
   });
 
-  it("loads a crawl saved before omens and floor variants", () => {
-    // That save's stages start at the Cellar, with no omen and no elites.
-    const old = structuredClone(start());
-    old.quest!.stages = old.quest!.stages.slice(1).map((st) => ({
+  it("replay starts a fresh crawl, with a fresh Quaff and an empty Cup", () => {
+    let s = fight(deal(start(), "dungeon.tab-goblin"), 1);
+    s = fight(deal(fromStep(s, STEP.boss1), "dungeon.keg-golem"), 15);
+    s.quest!.party!.quaffed = true;
+    s = replaySession(s, seeded(9));
+    expect(s.quest).toMatchObject({ due: true, step: 0, lost: 0 });
+    expect(party(s)).toEqual({
+      hearts: H,
+      max: H,
+      loot: [],
+      curse: null,
+      hits: 0,
+      rounds: 0,
+      wiped: false,
+      quaff: 3,
+      cup: 0,
+    });
+    roundTrip(s);
+  });
+
+  it("the plain modes play the rooms as ordinary cards, without the finds", () => {
+    const s = createSession(
+      { version: 1, packIds: ["dungeon"], limit: 30 },
+      cards,
+      packs,
+      seeded(3),
+    );
+    expect(s.quest).toBeUndefined();
+    expect(s.cards).toHaveLength(166);
+    expect(s.cards.some((c) => c.reward && !c.battle)).toBe(false);
+    expect(
+      s.cards.some(
+        (c) =>
+          c.offers ||
+          c.omen ||
+          c.encounter === "omen" ||
+          c.id.includes("queue-"),
+      ),
+    ).toBe(false);
+    // A trial is put aside with a tap, no verdict; a jinx card plays plain.
+    const trial = {
+      ...s,
+      order: [
+        "dungeon.riddling-tap",
+        "dungeon.goblin-shaman",
+        ...s.order.filter(
+          (id) =>
+            id !== "dungeon.riddling-tap" && id !== "dungeon.goblin-shaman",
+        ),
+      ],
+    };
+    const after = advance(advance(trial));
+    expect(after.discarded).toBe(1);
+    expect(currentCard(after).id).toBe("dungeon.goblin-shaman");
+  });
+
+  it("rejects saves whose party does not add up", () => {
+    const s = fight(
+      deal(fromStep(start(), STEP.boss2), "dungeon.hangover-hydra"),
+      14,
+    );
+    const tamper = (change: (q: SessionState) => void) => {
+      const copy = structuredClone(s);
+      change(copy);
+      return () => parseSession(JSON.stringify(copy));
+    };
+    expect(tamper(() => {})).not.toThrow();
+    expect(tamper((q) => (q.quest!.party!.hearts = 13))).toThrow();
+    expect(tamper((q) => (q.quest!.party!.hits = 2))).toThrow();
+    expect(tamper((q) => (q.quest!.party!.rounds = 0))).toThrow();
+    expect(tamper((q) => (q.quest!.party!.wiped = true))).toThrow();
+    expect(tamper((q) => (q.quest!.party!.loot = ["beer" as Loot]))).toThrow();
+    expect(
+      tamper((q) => (q.quest!.party!.loot = ["die", "die", "die", "die"])),
+    ).toThrow();
+    expect(tamper((q) => delete q.quest!.party)).toThrow();
+    // Boons and jinxes only from cards already dealt that carry them.
+    expect(
+      tamper(
+        (q) => (q.quest!.party!.boons = [q.quest!.finale[STEP.boss1 + 30]]),
+      ),
+    ).toThrow();
+    expect(
+      tamper((q) => (q.quest!.party!.boons = [q.quest!.finale[STEP.floor1]])),
+    ).toThrow();
+    expect(
+      tamper((q) => (q.quest!.party!.jinx = q.quest!.finale[STEP.lastCall])),
+    ).toThrow();
+    expect(tamper((q) => (q.quest!.party!.cup = -1))).toThrow();
+    expect(tamper((q) => (q.quest!.party!.quaffed = false as never))).toThrow();
+    expect(
+      tamper((q) => {
+        delete q.quest!.party!.quaff;
+        q.quest!.party!.quaffed = true;
+      }),
+    ).toThrow();
+  });
+
+  it("loads a crawl saved before adventurers, when the omen was the run's own", () => {
+    // That save opened on tonight's omen (an `omen` card, `party.omen`),
+    // then seven rooms a floor.
+    const old = structuredClone(make());
+    const omen = findCard(old, "dungeon.omen-the-regulars")!;
+    const legacy = { ...omen, omen: omen.boon!.effect };
+    delete (legacy as { boon?: unknown }).boon;
+    old.quest!.stages = old.quest!.stages.slice(1).map((st, i) => ({
       label: st.label,
       pick: st.pick,
-      cards: st.cards,
+      cards: i === 0 ? [legacy] : st.cards,
+      ...(st.elite ? { elite: st.elite } : {}),
     }));
-    old.quest!.finale = old.quest!.finale.slice(1);
-    old.quest!.step = 0;
-    old.discarded = 0;
-    old.previousId = null;
-    expect(parseSession(JSON.stringify(old))).toEqual(old);
+    old.quest!.finale = [legacy.id, ...old.quest!.finale.slice(2)];
+    delete old.quest!.party!.quaff;
+    delete old.quest!.party!.cup;
+    let s = advance(advance(old));
+    expect(party(s)).toMatchObject({
+      hearts: H + 2,
+      max: H + 2,
+      omen: legacy.id,
+    });
+    expect(party(s).boons).toBeUndefined();
+    expect(canQuaff(s)).toBe(false);
+    roundTrip(s);
+    s = fight(deal(fromStep(s, 2), "dungeon.gelatinous-shot"), 2);
+    expect(party(s).cup).toBeUndefined();
+    roundTrip(s);
     // A tampered omen is rejected.
     const forged = structuredClone(start());
     forged.quest!.party!.omen = "dungeon.gelatinous-shot";
@@ -501,39 +833,44 @@ describe("Pub Crawl", () => {
 });
 
 // The table plays sensibly: a draught at 3 hearts or less, a loaded die on
-// any lost roll, smoke on any room fight it can, relics opened above 4
-// hearts, trials won a little over half the time, a merchant's drink-priced
-// ware whenever the satchel has room (a price in hearts only above 8), and
-// the loud door above 6 hearts. Real cards, real engine, so a change to
-// either shows up here.
-function playRun(seed: number) {
+// any lost roll and the Quaff when there's no die, smoke on any room fight
+// it can, relics opened above 4 hearts, trials won a little over half the
+// time, a merchant's drink-priced ware whenever the satchel has room (a
+// price in hearts only above 8), the loud door above 6 hearts, a Tome read
+// at once, and at a landing a level up unless the hearts are low (6 or
+// fewer) or the adventurer is the Plus-One, who rests. Real cards, real
+// engine, so a change to either shows up here.
+function playRun(seed: number, adventurer?: string) {
   const random = seeded(seed);
   let s = createSession(crawl, cards, packs, random);
+  if (adventurer) s = deal(s, `dungeon.class-${adventurer}`);
   const use = (item: Loot) => {
     if (canUseLoot(s, item)) s = spendLoot(s, item, random);
   };
-  for (let guard = 0; guard < 400 && s.phase !== "complete"; guard++) {
+  const plusOne = () => party(s).omen === "dungeon.class-plus-one";
+  for (let guard = 0; guard < 500 && s.phase !== "complete"; guard++) {
     s = advance(s, random);
     const card = currentCard(s);
     if (party(s).hearts <= 3) use("draught");
+    if (!plusOne()) use("candy");
     if (awaitingOffer(s)) {
       const offers = card.offers!;
       const p = party(s);
-      const pick =
-        card.encounter === "fork"
-          ? p.hearts > 6
-            ? 1
-            : 0
-          : Math.max(
-              0,
-              offers.findIndex(
-                (o, i) =>
-                  !!o.loot &&
-                  p.loot.length < 3 &&
-                  (!o.cost || p.hearts > 8) &&
-                  canTakeOffer(s, i),
-              ),
-            );
+      let pick: number;
+      if (card.encounter === "fork") pick = p.hearts > 6 ? 1 : 0;
+      else if (card.encounter === "rest")
+        pick = p.hearts > 6 && !plusOne() && canTakeOffer(s, 0) ? 0 : 1;
+      else
+        pick = Math.max(
+          0,
+          offers.findIndex(
+            (o, i) =>
+              !!o.loot &&
+              p.loot.length < satchelSize(s.quest) &&
+              (!o.cost || p.hearts > 8) &&
+              canTakeOffer(s, i),
+          ),
+        );
       s = takeOffer(
         s,
         canTakeOffer(s, pick) ? pick : offers.length - 1,
@@ -561,6 +898,7 @@ function playRun(seed: number) {
       s = returnToCard(s);
       if (card.battle && !rollWins(card.dice, s.roll!.values, s.roll!)) {
         use("die");
+        if (s.roll && canQuaff(s)) s = quaff(s);
         if (!s.roll) s = returnToCard(rollDice(s, random));
       }
     }
@@ -571,58 +909,109 @@ function playRun(seed: number) {
 }
 
 const RUNS = 4000;
+// The tests below read thousands of runs; beside the other harness in a
+// full parallel `npm test` they can pass the 5 s default, so each has 30 s.
 const runs = Array.from({ length: RUNS }, (_, i) => playRun(i + 1));
 const rate = (group: SessionState[]) =>
   group.filter((s) => questRecord(s)!.won).length / group.length;
 const pct = (n: number) => (n * 100).toFixed(0) + "%";
+const by = (key: (s: SessionState) => string) => {
+  const groups = new Map<string, SessionState[]>();
+  for (const s of runs) groups.set(key(s), [...(groups.get(key(s)) ?? []), s]);
+  return [...groups].map(([name, group]) => [name, rate(group)] as const);
+};
 
 it("a crawl is hard: the party wins about a quarter of its runs", () => {
   expect(runs.every((s) => s.phase === "complete")).toBe(true);
   const won = rate(runs);
-  // Wipes by depth: the omen, then floor 1, its boss, floor 2, its boss,
-  // floor 3, Last Call.
-  const deep = (s: SessionState) => finaleStage(s.quest!).stage;
-  const wipes = [0, 1, 2, 3, 4, 5, 6].map(
-    (stage) =>
-      runs.filter((s) => party(s).wiped && deep(s) === stage).length /
-      runs.length,
-  );
-  // Report the shape so a tuning change is easy to read in the test output.
+  const winners = runs.filter((s) => questRecord(s)!.won);
+  const draws = winners.map((s) => s.discarded);
+  const mean = draws.reduce((a, b) => a + b, 0) / draws.length;
+  // Where runs wipe, by stage label.
+  const wipes = new Map<string, number>();
+  for (const s of runs.filter((s) => party(s).wiped)) {
+    const label = finaleStage(s.quest!)
+      .label.replace(/^The (Cellar|Wine Cellar)$/, "Floor 1")
+      .replace(/^The (Catacombs|Sewers)$/, "Floor 2")
+      .replace(/^The (Drowned Taproom|Kitchen)$/, "Floor 3")
+      .replace(/^.* boss$/, (l) =>
+        /Cellar/.test(l) ? "Floor 1 boss" : "Floor 2 boss",
+      );
+    wipes.set(label, (wipes.get(label) ?? 0) + 1);
+  }
+  const avg = (f: (s: SessionState) => number, of = winners) =>
+    (of.map(f).reduce((a, b) => a + b, 0) / of.length).toFixed(1);
   console.log(
-    `crawl: won ${(won * 100).toFixed(1)}%; wiped by stage ${wipes
-      .map(pct)
-      .join(" / ")}`,
+    `crawl: won ${(won * 100).toFixed(1)}%; a won run takes ${mean.toFixed(1)} draws, ` +
+      `keeps ${avg((s) => party(s).boons?.length ?? 0)} boons, pours ${avg((s) => party(s).cup ?? 0, runs)} splashes a run\n` +
+      `wiped at: ${[...wipes].map(([l, n]) => `${l} ${pct(n / RUNS)}`).join(", ")}`,
   );
   expect(won).toBeGreaterThan(0.18);
   expect(won).toBeLessThan(0.4);
-  // Nearly every run gets past the first floor; most wipes are deep.
-  expect(wipes[0] + wipes[1] + wipes[2]).toBeLessThan(0.1);
+  expect(mean).toBeGreaterThan(38);
+  expect(mean).toBeLessThan(55);
+  // Nearly every run gets through the door and the first floor.
+  const early = ["The Queue", "Floor 1"].reduce(
+    (n, l) => n + (wipes.get(l) ?? 0),
+    0,
+  );
+  expect(early / RUNS).toBeLessThan(0.1);
   for (const s of runs.slice(0, 50)) roundTrip(s);
-});
+}, 30_000);
 
-it("no omen and no dungeon makes a crawl a walkover or hopeless", () => {
-  const by = (key: (s: SessionState) => string) => {
-    const groups = new Map<string, SessionState[]>();
-    for (const s of runs)
-      groups.set(key(s), [...(groups.get(key(s)) ?? []), s]);
-    return [...groups].map(([name, group]) => [name, rate(group)] as const);
-  };
-  const omens = by((s) => s.quest!.finale[0].replace("dungeon.omen-", ""));
+it("adventurers level up often, but not always all the way", () => {
+  const levelling = runs.filter(
+    (s) => party(s).omen !== "dungeon.class-plus-one",
+  );
+  const once = levelling.filter((s) => (party(s).form ?? 0) >= 1).length;
+  const full = levelling.filter((s) => !omenForm(s.quest)!.canEvolve).length;
+  console.log(
+    `levels: ${pct(once / levelling.length)} level up at least once, ${pct(full / levelling.length)} reach level 3`,
+  );
+  expect(once / levelling.length).toBeGreaterThan(0.6);
+  expect(full / levelling.length).toBeGreaterThan(0.2);
+  expect(full / levelling.length).toBeLessThan(0.6);
+}, 30_000);
+
+it("no adventurer, omen or dungeon makes a crawl a walkover or hopeless", () => {
+  const adventurers = by((s) =>
+    s.quest!.finale[STEP.adventurer].replace("dungeon.class-", ""),
+  );
+  const omens = by((s) =>
+    s.quest!.finale[STEP.omen].replace("dungeon.omen-", ""),
+  );
   const dungeons = by((s) =>
     s
-      .quest!.stages.slice(1, 6)
-      .filter((_, i) => i % 2 === 0)
+      .quest!.stages.filter((st) => st.pick === 8)
       .map((st) => st.label.replace("The ", ""))
       .join(" > "),
   );
   console.log(
-    `omens: ${omens.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}\n` +
+    `adventurers: ${adventurers.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}\n` +
+      `omens: ${omens.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}\n` +
       `dungeons: ${dungeons.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}`,
   );
+  expect(adventurers).toHaveLength(12);
   expect(omens).toHaveLength(12);
   expect(dungeons).toHaveLength(8);
-  for (const [, r] of [...omens, ...dungeons]) {
-    expect(r).toBeGreaterThan(0.1);
-    expect(r).toBeLessThan(0.5);
+  // The Plus-One is the worst by design, measured on its own below.
+  for (const [name, r] of [...adventurers, ...omens, ...dungeons]) {
+    if (name === "plus-one") continue;
+    expect(r, name).toBeGreaterThan(0.1);
+    expect(r, name).toBeLessThan(0.5);
   }
-});
+}, 30_000);
+
+it("the Plus-One is the worst adventurer, and still wins now and then", () => {
+  const plus = rate(
+    Array.from({ length: 600 }, (_, i) => playRun(i + 1, "plus-one")),
+  );
+  const worst = Math.min(
+    ...by((s) => s.quest!.finale[STEP.adventurer])
+      .filter(([n]) => !n.endsWith("plus-one"))
+      .map(([, r]) => r),
+  );
+  console.log(`plus-one (600 runs) ${pct(plus)}; next worst ${pct(worst)}`);
+  expect(plus).toBeGreaterThan(0.01);
+  expect(plus).toBeLessThan(Math.min(0.1, worst));
+}, 30_000);

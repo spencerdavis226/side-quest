@@ -3,34 +3,60 @@ import { advance, createSession, currentCard } from "../../src/game/engine";
 import { returnToCard, rollDice } from "../../src/game/dice";
 import type { PartyState, SessionState } from "../../src/game/types";
 import { cards, packs } from "../../src/content/catalog";
+import { PARTY_HEARTS as H } from "../../src/content/dungeon/shared";
 const key = "side-quest.session.v1";
 
-// A Pub Crawl seeded at `step` with `id` in play, the party as given. Step
-// 0 is tonight's omen; the floors are the original three (the Cellar, the
-// Catacombs, the Drowned Taproom) unless `other` picks the other three.
+// Where a run is, step by step: the adventurer, tonight's omen, the queue,
+// the first floor's eight rooms and its boss, a landing, the second floor
+// and its boss, a landing, the third floor, closing time, Last Call.
+const STEP = {
+  adventurer: 0,
+  omen: 1,
+  queue: 2,
+  floor1: 3,
+  boss1: 11,
+  landing1: 12,
+  floor2: 13,
+  boss2: 21,
+  landing2: 22,
+  floor3: 23,
+  closing: 31,
+  lastCall: 32,
+};
+
+// A Pub Crawl seeded at `step` with `id` in play, the party as given. The
+// floors are the original three (the Cellar, the Catacombs, the Drowned
+// Taproom) unless `other` picks the other three. With `adventurer`, that
+// class was dealt and put aside first.
 function crawlAt(
   id: string,
   step = 0,
   party: Partial<PartyState> = {},
-  other = false,
+  { other = false, adventurer }: { other?: boolean; adventurer?: string } = {},
 ): SessionState {
   const floors = other ? [0.9, 0.9, 0.9] : [0.1, 0.1, 0.1];
-  const s = createSession(
+  let s = createSession(
     { version: 1, packIds: ["dungeon"], limit: null, quest: "dungeon" },
     cards,
     packs,
     () => floors.shift() ?? Math.random(),
   );
+  const place = (s: SessionState, id: string, step: number) => {
+    const finale = [...s.quest!.finale];
+    const at = finale.indexOf(id);
+    if (at >= 0) finale[at] = finale[step];
+    finale[step] = id;
+    return { ...s, quest: { ...s.quest!, finale } };
+  };
+  if (adventurer)
+    s = advance(advance(place(s, `dungeon.class-${adventurer}`, 0)));
+  s = place(s, id, step);
   const q = s.quest!;
-  const finale = [...q.finale];
-  const at = finale.indexOf(id);
-  if (at >= 0) finale[at] = finale[step];
-  finale[step] = id;
   return {
     ...s,
     discarded: step,
-    previousId: step ? finale[step - 1] : null,
-    quest: { ...q, finale, step, party: { ...q.party!, ...party } },
+    previousId: step ? q.finale[step - 1] : null,
+    quest: { ...q, step, party: { ...q.party!, ...party } },
   };
 }
 const reveal = (s: SessionState) => advance(s);
@@ -47,8 +73,9 @@ async function seed(page: Page, session: SessionState) {
 const saved = (page: Page) =>
   page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), key);
 const meter = (page: Page) => page.locator(".crawl-meter");
+const full = new RegExp(`^Hearts: ${H} of ${H}`);
 
-test("@release Pub Crawl opens on tonight's omen, then the first floor", async ({
+test("@release Pub Crawl opens on an adventurer and tonight's omen, then the queue", async ({
   page,
 }, info) => {
   await page.goto("./");
@@ -61,15 +88,23 @@ test("@release Pub Crawl opens on tonight's omen, then the first floor", async (
   await page.screenshot({ path: info.outputPath("setup.png") });
   await page.getByRole("button", { name: "Play", exact: true }).click();
   await expect(meter(page)).toHaveAccessibleName(
-    /^Hearts: 12 of 12\. Tonight's omen/,
+    new RegExp(`^Hearts: ${H} of ${H}\\. Your adventurer`),
   );
+  await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
+    "Your adventurer",
+  );
+  await expect(page.locator(".stage-banner")).toHaveText(
+    /Pub Crawl\s*Who's going down tonight\?/,
+  );
+  await page.locator(".game-card").click();
+  await expect(page.locator(".game-card .card-ribbon")).toHaveText(
+    "Your adventurer",
+  );
+  await page.screenshot({ path: info.outputPath("adventurer.png") });
+  await page.locator(".game-card").click();
   await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
     "Tonight's omen",
   );
-  await expect(page.locator(".stage-banner")).toHaveText(
-    /Pub Crawl\s*Tonight's omen/,
-  );
-  await page.screenshot({ path: info.outputPath("start.png") });
   await page.locator(".game-card").click();
   await expect(page.locator(".game-card .card-ribbon")).toHaveText(
     "Tonight's omen",
@@ -77,11 +112,15 @@ test("@release Pub Crawl opens on tonight's omen, then the first floor", async (
   await page.screenshot({ path: info.outputPath("omen.png") });
   await page.locator(".game-card").click();
   await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
-    /^Room 1 of 7, The (Wine )?Cellar$/,
+    "The Queue",
+  );
+  await expect(page.locator(".stage-banner")).toHaveText(
+    /Pub Crawl\s*The Quarter-Zips cut in/,
   );
   const s = await saved(page);
   expect(s.config.packIds).toEqual(["dungeon"]);
   expect(s.quest.party.omen).toBe(s.quest.finale[0]);
+  expect(s.quest.party.boons).toEqual([s.quest.finale[1]]);
 });
 
 test("@release a monster shows its stakes; a smoke bomb flees it", async ({
@@ -89,7 +128,7 @@ test("@release a monster shows its stakes; a smoke bomb flees it", async ({
 }, info) => {
   await seed(
     page,
-    reveal(crawlAt("dungeon.drunk-goblin", 3, { loot: ["smoke"] })),
+    reveal(crawlAt("dungeon.drunk-goblin", STEP.floor1, { loot: ["smoke"] })),
   );
   const face = page.locator(".game-card .study-face");
   await expect(face.locator(".stake-loss")).toHaveAccessibleName(
@@ -104,17 +143,20 @@ test("@release a monster shows its stakes; a smoke bomb flees it", async ({
   await page.screenshot({ path: info.outputPath("monster.png") });
   await flee.click();
   await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
-    /^Room 4 of 7/,
+    /^Room 2 of 8/,
   );
   const s = await saved(page);
-  expect(s.quest.party).toMatchObject({ hearts: 12, loot: [] });
-  expect(s.quest.step).toBe(4);
+  expect(s.quest.party).toMatchObject({ hearts: H, loot: [] });
+  expect(s.quest.step).toBe(STEP.floor1 + 1);
 });
 
 test("a loaded die rerolls a lost fight", async ({ page }, info) => {
   await seed(
     page,
-    rolled(reveal(crawlAt("dungeon.ex-wraith", 10, { loot: ["die"] })), 2),
+    rolled(
+      reveal(crawlAt("dungeon.ex-wraith", STEP.floor2, { loot: ["die"] })),
+      2,
+    ),
   );
   await expect(page.locator(".study-face")).toHaveClass(/battle-lost/);
   const reroll = page.getByRole("button", { name: /^Use the Loaded Die/ });
@@ -126,24 +168,58 @@ test("a loaded die rerolls a lost fight", async ({ page }, info) => {
   expect(s.quest.party.loot).toEqual([]);
 });
 
-test("@release a trial is settled with plaques; a loss costs hearts", async ({
+test("@release the Quaff rerolls a lost fight for drinks, once until a boss falls", async ({
   page,
 }, info) => {
-  await seed(page, reveal(crawlAt("dungeon.tomb-of-silence", 11)));
+  await seed(
+    page,
+    rolled(
+      reveal(crawlAt("dungeon.ex-wraith", STEP.floor2, { loot: ["die"] })),
+      2,
+    ),
+  );
+  const quaff = page.getByRole("button", { name: /^Quaff: drink 3/ });
+  await expect(quaff).toBeVisible();
+  await expect(
+    page.locator(".card-choice.items .card-choice-option"),
+  ).toHaveCount(2);
+  await page.screenshot({ path: info.outputPath("quaff.png") });
+  await quaff.click();
+  await expect(page.locator(".game-card")).toHaveAccessibleName(/^Roll 1d20/);
+  const s = await saved(page);
+  expect(s.roll).toBeNull();
+  expect(s.quest.party).toMatchObject({ quaffed: true, loot: ["die"] });
+  // Drunk once: the next lost roll offers only the die.
+  await seed(page, rolled(s, 2));
+  await expect(
+    page.getByRole("button", { name: /^Use the Loaded Die/ }),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: /^Quaff/ })).toHaveCount(0);
+});
+
+test("@release a trial is settled with plaques; a loss costs hearts and pours into the Cup", async ({
+  page,
+}, info) => {
+  await seed(page, reveal(crawlAt("dungeon.tomb-of-silence", STEP.floor2 + 1)));
   await expect(
     page.getByRole("button", { name: "Won", exact: true }),
   ).toBeVisible();
   await page.screenshot({ path: info.outputPath("trial.png") });
   await page.getByRole("button", { name: "Lost", exact: true }).click();
-  await expect(meter(page)).toHaveAccessibleName(/^Hearts: 10 of 12/);
-  await expect(page.locator(".crawl-meter strong")).toHaveText("10");
+  await expect(meter(page)).toHaveAccessibleName(
+    new RegExp(`^Hearts: ${H - 2} of ${H}.*The Cup: 1 splash$`),
+  );
+  await expect(page.locator(".crawl-meter strong")).toHaveText(`${H - 2}`);
+  await expect(page.locator(".tag-cup")).toHaveText("1");
 });
 
-test("a boss shows its wounds and comes back until it falls", async ({
+test("a boss shows its wounds, its trinket, and comes back until it falls", async ({
   page,
 }, info) => {
-  let s = reveal(crawlAt("dungeon.hangover-hydra", 16, { hits: 1, rounds: 1 }));
-  s = { ...s, discarded: 17 };
+  let s = reveal(
+    crawlAt("dungeon.hangover-hydra", STEP.boss2, { hits: 1, rounds: 1 }),
+  );
+  s = { ...s, discarded: STEP.boss2 + 1 };
   await seed(page, s);
   await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
     "Boss: 1 of 2 hits",
@@ -151,42 +227,149 @@ test("a boss shows its wounds and comes back until it falls", async ({
   await expect(page.locator(".game-card .card-ribbon")).toHaveText(
     "Catacombs · Boss",
   );
+  await expect(page.locator(".game-card .stake-trinket")).toHaveAccessibleName(
+    "Felling it drops a trinket: Hydra Tooth",
+  );
   await page.screenshot({ path: info.outputPath("boss.png") });
+  // The last swing lands: the trinket sweeps in, then the landing.
+  await seed(page, rolled(s, 18));
+  await page.locator(".game-card").click();
+  await expect(page.locator(".news-banner")).toHaveText(
+    /Trinket found\s*Hydra Tooth\s*\+2 to boss rolls\./,
+  );
+  await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
+    "The Lower Landing",
+  );
+  await page.screenshot({ path: info.outputPath("trinket.png") });
+  expect((await saved(page)).quest.party.boons).toEqual([
+    "dungeon.hangover-hydra",
+  ]);
 });
 
-test("the party dialog lays out the run, and a draught heals a heart", async ({
+test("a lost fight can lay a jinx, shown on the meter and in a banner", async ({
   page,
 }, info) => {
   await seed(
     page,
-    crawlAt("dungeon.bone-sommelier", 11, {
+    rolled(reveal(crawlAt("dungeon.goblin-shaman", STEP.floor1)), 2),
+  );
+  await expect(page.locator(".game-card .stake-jinx")).toHaveAccessibleName(
+    "Losing lays a jinx: Goblin Tongue",
+  );
+  await page.locator(".game-card").click();
+  await expect(page.locator(".news-banner")).toHaveText(
+    /Jinxed!\s*Goblin Tongue\s*The jinxed player speaks of themself/,
+  );
+  await expect(page.locator(".tag-jinx")).toBeVisible();
+  await expect(meter(page)).toHaveAccessibleName(/Jinx: Goblin Tongue/);
+  await page.screenshot({ path: info.outputPath("jinx.png") });
+});
+
+test("@release a landing levels the adventurer up for drinks, or rests", async ({
+  page,
+}, info) => {
+  await seed(
+    page,
+    reveal(
+      crawlAt(
+        "dungeon.landing-stairwell",
+        STEP.landing1,
+        {},
+        { adventurer: "barbarian" },
+      ),
+    ),
+  );
+  const plaques = page.locator(".card-choice.offers .card-choice-option");
+  await expect(plaques).toHaveCount(2);
+  await expect(plaques.nth(0)).toHaveAccessibleName(
+    "Berserker · drink 3: your adventurer levels up into Berserker",
+  );
+  await expect(plaques.nth(1)).toHaveAccessibleName("Rest: 3 hearts back");
+  await page.screenshot({ path: info.outputPath("landing.png") });
+  await plaques.nth(0).click();
+  await expect(page.locator(".evolution-banner")).toHaveText(
+    /Barbarian levels up!\s*Berserker\s*\+2 max hearts\. \+2 to elite and boss rolls\./,
+  );
+  // The next floor's banner names the boss waiting at the bottom.
+  const s = await saved(page);
+  const boss = cards.find((c) => c.id === s.quest.finale[STEP.boss2])!;
+  await expect(page.locator(".stage-banner:not(.evolution-banner)")).toHaveText(
+    new RegExp(`Down into the Catacombs\\s*Wanted: ${boss.title}`),
+  );
+  await page.screenshot({ path: info.outputPath("level-up.png") });
+  expect(s.quest.party).toMatchObject({ form: 1, max: H + 2 });
+});
+
+test("the party dialog lays out the run: adventurer, boons, jinx and the Cup", async ({
+  page,
+}, info) => {
+  const s = crawlAt(
+    "dungeon.bone-sommelier",
+    STEP.floor2 + 1,
+    {
       hearts: 5,
       curse: "bleed",
       loot: ["draught", "shield"],
-    }),
+      cup: 4,
+    },
+    { adventurer: "rogue" },
   );
+  // Tonight's omen, kept, and a jinx from a fight on the first floor.
+  const q = s.quest!;
+  const finale = [...q.finale];
+  const swap = (id: string, step: number) => {
+    const at = finale.indexOf(id);
+    if (at >= 0) finale[at] = finale[step];
+    finale[step] = id;
+  };
+  swap("dungeon.goblin-shaman", STEP.floor1);
+  // An omen that leaves the satchel alone.
+  swap("dungeon.omen-lefty-night", STEP.omen);
+  await seed(page, {
+    ...s,
+    quest: {
+      ...q,
+      finale,
+      party: {
+        ...q.party!,
+        boons: [finale[STEP.omen]],
+        jinx: "dungeon.goblin-shaman",
+      },
+    },
+  });
   await meter(page).click();
   const dialog = page.getByRole("dialog", { name: "The party" });
-  await expect(dialog.locator(".crawl-curse")).toContainText("Bleeding");
-  await expect(dialog.locator(".satchel-slot")).toHaveCount(3);
-  await expect(dialog.locator(".crawl-legend dd")).toHaveCount(6);
+  await expect(dialog.locator(".crawl-omen").first()).toContainText("Rogue");
+  await expect(dialog.locator(".crawl-boons li")).toHaveCount(1);
+  await expect(dialog.locator(".crawl-curse.curse-bleed")).toContainText(
+    "Bleeding",
+  );
+  await expect(dialog.locator(".crawl-jinx")).toContainText("Goblin Tongue");
+  await expect(dialog.locator(".crawl-cup")).toContainText("4 splashes");
+  // The Rogue's satchel holds four.
+  await expect(dialog.locator(".satchel-slot")).toHaveCount(4);
+  await expect(dialog.locator(".crawl-legend dd")).toHaveCount(8);
   await expect(dialog.locator(".crawl-legend")).toContainText(
     "A natural 1 doubles a loss",
   );
+  await expect(dialog.locator(".crawl-floors")).toContainText("Wanted:");
   await page.screenshot({ path: info.outputPath("party.png") });
   await dialog.getByRole("button", { name: "Drink" }).click();
   await expect(dialog.locator(".crawl-hearts")).toHaveAccessibleName(
-    "Hearts: 6 of 12",
+    `Hearts: 6 of ${H}`,
   );
   await expect(dialog.getByRole("button", { name: "Drink" })).toHaveCount(0);
 });
 
-test("@release losing the last heart wipes the party", async ({
+test("@release losing the last heart wipes the party, and the Cup goes to the last drawer", async ({
   page,
 }, info) => {
   await seed(
     page,
-    rolled(reveal(crawlAt("dungeon.tab-goblin", 5, { hearts: 1 })), 1),
+    rolled(
+      reveal(crawlAt("dungeon.tab-goblin", STEP.floor1 + 2, { hearts: 1 })),
+      1,
+    ),
   );
   await page.locator(".game-card").click();
   await expect(page.locator(".crawl-end.wiped h1")).toHaveText(
@@ -195,49 +378,83 @@ test("@release losing the last heart wipes the party", async ({
   await expect(page.locator(".crawl-verdict")).toHaveText(
     "Everyone finishes their drink.",
   );
+  await expect(page.locator(".crawl-cup")).toContainText(
+    "Whoever drew the last card drinks the Cup.",
+  );
+  // The queue, three floors, closing time and Last Call.
   await expect(page.locator(".crawl-floors li").first()).toContainText(
+    "The Queue",
+  );
+  await expect(page.locator(".crawl-floors li").nth(1)).toContainText(
     "The Cellar",
   );
-  await expect(page.locator(".crawl-floors li")).toHaveCount(3);
+  await expect(page.locator(".crawl-floors li")).toHaveCount(6);
   await page.screenshot({ path: info.outputPath("wiped.png") });
   await page.getByRole("button", { name: "Play again" }).click();
-  await expect(meter(page)).toHaveAccessibleName(/^Hearts: 12 of 12/);
+  await expect(meter(page)).toHaveAccessibleName(full);
 });
 
 test("felling the Last Call boss wins the crawl", async ({ page }, info) => {
-  let s = reveal(crawlAt("dungeon.last-call-lich", 24, { hits: 2, rounds: 2 }));
-  s = rolled({ ...s, discarded: 26 }, 15);
+  let s = reveal(
+    crawlAt("dungeon.last-call-lich", STEP.lastCall, {
+      hits: 2,
+      rounds: 2,
+      cup: 7,
+    }),
+  );
+  s = rolled({ ...s, discarded: STEP.lastCall + 2 }, 18);
   await seed(page, s);
   await page.locator(".game-card").click();
   await expect(page.locator(".crawl-end h1")).toHaveText(
     /Last call,\s*survived\./,
   );
+  await expect(page.locator(".crawl-cup")).toContainText(
+    "Whoever landed the last swing hands the Cup to anyone.",
+  );
   await page.screenshot({ path: info.outputPath("won.png") });
 });
 
 for (const width of [320, 390])
-  test(`the party meter shares the top row at ${width}px`, async ({
+  test(`the party meter and all four studs share the top row at ${width}px`, async ({
     page,
   }, info) => {
     await page.setViewportSize({ width, height: 640 });
+    const s = crawlAt("dungeon.cursed-idol", STEP.floor2, {
+      hearts: 3,
+      curse: "hex",
+      loot: ["draught", "die", "shield"],
+      cup: 12,
+    });
+    const finale = [...s.quest!.finale];
+    finale[STEP.floor1] = "dungeon.goblin-shaman";
     await seed(
       page,
-      reveal(
-        crawlAt("dungeon.cursed-idol", 10, {
-          hearts: 3,
-          curse: "hex",
-          loot: ["draught", "die", "shield"],
-        }),
-      ),
+      reveal({
+        ...s,
+        quest: {
+          ...s.quest!,
+          finale: finale.map((id, i) =>
+            i !== STEP.floor1 && id === "dungeon.goblin-shaman"
+              ? s.quest!.finale[STEP.floor1]
+              : id,
+          ),
+          party: { ...s.quest!.party!, jinx: "dungeon.goblin-shaman" },
+        },
+      }),
     );
-    const [left, middle, card, stakes] = await Promise.all([
+    const [left, middle, card, stakes, cup, jinx] = await Promise.all([
       page.locator(".crawl-meter").boundingBox(),
       page.locator(".crawl-progress").boundingBox(),
       page.locator(".game-card").boundingBox(),
       page.locator(".game-card .card-stakes").boundingBox(),
+      page.locator(".tag-cup").boundingBox(),
+      page.locator(".tag-jinx").boundingBox(),
     ]);
     expect(left!.x).toBeGreaterThanOrEqual(0);
+    expect(cup!.x).toBeGreaterThanOrEqual(0);
+    expect(jinx!.x).toBeGreaterThanOrEqual(0);
     expect(left!.x + left!.width).toBeLessThanOrEqual(middle!.x);
+    expect(cup!.x + cup!.width).toBeLessThanOrEqual(middle!.x);
     expect(stakes!.x).toBeGreaterThan(card!.x);
     expect(stakes!.x + stakes!.width).toBeLessThan(card!.x + card!.width);
     await page.screenshot({ path: info.outputPath(`meter-${width}.png`) });
@@ -246,7 +463,8 @@ for (const width of [320, 390])
 test("a merchant sells on plaques, and a price in hearts needs a spare heart", async ({
   page,
 }, info) => {
-  await seed(page, reveal(crawlAt("dungeon.rat-fence", 2, { hearts: 1 })));
+  const at = STEP.floor1 + 1;
+  await seed(page, reveal(crawlAt("dungeon.rat-fence", at, { hearts: 1 })));
   const plaques = page.locator(".card-choice.offers .card-choice-option");
   await expect(plaques).toHaveCount(3);
   await expect(plaques.nth(1)).toBeDisabled();
@@ -256,18 +474,21 @@ test("a merchant sells on plaques, and a price in hearts needs a spare heart", a
   await page.screenshot({ path: info.outputPath("merchant.png") });
   // A stray tap on the card does nothing; the plaques decide.
   await page.locator(".game-card").click({ force: true });
-  expect((await saved(page)).quest.step).toBe(2);
+  expect((await saved(page)).quest.step).toBe(at);
   await plaques.nth(0).click();
   await expect(page.locator(".tag-satchel")).toHaveText("1");
   const s = await saved(page);
   expect(s.quest.party).toMatchObject({ hearts: 1, loot: ["draught"] });
-  expect(s.quest.step).toBe(3);
+  expect(s.quest.step).toBe(at + 1);
 });
 
-test("a fork's loud door deals one of the floor's elites", async ({
+test("a fork's loud door deals one of the floor's elites, which drops a trinket", async ({
   page,
 }, info) => {
-  await seed(page, reveal(crawlAt("dungeon.red-or-white", 2, {}, true)));
+  await seed(
+    page,
+    reveal(crawlAt("dungeon.red-or-white", STEP.floor1, {}, { other: true })),
+  );
   await expect(page.locator(".game-card .card-ribbon")).toHaveText(
     "Wine Cellar · Fork",
   );
@@ -280,6 +501,9 @@ test("a fork's loud door deals one of the floor's elites", async ({
   await expect(page.locator(".game-card .stake-loss")).toHaveAccessibleName(
     "Losing costs 2 hearts",
   );
+  await expect(page.locator(".game-card .stake-trinket")).toHaveAccessibleName(
+    /^Winning drops a trinket: /,
+  );
   await page.screenshot({ path: info.outputPath("elite.png") });
 });
 
@@ -287,23 +511,44 @@ test("an ambush shows its two swings in the medallion", async ({
   page,
 }, info) => {
   await seed(page, {
-    ...reveal(crawlAt("dungeon.roach-conga", 11, { hits: 1, rounds: 1 }, true)),
+    ...reveal(
+      crawlAt(
+        "dungeon.roach-conga",
+        STEP.floor2 + 2,
+        { hits: 1, rounds: 1 },
+        { other: true },
+      ),
+    ),
     // The swing already landed was a draw too.
-    discarded: 12,
+    discarded: STEP.floor2 + 3,
   });
   await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
-    "Ambush in room 3 of 7: 1 of 2 hits",
+    "Ambush in room 3 of 8: 1 of 2 hits",
   );
   await page.screenshot({ path: info.outputPath("ambush.png") });
 });
 
+test("closing time: the rival party, beaten twice", async ({ page }, info) => {
+  await seed(page, reveal(crawlAt("dungeon.closing-last-table", STEP.closing)));
+  await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
+    "Ambush, Closing Time: 0 of 2 hits",
+  );
+  await expect(page.locator(".game-card .card-ribbon")).toHaveText(
+    "Closing Time · Rival",
+  );
+  await page.screenshot({ path: info.outputPath("closing.png") });
+});
+
 test("tonight's omen is kept in the party dialog", async ({ page }, info) => {
-  let s = reveal(crawlAt("dungeon.omen-lock-in", 0));
+  let s = reveal(crawlAt("dungeon.omen-lock-in", STEP.omen));
   s = advance(s);
   await seed(page, s);
   await meter(page).click();
   const dialog = page.getByRole("dialog", { name: "The party" });
-  await expect(dialog.locator(".crawl-omen")).toContainText("The Lock-In");
+  await expect(dialog.locator(".crawl-boons")).toContainText("The Lock-In");
+  await expect(dialog.locator(".crawl-boons")).toContainText(
+    "Bosses take 1 more hit.",
+  );
   await expect(dialog.locator(".satchel-slot").first()).toContainText(
     "Loaded Die",
   );
@@ -313,12 +558,12 @@ test("tonight's omen is kept in the party dialog", async ({ page }, info) => {
 test("every Dungeon night card fits its face with its plaques at 375x667", async ({
   page,
 }) => {
-  test.setTimeout(120000);
+  test.setTimeout(240000);
   await page.setViewportSize({ width: 375, height: 667 });
   const ids = cards.filter((c) => c.id.startsWith("dungeon.")).map((c) => c.id);
   // Where each card is dealt: its stage's first step on the route that has
   // it (an elite, behind a fork, one room later).
-  const routes = [crawlAt(ids[0]), crawlAt(ids[0], 0, {}, true)];
+  const routes = [crawlAt(ids[0]), crawlAt(ids[0], 0, {}, { other: true })];
   const placeOf = (id: string) => {
     for (const [other, base] of routes.entries()) {
       let first = 0;
@@ -337,7 +582,7 @@ test("every Dungeon night card fits its face with its plaques at 375x667", async
   for (const id of ids) {
     // A smoke bomb in the satchel puts the Flee plaque on every room fight.
     const { step, other } = placeOf(id);
-    const s = reveal(crawlAt(id, step, { loot: ["smoke"] }, other));
+    const s = reveal(crawlAt(id, step, { loot: ["smoke"] }, { other }));
     await page.evaluate(
       ({ key, session }) => localStorage.setItem(key, JSON.stringify(session)),
       { key, session: s },

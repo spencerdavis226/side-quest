@@ -1,6 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import type { SessionState } from "../game/types";
-import { finaleStage, omenEffect, omenForm, questStages } from "../game/engine";
+import {
+  finaleCard,
+  finaleStage,
+  formEffect,
+  omenForm,
+  questStages,
+  wantedBoss,
+} from "../game/engine";
 import { describeChange } from "../game/omenText";
 import { crawlTheme } from "./crawlTheme";
 import { packs } from "../content/manifest.generated";
@@ -26,6 +33,10 @@ export function StageBanner({ session }: { session: SessionState }) {
   // The banner takes the stage's ribbon finish (pearl, violet, crimson).
   const tone = quest.stages[stage.stage].cards[0]?.ribbonTone ?? "gold";
   const banner = quest.packId === "pokemon" ? stageArt(tone) : undefined;
+  // A floor of rooms names the boss waiting at the bottom (Pub Crawl).
+  const wantedWord = crawlTheme(quest.packId).words.wanted;
+  const wanted =
+    wantedWord && stage.size > 1 ? wantedBoss(quest)?.title : undefined;
   return (
     <div
       // Keyed by stage so a new stage replays the sweep.
@@ -37,6 +48,11 @@ export function StageBanner({ session }: { session: SessionState }) {
         {banner && <img className="stage-banner-art" src={banner} alt="" />}
         <small>{rules?.mode}</small>
         <strong>{intro}</strong>
+        {wanted && (
+          <span className="banner-wanted">
+            {wantedWord}: {wanted}
+          </span>
+        )}
       </div>
     </div>
   );
@@ -62,9 +78,10 @@ export function EvolutionBanner({ session }: { session: SessionState }) {
         form === 1 || now?.card.branches
           ? now?.card.title
           : now?.card.evolves?.[form - 2]?.title;
-      // What the evolution did, from the numbers: "Max HP 15 → 17."
+      // What the evolution did, from the numbers: "Max HP 15 → 17." The
+      // form alone: boons a crawl keeps beside it didn't change.
       const words = crawlTheme(quest?.packId).omenWords;
-      const after = omenEffect(quest) ?? {};
+      const after = formEffect(quest) ?? {};
       const base = (quest?.party?.max ?? 0) - (after.hearts ?? 0);
       const change =
         words && now?.before
@@ -86,6 +103,80 @@ export function EvolutionBanner({ session }: { session: SessionState }) {
         <small>{evolving(shown.from)}</small>
         <strong>{shown.to}</strong>
         {shown.change && <span>{shown.change}</span>}
+      </div>
+    </div>
+  );
+}
+
+/** Pub Crawl's news, swept across the top third like an evolution: a
+ * trinket found (its name and power), a jinx laid (its rule) or lifted.
+ * Shown once per change, never on a resumed game. Tonight's omen is a
+ * boon too, but its own card has just said so. */
+export function PartyNewsBanner({ session }: { session: SessionState }) {
+  const quest = session.quest;
+  const party = quest?.party;
+  const boons = party?.boons?.length ?? 0;
+  const jinx = party?.jinx;
+  const seen = useRef({ boons, jinx });
+  const [shown, setShown] = useState<{
+    key: string;
+    kicker: string;
+    title: string;
+    line: string;
+    tone: string;
+  } | null>(null);
+  const words = crawlTheme(quest?.packId).words;
+  useEffect(() => {
+    const before = seen.current;
+    seen.current = { boons, jinx };
+    if (!quest || !party) return;
+    if (boons > before.boons) {
+      const card = finaleCard(quest, party.boons![boons - 1]);
+      if (card?.boon && card.encounter !== "omen" && words.trinketFound) {
+        // A boss that falls can lift a jinx in the same breath.
+        const lifted = before.jinx && !jinx && words.jinx;
+        setShown({
+          key: `boon-${card.id}`,
+          kicker: words.trinketFound,
+          title: card.boon.name,
+          line: [card.boon.rules, lifted ? `${words.jinx!.lifted}.` : ""]
+            .filter(Boolean)
+            .join(" "),
+          tone: "violet",
+        });
+        return;
+      }
+    }
+    if (jinx && jinx !== before.jinx && words.jinx) {
+      const laid = finaleCard(quest, jinx)?.jinx;
+      if (laid)
+        setShown({
+          key: `jinx-${jinx}`,
+          kicker: words.jinx.landed,
+          title: laid.name,
+          line: laid.rule,
+          tone: "crimson",
+        });
+    } else if (before.jinx && !jinx && words.jinx)
+      setShown({
+        key: `lifted-${before.jinx}`,
+        kicker: words.jinx.name,
+        title: words.jinx.lifted,
+        line: "",
+        tone: "pearl",
+      });
+  }, [boons, jinx, quest, party, words]);
+  if (!shown) return null;
+  return (
+    <div
+      key={shown.key}
+      className={`stage-banner banner-${shown.tone} evolution-banner news-banner`}
+      role="status"
+    >
+      <div className="stage-banner-cloth">
+        <small>{shown.kicker}</small>
+        <strong>{shown.title}</strong>
+        {shown.line && <span>{shown.line}</span>}
       </div>
     </div>
   );

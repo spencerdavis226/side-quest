@@ -18,6 +18,14 @@ export interface OmenWords {
   kinds: Partial<Record<Encounter, string>>;
   /** The same kinds before "rolls": "route battle", "Ace Trainer". */
   rollKinds: Partial<Record<Encounter, string>>;
+  /** Write hearts and the satchel as changes ("+2 max hearts", "+1
+   * satchel slot") rather than totals: Pub Crawl stacks boons on the
+   * adventurer, so a total on one card would be wrong once another
+   * lands. `max` and `bag` are then the plural nouns, with these
+   * singulars. */
+  relative?: { maxOne: string; slot: [one: string, many: string] };
+  /** Where a restock comes: "at every gym". */
+  restockAt?: string;
 }
 
 const join = (parts: string[]) =>
@@ -88,7 +96,13 @@ const fumbleSentence = (fumble = 1) =>
       ? "Natural 1 on a 1 or 2"
       : `Natural 1 on 1 to ${fumble}`;
 const restockSentence = (item: Loot, words: OmenWords) =>
-  `A fresh ${words.items[item][0]} at every gym`;
+  `A fresh ${words.items[item][0]} ${words.restockAt ?? "at every gym"}`;
+/** "+2 max hearts", "−1 max heart". */
+const heartsBy = (n: number, words: OmenWords) =>
+  `${signed(n)} ${Math.abs(n) === 1 ? words.relative!.maxOne : words.max}`;
+/** "+1 satchel slot". */
+const slotsBy = (n: number, words: OmenWords) =>
+  `${signed(n)} ${words.relative!.slot[Math.abs(n) === 1 ? 0 : 1]}`;
 const sameRoll = (a: OmenEffect["roll"], b: OmenEffect["roll"]) =>
   JSON.stringify(
     Object.entries(a ?? {})
@@ -113,16 +127,20 @@ const bossSentence = (hits = 0) =>
 /** What an omen does, in sentences: "Max HP 15. Every heal heals 1 more.
  * Starts with a Potion." `base` is the run's HP before the omen. Items are
  * named only with `start` (the first form's are dealt at the start; a later
- * form's arrive once, in `describeChange`). */
+ * form's arrive once, in `describeChange`), led by `itemsLead` ("Comes
+ * with" for a boon found mid-run). */
 export function describeOmen(
   effect: OmenEffect,
   words: OmenWords,
   base: number,
   start = true,
+  itemsLead = "Starts with",
 ) {
   const out: string[] = [];
   // A later form always says its HP, so its power never reads empty.
-  if (effect.hearts || !start)
+  if (words.relative) {
+    if (effect.hearts) out.push(heartsBy(effect.hearts, words));
+  } else if (effect.hearts || !start)
     out.push(`${words.max} ${base + (effect.hearts ?? 0)}`);
   out.push(...rollSentences(effect.roll, words));
   if ((effect.crit ?? 20) < 20) out.push(critSentence(effect.crit));
@@ -132,9 +150,14 @@ export function describeOmen(
   out.push(...hurtSentences(effect.hurt, words));
   if (effect.restock) out.push(restockSentence(effect.restock, words));
   if (effect.bossHits) out.push(bossSentence(effect.bossHits));
-  if ((effect.satchel ?? 3) !== 3) out.push(bagSentence(words, effect.satchel));
+  if ((effect.satchel ?? 3) !== 3)
+    out.push(
+      words.relative
+        ? slotsBy((effect.satchel ?? 3) - 3, words)
+        : bagSentence(words, effect.satchel),
+    );
   if (start && effect.loot?.length)
-    out.push(`Starts with ${itemList(effect.loot, words)}`);
+    out.push(`${itemsLead} ${itemList(effect.loot, words)}`);
   return out
     .filter(Boolean)
     .map((s) => `${s}.`)
@@ -151,7 +174,12 @@ export function describeChange(
 ) {
   const out: string[] = [];
   const [h0, h1] = [before.hearts ?? 0, after.hearts ?? 0];
-  if (h0 !== h1) out.push(`${words.max} ${base + h0} → ${base + h1}`);
+  if (h0 !== h1)
+    out.push(
+      words.relative
+        ? heartsBy(h1 - h0, words)
+        : `${words.max} ${base + h0} → ${base + h1}`,
+    );
   if (!sameRoll(before.roll, after.roll)) {
     const roll = rollSentences(after.roll, words);
     out.push(...(roll.length ? roll : ["No roll bonus"]));
@@ -173,7 +201,11 @@ export function describeChange(
   if ((before.bossHits ?? 0) !== (after.bossHits ?? 0))
     out.push(bossSentence(after.bossHits));
   if ((before.satchel ?? 3) !== (after.satchel ?? 3))
-    out.push(bagSentence(words, after.satchel));
+    out.push(
+      words.relative
+        ? slotsBy((after.satchel ?? 3) - (before.satchel ?? 3), words)
+        : bagSentence(words, after.satchel),
+    );
   if (before.restock !== after.restock && after.restock)
     out.push(restockSentence(after.restock, words));
   if (after.loot?.length) out.push(`Gets ${itemList(after.loot, words)}`);
@@ -210,4 +242,39 @@ export const leagueOmenWords: OmenWords = {
     ambush: "rival",
     boss: "boss",
   },
+};
+
+/** Pub Crawl's words for its adventurers, tonight's omens and trinkets
+ * (the dungeon theme's item names). Hearts and the satchel are written as
+ * changes, since boons stack. */
+export const dungeonOmenWords: OmenWords = {
+  max: "max hearts",
+  bag: "The satchel",
+  relative: { maxOne: "max heart", slot: ["satchel slot", "satchel slots"] },
+  items: {
+    draught: ["Healing Draught", "Healing Draughts", "a"],
+    shield: ["Coaster Shield", "Coaster Shields", "a"],
+    die: ["Loaded Die", "Loaded Dice", "a"],
+    smoke: ["Smoke Bomb", "Smoke Bombs", "a"],
+    revive: ["Second Wind", "Second Winds", "a"],
+    candy: ["Dog-Eared Tome", "Dog-Eared Tomes", "a"],
+  },
+  kinds: {
+    monster: "monsters",
+    trial: "trials",
+    trap: "traps",
+    relic: "relics",
+    elite: "elites",
+    ambush: "ambushes",
+    boss: "bosses",
+  },
+  rollKinds: {
+    monster: "monster",
+    trap: "trap",
+    relic: "relic",
+    elite: "elite",
+    ambush: "ambush",
+    boss: "boss",
+  },
+  restockAt: "whenever a boss falls",
 };

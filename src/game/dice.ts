@@ -226,7 +226,7 @@ export function validateRoll(
       (dice.count !== 1 ||
         dice.sides !== 20 ||
         !Number.isSafeInteger(roll.bonus) ||
-        Math.abs(roll.bonus!) > 6 ||
+        Math.abs(roll.bonus!) > 10 ||
         (roll.natural !== undefined && ![20, 1].includes(roll.natural)) ||
         (roll.flinched !== undefined && roll.flinched !== true)))
   )

@@ -2,6 +2,90 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Pub Crawl at League depth (2026-10-17, owner request; committed locally, not pushed)
+
+**Owner request.** Pokémon League is "really nice" and Dungeon night is falling behind: bring Pub Crawl up to League tier in fun and immersion, with more cards. Borrow from other games as well as inventing. The owner approved every idea in the proposal ("implement everything you think is great").
+
+**Run structure (dungeon.ts):**
+- Your adventurer (1 of 12).
+- Tonight's omen (1 of 12).
+- The Queue: the Quarter-Zips cut in (1 of 5).
+- Floor 1 (8 rooms), then its boss (1 of 5).
+- The Landing.
+- Floor 2 (8 rooms), then its boss (1 of 5).
+- The Lower Landing.
+- Floor 3 (8 rooms).
+- Closing Time: the Quarter-Zips again, 2 hits (1 of 5).
+- Last Call (1 of 8).
+
+The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
+
+**New systems (engine; all fields optional, schema v2 unchanged, old saves load):**
+- **Adventurers** (`dungeon/classes.ts`) are the League's starter engine.
+  - Each class has one felt perk and levels up twice. Level-up text is written from the numbers in relative words (`dungeonOmenWords.relative`).
+  - The Drunken Monk starts bad and gets strong. The Plus-One is the worst by design, and levelling it up makes it worse.
+  - The dice wear the adventurer's colours (35 palettes). Tonight's omen no longer colours them.
+- **Boons** (`card.boon`, `party.boons`, `stackEffects`, `formEffect`): tonight's omen is now a boon.
+  - Bosses on floors 1 and 2, and every elite, drop a **trinket** (38 in all).
+  - Boons stack: numbers add, naturals widen, and a boon's satchel moves the size by its difference from 3. `omenEffect` returns the stacked effect.
+- **Landings** (`encounter: "rest"`): two plaques, "Level up · drink 3" (`evolve`) or rest for 3 hearts.
+- **Jinxes** (`card.jinx`, `party.jinx`): 17 spoken table rules (Picolo's viruses). A jinx lands on a loss, shows on the meter, in the party dialog and in a banner, and lifts when the floor's boss falls.
+- **The Quaff** (`party.quaff`, `canQuaff`, `quaff`): reroll a lost d20 for 3 drinks, once until the next boss falls. A hex does not block it.
+- **The Cup** (`party.cup`): every lost fight adds a splash. The end screens say who drinks it: the last swing hands it to anyone on a win; the last drawer drinks it on a wipe.
+- **Wanted poster**: a floor's stage banner and the party dialog name the boss waiting at the bottom (`wantedBoss`).
+- `restock` now also fires on any boss in a crawl without badges (Pub Crawl), so the Wizard, Templar and Brewmaster can use it.
+
+**Content: 269 Dungeon night cards, up from 166.**
+- Deck: 166, up from 118. Each floor has 20 fights; floors 1 and 2 have 3 elites and 5 bosses; Last Call has 8 bosses.
+- Pub Crawl only: 103, up from 48. That is 61 finds (a second fork and merchant per floor, Tome and Second Wind for sale), 12 omens, 12 adventurers, 8 landings and 10 Quarter-Zips cards.
+- Variety pass on the old plain "Drink 3 / Give 3" fights:
+  - Named targets and table moments.
+  - d6 move lists and 2d6 pairs (the League's `moves`/`pair`).
+  - Jinxes on some losses.
+- Ported from the League: the Revive and the Rare Candy become the dungeon's Second Wind and Dog-Eared Tome.
+- Omen copy now speaks in changes, because omens stack: Cargo Shorts and Butterfingers say "one more/fewer satchel slot". Happy Hour and Thin Walls now say "every heal", which is what the engine always did.
+
+**Tuning (`dungeon/shared.ts`):**
+- Party hearts 12 → 11.
+- Targets raised by 1: NEED 7/9/11, SAVE 9/11/13, BOSS 9/11/12, ELITE 10/12/14.
+- Third-floor rooms cost 3 hearts; closing time costs 3.
+
+`tests/dungeon.test.ts` (4,000 seeded runs; a sensible table quaffs when it has no die, and levels up unless at 6 hearts or fewer):
+- Won 32.8%. A won run is 42.4 draws and keeps 4 boons. The Cup takes 9.5 splashes a run.
+- Adventurers 27% (Rogue) to 42% (Paladin, Barbarian). Plus-One 7% over 600 forced runs.
+- Omens 23% (Lock-In) to 42% (Regulars). Routes 28% to 38%.
+- 82% of runs level up at least once; 40% reach level 3.
+- Wipes come at the second boss (15%), closing time (19%) and Last Call (17%).
+
+**UI:**
+- Meter: jinx stud (bottom left) and Cup stud (top left, tips on each splash).
+- Medallion: helm for the adventurer, fire for a landing, shadows for the queue.
+- Card seals: trinket (green) and jinx.
+- Plaques: an amber Quaff beside Reroll. The level-up plaque names the next level ("Berserker · drink 3").
+- `PartyNewsBanner`: trinket found, jinx laid or lifted. `EvolutionBanner`: "Barbarian levels up!" with what changed.
+- `CrawlRecord`: adventurer, boons, jinx, Cup, set-piece rows (the queue, closing time, and the League's rival, Legendary and Champion as their own rows) and wanted.
+- Six new marks from game-icons via `scripts/crawl-icons.ts`.
+- The League's words and plaques are unchanged.
+
+**Verification:**
+- `npm test`: 221 passed.
+- The four aggregate harness tests (League and Dungeon) now have 30 s timeouts. Under a full parallel run the League aggregate hit the 5 s default; it passes alone.
+- Lint, typecheck, `npm run build` and budgets passed: runtime 3,752 KiB; largest lazy chunk 145.5 KiB gzip; dungeon chunk 23 KiB gzip.
+- `npm run cards:review` regenerated.
+- Browser, Chromium only. Run against the container's Chromium 1194 through a throwaway local config, because Playwright's pinned build isn't installed here.
+  - `crawl.spec.ts` (rewritten for the new run, 19 tests) passed alone, including both 320/390 px meter checks and the 375×667 fit sweep over all 269 cards. The sweep had first caught one overflowing card (Staff Only), which was shortened.
+  - `quest.spec.ts` passed (League wording unchanged). Its fit sweep needed a retry once, after timing out while two Vitest runs shared the CPU.
+- WebKit and a physical device: not checked.
+
+**Risks:**
+- Balance is measured by a scripted table, not people. The Quaff and level-up policies are guesses at real behaviour.
+- At 320 px the meter carries four studs. They fit (tested), but it is busy.
+- The Cup averages about 10 splashes; a "splash" is left to the table.
+- Jinxes are table-behaviour rules, which the owner excluded for starter perks (2026-10-17). Here they are app-tracked and lift by themselves. Confirm the owner wants them.
+- The deck play of jinx cards is plain text only.
+
+**Next:** owner playtest, then device check (studs at 320 px, banner timing on a real phone); WebKit e2e in CI.
+
 ## Starters you feel, Bidoof, themed dice (2026-10-17, owner request; pushed to `main` for deploy)
 
 **Owner request.** Starters and evolutions should be felt heavily. Add a Bidoof starter that is the worst, with an evolution that is worse, plus a few more bad or neutral starters. Theme the dice to the starter, and to the omen in Pub Crawl. The owner picked roll bonuses (B) and natural-range tweaks (E) from the proposal, plus the listed perks without any table-behaviour rules (no sunglasses, no blowing on drinks, no Pika naming).

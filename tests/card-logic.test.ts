@@ -39,7 +39,8 @@ describe("card logic sweep", () => {
       if (DURATION_EXCEPTIONS.has(card.id)) continue;
       // A Pub Crawl omen is the run's first card and holds for the whole
       // crawl; its ribbon, "Tonight's omen", is its horizon.
-      if (card.omen) continue;
+      // A crawl's omens and boons hold for the run.
+      if (card.omen || card.boon) continue;
       expect(textOf(card), card.id).toMatch(
         /next turn|rest of the game|end of the game/i,
       );

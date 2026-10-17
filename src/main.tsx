@@ -39,7 +39,11 @@ import { Completion } from "./screens/Completion";
 import { GameDialogs, type DialogName } from "./screens/GameDialogs";
 import { useWakeLock } from "./app/wakeLock";
 import { PortraitGate } from "./components/PortraitGate";
-import { EvolutionBanner, StageBanner } from "./components/StageBanner";
+import {
+  EvolutionBanner,
+  PartyNewsBanner,
+  StageBanner,
+} from "./components/StageBanner";
 import { PartyPulse } from "./components/Crawl";
 import "./style.css";
 import "./presentation/theme.css";
@@ -239,11 +243,13 @@ function App() {
               onSettle={(won) => controller.settle(won)}
               onSpend={(item) => controller.spend(item)}
               onOffer={(index, branch) => controller.offer(index, branch)}
+              onQuaff={() => controller.quaff()}
               onRevealRoll={() => controller.revealRoll()}
               onFinish={finish}
             />
             <StageBanner session={display} />
             <EvolutionBanner session={display} />
+            <PartyNewsBanner session={display} />
           </>
         )}
         {!active && !motion && updateReady && (

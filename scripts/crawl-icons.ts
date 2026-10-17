@@ -23,6 +23,14 @@ const picks: Record<string, string> = {
   "crawl/ambush": "lorc/two-shadows",
   "crawl/elite": "lorc/crossed-swords",
   "crawl/door": "lorc/wooden-door",
+  // Pub Crawl's adventurer, trinkets, the Cup, the Quaff, the landing's
+  // rest and a jinx (2026-10-17).
+  "crawl/adventurer": "lorc/visored-helm",
+  "crawl/trinket": "lorc/gem-pendant",
+  "crawl/cup": "lorc/chalice-drops",
+  "crawl/quaff": "lorc/beer-stein",
+  "crawl/rest": "lorc/campfire",
+  "crawl/jinx": "delapouite/tongue",
   // Pokémon League (src/components/crawlTheme.ts maps them to the crawl's
   // marks).
   "league/potion": "lorc/spray",

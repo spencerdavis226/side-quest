@@ -6,6 +6,7 @@ import {
   currentCard,
   settleBattle,
   skipRoll,
+  quaff,
   spendLoot,
   awaitingOffer,
   takeOffer,
@@ -179,6 +180,17 @@ export class PresentationController {
       this.transition(next, null);
       this.effect("press");
     }
+  }
+  /** Quaff: the drawer drinks for another go at a lost roll, which clears
+   * it so the card can be rolled again. */
+  quaff() {
+    const { session, motion } = this.state;
+    if (!session || motion) return;
+    const next = quaff(session);
+    if (next === session) return;
+    this.persist(next);
+    this.transition(next, null);
+    this.effect("press");
   }
   revealRoll() {
     const { session, motion } = this.state;

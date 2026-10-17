@@ -357,12 +357,18 @@ describe("choice cards", () => {
       "cabin.pet-that-dog",
       // Dungeon night relics: walk away, or roll for the loot.
       "dungeon.mimic-cooler",
+      "dungeon.fuse-box",
       "dungeon.dusty-bottle",
+      "dungeon.locked-reserve",
       "dungeon.cursed-idol",
       "dungeon.bone-vending",
+      "dungeon.sarcophagus",
       "dungeon.glint-in-the-drain",
+      "dungeon.the-floater",
       "dungeon.sunken-chest",
+      "dungeon.the-cash-register",
       "dungeon.back-burner",
+      "dungeon.the-mystery-meat",
     ]);
     for (const choice of [
       {},

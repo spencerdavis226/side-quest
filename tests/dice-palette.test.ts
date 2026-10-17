@@ -6,8 +6,10 @@ import {
   houseDice,
 } from "../src/presentation/dice/palette";
 
-// The dice wear the starter's or omen's colours (owner, 2026-10-17); the
-// numerals must stay legible from across the table on every one.
+// The dice wear the starter's colours (owner, 2026-10-17), and since
+// 2026-10-17 the Pub Crawl adventurer's (tonight's omen became a boon and
+// no longer colours them); the numerals must stay legible from across the
+// table on every one.
 const omens = cards.filter((c) => c.omen);
 const palettes = omens.flatMap((c) => [
   [c.title, c.palette],
@@ -15,8 +17,10 @@ const palettes = omens.flatMap((c) => [
 ]) as [string, (typeof omens)[number]["palette"]][];
 
 describe("dice palettes", () => {
-  it("gives every starter form and every omen its own colours", () => {
-    expect(palettes.length).toBe(23 + 39 + 12);
+  it("gives every starter and adventurer level its own colours", () => {
+    // 23 starters and their 39 later forms; 12 adventurers and their 23
+    // later levels.
+    expect(palettes.length).toBe(23 + 39 + 12 + 23);
     for (const [title, p] of palettes) expect(p, title).toBeDefined();
     const keys = palettes.map(([, p]) => `${p!.primary}${p!.secondary}`);
     expect(new Set(keys).size).toBe(keys.length);

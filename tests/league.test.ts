@@ -179,6 +179,8 @@ function playRun(seed: number, starter?: string) {
 }
 
 const RUNS = 4000;
+// The tests below read thousands of runs; beside the other harness in a
+// full parallel `npm test` they can pass the 5 s default, so each has 30 s.
 const runs = Array.from({ length: RUNS }, (_, i) => playRun(i + 1));
 const rate = (group: SessionState[]) =>
   group.filter((s) => questRecord(s)!.won).length / group.length;
@@ -218,7 +220,7 @@ it("the League is hard: the team wins between 18% and 40% of its runs", () => {
   expect(mean).toBeGreaterThan(60);
   expect(mean).toBeLessThan(70);
   for (const s of runs.slice(0, 50)) roundTrip(s);
-});
+}, 30_000);
 
 it("starters evolve often, but not always all the way", () => {
   const evolving = runs.filter((s) => (omenForm(s.quest)?.forms ?? 0) > 0);
@@ -231,7 +233,7 @@ it("starters evolve often, but not always all the way", () => {
   expect(once / evolving.length).toBeLessThan(0.9);
   expect(full / evolving.length).toBeGreaterThan(0.3);
   expect(full / evolving.length).toBeLessThan(0.5);
-});
+}, 30_000);
 
 it("no starter and no hideout makes the League a walkover or hopeless", () => {
   const starters = by((s) =>
@@ -254,7 +256,7 @@ it("no starter and no hideout makes the League a walkover or hopeless", () => {
     expect(r, name).toBeGreaterThan(0.1);
     expect(r, name).toBeLessThan(0.5);
   }
-});
+}, 30_000);
 
 it("Bidoof is the worst starter, and still wins now and then", () => {
   const bidoof = rate(

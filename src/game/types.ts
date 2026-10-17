@@ -98,6 +98,29 @@ export interface CardDefinition {
   branches?: true;
   /** A crawl omen's dice colours while it holds (`DicePalette`). */
   palette?: DicePalette;
+  /** Pub Crawl (2026-10-17): an effect the party keeps for the rest of the
+   * run once this card is put aside (a battle only on a win, a boss or an
+   * ambush only when it falls): tonight's omen, or a trinket a boss or an
+   * elite drops. Boons stack with each other and with the adventurer's
+   * omen (`party.boons`). */
+  boon?: Boon;
+  /** Pub Crawl (2026-10-17): a spoken rule the table keeps until the
+   * floor's boss falls, laid when the card is put aside (a battle only when
+   * lost). The app shows it and lifts it; nobody has to remember. */
+  jinx?: Jinx;
+}
+/** A lasting effect and its name, as the party dialog shows it. `rules` is
+ * written from `effect` (`describeOmen`). */
+export interface Boon {
+  name: string;
+  rules: string;
+  effect: OmenEffect;
+}
+/** A table rule with a name: "Goblin Tongue", "Speak of yourself in the
+ * third person. Slip: drink 1." */
+export interface Jinx {
+  name: string;
+  rule: string;
 }
 /** One later form of a starter: its name, what it does (shown in the team
  * dialog) and the omen effect it holds while it is the current form. */
@@ -126,6 +149,8 @@ export const ENCOUNTERS = [
   "merchant",
   "fork",
   "omen",
+  // A rest between floors: level up or catch your breath (2026-10-17).
+  "rest",
 ] as const;
 export type Encounter = (typeof ENCOUNTERS)[number];
 /** One plaque on a merchant or a fork. `cost` is hearts paid outright (no
@@ -234,8 +259,11 @@ export interface PackQuest {
   /** A crawl: the run is the finale stages alone, dealt from the first card
    * (`goal` is 0 and the deck is never dealt), and the table shares
    * `hearts`. Losing them all ends the game. Stage cards may also be in the
-   * pack's deck, which plays them as ordinary cards in the plain modes. */
-  party?: { hearts: number };
+   * pack's deck, which plays them as ordinary cards in the plain modes.
+   * `quaff` (2026-10-17): a lost d20 can be rolled again for that many
+   * drinks, once until the next boss falls. `cup`: every lost fight pours a
+   * splash into a shared cup, and the run's end hands it to someone. */
+  party?: { hearts: number; quaff?: number; cup?: true };
 }
 /** A quest's progress in one game. `stages` snapshots each stage's pool and
  * `finale` holds the cards picked at the start, in the order they are dealt.
@@ -281,6 +309,17 @@ export interface PartyState {
   omen?: string;
   /** How many times tonight's omen has evolved (`evolves`); absent is 0. */
   form?: number;
+  /** The cards whose `boon` the party keeps, in the order they came; older
+   * saves omit it. */
+  boons?: string[];
+  /** The card whose `jinx` holds until the floor's boss falls. */
+  jinx?: string;
+  /** The Quaff's price in drinks, when the crawl has one, and whether it
+   * has been drunk since the last boss fell. */
+  quaff?: number;
+  quaffed?: true;
+  /** Splashes in the Cup, when the crawl keeps one: one per lost fight. */
+  cup?: number;
 }
 export interface PackDefinition {
   version: 1;

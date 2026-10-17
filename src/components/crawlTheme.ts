@@ -1,5 +1,9 @@
 import type { Curse, Loot, QuestStage } from "../game/types";
-import { leagueOmenWords, type OmenWords } from "../game/omenText";
+import {
+  dungeonOmenWords,
+  leagueOmenWords,
+  type OmenWords,
+} from "../game/omenText";
 
 // What a crawl is called, per pack: the same engine is a dungeon crawl in
 // Dungeon night and a journey in Pokémon League. Display only; the engine
@@ -15,7 +19,13 @@ export type CrawlIconName =
   | "omen"
   | "ambush"
   | "elite"
-  | "door";
+  | "door"
+  | "adventurer"
+  | "trinket"
+  | "cup"
+  | "quaff"
+  | "rest"
+  | "jinx";
 
 export interface CrawlTheme {
   loot: Record<Loot, { name: string; does: string }>;
@@ -68,6 +78,26 @@ export interface CrawlTheme {
     badges?: string;
     /** The banner when the starter evolves: "What? Charmander is evolving!" */
     evolving?: (from: string) => string;
+    /** The run's own omen in the party dialog and the medallion: "Your
+     * starter", "Your adventurer". */
+    adventurer: string;
+    /** On an evolve plaque: who grows, and what it is once it can't. */
+    grows: { who: string; verb: string; done: string };
+    /** Pub Crawl only (2026-10-17): the boons kept for the run, a jinx, the
+     * Quaff and the Cup. A theme without them never shows them. */
+    trinkets?: string;
+    trinketFound?: string;
+    jinx?: { name: string; landed: string; lifted: string; lasts: string };
+    quaff?: string;
+    cup?: {
+      name: string;
+      pour: string;
+      /** The end screens: who drinks it. */
+      won: string;
+      wiped: string;
+    };
+    /** A floor's banner names the boss waiting at the bottom. */
+    wanted?: string;
   };
   /** What the setup screen counts as the run's length (floors, gyms);
    * by default every stage of several rooms. */
@@ -77,6 +107,8 @@ export interface CrawlTheme {
   /** The legend's last two lines, the standing rule on a d20: what a
    * natural 20 doubles, then what a natural 1 doubles. */
   naturals: [string, string];
+  /** Pub Crawl's extra seals: a trinket on a win, a jinx on a loss. */
+  legendMore?: { trinket: string; jinx: string };
   /** The end screens: two title lines (the second in italics) and the
    * verdict. */
   wiped: { title: [string, string]; verdict: string };
@@ -92,12 +124,12 @@ const dungeon: CrawlTheme = {
     shield: { name: "Coaster Shield", does: "Blocks the next heart loss" },
     die: { name: "Loaded Die", does: "Roll a lost fight again" },
     smoke: { name: "Smoke Bomb", does: "Escape a room fight" },
-    // Only the League's starters bring these; named for completeness.
+    // Adventurers, merchants and trinkets bring these (2026-10-17).
     revive: {
       name: "Second Wind",
       does: "When the hearts run out: back to half",
     },
-    candy: { name: "Odd Candy", does: "Tonight's omen grows" },
+    candy: { name: "Dog-Eared Tome", does: "Your adventurer levels up now" },
   },
   curses: {
     bleed: { name: "Bleeding", does: "Every heart loss costs one more" },
@@ -105,8 +137,9 @@ const dungeon: CrawlTheme = {
   },
   flee: "Flee",
   reroll: "Reroll",
-  eat: "Eat",
+  eat: "Read",
   drink: "Drink",
+  omenWords: dungeonOmenWords,
   icons: { folder: "art/crawl", files: {} },
   words: {
     heart: "heart",
@@ -123,13 +156,36 @@ const dungeon: CrawlTheme = {
     aBoss: "A boss",
     anAmbush: "An ambush",
     omen: "Tonight's omen",
-    elite: "the next room is an elite: harder, and it pays",
+    elite: "the next room is an elite: harder, and it drops a trinket",
     curseLasts: "to the end of the floor",
     setupTitle: "The crawl",
     setupBrief: (hearts, floors) =>
-      `${hearts} shared hearts, ${floors} floors, a boss on each, and a new omen every run`,
+      `${hearts} shared hearts, ${floors} floors, an adventurer who levels up, trinkets from bosses, and the Cup`,
     setupHearts: "hearts",
     setupFloors: "floors",
+    evolving: (from) => `${from} levels up!`,
+    adventurer: "Your adventurer",
+    grows: {
+      who: "your adventurer",
+      verb: "levels up",
+      done: "fully levelled",
+    },
+    trinkets: "Kept for the run",
+    trinketFound: "Trinket found",
+    jinx: {
+      name: "Jinx",
+      landed: "Jinxed!",
+      lifted: "The jinx lifts",
+      lasts: "until the floor's boss falls",
+    },
+    quaff: "Quaff",
+    cup: {
+      name: "The Cup",
+      pour: "Every lost fight pours a splash into the Cup",
+      won: "Whoever landed the last swing hands the Cup to anyone.",
+      wiped: "Whoever drew the last card drinks the Cup.",
+    },
+    wanted: "Wanted",
   },
   legend: [
     "Hearts the party loses if the fight is lost",
@@ -141,6 +197,10 @@ const dungeon: CrawlTheme = {
     "A natural 20 doubles a win: its gives, item, heal and swing",
     "A natural 1 doubles a loss: its drinks and hearts",
   ],
+  legendMore: {
+    trinket: "A trinket on a win: it holds the rest of the run",
+    jinx: "A jinx on a loss: a table rule until the boss falls",
+  },
   wiped: {
     title: ["Party", "wiped."],
     verdict: "Everyone finishes their drink.",
@@ -194,6 +254,7 @@ const league: CrawlTheme = {
       satchel: "bag",
       wiped: "whited-out",
       omen: "starter",
+      adventurer: "starter",
     },
   },
   words: {
@@ -220,6 +281,8 @@ const league: CrawlTheme = {
     setupFloors: "gyms",
     badges: "Badges",
     evolving: (from) => `What? ${from} is evolving!`,
+    adventurer: "Your starter",
+    grows: { who: "your starter", verb: "evolves", done: "fully evolved" },
   },
   lengthOf: (stages) => stages.filter((st) => /^Gym \d/.test(st.label)).length,
   legend: [

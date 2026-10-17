@@ -851,3 +851,121 @@
   font-size: 0.95rem;
   line-height: 1.2;
 }
+
+/* --- Pub Crawl at League depth (2026-10-17) -------------------------------
+   The jinx and the Cup on the meter's left rim (the satchel and the curse
+   keep the right), the trinket and jinx seals, the Quaff plaque, and the
+   party dialog's boons, jinx and Cup. */
+
+.tag-jinx,
+.tag-cup {
+  right: auto;
+  left: -6px;
+}
+.tag-jinx {
+  bottom: -4px;
+  background: radial-gradient(circle at 30% 25%, #b5426b, #4a0f26 75%);
+  color: #ffd6e4;
+}
+.tag-cup {
+  top: -4px;
+  background: linear-gradient(180deg, #d9a35a, #7a4a1c);
+  color: #fff2d6;
+  animation: cup-tip 600ms cubic-bezier(0.22, 1.4, 0.36, 1);
+}
+@keyframes cup-tip {
+  from {
+    transform: rotate(-24deg) scale(1.3);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tag-cup {
+    animation: none;
+  }
+}
+.stake-trinket {
+  background: radial-gradient(circle at 30% 25%, #7fd8b4, #1f6b55 75%);
+  color: #effff8;
+}
+.stake-jinx {
+  background: radial-gradient(circle at 30% 25%, #b5426b, #4a0f26 75%);
+  color: #ffd6e4;
+}
+/* The Quaff: amber, like the drink it costs. */
+.loot-plaque.quaff-plaque {
+  color: #2b1806;
+  background: linear-gradient(145deg, #f0c56a, #b9782c);
+}
+.quaff-plaque > span {
+  display: grid;
+  justify-items: center;
+}
+/* The medallion: the adventurer's helm, a landing's fire, the rival's
+   shadows. */
+.crawl-progress .icon-adventurer,
+.crawl-progress .icon-rest {
+  width: 30px;
+  height: 30px;
+  filter: drop-shadow(0 1px 1px #000c);
+}
+.crawl-progress .icon-adventurer {
+  background: linear-gradient(180deg, #f6f1e4, #a9b3c4);
+}
+.crawl-progress .icon-rest {
+  background: linear-gradient(180deg, #ffd27a, #e0582a);
+}
+.crawl-boons {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.crawl-boons .boon-trinket {
+  border-color: #3f8c72;
+  background: rgb(14 52 42 / 0.5);
+}
+.crawl-boons .boon-trinket .crawl-icon {
+  color: #8fe6c4;
+}
+.crawl-jinx {
+  border-color: #a3456a;
+  background: rgb(70 12 36 / 0.5);
+}
+.crawl-jinx .crawl-icon {
+  color: #ff9fc0;
+}
+.crawl-cup {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 10px;
+  align-items: center;
+  margin: 0;
+  padding: 8px 12px;
+  border: 1px solid #9a6a2e;
+  border-radius: 10px;
+  background: rgb(70 40 10 / 0.45);
+  font-size: 1rem;
+}
+.crawl-cup .crawl-icon {
+  grid-row: span 2;
+  width: 26px;
+  height: 26px;
+  color: #f0c56a;
+}
+.crawl-cup strong {
+  color: #fff0cf;
+  font-family: var(--font-tavern);
+}
+.crawl-cup span {
+  color: #d9c7a4;
+  font-size: 0.95rem;
+}
+.crawl-wanted {
+  color: #ff9b8c;
+}
+/* A floor's banner names its boss under the floor's name. */
+.banner-wanted {
+  font: 600 15px/1.2 var(--font-tavern);
+  opacity: 0.9;
+}

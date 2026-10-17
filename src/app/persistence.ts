@@ -4,8 +4,9 @@ import { validateRoll } from "../game/dice";
 import {
   currentCard,
   findCard,
+  finaleCard,
+  formEffect,
   hitsNeeded,
-  omenEffect,
   omenForm,
   satchelSize,
   validConfig,
@@ -120,6 +121,7 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
   if (p === undefined) return;
   const whole = (n: unknown, min: number): n is number =>
     Number.isSafeInteger(n) && (n as number) >= min;
+  const dealt = s.quest!.finale.slice(0, s.quest!.step + 1);
   if (
     !p ||
     !whole(p.max, 1) ||
@@ -137,8 +139,26 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
     // Tonight's omen is a card already dealt.
     (p.omen !== undefined &&
       (typeof p.omen !== "string" ||
-        !s.quest!.finale.slice(0, s.quest!.step + 1).includes(p.omen) ||
-        !omenEffect(s.quest))) ||
+        !dealt.includes(p.omen) ||
+        !formEffect(s.quest))) ||
+    // Boons and the jinx come from cards already dealt that carry them.
+    (p.boons !== undefined &&
+      (!Array.isArray(p.boons) ||
+        new Set(p.boons).size !== p.boons.length ||
+        p.boons.some(
+          (id) =>
+            typeof id !== "string" ||
+            !dealt.includes(id) ||
+            !finaleCard(s.quest!, id)?.boon,
+        ))) ||
+    (p.jinx !== undefined &&
+      (typeof p.jinx !== "string" ||
+        !dealt.includes(p.jinx) ||
+        !finaleCard(s.quest!, p.jinx)?.jinx)) ||
+    (p.quaff !== undefined && !whole(p.quaff, 0)) ||
+    (p.quaffed !== undefined &&
+      (p.quaffed !== true || p.quaff === undefined)) ||
+    (p.cup !== undefined && !whole(p.cup, 0)) ||
     // The starter's form: a later form it has, once the omen is set.
     (p.form !== undefined &&
       (!whole(p.form, 1) ||
