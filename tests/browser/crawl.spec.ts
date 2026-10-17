@@ -169,7 +169,10 @@ test("the party dialog lays out the run, and a draught heals a heart", async ({
   const dialog = page.getByRole("dialog", { name: "The party" });
   await expect(dialog.locator(".crawl-curse")).toContainText("Bleeding");
   await expect(dialog.locator(".satchel-slot")).toHaveCount(3);
-  await expect(dialog.locator(".crawl-legend dd")).toHaveCount(4);
+  await expect(dialog.locator(".crawl-legend dd")).toHaveCount(6);
+  await expect(dialog.locator(".crawl-legend")).toContainText(
+    "A natural 1 doubles a loss",
+  );
   await page.screenshot({ path: info.outputPath("party.png") });
   await dialog.getByRole("button", { name: "Drink" }).click();
   await expect(dialog.locator(".crawl-hearts")).toHaveAccessibleName(

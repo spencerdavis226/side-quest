@@ -133,11 +133,15 @@ export const johto: Region = {
           instruction:
             "Hyper Beam sweeps the table. Everyone finishes their drink.",
         },
-        { min: 6, max: 10, instruction: "Close fight. Everyone drinks 3." },
+        {
+          min: 6,
+          max: 10,
+          instruction: "Dragonite's Outrage. Everyone drinks 3 and yells.",
+        },
         {
           min: 11,
           max: 20,
-          instruction: "Hall of Fame! Make a rule for the rest of the night.",
+          instruction: "Hall of Fame! Make a rule for the rest of the game.",
           win: true,
         },
       ]),
@@ -151,8 +155,9 @@ export const johto: Region = {
       "Lugia floods the table. Roll d20; miss it and everyone drinks that many seconds.",
       d20(
         LEGENDARY_NEED,
-        "Everyone drinks for {total} seconds.",
+        "Aeroblast. Everyone drinks for {total} seconds.",
         "Caught! Everyone else drinks for 10 seconds.",
+        { fumble: "It floods the table. Everyone drinks for 5 seconds." },
       ),
     ),
     legendary(
@@ -187,8 +192,8 @@ export const johto: Region = {
       "Celebi travels in time. Relive your most regrettable night out for the table, then roll d20.",
       d20(
         LEGENDARY_NEED,
-        "It makes you live it again. Drink 5.",
-        "You rewrite history. Give 4.",
+        "It makes you live it again. Drink 5 and tell the ending you skipped.",
+        "You rewrite history. Pick a player: they tell their worst night out or drink 4.",
         { crit: "That night never happened. Give 8." },
       ),
     ),

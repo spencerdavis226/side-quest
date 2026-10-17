@@ -10,6 +10,7 @@ import type {
   PackDefinition,
 } from "../game/types";
 import { cardFactory, choice, rollTable } from "./author";
+import { withNaturals } from "./naturals";
 
 // Dungeon night: the bar has a cellar, and the cellar goes down forever.
 // Written for the owner on 2026-10-15 ("very flavorful", "actually difficult,
@@ -1867,6 +1868,8 @@ const deck = [
   ...lastCallBosses,
 ];
 
+// Every d20 here carries the crawls' natural 20 and natural 1
+// (`naturals.ts`), in Pub Crawl and in the plain modes alike.
 export const dungeonCards: CardDefinition[] = [
   ...deck,
   ...cellarFinds,
@@ -1876,7 +1879,7 @@ export const dungeonCards: CardDefinition[] = [
   ...taproomFinds,
   ...kitchenFinds,
   ...omens,
-];
+].map(withNaturals);
 
 const ids = (cards: CardDefinition[]) => cards.map((c) => c.id);
 

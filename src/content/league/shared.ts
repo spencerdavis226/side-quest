@@ -5,6 +5,7 @@ import type {
   RibbonTone,
 } from "../../game/types";
 import { cardFactory, rollTable } from "../author";
+import { withNaturals } from "../naturals";
 
 // Pokémon League tuning, in the style of `dungeon.ts`. Every League card is a
 // boss (`encounter: "boss"`, a `battle`), so in a crawl a loss costs the team
@@ -69,13 +70,15 @@ const boss = (
   dice: DiceDefinition | undefined,
   hits: number,
   damage: number,
-): CardDefinition => ({
-  ...card(id, name, "challenge", rules, dice),
-  encounter: "boss",
-  battle: true,
-  hits,
-  damage,
-});
+): CardDefinition =>
+  // Every League d20 carries the crawls' natural 20 and natural 1.
+  withNaturals({
+    ...card(id, name, "challenge", rules, dice),
+    encounter: "boss",
+    battle: true,
+    hits,
+    damage,
+  });
 
 /** A gym leader at its tier. Without dice the table settles it with Won and
  * Lost plaques, so its rules must be judged on the spot. */

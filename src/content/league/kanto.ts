@@ -176,7 +176,12 @@ export const kanto: Region = {
           max: 5,
           instruction: "Blue smells you. Everyone finishes their drink.",
         },
-        { min: 6, max: 10, instruction: "Close fight. Everyone drinks 4." },
+        {
+          min: 6,
+          max: 10,
+          instruction:
+            'Close fight. Everyone drinks 4 and says "smell ya later."',
+        },
         {
           min: 11,
           max: 20,
@@ -192,8 +197,8 @@ export const kanto: Region = {
       "Red hasn't spoken in 25 years. The whole table fights in silence. Anyone talks: drink 2. Roll d20.",
       d20(
         CHAMPION_NEED,
-        "Pikachu Volt Tackles the table. Everyone drinks 4.",
-        "A hit on Mt. Silver. Give 4.",
+        "Pikachu Volt Tackles the table. Everyone drinks 4 in silence.",
+        "A hit on Mt. Silver. Everyone who stayed silent gives 2.",
         {
           crit: "Red nods once. Give 10.",
           fumble: "Red says nothing. Everyone finishes their drink.",
@@ -208,7 +213,12 @@ export const kanto: Region = {
       "Articuno",
       "Articuno freezes the table. Everyone shivers dramatically while you roll d20.",
       rollTable(1, 20, [
-        { min: 1, max: 13, instruction: "Frozen. Everyone drinks 3." },
+        {
+          min: 1,
+          max: 13,
+          instruction:
+            "Frozen. Everyone drinks 3; the first to stop shivering drinks 2 more.",
+        },
         { min: 14, max: 20, instruction: "Caught! Give 8.", win: true },
       ]),
     ),
@@ -241,7 +251,7 @@ export const kanto: Region = {
       d20(
         LEGENDARY_NEED,
         "Overpowered. Finish your drink.",
-        "You hold on. Give 4.",
+        "You hold on. Pick a player: they share their worst thought or drink 4.",
         { crit: "Caught! Everyone else finishes their drink." },
       ),
     ),

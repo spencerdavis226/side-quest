@@ -20,9 +20,14 @@ export const sinnoh: Region = {
       "Roark",
       "Coal",
       "Roark shines his miner's headlamp right in your eyes. Squint at him, then roll d20.",
-      d20(GYM_NEED[0], "Cave-in. Drink 4.", "You strike coal. Give 3.", {
-        fumble: "Black lung. Finish your drink.",
-      }),
+      d20(
+        GYM_NEED[0],
+        "Cave-in. Drink 4 with your eyes shut.",
+        "You strike coal. Shine your phone light on a player; they drink 3.",
+        {
+          fumble: "Black lung. Finish your drink.",
+        },
+      ),
     ),
     leader(
       1,
@@ -46,7 +51,7 @@ export const sinnoh: Region = {
       "Crasher Wake is a luchador. Put on an imaginary mask, flex at the table, and roll d20.",
       d20(
         GYM_NEED[3],
-        "Body slam. Drink 5.",
+        "Body slam. Drink 5, then flex again.",
         "You pin him for three. Give 5.",
         {
           crit: "You unmask him. Give a shot.",
@@ -69,7 +74,7 @@ export const sinnoh: Region = {
       "Byron is Roark's dad and louder about it. Shout your biggest flex at the table, then roll d20.",
       d20(
         GYM_NEED[5],
-        "Iron Defense. Drink 5.",
+        "Iron Defense. Drink 5, and the table rates your flex out of 10.",
         "You dent the old man. Give 5.",
         {
           crit: "You bend his steel. Everyone else drinks 3.",
@@ -92,8 +97,8 @@ export const sinnoh: Region = {
       "Volkner is so bored he blacked out the city. Bore the table with a fun fact, then roll d20.",
       d20(
         GYM_NEED[7],
-        "He yawns at you. Drink 6.",
-        "You spark him up. Give 6.",
+        "He yawns at you. Drink 6 and tell another fun fact.",
+        "You spark him up. Whoever yawned during your fact drinks 4.",
         {
           crit: "He's finally interested. Everyone else drinks 4.",
           fumble: "Blackout. Finish your drink in the dark.",
@@ -108,7 +113,11 @@ export const sinnoh: Region = {
       "Aaron",
       "Bug",
       "Aaron loves bugs. Eat a crumb off the floor, or fake it well, then roll d20.",
-      d20(ELITE_NEED, "Bug Bite. Drink 5.", "You squash his bugs. Give 5."),
+      d20(
+        ELITE_NEED,
+        "Bug Bite. Drink 5 and buzz for five seconds.",
+        "You squash his bugs. Slap the table and give 5.",
+      ),
     ),
     eliteFour(
       "bertha",
@@ -121,9 +130,14 @@ export const sinnoh: Region = {
       "Flint",
       "Fire",
       "Flint's afro is on fire again. Fluff your hair at the table, then roll d20.",
-      d20(ELITE_NEED, "Singed. Drink 5.", "You put out the afro. Give 5.", {
-        fumble: "Flare Blitz. Take a spicy shot.",
-      }),
+      d20(
+        ELITE_NEED,
+        "Singed. Drink 5, and keep your hair fluffed until your next turn.",
+        "You put out the afro. Pat out your left neighbor's head; they drink 3.",
+        {
+          fumble: "Flare Blitz. Take a spicy shot.",
+        },
+      ),
     ),
     eliteFour(
       "lucian",
@@ -141,8 +155,8 @@ export const sinnoh: Region = {
       "Cynthia's Garchomp has never lost. The whole table holds hands and prays, then roll d20.",
       d20(
         CHAMPION_NEED,
-        "Earthquake. Everyone drinks 4.",
-        "Garchomp flinches. Give 4.",
+        "Earthquake. Everyone drinks 4 without letting go of hands.",
+        "Garchomp flinches. Give 4, and everyone lets go.",
         {
           crit: "Cynthia drops her hair clip. Give 10.",
           fumble: "Garchomp sweeps the table. Everyone finishes their drink.",
@@ -158,8 +172,8 @@ export const sinnoh: Region = {
       "Dialga controls time. Drink for exactly 5 seconds, counted out loud by the table, then roll d20.",
       d20(
         LEGENDARY_NEED,
-        "Roar of Time. Drink 5.",
-        "Time is on your side. Give 5.",
+        "Roar of Time. Drink 5, and talk in slow motion until your next turn.",
+        "Time is on your side. Pick a player: they drink for 5 seconds, counted by the table.",
         {
           crit: "Time stops for you. Everyone else drinks 4.",
         },
@@ -171,8 +185,8 @@ export const sinnoh: Region = {
       "Palkia bends space. Swap seats with the player farthest from you, then roll d20.",
       d20(
         LEGENDARY_NEED,
-        "Spacial Rend. Drink 5.",
-        "You close the rift. Give 5.",
+        "Spacial Rend. Drink 5, then swap seats again.",
+        "You close the rift. Whoever is farthest from you now drinks 3.",
       ),
     ),
     legendary(
@@ -181,8 +195,8 @@ export const sinnoh: Region = {
       "Giratina lives in a world turned backwards. Say your name backwards, then roll d20.",
       d20(
         LEGENDARY_NEED,
-        "Shadow Force. Drink 5.",
-        "You drag it out. Give 5.",
+        "Shadow Force. Drink 5; the table calls you your backwards name until your next turn.",
+        "You drag it out. Pick a player: they say their name backwards or drink 3.",
         {
           fumble: "Lost in the Distortion World. Finish your drink.",
         },
@@ -192,18 +206,28 @@ export const sinnoh: Region = {
       "darkrai",
       "Darkrai",
       "Darkrai feeds on nightmares. Tell the table your weirdest sex dream, then roll d20.",
-      d20(LEGENDARY_NEED, "Bad dream. Drink 5.", "You wake up. Give 5.", {
-        fumble: "Sleep paralysis. Finish your drink.",
-      }),
+      d20(
+        LEGENDARY_NEED,
+        "Bad dream. Drink 5 while the table interprets it.",
+        "You wake up. Anyone who's had that dream too drinks 3.",
+        {
+          fumble: "Sleep paralysis. Finish your drink.",
+        },
+      ),
     ),
     legendary(
       "arceus",
       "Arceus",
       "Arceus is literally God. Pray out loud for 5 seconds, then roll d20.",
-      d20(LEGENDARY_NEED, "Judgment. Drink 6.", "God blinks. Give 6.", {
-        crit: "You caught God. Everyone else finishes their drink.",
-        fumble: "Smited. Finish your drink.",
-      }),
+      d20(
+        LEGENDARY_NEED,
+        "Judgment. Drink 6 and confess one sin to the table.",
+        "God blinks. Give 6.",
+        {
+          crit: "You caught God. Everyone else finishes their drink.",
+          fumble: "Smited. Finish your drink.",
+        },
+      ),
     ),
   ],
 };

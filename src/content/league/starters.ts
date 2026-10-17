@@ -190,8 +190,8 @@ export const starters: CardDefinition[] = [
   starter(
     "piplup",
     "Piplup",
-    "Piplup chose you and is very proud of it. Five more HP, but every boss takes a hit more.",
-    { hearts: 5, bossHits: 1 },
+    "Piplup chose you and is very proud of it. Six more HP and a Protect, but every boss takes a hit more.",
+    { hearts: 6, bossHits: 1, loot: ["shield"] },
     [
       {
         title: "Prinplup",

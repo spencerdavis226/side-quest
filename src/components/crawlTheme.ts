@@ -68,6 +68,9 @@ export interface CrawlTheme {
   lengthOf?: (stages: QuestStage[]) => number;
   /** The seals legend in the party dialog: −hearts, curse, hits, +item. */
   legend: [string, string, string, string];
+  /** The legend's last two lines, the standing rule on a d20: what a
+   * natural 20 doubles, then what a natural 1 doubles. */
+  naturals: [string, string];
   /** The end screens: two title lines (the second in italics) and the
    * verdict. */
   wiped: { title: [string, string]; verdict: string };
@@ -120,6 +123,10 @@ const dungeon: CrawlTheme = {
     "A curse on a loss, until the floor's boss falls",
     "Wins it takes: the next drawer swings again",
     "An item for the satchel, on a win",
+  ],
+  naturals: [
+    "A natural 20 doubles a win: its gives, item, heal and swing",
+    "A natural 1 doubles a loss: its drinks and hearts",
   ],
   wiped: {
     title: ["Party", "wiped."],
@@ -198,6 +205,10 @@ const league: CrawlTheme = {
     "A status on a loss, until the next gym falls",
     "Wins it takes: the next trainer battles again",
     "An item for the bag, on a win",
+  ],
+  naturals: [
+    "A natural 20 doubles a win: its gives, item, heal and hit",
+    "A natural 1 doubles a loss: its drinks and HP",
   ],
   wiped: {
     title: ["Whited", "out."],

@@ -1,5 +1,6 @@
 import type {
   CardDefinition,
+  DiceRoll,
   GameConfig,
   Loot,
   OmenEffect,
@@ -514,6 +515,17 @@ export function settleBattle(
   return awaitingVerdict(s) ? discard(s, random, won ? "won" : "lost") : s;
 }
 type Outcome = "won" | "lost" | "fled";
+/** A crawl's standing rule (owner, 2026-10-17): a single d20 that lands on
+ * 20 doubles what a won fight brings (its heal and its item, and a boss
+ * takes two swings), and one that lands on 1 doubles the hearts a lost fight
+ * costs. The cards' own text doubles the drinks (`content/naturals.ts`). */
+export function natural(
+  card: CardDefinition,
+  roll: DiceRoll | null,
+): 20 | 1 | null {
+  if (card.dice?.count !== 1 || card.dice.sides !== 20 || !roll) return null;
+  return roll.values[0] === 20 ? 20 : roll.values[0] === 1 ? 1 : null;
+}
 /** Whether the party can use the satchel's item `item` now. */
 export function canUseLoot(s: SessionState, item: Loot): boolean {
   const party = s.quest?.party;
@@ -587,6 +599,7 @@ function settleParty(
   card: CardDefinition,
   outcome: Outcome | null,
   quest: QuestState,
+  nat: 20 | 1 | null = null,
 ): PartyState {
   const omen = omenEffect(quest);
   const size = satchelSize(quest);
@@ -594,16 +607,23 @@ function settleParty(
   if (outcome === "lost" && card.damage)
     next = hurt(
       next,
-      card.damage + (card.encounter ? (omen?.hurt?.[card.encounter] ?? 0) : 0),
+      (card.damage +
+        (card.encounter ? (omen?.hurt?.[card.encounter] ?? 0) : 0)) *
+        (nat === 1 ? 2 : 1),
     );
   if (outcome === null || outcome === "won") {
     const { loot, heal } = card.reward ?? {};
-    if (loot && next.loot.length < size)
-      next = { ...next, loot: [...next.loot, loot] };
+    const times = outcome === "won" && nat === 20 ? 2 : 1;
+    for (let i = 0; i < times; i++)
+      if (loot && next.loot.length < size)
+        next = { ...next, loot: [...next.loot, loot] };
     if (heal)
       next = {
         ...next,
-        hearts: Math.min(next.max, next.hearts + heal + (omen?.heal ?? 0)),
+        hearts: Math.min(
+          next.max,
+          next.hearts + (heal + (omen?.heal ?? 0)) * times,
+        ),
       };
   }
   if (card.omen && outcome === null) {
@@ -643,7 +663,8 @@ function discard(
   const party = s.quest?.party;
   if (s.quest?.due && party) {
     const q = s.quest;
-    let next = settleParty(party, card, outcome, q);
+    const nat = natural(card, s.roll);
+    let next = settleParty(party, card, outcome, q, nat);
     // The hearts ran out: the party wipes and the game ends on this card.
     if (next.hearts === 0)
       return {
@@ -658,7 +679,10 @@ function discard(
     // falls.
     const need = hitsNeeded(q, card);
     if (need && outcome !== "fled") {
-      const hits = next.hits + (outcome === "won" ? 1 : 0);
+      const hits = Math.min(
+        need,
+        next.hits + (outcome === "won" ? (nat === 20 ? 2 : 1) : 0),
+      );
       if (hits < need)
         return {
           ...s,

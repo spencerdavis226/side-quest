@@ -554,6 +554,19 @@ export function CrawlRecord({
             </dt>
             <dd>{theme.legend[3]}</dd>
           </div>
+          {/* The standing rule on a d20, the crawl's natural 20 and 1. */}
+          <div>
+            <dt className="stake stake-natural">
+              <b>20</b>
+            </dt>
+            <dd>{theme.naturals[0]}</dd>
+          </div>
+          <div>
+            <dt className="stake stake-loss">
+              <b>1</b>
+            </dt>
+            <dd>{theme.naturals[1]}</dd>
+          </div>
         </dl>
       )}
     </div>

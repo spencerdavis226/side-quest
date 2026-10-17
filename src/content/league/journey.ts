@@ -10,6 +10,7 @@ import type {
   Evolution,
 } from "../../game/types";
 import { cardFactory, choice, rollTable } from "../author";
+import { withNaturals } from "../naturals";
 
 // Pokémon League's journey (owner, 2026-10-16): a run is a crawl. A starter
 // opens it, then eight routes of four random cards, each closed by a gym
@@ -71,6 +72,77 @@ export function d20(
   return rollTable(1, 20, outcomes);
 }
 
+/** How a fight is rolled, from the d20 its card needs (the leg's odds), so
+ * the needs above retune every kind of roll. */
+export type Roll = (need: number) => DiceDefinition;
+
+/** A d20 at the need. */
+export const vs =
+  (
+    lose: string,
+    win: string,
+    extra: { crit?: string; fumble?: string } = {},
+  ): Roll =>
+  (need) =>
+    d20(need, lose, win, extra);
+
+/** The d6 faces that lose at a d20 need: the same odds, rounded. */
+export const sixLoses = (need: number) =>
+  Math.min(5, Math.max(1, Math.round((6 * (need - 1)) / 20)));
+
+/** Six moves on a d6, worst first: `lose` must hold exactly `sixLoses(need)`
+ * faces, so a retune that moves the split fails at load and the faces get
+ * rewritten to match. */
+export const moves =
+  (lose: string[], win: string[]): Roll =>
+  (need) => {
+    if (lose.length !== sixLoses(need) || lose.length + win.length !== 6)
+      throw Error(
+        `A d6 fight at need ${need} loses on ${sixLoses(need)} faces`,
+      );
+    return rollTable(1, 6, [
+      ...lose.map((instruction, i) => ({
+        min: i + 1,
+        max: i + 1,
+        instruction,
+      })),
+      ...win.map((instruction, i) => ({
+        min: lose.length + i + 1,
+        max: lose.length + i + 1,
+        instruction,
+        win: true as const,
+      })),
+    ]);
+  };
+
+/** Ways to roll each 2d6 total. */
+const ways = (t: number) => 6 - Math.abs(t - 7);
+/** The 2d6 total that wins nearest the d20 need's odds. */
+export const pairNeed = (need: number) => {
+  const odds = (21 - need) / 20;
+  const at = (t: number) =>
+    Array.from({ length: 13 - t }, (_, i) => ways(t + i)).reduce(
+      (a, b) => a + b,
+      0,
+    ) / 36;
+  let best = 3;
+  for (let t = 3; t <= 12; t++)
+    if (Math.abs(at(t) - odds) < Math.abs(at(best) - odds)) best = t;
+  return best;
+};
+
+/** 2d6 at the nearest odds; `doubles`, when given, always win. */
+export const pair =
+  (lose: string, win: string, doubles?: string): Roll =>
+  (need) => {
+    const t = pairNeed(need);
+    const dice = rollTable(2, 6, [
+      { min: 2, max: t - 1, instruction: lose },
+      { min: t, max: 12, instruction: win, win: true },
+    ]);
+    return doubles ? { ...dice, doubles, doublesWin: true } : dice;
+  };
+
 const spot = (
   leg: Leg,
   kind: string,
@@ -81,37 +153,29 @@ const spot = (
   dice?: DiceDefinition,
   category: CardDefinition["category"] = "challenge",
 ): CardDefinition => ({
-  ...card(id, title, category, rules, dice),
+  // Every League d20 carries the crawls' natural 20 and natural 1.
+  ...withNaturals(card(id, title, category, rules, dice)),
   ribbon: `${legName(leg)} · ${kind}`,
   encounter,
 });
 
-type Extra = { crit?: string; fumble?: string; loot?: Loot; curse?: Curse };
+type Extra = { loot?: Loot; curse?: Curse };
 const stakes = ({ loot, curse }: Extra) => ({
   ...(loot ? { reward: { loot } } : {}),
   ...(curse ? { curse } : {}),
 });
 
-/** A wild Pokémon: a d20 fight at the leg's odds. A `curse` lands on a
- * loss (poison, confusion); `loot` comes with a win. */
+/** A wild Pokémon: a fight at the leg's odds. A `curse` lands on a loss
+ * (poison, confusion); `loot` comes with a win. */
 export const wild = (
   leg: Leg,
   id: string,
   title: string,
   rules: string,
-  lose: string,
-  win: string,
+  fight: Roll,
   more: Extra = {},
 ): CardDefinition => ({
-  ...spot(
-    leg,
-    "Wild",
-    "monster",
-    id,
-    title,
-    rules,
-    d20(WILD_NEED[leg], lose, win, more),
-  ),
+  ...spot(leg, "Wild", "monster", id, title, rules, fight(WILD_NEED[leg])),
   battle: true,
   damage: WILD_HURT[leg],
   ...stakes(more),
@@ -123,11 +187,10 @@ export const trainer = (
   id: string,
   title: string,
   rules: string,
-  lose: string,
-  win: string,
+  fight: Roll,
   more: Extra = {},
 ): CardDefinition => ({
-  ...wild(leg, id, title, rules, lose, win, more),
+  ...wild(leg, id, title, rules, fight, more),
   ribbon: `${legName(leg)} · Trainer`,
 });
 
@@ -144,25 +207,16 @@ export const challenge = (
   damage: WILD_HURT[leg],
 });
 
-/** A hazard: a d20 save at the leg's odds; it only ever costs one. */
+/** A hazard: a save at the leg's odds; it only ever costs one. */
 export const hazard = (
   leg: Leg,
   id: string,
   title: string,
   rules: string,
-  lose: string,
-  win: string,
+  fight: Roll,
   curse?: Curse,
 ): CardDefinition => ({
-  ...spot(
-    leg,
-    "Hazard",
-    "trap",
-    id,
-    title,
-    rules,
-    d20(HAZARD_SAVE[leg], lose, win),
-  ),
+  ...spot(leg, "Hazard", "trap", id, title, rules, fight(HAZARD_SAVE[leg])),
   battle: true,
   damage: 1,
   ...(curse ? { curse } : {}),
@@ -282,10 +336,8 @@ export const ace = (
   id: string,
   title: string,
   rules: string,
-  lose: string,
-  win: string,
+  fight: Roll,
   loot: Loot,
-  extra: { crit?: string; fumble?: string } = {},
 ): CardDefinition => ({
   ...spot(
     leg,
@@ -294,7 +346,7 @@ export const ace = (
     id,
     title,
     rules,
-    d20(WILD_NEED[leg] + ACE_BONUS, lose, win, extra),
+    fight(WILD_NEED[leg] + ACE_BONUS),
   ),
   battle: true,
   damage: ACE_HURT[leg],
@@ -323,10 +375,9 @@ export const rival = (
   id: string,
   title: string,
   rules: string,
-  lose: string,
-  win: string,
+  fight: Roll,
 ): CardDefinition => ({
-  ...card(id, title, "challenge", rules, d20(RIVAL_NEED, lose, win)),
+  ...withNaturals(card(id, title, "challenge", rules, fight(RIVAL_NEED))),
   ribbon: "Victory Road · Rival",
   ribbonTone: "crimson",
   encounter: "ambush",
@@ -341,11 +392,10 @@ export const grunt = (
   id: string,
   title: string,
   rules: string,
-  lose: string,
-  win: string,
+  fight: Roll,
   more: Extra = {},
 ): CardDefinition => ({
-  ...wild(HIDEOUT_LEG, id, title, rules, lose, win, more),
+  ...wild(HIDEOUT_LEG, id, title, rules, fight, more),
   ribbon: `${team} · Grunt`,
 });
 
@@ -356,11 +406,12 @@ export const villain = (
   id: string,
   title: string,
   rules: string,
-  lose: string,
-  win: string,
+  fight: Roll,
   curse?: Curse,
 ): CardDefinition => ({
-  ...card(id, title, "challenge", rules, d20(HIDEOUT_BOSS_NEED, lose, win)),
+  ...withNaturals(
+    card(id, title, "challenge", rules, fight(HIDEOUT_BOSS_NEED)),
+  ),
   ribbon: `${team} · Boss`,
   ribbonTone: "crimson",
   encounter: "boss",

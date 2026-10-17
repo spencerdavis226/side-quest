@@ -25,7 +25,7 @@ export const paldea: Region = {
       "Katy baked you a cake and her bugs got in the batter. Take a big bite of nothing, then roll d20.",
       d20(
         GYM_NEED[0],
-        "Sticky Web. Drink 4.",
+        "Sticky Web. Drink 4, and keep your elbows on the table until your next turn.",
         "Sugar crash for Katy. Give 3.",
         {
           fumble: "You found a leg. Finish your drink.",
@@ -45,10 +45,15 @@ export const paldea: Region = {
       "Iono",
       "Electric",
       "Iono is streaming this. Say hi to chat in your best influencer voice, then roll d20.",
-      d20(GYM_NEED[2], "Chat hates you. Drink 4.", "You're trending. Give 4.", {
-        crit: "Top donor. Give 8.",
-        fumble: "Banned from chat. Finish your drink.",
-      }),
+      d20(
+        GYM_NEED[2],
+        "Chat hates you. Drink 4 and read your own hate comment aloud.",
+        "You're trending. Shout out a player by name; they drink 3.",
+        {
+          crit: "Top donor. Give 8.",
+          fumble: "Banned from chat. Finish your drink.",
+        },
+      ),
     ),
     leader(
       3,
@@ -63,10 +68,15 @@ export const paldea: Region = {
       "Larry",
       "Normal",
       "Larry is a tired salaryman. Do your saddest desk-job sigh, then roll d20.",
-      d20(GYM_NEED[4], "Overtime. Drink 5.", "You clock out early. Give 5.", {
-        crit: "Promoted. Give a shot.",
-        fumble: "Performance review. Finish your drink.",
-      }),
+      d20(
+        GYM_NEED[4],
+        "Overtime. Drink 5 and sigh again.",
+        "You clock out early. Give 5.",
+        {
+          crit: "Promoted. Give a shot.",
+          fumble: "Performance review. Finish your drink.",
+        },
+      ),
     ),
     leader(
       5,
@@ -81,10 +91,15 @@ export const paldea: Region = {
       "Tulip",
       "Psychic",
       "Tulip does your makeup. Shut your eyes while your left neighbor finger-paints your face. Roll d20.",
-      d20(GYM_NEED[6], "Hideous. Drink 6.", "Gorgeous. Give 6.", {
-        crit: "Supermodel. Everyone else drinks 4.",
-        fumble: "Clown face. Finish your drink.",
-      }),
+      d20(
+        GYM_NEED[6],
+        "Hideous. Drink 6, and keep the face paint until your next turn.",
+        "Gorgeous. You and your makeup artist give 3 each.",
+        {
+          crit: "Supermodel. Everyone else drinks 4.",
+          fumble: "Clown face. Finish your drink.",
+        },
+      ),
     ),
     leader(
       7,
@@ -107,9 +122,14 @@ export const paldea: Region = {
       "Poppy",
       "Steel",
       "Poppy is eight and has a hammer. Let your left neighbor bonk your head, then roll d20.",
-      d20(ELITE_NEED, "Gigaton Hammer. Drink 5.", "You take her toy. Give 5.", {
-        fumble: "Bonked silly. Finish your drink.",
-      }),
+      d20(
+        ELITE_NEED,
+        "Gigaton Hammer. Drink 5, and she bonks you again.",
+        "You take her toy. Bonk a player once; they drink 3.",
+        {
+          fumble: "Bonked silly. Finish your drink.",
+        },
+      ),
     ),
     eliteFour(
       "larry",
@@ -118,7 +138,7 @@ export const paldea: Region = {
       "It's Larry again. He's on unpaid overtime. Sigh with him, then roll d20.",
       d20(
         ELITE_NEED,
-        "Unpaid overtime. Drink 6.",
+        "Unpaid overtime. Drink 6 and sigh again, sadder.",
         "Larry gets to go home. Give 5.",
         {
           crit: "Larry smiles. Everyone else drinks 4.",
@@ -136,9 +156,14 @@ export const paldea: Region = {
       "Crispin",
       "Fire",
       "Crispin is on nine energy drinks. Talk at double speed for 10 seconds, then roll d20.",
-      d20(ELITE_NEED, "Burnout. Drink 5.", "He crashes. Give 5.", {
-        fumble: "Heart palpitations. Finish your drink.",
-      }),
+      d20(
+        ELITE_NEED,
+        "Burnout. Drink 5, then talk at half speed until your next turn.",
+        "He crashes. Whoever looks most tired drinks 3.",
+        {
+          fumble: "Heart palpitations. Finish your drink.",
+        },
+      ),
     ),
     eliteFour(
       "amarys",
@@ -160,7 +185,7 @@ export const paldea: Region = {
       d20(
         ELITE_NEED,
         "He beats you without trying. Drink 6.",
-        "You tried harder. Give 5.",
+        "You tried harder. Give 5, with minimal effort.",
       ),
     ),
   ],
@@ -173,8 +198,8 @@ export const paldea: Region = {
       'Geeta booked your fight in a meeting. The whole table says "per my last email." Roll d20.',
       d20(
         CHAMPION_NEED,
-        "Glimmora's Tera Blast. Everyone drinks 4.",
-        "Meeting ends early. Give 4.",
+        "Tera Blast. Everyone drinks 4 and replies all.",
+        "The meeting ends early. Give 4 and leave the room for five seconds.",
         {
           crit: "You're the boss now. Give 10.",
           fumble: "Mandatory overtime. Everyone finishes their drink.",
@@ -188,8 +213,8 @@ export const paldea: Region = {
       "Nemona wants to battle you again. And again. And again. The whole table fights. Roll d20.",
       d20(
         CHAMPION_NEED,
-        "Rematch! Everyone drinks 3.",
-        "She loves it. Give 4.",
+        'Rematch! Everyone drinks 3 and says "one more!"',
+        "She loves it. Give 4, and hug your left neighbor for her.",
         {
           crit: "She finally needs a nap. Give 10.",
           fumble: "One more battle! Everyone finishes their drink.",
@@ -203,9 +228,14 @@ export const paldea: Region = {
       "koraidon",
       "Koraidon",
       "Koraidon is your motorcycle. Make engine noises and lean into a turn, then roll d20.",
-      d20(LEGENDARY_NEED, "Wipeout. Drink 5.", "Wheelie. Give 5.", {
-        fumble: "Road rash. Finish your drink.",
-      }),
+      d20(
+        LEGENDARY_NEED,
+        "Wipeout. Drink 5, and walk your bike: stand until your next turn.",
+        "Wheelie. Pick a passenger; you both give 3.",
+        {
+          fumble: "Road rash. Finish your drink.",
+        },
+      ),
     ),
     legendary(
       "miraidon",
@@ -213,8 +243,8 @@ export const paldea: Region = {
       "Miraidon is a robot dragon bike from the future. Predict tomorrow's hangover, then roll d20.",
       d20(
         LEGENDARY_NEED,
-        "Electro Drift. Drink 5.",
-        "The future's bright. Give 5.",
+        "Electro Drift. Drink 5; your hangover prediction just got worse.",
+        "The future's bright. Predict a player's hangover; they drink 3.",
       ),
     ),
   ],

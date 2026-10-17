@@ -1,6 +1,34 @@
 # Current state and implementation plan
 
-Updated 2026-10-16. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
+Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
+
+## League variety pass and natural 20/1 (2026-10-17, owner request; local, not yet pushed)
+
+**Owner request.** League cards were "a lot of roll d20 then give/drink 3": make challenges, outcomes and specificity more varied. Add a standing rule for Pokémon League and Pub Crawl: a natural 20 doubles the good outcome (drinks given, HP gained, whatever applies) and a natural 1 doubles the bad.
+
+**Before.** 212 of the 356 League cards were a single d20, and 141 of those resolved only to "Drink N." / "Give N." Hideout grunts, rivals, most Legendaries and every Champion shared one template.
+
+**Natural 20 and 1 (both crawls).**
+- Engine (`natural` in `src/game/engine.ts`, crawl only): on a single d20, a won 20 doubles the card's heal and item and lands two boss swings; a lost 1 doubles the hearts lost (before shield and bleed). No schema change.
+- Text (`src/content/naturals.ts`, `withNaturals`): every League and Dungeon d20 has its own 20 and 1 outcome, with "Natural 20!" or "Natural 1!" and the drinks doubled. Applied in `league/shared.ts` (`boss`), `league/journey.ts` (`spot`, `rival`, `villain`) and at `dungeonCards`. Dungeon cards keep the text in the plain modes too. The 120 plain Pokémon sheet cards are unchanged.
+- The party dialog legend gains two lines (`crawlTheme.naturals`, `.stake-natural`).
+- `tests/naturals.test.ts`: every crawl d20 has single-face 20 and 1 outcomes, and neither reads like the roll beside it.
+
+**Variety pass.**
+- Fight helpers take a `Roll` (`vs` d20, `moves` six named moves on a d6, `pair` 2d6 with a winning pair), all derived from the leg's need so the constants still tune everything. A retune that moves a d6 split throws at load.
+- Rewrote all 128 route, Ace, rival, grunt and hideout-boss fights: about 40 are d6 move lists, 20 are 2d6, the rest d20 with specific outcomes (a target at the table, a status until the drawer's next turn, a dare or drink, graded `{total}` losses, pairs of players).
+- Rewrote the flat results of 60 gym, Elite Four, Champion and Legendary cards in place, keeping each card's win ranges. Lugia gained a fumble.
+- Balance: Piplup fell to 9% (the floor is 10%), so it starts with a Protect ("Six more HP and a Protect"; it was "Five more HP").
+
+**Harness after.**
+- League: won 22.0% (was 23.1%). A won run takes 67.1 draws. Starters 12% (Piplup) to 41% (Mudkip). Hideouts 17% to 25%. Evolution 74% / 37%.
+- Pub Crawl: won 25.1%. Omens 17% to 32%.
+
+**Tests.** `npm test` 199 passed, but only with `--testTimeout=300000`: in this container both harness tests time out at the default 5 s even before the change (imports take about 70 s here). Lint, typecheck and `BASE_PATH=/side-quest/ npm run build` passed. Budgets: Pokémon chunk 36.6 KiB gzip (was 30.4), runtime 3686 KiB. `npm run cards:review` regenerated.
+
+**Not done or not verified:** browser specs (see the result below), WebKit (not installed in this container), a physical device, and a table playtest of the new outcomes.
+
+**Next.** Push after owner approval. Then playtest a League run and a Pub Crawl run and cut any outcome that slows the table down.
 
 ## Pokémon League journey (2026-10-16, owner request; merged to `main` and deployed)
 

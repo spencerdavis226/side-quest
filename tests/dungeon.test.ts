@@ -212,6 +212,40 @@ describe("Pub Crawl", () => {
     roundTrip(s);
   });
 
+  it("a natural 20 doubles what a win brings; a natural 1 doubles a loss's cost", () => {
+    // A room: 2 hearts on a loss (floor 1), 4 on a natural 1.
+    const room = () => deal(fromStep(start(), 9), "dungeon.bachelor-ghosts");
+    expect(party(fight(room(), 2)).hearts).toBe(10);
+    expect(party(fight(room(), 1)).hearts).toBe(8);
+    // A shield still takes the whole doubled loss.
+    const shielded = room();
+    shielded.quest!.party!.loot = ["shield"];
+    expect(party(fight(shielded, 1))).toMatchObject({ hearts: 12, loot: [] });
+    // An elite's item comes twice on a natural 20, room permitting.
+    const s = takeOffer(advance(deal(start(), "dungeon.two-hatches")), 1);
+    const loot = currentCard(s).reward!.loot!;
+    expect(party(fight(s, 20)).loot).toEqual([loot, loot]);
+    const full = structuredClone(s);
+    full.quest!.party!.loot = ["smoke", "smoke"];
+    expect(party(fight(full, 20)).loot).toEqual(["smoke", "smoke", loot]);
+    // A boss takes two swings from a natural 20.
+    let b = deal(fromStep(start(), 16), "dungeon.hangover-hydra");
+    b = fight(b, 20);
+    expect(b.quest!.step).toBe(17);
+    expect(party(b)).toMatchObject({ hits: 0, rounds: 0 });
+    roundTrip(b);
+    // A heal doubles too.
+    const healer = cards.find(
+      (c) => c.id.startsWith("dungeon.") && c.battle && c.reward?.heal,
+    );
+    if (healer) {
+      const h = deal(start(), healer.id);
+      h.quest!.party!.hearts = 4;
+      const once = party(fight(structuredClone(h), 19)).hearts;
+      expect(party(fight(h, 20)).hearts - 4).toBe((once - 4) * 2);
+    }
+  });
+
   it("the last boss falling wins the crawl", () => {
     let s = deal(fromStep(start(), 24), "dungeon.last-call-lich");
     for (let i = 0; i < 3; i++) s = fight(s, 15);
@@ -240,7 +274,7 @@ describe("Pub Crawl", () => {
     const at = (loot: Loot[], curse: "bleed" | "hex" | null) => {
       const s = deal(fromStep(start(), 9), "dungeon.bachelor-ghosts");
       Object.assign(s.quest!.party!, { loot, curse });
-      return party(fight(s, 1));
+      return party(fight(s, 2));
     };
     expect(at(["shield"], null)).toMatchObject({ hearts: 12, loot: [] });
     expect(at([], "bleed")).toMatchObject({ hearts: 9 });
@@ -414,7 +448,7 @@ describe("Pub Crawl", () => {
     ]).toContain(elite.id);
     roundTrip(loud);
     // A won elite pays its loot.
-    expect(party(fight(loud, 20)).loot).toEqual([elite.reward!.loot]);
+    expect(party(fight(loud, 19)).loot).toEqual([elite.reward!.loot]);
   });
 
   it("a fork is never the last room of its floor", () => {

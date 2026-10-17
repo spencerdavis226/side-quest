@@ -50,7 +50,11 @@ material, not game content:
   Zubat, Gym Battle, Poké Ball, Chansey, Supersonic, Game Corner, Rival Wally,
   Delibird, Elite Four) so the roll is a joke with its pour, and evened out
   Battle of the Sexes; the beasts, shots and chugs are as before. Board-only plumbing (squares, lights, turn order, extra turns) is
-  intentionally not carried over.
+  intentionally not carried over. The League's cards (`src/content/league/`,
+  `pokemon-league.ts`) are original rather than from the sheets; at the
+  owner's request (2026-10-17, "less same-y") their roll results were
+  rewritten so fewer read as a bare "Drink N / Give N", and every League
+  d20 gained a natural 20 and natural 1. The 120 sheet cards are unchanged.
 
 ## Adding a new reference file
 

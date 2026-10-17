@@ -141,7 +141,12 @@ export const hoenn: Region = {
       "Ice",
       "Glacia says your drink is warm and your heart is too. Roll d20.",
       rollTable(1, 20, [
-        { min: 1, max: 12, instruction: "Sheer Cold. Drink 6." },
+        {
+          min: 1,
+          max: 12,
+          instruction:
+            "Sheer Cold. Drink 6, and give your left neighbor the cold shoulder until your next turn.",
+        },
         {
           min: 13,
           max: 19,
@@ -202,10 +207,15 @@ export const hoenn: Region = {
       "Wallace",
       "Hoenn",
       "Wallace demands a beautiful fight. The whole table strikes its most fabulous pose, then roll d20.",
-      d20(CHAMPION_NEED, "Ugly. Everyone drinks 3.", "Stunning hit. Give 4.", {
-        crit: "Contest winner. Make a rule for the rest of the game.",
-        fumble: "Milotic sweeps. Everyone finishes their drink.",
-      }),
+      d20(
+        CHAMPION_NEED,
+        "Ugly. Everyone drinks 3; the table names the ugliest pose and that player drinks 2 more.",
+        "Stunning hit. The table names the best pose; that player gives 4.",
+        {
+          crit: "Contest winner. Make a rule for the rest of the game.",
+          fumble: "Milotic sweeps. Everyone finishes their drink.",
+        },
+      ),
     ),
   ],
 
@@ -236,25 +246,40 @@ export const hoenn: Region = {
       "deoxys",
       "Deoxys",
       "A space virus with a laser. Roll d20.",
-      d20(LEGENDARY_NEED, "Psycho Boost lands. Drink 6.", "Caught! Give 6.", {
-        crit: "Caught clean! Give 10.",
-      }),
+      d20(
+        LEGENDARY_NEED,
+        "Psycho Boost lands. Drink 6; anyone who uncovered their mouth drinks 2.",
+        "Caught! Give 6.",
+        {
+          crit: "Caught clean! Give 10.",
+        },
+      ),
     ),
     legendary(
       "groudon",
       "Groudon",
       "Groudon dried up the oceans, and now your drink. Drink 2, then roll d20.",
-      d20(LEGENDARY_NEED, "Drought. Drink 4.", "You crack its crust. Give 5.", {
-        fumble: "Precipice Blades. Take a spicy shot.",
-      }),
+      d20(
+        LEGENDARY_NEED,
+        "Drought. Drink 4, and no water until your next turn.",
+        "You crack its crust. Give 5.",
+        {
+          fumble: "Precipice Blades. Take a spicy shot.",
+        },
+      ),
     ),
     legendary(
       "kyogre",
       "Kyogre",
       "Kyogre is flooding the world. Everyone drinks 2 to lower the sea, then you roll d20.",
-      d20(LEGENDARY_NEED, "Tidal wave. Drink 5.", "You surf it. Give 5.", {
-        crit: "You drain the ocean. Everyone else drinks 4.",
-      }),
+      d20(
+        LEGENDARY_NEED,
+        "Tidal wave. You and both neighbors drink 3.",
+        "You surf it. Give 5, arms out.",
+        {
+          crit: "You drain the ocean. Everyone else drinks 4.",
+        },
+      ),
     ),
     legendary(
       "rayquaza",
@@ -263,7 +288,7 @@ export const hoenn: Region = {
       d20(
         LEGENDARY_NEED,
         "Dragon Ascent. You and both brawlers drink 3.",
-        "You ride the dragon. Give 5.",
+        "You ride the dragon. The two brawlers hug it out or drink 4 each.",
       ),
     ),
     legendary(
@@ -272,7 +297,7 @@ export const hoenn: Region = {
       "Three golems behind a puzzle nobody solved without a guide. Admit you used one, then roll d20.",
       d20(
         LEGENDARY_NEED,
-        "Explosion. Drink 5.",
+        "Explosion. Drink 5, and admit what else you looked up a guide for.",
         "You crack the code. Give 5.",
         {
           fumble: "Three Explosions. Finish your drink.",

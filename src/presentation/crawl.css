@@ -367,6 +367,10 @@
 .stake-heal .crawl-icon {
   color: #b8261d;
 }
+.stake-natural {
+  background: radial-gradient(circle at 30% 25%, #f6e2a5, #b88a3c 75%);
+  color: #4a1410;
+}
 .stake-loot {
   background: radial-gradient(circle at 30% 25%, #a98bd9, #4b2d80 75%);
   color: #fbefff;
