@@ -375,8 +375,14 @@ export function OfferPlaque({
   /** One of a branching starter's forms, on its own evolve plaque. */
   branch?: { name: string; index: number };
 }) {
-  // A branch plaque names its form; its price stays under the name.
+  // A branch plaque names its form, with its own label ("Level up · drink 3")
+  // under the name; a heal says how many hearts it brings back.
   const price = branch ? offer.label.split(" · ")[1] : undefined;
+  const under = branch
+    ? offer.label
+    : offer.heal
+      ? `+${heartCount(theme, offer.heal)}`
+      : undefined;
   const icon: CrawlIconName | null = offer.loot
     ? offer.loot
     : offer.elite
@@ -421,7 +427,7 @@ export function OfferPlaque({
       </span>
       <span className="offer-label">
         {branch ? branch.name : offer.label}
-        {price && <small className="offer-price">{price}</small>}
+        {under && <small className="offer-price">{under}</small>}
       </span>
     </button>
   );

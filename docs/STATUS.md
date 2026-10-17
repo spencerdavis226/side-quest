@@ -2,6 +2,12 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Offer plaques say what they do (2026-10-17; branch `offer-plaque-hints`)
+
+- **Problem (owner):** a landing's plaques read "Archmage / drink 3" and "Rest". Nothing said the first levels the adventurer up or how many hearts Rest brings back.
+- **Fix (display only, `OfferPlaque` in `src/components/Crawl.tsx`):** a level-up or evolve plaque now shows the form name with the offer's own label under it ("Archmage / Level up · drink 3", "Vaporeon / Evolve · drink 3"); every heal plaque shows its hearts under its label ("Rest / +3 hearts", "Press B / +1 HP", "Catch it · drink 2 / +1 HP"). Aria labels unchanged.
+- **Verification:** `npm test` 226 passed; lint, typecheck, build passed. Chromium: the landing, evolution and Eevee tests passed (4); screenshots checked at 390 px and Eevee's four plaques at 320 px (the label wraps to two lines and fits).
+
 ## Head-to-head cards get a real opponent (2026-10-17; pushed to `main`)
 
 - **Problem (owner):** two Won/Lost cards asked the drawer to beat a character's performance that never happens. Chad's Fake ID ("Worse than his") and Fisherman Ned ("top it") had nothing to compare against. Of the 108 Won/Lost cards without dice, only these two did it.
