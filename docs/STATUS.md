@@ -2,7 +2,7 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## How to play in two places only (2026-10-17)
+## How to play in two places only (2026-10-17; pushed to `main`, PR #14)
 
 - **Owner:** too many How to play buttons. Now only the pause menu in a game, and "How to play ›" on setup's "How long?" heading (every mode; it explains the mode chosen: a crawl's rows, or the basics). Removed: the link in the party, satchel and chip dialogs, and the crawl heading's "How it works ›".
 - **Verification:** lint, typecheck, build passed. Chromium browser suite (all but the two fit sweeps, which this does not touch): 132 passed. Setup checked at 320 and 390 px.
