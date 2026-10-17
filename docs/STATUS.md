@@ -2,12 +2,13 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Top-edge blur: strip reaches past the status bar (2026-10-17; branch `status-edge-below`)
+## Top-edge blur: strip reaches past the status bar, bar blends into the wood (2026-10-17; pushed to `main`, PR #19)
 
 - **Owner (iOS 27, iPhone 15 Pro), after PR #18:** the header top and "YOUR STARTER" are still blurred, identical to before. The header sits at inset + 20px in both screenshots, so the app still draws under the status bar on iOS 27 (top inset 59pt) and the strip was already 59pt tall; PR #18's 14px minimum changed nothing there.
 - **Hypothesis:** WebKit samples 4px inside the *unobscured* edge, the bottom of the status bar (63pt), where the strip did not reach; the projects whose fixes worked pad a sticky header under the clock, so their box spans that point.
 - **Fix:** `.status-edge` is `calc(var(--top-safe) + 14px)` tall (inside the 20px above the header; nothing on setup or play sits there), background colour `#211810` (the wood's, as iOS may paint it in the status bar). `layout.spec.ts` hit-tests at inset + 4.
 - **Owner, after re-adding the app (fresh install, PR #18 live):** the header is sharp; the blur is fixed. But the opaque status bar is flat #271c11 (theme-color), lighter than the wood under it (~#18110c), and looks bad. The meta `theme-color` and the strip's colour are now #18110c, the wood at the edge; the manifest keeps #271c11 (its theme, background and the html root must agree, `pages.spec.ts`). Whether iOS picks up a changed theme-color without a re-add is not known.
+- **Bar blend (owner chose option 3 of: flat matched bar / wood under a blurred clock with the header 22pt lower / matched bar plus fade):** below the status bar the wood starts in #18110c and fades in over 56px (`--edge-fade`, painted on the installed app's `body:before` and on `.status-edge` so the two agree). Header and card size unchanged. Checked in Chromium emulation (no seam, inset 0 and 47px); not yet on a device.
 - **Owner's fallback (2026-10-17, superseded: the fix worked):** if this did not fix it, drop the solid colour/strip and keep wood texture in the status bar, accepting the blur.
 - **Verification:** `npm test` 229 passed; lint, typecheck, build passed; Chromium `@release` (minus fit sweeps) 37 passed. Not verified on a device.
 

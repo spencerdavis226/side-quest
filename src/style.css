@@ -75,6 +75,7 @@ html.standalone .status-edge {
   z-index: 1;
   height: calc(var(--top-safe) + 14px);
   background:
+    var(--edge-fade),
     radial-gradient(ellipse at 50% 40%, #110c0760, #100c0ac9) 0 0 / 100%
       var(--backdrop-height) no-repeat,
     url("/art/table.webp") center
@@ -118,6 +119,25 @@ body:before {
     url("/art/table.webp") center/cover no-repeat;
   background-color: #211811;
   pointer-events: none;
+}
+/* The installed app's top edge: below the status bar, which iOS paints flat
+   in theme-color, the wood starts in that colour and fades in over 56px, so
+   the bar reads as the table's shadowed edge instead of a band. The strip
+   (.status-edge) paints the same fade over the top of it. */
+html.standalone {
+  --edge-fade: linear-gradient(
+      #18110c,
+      #18110c var(--top-safe),
+      #18110c00 calc(var(--top-safe) + 56px)
+    )
+    0 0 / 100% calc(var(--top-safe) + 56px) no-repeat;
+}
+html.standalone body:before {
+  background:
+    var(--edge-fade),
+    radial-gradient(ellipse at 50% 40%, #110c0760, #100c0ac9),
+    url("/art/table.webp") center/cover no-repeat;
+  background-color: #211811;
 }
 button,
 input {
