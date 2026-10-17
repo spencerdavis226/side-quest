@@ -132,6 +132,20 @@ test("an exiting dialog is inert and cannot trigger its controls", async ({
   await expect(page.getByRole("dialog")).toHaveCount(0);
 });
 
+test("How to play explains every card from the pause menu", async ({
+  page,
+}) => {
+  await seed(page, game());
+  await page.getByRole("button", { name: "Open game menu" }).click();
+  await page.getByRole("button", { name: "How to play" }).click();
+  const guide = page.getByRole("dialog", { name: "How to play" });
+  // A plain game has no crawl rows, only the basics.
+  await expect(guide.locator(".guide-rows")).toHaveCount(0);
+  await expect(guide.locator(".guide-basics dt")).toHaveCount(5);
+  await guide.getByRole("button", { name: "Back to game" }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+});
+
 test("Escape closes the menu and restores focus to its opener", async ({
   page,
 }) => {

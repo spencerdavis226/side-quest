@@ -120,7 +120,10 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
   const boons = party?.boons?.length ?? 0;
   const jinx = party?.jinx;
   const passed = party?.passed;
-  const seen = useRef({ boons, jinx, passed });
+  const cup = party?.cup ?? 0;
+  const seen = useRef({ boons, jinx, passed, cup });
+  // The Cup explains itself once, on the first splash this screen sees.
+  const cupTold = useRef(false);
   const [shown, setShown] = useState<{
     key: string;
     kicker: string;
@@ -131,7 +134,7 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
   const words = crawlTheme(quest?.packId).words;
   useEffect(() => {
     const before = seen.current;
-    seen.current = { boons, jinx, passed };
+    seen.current = { boons, jinx, passed, cup };
     if (!quest || !party) return;
     if (passed !== undefined && passed !== before.passed) {
       const item = crawlTheme(quest.packId).loot.round;
@@ -180,7 +183,17 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
         line: "",
         tone: "pearl",
       });
-  }, [boons, jinx, passed, quest, party, words]);
+    else if (cup > before.cup && !cupTold.current && words.cup) {
+      cupTold.current = true;
+      setShown({
+        key: `cup-${cup}`,
+        kicker: words.cup.name,
+        title: words.cup.first.title,
+        line: words.cup.first.line,
+        tone: "amber",
+      });
+    }
+  }, [boons, jinx, passed, cup, quest, party, words]);
   if (!shown) return null;
   return (
     <div

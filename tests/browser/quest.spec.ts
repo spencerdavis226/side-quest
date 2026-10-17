@@ -203,6 +203,14 @@ test("@release a starter evolves on a route, and the banner says what changed", 
     dialog.locator(".crawl-omen > span:not(.crawl-icon)"),
   ).toHaveText("Max HP 18. +2 to route battle rolls.");
   await page.screenshot({ path: info.outputPath("team-dialog.png") });
+  // How to play speaks the League's words: no Quaff, no Cup.
+  await dialog.getByRole("button", { name: "How to play" }).click();
+  const guide = page.getByRole("dialog", { name: "How to play" });
+  await expect(guide.locator(".guide-rows li")).toHaveCount(6);
+  await expect(guide.locator(".guide-rows")).toContainText("Team HP");
+  await expect(guide.locator(".guide-rows")).not.toContainText("Quaff");
+  await guide.screenshot({ path: info.outputPath("league-guide.png") });
+  await page.keyboard.press("Escape");
   // A reload keeps the form and does not replay the banner.
   await page.reload();
   await expect(page.locator(".evolution-banner")).toHaveCount(0);

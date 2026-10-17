@@ -6,11 +6,12 @@ import { selectedPacks } from "../presentation/packs";
 import { findCard, questRecord } from "../game/engine";
 import { QuestRecord } from "../components/QuestRecord";
 import { CrawlRecord } from "../components/Crawl";
+import { Guide } from "../components/Guide";
 import { crawlTheme } from "../components/crawlTheme";
 import { CardFrame } from "../components/Cards";
 import { theme } from "../presentation/theme";
 export type DialogName =
-  "menu" | "previous" | "end" | "install" | "badges" | null;
+  "menu" | "previous" | "end" | "install" | "badges" | "guide" | null;
 // Unmount just after the shared exit animation finishes. The timer is the
 // bounded fallback, so a missing/again-changing animation can never strand the
 // dialog open.
@@ -104,6 +105,9 @@ export function GameDialogs({
             ))}
           </div>
         )}
+        <Button variant="menu-row" onClick={() => setModal("guide")}>
+          How to play
+        </Button>
         <Button
           variant="menu-row"
           className="danger"
@@ -142,6 +146,33 @@ export function GameDialogs({
           theme={crawl}
           session={session}
           onUse={onSpend}
+        />
+        <Button onClick={() => setModal(null)}>Back to game</Button>
+        <Button variant="text-button" onClick={() => setModal("guide")}>
+          How to play
+        </Button>
+      </Modal>
+    );
+  }
+  if (displayed === "guide") {
+    const party = session?.quest?.party;
+    return (
+      <Modal
+        title="How to play"
+        onClose={() => setModal("menu")}
+        exiting={exiting}
+      >
+        <Guide
+          crawl={
+            party && session?.quest
+              ? {
+                  packId: session.quest.packId,
+                  hearts: party.max,
+                  quaff: party.quaff,
+                  cup: party.cup !== undefined,
+                }
+              : undefined
+          }
         />
         <Button onClick={() => setModal(null)}>Back to game</Button>
       </Modal>

@@ -11,6 +11,7 @@ import { PackLogo, ModeMark } from "../components/PackMarks";
 import { asset } from "../presentation/theme";
 import { CrawlIcon } from "../components/Crawl";
 import { crawlTheme } from "../components/crawlTheme";
+import { Guide } from "../components/Guide";
 
 export function Setup({
   prefs,
@@ -24,6 +25,7 @@ export function Setup({
   onStart: () => void;
 }) {
   const [packsOpen, setPacksOpen] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
   const [crestFailed, setCrestFailed] = useState(false);
   const selected = packs.filter((pack) =>
     prefs.config.packIds.includes(pack.id),
@@ -167,6 +169,9 @@ export function Setup({
         <div className="setup-section setup-packs">
           <div className="section-label">
             <h2>{crawlLook.words.setupTitle}</h2>
+            <button className="guide-link" onClick={() => setGuideOpen(true)}>
+              How it works ›
+            </button>
           </div>
           <div
             className="crawl-brief"
@@ -183,6 +188,19 @@ export function Setup({
             </span>
           </div>
         </div>
+      )}
+      {guideOpen && crawlPack && (
+        <Modal title="How to play" onClose={() => setGuideOpen(false)}>
+          <Guide
+            crawl={{
+              packId: crawlPack.id,
+              hearts: crawlPack.quest!.party!.hearts,
+              quaff: crawlPack.quest!.party!.quaff,
+              cup: !!crawlPack.quest!.party!.cup,
+            }}
+          />
+          <Button onClick={() => setGuideOpen(false)}>Got it</Button>
+        </Modal>
       )}
       {limit !== null && cardCount > 0 && cardCount < limit && (
         <p className="pack-hint" role="status">

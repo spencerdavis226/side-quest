@@ -2,11 +2,14 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Offer plaques say what they do (2026-10-17; branch `offer-plaque-hints`)
+## How to play, clearer plaques, the Cup explained (2026-10-17; branch `offer-plaque-hints`, PR #12)
 
-- **Problem (owner):** a landing's plaques read "Archmage / drink 3" and "Rest". Nothing said the first levels the adventurer up or how many hearts Rest brings back.
-- **Fix (display only, `OfferPlaque` in `src/components/Crawl.tsx`):** a level-up or evolve plaque now shows the form name with the offer's own label under it ("Archmage / Level up · drink 3", "Vaporeon / Evolve · drink 3"); every heal plaque shows its hearts under its label ("Rest / +3 hearts", "Press B / +1 HP", "Catch it · drink 2 / +1 HP"). Aria labels unchanged.
-- **Verification:** `npm test` 226 passed; lint, typecheck, build passed. Chromium: the landing, evolution and Eevee tests passed (4); screenshots checked at 390 px and Eevee's four plaques at 320 px (the label wraps to two lines and fits).
+- **Owner asks:** the landing plaques didn't say what they did; the Quaff and the Cup were never explained; a simple TLDR of the special mechanics (Pub Crawl and the League), separate from the inventory; drop the floors list from the party dialog; plaque text looked cramped and cheap.
+- **Plaques (`OfferPlaque`, `PressPlaques`, `SpoilsPlaque`, `QuaffPlaque` in `src/components/Crawl.tsx`, styles in `crawl.css`):** one or two across, every plaque is its mark beside its name, with what it does on a smaller line under both ("Berserker / Level up · drink 3", "Rest / +3 hearts", "Quaff / drink 3 · reroll", "Press B / +1 HP"). Three or four across (merchants, Eevee) keep the stacked layout. The name is now its own `.offer-name`; aria labels unchanged.
+- **How to play (`src/components/Guide.tsx`):** pause menu row "How to play" in every game, a "How to play" link in the party dialog, and "How it works ›" on the crawl's heading row at setup. A crawl shows its goal, one row per mechanic (`guide` in `crawlTheme.ts`: Pub Crawl 8 rows with the Quaff and the Cup, the League 6), the seals legend (moved here from the party dialog as `SealLegend`), then every game's basics (draw, dice, buttons, secrets, previous card). A plain game shows only the basics. `tests/crawl-theme.test.ts` holds the guide's numbers to `PARTY_HEARTS`, `QUAFF_DRINKS`, `LEVEL_DRINK` and `LANDING_HEAL`.
+- **The Cup:** the drawer pours (owner's call was open; the guide, the party dialog and a new first-splash banner now say so). `PartyNewsBanner` shows "The Cup / Pour a splash in" (amber) once per screen on the first splash it sees; a jinx laid by the same loss wins the banner.
+- **Party dialog:** the floors list and the seals legend are gone; the floors list stays on the end screens.
+- **Verification:** see the commit message.
 
 ## Head-to-head cards get a real opponent (2026-10-17; pushed to `main`)
 

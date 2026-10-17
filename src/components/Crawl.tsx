@@ -426,7 +426,7 @@ export function OfferPlaque({
         ) : null}
       </span>
       <span className="offer-label">
-        {branch ? branch.name : offer.label}
+        <span className="offer-name">{branch ? branch.name : offer.label}</span>
         {under && <small className="offer-price">{under}</small>}
       </span>
     </button>
@@ -489,9 +489,9 @@ export function QuaffPlaque({
       onClick={onQuaff}
     >
       <CrawlIcon name="quaff" theme={theme} />
-      <span>
-        {theme.words.quaff}
-        <small className="offer-price">drink {drinks}</small>
+      <span className="offer-label">
+        <span className="offer-name">{theme.words.quaff}</span>
+        <small className="offer-price">drink {drinks} · reroll</small>
       </span>
     </button>
   );
@@ -526,7 +526,9 @@ export function PressPlaques({
             <CrawlIcon key={i} name={p} theme={theme} />
           ))}
         </span>
-        <span className="offer-label">Cash out</span>
+        <span className="offer-label">
+          <span className="offer-name">Cash out</span>
+        </span>
       </button>
       <button
         className="card-choice-option offer-plaque offer-loud press-again"
@@ -537,7 +539,7 @@ export function PressPlaques({
           <CrawlIcon name={card.press!.prizes[banked]} theme={theme} />
         </span>
         <span className="offer-label">
-          Again
+          <span className="offer-name">Again</span>
           <small className="offer-price">−{PRESS_STEP} to the roll</small>
         </span>
       </button>
@@ -571,7 +573,7 @@ export function SpoilsPlaque({
         <CrawlIcon name="trinket" theme={theme} />
       </span>
       <span className="offer-label">
-        {name}
+        <span className="offer-name">{name}</span>
         <small className="offer-price">{rules}</small>
       </span>
     </button>
@@ -581,8 +583,8 @@ export function SpoilsPlaque({
 type RunRecord = NonNullable<ReturnType<typeof questRecord>>;
 
 /** The run so far, for the satchel dialog and the end screens: the hearts,
- * the satchel (a draught can be drunk from here), the curse, and each floor
- * with its rooms faced and its boss. */
+ * the satchel (a draught can be drunk from here), the curse, and on the end
+ * screens each floor with its rooms faced and its boss. */
 export function CrawlRecord({
   record,
   theme,
@@ -771,105 +773,113 @@ export function CrawlRecord({
           })}
         </ul>
       )}
-      <ol className="crawl-floors">
-        {floors.map((floor) => (
-          <li
-            key={floor.name}
-            className={
-              floor.boss ? "cleared" : floor.rooms ? "reached" : undefined
-            }
-          >
-            <strong>{floor.name}</strong>
-            <span>
-              {floor.piece
-                ? floor.piece
-                : floor.rooms
-                  ? `${floor.rooms} of ${floor.of} ${words.rooms}`
-                  : "Not yet reached"}
-              {floor.boss && (
-                <>
-                  {" · "}
-                  <em>{floor.boss}</em>
-                </>
-              )}
-              {floor.wanted && words.wanted && (
-                <>
-                  {" · "}
-                  <span className="crawl-wanted">
-                    {words.wanted}: {floor.wanted}
-                  </span>
-                </>
-              )}
-            </span>
-          </li>
-        ))}
-      </ol>
-      {session && (
-        // Touch has no hover: the seals on a card are explained here.
-        <dl className="crawl-legend" aria-label="The seals on a card">
-          <div>
-            <dt className="stake stake-loss">
-              <b>−2</b>
-              <CrawlIcon name="heart" theme={theme} />
-            </dt>
-            <dd>{theme.legend[0]}</dd>
-          </div>
-          <div>
-            <dt className="stake stake-curse curse-bleed">
-              <CrawlIcon name="bleed" theme={theme} />
-            </dt>
-            <dd>{theme.legend[1]}</dd>
-          </div>
-          <div>
-            <dt className="stake stake-hits">
-              <CrawlIcon name="boss" theme={theme} />
-              <span className="stake-pips">
-                <i className="hit" />
-                <i />
+      {/* The run floor by floor, on the end screens only: in play, the
+          stage banners already name each floor and its boss. */}
+      {!session && (
+        <ol className="crawl-floors">
+          {floors.map((floor) => (
+            <li
+              key={floor.name}
+              className={
+                floor.boss ? "cleared" : floor.rooms ? "reached" : undefined
+              }
+            >
+              <strong>{floor.name}</strong>
+              <span>
+                {floor.piece
+                  ? floor.piece
+                  : floor.rooms
+                    ? `${floor.rooms} of ${floor.of} ${words.rooms}`
+                    : "Not yet reached"}
+                {floor.boss && (
+                  <>
+                    {" · "}
+                    <em>{floor.boss}</em>
+                  </>
+                )}
+                {floor.wanted && words.wanted && (
+                  <>
+                    {" · "}
+                    <span className="crawl-wanted">
+                      {words.wanted}: {floor.wanted}
+                    </span>
+                  </>
+                )}
               </span>
-            </dt>
-            <dd>{theme.legend[2]}</dd>
-          </div>
-          <div>
-            <dt className="stake stake-loot">
-              <b>+</b>
-              <CrawlIcon name="die" theme={theme} />
-            </dt>
-            <dd>{theme.legend[3]}</dd>
-          </div>
-          {theme.legendMore?.trinket && (
-            <div>
-              <dt className="stake stake-trinket">
-                <b>+</b>
-                <CrawlIcon name="trinket" theme={theme} />
-              </dt>
-              <dd>{theme.legendMore.trinket}</dd>
-            </div>
-          )}
-          {theme.legendMore?.jinx && (
-            <div>
-              <dt className="stake stake-jinx">
-                <CrawlIcon name="jinx" theme={theme} />
-              </dt>
-              <dd>{theme.legendMore.jinx}</dd>
-            </div>
-          )}
-          {/* The standing rule on a d20, the crawl's natural 20 and 1. */}
-          <div>
-            <dt className="stake stake-natural">
-              <b>20</b>
-            </dt>
-            <dd>{theme.naturals[0]}</dd>
-          </div>
-          <div>
-            <dt className="stake stake-loss">
-              <b>1</b>
-            </dt>
-            <dd>{theme.naturals[1]}</dd>
-          </div>
-        </dl>
+            </li>
+          ))}
+        </ol>
       )}
     </div>
+  );
+}
+
+/** The seals a crawl card wears, and the standing d20 rule, explained: touch
+ * has no hover, so the guide spells them out. */
+export function SealLegend({ theme }: { theme: CrawlTheme }) {
+  return (
+    <dl className="crawl-legend" aria-label="The seals on a card">
+      <div>
+        <dt className="stake stake-loss">
+          <b>−2</b>
+          <CrawlIcon name="heart" theme={theme} />
+        </dt>
+        <dd>{theme.legend[0]}</dd>
+      </div>
+      <div>
+        <dt className="stake stake-curse curse-bleed">
+          <CrawlIcon name="bleed" theme={theme} />
+        </dt>
+        <dd>{theme.legend[1]}</dd>
+      </div>
+      <div>
+        <dt className="stake stake-hits">
+          <CrawlIcon name="boss" theme={theme} />
+          <span className="stake-pips">
+            <i className="hit" />
+            <i />
+          </span>
+        </dt>
+        <dd>{theme.legend[2]}</dd>
+      </div>
+      <div>
+        <dt className="stake stake-loot">
+          <b>+</b>
+          <CrawlIcon name="die" theme={theme} />
+        </dt>
+        <dd>{theme.legend[3]}</dd>
+      </div>
+      {theme.legendMore?.trinket && (
+        <div>
+          <dt className="stake stake-trinket">
+            <b>+</b>
+            <CrawlIcon name="trinket" theme={theme} />
+          </dt>
+          <dd>{theme.legendMore.trinket}</dd>
+        </div>
+      )}
+      {theme.legendMore?.jinx && (
+        <div>
+          <dt className="stake stake-jinx">
+            <CrawlIcon name="jinx" theme={theme} />
+          </dt>
+          <dd>{theme.legendMore.jinx}</dd>
+        </div>
+      )}
+      {/* The standing rule on a d20, the crawl's natural 20 and 1. */}
+      <div>
+        <dt className="stake stake-natural">
+          <b>20</b>
+        </dt>
+        <dd>{theme.naturals[0]}</dd>
+      </div>
+      <div>
+        <dt className="stake stake-loss">
+          <b>1</b>
+        </dt>
+        <dd>{theme.naturals[1]}</dd>
+      </div>
+    </dl>
   );
 }
 

@@ -277,6 +277,11 @@ test("@release a trial is settled with plaques; a loss costs hearts and pours in
   );
   await expect(page.locator(".crawl-meter strong")).toHaveText(`${H - 2}`);
   await expect(page.locator(".tag-cup")).toHaveText("1");
+  // The first splash explains the Cup.
+  await expect(page.locator(".news-banner")).toHaveText(
+    /The Cup\s*Pour a splash in\s*Lost fight: the drawer pours/,
+  );
+  await page.screenshot({ path: info.outputPath("cup-banner.png") });
 });
 
 test("a boss shows its wounds, its trinket, and comes back until it falls", async ({
@@ -423,17 +428,28 @@ test("the party dialog lays out the run: adventurer, boons, jinx and the Cup", a
   await expect(dialog.locator(".crawl-cup")).toContainText("4 splashes");
   // The Rogue's satchel holds four.
   await expect(dialog.locator(".satchel-slot")).toHaveCount(4);
-  await expect(dialog.locator(".crawl-legend dd")).toHaveCount(8);
-  await expect(dialog.locator(".crawl-legend")).toContainText(
-    "A natural 1 doubles a loss",
-  );
-  await expect(dialog.locator(".crawl-floors")).toContainText("Wanted:");
+  // The floors and the seals moved out: the guide explains the seals.
+  await expect(dialog.locator(".crawl-floors, .crawl-legend")).toHaveCount(0);
   await page.screenshot({ path: info.outputPath("party.png") });
   await dialog.getByRole("button", { name: "Drink" }).click();
   await expect(dialog.locator(".crawl-hearts")).toHaveAccessibleName(
     `Hearts: 6 of ${H}`,
   );
   await expect(dialog.getByRole("button", { name: "Drink" })).toHaveCount(0);
+  // How to play, from the party dialog: the run's rules and the seals.
+  await dialog.getByRole("button", { name: "How to play" }).click();
+  const guide = page.getByRole("dialog", { name: "How to play" });
+  await expect(guide.locator(".guide-rows li")).toHaveCount(8);
+  await expect(guide.locator(".guide-rows")).toContainText(
+    "Lost a d20? Drink 3 to roll it again.",
+  );
+  await expect(guide.locator(".crawl-legend dd")).toHaveCount(8);
+  await expect(guide.locator(".crawl-legend")).toContainText(
+    "A natural 1 doubles a loss",
+  );
+  await guide.screenshot({ path: info.outputPath("guide.png") });
+  await guide.locator(".guide-basics").scrollIntoViewIfNeeded();
+  await guide.screenshot({ path: info.outputPath("guide-end.png") });
 });
 
 test("@release losing the last heart wipes the party, and the Cup goes to the last drawer", async ({

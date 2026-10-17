@@ -513,6 +513,69 @@
   background: #6b2a24;
 }
 
+/* One or two across, every plaque reads the same: its mark beside its name,
+   and what it does on a smaller line under both. Three or four across keep
+   the stacked layout above, as there is no room beside the mark. */
+.card-choice:not(.plaques-3, .plaques-4)
+  :is(.offer-plaque, .spoils-plaque, .quaff-plaque) {
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  gap: max(3px, 0.8cqw) max(6px, 1.6cqw);
+  padding: 0 max(8px, 2cqw);
+}
+.card-choice:not(.plaques-3, .plaques-4) .offer-label {
+  display: contents;
+}
+.card-choice:not(.plaques-3, .plaques-4) .offer-name {
+  grid-row: 1;
+  font-size: 0.96em;
+  line-height: 1;
+  text-align: left;
+}
+.card-choice:not(.plaques-3, .plaques-4)
+  :is(.offer-goods, .quaff-plaque > .crawl-icon) {
+  grid-row: 1;
+}
+.card-choice:not(.plaques-3, .plaques-4)
+  :is(
+    .offer-goods > .crawl-icon,
+    .quaff-plaque > .crawl-icon,
+    .loot-plaque > .crawl-icon
+  ) {
+  width: 1.05em;
+  height: 1.05em;
+}
+.card-choice:not(.plaques-3, .plaques-4) .offer-price {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 0.7em;
+  line-height: 1.15;
+  letter-spacing: 0.03em;
+  text-align: center;
+}
+/* Cash out: its prizes go under the name, where a price would be. */
+.card-choice:not(.plaques-3, .plaques-4) .press-cash .offer-goods {
+  grid-row: 2;
+  grid-column: 1 / -1;
+  justify-content: center;
+}
+.card-choice:not(.plaques-3, .plaques-4)
+  .press-cash
+  .offer-goods
+  > .crawl-icon {
+  width: 0.8em;
+  height: 0.8em;
+}
+/* A plaque with no line under its name: just the mark and the name. */
+.card-choice:not(.plaques-3, .plaques-4)
+  .offer-plaque:not(:has(.offer-price))
+  .offer-name {
+  font-size: 1em;
+}
+
 /* --- The run: hearts, curse, satchel, floors ------------------------------ */
 
 .crawl-record {
@@ -896,10 +959,7 @@
   color: #2b1806;
   background: linear-gradient(145deg, #f0c56a, #b9782c);
 }
-.quaff-plaque > span {
-  display: grid;
-  justify-items: center;
-}
+
 /* The medallion: the adventurer's helm, a landing's fire, the rival's
    shadows. */
 .crawl-progress .icon-adventurer,
@@ -996,4 +1056,104 @@
 }
 .press-again .offer-price {
   opacity: 0.9;
+}
+
+/* --- How to play (2026-10-17) ---------------------------------------------
+   The goal in a line, one row per mechanic (its mark, its name, one line),
+   the seals on a card, then every game's basics. */
+
+.guide {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 18px;
+  text-align: left;
+}
+.guide-goal {
+  margin: 0;
+  color: #f1d58c;
+  font: 600 1.05rem / 1.3 var(--font-tavern);
+  text-align: center;
+}
+.guide-rows {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.guide-rows li {
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  gap: 2px 12px;
+  align-items: start;
+  padding: 10px 12px;
+  border: 1px solid #5b4630;
+  border-radius: 10px;
+  background: rgb(20 12 6 / 0.4);
+}
+.guide-rows .crawl-icon {
+  grid-row: span 2;
+  width: 24px;
+  height: 24px;
+  margin-top: 1px;
+  color: #e9c97f;
+}
+.guide-rows strong {
+  color: #fff0cf;
+  font: 700 1rem / 1.2 var(--font-tavern);
+}
+.guide-rows span {
+  color: #d9c7a4;
+  font-size: 0.95rem;
+  line-height: 1.3;
+}
+.guide h3 {
+  margin: 6px 0 0;
+  color: #c9a86a;
+  font: 600 13px / 1 var(--font-tavern);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.guide-basics {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+.guide-basics > div {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 14px;
+  align-items: baseline;
+}
+.guide-basics dt {
+  color: #fff0cf;
+  font: 700 0.95rem / 1.2 var(--font-tavern);
+}
+.guide-basics dd {
+  margin: 0;
+  color: #d9c7a4;
+  font-size: 0.95rem;
+  line-height: 1.3;
+}
+/* Setup: "How it works" sits on the crawl's heading row, so the screen keeps
+   its height. A 44px target, read as a quiet gold link. */
+.section-label:has(.guide-link) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.guide-link {
+  min-height: 44px;
+  margin: -8px -4px -8px 0;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: #d9b56e;
+  font: 600 1rem / 1 var(--font-tavern);
+  letter-spacing: 0.02em;
+  cursor: pointer;
+}
+.guide-link:active {
+  filter: brightness(1.25);
 }

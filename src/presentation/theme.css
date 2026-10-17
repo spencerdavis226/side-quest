@@ -1333,6 +1333,12 @@ button.quest-meter:active:not(:disabled) {
   color: #ffe6a6;
   text-shadow: 0 1px 0 #3b0605;
 }
+/* The Cup's first splash: amber, like the Quaff. */
+.banner-amber .stage-banner-cloth {
+  background: linear-gradient(180deg, #f6d68a 0%, #d39a45 55%, #8e5a1f 100%);
+  color: #2b1806;
+  text-shadow: 0 1px 0 #f9e6b8;
+}
 .stage-banner-cloth.painted-banner {
   position: relative;
   width: min(100%, 768px);

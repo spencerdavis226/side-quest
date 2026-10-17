@@ -27,6 +27,13 @@ export type CrawlIconName =
   | "rest"
   | "jinx";
 
+/** One row of the how-to-play guide: a mark, a name, one line. */
+export interface GuideRow {
+  icon: CrawlIconName;
+  title: string;
+  line: string;
+}
+
 export interface CrawlTheme {
   loot: Record<Loot, { name: string; does: string }>;
   curses: Record<Curse, { name: string; does: string }>;
@@ -97,6 +104,8 @@ export interface CrawlTheme {
       /** The end screens: who drinks it. */
       won: string;
       wiped: string;
+      /** The banner on the first splash a game shows. */
+      first: { title: string; line: string };
     };
     /** A floor's banner names the boss waiting at the bottom. */
     wanted?: string;
@@ -104,13 +113,19 @@ export interface CrawlTheme {
   /** What the setup screen counts as the run's length (floors, gyms);
    * by default every stage of several rooms. */
   lengthOf?: (stages: QuestStage[]) => number;
-  /** The seals legend in the party dialog: −hearts, curse, hits, +item. */
+  /** The seals legend in the guide: −hearts, curse, hits, +item. */
   legend: [string, string, string, string];
   /** The legend's last two lines, the standing rule on a d20: what a
    * natural 20 doubles, then what a natural 1 doubles. */
   naturals: [string, string];
   /** Pub Crawl's extra seals: a trinket on a win, a jinx on a loss. */
   legendMore?: { trinket?: string; jinx?: string };
+  /** The how-to-play guide (2026-10-17): the goal in a line, then one row
+   * per mechanic. `quaff` and `cup` are the pack's quest's. */
+  guide: {
+    goal: string;
+    rows: (n: { hearts: number; quaff?: number; cup?: boolean }) => GuideRow[];
+  };
   /** The end screens: two title lines (the second in italics) and the
    * verdict. */
   wiped: { title: [string, string]; verdict: string };
@@ -188,9 +203,13 @@ const dungeon: CrawlTheme = {
     quaff: "Quaff",
     cup: {
       name: "The Cup",
-      pour: "Every lost fight pours a splash into the Cup",
+      pour: "Every lost fight, the drawer pours a splash into the Cup",
       won: "Whoever landed the last swing hands the Cup to anyone.",
       wiped: "Whoever drew the last card drinks the Cup.",
+      first: {
+        title: "Pour a splash in",
+        line: "Lost fight: the drawer pours some of their drink into the Cup in the middle.",
+      },
     },
     wanted: "Wanted",
   },
@@ -210,6 +229,59 @@ const dungeon: CrawlTheme = {
   legendMore: {
     trinket: "A trinket on a win: it holds the rest of the run",
     jinx: "A jinx on a loss: a table rule until the boss falls",
+  },
+  guide: {
+    goal: "Beat Last Call before the party's hearts run out.",
+    rows: ({ hearts, quaff, cup }) => [
+      {
+        icon: "heart",
+        title: "Hearts",
+        line: `The table shares ${hearts}. A lost fight costs hearts; at zero the party is wiped.`,
+      },
+      {
+        icon: "die",
+        title: "Fights",
+        line: "Roll the d20 and meet the number to win. No dice: the table judges, then taps Won or Lost.",
+      },
+      {
+        icon: "boss",
+        title: "Bosses",
+        line: "One ends each floor. Its pips are the wins it takes; each drawer gets one swing.",
+      },
+      {
+        icon: "rest",
+        title: "Landings",
+        line: "After a boss: level up your adventurer for 3 drinks, or rest for 3 hearts.",
+      },
+      {
+        icon: "satchel",
+        title: "Satchel and trinkets",
+        line: "Items show up as buttons on a card when they help. Trinkets from bosses last the run. Tap the hearts to see both.",
+      },
+      ...(quaff
+        ? [
+            {
+              icon: "quaff" as const,
+              title: "Quaff",
+              line: `Lost a d20? Drink ${quaff} to roll it again. Once per boss.`,
+            },
+          ]
+        : []),
+      ...(cup
+        ? [
+            {
+              icon: "cup" as const,
+              title: "The Cup",
+              line: "Each lost fight, the drawer pours a splash in. Win: the last swing hands it to anyone. Wipe: the last drawer drinks it.",
+            },
+          ]
+        : []),
+      {
+        icon: "jinx",
+        title: "Curses and jinxes",
+        line: "A lost fight can curse the party or jinx a player with a table rule. Both lift when the floor's boss falls.",
+      },
+    ],
   },
   wiped: {
     title: ["Party", "wiped."],
@@ -320,6 +392,41 @@ const league: CrawlTheme = {
   ],
   legendMore: {
     jinx: "A jinx on a loss: a table rule until the next boss falls",
+  },
+  guide: {
+    goal: "Beat the Champion before the team's HP runs out.",
+    rows: ({ hearts }) => [
+      {
+        icon: "heart",
+        title: "Team HP",
+        line: `The table shares ${hearts}. A lost battle costs HP; at zero the team whites out.`,
+      },
+      {
+        icon: "die",
+        title: "Battles",
+        line: "Roll the d20 and meet the number to win. No dice: the table judges, then taps Won or Lost.",
+      },
+      {
+        icon: "boss",
+        title: "Gyms and badges",
+        line: "A gym ends each route. Its pips are the wins it takes; each trainer gets one turn.",
+      },
+      {
+        icon: "adventurer",
+        title: "Evolution",
+        line: "Evolve your starter for drinks, or press B for 1 HP. Each form is stronger.",
+      },
+      {
+        icon: "satchel",
+        title: "Bag",
+        line: "Items show up as buttons on a card when they help. Tap the HP to see the bag.",
+      },
+      {
+        icon: "bleed",
+        title: "Statuses and jinxes",
+        line: "A lost battle can poison or confuse the team until the next gym falls, or jinx a player with a table rule.",
+      },
+    ],
   },
   wiped: {
     title: ["Whited", "out."],
