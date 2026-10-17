@@ -52,10 +52,12 @@ const seeded = (seed: number): Random => {
     return (seed - 1) / 2147483646;
   };
 };
-// The first three draws pick the floors: below 0.5 the original ones (the
-// Cellar, the Catacombs, the Drowned Taproom), above it the others.
-const ORIGINAL = [0.1, 0.1, 0.1];
-const OTHER = [0.9, 0.9, 0.9];
+// The first four draws pick the route, in run order (floor 1, the hidden
+// room, floor 2, floor 3): below 0.5 the original floors (the Cellar, the
+// Catacombs, the Drowned Taproom) and the first room (the Speakeasy), above
+// it the other floors and the last room (the Basement).
+const ORIGINAL = [0.1, 0.1, 0.1, 0.1];
+const OTHER = [0.9, 0.9, 0.9, 0.9];
 const make = (floors = ORIGINAL, seed = 1) => {
   const rest = seeded(seed);
   const queue = [...floors];
@@ -73,12 +75,14 @@ const STEP = {
   floor1: 3,
   boss1: 11,
   landing1: 12,
-  floor2: 13,
-  boss2: 21,
-  landing2: 22,
-  floor3: 23,
-  closing: 31,
-  lastCall: 32,
+  hidden: 13,
+  keeper: 15,
+  floor2: 16,
+  boss2: 24,
+  landing2: 25,
+  floor3: 26,
+  closing: 34,
+  lastCall: 35,
 };
 // The run past the door, with no adventurer or omen: the Cellar's first
 // room.
@@ -143,6 +147,8 @@ describe("Pub Crawl", () => {
       ["The Cellar", 8],
       ["Cellar boss", 1],
       ["The Landing", 1],
+      ["The Speakeasy", 2],
+      ["Speakeasy boss", 1],
       ["The Catacombs", 8],
       ["Catacombs boss", 1],
       ["The Lower Landing", 1],
@@ -150,9 +156,12 @@ describe("Pub Crawl", () => {
       ["Closing Time", 1],
       ["Last call", 1],
     ]);
-    expect(s.quest!.finale).toHaveLength(33);
+    expect(s.quest!.finale).toHaveLength(36);
     expect(currentCard(s).omen).toBeDefined();
     const at = (step: number) => findCard(s, s.quest!.finale[step])!;
+    expect(at(STEP.hidden).ribbon).toBe("Speakeasy · Guard");
+    expect(at(STEP.keeper)).toMatchObject({ encounter: "boss", hits: 2 });
+    expect(at(STEP.keeper).spoils).toHaveLength(2);
     expect(at(STEP.omen).boon).toBeDefined();
     expect(at(STEP.queue)).toMatchObject({ encounter: "ambush", battle: true });
     expect(at(STEP.queue).hits).toBeUndefined();
@@ -181,6 +190,8 @@ describe("Pub Crawl", () => {
       "The Wine Cellar",
       "Wine Cellar boss",
       "The Landing",
+      "The Basement",
+      "Basement boss",
       "The Sewers",
       "Sewers boss",
       "The Lower Landing",
@@ -201,7 +212,8 @@ describe("Pub Crawl", () => {
       adventurers.add(s.quest!.finale[STEP.adventurer]);
       omens.add(s.quest!.finale[STEP.omen]);
     }
-    expect(routes.size).toBe(8);
+    // Eight dungeons, each with one of five hidden rooms.
+    expect(routes.size).toBe(40);
     expect(adventurers.size).toBe(12);
     expect(omens.size).toBe(12);
   });
@@ -496,7 +508,7 @@ describe("Pub Crawl", () => {
       title: "Berserker",
       next: "Warlord",
     });
-    expect(up.quest!.step).toBe(STEP.floor2);
+    expect(up.quest!.step).toBe(STEP.hidden);
     roundTrip(up);
     s.quest!.party!.hearts = H - 4;
     expect(party(takeOffer(s, 1))).toMatchObject({ hearts: H - 1 });
@@ -1081,6 +1093,7 @@ it("no adventurer, omen or dungeon makes a crawl a walkover or hopeless", () => 
   const omens = by((s) =>
     s.quest!.finale[STEP.omen].replace("dungeon.omen-", ""),
   );
+  const rooms = by((s) => s.quest!.stages[6].label);
   const dungeons = by((s) =>
     s
       .quest!.stages.filter((st) => st.pick === 8)
@@ -1090,13 +1103,15 @@ it("no adventurer, omen or dungeon makes a crawl a walkover or hopeless", () => 
   console.log(
     `adventurers: ${adventurers.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}\n` +
       `omens: ${omens.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}\n` +
+      `hidden rooms: ${rooms.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}\n` +
       `dungeons: ${dungeons.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}`,
   );
   expect(adventurers).toHaveLength(12);
   expect(omens).toHaveLength(12);
   expect(dungeons).toHaveLength(8);
+  expect(rooms).toHaveLength(5);
   // The Plus-One is the worst by design, measured on its own below.
-  for (const [name, r] of [...adventurers, ...omens, ...dungeons]) {
+  for (const [name, r] of [...adventurers, ...omens, ...rooms, ...dungeons]) {
     if (name === "plus-one") continue;
     expect(r, name).toBeGreaterThan(0.1);
     expect(r, name).toBeLessThan(0.5);

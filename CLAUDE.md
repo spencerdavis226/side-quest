@@ -13,7 +13,7 @@ AGENTS.md (imported above) holds the binding constraints and commands; `docs/STA
 | Path | Role |
 | --- | --- |
 | `src/game` | Pure engine: shuffle, advance, dice sampling. No DOM, no React. |
-| `src/content` | Card and pack data (1,442 cards incl. Pokémon League and Pub Crawl cards, 8 packs). App code imports `manifest.generated.ts` and loads card text per pack via `loaders.ts`. |
+| `src/content` | Card and pack data (1,462 cards incl. Pokémon League and Pub Crawl cards, 8 packs). App code imports `manifest.generated.ts` and loads card text per pack via `loaders.ts`. |
 | `src/app/persistence.ts` | localStorage save/load, v1→v2 migration, preferences. |
 | `src/presentation` | Controller (animation state machine), theme, CSS, dice renderer adapter, imprint sprite. |
 | `src/components`, `src/screens` | React UI; `main.tsx` wires state, PWA update, and dialogs. |
@@ -27,5 +27,5 @@ AGENTS.md (imported above) holds the binding constraints and commands; `docs/STA
 - Read `docs/STATUS.md` first, but only the top sections; it is long and mostly history.
 - Verify with the narrowest check that proves the change, then say exactly what ran. `npm test` is fast (about 1s) and covers engine and content; layout and iOS-edge behavior need a production build plus Playwright (see AGENTS.md for the `TEST_PORT` pattern).
 - Emulated WebKit is not an iPhone. Never claim installed-app, Safari-toolbar, frost-strip, haptic, or performance behavior without a physical-device result in `docs/DEVICE_CHECKLIST.md`.
-- Card copy follows `docs/CARD_VOICE_REFERENCE.md` and `docs/AUTHORING.md`; supplied House/Pokémon wording stays as supplied unless the owner asks (the 2026-10-07 crude pass is recorded in `reference/README.md`).
+- Card copy follows `docs/CARD_VOICE_REFERENCE.md` and `docs/AUTHORING.md`. Since 2026-10-17 the owner says nothing is gospel: supplied House/Pokémon wording may be improved too, recorded in `reference/README.md`.
 - Commits and pushes to `main` publish the live site (the workflow deploys on every push to `main`). Always ask first.

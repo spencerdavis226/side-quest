@@ -204,6 +204,9 @@ const dungeon: CrawlTheme = {
     "A natural 20 doubles a win: its gives, item, heal and swing",
     "A natural 1 doubles a loss: its drinks and hearts",
   ],
+  // Floors are the stages of eight rooms; the hidden room's two guards are
+  // not a floor.
+  lengthOf: (stages) => stages.filter((st) => st.pick >= 4).length,
   legendMore: {
     trinket: "A trinket on a win: it holds the rest of the run",
     jinx: "A jinx on a loss: a table rule until the boss falls",

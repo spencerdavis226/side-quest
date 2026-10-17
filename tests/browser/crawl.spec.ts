@@ -16,25 +16,35 @@ const STEP = {
   floor1: 3,
   boss1: 11,
   landing1: 12,
-  floor2: 13,
-  boss2: 21,
-  landing2: 22,
-  floor3: 23,
-  closing: 31,
-  lastCall: 32,
+  hidden: 13,
+  keeper: 15,
+  floor2: 16,
+  boss2: 24,
+  landing2: 25,
+  floor3: 26,
+  closing: 34,
+  lastCall: 35,
 };
 
 // A Pub Crawl seeded at `step` with `id` in play, the party as given. The
 // floors are the original three (the Cellar, the Catacombs, the Drowned
-// Taproom) unless `other` picks the other three. With `adventurer`, that
+// Taproom) and the Speakeasy, unless `other` picks the other three and the
+// Basement. With `adventurer`, that
 // class was dealt and put aside first.
 function crawlAt(
   id: string,
   step = 0,
   party: Partial<PartyState> = {},
-  { other = false, adventurer }: { other?: boolean; adventurer?: string } = {},
+  {
+    other = false,
+    adventurer,
+    room = other ? 4 : 0,
+  }: { other?: boolean; adventurer?: string; room?: number } = {},
 ): SessionState {
-  const floors = other ? [0.9, 0.9, 0.9] : [0.1, 0.1, 0.1];
+  // The route draws come in run order: floor 1, the hidden room (0 to 4),
+  // floor 2, floor 3.
+  const f = other ? 0.9 : 0.1;
+  const floors = [f, (room + 0.5) / 5, f, f];
   let s = createSession(
     { version: 1, packIds: ["dungeon"], limit: null, quest: "dungeon" },
     cards,
@@ -321,11 +331,11 @@ test("@release a landing levels the adventurer up for drinks, or rests", async (
   await expect(page.locator(".evolution-banner")).toHaveText(
     /Barbarian levels up!\s*Berserker\s*\+2 max hearts\. \+2 to elite and boss rolls\./,
   );
-  // The next floor's banner names the boss waiting at the bottom.
+  // Next comes the hidden room behind the bookcase; its banner names the
+  // keeper waiting inside.
   const s = await saved(page);
-  const boss = cards.find((c) => c.id === s.quest.finale[STEP.boss2])!;
   await expect(page.locator(".stage-banner:not(.evolution-banner)")).toHaveText(
-    new RegExp(`Down into the Catacombs\\s*Wanted: ${boss.title}`),
+    /Behind the bookcase\s*Wanted: The Proprietor/,
   );
   await page.screenshot({ path: info.outputPath("level-up.png") });
   expect(s.quest.party).toMatchObject({ form: 1, max: H + 2 });
@@ -412,14 +422,14 @@ test("@release losing the last heart wipes the party, and the Cup goes to the la
   await expect(page.locator(".crawl-cup")).toContainText(
     "Whoever drew the last card drinks the Cup.",
   );
-  // The queue, three floors, closing time and Last Call.
+  // The queue, three floors and the hidden room, closing time, Last Call.
   await expect(page.locator(".crawl-floors li").first()).toContainText(
     "The Queue",
   );
   await expect(page.locator(".crawl-floors li").nth(1)).toContainText(
     "The Cellar",
   );
-  await expect(page.locator(".crawl-floors li")).toHaveCount(6);
+  await expect(page.locator(".crawl-floors li")).toHaveCount(7);
   await page.screenshot({ path: info.outputPath("wiped.png") });
   await page.getByRole("button", { name: "Play again" }).click();
   await expect(meter(page)).toHaveAccessibleName(full);
@@ -594,15 +604,21 @@ test("every Dungeon night card fits its face with its plaques at 375x667", async
   const ids = cards.filter((c) => c.id.startsWith("dungeon.")).map((c) => c.id);
   // Where each card is dealt: its stage's first step on the route that has
   // it (an elite, behind a fork, one room later).
-  const routes = [crawlAt(ids[0]), crawlAt(ids[0], 0, {}, { other: true })];
+  const routes = [true, false].flatMap((other) =>
+    [0, 1, 2, 3, 4].map((room) => ({
+      other,
+      room,
+      base: crawlAt(ids[0], 0, {}, { other, room }),
+    })),
+  );
   const placeOf = (id: string) => {
-    for (const [other, base] of routes.entries()) {
+    for (const { other, room, base } of routes) {
       let first = 0;
       for (const stage of base.quest!.stages) {
         if (stage.cards.some((c) => c.id === id))
-          return { step: first, other: !!other };
+          return { step: first, other, room };
         if (stage.elite?.some((c) => c.id === id))
-          return { step: first + 1, other: !!other };
+          return { step: first + 1, other, room };
         first += stage.pick;
       }
     }
@@ -612,8 +628,8 @@ test("every Dungeon night card fits its face with its plaques at 375x667", async
   await page.goto("./");
   for (const id of ids) {
     // A smoke bomb in the satchel puts the Flee plaque on every room fight.
-    const { step, other } = placeOf(id);
-    const s = reveal(crawlAt(id, step, { loot: ["smoke"] }, { other }));
+    const { step, other, room } = placeOf(id);
+    const s = reveal(crawlAt(id, step, { loot: ["smoke"] }, { other, room }));
     await page.evaluate(
       ({ key, session }) => localStorage.setItem(key, JSON.stringify(session)),
       { key, session: s },

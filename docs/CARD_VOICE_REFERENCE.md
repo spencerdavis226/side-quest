@@ -66,7 +66,7 @@ A rule that asks the table to behave a certain way (a voice, a pose, a word to s
 4. **One sentence**, obvious when broken.
 5. **Short, or tracked.** A loose rule lasts until the drawer's next turn at most. Anything longer is a crawl **jinx** (`card.jinx`): the app shows it on the meter and lifts it when the boss falls, so nobody has to remember. Write a jinx for "the jinxed player" (or "everyone"/"nobody"), ending on its slip: "Forget: drink 1."
 
-`tests/card-logic.test.ts` fails a crawl card that asks for something before every sip or drink, every time you stand, or all night, and a jinx without a 1-drink slip. The supplied Pokémon sheet cards keep their wording as supplied.
+`tests/card-logic.test.ts` fails a crawl card that asks for something before every sip or drink, every time you stand, or all night, and a jinx without a 1-drink slip. Since the owner's "nothing is gospel" (2026-10-17) the supplied sheets are held to the same test; record any change in `reference/README.md`.
 
 ## Suggestion rubric
 

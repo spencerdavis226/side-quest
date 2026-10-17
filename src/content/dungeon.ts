@@ -1,5 +1,6 @@
 import type { CardDefinition, PackDefinition } from "../game/types";
 import { withNaturals } from "./naturals";
+import { hiddenRoomCards, hiddenRooms } from "./dungeon/bookcase";
 import { catacombs } from "./dungeon/catacombs";
 import { cellar } from "./dungeon/cellar";
 import { classes } from "./dungeon/classes";
@@ -70,6 +71,7 @@ export const dungeonCards: CardDefinition[] = [
   ...lowerLandings,
   ...queueCards,
   ...closingCards,
+  ...hiddenRoomCards,
 ].map(withNaturals);
 
 const ids = (cards: CardDefinition[]) => cards.map((c) => c.id);
@@ -127,6 +129,16 @@ export const dungeonPack: PackDefinition = {
         ],
       },
       one("The Landing", "A breather on the stairs", upperLandings),
+      // Behind the bookcase: one of five hidden rooms, two guards and a
+      // keeper (2026-10-17).
+      {
+        oneOf: hiddenRooms.map((r) => [
+          { label: r.label, intro: r.intro, pick: 2, cardIds: ids(r.guards) },
+          one(`${r.label.replace(/^The /, "")} boss`, "Someone is waiting", [
+            r.keeper,
+          ]),
+        ]),
+      },
       {
         oneOf: [
           [

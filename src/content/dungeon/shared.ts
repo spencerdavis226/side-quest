@@ -57,6 +57,12 @@ export const QUEUE_NEED = 8;
 export const QUEUE_HURT = 1;
 export const CLOSING_NEED = 12;
 export const CLOSING_HURT = 3;
+/** The hidden room behind the bookcase, between the first landing and the
+ * second floor: its guards (two of three) and its keeper, beaten twice. */
+export const GUARD_NEED = 8;
+export const GUARD_HURT = 2;
+export const KEEPER_NEED = 10;
+export const KEEPER_HURT = 2;
 /** A landing between floors: level up for drinks, or rest for hearts. */
 export const LANDING_HEAL = 3;
 export const LEVEL_DRINK = 3;
@@ -536,6 +542,46 @@ export const vs =
   ): Roll =>
   (need) =>
     d20(need, lose, win, extra);
+
+/** A hidden room's guard: a fight at the room's odds (`fight`), or a trial
+ * the table calls (`null`). Pub Crawl only. */
+export const guard = (
+  room: string,
+  id: string,
+  title: string,
+  rules: string,
+  fight: Roll | null,
+  more: Stakes = {},
+): CardDefinition => ({
+  ...card(id, title, "challenge", rules, fight ? fight(GUARD_NEED) : undefined),
+  ribbon: `${room} · Guard`,
+  encounter: fight ? "monster" : "trial",
+  battle: true,
+  damage: GUARD_HURT,
+  ...stakes(more),
+});
+
+/** A hidden room's keeper: a boss, dealt again until beaten twice, who
+ * offers spoils when it falls. Pub Crawl only. */
+export const keeper = (
+  room: string,
+  id: string,
+  title: string,
+  rules: string,
+  fight: Roll,
+  more: { curse?: Curse; jinx?: Jinx; drops: Spoils },
+): CardDefinition => ({
+  ...card(id, title, "challenge", rules, fight(KEEPER_NEED)),
+  ribbon: `${room} · Boss`,
+  ribbonTone: "crimson",
+  encounter: "boss",
+  battle: true,
+  hits: 2,
+  damage: KEEPER_HURT,
+  ...(more.curse ? { curse: more.curse } : {}),
+  ...(more.jinx ? { jinx: more.jinx } : {}),
+  spoils: more.drops,
+});
 
 /** One floor's cards: its rooms (fights and finds), the elites behind its
  * fork, and its bosses (none on a third floor: Last Call closes it). */

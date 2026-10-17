@@ -20,6 +20,10 @@ import { starters } from "./league/starters";
 // consequences stay as written: shots, chugs, gendered splits, mixed drinks,
 // slaps and rough dares are not softened (the 2026-10-07 crude pass reworded
 // the flat dice spaces so each roll lands a joke; see reference/README.md).
+// The 2026-10-17 table-rule pass (owner: "nothing is gospel") turned eleven
+// prop, chore or dead rules into one-time actions (Egg, Lickitung, Psyduck,
+// Ditto, Murkrow, Mawile, Relicanth, Farfetch'd, Vulpix) and gave Team Magma
+// and Aqua a team that exists (whoever wears red or blue).
 // The source sheet is kept raw at
 // reference/pokemon_board_spaces.json; never rewrite it to match this file.
 // Keep IDs stable: active sessions snapshot their text and order.
@@ -236,8 +240,8 @@ const deck: CardDefinition[] = [
   card(
     "lickitung",
     "Lickitung",
-    "rule",
-    "Lickitung used Lick! Give 2 and keep your tongue out until your next turn.",
+    "sip",
+    "Lickitung used Lick! Lick your lips at the player across from you, then give them 2.",
   ),
 
   // --- Category rounds ------------------------------------------------------
@@ -307,14 +311,14 @@ const deck: CardDefinition[] = [
   card(
     "team-magma",
     "Team Magma",
-    "rule",
-    "Team Magma recruited you! If you're on Team Magma, make a rule for the rest of the game. Otherwise, drink 7.",
+    "group",
+    "Team Magma recruited you! Everyone wearing red joins you: you all give 3. Nobody in red: drink 4.",
   ),
   card(
     "team-aqua",
     "Team Aqua",
-    "rule",
-    "Team Aqua recruited you! If you're on Team Aqua, make a rule for the rest of the game. Otherwise, drink 7.",
+    "group",
+    "Team Aqua recruited you! Everyone wearing blue joins you: you all give 3. Nobody in blue: drink 4.",
   ),
   card(
     "pokemon-master",
@@ -546,8 +550,8 @@ const deck: CardDefinition[] = [
   card(
     "farfetchd",
     "Farfetch'd",
-    "rule",
-    "Farfetch'd got away! Drink 1. For the rest of the game, fetch drinks for anyone who asks.",
+    "sip",
+    "Farfetch'd got away! Drink 1, then fetch the next drink anyone asks for.",
   ),
   card(
     "raticate",
@@ -588,8 +592,8 @@ const deck: CardDefinition[] = [
   card(
     "vulpix",
     "Vulpix",
-    "rule",
-    "Vulpix used Will-O-Wisp! For the rest of the game, add 1 to every drink you take.",
+    "sip",
+    "Vulpix used Will-O-Wisp! You are burned: drink 3 while the table fans you.",
   ),
   card(
     "shuppet",
@@ -600,14 +604,14 @@ const deck: CardDefinition[] = [
   card(
     "ditto",
     "Ditto",
-    "rule",
-    "Ditto used Transform! Until your next turn, copy everything the next player does.",
+    "challenge",
+    "Ditto used Transform! Do an impression of someone here; the table guesses who. Nobody gets it: drink 2.",
   ),
   card(
     "psyduck",
     "Psyduck",
-    "rule",
-    "Psyduck has a headache! Until your next turn, hold your head. Let go and drink 1.",
+    "sip",
+    'Psyduck has a headache! Hold your head, groan "Psyyy", then drink 2.',
   ),
   card(
     "lapras",
@@ -624,8 +628,8 @@ const deck: CardDefinition[] = [
   card(
     "egg",
     "Egg",
-    "rule",
-    "You got an Egg! Hold an object until your next turn. Caught without it: drink 1.",
+    "sip",
+    "You got an Egg! Cradle your drink like a baby, sing it one line of a lullaby, then drink 2.",
   ),
   card(
     "togepi",
@@ -704,8 +708,8 @@ const deck: CardDefinition[] = [
   card(
     "murkcrow",
     "Murkrow",
-    "rule",
-    "Murkrow used Mimic! Pick a player and repeat everything they say until your next turn.",
+    "challenge",
+    "Murkrow used Mimic! Repeat a player's last sentence in their voice. The table calls it bad: drink 2.",
   ),
   card(
     "sudowoodo",
@@ -859,8 +863,8 @@ const deck: CardDefinition[] = [
   card(
     "mawile",
     "Mawile",
-    "rule",
-    "Mawile used Vicegrip! Until your next turn, grab a player and squeeze them. Drink 4 and apologize.",
+    "challenge",
+    "Mawile used Vicegrip! Give your left neighbor a 3-second bear hug, then drink 4 and apologize.",
   ),
   card(
     "fiery-path",
@@ -871,8 +875,8 @@ const deck: CardDefinition[] = [
   card(
     "relicanth",
     "Relicanth",
-    "rule",
-    "Relicanth used Dive! Kneel under the table until your next turn. Surface early: drink 2.",
+    "challenge",
+    "Relicanth used Dive! Duck under the table and hold your breath for 10 seconds. Surface early: drink 2.",
   ),
   card(
     "koffing",

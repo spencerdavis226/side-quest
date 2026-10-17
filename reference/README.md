@@ -49,7 +49,12 @@ material, not game content:
   softened. The 2026-10-07 crude pass reworded the flat dice spaces (Mareep,
   Zubat, Gym Battle, Poké Ball, Chansey, Supersonic, Game Corner, Rival Wally,
   Delibird, Elite Four) so the roll is a joke with its pour, and evened out
-  Battle of the Sexes; the beasts, shots and chugs are as before. Board-only plumbing (squares, lights, turn order, extra turns) is
+  Battle of the Sexes; the beasts, shots and chugs are as before. The
+  2026-10-17 table-rule pass (owner: "nothing is gospel"; the test is in
+  `docs/CARD_VOICE_REFERENCE.md`) turned eleven prop, chore or dead rules into
+  one-time actions: Egg (no object to hold), Lickitung, Psyduck, Ditto,
+  Murkrow, Mawile, Relicanth, Farfetch'd, Vulpix, and Team Magma and Aqua
+  (there are no teams, so whoever wears red or blue joins). Board-only plumbing (squares, lights, turn order, extra turns) is
   intentionally not carried over. The League's cards (`src/content/league/`,
   `pokemon-league.ts`) are original rather than from the sheets; at the
   owner's request (2026-10-17, "less same-y") their roll results were

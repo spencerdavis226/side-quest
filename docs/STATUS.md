@@ -2,6 +2,27 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Behind the Bookcase, and the Pokémon sheet table-rule pass (2026-10-17; pushed to `main`)
+
+**Hidden rooms** (`src/content/dungeon/bookcase.ts`): the League's villain hideouts done as a bar.
+- Between the first landing and the second floor the run finds one of five rooms: the Speakeasy, the VIP Room, the Back Office, Poker Night or the Basement.
+- Each deals two of its three guards (d20, d6 moves, 2d6 or a trial), then a keeper beaten twice.
+- The keeper offers spoils and, on a missed swing, lays a themed jinx that lasts only that fight: Prohibition (nobody says "drink"), Talk to My Agent, Per My Last Email, Poker Face, First Rule.
+- Constants: `GUARD_*`, `KEEPER_*`.
+- 20 cards, all Pub Crawl only. Dungeon night now has 289 cards; the catalog has 1,462.
+- A run is now 36 cards; a won run takes about 46 draws.
+
+**Balance:**
+- Won 29.8%.
+- Hidden rooms 28–33%.
+- Adventurers 24–43%; the Plus-One is 6% over 600 forced runs.
+- Routes 24–34%.
+
+**Pokémon sheet** (owner: "nothing is gospel"). Eleven supplied rules that needed props, were chores or referred to things that don't exist became one-time actions:
+- Egg, Lickitung, Psyduck, Ditto, Murkrow, Mawile, Relicanth, Farfetch'd, Vulpix.
+- Team Magma and Aqua: there are no teams, so whoever wears red or blue joins you.
+- Recorded in `reference/README.md`. The voice reference now holds the supplied sheets to the same test.
+
 ## Choose your spoils and the Bar Tab (2026-10-17; pushed to `main`)
 
 - **Spoils.** All 38 bosses and elites now offer two trinkets when they fall: their signature and a contrasting alternative, such as the Hydra Tooth (+2 to boss rolls) or the Hydra Scale (+2 max hearts).

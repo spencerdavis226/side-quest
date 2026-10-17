@@ -233,7 +233,7 @@ the Review column is intentionally blank so you can mark it up.
 
 ## Pokémon night (`pokemon`)
 
-482 cards · 44 sip · 47 group · 5 category · 338 challenge · 48 rule · 248 dice
+482 cards · 49 sip · 49 group · 5 category · 342 challenge · 37 rule · 248 dice
 
 | Review | Title | ID | Cat | Rules | Dice, secret or timer |
 | --- | --- | --- | --- | --- | --- |
@@ -252,7 +252,12 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Sentret | `pokemon.sentret` | sip | Sentret used Foresight! Choose someone who didn't see it coming; they drink 4. |  |
 | ☐ | Starter | `pokemon.starter` | sip | Choose your starter: drink 2 (grass), give 2 (fire), or everyone drinks 1 (water). |  |
 | ☐ | Doduo | `pokemon.doduo` | sip | Doduo used Double-Edge! Give 4 drinks, then drink 1. |  |
+| ☐ | Lickitung | `pokemon.lickitung` | sip | Lickitung used Lick! Lick your lips at the player across from you, then give them 2. |  |
 | ☐ | Rocket Grunt | `pokemon.rocket-grunt` | sip | A Rocket Grunt sends five Rattata. Drink as many as you want, then laugh at him. |  |
+| ☐ | Farfetch'd | `pokemon.farfetchd` | sip | Farfetch'd got away! Drink 1, then fetch the next drink anyone asks for. |  |
+| ☐ | Vulpix | `pokemon.vulpix` | sip | Vulpix used Will-O-Wisp! You are burned: drink 3 while the table fans you. |  |
+| ☐ | Psyduck | `pokemon.psyduck` | sip | Psyduck has a headache! Hold your head, groan "Psyyy", then drink 2. |  |
+| ☐ | Egg | `pokemon.egg` | sip | You got an Egg! Cradle your drink like a baby, sing it one line of a lullaby, then drink 2. |  |
 | ☐ | Rare Candy | `pokemon.rare-candy` | sip | Rare Candy! Level up: take another card now. No passing the device. |  |
 | ☐ | Bellsprout | `pokemon.bellsprout` | sip | Bellsprout used Growth! Drink 1 and take another card now. |  |
 | ☐ | Jigglypuff | `pokemon.jigglypuff` | sip | Jigglypuff used Sing! Everyone else fell asleep. Take another card now. |  |
@@ -292,6 +297,8 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Rival Silver | `pokemon.silver` | group | Rival Silver appears. Drink half the table, rounded up. He's still smug. |  |
 | ☐ | Rival May | `pokemon.may` | group | Rival May blocks the path! Everyone in a relationship drinks 3. If nobody is, everyone drinks 5. |  |
 | ☐ | Team Rocket | `pokemon.team-rocket` | group | Team Rocket blasts off! Everyone recites the motto. Last to finish drinks 2. |  |
+| ☐ | Team Magma | `pokemon.team-magma` | group | Team Magma recruited you! Everyone wearing red joins you: you all give 3. Nobody in red: drink 4. |  |
+| ☐ | Team Aqua | `pokemon.team-aqua` | group | Team Aqua recruited you! Everyone wearing blue joins you: you all give 3. Nobody in blue: drink 4. |  |
 | ☐ | Pokémon Master | `pokemon.pokemon-master` | group | Throw the Master Ball! Take 2 victory drinks while everyone toasts you. |  |
 | ☐ | Geodude | `pokemon.geodude` | group | Magnitude! Drink as many as you want; the player on your left drinks one less. Go around the table. |  |
 | ☐ | Day Care | `pokemon.day-care` | group | You visited the Day Care! Give 1 for each sibling you have. None? Drink 2. |  |
@@ -361,6 +368,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Poké Ball | `pokemon.pokeball` | challenge | Throw a Poké Ball! Roll d6. | 1d6 — 1-2: You nail the trainer in the balls. You both drink 2. 3-4: It flees. Drink 3. 5-6: Caught it! Give 3 and name it after someone here. |
 | ☐ | Supersonic | `pokemon.supersonic` | challenge | Tentacool used Supersonic! You're confused. Roll d6. | 1d6 — 1-2: You hurt yourself in confusion. Drink 4. 3-4: Drink 2 with your other hand. 5-6: You snap out of it. Give 2. |
 | ☐ | Missingno | `pokemon.missingno` | challenge | A wild Missingno glitched in! Roll d20. 1-5: the game breaks; everyone drinks 3. Higher: drink 2. | 1d20 — 1-1: Natural 1! The game breaks hard. Everyone drinks 6. 2-5: The game breaks. Everyone drinks 3. 6-20: Drink 2. |
+| ☐ | Ditto | `pokemon.ditto` | challenge | Ditto used Transform! Do an impression of someone here; the table guesses who. Nobody gets it: drink 2. |  |
 | ☐ | Tentacool | `pokemon.tentacool` | challenge | Tentacool used Constrict! Drink 2 and hold your drink until you finish it. |  |
 | ☐ | Machoke | `pokemon.machoke` | challenge | Machoke used Submission! Do anything the group tells you now, or drink 4. |  |
 | ☐ | Marill | `pokemon.marill` | challenge | Rain Dance! Perform a song and dance the group chooses, or drink 3. |  |
@@ -368,6 +376,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Ursaring | `pokemon.ursaring` | challenge | Ursaring woke up angry! Drink as many as the group decides, and apologize. |  |
 | ☐ | Clefairy | `pokemon.clefairy` | challenge | Clefairy used Metronome! Close your eyes and point at a player. Whoever you touch drinks 3. |  |
 | ☐ | Razor Leaf | `pokemon.razor-leaf` | challenge | Bellsprout used Razor Leaf! Shred someone with a callout. They drink 1 in shame. |  |
+| ☐ | Murkrow | `pokemon.murkcrow` | challenge | Murkrow used Mimic! Repeat a player's last sentence in their voice. The table calls it bad: drink 2. |  |
 | ☐ | Sudowoodo | `pokemon.sudowoodo` | challenge | A wild Sudowoodo blocks the path! Reveal an embarrassing truth to avoid 2 drinks, and everyone else drinks. |  |
 | ☐ | Contest Hall | `pokemon.contest-hall` | challenge | Hoenn Contest Hall! Runway walk to a group-chosen song. Give 5 if you do it; drink 3 if you don't. |  |
 | ☐ | Spinda | `pokemon.spinda` | challenge | Spinda used Teeter Dance! Dance to a group-chosen song or drink 8. |  |
@@ -377,7 +386,9 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Claydol | `pokemon.claydol` | challenge | Claydol used Double-Edge! Give as many drinks as you want, then drink half in recoil, rounded up. |  |
 | ☐ | Grimer | `pokemon.grimer` | challenge | Grimer used Sludge Bomb! Have every player combine their drinks in a glass, then finish it! |  |
 | ☐ | Pelipper | `pokemon.pelipper` | challenge | Pelipper used Stockpile! Mix a splash of everyone's drink. Roll d6. Even: swallow it. Odd: choose who drinks it. | 1d6 — 1-5: Spit Up! Choose who drinks it. 2-6: Swallow it. |
+| ☐ | Mawile | `pokemon.mawile` | challenge | Mawile used Vicegrip! Give your left neighbor a 3-second bear hug, then drink 4 and apologize. |  |
 | ☐ | Fiery Path | `pokemon.fiery-path` | challenge | Fiery Path! Take off an article of clothing. Drink 4 to stay hydrated. |  |
+| ☐ | Relicanth | `pokemon.relicanth` | challenge | Relicanth used Dive! Duck under the table and hold your breath for 10 seconds. Surface early: drink 2. |  |
 | ☐ | Brock | `pokemon.gym-brock` | challenge | Brock is busy hitting on Nurse Joy. Hit on someone here for him, then roll d20. | 1d20 — 1-1: Natural 1! Onix flattens you. Drink 10. 2-12: Onix flattens you. Drink 5. 13-19: You chip through. Drink 2. 20-20: Natural 20! Critical hit. Give 6. |
 | ☐ | Misty | `pokemon.gym-misty` | challenge | Misty's Cascade. Chug for 10 seconds without stopping. Stop early: drink 4 more. |  |
 | ☐ | Lt. Surge | `pokemon.gym-lt-surge` | challenge | Lt. Surge wants to see your service record. Salute him and roll 2d6. | 2d6 — 2-7: Shocked. Drink 4. 8-12: You ground him. Give 4. |
@@ -671,31 +682,20 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Starmobile | `pokemon.star-car` | challenge | A boss revs a Starmobile, a car made of Revavroom. Rev with your mouth, roll 2d6. | 2d6 — 2-6: Run over. Drink 3. 7-12: It stalls. Give 3. |
 | ☐ | Star Squad | `pokemon.star-squad` | challenge | Thirty grunts. Thirty seconds. Everyone points at the drawer. Roll d20. | 1d20 — 1-1: Natural 1! Thirty grunts sit on you. Drink 4, and everyone who pointed points again. 2-7: Overrun. Drink {total}. 8-19: Thirty down. Everyone who pointed drinks 1. 20-20: Natural 20! Thirty down. Everyone who pointed drinks 2. |
 | ☐ | Cassiopeia | `pokemon.boss-cassiopeia` | challenge | Cassiopeia was the Champion's classmate all along. Plot twist. Roll d6. | 1d6 — 1-1: Twist. Drink 5. 2-2: Double twist: she's also your left neighbor. You both drink 3. 3-3: Team Star disbands. Give 4. 4-4: She hands over the Star Badge. Give 4. 5-5: Everyone makes up. Give 4. 6-6: She cries. Give 5. |
-| ☐ | Lickitung | `pokemon.lickitung` | rule | Lickitung used Lick! Give 2 and keep your tongue out until your next turn. |  |
-| ☐ | Team Magma | `pokemon.team-magma` | rule | Team Magma recruited you! If you're on Team Magma, make a rule for the rest of the game. Otherwise, drink 7. |  |
-| ☐ | Team Aqua | `pokemon.team-aqua` | rule | Team Aqua recruited you! If you're on Team Aqua, make a rule for the rest of the game. Otherwise, drink 7. |  |
 | ☐ | Pineco | `pokemon.pineco` | rule | Pineco used Protect! Drink 2. Until your next turn, ignore every drink given to you. |  |
-| ☐ | Farfetch'd | `pokemon.farfetchd` | rule | Farfetch'd got away! Drink 1. For the rest of the game, fetch drinks for anyone who asks. |  |
 | ☐ | Raticate | `pokemon.raticate` | rule | Raticate used Pursuit! For the rest of the game, drink 1 whenever you leave the table. |  |
 | ☐ | Mankey | `pokemon.mankey` | rule | Mankey used Swagger! Teach a handshake. Until your next turn, fumbles drink 1. |  |
 | ☐ | Aipom | `pokemon.aipom` | rule | Aipom used Baton Pass! Until your next turn, pass every drink you're given to another player. |  |
 | ☐ | Skarmory | `pokemon.skarmory` | rule | Steel Wing! Drink 3. Until your next turn, drinks given to you bounce to the player on your right. |  |
 | ☐ | Tropius | `pokemon.tropius` | rule | Tropius used Sweet Scent! Until your next turn, every drink given out comes to you instead. |  |
 | ☐ | Sandshrew | `pokemon.sandshrew` | rule | Sandshrew used Sand-Attack! Drink with your non-dominant hand for the rest of the game. |  |
-| ☐ | Vulpix | `pokemon.vulpix` | rule | Vulpix used Will-O-Wisp! For the rest of the game, add 1 to every drink you take. |  |
 | ☐ | Shuppet | `pokemon.shuppet` | rule | Shuppet used Curse! For the rest of the game, drink 1 every time you curse. |  |
-| ☐ | Ditto | `pokemon.ditto` | rule | Ditto used Transform! Until your next turn, copy everything the next player does. |  |
-| ☐ | Psyduck | `pokemon.psyduck` | rule | Psyduck has a headache! Until your next turn, hold your head. Let go and drink 1. |  |
 | ☐ | Lapras | `pokemon.lapras` | rule | Lapras used Confuse Ray! Pick a player. Until your next turn, they speak in questions or drink 1. |  |
-| ☐ | Egg | `pokemon.egg` | rule | You got an Egg! Hold an object until your next turn. Caught without it: drink 1. |  |
 | ☐ | Togepi | `pokemon.togepi` | rule | Togepi hatched! Make a new rule for the rest of the game. Violations: drink 1. |  |
 | ☐ | Eevee | `pokemon.eevee` | rule | Eeveelution time! Choose a new rule for the rest of the game. Violations: drink 1. |  |
 | ☐ | Trick House | `pokemon.trick-house` | rule | The Trick House! Make a tricky new rule for the rest of the game. Violations: drink 1. |  |
 | ☐ | Pokémon Tower | `pokemon.pokemon-tower` | rule | Out of respect for the dead: no talking until your next turn. Slip and drink 1. |  |
-| ☐ | Murkrow | `pokemon.murkcrow` | rule | Murkrow used Mimic! Pick a player and repeat everything they say until your next turn. |  |
 | ☐ | Barboach | `pokemon.barboach` | rule | Barboach used Mud-slap! Name a player. For the rest of the game, they may slap you once after a full drink. |  |
-| ☐ | Mawile | `pokemon.mawile` | rule | Mawile used Vicegrip! Until your next turn, grab a player and squeeze them. Drink 4 and apologize. |  |
-| ☐ | Relicanth | `pokemon.relicanth` | rule | Relicanth used Dive! Kneel under the table until your next turn. Surface early: drink 2. |  |
 | ☐ | Bulbasaur | `pokemon.starter-bulbasaur` | rule | Bulbasaur chose you. Everyone sniff the bulb. Max HP 15. Every heal heals 2 more. |  |
 | ☐ | Charmander | `pokemon.starter-charmander` | rule | Charmander chose you. Keep its tail lit. +2 to route battle rolls. Bosses hurt 1 more. |  |
 | ☐ | Squirtle | `pokemon.starter-squirtle` | rule | Squirtle chose you, in sunglasses. The bag holds 2. Starts with a Protect. |  |
@@ -1228,7 +1228,7 @@ the Review column is intentionally blank so you can mark it up.
 
 ## Dungeon night (`dungeon`)
 
-269 cards · 24 sip · 32 group · 0 category · 189 challenge · 24 rule · 164 dice
+289 cards · 24 sip · 32 group · 0 category · 209 challenge · 24 rule · 179 dice
 
 | Review | Title | ID | Cat | Rules | Dice, secret or timer |
 | --- | --- | --- | --- | --- | --- |
@@ -1477,6 +1477,26 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Chad's Last Round | `dungeon.closing-last-round` | challenge | Chad ordered the last round, for the boys only. Intercept it. Roll d20. | 1d20 — 1-1: Natural 1! He drinks yours in front of you. Drink 8. 2-11: He drinks yours in front of you. Drink 4. 12-19: You carry the tray to your own table. Give 4. 20-20: Natural 20! You carry the tray, and Chad tips you. Everyone else drinks 3. |
 | ☐ | Brad's Venmo Request | `dungeon.closing-venmo-request` | challenge | Brad has Venmo-requested everyone here $14.50 for 'vibes'. Roll d20. | 1d20 — 1-1: Natural 1! You accidentally pay it. Drink 8. 2-11: You accidentally pay it. Drink 4. 12-19: You request $15 back for 'better vibes'. Give 4. 20-20: Natural 20! You request $15 back for 'better vibes'. Give 8. |
 | ☐ | The Dance-Off | `dungeon.closing-dance-off` | challenge | The Quarter-Zips call a dance-off. The whole bar is watching. Roll d6. | 1d6 — 1-1: Brad does the worm. You can't follow that. Drink 4. 2-2: You pull something. Drink 4. 3-3: Thad dips you. You let him. Drink 4. 4-4: You do the robot, and mean it. Give 4. 5-5: You moonwalk out the door and back. Give 4. 6-6: Everyone in the bar joins your dance. Everyone else drinks 2. |
+| ☐ | The Peephole | `dungeon.peephole` | challenge | A slot opens in the door. Invent a password in 5 seconds and sell it. The table votes. Fail: drink 3. |  |
+| ☐ | Flapper Fran | `dungeon.flapper-fran` | challenge | Fran challenges you to a Charleston. Do five seconds of it, then roll d20. | 1d20 — 1-1: Natural 1! Two left feet. Drink 6. 2-7: Two left feet. Drink 3. 8-19: The room applauds. Give 3. 20-20: Natural 20! The room applauds. Give 6. |
+| ☐ | Bathtub Gin | `dungeon.bathtub-gin` | challenge | A bathtub full of homemade gin, and a ladle. Roll d6. | 1d6 — 1-1: It tastes like a radiator. Drink 3. 2-2: You go blind for a minute. Drink 3. 3-3: Smooth, somehow. Give 2. 4-4: You ladle out a round. Give 3. 5-5: You find the still's off switch. Give 3. 6-6: You bottle it and sell it. Everyone else drinks 1. |
+| ☐ | The Proprietor | `dungeon.the-proprietor` | challenge | A bootlegger, dead since Prohibition, still running the room. Roll d20. | 1d20 — 1-1: Natural 1! He pours you the bathtub special. Drink 8. 2-9: He pours you the bathtub special. Drink 4. 10-19: You tip off the feds. Give 4. 20-20: Natural 20! You buy the place. Everyone else drinks 3. |
+| ☐ | Bottle Service | `dungeon.bottle-service` | challenge | A server brings a sparkler bottle and a bill for $900. Roll 2d6. | 2d6 — 2-6: You sign it. Drink 3. 7-12: It was for the next table. Give 3. |
+| ☐ | The Influencer | `dungeon.the-influencer` | challenge | Take the most flattering photo of the table in 10 seconds. The table hates it: drink 3. |  |
+| ☐ | The Bodyguard | `dungeon.the-bodyguard` | challenge | Six-five, an earpiece, no neck. He wants to see your wristband. Roll d20. | 1d20 — 1-1: Natural 1! No wristband. Drink 6. 2-7: No wristband. Drink 3. 8-19: You walk in like you own it. Give 3. 20-20: Natural 20! You walk in like you own it. Give 6. |
+| ☐ | The Promoter | `dungeon.the-promoter` | challenge | He's put your name on a list. You don't know which list. Roll d20. | 1d20 — 1-1: Natural 1! You're the promoter now. Finish your drink. 2-9: The bad list. Drink 4. 10-19: You're on his list now. Give 4. 20-20: Natural 20! You're on his list now. Give 8. |
+| ☐ | The Accountant | `dungeon.the-accountant` | challenge | He's found a discrepancy in the books, and it's you. Roll d20. | 1d20 — 1-1: Natural 1! Audited. Drink 6. 2-7: Audited. Drink 3. 8-19: You find his discrepancy. Give 3. 20-20: Natural 20! You find his discrepancy. Give 6. |
+| ☐ | The Security Camera | `dungeon.security-camera` | challenge | Freeze like a statue for 15 seconds while the table tries to crack you. Move: drink 3. |  |
+| ☐ | The Safe | `dungeon.the-safe` | challenge | The combination is somebody's birthday. Guess whose and roll d6. | 1d6 — 1-1: The alarm goes off. Drink 3. 2-2: A dye pack. Drink 3, blue. 3-3: It's empty. Give 2. 4-4: Petty cash. Give 3. 5-5: Petty cash and a bottle. Give 3. 6-6: It was the owner's birthday. Everyone else drinks 1. |
+| ☐ | The Manager | `dungeon.the-manager` | challenge | He needs you to come in on Saturday. He's not asking. Roll d20. | 1d20 — 1-1: Natural 1! You're working Saturday. Drink 8. 2-9: You're working Saturday. Drink 4. 10-19: You quit, loudly. Give 4. 20-20: Natural 20! You get his job. Everyone else drinks 3. |
+| ☐ | The Card Sharp | `dungeon.card-sharp` | challenge | He deals you in with a smile you don't like. Roll 2d6 for your hand. | 2d6 — 2-6: Two pair. His is better. Drink 3. 7-12: Full house. Give 3. |
+| ☐ | The Tell | `dungeon.the-tell` | challenge | Tell two truths and a lie. Anyone at the table spots the lie: drink 3. |  |
+| ☐ | The Dealer | `dungeon.the-dealer` | challenge | She's dealing from the bottom of the deck and smiling about it. Roll d20. | 1d20 — 1-1: Natural 1! Busted. Drink 6. 2-7: Busted. Drink 3. 8-19: You catch her. Give 3. 20-20: Natural 20! You catch her. Give 6. |
+| ☐ | Big Mike | `dungeon.big-mike` | challenge | He has never lost a hand, and he plays with real money and fake teeth. Roll d20. | 1d20 — 1-1: Natural 1! Big Mike takes the pot. Drink 8. 2-9: Big Mike takes the pot. Drink 4. 10-19: You call his bluff. Give 4. 20-20: Natural 20! You take the pot and his teeth. Everyone else drinks 3. |
+| ☐ | The Arm Wrestle | `dungeon.arm-wrestle` | challenge | Arm-wrestle the player on your right, best of one. Lose: drink 3. |  |
+| ☐ | The Ref | `dungeon.the-ref` | challenge | A ref with one rule: there are no rules. Roll d20. | 1d20 — 1-1: Natural 1! He calls it on you. Drink 6. 2-7: He calls it on you. Drink 3. 8-19: He raises your hand. Give 3. 20-20: Natural 20! He raises your hand. Give 6. |
+| ☐ | The Undercard | `dungeon.the-undercard` | challenge | The undercard fighter is warming up, on you. Roll d6. | 1d6 — 1-1: Jab, jab, hook. Drink 3. 2-2: Headlock. Drink 3. 3-3: You duck. Give 2. 4-4: You counter. Give 3. 5-5: You knock him out of the ring. Give 3. 6-6: The crowd lifts you up. Everyone else drinks 1. |
+| ☐ | The Undefeated | `dungeon.the-undefeated` | challenge | He has a belt, a mouthguard and a grudge he can't remember starting. Roll d20. | 1d20 — 1-1: Natural 1! You go through a table. Finish your drink. 2-9: Down for the count. Drink 4. 10-19: You take the belt. Give 4. 20-20: Natural 20! You take the belt. Give 8. |
 | ☐ | Flooded Stairs | `dungeon.omen-flooded-stairs` | rule | The stairs are underwater. Every trap costs one more heart. Take a smoke bomb down. |  |
 | ☐ | Happy Hour | `dungeon.omen-happy-hour` | rule | Two for one, all the way down. Every heal heals one more heart. Everyone drinks 1. |  |
 | ☐ | Running a Tab | `dungeon.omen-running-a-tab` | rule | You start two hearts short, but the bar put a shield and a draught on your tab. |  |

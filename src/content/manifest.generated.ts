@@ -1899,6 +1899,100 @@ export const packs: PackDefinition[] = [
           oneOf: [
             [
               {
+                label: "The Speakeasy",
+                intro: "Behind the bookcase",
+                pick: 2,
+                cardIds: [
+                  "dungeon.peephole",
+                  "dungeon.flapper-fran",
+                  "dungeon.bathtub-gin",
+                ],
+              },
+              {
+                label: "Speakeasy boss",
+                intro: "Someone is waiting",
+                pick: 1,
+                cardIds: ["dungeon.the-proprietor"],
+              },
+            ],
+            [
+              {
+                label: "The VIP Room",
+                intro: "Past the velvet rope",
+                pick: 2,
+                cardIds: [
+                  "dungeon.bottle-service",
+                  "dungeon.the-influencer",
+                  "dungeon.the-bodyguard",
+                ],
+              },
+              {
+                label: "VIP Room boss",
+                intro: "Someone is waiting",
+                pick: 1,
+                cardIds: ["dungeon.the-promoter"],
+              },
+            ],
+            [
+              {
+                label: "The Back Office",
+                intro: "A door marked PRIVATE",
+                pick: 2,
+                cardIds: [
+                  "dungeon.the-accountant",
+                  "dungeon.security-camera",
+                  "dungeon.the-safe",
+                ],
+              },
+              {
+                label: "Back Office boss",
+                intro: "Someone is waiting",
+                pick: 1,
+                cardIds: ["dungeon.the-manager"],
+              },
+            ],
+            [
+              {
+                label: "Poker Night",
+                intro: "A card game in the back",
+                pick: 2,
+                cardIds: [
+                  "dungeon.card-sharp",
+                  "dungeon.the-tell",
+                  "dungeon.the-dealer",
+                ],
+              },
+              {
+                label: "Poker Night boss",
+                intro: "Someone is waiting",
+                pick: 1,
+                cardIds: ["dungeon.big-mike"],
+              },
+            ],
+            [
+              {
+                label: "The Basement",
+                intro: "Down the stairs nobody uses",
+                pick: 2,
+                cardIds: [
+                  "dungeon.arm-wrestle",
+                  "dungeon.the-ref",
+                  "dungeon.the-undercard",
+                ],
+              },
+              {
+                label: "Basement boss",
+                intro: "Someone is waiting",
+                pick: 1,
+                cardIds: ["dungeon.the-undefeated"],
+              },
+            ],
+          ],
+        },
+        {
+          oneOf: [
+            [
+              {
                 label: "The Catacombs",
                 intro: "Down into the Catacombs",
                 pick: 8,
