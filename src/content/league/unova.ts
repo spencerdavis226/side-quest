@@ -59,7 +59,7 @@ export const unova: Region = {
       "Clay is a cowboy with a mine and no patience. Tip your hat, partner, and roll d20.",
       d20(
         GYM_NEED[4],
-        'Earthquake. Drink 5, and say "yeehaw" before every sip until your next turn.',
+        'Earthquake. Yell "yeehaw", then drink 5.',
         "You strike gold. Everyone tips their hat; the last one drinks 3.",
         {
           fumble: "Buried in the mine. Finish your drink.",

@@ -240,8 +240,8 @@ export const lastCallBosses: CardDefinition[] = [
     ),
     {
       jinx: {
-        name: "Screenshot",
-        rule: "The jinxed player narrates everything they do, like a voice note. Forget: drink 1.",
+        name: "Muted",
+        rule: "The jinxed player can only mime. Say a word: drink 1.",
       },
     },
   ),

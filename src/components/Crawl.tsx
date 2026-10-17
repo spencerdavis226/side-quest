@@ -717,22 +717,22 @@ export function CrawlRecord({
             </dt>
             <dd>{theme.legend[3]}</dd>
           </div>
-          {theme.legendMore && (
-            <>
-              <div>
-                <dt className="stake stake-trinket">
-                  <b>+</b>
-                  <CrawlIcon name="trinket" theme={theme} />
-                </dt>
-                <dd>{theme.legendMore.trinket}</dd>
-              </div>
-              <div>
-                <dt className="stake stake-jinx">
-                  <CrawlIcon name="jinx" theme={theme} />
-                </dt>
-                <dd>{theme.legendMore.jinx}</dd>
-              </div>
-            </>
+          {theme.legendMore?.trinket && (
+            <div>
+              <dt className="stake stake-trinket">
+                <b>+</b>
+                <CrawlIcon name="trinket" theme={theme} />
+              </dt>
+              <dd>{theme.legendMore.trinket}</dd>
+            </div>
+          )}
+          {theme.legendMore?.jinx && (
+            <div>
+              <dt className="stake stake-jinx">
+                <CrawlIcon name="jinx" theme={theme} />
+              </dt>
+              <dd>{theme.legendMore.jinx}</dd>
+            </div>
           )}
           {/* The standing rule on a d20, the crawl's natural 20 and 1. */}
           <div>

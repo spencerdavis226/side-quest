@@ -187,8 +187,8 @@ export const cellar: FloorCards = {
       "You catch the shark. Keep it. Give 2.",
       {
         jinx: {
-          name: "Seeing Stars",
-          rule: "The jinxed player counts out loud to three before every drink. Forget: drink 1.",
+          name: "Thumb Master",
+          rule: "Whenever the jinxed player puts a thumb on the table, the last to copy drinks 1.",
         },
       },
     ),

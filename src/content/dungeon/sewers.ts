@@ -127,8 +127,8 @@ export const sewers: FloorCards = {
       "You say nothing. It explodes. Give 4.",
       {
         jinx: {
-          name: "The Echo",
-          rule: "The jinxed player repeats the last word of everything they say. Forget: drink 1.",
+          name: "Bat Signal",
+          rule: "Whenever the jinxed player points at the ceiling, the last to copy drinks 1.",
         },
       },
     ),
@@ -365,8 +365,8 @@ export const sewers: FloorCards = {
       }),
       {
         jinx: {
-          name: "Toilet Seat Crown",
-          rule: "The jinxed player wears a coaster on their head. It falls off: drink 1.",
+          name: "Plunger Hands",
+          rule: "Nobody points at anything. Slip: drink 1.",
         },
         drops: trinket("Royal Wrench", {
           hurt: { trap: -1 },

@@ -63,12 +63,12 @@ export const kanto: Region = {
       "erika",
       "Erika",
       "Rainbow",
-      "Erika's Sleep Powder. Roll d6. Fall asleep and your eyes stay shut until your next turn.",
+      "Erika's Sleep Powder. Shut your eyes and roll d6.",
       rollTable(1, 6, [
         ...[1, 2, 3, 4].map((n) => ({
           min: n,
           max: n,
-          instruction: `Asleep. Drink ${n + 2}, eyes shut.`,
+          instruction: `Asleep. Drink ${n + 2} with your eyes shut.`,
         })),
         {
           min: 5,
@@ -156,12 +156,18 @@ export const kanto: Region = {
       "Fighting",
       "Arm-wrestle the two strongest players back to back. Each loss: drink 5.",
     ),
-    eliteFour(
-      "agatha",
-      "Agatha",
-      "Ghost",
-      "Drink 3. Until your next turn you can't say anyone's name. Each slip: drink 3.",
-    ),
+    {
+      ...eliteFour(
+        "agatha",
+        "Agatha",
+        "Ghost",
+        "Agatha's ghosts eat names. For one minute nobody says one. Anyone slips: drink 3. You slip: lost.",
+      ),
+      jinx: {
+        name: "No Names",
+        rule: "Nobody says a first name. Slip: drink 1.",
+      },
+    },
   ],
 
   champions: [

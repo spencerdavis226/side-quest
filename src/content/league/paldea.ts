@@ -25,7 +25,7 @@ export const paldea: Region = {
       "Katy baked you a cake and her bugs got in the batter. Take a big bite of nothing, then roll d20.",
       d20(
         GYM_NEED[0],
-        "Sticky Web. Drink 4, and keep your elbows on the table until your next turn.",
+        "Sticky Web. Drink 4 with your elbows stuck to the table.",
         "Sugar crash for Katy. Give 3.",
         {
           fumble: "You found a leg. Finish your drink.",
@@ -90,10 +90,10 @@ export const paldea: Region = {
       "tulip",
       "Tulip",
       "Psychic",
-      "Tulip does your makeup. Shut your eyes while your left neighbor finger-paints your face. Roll d20.",
+      "Tulip does your makeup. Your left neighbor mimes it, narrating every stroke. Roll d20.",
       d20(
         GYM_NEED[6],
-        "Hideous. Drink 6, and keep the face paint until your next turn.",
+        "Hideous. Drink 6.",
         "Gorgeous. You and your makeup artist give 3 each.",
         {
           crit: "Supermodel. Everyone else drinks 4.",
@@ -230,7 +230,7 @@ export const paldea: Region = {
       "Koraidon is your motorcycle. Make engine noises and lean into a turn, then roll d20.",
       d20(
         LEGENDARY_NEED,
-        "Wipeout. Drink 5, and walk your bike: stand until your next turn.",
+        "Wipeout. Drink 5 standing, like you just fell off.",
         "Wheelie. Pick a passenger; you both give 3.",
         {
           fumble: "Road rash. Finish your drink.",

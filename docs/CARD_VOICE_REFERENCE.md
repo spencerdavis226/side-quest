@@ -56,6 +56,18 @@ Dice *are* supported in this game (one to four d6/d20; total, doubles, or per-di
 
 These exclusions are mechanical constraints, not a request to sanitize the personality. Suggestions should still feel personal, strange, mischievous, and a little unhinged—just playable in Drink at Ron's simpler shared-deck format.
 
+## Table rules: the owner's test (2026-10-17)
+
+A rule that asks the table to behave a certain way (a voice, a pose, a word to say, a thing nobody may do) has to earn its place. The owner cut Squirtle's sunglasses (a bar may have none) and the Pikachu naming rule (work with no payoff). Keep a table rule only when it passes all of these:
+
+1. **No props.** Drinks, phones, chairs and the table only: no sunglasses, makeup, hats or "hold an object".
+2. **It pays off.** Either doing it is the joke (talk posh, kneel, call someone Your Majesty), or it is a gotcha the table can catch someone on (no first names, Question Master, Thumb Master), with a 1-drink slip.
+3. **No chores.** Nothing "before every sip" or "every time you stand", unless the action itself is the laugh and the app tracks it. Turn a chore into a one-time action instead: "Oink, then drink 2", "Hold your nose and drink 3".
+4. **One sentence**, obvious when broken.
+5. **Short, or tracked.** A loose rule lasts until the drawer's next turn at most. Anything longer is a crawl **jinx** (`card.jinx`): the app shows it on the meter and lifts it when the boss falls, so nobody has to remember. Write a jinx for "the jinxed player" (or "everyone"/"nobody"), ending on its slip: "Forget: drink 1."
+
+`tests/card-logic.test.ts` fails a crawl card that asks for something before every sip or drink, every time you stand, or all night, and a jinx without a 1-drink slip. The supplied Pokémon sheet cards keep their wording as supplied.
+
 ## Suggestion rubric
 
 A strong suggestion should answer yes to most of these:

@@ -107,7 +107,7 @@ export const alola: Region = {
       "Hapu's Mudsdale stomps. Stomp your feet like a horse, then roll d20.",
       d20(
         GYM_NEED[7],
-        "Trampled. Drink 7, and stomp before every sip until your next turn.",
+        "Trampled. Stomp three times, then drink 7.",
         "You ride her horse. Pick a player: they neigh for you or drink 4.",
         {
           crit: "Island Kahuna. Everyone else drinks 4.",

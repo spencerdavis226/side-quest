@@ -1,6 +1,7 @@
 import type {
   CardDefinition,
   Curse,
+  Jinx,
   DiceDefinition,
   DiceOutcome,
   Encounter,
@@ -160,10 +161,11 @@ const spot = (
   encounter,
 });
 
-type Extra = { loot?: Loot; curse?: Curse };
-const stakes = ({ loot, curse }: Extra) => ({
+type Extra = { loot?: Loot; curse?: Curse; jinx?: Jinx };
+const stakes = ({ loot, curse, jinx }: Extra) => ({
   ...(loot ? { reward: { loot } } : {}),
   ...(curse ? { curse } : {}),
+  ...(jinx ? { jinx } : {}),
 });
 
 /** A wild Pokémon: a fight at the leg's odds. A `curse` lands on a loss

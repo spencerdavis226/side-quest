@@ -48,7 +48,7 @@ const route1: CardDefinition[] = [
     "Rattata",
     "Wild Rattata appeared! It is chewing on your shoelaces like it pays rent. Roll d20.",
     vs(
-      "It bites your ankle. Drink 2 and limp until your next turn.",
+      "It bites your ankle. Drink 2 standing on one foot.",
       "Evicted. Whoever has the worst shoes drinks 2.",
     ),
   ),
@@ -91,7 +91,7 @@ const route1: CardDefinition[] = [
     "Lechonk",
     "Wild Lechonk is snorting your snacks. Everyone oinks at it; the drawer rolls d20.",
     vs(
-      "It eats the whole bag. Drink 2, and oink before every sip until your next turn.",
+      "It eats the whole bag. Oink, then drink 2.",
       "Bacon later. The quietest oinker drinks 2.",
     ),
   ),
@@ -270,7 +270,7 @@ const route2: CardDefinition[] = [
     "Yungoos",
     "Wild Yungoos is a sausage with teeth and a bad attitude. Roll d20.",
     vs(
-      "It bites your sausage. Drink 3 and cross your legs until your next turn.",
+      "It bites your sausage. Drink 3 with your legs crossed.",
       "Sausage served. Whoever has the longest name drinks 2.",
     ),
   ),
@@ -384,11 +384,14 @@ const route3: CardDefinition[] = [
     "route-psyduck",
     "Psyduck",
     "Wild Psyduck has a headache. So do you. Hold your head and roll d20.",
-    vs(
-      "Confusion. Drink 3, and answer only in questions until your next turn.",
-      "It waddles off, still confused. Give 2.",
-    ),
-    { curse: "hex" },
+    vs("Confusion. Drink 3.", "It waddles off, still confused. Give 2."),
+    {
+      curse: "hex",
+      jinx: {
+        name: "Question Time",
+        rule: "The jinxed player speaks only in questions. Slip: drink 1.",
+      },
+    },
   ),
   wild(
     2,
@@ -462,24 +465,28 @@ const route3: CardDefinition[] = [
     "Juggler Rico",
     "Juggler Rico juggles three Voltorb. Juggle any two things for five seconds or drink 3.",
   ),
-  hazard(
-    2,
-    "route-team-rocket",
-    "Prepare for Trouble",
-    "Jessie and James drop a net from a Meowth balloon. Recite what you can of their motto, then roll d6.",
-    moves(
-      [
-        "Netted. Drink 3.",
-        "Meowth scratches. Drink 2, and meow before every sip until your next turn.",
-      ],
-      [
-        "Wobbuffet! Give 1.",
-        "They argue about the motto. Give 2.",
-        "They blast off again. Give 2.",
-        "They blast off again! Everyone points up; the last to point drinks 3.",
-      ],
+  // A loss lays Meowth's catchphrase.
+  {
+    ...hazard(
+      2,
+      "route-team-rocket",
+      "Prepare for Trouble",
+      "Jessie and James drop a net from a Meowth balloon. Recite what you can of their motto, then roll d6.",
+      moves(
+        ["Netted. Drink 3.", "Meowth scratches. Drink 2."],
+        [
+          "Wobbuffet! Give 1.",
+          "They argue about the motto. Give 2.",
+          "They blast off again. Give 2.",
+          "They blast off again! Everyone points up; the last to point drinks 3.",
+        ],
+      ),
     ),
-  ),
+    jinx: {
+      name: "That's Right!",
+      rule: "The jinxed player ends every sentence with 'that's right!' Forget: drink 1.",
+    },
+  },
   catchable(
     2,
     "route-abra",
@@ -566,7 +573,7 @@ const route4: CardDefinition[] = [
     "Ponyta",
     "Wild Ponyta. A horse on fire. Gallop around your chair once, then roll d20.",
     vs(
-      "Trampled. Drink 3, and gallop whenever you stand until your next turn.",
+      "Trampled. Gallop in place, then drink 3.",
       "You ride it into the sunset. Give 3.",
     ),
   ),
@@ -640,8 +647,7 @@ const route4: CardDefinition[] = [
       "Run over. Drink {total}.",
       "He wipes out. Give 3 to whoever looks most like they own a motorcycle.",
       {
-        fumble:
-          "He runs you over twice. Drink 3 and make the engine noise until your next turn.",
+        fumble: "He runs you over twice. Make the engine noise, then drink 3.",
       },
     ),
   ),
@@ -751,11 +757,14 @@ const route5: CardDefinition[] = [
     "route-haunter",
     "Haunter",
     "Wild Haunter licks you. It's cold and it lingers. Lick your lips and roll d20.",
-    vs(
-      "Lick. Drink 3, and lick your lips before every sip until your next turn.",
-      "It vanishes, giggling. Give 3.",
-    ),
-    { curse: "hex" },
+    vs("Lick. Drink 3.", "It vanishes, giggling. Give 3."),
+    {
+      curse: "hex",
+      jinx: {
+        name: "Mean Look",
+        rule: "Anyone who meets the jinxed player's eyes drinks 1.",
+      },
+    },
   ),
   wild(
     4,
@@ -763,10 +772,7 @@ const route5: CardDefinition[] = [
     "Scyther",
     "Wild Scyther in the Safari Zone. It has knives for arms. Hold very still and roll d6.",
     moves(
-      [
-        "Fury Cutter, three cuts. Drink 4.",
-        "Slash. Drink 3, and keep your hands flat on the table until your next turn.",
-      ],
+      ["Fury Cutter, three cuts. Drink 4.", "Slash. Drink 3 with no hands."],
       [
         "Swords Dance, but it trips. Give 2.",
         "You slip past its blades. Give 3.",
@@ -997,7 +1003,7 @@ const route6: CardDefinition[] = [
     "Salandit",
     "Wild Salandit's gas is toxic and smells like your ex. Roll d20.",
     vs(
-      "Toxic. Drink 3, and hold your nose for every sip until your next turn.",
+      "Toxic. Hold your nose and drink 3.",
       "You hold your breath and walk. Give 3.",
     ),
     { curse: "bleed" },
@@ -1181,7 +1187,7 @@ const route7: CardDefinition[] = [
     "Kingambit",
     "Wild Kingambit demands you kneel. Kneel, then roll d20.",
     vs(
-      "Sliced. Drink 4, and stay on your knees until your next turn.",
+      "Sliced. Drink 4 on your knees.",
       "You rise. Everyone else kneels; the last one down drinks 3.",
     ),
     { curse: "bleed" },

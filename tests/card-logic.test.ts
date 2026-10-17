@@ -46,4 +46,34 @@ describe("card logic sweep", () => {
       );
     }
   });
+
+  // Table rules (owner, 2026-10-17): no chores. A crawl card never asks for
+  // something before every sip, or for the whole night, unless the app
+  // tracks it as a jinx (which lifts by itself). One-time actions are fine:
+  // "Oink, then drink 2."
+  it("asks for no per-sip chores and no untracked all-night rules in the crawls", () => {
+    const plain = new Set(
+      cards
+        .filter((c) => c.id.startsWith("pokemon.") && !c.encounter)
+        .map((c) => c.id),
+    );
+    const crawl = cards.filter(
+      (c) =>
+        c.id.startsWith("dungeon.") ||
+        (c.id.startsWith("pokemon.") && !plain.has(c.id)),
+    );
+    for (const card of crawl)
+      expect(textOf(card), card.id).not.toMatch(
+        /before every (sip|drink)|for every sip|every time you stand|(rest of the|all) night/i,
+      );
+  });
+
+  it("gives every jinx a name and a one-sentence rule with its slip", () => {
+    const jinxed = cards.filter((c) => c.jinx);
+    expect(jinxed.length).toBeGreaterThan(20);
+    for (const { id, jinx } of jinxed) {
+      expect(jinx!.name.length, id).toBeLessThanOrEqual(22);
+      expect(jinx!.rule, id).toMatch(/drinks? 1\.$/);
+    }
+  });
 });

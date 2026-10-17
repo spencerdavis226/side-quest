@@ -2,7 +2,39 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Pub Crawl at League depth (2026-10-17, owner request; committed locally, not pushed)
+## Table-rule pass (2026-10-17, owner request; pushed to `main`)
+
+**Owner direction.** Jinxes and table-behaviour rules are welcome "within reason": no props (Squirtle's sunglasses were cut because a bar may have none), and no work without a payoff or a laugh (the Pikachu naming rule). This also applies to the League.
+
+**The standard** is in `docs/CARD_VOICE_REFERENCE.md` ("Table rules: the owner's test"):
+- No props.
+- It pays off: a laugh or a gotcha.
+- No chores.
+- One sentence.
+- Short, or app-tracked as a jinx.
+
+`tests/card-logic.test.ts` now fails a crawl card asking for something before every sip or drink, every time you stand, or all night. It also fails a jinx without a 1-drink slip.
+
+**Dungeon.** Eight weak jinxes were replaced with gotchas:
+- Thumb Master, Spooked (no eye contact), Question Master, No First Names, Bat Signal (point at the ceiling), No Pointing, Muted (mime only), Pinky Out.
+- The Line Cook's all-night "yell behind" became the Behind! jinx.
+- The fruit-fly coaster line no longer needs a coaster.
+
+**League.**
+- 18 chores became one-time actions ("Oink, then drink 2", "Hold your nose and drink 3", "Drink 4 on your knees").
+- Groudon's "no water" and Maxie's "nobody refills" are gone.
+- Erika's eyes-shut-until-your-turn is now shut for the drink only. Tulip no longer needs face paint.
+- Agatha is a judged one-minute "nobody says a name" battle.
+- Seven League cards lay real jinxes, lifted by the next boss (`crawlTheme` League `jinx` words): Agatha (No Names), Hop (Mate), Giratina (Backwards), Psyduck route (Question Time), Haunter (Mean Look), Team Rocket (That's Right!), Commander Mars (Lab Rat).
+- Kept as short, funny rules: talk posh, slow motion, whisper, talk tiny, half speed, the cold shoulder, kneel.
+- The 120 supplied Pokémon sheet cards are unchanged.
+
+**Verification:**
+- `npm test`: 223 passed. Lint, typecheck and build passed.
+- Chromium `crawl.spec.ts` and `quest.spec.ts`: 31 passed, no retries.
+- CI on the previous push (`0aaa924`, run 93) was green, including the WebKit release shards, and deployed.
+
+## Pub Crawl at League depth (2026-10-17, owner request; pushed to `main` as `0aaa924`, CI green and deployed)
 
 **Owner request.** Pokémon League is "really nice" and Dungeon night is falling behind: bring Pub Crawl up to League tier in fun and immersion, with more cards. Borrow from other games as well as inventing. The owner approved every idea in the proposal ("implement everything you think is great").
 

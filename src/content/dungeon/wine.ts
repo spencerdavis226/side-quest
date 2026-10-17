@@ -88,8 +88,8 @@ export const wine: FloorCards = {
       "You jam the stopper in. Give 3.",
       {
         jinx: {
-          name: "Breathe It",
-          rule: "The jinxed player swirls and sniffs every drink before a sip. Forget: drink 1.",
+          name: "Spooked",
+          rule: "Nobody may look the jinxed player in the eye. Caught: drink 1.",
         },
       },
     ),
@@ -188,7 +188,7 @@ export const wine: FloorCards = {
       "fruit-fly-swarm",
       "Fruit Fly Swarm",
       "A cloud of fruit flies off the dump bucket, and they brought friends. Roll d20.",
-      "In your mouth. Drink 2, and cover your drink with a coaster.",
+      "In your mouth. Drink 2 with a hand over your glass.",
       "Swatted. Give 2.",
     ),
     ambush(
@@ -224,8 +224,8 @@ export const wine: FloorCards = {
       {
         loot: "draught",
         jinx: {
-          name: "Owner's Guilt",
-          rule: "The jinxed player starts every sentence with 'Sorry, but'. Forget: drink 1.",
+          name: "Pinky Out",
+          rule: "The jinxed player drinks with their pinky out. Caught without it: drink 1.",
         },
       },
     ),

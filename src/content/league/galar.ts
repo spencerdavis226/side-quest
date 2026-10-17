@@ -116,20 +116,26 @@ export const galar: Region = {
       "Dark",
       "Lead the table in a Team Yell chant for Marnie. Anyone doesn't join in: you drink 5.",
     ),
-    cupFinalist(
-      "hop",
-      "Hop",
-      "Rival",
-      "Hop is Leon's little brother and he won't stop saying so. Say \"Mate!\" then roll d20.",
-      d20(
-        ELITE_NEED,
-        'Still not Leon. Drink 5, and say "mate" before every sip until your next turn.',
-        "He cries to his brother. Give 5.",
-        {
-          crit: "Unbeatable! Everyone else drinks 3.",
-        },
+    {
+      ...cupFinalist(
+        "hop",
+        "Hop",
+        "Rival",
+        "Hop is Leon's little brother and he won't stop saying so. Say \"Mate!\" then roll d20.",
+        d20(
+          ELITE_NEED,
+          "Still not Leon. Drink 5.",
+          "He cries to his brother. Give 5.",
+          {
+            crit: "Unbeatable! Everyone else drinks 3.",
+          },
+        ),
       ),
-    ),
+      jinx: {
+        name: "Mate",
+        rule: "The jinxed player ends every sentence with 'mate'. Forget: drink 1.",
+      },
+    },
     cupFinalist(
       "bede",
       "Bede",

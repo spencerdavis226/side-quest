@@ -132,7 +132,7 @@ export const sinnoh: Region = {
       "Flint's afro is on fire again. Fluff your hair at the table, then roll d20.",
       d20(
         ELITE_NEED,
-        "Singed. Drink 5, and keep your hair fluffed until your next turn.",
+        "Singed. Pat out your hair, then drink 5.",
         "You put out the afro. Pat out your left neighbor's head; they drink 3.",
         {
           fumble: "Flare Blitz. Take a spicy shot.",
@@ -189,19 +189,25 @@ export const sinnoh: Region = {
         "You close the rift. Whoever is farthest from you now drinks 3.",
       ),
     ),
-    legendary(
-      "giratina",
-      "Giratina",
-      "Giratina lives in a world turned backwards. Say your name backwards, then roll d20.",
-      d20(
-        LEGENDARY_NEED,
-        "Shadow Force. Drink 5; the table calls you your backwards name until your next turn.",
-        "You drag it out. Pick a player: they say their name backwards or drink 3.",
-        {
-          fumble: "Lost in the Distortion World. Finish your drink.",
-        },
+    {
+      ...legendary(
+        "giratina",
+        "Giratina",
+        "Giratina lives in a world turned backwards. Say your name backwards, then roll d20.",
+        d20(
+          LEGENDARY_NEED,
+          "Shadow Force. Drink 5.",
+          "You drag it out. Pick a player: they say their name backwards or drink 3.",
+          {
+            fumble: "Lost in the Distortion World. Finish your drink.",
+          },
+        ),
       ),
-    ),
+      jinx: {
+        name: "Backwards",
+        rule: "Everyone calls the jinxed player their name backwards. Slip: drink 1.",
+      },
+    },
     legendary(
       "darkrai",
       "Darkrai",

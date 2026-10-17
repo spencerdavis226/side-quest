@@ -129,8 +129,8 @@ export const catacombs: FloorCards = {
       "You find an error in his math. Give 4.",
       {
         jinx: {
-          name: "Itemized",
-          rule: "The jinxed player says 'and that's tax deductible' after every sip. Forget: drink 1.",
+          name: "Question Master",
+          rule: "Anyone who answers a question from the jinxed player drinks 1.",
         },
       },
     ),
@@ -366,8 +366,8 @@ export const catacombs: FloorCards = {
       ),
       {
         jinx: {
-          name: "On the List",
-          rule: "The jinxed player introduces themself before speaking to anyone. Forget: drink 1.",
+          name: "No First Names",
+          rule: "Nobody says a first name. Slip: drink 1.",
         },
         drops: trinket("VIP Wristband", { hearts: 2, hurt: { ambush: -1 } }),
       },

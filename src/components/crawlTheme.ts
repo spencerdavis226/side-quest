@@ -108,7 +108,7 @@ export interface CrawlTheme {
    * natural 20 doubles, then what a natural 1 doubles. */
   naturals: [string, string];
   /** Pub Crawl's extra seals: a trinket on a win, a jinx on a loss. */
-  legendMore?: { trinket: string; jinx: string };
+  legendMore?: { trinket?: string; jinx?: string };
   /** The end screens: two title lines (the second in italics) and the
    * verdict. */
   wiped: { title: [string, string]; verdict: string };
@@ -283,6 +283,13 @@ const league: CrawlTheme = {
     evolving: (from) => `What? ${from} is evolving!`,
     adventurer: "Your starter",
     grows: { who: "your starter", verb: "evolves", done: "fully evolved" },
+    // League jinxes (2026-10-17): a few trainers and Legendaries lay one.
+    jinx: {
+      name: "Jinx",
+      landed: "Jinxed!",
+      lifted: "The jinx lifts",
+      lasts: "until the next boss falls",
+    },
   },
   lengthOf: (stages) => stages.filter((st) => /^Gym \d/.test(st.label)).length,
   legend: [
@@ -295,6 +302,9 @@ const league: CrawlTheme = {
     "A natural 20 doubles a win: its gives, item, heal and hit",
     "A natural 1 doubles a loss: its drinks and HP",
   ],
+  legendMore: {
+    jinx: "A jinx on a loss: a table rule until the next boss falls",
+  },
   wiped: {
     title: ["Whited", "out."],
     verdict: "Everyone finishes their drink.",

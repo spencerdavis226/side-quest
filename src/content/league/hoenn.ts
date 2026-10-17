@@ -261,7 +261,7 @@ export const hoenn: Region = {
       "Groudon dried up the oceans, and now your drink. Drink 2, then roll d20.",
       d20(
         LEGENDARY_NEED,
-        "Drought. Drink 4, and no water until your next turn.",
+        "Drought. Drink 4, panting.",
         "You crack its crust. Give 5.",
         {
           fumble: "Precipice Blades. Take a spicy shot.",

@@ -78,10 +78,7 @@ export const hideouts = [
         "magma-grunt-hood",
         "Magma Grunt",
         "A Magma Grunt in a red hood wants more land. Stand up and claim your chair. Roll d20.",
-        vs(
-          "He claims your chair. Drink 3, and stand until your next turn.",
-          "Your land now. Give 3.",
-        ),
+        vs("He claims your chair. Drink 3 standing.", "Your land now. Give 3."),
       ),
       grunt(
         "Team Magma",
@@ -112,7 +109,7 @@ export const hideouts = [
       "Maxie",
       "Maxie pushes up his glasses and wakes Groudon. The room heats up. Roll d20.",
       vs(
-        "Drought. Drink 5, and nobody refills your drink until your next turn.",
+        "Drought. Fan yourself, then drink 5.",
         "Groudon goes back to sleep. Give 4.",
       ),
       "bleed",
@@ -195,10 +192,13 @@ export const hideouts = [
         "galactic-commander-mars",
         "Mars",
         "Commander Mars wants your Pokémon for science. Roll d20.",
-        vs(
-          "For science. Drink 3, and the table names you like a lab rat until your next turn.",
-          "Science denied. Give 3.",
-        ),
+        vs("For science. Drink 3.", "Science denied. Give 3."),
+        {
+          jinx: {
+            name: "Lab Rat",
+            rule: "Everyone calls the jinxed player Subject 7. Slip: drink 1.",
+          },
+        },
       ),
       grunt(
         "Team Galactic",
@@ -349,7 +349,7 @@ export const hideouts = [
         "Skull Grunt",
         "A Skull Grunt does the Skull pose and says YO. Everyone does the pose. Roll d20.",
         vs(
-          "YO. Drink 3, and say YO before every sip until your next turn.",
+          "YO. Do the Skull pose, then drink 3.",
           "No YO. The table picks the worst pose; that player drinks 2.",
         ),
       ),
@@ -460,7 +460,7 @@ export const hideouts = [
         "Star Grunt",
         "A Team Star grunt does the Star Shuffle. Do it with her, then roll d20.",
         vs(
-          "Starstruck. Drink 3, and keep shuffling until your next turn.",
+          "Starstruck. Shuffle while you drink 3.",
           "You shuffle past. Give 3.",
         ),
       ),

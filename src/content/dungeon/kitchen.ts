@@ -33,8 +33,14 @@ export const kitchen: FloorCards = {
       "line-cook-golem",
       "Line Cook Golem",
       "Seven feet of burns and tattoos, ten tickets deep, and you're in the way. Roll d20.",
-      "Behind! Drink 5, and yell 'behind' every time you stand up tonight.",
+      "Behind! Drink 5.",
       "You run his food. He respects you. Give 5.",
+      {
+        jinx: {
+          name: "Behind!",
+          rule: "The jinxed player yells 'Behind!' whenever they stand up. Forget: drink 1.",
+        },
+      },
     ),
     monster(
       5,
