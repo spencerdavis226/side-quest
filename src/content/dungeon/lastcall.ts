@@ -31,7 +31,7 @@ export const queueCards: CardDefinition[] = [
   queue(
     "fake-id",
     "Chad's Fake ID",
-    "Chad's ID says he's 41 and from Canada. Do a Canadian accent for 15 seconds. Worse than his: drink 3.",
+    "Your left neighbor is Chad: 10 seconds of Canadian accent. Then you. The table votes. Chad wins: drink 3.",
     null,
     { loot: "smoke" },
   ),

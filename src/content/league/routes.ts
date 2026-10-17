@@ -1022,7 +1022,7 @@ const route6: CardDefinition[] = [
     5,
     "route-fisherman",
     "Fisherman Ned",
-    "Fisherman Ned tells a fish story. The drawer must top it, and the table votes. Lose: drink 4.",
+    "Fisherman Ned (your left neighbor) tells a fish story. Top it; the table votes. Ned wins: drink 4.",
   ),
   hazard(
     5,

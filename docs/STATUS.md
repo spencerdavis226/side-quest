@@ -2,6 +2,15 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Head-to-head cards get a real opponent (2026-10-17; pushed to `main`)
+
+- **Problem (owner):** two Won/Lost cards asked the drawer to beat a character's performance that never happens. Chad's Fake ID ("Worse than his") and Fisherman Ned ("top it") had nothing to compare against. Of the 108 Won/Lost cards without dice, only these two did it.
+- **Fix:** a player plays the character first, as Psychic Tyron and Acerola already do.
+  - `dungeon.queue-fake-id`: "Your left neighbor is Chad: 10 seconds of Canadian accent. Then you. The table votes. Chad wins: drink 3."
+  - `pokemon.route-fisherman`: "Fisherman Ned (your left neighbor) tells a fish story. Top it; the table votes. Ned wins: drink 4."
+- IDs, loot and tuning unchanged; `docs/CARD_REVIEW.md` and `docs/card-review.csv` regenerated.
+- **Verification:** `npm test` 226 passed; lint, typecheck and build passed. Chromium `crawl.spec.ts` and `quest.spec.ts`: 31 passed, 2 flaky (passed on retry): the League fit sweep hit its 300 s timeout on the first try, and the smoke-bomb test expects "Room 2 of 8" but the next room was a random ambush ("Ambush in room 2 of 8"); that test seeds neither card. WebKit not run locally.
+
 ## Two plain lengths: Standard (50) and Infinite (2026-10-17; pushed to `main`)
 
 - **Request (owner):** the plain modes are now only Standard (50 cards) and Infinite. Short (30) and Long (60) are gone; the quest modes are unchanged.
