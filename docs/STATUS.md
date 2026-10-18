@@ -32,6 +32,15 @@ Not doing (owner left it to my call): dropping a crawl's unused deck cards from 
 - **Not covered:** League saves from before the gauntlet or the crawl (meter mode) can't be produced by today's code, so no fixture holds one; their load path keeps its existing unit tests.
 - **Verification:** `npm test` 254 passed; lint, typecheck, build passed. Chromium (local): `game.spec.ts` 17 passed; `@release` minus fit sweeps and the known flaky dice test 36 passed. WebKit not run locally.
 
+## Review fixes: performance (2026-10-18; branch `review-perf`, PR 3 of the review plan)
+
+- **Timers:** a fuse sets one timeout for when it goes off, a countdown one per second turning over (`CardActions.tsx`); both still catch up on return from the background. Measured with a React commit counter in Chromium over 10 s of a running timer: fuse 52 → 0 commits, countdown 53 → 12.
+- **League art:** the Ancient Mew front and back (about 7 MB decoded) are decoded only once the League mode is chosen or a League game is on the table, not on every launch (`main.tsx`). The first-render hold for a resumed League game is unchanged.
+- **Idle table (owner's choice A):** after 60 s without a tap or key, `.atmosphere.idle` pauses the glow and fades the embers and dust out (1.2 s) and stops them; the next tap brings them back (`Atmosphere.tsx`, `theme.css`; the embers now sit in an `.embers` box like the dust). Battery saving not measured: device check added.
+- **Fonts:** Grenze (both styles) is subset to the 200 characters `src/` and `index.html` use plus Latin-1, keeping every OpenType feature, the variable weight axis and the OFL name records: 134.6 KB → 76.8 KB (43%). Originals in `assets/fonts/`; `npm run fonts` (Python fonttools) regenerates byte-identical files; `validate-content.ts` fails the build on a character outside `assets/fonts/subset.json`. Source Serif 4 is left whole: Adobe reserves the name "Source" and the OFL bars a modified font from keeping it. All fonts: 216 KB → 158 KB (27%, a little under the 30% bar set in the plan; kept because it is 58 KB off the first screen at no runtime cost). Runtime 3,816 → 3,760 KiB. Screenshots of setup, How to play, three cards and the pause menu are pixel-identical before and after (Chromium).
+- **Tests:** `game.spec.ts` (idle after a minute, woken by a tap, with the page clock), `pages.spec.ts` (no League art request until the League is chosen).
+- **Verification:** `npm test` 229 passed; lint, typecheck, build passed. Chromium (local): `@release` minus fit sweeps and the known flaky dice test 38 passed; `title-fit`, `secrets`, `motion` and `game` specs 37 passed. WebKit not run locally; no device check.
+
 ## Two-across plaques: mark and name centred together (2026-10-18; pushed to `main`, PR #23)
 
 - **Owner (iPhone screenshot, The Barrel Room's spoils):** "weird text placement". Two-across plaques (spoils, offers, the Quaff) laid the mark and name in two `auto` grid columns with the line under them spanning both; a line wider than mark plus name widened those columns, so the mark drifted left and the name wrapped ("Bung / Mallet").

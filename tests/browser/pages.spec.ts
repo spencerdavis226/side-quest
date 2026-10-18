@@ -237,3 +237,18 @@ test.describe("a pack's cards that can't be fetched", () => {
     expect(session.config.packIds).toEqual(["core"]);
   });
 });
+test("@release the League's card art loads only once the League is chosen", async ({
+  page,
+}) => {
+  const league: string[] = [];
+  page.on("request", (r) => {
+    if (/league-front|card-back-league/.test(r.url())) league.push(r.url());
+  });
+  await page.goto("./");
+  await page.getByRole("button", { name: "Play", exact: true }).waitFor();
+  // Give setup's own preloads time to go out.
+  await page.waitForLoadState("networkidle");
+  expect(league).toEqual([]);
+  await page.getByRole("button", { name: /^Pokémon League/ }).click();
+  await expect.poll(() => league.length).toBe(2);
+});

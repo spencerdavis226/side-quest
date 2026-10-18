@@ -5,6 +5,7 @@ import { imprintIconSlugs } from "../src/content/imprint";
 import { artworkRegistry, normalizeArtwork } from "../src/presentation/artwork";
 import { theme } from "../src/presentation/theme";
 import { buildImprintModule, IMPRINT_OUTPUT } from "./imprint";
+import { FONT_SUBSET_RECORD, fontCodePoints } from "./font-chars";
 validateCatalog(cards, packs);
 // The imprint sprite is generated from the assignment map in
 // src/content/imprint.ts. A stale file would ship the wrong icons, so fail the
@@ -67,3 +68,17 @@ for (const pack of packs) {
     throw Error(`Packs must have distinct logos: ${pack.id}`);
   logos.add(pack.logo);
 }
+
+// Grenze ships subset to the characters the app uses (`npm run fonts`). A
+// character added since would fall back to Georgia mid-word, so the build
+// fails until the subset is regenerated.
+const subset = new Set(
+  JSON.parse(await readFile(FONT_SUBSET_RECORD, "utf8")).characters as string,
+);
+const missing = fontCodePoints()
+  .map((cp) => String.fromCodePoint(cp))
+  .filter((ch) => !subset.has(ch));
+if (missing.length)
+  throw Error(
+    `Characters not in the Grenze subset: ${missing.join(" ")} — run \`npm run fonts\`.`,
+  );

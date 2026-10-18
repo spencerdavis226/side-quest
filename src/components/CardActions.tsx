@@ -24,23 +24,31 @@ export function useCardActions(card: CardDefinition, key: string) {
     setTimer({ phase: "idle" });
     setHolding(false);
   }
+  const countdown = card.timer?.kind === "countdown";
   useEffect(() => {
     if (timer.phase !== "running") return;
     const { endsAt } = timer;
-    // Wall-clock time, so a fuse that ran out while the app was in the
-    // background goes off as soon as it is back.
+    // Wake only when something shows: a countdown as each second turns over,
+    // a fuse (which shows no count) when it goes off. Wall-clock time, so a
+    // fuse that ran out while the app was in the background goes off as soon
+    // as it is back.
+    const wait = (t: number) =>
+      (countdown ? (endsAt - t) % 1000 || 1000 : endsAt - t) + 5;
+    let id = 0;
     const tick = () => {
+      window.clearTimeout(id);
       const t = Date.now();
       setNow(t);
       if (t >= endsAt) setTimer({ phase: "done", at: t });
+      else id = window.setTimeout(tick, wait(t));
     };
-    const id = setInterval(tick, 200);
+    id = window.setTimeout(tick, wait(Date.now()));
     document.addEventListener("visibilitychange", tick);
     return () => {
-      clearInterval(id);
+      window.clearTimeout(id);
       document.removeEventListener("visibilitychange", tick);
     };
-  }, [timer]);
+  }, [timer, countdown]);
   useEffect(() => {
     // Never leave a secret on screen when the app loses the finger's focus.
     const hide = () => setHolding(false);
