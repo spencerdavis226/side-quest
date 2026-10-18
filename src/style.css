@@ -732,12 +732,19 @@ dialog p {
     font-size: 1.25rem;
   }
 }
+/* Reduce Motion: every animation and transition runs to its end at once
+   instead of being removed, so fill modes still land (a banner's sweep ends
+   hidden, a splat ends centred) and animationend still fires. The few fades
+   meant to survive (banners, the heart splat, the party pulse) restore their
+   own durations with !important beside their keyframes. This is the only
+   global block; theme.css adds the atmosphere's display: none. */
 @media (prefers-reduced-motion: reduce) {
   *,
-  *:before,
-  *:after {
-    animation: none !important;
-    transition: none !important;
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
 }

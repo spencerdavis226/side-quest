@@ -750,12 +750,6 @@ dialog.closing {
   .atmosphere {
     display: none !important;
   }
-  *,
-  *:before,
-  *:after {
-    animation: none !important;
-    transition: none !important;
-  }
 }
 .previous-card {
   text-align: center;
@@ -1496,8 +1490,14 @@ button.quest-meter:active:not(:disabled) {
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  /* A fade in place of the sweep, at the sweep's own length (the global
+     reduced-motion rule would otherwise end it at once). */
   .stage-banner-cloth {
     animation-name: banner-fade;
+    animation-duration: 2600ms !important;
+  }
+  .evolution-banner .stage-banner-cloth {
+    animation-duration: 5200ms !important;
   }
   @keyframes banner-fade {
     0%,

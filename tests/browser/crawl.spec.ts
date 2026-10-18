@@ -376,6 +376,39 @@ test("a lost fight can lay a jinx, shown on the meter and in a banner", async ({
   await page.screenshot({ path: info.outputPath("jinx.png") });
 });
 
+test("with Reduce Motion a banner fades and goes, and the splat stays centred", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await seed(
+    page,
+    rolled(reveal(crawlAt("dungeon.goblin-shaman", STEP.floor1)), 2),
+  );
+  await page.locator(".game-card").click();
+  const banner = page.locator(".news-banner");
+  await expect(banner).toHaveText(/Jinxed!\s*Goblin Tongue/);
+  // The banner fades rather than vanishing at once: still shown a moment in.
+  await page.waitForTimeout(400);
+  await expect(banner.locator(".stage-banner-cloth")).not.toHaveCSS(
+    "opacity",
+    "0",
+  );
+  // The lost hearts float off the heart, centred on it.
+  const [splat, heart] = await Promise.all([
+    page.locator(".heart-splat").boundingBox(),
+    meter(page).boundingBox(),
+  ]);
+  expect(
+    Math.abs(splat!.x + splat!.width / 2 - (heart!.x + heart!.width / 2)),
+  ).toBeLessThanOrEqual(1);
+  expect(
+    Math.abs(splat!.y + splat!.height / 2 - (heart!.y + heart!.height / 2)),
+  ).toBeLessThanOrEqual(1);
+  // Before 2026-10-18 no animation ran at all, so the banner never left.
+  await expect(banner).toHaveCount(0, { timeout: 8000 });
+  await expect(page.locator(".tag-jinx")).toBeVisible();
+});
+
 test("@release a landing levels the adventurer up for drinks, or rests", async ({
   page,
 }, info) => {

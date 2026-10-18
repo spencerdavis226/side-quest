@@ -662,6 +662,10 @@
   .timer-blast span {
     animation: none;
   }
+  /* The flash still fades in and out (opacity only); the word holds still. */
+  .timer-blast {
+    animation-duration: 1.6s !important;
+  }
 }
 
 /* Pokémon League: the matching Ancient Mew front, same title and body boxes. */

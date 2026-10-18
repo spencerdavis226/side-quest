@@ -106,6 +106,8 @@
   font: 800 20px/1 var(--font-card-title);
   font-variant-numeric: lining-nums;
   pointer-events: none;
+  /* Centred on the meter without its keyframes too (Reduce Motion). */
+  transform: translate(-50%, -50%);
   animation: heart-splat 1250ms cubic-bezier(0.2, 0.8, 0.3, 1) both;
 }
 .splat-hurt {
@@ -148,6 +150,7 @@
 @media (prefers-reduced-motion: reduce) {
   .heart-splat {
     animation: heart-splat-fade 1250ms ease-out both;
+    animation-duration: 1250ms !important;
   }
   @keyframes heart-splat-fade {
     0%,
@@ -1064,8 +1067,9 @@
   .boss-pips i.hit {
     animation: none;
   }
+  /* A soft fade, not the hard flash of no animation at all. */
   .party-pulse {
-    animation-duration: 0.6s;
+    animation-duration: 0.6s !important;
   }
 }
 .suspended .crawl-meter .icon-heart {
