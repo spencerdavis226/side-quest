@@ -15,6 +15,9 @@ import type { GameConfig, PartyState, SessionState } from "../game/types";
 import { CURSES, LOOT } from "../game/types";
 export const SAVE_KEY = "side-quest.session.v1";
 export const SETTINGS_KEY = "side-quest.settings.v1";
+/** The last save that failed to load, kept as it was so a later fix can
+ * recover the game. Only the latest is kept. */
+export const CORRUPT_KEY = "side-quest.session.corrupt.v1";
 /** Keys from before the rename to Side Quest, mapped to their new names. */
 export const LEGACY_KEYS: Record<string, string> = {
   "drink-at-ron.session.v1": SAVE_KEY,
@@ -347,6 +350,13 @@ export function loadSession(): {
       unavailable: false,
     };
   } catch {
+    // Keep the game before "Return to setup" clears it. Storage that is full
+    // or refuses only loses the backup, never the recovery screen.
+    try {
+      localStorage.setItem(CORRUPT_KEY, raw!);
+    } catch {
+      /* no room for a backup */
+    }
     return { session: null, corrupt: true, unavailable: false };
   }
 }

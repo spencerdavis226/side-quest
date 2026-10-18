@@ -10,6 +10,7 @@ Read `docs/STATUS.md` before planning or editing. It is the single current hando
 - Preserve the approved painted frame and constant 2:3 outer ratio (front/back/Previous Card agree). Stationary taps must keep working while long rules stay scrollable.
 - Keep assets local and GitHub Pages/offline compatible — no CDN or runtime services.
 - `reference/` holds raw user-supplied sources (CABIIN sheet, house Sheet1 CSV, sample deck JSON). Keep them exactly as supplied and out of `src/` and the bundle; replace with a newer supplied file and rerun the matching `npm run *:reference` parse instead of editing them to match shipping content.
+- Saved games must survive every update. `tests/fixtures/saves/` holds real saves frozen from seeded games (`npm run fixtures:saves`), and `tests/save-fixtures.test.ts` requires each to load and play on. A change to what a save holds, to `parseSession`/`validateParty`/`validateRoll`, or to the runtime card rules in `src/content/validate.ts` adds fixtures for the new state (the script writes `<date>-<situation>.json` and never rewrites a file); never edit or delete a fixture to make the test pass. A save that still fails to load is copied to `side-quest.session.corrupt.v1` before the recovery screen clears it.
 - Merge, push, and publication need explicit user authorization; ordinary local edits/checks do not.
 
 ## Commands (Node 22.12+, `npm ci`)
