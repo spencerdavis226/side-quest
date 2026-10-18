@@ -104,7 +104,7 @@ export const brewery: FloorCards = {
       6,
       "sour-mash-witch",
       "Sour Mash Witch",
-      "She brews sours, and so is her mood. Roll d20.",
+      "She brews sours, and her mood went sour years ago. Roll d20.",
       "Puckered. Drink 3, and make the face.",
       "You sweeten her up. Give 3.",
       { curse: "hex" },
@@ -157,7 +157,7 @@ export const brewery: FloorCards = {
       6,
       "bottling-line",
       "The Bottling Line",
-      "Pass the phone around the table and back with nobody laughing. Someone laughs: drink 3.",
+      "Pass an empty bottle around the table and back. Anyone laughs: you drink 3.",
     ),
     trap(
       6,
@@ -179,8 +179,8 @@ export const brewery: FloorCards = {
       6,
       "co2-leak",
       "CO2 Leak",
-      "Something hisses, and everyone's voice goes squeaky. Roll d20.",
-      "Squeaky. Drink 2, then say something in your squeakiest voice.",
+      "Something hisses, and everyone's voice drops an octave. Roll d20.",
+      "Barry White. Drink 2, then say something in your deepest voice.",
       "You find the valve. Give 2.",
     ),
     trap(

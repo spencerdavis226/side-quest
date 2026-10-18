@@ -54,7 +54,7 @@ export const freezer: FloorCards = {
       7,
       "frost-giant",
       "Frost Giant Bartender",
-      "Nine feet tall, pours with ice for hands, and you're cut off. Roll d20.",
+      "Nine feet tall, ice for hands, and he says you're cut off. Roll d20.",
       "He pours you a glacier. Drink 4.",
       "You tip him. He warms right up. Give 4.",
       { loot: "shield" },

@@ -68,7 +68,7 @@ export const rooftop: FloorCards = {
       "It's eyeing your fries. You don't have fries. It's eyeing you. Roll d20.",
       "It takes a bite. Drink 5.",
       "You stare it down. Give 5.",
-      { fumble: "It takes your drink, and flies. Finish your drink." },
+      { fumble: "It goes for your eyes, then your drink. Finish your drink." },
     ),
     monster(
       8,
@@ -97,7 +97,7 @@ export const rooftop: FloorCards = {
       8,
       "the-gargoyle",
       "The Gargoyle",
-      "A stone gargoyle on the ledge, and it's been pretending to be stone. Roll d20.",
+      "A gargoyle on the ledge, and it's only been pretending to be stone. Roll d20.",
       "It drops on you. Drink 5.",
       "You push it off the ledge. Give 5.",
       { curse: "bleed" },
@@ -308,7 +308,7 @@ export const rooftop: FloorCards = {
       8,
       "penthouse-owner",
       "The Penthouse Owner",
-      "He owns the building, the roof, and he thinks, you. Roll d20.",
+      "He owns the building, the roof and, he thinks, you. Roll d20.",
       "He has you thrown off the guest list. Drink 6.",
       "You buy the floor below his. Give 6.",
       [

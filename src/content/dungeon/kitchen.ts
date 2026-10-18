@@ -88,7 +88,7 @@ export const kitchen: FloorCards = {
       "Food Critic Ghoul",
       "A ghoul with a notebook. One star, and he hasn't eaten yet. Roll d20.",
       "One star. Drink 5, and give the room a one-star review out loud.",
-      "You comp his meal. He leaves a draught as a tip. Give 4.",
+      "You comp his meal. He tips you his hip flask. Give 4.",
       { loot: "draught" },
     ),
     monster(

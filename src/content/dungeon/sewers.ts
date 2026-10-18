@@ -47,7 +47,7 @@ export const sewers: FloorCards = {
       "Hazmat Goblin",
       "A goblin in a hazmat suit who loves it down here. Loves it. Roll d20.",
       "He hugs you. Drink 4.",
-      "You pull his air hose. He drops a smoke bomb. Give 3.",
+      "You pull his air hose. He leaves something smoky behind. Give 3.",
       { loot: "smoke" },
     ),
     monster(
@@ -411,7 +411,7 @@ export const sewers: FloorCards = {
     boss(
       4,
       "the-crocodile-mom",
-      "Mama Croc",
+      "Mama Gator",
       "Gator Junior's mother has heard what you did. Roll d20.",
       d20(
         BOSS_NEED[1],

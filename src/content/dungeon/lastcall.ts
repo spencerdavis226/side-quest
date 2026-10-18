@@ -99,7 +99,7 @@ export const closingCards: CardDefinition[] = [
     "Thad is giving a toast about 'the boys', eleven minutes in. Roll d20 to cut him off.",
     vs(
       "It's moving, somehow. Raise a glass and drink 4.",
-      "You raise a glass mid-sentence and everyone drinks. Give 4.",
+      "You raise a glass mid-sentence, and it's over. Give 4.",
       { fumble: "You cry at it. Finish your drink." },
     ),
   ),

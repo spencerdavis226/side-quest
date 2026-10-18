@@ -46,7 +46,7 @@ export const omens: CardDefinition[] = [
   omen(
     "blood-moon",
     "Blood Moon",
-    "Blood on the moon. Every monster costs one more heart, but you start with two more.",
+    "Blood on the moon. Every monster, elite and ambush costs a heart more. Start with two more.",
     { hurt: { monster: 1, elite: 1, ambush: 1 }, hearts: 2 },
   ),
   omen(
@@ -74,7 +74,7 @@ export const omens: CardDefinition[] = [
   omen(
     "cold-open",
     "Cold Open",
-    "Everyone drinks before the first door. Start a heart short, with a loaded die and shield.",
+    "Everyone drinks 1 at the door. Start a heart short, with a loaded die and a shield.",
     { hearts: -1, loot: ["die", "shield"] },
   ),
 ];
