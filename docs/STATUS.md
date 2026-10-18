@@ -2,6 +2,15 @@
 
 Updated 2026-10-18. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Pokémon and League copy review (2026-10-18; branch `review-league-copy`, not merged or pushed)
+
+- **Bugs:** wins that made the drawer drink now give (Brock, gym Giovanni, Tate & Liza, Glacia; Ho-Oh's losses drink, wins give); per-face losses no longer pour more nearer the win (Erika, Lorelei, Bugsy, Drake). Plain wins on 2- and 3-hit bosses read as a swing, not the fall. Natural 1s cost at least twice the worst loss and natural 20s give at least double (Zigzagoon, Biker Gang, Hydreigon, rival Nemona, Star Squad, Lugia, the shot fumbles; Deoxys, Zacian). Starter and adventurer roll bonuses say "d20" (`omenText.ts`; also Pub Crawl's lines; `quest.spec.ts` and `crawl.spec.ts` expectations follow). Hideout ribbons carry ranks (`grunt(..., { rank })`). Forks no longer promise a specific elite; route rules no longer name items; Ilse's faces match the count.
+- **Facts, clarity, consistency, fit:** Gordie, Pokémon Tower 6F, Blaine Jr., Kenji, current move names; who acts and what wins on a dozen cards; props removed (Burgh, Brassius, Wikstrom, Sandile); "A pair!" on every doubles; League jinxes end "Slip: drink 1." (docs example too); repeated jokes for characters who meet twice in a run rewritten (Lorelei, Bruno, Grusha, Lacey, Sableye, Crasher Wake, rival Hop, rival Nemona, route Psyduck); the 33 listed fight and ribbon rules are 80 characters or fewer.
+- **Sheet cards** (recorded in `reference/README.md`): Castform, Sentret, Krabby and Pound get their supplied consequences back; Spoink and Missingno fixed; move names; Barboach, Clefairy, Lapras, Silver, Mankey and Rare Candy reworded.
+- **Docs:** League bosses are all battles (`AUTHORING.md`); 23 starters and 362 League-only cards (`AGENTS.md`, `GAME_DESIGN.md`, `src/content/CLAUDE.md`).
+- **Not changed:** Whitney's Rollout (rising pours are the joke) and the `{total}` losses that grow toward the win (a documented graded loss).
+- **Verification:** `npm test` 251 passed; `npm run test:balance` 8 passed; lint, typecheck and `validate-content` passed; Prettier clean on touched TypeScript. Fit judged by character count, not measured in a browser; browser specs not run.
+
 ## Review follow-up plan (2026-10-18; owner approved; all four merged to `main`)
 
 An app-wide review found the bugs and gaps below. The owner approved four PRs, in order, and then their merge ("Go ahead"): #24, #25, #26 and #27 are on `main`. Each was merged with `main` brought in first and CI green on that head; the combined tree was checked locally before the first merge (`npm test` 251, `test:balance` 8, lint, typecheck, build, Chromium browser suite minus the fit sweeps 136 passed).
