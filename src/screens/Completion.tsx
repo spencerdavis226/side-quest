@@ -14,6 +14,7 @@ export function Completion({
   league = false,
   packId,
   celebrate,
+  starting = false,
   onReplay,
   onSetup,
   onFinish,
@@ -26,6 +27,8 @@ export function Completion({
   /** The quest's pack: a crawl's words and marks. */
   packId?: string;
   celebrate: boolean;
+  /** The next run's cards are on their way; Play again waits for them. */
+  starting?: boolean;
   onReplay: () => void;
   onSetup: () => void;
   onFinish: () => void;
@@ -81,10 +84,14 @@ export function Completion({
       <p className="cards-played">
         {count} {count === 1 ? "card" : "cards"} played
       </p>
-      <Button disabled={celebrate} onClick={onReplay}>
-        Play again
+      <Button disabled={celebrate || starting} onClick={onReplay}>
+        {starting ? "Dealing…" : "Play again"}
       </Button>
-      <Button variant="text-button" disabled={celebrate} onClick={onSetup}>
+      <Button
+        variant="text-button"
+        disabled={celebrate || starting}
+        onClick={onSetup}
+      >
         Change deck
       </Button>
     </section>
