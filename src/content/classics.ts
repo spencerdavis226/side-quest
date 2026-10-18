@@ -81,13 +81,13 @@ export const classicCards: CardDefinition[] = [
   ),
   card(
     "stare-down",
-    "Stare Down",
+    "Mirror Mirror",
     "challenge",
-    "Stare down someone. First to blink or laugh drinks 2.",
+    "Mirror someone's every move and word for 20 seconds. First of you to laugh drinks 2.",
   ),
   card(
     "story-time",
-    "Story Time",
+    "Dirty Story",
     "category",
     "Clockwise, build an erotic story one word at a time. First to stall or laugh drinks 2.",
   ),
@@ -97,20 +97,20 @@ export const classicCards: CardDefinition[] = [
     "little-green-man",
     "Little Green Man",
     "rule",
-    "Until your next turn, everyone removes the tiny man before drinking. Slip = drink 2.",
+    "Until your next turn, everyone removes the tiny man before drinking. Slip: drink 2.",
   ),
   card(
     "question-master",
     "Question Master",
     "rule",
-    "Until your next turn: anyone who answers your question drinks 2.",
+    "Until your next turn, anyone who answers your question drinks 2.",
   ),
   // --- King's Cup ranks ----------------------------------------------------
   card(
     "waterfall",
     "Ace Is Waterfall",
     "group",
-    "You start drinking; clockwise, everyone joins. Nobody stops until the player before them does.",
+    "You drink first; clockwise, everyone joins. Nobody stops until the player before them does.",
   ),
   card(
     "kings-two",
@@ -135,7 +135,7 @@ export const classicCards: CardDefinition[] = [
     "dragon-breath",
     "Dragon's Breath",
     "challenge",
-    "Breathe on the person to your right. They rate it out of 10. Over 5: you drink 3.",
+    "Dragon-roar in your right neighbor's face. They flinch: they drink 3. They don't: you do.",
   ),
   card(
     "potion-courage",

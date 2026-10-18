@@ -481,7 +481,7 @@ const authored: CardDefinition[] = [
     "challenge",
     "Abra's dumbass brother. Swap seats with anyone.",
   ),
-  card("its-gotta-go", "It's Gotta Go", "challenge", "Finish your drink."),
+  card("its-gotta-go", "Send It", "challenge", "Finish your drink."),
 
   // --- Rule ------------------------------------------------------------------
   card(
@@ -504,7 +504,7 @@ const authored: CardDefinition[] = [
   ),
   card(
     "spirit-airlines",
-    "Spirit Airlines",
+    "Ultra Low Fare",
     "rule",
     "Drink 3. Until your next turn, anyone whose die lands on 1 pays the bag fee: drink 1 more.",
   ),

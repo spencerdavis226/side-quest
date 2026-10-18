@@ -47,7 +47,7 @@ export const sampleCards: CardDefinition[] = [
     "group-project",
     "Group Project",
     "group",
-    "Hands up. Last hand up drinks 3 and does all the work.",
+    "Pick someone to carry you. They drink 4 for the both of you; you take the credit.",
   ),
   card(
     "bad-text",
@@ -153,7 +153,7 @@ export const sampleCards: CardDefinition[] = [
     "categories",
     "Categories",
     "category",
-    "Pick a category. First repeat or blank drinks 3.",
+    "Pick a category. Clockwise, name one each. First repeat or blank drinks 3.",
   ),
   card(
     "rhyme-time",
@@ -163,9 +163,9 @@ export const sampleCards: CardDefinition[] = [
   ),
   card(
     "rock-paper-drink",
-    "Rock Paper Drink",
+    "Thumb War",
     "challenge",
-    "Rock paper scissors anyone you want. Loser drinks 3 and calls the winner daddy.",
+    "Thumb-war anyone you want. Loser drinks 3 and calls the winner daddy.",
   ),
   card(
     "never-have-i",
@@ -183,19 +183,19 @@ export const sampleCards: CardDefinition[] = [
     "no-names",
     "Who the Fuck Are You?",
     "rule",
-    "Until your next turn, nobody uses names. Slip = drink 2.",
+    "Until your next turn, nobody uses names. Slip: drink 2.",
   ),
   card(
     "potty-mouth",
     "Church Mode",
     "rule",
-    "Until your next turn, nobody swears. Slip = drink 2.",
+    "Until your next turn, everyone whispers like they're in church. Slip: drink 2.",
   ),
   card(
     "cursed-number",
     "Cursed Number",
     "rule",
-    "Roll d6. Nobody may say that number until your next turn. Slip = drink 2.",
+    "Roll d6. Nobody may say that number until your next turn. Slip: drink 2.",
     roll(1, 6, "{total} is banned until your next turn. Say it: drink 2."),
   ),
 ];
