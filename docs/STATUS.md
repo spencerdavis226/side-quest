@@ -2,6 +2,12 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Two-across plaques: mark and name centred together (2026-10-18; branch `plaque-centre`)
+
+- **Owner (iPhone screenshot, The Barrel Room's spoils):** "weird text placement". Two-across plaques (spoils, offers, the Quaff) laid the mark and name in two `auto` grid columns with the line under them spanning both; a line wider than mark plus name widened those columns, so the mark drifted left and the name wrapped ("Bung / Mallet").
+- **Fix (`src/presentation/crawl.css`):** columns `minmax(0, 1fr) auto auto minmax(0, 1fr)`, mark in 2 and name in 3 (Cash out's name spans both middle columns), so spare width goes to the outer columns; the line under them is `text-wrap: balance` (no lone "less.").
+- **Verification:** before/after screenshots of The Barrel Room's spoils at 393x640 (Chromium); landing, push-your-luck, merchant and Quaff plaques checked in their spec screenshots. `npm test` 229 passed; lint clean; full Playwright (Chromium and WebKit, minus sweeps) 130 passed. Not checked on a device.
+
 ## Long rules shrink to fit before they scroll (2026-10-18; pushed to `main`, PR #21)
 
 - **Owner (iPhone 15 Pro, Safari tab, not installed):** Chad's Fake ID's rules faded and cut off at the bottom. Rule text had a 26px floor; Safari's toolbar and the crawl strip (`--hud-strip`, added 2026-10-17) leave a smaller card, so long rules spilled into the scroll fade. The fit sweeps had been skipped (`--grep-invert "fits its face"`) since the header redesign.

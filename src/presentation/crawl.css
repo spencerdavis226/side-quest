@@ -692,11 +692,14 @@
 
 /* One or two across, every plaque reads the same: its mark beside its name,
    and what it does on a smaller line under both. Three or four across keep
-   the stacked layout above, as there is no room beside the mark. */
+   the stacked layout above, as there is no room beside the mark. The mark
+   and name sit in the two middle columns; the outer ones take the spare
+   width, so a line under them wider than both no longer stretches them
+   apart (owner, 2026-10-18: the mark drifted left and the name wrapped). */
 .card-choice:not(.plaques-3, .plaques-4)
   :is(.offer-plaque, .spoils-plaque, .quaff-plaque) {
   display: grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: minmax(0, 1fr) auto auto minmax(0, 1fr);
   justify-content: center;
   align-content: center;
   align-items: center;
@@ -708,6 +711,7 @@
 }
 .card-choice:not(.plaques-3, .plaques-4) .offer-name {
   grid-row: 1;
+  grid-column: 3;
   font-size: 0.96em;
   line-height: 1;
   text-align: left;
@@ -715,6 +719,7 @@
 .card-choice:not(.plaques-3, .plaques-4)
   :is(.offer-goods, .quaff-plaque > .crawl-icon) {
   grid-row: 1;
+  grid-column: 2;
 }
 .card-choice:not(.plaques-3, .plaques-4)
   :is(
@@ -728,16 +733,23 @@
 .card-choice:not(.plaques-3, .plaques-4) .offer-price {
   grid-column: 1 / -1;
   margin: 0;
+  /* Two even lines, never one word left alone on the second. */
+  text-wrap: balance;
   font-size: 0.7em;
   line-height: 1.15;
   letter-spacing: 0.03em;
   text-align: center;
 }
-/* Cash out: its prizes go under the name, where a price would be. */
+/* Cash out: its prizes go under the name, where a price would be, and the
+   name takes both middle columns. */
 .card-choice:not(.plaques-3, .plaques-4) .press-cash .offer-goods {
   grid-row: 2;
   grid-column: 1 / -1;
   justify-content: center;
+}
+.card-choice:not(.plaques-3, .plaques-4) .press-cash .offer-name {
+  grid-column: 2 / 4;
+  text-align: center;
 }
 .card-choice:not(.plaques-3, .plaques-4)
   .press-cash
