@@ -2,7 +2,12 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Card copy length pass: 100-character rule limit (2026-10-18; branch `trim-long-rules`)
+## Two-across plaques: mark and name centred together (2026-10-18; pushed to `main`, PR #23)
+
+- **Owner (iPhone screenshot, The Barrel Room's spoils):** "weird text placement". Two-across plaques (spoils, offers, the Quaff) laid the mark and name in two `auto` grid columns with the line under them spanning both; a line wider than mark plus name widened those columns, so the mark drifted left and the name wrapped ("Bung / Mallet").
+- **Fix (`src/presentation/crawl.css`):** columns `minmax(0, 1fr) auto auto minmax(0, 1fr)`, mark in 2 and name in 3 (Cash out's name spans both middle columns), so spare width goes to the outer columns; the line under them is `text-wrap: balance` (no lone "less.").
+- **Verification:** before/after screenshots of The Barrel Room's spoils at 393x640 (Chromium); landing, push-your-luck, merchant and Quaff plaques checked in their spec screenshots. `npm test` 229 passed; lint clean; full Playwright (Chromium and WebKit, minus sweeps) 130 passed. Not checked on a device.
+## Card copy length pass: 100-character rule limit (2026-10-18; pushed to `main`, PR #22)
 
 - **Owner:** "do the professional, no cut-corners moves" after PR #21 (shrink-to-fit). The fit handles screen size; this keeps text large by keeping copy short.
 - **Copy:** all 66 rules over 95 characters rewritten to 95 or fewer with the same actors, durations, amounts and dice (9 Dungeon, 1 House row 60, 55 Pokémon incl. 21 sheet cards and three starter flavor lines, 1 VIP). Recorded in `reference/README.md`.
