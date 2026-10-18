@@ -200,8 +200,8 @@ export const cellar: FloorCards = {
       0,
       "lost-bridesmaids",
       "Lost Bridesmaids",
-      "Two bridesmaids looking for the bathroom found you instead. They want a photo. Roll d20.",
-      "You're in forty photos. Drink 2, and pose for one now.",
+      "Two lost bridesmaids have decided you're the groom. Roll d20.",
+      "First dance. Drink 2, then sway with your right neighbor.",
       "You point them upstairs. Give 2.",
     ),
     ambush(
@@ -315,7 +315,7 @@ export const cellar: FloorCards = {
       "Grease Trap Horror",
       "The grease trap has been fed fries for twenty years. Now it's hungry. Roll d20.",
       "It slurps you in. Drink 4, then wash your hands in shame.",
-      "You seal the lid. Something shiny's stuck to it. Give 4.",
+      "You seal the lid and sit on it. Give 4.",
       [
         trinket("Grease-Proof Apron", { hurt: { trap: -1 } }),
         trinket("Greasy Knuckles", { roll: { monster: 1 } }),
@@ -372,7 +372,7 @@ export const cellar: FloorCards = {
       0,
       "rat-king",
       "The Rat King",
-      "Forty rats in one crown, holding court in the grease trap. Bow, then roll d20.",
+      "Forty rats in one crown, holding court in the grease trap. Kiss the ring, then roll d20.",
       d20(
         BOSS_NEED[0],
         "The court finds you guilty. Drink 4.",

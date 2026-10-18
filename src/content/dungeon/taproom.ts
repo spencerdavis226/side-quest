@@ -25,7 +25,7 @@ export const taproom: FloorCards = {
       2,
       "sommelier-kraken",
       "Sommelier Kraken",
-      "Eight arms, eight wine glasses, and every one of them is yours. Roll d20.",
+      "A kraken with a wine glass in every arm, and every glass is yours. Roll d20.",
       "Squeezed. Drink 5.",
       "Calamari. Give 5, split however you like.",
     ),
@@ -147,7 +147,7 @@ export const taproom: FloorCards = {
       2,
       "last-round",
       "The Last Round",
-      "Carry every drink here across the room and back. Spill a drop: drink 5.",
+      "Last round's on you: name everyone's drink order from memory. Miss one: drink 5.",
     ),
     trial(
       2,

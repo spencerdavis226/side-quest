@@ -46,7 +46,7 @@ export const sewers: FloorCards = {
       "hazmat-goblin",
       "Hazmat Goblin",
       "A goblin in a hazmat suit who loves it down here. Loves it. Roll d20.",
-      "He hugs you. Drink 4.",
+      "He hugs you, suit and all. Drink 4.",
       "You pull his air hose. He leaves something smoky behind. Give 3.",
       { loot: "smoke" },
     ),
@@ -178,7 +178,7 @@ export const sewers: FloorCards = {
       "swamp-gas",
       "Swamp Gas",
       "Somebody lit a cigarette. Down here. Roll d20.",
-      "Eyebrows gone. Drink 3.",
+      "Whoomph. Drink 3, and pat out your hair.",
       "You dive into the sludge. Give 2 to whoever you blame.",
     ),
     trap(
@@ -326,7 +326,7 @@ export const sewers: FloorCards = {
       "Rat Captain",
       "A rat in a captain's hat with a tiny cutlass and a big grudge. Roll d20.",
       "Keelhauled. Drink 5, and say 'aye aye, captain'.",
-      "You take his hat. Give 5.",
+      "You take his hat and his ship. Give 5.",
       [
         trinket("Captain's Hat", { satchel: 4, loot: ["die"] }),
         trinket("Tiny Cutlass", { roll: { monster: 2 } }),

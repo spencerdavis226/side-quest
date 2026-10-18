@@ -157,7 +157,7 @@ export const lastCallBosses: CardDefinition[] = [
     2,
     "last-call-lich",
     "The Last Call Lich",
-    "Lights up. Music off. It's last call forever unless you kill it. Roll d20.",
+    "A bony hand rings the bell. It's last call forever unless you kill it. Roll d20.",
     d20(
       BOSS_NEED[2],
       "Closing time. Everyone drinks 4.",

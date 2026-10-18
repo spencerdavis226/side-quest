@@ -56,7 +56,7 @@ export const kitchen: FloorCards = {
       "garlic-wraith",
       "Garlic Breath Wraith",
       "A wraith that only ever exhales. Roll d20.",
-      "It breathes on you. Drink 4.",
+      "You'll taste it for a week. Drink 4.",
       "You hold your breath. Give 5.",
       { curse: "hex" },
     ),

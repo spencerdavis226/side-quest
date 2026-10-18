@@ -45,7 +45,7 @@ export const catacombs: FloorCards = {
       1,
       "bone-sommelier",
       "Bone Sommelier",
-      "A skeleton swirls a glass, sniffs yours, and calls it cute. Roll d20.",
+      "A skeleton in a sommelier's chain rates your drink. Out of ten, it's a two. Roll d20.",
       "Shamed. Drink 4.",
       "You pour his on the floor. Give 4.",
     ),
@@ -350,7 +350,7 @@ export const catacombs: FloorCards = {
       "bone-dragon",
       "The Bone Dragon",
       "A dragon skeleton with a tiny hat, guarding a pile of bottle caps. Roll d20.",
-      "It sits on you. Drink 5.",
+      "It lies down on you, hat and all. Drink 5.",
       "You take the hat. It deflates. Give 5.",
       [
         trinket("The Tiny Hat", { roll: { all: 1 } }),

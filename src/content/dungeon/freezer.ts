@@ -143,7 +143,7 @@ export const freezer: FloorCards = {
       7,
       "frozen-solid",
       "Frozen Solid",
-      "Freeze in your coldest pose for 15 seconds while the table tries to crack you. Move: drink 4.",
+      "Strike your coldest pose and hold it, dead still, for 15 seconds. Move: drink 4.",
     ),
     trial(
       7,
@@ -163,7 +163,7 @@ export const freezer: FloorCards = {
       "The Slippery Floor",
       "Black ice, right where the door used to be. Roll d20.",
       "Flat on your back. Drink 3.",
-      "You skate it. Give 3.",
+      "You triple-axel it. Give 3.",
     ),
     trap(
       7,
@@ -193,8 +193,8 @@ export const freezer: FloorCards = {
       7,
       "penguin-gang",
       "The Penguin Gang",
-      "Six penguins in tiny leather jackets, and one has a switchblade. Roll d20.",
-      "They waddle off with your wallet. Drink 3.",
+      "Six penguins in matching tuxes, and they say you're on their ice. Roll d20.",
+      "Flipper slaps, from all sides. Drink 3.",
       "You out-waddle them. Give 3.",
     ),
     ambush(
@@ -318,9 +318,9 @@ export const freezer: FloorCards = {
       7,
       "abominable-barback",
       "The Abominable Barback",
-      "He's been restocking ice for twenty years and he's never been thanked. Roll d20.",
+      "Eight feet of white fur and an ice scoop, and you just asked for no ice. Roll d20.",
       "He dumps a bucket on you. Drink 5.",
-      "You thank him. He hands you his scoop. Give 5.",
+      "You ask for extra ice. He hands you his scoop. Give 5.",
       [
         trinket("Ice Scoop", { roll: { monster: 2 } }),
         trinket("Barback's Gloves", { hurt: { monster: -1 } }),
@@ -348,7 +348,7 @@ export const freezer: FloorCards = {
       d20(
         BOSS_NEED[1],
         "It drops ten degrees. Drink 5.",
-        "You pull the plug. Give 5.",
+        "You unplug it at the wall. Give 5.",
         { crit: "You kick the door off. Everyone else drinks 3." },
       ),
       {
@@ -425,7 +425,7 @@ export const freezer: FloorCards = {
       d20(
         BOSS_NEED[1],
         "They pick up mid-sentence. Drink 5.",
-        "You say 'Let it go.' They do. Give 5.",
+        "You say you've moved on, and mean it. They shatter. Give 5.",
         { crit: "You both laugh about it. Everyone else drinks 3." },
       ),
       {

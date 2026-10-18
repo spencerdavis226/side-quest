@@ -208,7 +208,7 @@ export const wine: FloorCards = {
       "Wine Roulette",
       "Six glasses, one of them corked. Win, then cash out or pick again, harder. Roll d20.",
       "Corked. Drink 3.",
-      "Lovely. Give 2.",
+      "A good year. Give 2.",
       ["draught", "draught", "shield"],
     ),
     relic(

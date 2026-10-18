@@ -73,7 +73,7 @@ export const omens: CardDefinition[] = [
   ),
   omen(
     "cold-open",
-    "Cold Open",
+    "The Pregame",
     "Everyone drinks 1 at the door. Start a heart short, with a loaded die and a shield.",
     { hearts: -1, loot: ["die", "shield"] },
   ),

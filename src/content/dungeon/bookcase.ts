@@ -139,7 +139,10 @@ export const hiddenRooms: HiddenRoom[] = [
         "the-accountant",
         "The Accountant",
         "He's found a discrepancy in the books, and it's you. Roll d20.",
-        vs("Audited. Drink 3.", "You find his discrepancy. Give 3."),
+        vs(
+          "You're the discrepancy. Drink 3.",
+          "You find his discrepancy. Give 3.",
+        ),
       ),
       guard(
         office,
@@ -260,7 +263,7 @@ export const hiddenRooms: HiddenRoom[] = [
         moves(
           ["Jab, jab, hook. Drink 3.", "Headlock. Drink 3."],
           [
-            "You duck. Give 2.",
+            "You slip the jab. Give 2.",
             "You counter. Give 3.",
             "You knock him out of the ring. Give 3.",
             "The crowd lifts you up. Everyone else drinks 1.",

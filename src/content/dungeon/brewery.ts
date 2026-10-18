@@ -105,7 +105,7 @@ export const brewery: FloorCards = {
       "sour-mash-witch",
       "Sour Mash Witch",
       "She brews sours, and her mood went sour years ago. Roll d20.",
-      "Puckered. Drink 3, and make the face.",
+      "Puckered. Drink 3 through pursed lips.",
       "You sweeten her up. Give 3.",
       { curse: "hex" },
     ),
@@ -263,7 +263,7 @@ export const brewery: FloorCards = {
     shrine(
       6,
       "brewers-break",
-      "The Tasting Room",
+      "Brewer's Break",
       "Pretzels, mustard and one working chair. Everyone eats a pretend pretzel and sips.",
     ),
     merchant(

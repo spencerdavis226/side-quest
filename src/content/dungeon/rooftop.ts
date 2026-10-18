@@ -40,7 +40,7 @@ export const rooftop: FloorCards = {
       {
         roll: moves(
           [
-            "He drops the bass on you. Drink 5.",
+            "He drops your ringtone into the mix. Drink 5.",
             "He plays your ex's song. Drink 5.",
             "An air horn, in your ear. Drink 5.",
           ],
@@ -243,8 +243,8 @@ export const rooftop: FloorCards = {
     treasure(
       8,
       "rooftop-lost-found",
-      "The Lost and Found",
-      "A box behind the bar: three sunglasses, a shoe, and a smoke bomb. Drink 1.",
+      "Left Behind",
+      "A box behind the bar: one shoe, one earring and a smoke bomb. Drink 1.",
       "smoke",
     ),
     treasure(
