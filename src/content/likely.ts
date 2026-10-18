@@ -349,6 +349,11 @@ const payoutText = (payout: Payout = 2) =>
       ? "most votes takes a shot"
       : `most votes drinks ${payout}`;
 
+// Capitalize the prompt and end it with one full stop ("at 3 a.m." already
+// has its own).
+const sentence = (prompt: string) =>
+  `${prompt[0].toUpperCase()}${prompt.slice(1)}${prompt.endsWith(".") ? "" : "."}`;
+
 export const likelyCards: CardDefinition[] = prompts.flatMap((entry, index) =>
   entry
     ? [
@@ -356,7 +361,7 @@ export const likelyCards: CardDefinition[] = prompts.flatMap((entry, index) =>
           String(index + 1).padStart(3, "0"),
           "Most Likely To",
           "group",
-          `${entry[0][0].toUpperCase()}${entry[0].slice(1)}. Point on three: ${payoutText(entry[1])}.`,
+          `${sentence(entry[0])} Point on three: ${payoutText(entry[1])}.`,
         ),
       ]
     : [],

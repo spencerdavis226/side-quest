@@ -119,15 +119,26 @@ const facts = [
   "FACT: Sharks have been around longer than trees.",
 ];
 
-const TRUTH = "Tell the truth. Every word.";
+const TRUTH =
+  "Tell the truth. Every word. No story of your own? Tell a true one about someone here.";
 const LIE = "Lie. Make it up and sell it.";
-const stories: [title: string, topic: string, secret: string][] = [
+// Each title is dealt once as a truth and once as a lie (story-07 onwards
+// flip story-01 to 06), so knowing the card never gives the answer away.
+const storyTopics: [title: string, topic: string, first: string][] = [
   ["Worst Date", "your worst date story", LIE],
   ["Police Story", "your best cop story", TRUTH],
   ["Celebrity Sighting", "your best celebrity story", LIE],
   ["ER Visit", "your dumbest injury story", TRUTH],
   ["Worst Job", "your worst job story", LIE],
   ["Worst Hangover", "your worst hangover story", TRUTH],
+];
+const stories: [title: string, topic: string, secret: string][] = [
+  ...storyTopics,
+  ...storyTopics.map(([title, topic, first]): [string, string, string] => [
+    title,
+    topic,
+    first === LIE ? TRUTH : LIE,
+  ]),
 ];
 
 const secretRules = [

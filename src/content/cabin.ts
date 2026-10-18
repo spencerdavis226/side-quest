@@ -278,7 +278,14 @@ const authored: CardDefinition[] = [
     "Voltorb",
     "challenge",
     "Roll d6. Pick that many players to finish their drinks.",
-    roll(1, 6, "Pick {total} players to finish their drinks."),
+    rollTable(1, 6, [
+      { min: 1, max: 1, instruction: "Pick 1 player to finish their drink." },
+      {
+        min: 2,
+        max: 6,
+        instruction: "Pick {total} players to finish their drinks.",
+      },
+    ]),
   ),
   card(
     "ow-scratchies",
@@ -535,7 +542,7 @@ const authored: CardDefinition[] = [
     "deez-nuts",
     "Deez Nuts",
     "rule",
-    "You are Deez for the rest of the game. Fall for a deez nuts joke: drink 3.",
+    "You are Deez for the rest of the game. Anyone who falls for your deez nuts joke drinks 3.",
   ),
   card(
     "ohio",

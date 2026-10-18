@@ -1,5 +1,5 @@
 import type { CardDefinition } from "../game/types";
-import { cardFactory, roll } from "./author";
+import { cardFactory, choice, roll } from "./author";
 
 /**
  * Classic party and King's Cup content for the generated main deck. Traditional
@@ -64,14 +64,14 @@ export const classicCards: CardDefinition[] = [
     "Truth or Drink",
     "challenge",
     "The table asks you one filthy question. Answer honestly, or roll d6 and drink it.",
-    roll(1, 6, "Coward. Drink {total}."),
+    choice(roll(1, 6, "Coward. Drink {total}."), "Answered", "Coward"),
   ),
   card(
     "rant",
     "Rant Mode",
     "challenge",
     "Rant for 20 seconds about something you hate. Run dry early: roll d6 and drink it.",
-    roll(1, 6, "Ran out of hate. Drink {total}."),
+    choice(roll(1, 6, "Ran out of hate. Drink {total}."), "Ranted", "Ran dry"),
   ),
   card(
     "impression",

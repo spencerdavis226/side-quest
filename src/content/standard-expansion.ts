@@ -133,7 +133,7 @@ const drafts: Draft[] = [
     "dating-profile",
     "Dating Profile",
     "challenge",
-    "Your right neighbor pitches you as a dating profile. Hate it: drink 3. Love it: they do.",
+    "Your right neighbor pitches you as a dating profile. Table swipes left: they drink 3. Right: you do.",
   ],
   [
     "bad-kisser",
