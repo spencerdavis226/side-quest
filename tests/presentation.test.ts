@@ -3,8 +3,11 @@ import { PresentationController } from "../src/presentation/controller";
 import { createSession } from "../src/game/engine";
 import { cards, packs } from "../src/content/catalog";
 import {
+  CORRUPT_KEY,
   defaults,
   loadPreferences,
+  loadSession,
+  SAVE_KEY,
   parseSession,
 } from "../src/app/persistence";
 const core = packs[0];
@@ -134,5 +137,33 @@ describe("preferences compatibility", () => {
       getItem: () => JSON.stringify({ sound: true, atmosphere: false }),
     });
     expect(loadPreferences()).toEqual(defaults);
+  });
+});
+describe("a save that fails to load", () => {
+  const store = (entries: Record<string, string>, full = false) => {
+    const map = new Map(Object.entries(entries));
+    vi.stubGlobal("localStorage", {
+      getItem: (k: string) => map.get(k) ?? null,
+      setItem: (k: string, v: string) => {
+        if (full) throw Error("QuotaExceededError");
+        map.set(k, v);
+      },
+    });
+    return map;
+  };
+  it("is kept under its own key before setup clears it", () => {
+    const raw = JSON.stringify({ ...initial(), discarded: 99 });
+    const map = store({ [SAVE_KEY]: raw });
+    expect(loadSession()).toMatchObject({ session: null, corrupt: true });
+    expect(map.get(CORRUPT_KEY)).toBe(raw);
+  });
+  it("still opens the recovery screen when there is no room for a backup", () => {
+    store({ [SAVE_KEY]: "not json" }, true);
+    expect(loadSession()).toMatchObject({ session: null, corrupt: true });
+  });
+  it("leaves a good save alone", () => {
+    const map = store({ [SAVE_KEY]: JSON.stringify(initial()) });
+    expect(loadSession().corrupt).toBe(false);
+    expect(map.has(CORRUPT_KEY)).toBe(false);
   });
 });

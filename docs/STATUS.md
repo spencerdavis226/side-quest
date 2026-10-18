@@ -1,6 +1,15 @@
 # Current state and implementation plan
 
-Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
+Updated 2026-10-18. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
+
+## Review fixes: saved games survive updates (2026-10-18; branch `review-saves`, PR 2 of the review plan)
+
+- **Frozen saves.** `npm run fixtures:saves` (`scripts/save-fixtures.ts`) plays seeded games through the engine (`scripts/table-play.ts`) and freezes the first save in each of 21 situations in `tests/fixtures/saves/2026-10-18-*.json`: Standard mid-game, a roll in flight, a roll on the card, complete; Infinite in its second round, a choice waiting; a timed card, a secret card; the League on its starter, evolved, mid-gym, with a bag and a status, in the Hall of Fame; Pub Crawl with boons and a jinx, after a Quaff, pressing its luck, mid-boss, cursed with the Cup, wiped, survived; and a version-1 save. The script never rewrites a file; regenerating gives byte-identical files. 3.5 MB on disk, one-line JSON, marked `-diff linguist-generated` (`.gitattributes`) and skipped by Prettier (`.prettierignore`).
+- **Test:** `tests/save-fixtures.test.ts` loads every fixture with `parseSession`, then plays up to 40 moves on, re-loading each state. Tightening the ribbon limit in `validate.ts` from 32 to 10 characters fails it on every League and crawl fixture.
+- **Rule (AGENTS.md, `src/app`, `src/game`, `scripts`, `tests` CLAUDE.md):** a change to what a save holds, to save checks or to runtime card rules adds fixtures; never edit or delete one.
+- **Backup:** a save `loadSession` rejects is copied to `side-quest.session.corrupt.v1` (latest only) before the recovery screen clears it; a full storage loses only the backup. Unit tests in `presentation.test.ts`; `game.spec.ts`'s recovery test checks the key.
+- **Not covered:** League saves from before the gauntlet or the crawl (meter mode) can't be produced by today's code, so no fixture holds one; their load path keeps its existing unit tests.
+- **Verification:** `npm test` 254 passed; lint, typecheck, build passed. Chromium (local): `game.spec.ts` 17 passed; `@release` minus fit sweeps and the known flaky dice test 36 passed. WebKit not run locally.
 
 ## Two-across plaques: mark and name centred together (2026-10-18; pushed to `main`, PR #23)
 
