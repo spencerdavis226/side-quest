@@ -10,4 +10,4 @@ No DOM, React, `window`, or storage imports here, and nothing that depends on re
 - `dice.ts`: only place that samples dice. `rollDice` commits faces and the exact resolved instruction before any animation; the renderer receives those values and must land on them. `validateDice` runs at build time; `validateRoll` re-derives the instruction on load, so changing `resolveInstruction` output invalidates saved rolls (it throws "Invalid saved dice result").
 - Dice templates: `{total}` and `{first}`…`{fourth}`; outcomes by total with optional `step` for odds/evens and a `doubles` override. Legacy `instruction` strings stay valid for old saves.
 
-Tests: `tests/engine.test.ts`, `tests/dice.test.ts`. Add a failing test before changing a saved-state invariant, and keep `parseSession` in lockstep with any new invariant.
+Tests: `tests/engine.test.ts`, `tests/dice.test.ts`. Add a failing test before changing a saved-state invariant, and keep `parseSession` in lockstep with any new invariant. Saves frozen from earlier releases (`tests/fixtures/saves/`, `tests/save-fixtures.test.ts`) must keep loading; a new kind of state gets a fixture (`npm run fixtures:saves`).

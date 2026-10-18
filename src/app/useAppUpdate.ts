@@ -19,6 +19,9 @@ if ("serviceWorker" in navigator) {
     controlled = true;
   });
 }
+/** When the page last reloaded for a missing chunk; one reload per window. */
+export const PRELOAD_RELOAD_KEY = "side-quest.preload-reload";
+const PRELOAD_RELOAD_MS = 30_000;
 /** The service worker's state: whether the game is cached for offline play,
  * and whether a newer release has taken over and wants a reload. */
 export function useAppUpdate() {
@@ -68,8 +71,19 @@ export function useAppUpdate() {
   useEffect(() => {
     // An update can replace this page's hashed chunks while it is still open.
     // The active worker already serves the new release, so a single reload
-    // repairs the mismatch instead of stranding a dead lazy import.
+    // repairs the mismatch instead of stranding a dead lazy import. A chunk
+    // still missing after that reload is really gone (offline before it was
+    // cached): the import fails and its caller falls back, rather than the
+    // page reloading forever. Without session storage there is no way to
+    // tell, so it never reloads.
     const onPreloadError = (event: Event) => {
+      try {
+        const last = Number(sessionStorage.getItem(PRELOAD_RELOAD_KEY));
+        if (Date.now() - last < PRELOAD_RELOAD_MS) return;
+        sessionStorage.setItem(PRELOAD_RELOAD_KEY, String(Date.now()));
+      } catch {
+        return;
+      }
       event.preventDefault();
       location.reload();
     };

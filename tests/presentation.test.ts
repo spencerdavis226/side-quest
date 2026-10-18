@@ -3,8 +3,13 @@ import { PresentationController } from "../src/presentation/controller";
 import { createSession } from "../src/game/engine";
 import { cards, packs } from "../src/content/catalog";
 import {
+  CORRUPT_KEY,
   defaults,
+  chooseLength,
+  chooseQuest,
   loadPreferences,
+  loadSession,
+  SAVE_KEY,
   parseSession,
 } from "../src/app/persistence";
 const core = packs[0];
@@ -134,5 +139,79 @@ describe("preferences compatibility", () => {
       getItem: () => JSON.stringify({ sound: true, atmosphere: false }),
     });
     expect(loadPreferences()).toEqual(defaults);
+  });
+});
+describe("quest modes and the pack selection", () => {
+  const core = defaults;
+  it("switches a quest's pack off again when the player leaves the mode", () => {
+    const crawl = chooseQuest(core, "dungeon");
+    expect(crawl).toMatchObject({ choice: "quest", added: "dungeon" });
+    expect(crawl.config.packIds).toEqual(["core", "dungeon"]);
+    for (const choice of ["standard", "infinite"] as const) {
+      const back = chooseLength(crawl, choice);
+      expect(back.config.packIds).toEqual(["core"]);
+      expect(back.config.quest).toBeUndefined();
+      expect(back.added).toBeUndefined();
+    }
+  });
+  it("keeps a quest's pack the player had already chosen", () => {
+    const both = {
+      ...core,
+      config: { ...core.config, packIds: ["core", "pokemon"] },
+    };
+    const league = chooseQuest(both, "pokemon");
+    expect(league.added).toBeUndefined();
+    expect(chooseLength(league, "standard").config.packIds).toEqual([
+      "core",
+      "pokemon",
+    ]);
+  });
+  it("moves from one quest to another without keeping the first's pack", () => {
+    const league = chooseQuest(chooseQuest(core, "dungeon"), "pokemon");
+    expect(league.config.packIds).toEqual(["core", "pokemon"]);
+    expect(league.added).toBe("pokemon");
+    expect(chooseLength(league, "standard").config.packIds).toEqual(["core"]);
+  });
+  it("never leaves the selection empty", () => {
+    const none = { ...core, config: { ...core.config, packIds: [] } };
+    const back = chooseLength(chooseQuest(none, "dungeon"), "standard");
+    expect(back.config.packIds).toEqual(["dungeon"]);
+  });
+  it("remembers the switched-on pack across a reload", () => {
+    const crawl = chooseQuest(core, "dungeon");
+    vi.stubGlobal("localStorage", { getItem: () => JSON.stringify(crawl) });
+    expect(loadPreferences()).toEqual(crawl);
+    // Settings saved before `added` existed load without it.
+    const { added: _added, ...old } = crawl;
+    vi.stubGlobal("localStorage", { getItem: () => JSON.stringify(old) });
+    expect(loadPreferences()).toEqual(old);
+  });
+});
+describe("a save that fails to load", () => {
+  const store = (entries: Record<string, string>, full = false) => {
+    const map = new Map(Object.entries(entries));
+    vi.stubGlobal("localStorage", {
+      getItem: (k: string) => map.get(k) ?? null,
+      setItem: (k: string, v: string) => {
+        if (full) throw Error("QuotaExceededError");
+        map.set(k, v);
+      },
+    });
+    return map;
+  };
+  it("is kept under its own key before setup clears it", () => {
+    const raw = JSON.stringify({ ...initial(), discarded: 99 });
+    const map = store({ [SAVE_KEY]: raw });
+    expect(loadSession()).toMatchObject({ session: null, corrupt: true });
+    expect(map.get(CORRUPT_KEY)).toBe(raw);
+  });
+  it("still opens the recovery screen when there is no room for a backup", () => {
+    store({ [SAVE_KEY]: "not json" }, true);
+    expect(loadSession()).toMatchObject({ session: null, corrupt: true });
+  });
+  it("leaves a good save alone", () => {
+    const map = store({ [SAVE_KEY]: JSON.stringify(initial()) });
+    expect(loadSession().corrupt).toBe(false);
+    expect(map.has(CORRUPT_KEY)).toBe(false);
   });
 });

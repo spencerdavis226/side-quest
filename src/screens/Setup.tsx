@@ -1,5 +1,7 @@
 import { useState } from "react";
 import {
+  chooseLength,
+  chooseQuest,
   MODE_LIMITS,
   type DeckChoice,
   type Preferences,
@@ -16,11 +18,14 @@ import { Guide } from "../components/Guide";
 export function Setup({
   prefs,
   packs,
+  starting = false,
   onChange,
   onStart,
 }: {
   prefs: Preferences;
   packs: PackDefinition[];
+  /** The deck's cards are on their way; Play waits for them. */
+  starting?: boolean;
   onChange: (prefs: Preferences) => void;
   onStart: () => void;
 }) {
@@ -55,22 +60,12 @@ export function Setup({
             (st) => st.pick > 1,
           ),
         ).length;
-  const chooseLength = (choice: DeckChoice) => {
-    const { quest: _quest, ...config } = prefs.config;
-    onChange({ ...prefs, choice, config });
-  };
+  // Leaving a quest mode switches its pack off again if choosing it switched
+  // the pack on (persistence.ts).
+  const pickLength = (choice: DeckChoice) =>
+    onChange(choice === "quest" ? prefs : chooseLength(prefs, choice));
   // A quest mode plays its own pack, plus whatever else is selected.
-  const chooseQuest = (id: string) =>
-    onChange({
-      choice: "quest",
-      config: {
-        ...prefs.config,
-        quest: id,
-        packIds: packs
-          .filter((p) => p.id === id || prefs.config.packIds.includes(p.id))
-          .map((p) => p.id),
-      },
-    });
+  const pickQuest = (id: string) => onChange(chooseQuest(prefs, id, packs));
   const toggle = (id: string) => {
     if (id === questPack) return;
     const next = new Set(prefs.config.packIds);
@@ -113,7 +108,7 @@ export function Setup({
             How to play ›
           </button>
         </div>
-        <DeckChoices value={prefs.choice} onChange={chooseLength} />
+        <DeckChoices value={prefs.choice} onChange={pickLength} />
         <div className="lengths quest-modes" role="group" aria-label="Modes">
           {packs
             .filter((pack) => pack.quest)
@@ -124,7 +119,7 @@ export function Setup({
                 key={pack.id}
                 aria-label={`${pack.quest!.mode}, ${pack.quest!.summary}`}
                 aria-pressed={pack.id === questPack}
-                onClick={() => chooseQuest(pack.id)}
+                onClick={() => pickQuest(pack.id)}
               >
                 {pack.quest!.mark ? (
                   <ModeMark src={pack.quest!.mark} />
@@ -210,8 +205,8 @@ export function Setup({
           These packs have {cardCount} cards, so some will repeat.
         </p>
       )}
-      <Button onClick={onStart} disabled={!selected.length}>
-        Play
+      <Button onClick={onStart} disabled={!selected.length || starting}>
+        {starting ? "Dealing…" : "Play"}
       </Button>
       {packsOpen && (
         <Modal title="Card packs" onClose={() => setPacksOpen(false)}>

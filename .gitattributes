@@ -1,0 +1,2 @@
+# Frozen saves are one-line JSON; keep them out of text diffs and PR review.
+tests/fixtures/saves/*.json -diff linguist-generated=true

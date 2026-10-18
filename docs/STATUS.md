@@ -2,6 +2,36 @@
 
 Updated 2026-10-18. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Review follow-up plan (2026-10-18; owner approved)
+
+An app-wide review found the bugs and gaps below. The owner approved four PRs, in order; each is a branch and a draft PR, merged only on the owner's word.
+
+1. **Bugs** (`review-bugs`, below).
+2. **Saved games:** frozen example saves from seeded runs (`tests/fixtures/saves/`) that every release must still load; a rule that a change to save checks or card rules adds a fixture and never edits one; a backup of a save that fails to load (`side-quest.session.corrupt.v1`) before it is cleared.
+3. **Performance:** a fuse sets one timeout and a countdown ticks once a second (`CardActions.tsx`); League frame art is decoded only when the League is chosen or resumed; the table's embers and firelight pause after 60 seconds without a tap and resume on the next (owner's choice, option A); fonts subset to the characters the app and cards use, with a build check, kept only if it saves about 30% or more.
+4. **Tests and docs:** `npm test` without the 4,000-run balance simulations, which move to `npm run test:balance` (CI runs both); stale docs fixed (test time, save sizes, the black-translucent comment, the dice budget note); `-webkit-text-size-adjust: 100%`; banners announced through one persistent live region; the dice test "a second tap finishes the moving dice" made robust (it fails about 1 in 4 under three local workers, before and after PR 1, because the roll can finish before the test sees it rolling).
+
+Not doing (owner left it to my call): dropping a crawl's unused deck cards from its save. It would change what a valid save is for about 130 KiB.
+
+## Review fixes: bugs (2026-10-18; branch `review-bugs`)
+
+- **A quest mode's pack leaked into plain games.** Choosing Pub Crawl (or the League) switched its pack on, and going back to Standard or Infinite kept it: a Standard game had 341 cards instead of Core's 96. `chooseQuest` and `chooseLength` (`src/app/persistence.ts`, used by `Setup.tsx`) now record the pack a mode switched on in `Preferences.added` and switch it off when the mode is left; a pack the player had chosen stays, and the selection is never emptied.
+- **A quest mode chosen and not yet played was forgotten on reload.** Choosing one kept Standard's 50-card limit, which `loadPreferences` rejects with a quest, so setup came back as the defaults. Quest choices now set `limit: null`, plain ones their own limit.
+- **A missing card chunk reloaded the app forever.** `vite:preloadError` reloaded every time; setup fetches the chosen packs on open, so a chunk missing before and after the reload (offline before it was cached) looped. Confirmed in Chromium with the chunk blocked. Now at most one reload per 30 s (`side-quest.preload-reload` in session storage); after that the import fails and its caller falls back ("Couldn't load the cards."). A dice overlay that can't load puts the saved result straight on the card (`NoDice` in `Play.tsx`) instead of stranding the roll.
+- **No feedback while a deck loads.** Play and Play again read "Dealing…" and are disabled while the pack's cards load.
+- **Flaky test fixed:** "a smoke bomb flees it" now seeds an ordinary next room (a random ambush changed the plaque's words).
+- **Tests:** `tests/presentation.test.ts` (5 new: leaving a mode, a pack already chosen, quest to quest, never empty, reload); browser: `secondary.spec.ts` (the leak, a quest mode kept across a reload), `pages.spec.ts` (one reload then the notice, with the service worker blocked; "Dealing…"). The reload test fails on the old code (the notice never shows).
+- **Verification:** `npm test` 234 passed; lint, typecheck and build passed. Chromium (local, the container's Chromium via a local config): touched specs 15 passed; the smoke-bomb test 20 of 20 with `--repeat-each=20`; `@release` minus fit sweeps 40 passed, 1 failed ("a second tap finishes the moving dice": fails the same way on unmodified code under three workers, passes 6 of 6 alone). WebKit not run locally; no device check.
+
+## Review fixes: saved games survive updates (2026-10-18; branch `review-saves`, PR 2 of the review plan)
+
+- **Frozen saves.** `npm run fixtures:saves` (`scripts/save-fixtures.ts`) plays seeded games through the engine (`scripts/table-play.ts`) and freezes the first save in each of 21 situations in `tests/fixtures/saves/2026-10-18-*.json`: Standard mid-game, a roll in flight, a roll on the card, complete; Infinite in its second round, a choice waiting; a timed card, a secret card; the League on its starter, evolved, mid-gym, with a bag and a status, in the Hall of Fame; Pub Crawl with boons and a jinx, after a Quaff, pressing its luck, mid-boss, cursed with the Cup, wiped, survived; and a version-1 save. The script never rewrites a file; regenerating gives byte-identical files. 3.5 MB on disk, one-line JSON, marked `-diff linguist-generated` (`.gitattributes`) and skipped by Prettier (`.prettierignore`).
+- **Test:** `tests/save-fixtures.test.ts` loads every fixture with `parseSession`, then plays up to 40 moves on, re-loading each state. Tightening the ribbon limit in `validate.ts` from 32 to 10 characters fails it on every League and crawl fixture.
+- **Rule (AGENTS.md, `src/app`, `src/game`, `scripts`, `tests` CLAUDE.md):** a change to what a save holds, to save checks or to runtime card rules adds fixtures; never edit or delete one.
+- **Backup:** a save `loadSession` rejects is copied to `side-quest.session.corrupt.v1` (latest only) before the recovery screen clears it; a full storage loses only the backup. Unit tests in `presentation.test.ts`; `game.spec.ts`'s recovery test checks the key.
+- **Not covered:** League saves from before the gauntlet or the crawl (meter mode) can't be produced by today's code, so no fixture holds one; their load path keeps its existing unit tests.
+- **Verification:** `npm test` 254 passed; lint, typecheck, build passed. Chromium (local): `game.spec.ts` 17 passed; `@release` minus fit sweeps and the known flaky dice test 36 passed. WebKit not run locally.
+
 ## Review fixes: performance (2026-10-18; branch `review-perf`, PR 3 of the review plan)
 
 - **Timers:** a fuse sets one timeout for when it goes off, a countdown one per second turning over (`CardActions.tsx`); both still catch up on return from the background. Measured with a React commit counter in Chromium over 10 s of a running timer: fuse 52 → 0 commits, countdown 53 → 12.

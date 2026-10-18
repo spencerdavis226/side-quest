@@ -142,12 +142,15 @@ function App() {
   // so the next run is a different dungeon; anything else replays its own
   // snapshot (and so does a crawl whose cards can't load).
   const replay = (s: SessionState) => {
+    if (starting) return;
     if (!s.quest?.party) return controller.start(replaySession(s));
     const ready = loadedPackCards(s.config.packIds);
     if (ready) return controller.start(createSession(s.config, ready, packs));
+    setStarting(true);
     loadPackCards(s.config.packIds)
       .then((cards) => controller.start(createSession(s.config, cards, packs)))
-      .catch(() => controller.start(replaySession(s)));
+      .catch(() => controller.start(replaySession(s)))
+      .finally(() => setStarting(false));
   };
   const finish = (id: number) => controller.finish(id);
   return (
@@ -223,6 +226,7 @@ function App() {
           <Setup
             prefs={prefs}
             packs={packs}
+            starting={starting}
             onChange={setPrefs}
             onStart={start}
           />
@@ -236,6 +240,7 @@ function App() {
               packs.find((p) => p.id === display.quest?.packId)?.quest?.mode
             }
             celebrate={motion === "complete"}
+            starting={starting}
             onReplay={() => replay(display)}
             onSetup={() => controller.clear()}
             onFinish={() => finish(transition)}

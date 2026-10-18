@@ -162,6 +162,16 @@ test("corrupt save recovery", async ({ page }) => {
   await expect(
     page.getByRole("button", { name: "Play", exact: true }),
   ).toBeVisible();
+  // The game is gone from play but kept, as it was, for a later fix.
+  expect(
+    await page.evaluate(
+      (k) => [
+        localStorage.getItem(k),
+        localStorage.getItem("side-quest.session.corrupt.v1"),
+      ],
+      key,
+    ),
+  ).toEqual([null, '{"bad":true}']);
 });
 test("storage failure still allows play", async ({ page }) => {
   await page.addInitScript(() => {
