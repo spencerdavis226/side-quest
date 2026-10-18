@@ -156,7 +156,7 @@ export const catacombs: FloorCards = {
     trial(
       1,
       "the-seance",
-      "The Seance",
+      "The Séance",
       "Everyone holds hands while you summon a spirit. Make someone laugh in 20 seconds, or drink 4.",
     ),
     trap(
@@ -181,7 +181,7 @@ export const catacombs: FloorCards = {
       "Fog of Regret",
       "A green fog that smells like the tequila from your 21st. Roll d20.",
       "Flashbacks. Drink 3.",
-      "You hold your breath. Give 2 to whoever was there.",
+      "You hold your breath. Give 2 to whoever had the worst 21st.",
       {
         jinx: {
           name: "Tequila Flashback",
@@ -219,7 +219,7 @@ export const catacombs: FloorCards = {
       1,
       "bone-dice",
       "The Bone Dice",
-      "A skeleton rattles a cup of finger bones at you. Win, then cash out or go again. Roll d20.",
+      "A skeleton rattles a cup of finger bones. Win, then cash out or throw again, harder. Roll d20.",
       "Snake eyes. Drink 4.",
       "He clacks his jaw. Give 3.",
       ["die", "smoke", "revive"],
@@ -317,7 +317,7 @@ export const catacombs: FloorCards = {
       "two-crypts",
       "Two Crypts",
       "Two crypt doors. One says REST. The other says PARTY, in fresh blood.",
-      ["Rest", "Party"],
+      ["The REST door", "The PARTY door"],
     ),
   ],
   elites: [

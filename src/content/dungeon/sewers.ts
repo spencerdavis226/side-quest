@@ -155,7 +155,7 @@ export const sewers: FloorCards = {
       4,
       "rat-race",
       "Rat Race",
-      "Race your left neighbor to finish a sip and say 'rat' three times. Lose: drink 4.",
+      "Race your left neighbor: take a sip, then say 'rat' three times. Slower: drink 4.",
     ),
     trap(
       4,
@@ -179,7 +179,7 @@ export const sewers: FloorCards = {
       "Swamp Gas",
       "Somebody lit a cigarette. Down here. Roll d20.",
       "Eyebrows gone. Drink 3.",
-      "You dive into the sludge. Give 2 to the smoker here, if there is one.",
+      "You dive into the sludge. Give 2 to whoever you blame.",
     ),
     trap(
       4,
@@ -211,7 +211,7 @@ export const sewers: FloorCards = {
       4,
       "fishing-the-drain",
       "Fishing the Drain",
-      "A rod, a hook and the big drain. Catch, then keep it or cast again, harder. Roll d20.",
+      "A rod, a hook and the big drain. Catch, then cash out or cast again, harder. Roll d20.",
       "You hook a rat. Drink 4.",
       "Something shiny. Give 3.",
       ["smoke", "round", "shield"],
@@ -255,7 +255,7 @@ export const sewers: FloorCards = {
       4,
       "maintenance-locker",
       "Maintenance Locker",
-      "A hard hat and a thermos of something brown. Wear one, drink from the other. Drink 1.",
+      "A hard hat on a hook, and a thermos of something brown. Drink 1 from the thermos.",
       "shield",
     ),
     shrine(
@@ -268,7 +268,7 @@ export const sewers: FloorCards = {
       4,
       "dry-ledge",
       "The Dry Ledge",
-      "A ledge above the waterline with a cooler and two lawn chairs. Everyone rests a sip.",
+      "A dry ledge, a cooler and two lawn chairs. Everyone sits back and takes one slow sip.",
     ),
     merchant(
       4,
@@ -416,7 +416,7 @@ export const sewers: FloorCards = {
       d20(
         BOSS_NEED[1],
         "She sits on you, gently, for an hour. Drink 5.",
-        "You apologise to her face. She weeps. Give 4.",
+        "You apologize to her face. She weeps. Give 4.",
         { fumble: "She adopts you. Finish your drink, then call her mom." },
       ),
       {

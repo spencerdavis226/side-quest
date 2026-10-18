@@ -122,7 +122,7 @@ export const dungeonPack: PackDefinition = {
     // landing after each boss, then closing time and Last Call.
     finale: [
       one("Your adventurer", "Who's going down tonight?", classes),
-      one("Tonight's omen", "Tonight's omen", omens),
+      one("Tonight's omen", "Something in the air", omens),
       one("The Queue", "The Quarter-Zips cut in", queueCards),
       {
         oneOf: [
@@ -170,13 +170,13 @@ export const dungeonPack: PackDefinition = {
       one("The Lower Landing", "One last breather", lowerLandings),
       {
         oneOf: [
-          [floor("The Drowned Taproom", "The Drowned Taproom", taproom)],
+          [floor("The Drowned Taproom", "The taps never stopped", taproom)],
           [floor("The Kitchen", "Through the swinging door", kitchen)],
           [floor("The Rooftop Bar", "Out onto the roof", rooftop)],
         ],
       },
       one("Closing Time", "The Quarter-Zips are back", closingCards),
-      one("Last call", "Last call. The Cup waits", lastCallBosses),
+      one("Last Call", "Last call. The Cup waits", lastCallBosses),
     ],
   },
 };

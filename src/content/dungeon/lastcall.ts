@@ -21,10 +21,10 @@ export const queueCards: CardDefinition[] = [
   queue(
     "knows-the-owner",
     "Brad Knows the Owner",
-    "The Quarter-Zips cut the line: Brad's cousin knows the owner. Name-drop harder. Roll d20.",
+    "Brad's cousin knows the owner, so the Quarter-Zips cut in. Drop a bigger name. Roll d20.",
     vs(
       "His cousin really does know the owner. Drink 3.",
-      "The owner has never heard of him. Give 3 to the best name-dropper here.",
+      "The owner has never heard of Brad. Give 3.",
     ),
     { loot: "draught" },
   ),
@@ -49,10 +49,10 @@ export const queueCards: CardDefinition[] = [
   queue(
     "group-name",
     "The Group Name",
-    "The Quarter-Zips have a group name, a hashtag and matching vests. Look cooler. Roll d20.",
+    "The Quarter-Zips have a group name, a hashtag and matching vests. Roll d20.",
     vs(
-      "Nobody could look cooler. Drink 3.",
-      "Your vest is a jacket. It's better. Give 3.",
+      "They look cooler than you. Drink 3.",
+      "You have a jacket. It beats a vest. Give 3.",
     ),
     {
       loot: "die",

@@ -34,7 +34,7 @@ export const omens: CardDefinition[] = [
   omen(
     "cargo-shorts",
     "Cargo Shorts",
-    "Somebody wore cargo shorts. One more satchel slot tonight, and one pocket has a draught.",
+    "You wore cargo shorts. Drink 3 for it. One more satchel slot, and a draught in a pocket.",
     { satchel: 4, loot: ["draught"] },
   ),
   omen(
@@ -52,7 +52,7 @@ export const omens: CardDefinition[] = [
   omen(
     "lefty-night",
     "Lefty Night",
-    "Drink with your off hand all crawl. Caught using the other: drink 1. That's all. Probably.",
+    "Everyone drinks with their off hand all crawl. Caught using the other: drink 1.",
   ),
   omen(
     "karaoke-night",
@@ -62,13 +62,13 @@ export const omens: CardDefinition[] = [
   omen(
     "the-regulars",
     "The Regulars",
-    "The bartender likes you. You start with two more hearts.",
+    "The bartender knows you, and your tab. Everyone drinks 2. Start with two more hearts.",
     { hearts: 2 },
   ),
   omen(
     "thin-walls",
     "Thin Walls",
-    "Every trial costs one more heart tonight, but every heal heals one more.",
+    "Everyone can hear you. Every trial costs a heart more, but every heal heals one more.",
     { hurt: { trial: 1 }, heal: 1 },
   ),
   omen(

@@ -49,7 +49,7 @@ export const kitchen: FloorCards = {
       "Sentient Sourdough",
       "The starter has been fed for forty years. It wants more. Roll d20.",
       "It rises over you. Drink 5.",
-      "You punch it down. Give 5 to whoever owns a sourdough starter.",
+      "You punch it down. Give 5 to whoever's most likely to own a starter.",
     ),
     monster(
       5,
@@ -94,8 +94,8 @@ export const kitchen: FloorCards = {
     monster(
       5,
       "walk-in-yeti",
-      "Walk-In Yeti",
-      "Something lives in the walk-in, and it ate the shrimp. Roll d20.",
+      "Cold Room Yeti",
+      "Something lives in the cold room, and it ate all the shrimp. Roll d20.",
       "Cold hug. Drink 5.",
       "You lock it in. Give 5.",
       { fumble: "It locks you in. Finish your drink." },
@@ -224,7 +224,7 @@ export const kitchen: FloorCards = {
       5,
       "back-burner",
       "The Back Burner",
-      "A pot that's been simmering since the flood. Taste it, or leave it.",
+      "A pot that's been simmering since opening night. Taste it, or leave it.",
       13,
       "Fish heads. Drink 5.",
       "Best soup of your life, and a draught for later. Give 5.",

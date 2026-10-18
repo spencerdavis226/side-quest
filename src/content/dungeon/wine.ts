@@ -137,8 +137,8 @@ export const wine: FloorCards = {
     trial(
       3,
       "coaster-nose",
-      "Coaster on the Nose",
-      "Balance a coaster on your nose for 10 seconds. It falls: drink 3.",
+      "The Flamingo",
+      "Stand on one leg with your eyes shut for 10 seconds. Wobble or peek: drink 3.",
     ),
     trial(
       3,
@@ -150,7 +150,7 @@ export const wine: FloorCards = {
       3,
       "the-toast",
       "The Toast",
-      "Give a toast to the person on your right, sincere, 20 seconds. Anyone laughs: drink 3.",
+      "Toast your right neighbor, sincerely, for 20 seconds. Anyone laughs: you drink 3.",
     ),
     trap(
       3,
@@ -250,7 +250,7 @@ export const wine: FloorCards = {
       3,
       "the-magnum",
       "The Magnum",
-      "A magnum of something nice behind the racks. Everyone gets a splash; save a swig. Drink 1.",
+      "A magnum of something nice behind the racks. Drink 1, and cork the rest for later.",
       "draught",
     ),
     shrine(

@@ -121,10 +121,10 @@ export const rooftop: FloorCards = {
       8,
       "the-proposal",
       "The Proposal",
-      "A stranger is proposing at the railing and needs you to film it. Roll d20.",
+      "A guy is proposing to his girlfriend at the railing, and you're filming. Roll d20.",
       "She says no, and it's somehow your fault. Drink 5.",
       "She says yes. Champagne for the table. Give 5.",
-      { crit: "You catch the ring. Give 10." },
+      { crit: "He drops the ring, and you catch it. Give 10." },
     ),
     monster(
       8,
@@ -151,7 +151,7 @@ export const rooftop: FloorCards = {
       8,
       "the-slow-dance",
       "The Slow Dance",
-      "Slow-dance with the player on your right for ten seconds, eye contact. Either laughs: drink 5.",
+      "Slow-dance with your right neighbor, eyes locked, for 10 seconds. Either laughs: you drink 5.",
     ),
     trial(
       8,

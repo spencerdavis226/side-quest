@@ -30,7 +30,7 @@ export const freezer: FloorCards = {
       "Freezer Burn",
       "A steak that's been in here since 2009 and has become sentient and bitter. Roll d20.",
       "It tastes like the freezer. Drink 4.",
-      "You thaw it. It apologises. Give 4.",
+      "You thaw it. It apologizes. Give 4.",
       { curse: "bleed" },
     ),
     monster(
@@ -46,7 +46,7 @@ export const freezer: FloorCards = {
       7,
       "frozen-bachelor",
       "The Frozen Bachelor",
-      "A groom-to-be, frozen mid-shot since his stag do. He's thawing. Roll d20.",
+      "A groom-to-be, frozen mid-shot at his bachelor party. He's thawing. Roll d20.",
       "He finishes the shot on you. Drink 4.",
       "You get him to the church. Give 4.",
     ),
@@ -70,7 +70,7 @@ export const freezer: FloorCards = {
         roll: pair(
           "Full freeze. Drink 4, holding your forehead.",
           "You press your tongue to the roof of your mouth. Give 4.",
-          "A pair! You're immune now. Everyone else drinks 2.",
+          "A pair! You drink straight through it. Everyone else drinks 2.",
         ),
       },
     ),
@@ -149,7 +149,7 @@ export const freezer: FloorCards = {
       7,
       "the-icebreaker",
       "The Icebreaker",
-      "Deliver your best icebreaker to the player on your left. The table groans: drink 4.",
+      "Deliver your best icebreaker to your left neighbor. The table groans: drink 4.",
     ),
     trial(
       7,
@@ -201,7 +201,7 @@ export const freezer: FloorCards = {
       7,
       "frozen-peas",
       "The Frozen Peas",
-      "A bag split open and now there are peas everywhere, and they're organised. Roll d20.",
+      "A bag split open and now there are peas everywhere, and they're organized. Roll d20.",
       "Peas down your shirt. Drink 3.",
       "You ice your knee with them. Give 3.",
     ),
@@ -343,7 +343,7 @@ export const freezer: FloorCards = {
     boss(
       7,
       "the-walk-in",
-      "The Walk-In",
+      "The Walk-in",
       "The freezer itself wakes up, and the door shuts, and the light goes out. Roll d20.",
       d20(
         BOSS_NEED[1],

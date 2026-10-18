@@ -36,7 +36,7 @@ export const hiddenRooms: HiddenRoom[] = [
         speakeasy,
         "flapper-fran",
         "Flapper Fran",
-        "Fran challenges you to a Charleston. Do five seconds of it, then roll d20.",
+        "Fran challenges you to a Charleston. Do 5 seconds of it, then roll d20.",
         vs("Two left feet. Drink 3.", "The room applauds. Give 3."),
       ),
       guard(
@@ -115,7 +115,7 @@ export const hiddenRooms: HiddenRoom[] = [
       "the-promoter",
       "The Promoter",
       "He's put your name on a list. You don't know which list. Roll d20.",
-      vs("The bad list. Drink 4.", "You're on his list now. Give 4.", {
+      vs("The bad list. Drink 4.", "You're on the good list. Give 4.", {
         fumble: "You're the promoter now. Finish your drink.",
       }),
       {
@@ -156,7 +156,7 @@ export const hiddenRooms: HiddenRoom[] = [
         moves(
           ["The alarm goes off. Drink 3.", "A dye pack. Drink 3, blue."],
           [
-            "It's empty. Give 2.",
+            "Cracked it. Empty, but you look cool. Give 2.",
             "Petty cash. Give 3.",
             "Petty cash and a bottle. Give 3.",
             "It was the owner's birthday. Everyone else drinks 1.",
@@ -203,7 +203,7 @@ export const hiddenRooms: HiddenRoom[] = [
         poker,
         "the-tell",
         "The Tell",
-        "Tell two truths and a lie. Anyone at the table spots the lie: drink 3.",
+        "Tell two truths and a lie. Anyone spots the lie: you drink 3.",
         null,
       ),
       guard(
@@ -242,7 +242,7 @@ export const hiddenRooms: HiddenRoom[] = [
         basement,
         "arm-wrestle",
         "The Arm Wrestle",
-        "Arm-wrestle the player on your right, best of one. Lose: drink 3.",
+        "Arm-wrestle your right neighbor, best of one. Lose: drink 3.",
         null,
       ),
       guard(
