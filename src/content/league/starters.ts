@@ -114,7 +114,7 @@ export const starters: CardDefinition[] = [
   starter(
     "treecko",
     "Treecko",
-    "Treecko chose you, chewing a twig.",
+    "Treecko chose you, unbothered.",
     { loot: ["smoke"], hurt: { ambush: 1, elite: 1 } },
     [
       { title: "Grovyle", omen: { hearts: 1, loot: ["smoke"] } },
@@ -159,7 +159,7 @@ export const starters: CardDefinition[] = [
   starter(
     "piplup",
     "Piplup",
-    "Piplup chose you and is very proud of it.",
+    "Piplup chose you, proudly.",
     { hearts: 6, bossHits: 1, loot: ["shield"] },
     [
       { title: "Prinplup", omen: { hearts: 6, bossHits: 1, loot: ["shield"] } },
@@ -230,7 +230,7 @@ export const starters: CardDefinition[] = [
   starter(
     "scorbunny",
     "Scorbunny",
-    "Scorbunny chose you, bouncing.",
+    "Scorbunny chose you. Boing.",
     { satchel: 2, hurt: { monster: -1, trial: -1 } },
     [
       {

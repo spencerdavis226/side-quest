@@ -206,7 +206,7 @@ export const hoenn: Region = {
       "wallace",
       "Wallace",
       "Hoenn",
-      "Wallace demands a beautiful fight. The whole table strikes its most fabulous pose, then roll d20.",
+      "Wallace wants a beautiful fight. Everyone strikes a fabulous pose, then roll d20.",
       d20(
         CHAMPION_NEED,
         "Ugly. Everyone drinks 3; the table names the ugliest pose and that player drinks 2 more.",
@@ -284,7 +284,7 @@ export const hoenn: Region = {
     legendary(
       "rayquaza",
       "Rayquaza",
-      "Rayquaza came down from space to stop a fight. Name the two players likeliest to brawl. Roll d20.",
+      "Rayquaza flew down to stop a fight. Name the two players likeliest to brawl. Roll d20.",
       d20(
         LEGENDARY_NEED,
         "Dragon Ascent. You and both brawlers drink 3.",

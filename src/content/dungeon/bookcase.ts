@@ -29,7 +29,7 @@ export const hiddenRooms: HiddenRoom[] = [
         speakeasy,
         "peephole",
         "The Peephole",
-        "A slot opens in the door. Invent a password in 5 seconds and sell it. The table votes. Fail: drink 3.",
+        "A slot opens. Invent a password in 5 seconds and sell it. Table says no: drink 3.",
         null,
       ),
       guard(

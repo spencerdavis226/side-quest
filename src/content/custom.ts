@@ -318,7 +318,7 @@ const sheetRows: CardDefinition[] = [
     "sheet-060",
     "Spirit airlines",
     "challenge",
-    "Tell your worst vacation story. If team agrees it's bad, give 2 drinks. If team agrees it's not bad, drink 2 drinks.",
+    "Tell your worst vacation story. Team agrees it's bad: give 2. Team says not bad: drink 2.",
   ),
   houseCard(
     "sheet-061",

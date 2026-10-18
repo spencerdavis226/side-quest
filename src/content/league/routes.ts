@@ -109,7 +109,7 @@ const route1: CardDefinition[] = [
     0,
     "route-bug-catcher",
     "Bug Catcher",
-    "A bug catcher in short shorts bets you can't name five bug Pokémon in ten seconds. Lose: drink 2.",
+    "A kid in short shorts bets you can't name five bug Pokémon in 10 seconds. Lose: drink 2.",
   ),
   hazard(
     0,
@@ -471,7 +471,7 @@ const route3: CardDefinition[] = [
       2,
       "route-team-rocket",
       "Prepare for Trouble",
-      "Jessie and James drop a net from a Meowth balloon. Recite what you can of their motto, then roll d6.",
+      "Jessie and James net you from their balloon. Recite what you can of their motto, then roll d6.",
       moves(
         ["Netted. Drink 3.", "Meowth scratches. Drink 2."],
         [
@@ -1022,7 +1022,7 @@ const route6: CardDefinition[] = [
     5,
     "route-fisherman",
     "Fisherman Ned",
-    "Fisherman Ned (your left neighbor) tells a fish story. Top it; the table votes. Ned wins: drink 4.",
+    "Fisherman Ned (your left neighbor) tells a fish story. Top it. Ned wins the vote: drink 4.",
   ),
   hazard(
     5,
@@ -1061,7 +1061,7 @@ const route6: CardDefinition[] = [
     5,
     "route-saffron-center",
     "Saffron Center",
-    "Saffron's Center. A Psychic heals you with her mind. Everyone thinks a nice thought and drinks 1.",
+    "A Psychic heals you with her mind. Everyone thinks a nice thought and drinks 1.",
   ),
   mart(
     5,
@@ -1558,7 +1558,7 @@ const victoryRoad: CardDefinition[] = [
     8,
     "route-veteran-victory",
     "Veteran Ada",
-    "Veteran Ada wants to see your badges. The drawer names all eight from this run. Miss one: drink 4.",
+    "Veteran Ada wants to see your badges. Name all eight from this run. Miss one: drink 4.",
   ),
   center(
     8,

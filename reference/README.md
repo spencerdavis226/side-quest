@@ -34,7 +34,9 @@ material, not game content:
   keeping their first sentence: the nine travel Never Have I Evers (rows 26,
   50, 67–73), Singles (64), Damn, you're old (61), Big Baby (76) and Work it
   (80). Every in-joke row (Ron, Steve, Becca, Freddies, Same, Split the G and
-  so on) is unchanged.
+  so on) is unchanged. The 2026-10-18 length pass (owner: "the professional,
+  no cut-corners moves") shortened row 60, Spirit airlines, to fit the new
+  100-character rule limit with the same consequences.
 - **VIP**: the four VIP rows become `vip.sheet-003`…`vip.sheet-006` in the same
   file; the rest of `VIP night` is original.
 - **CABIIN**: tone reference only; see `docs/CARD_VOICE_REFERENCE.md` for what
@@ -61,6 +63,12 @@ material, not game content:
   rewritten so fewer read as a bare "Drink N / Give N", and every League
   d20 gained a natural 20 and natural 1. Of the 120 sheet cards only
   Missingno changed: its roll of 1 is now "Natural 1!", everyone drinks 6.
+  The 2026-10-18 length pass tightened the wording of 21 sheet cards over 95
+  characters (Hoothoot, Castform, Rival May, Team Magma and Aqua, Bug Catching
+  Contest, Missingno, Skarmory, Ditto, Lapras, Geodude, Wartortle, Murkrow,
+  Sudowoodo, Contest Hall, Seaking, Spheal, Claydol, Pelipper, Barboach,
+  Relicanth) under the new 100-character rule limit; every consequence and
+  amount is unchanged.
 
 ## Adding a new reference file
 

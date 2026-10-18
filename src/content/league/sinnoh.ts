@@ -123,7 +123,7 @@ export const sinnoh: Region = {
       "bertha",
       "Bertha",
       "Ground",
-      "Grandma Bertha asks about your love life. Answer every question for 20 seconds. Dodge one: drink 5.",
+      "Grandma Bertha grills you on your love life for 20 seconds. Dodge a question: drink 5.",
     ),
     eliteFour(
       "flint",
@@ -143,7 +143,7 @@ export const sinnoh: Region = {
       "lucian",
       "Lucian",
       "Psychic",
-      "Lucian reads mid-battle. Read your last sent text aloud, dramatically. Refuse: finish your drink.",
+      "Lucian reads mid-battle. Dramatically read your last sent text. Refuse: finish your drink.",
     ),
   ],
 
@@ -169,7 +169,7 @@ export const sinnoh: Region = {
     legendary(
       "dialga",
       "Dialga",
-      "Dialga controls time. Drink for exactly 5 seconds, counted out loud by the table, then roll d20.",
+      "Dialga controls time. Drink for 5 seconds while the table counts aloud, then roll d20.",
       d20(
         LEGENDARY_NEED,
         "Roar of Time. Drink 5, and talk in slow motion until your next turn.",

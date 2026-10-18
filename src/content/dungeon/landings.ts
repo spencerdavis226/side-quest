@@ -37,7 +37,7 @@ export const lowerLandings: CardDefinition[] = [
   landing(
     "boiler-room",
     "The Boiler Room",
-    "Warm pipes and a cot someone clearly lives on. Everyone warms their hands. Level up, or lie down.",
+    "Warm pipes and a cot someone lives on. Everyone warms their hands. Level up, or lie down.",
     "Lie down",
   ),
   landing(
@@ -48,7 +48,7 @@ export const lowerLandings: CardDefinition[] = [
   landing(
     "staff-room",
     "The Staff Room",
-    "Lockers, a kettle and a sign: WASH YOUR OWN MUG. Everyone washes a mug. Level up, or put the kettle on.",
+    "A kettle and a sign: WASH YOUR OWN MUG. Everyone mimes it. Level up, or put the kettle on.",
     "Kettle on",
   ),
   landing(

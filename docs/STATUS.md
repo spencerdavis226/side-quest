@@ -2,6 +2,13 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Card copy length pass: 100-character rule limit (2026-10-18; branch `trim-long-rules`)
+
+- **Owner:** "do the professional, no cut-corners moves" after PR #21 (shrink-to-fit). The fit handles screen size; this keeps text large by keeping copy short.
+- **Copy:** all 66 rules over 95 characters rewritten to 95 or fewer with the same actors, durations, amounts and dice (9 Dungeon, 1 House row 60, 55 Pokémon incl. 21 sheet cards and three starter flavor lines, 1 VIP). Recorded in `reference/README.md`.
+- **Limit:** `scripts/validate-content.ts` now rejects rules over 100 characters or 20 words (was 120 / 24); the 90 / 18 review warning stays. Docs updated (`AUTHORING.md`, `GAME_DESIGN.md`, `ART_DIRECTION.md`, `src/content/CLAUDE.md`, `cards-review.ts`); `docs/CARD_REVIEW.md` and the manifest regenerated. Saved games keep their snapshot text.
+- **Verification:** `npm test` 229 passed (card-logic caught a dropped "rest of the game" on Barboach, fixed); lint and typecheck clean; build validated 1,580 cards. Playwright and both sweeps: see the commit that marks this pushed.
+
 ## Long rules shrink to fit before they scroll (2026-10-18; pushed to `main`, PR #21)
 
 - **Owner (iPhone 15 Pro, Safari tab, not installed):** Chad's Fake ID's rules faded and cut off at the bottom. Rule text had a 26px floor; Safari's toolbar and the crawl strip (`--hud-strip`, added 2026-10-17) leave a smaller card, so long rules spilled into the scroll fade. The fit sweeps had been skipped (`--grep-invert "fits its face"`) since the header redesign.

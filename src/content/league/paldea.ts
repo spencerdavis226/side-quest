@@ -22,7 +22,7 @@ export const paldea: Region = {
       "katy",
       "Katy",
       "Bug",
-      "Katy baked you a cake and her bugs got in the batter. Take a big bite of nothing, then roll d20.",
+      "Katy's bugs got in the cake batter. Take a big bite of nothing, then roll d20.",
       d20(
         GYM_NEED[0],
         "Sticky Web. Drink 4 with your elbows stuck to the table.",
@@ -37,7 +37,7 @@ export const paldea: Region = {
       "brassius",
       "Brassius",
       "Grass",
-      "Brassius demands art. Sculpt a Pokémon from a napkin in 20 seconds. Table can't name it: drink 4.",
+      "Brassius demands art. Napkin-sculpt a Pokémon in 20 seconds. Nobody can name it: drink 4.",
     ),
     leader(
       2,
@@ -169,7 +169,7 @@ export const paldea: Region = {
       "amarys",
       "Amarys",
       "Steel",
-      'Amarys doesn\'t do friends. Get your right neighbor to say "friend" in 30 seconds. Fail: drink 5.',
+      'Amarys doesn\'t do friends. Get your right neighbor to say "friend" in 30 seconds or drink 5.',
     ),
     eliteFour(
       "lacey",

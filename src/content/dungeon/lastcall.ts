@@ -21,7 +21,7 @@ export const queueCards: CardDefinition[] = [
   queue(
     "knows-the-owner",
     "Brad Knows the Owner",
-    "The Quarter-Zips cut the line. Brad says his cousin knows the owner. Name-drop harder. Roll d20.",
+    "The Quarter-Zips cut the line: Brad's cousin knows the owner. Name-drop harder. Roll d20.",
     vs(
       "His cousin really does know the owner. Drink 3.",
       "The owner has never heard of him. Give 3 to the best name-dropper here.",
@@ -31,14 +31,14 @@ export const queueCards: CardDefinition[] = [
   queue(
     "fake-id",
     "Chad's Fake ID",
-    "Your left neighbor is Chad: 10 seconds of Canadian accent. Then you. The table votes. Chad wins: drink 3.",
+    "Chad (left neighbor) and you: 10 seconds of Canadian accent each. Chad wins the vote: drink 3.",
     null,
     { loot: "smoke" },
   ),
   queue(
     "were-together",
     "We're Together",
-    "Thad cut in front of you by telling the bouncer 'we're together'. You're not. Roll 2d6 to argue.",
+    "Thad cuts in, telling the bouncer 'we're together'. You're not. Roll 2d6 to argue.",
     pair(
       "The bouncer believes him. Drink 3.",
       "The bouncer believes you. Give 3.",

@@ -137,7 +137,7 @@ export const freezer: FloorCards = {
       7,
       "the-shiver",
       "The Shiver",
-      "Make the table shiver with the coldest thing you've ever said to an ex, true or not. Nobody winces: drink 4.",
+      "Say the coldest thing you've ever said to an ex, true or not. Nobody winces: drink 4.",
     ),
     trial(
       7,
@@ -290,7 +290,7 @@ export const freezer: FloorCards = {
       7,
       "two-shelves",
       "Two Shelves",
-      "Crawl behind the shelves of frozen peas, or through the ice cream aisle, where something is licking.",
+      "Crawl behind the frozen peas, or through the ice cream aisle, where something is licking.",
       ["The peas", "The ice cream"],
     ),
     fork(

@@ -90,13 +90,13 @@ const deck: CardDefinition[] = [
     "hoothoot",
     "Hoothoot",
     "sip",
-    "Hoothoot only comes out at night. If it's dark outside, give 2. Otherwise, hoot like an owl and drink 2.",
+    "Hoothoot comes out at night. Dark outside: give 2. Daylight: hoot like an owl and drink 2.",
   ),
   card(
     "castform",
     "Castform",
     "sip",
-    "Castform used Weather Ball! Look outside. Clear: drink 2. Cloudy: give 2. Rain or snow: drink 3.",
+    "Castform used Weather Ball! Clear outside: drink 2. Cloudy: give 2. Rain or snow: drink 3.",
   ),
   card(
     "tauros",
@@ -294,7 +294,7 @@ const deck: CardDefinition[] = [
     "may",
     "Rival May",
     "group",
-    "Rival May blocks the path! Everyone in a relationship drinks 3. If nobody is, everyone drinks 5.",
+    "Rival May blocks the path! Everyone taken drinks 3. Nobody's taken: everyone drinks 5.",
   ),
   card(
     "team-rocket",
@@ -312,13 +312,13 @@ const deck: CardDefinition[] = [
     "team-magma",
     "Team Magma",
     "group",
-    "Team Magma recruited you! Everyone wearing red joins you: you all give 3. Nobody in red: drink 4.",
+    "Team Magma recruited you! Everyone in red joins: you all give 3. Nobody in red: drink 4.",
   ),
   card(
     "team-aqua",
     "Team Aqua",
     "group",
-    "Team Aqua recruited you! Everyone wearing blue joins you: you all give 3. Nobody in blue: drink 4.",
+    "Team Aqua recruited you! Everyone in blue joins: you all give 3. Nobody in blue: drink 4.",
   ),
   card(
     "pokemon-master",
@@ -446,7 +446,7 @@ const deck: CardDefinition[] = [
     "bug-contest",
     "Bug Catching Contest",
     "challenge",
-    "Bug Catching Contest! Roll d6: 1 Paras, 2 Metapod, 3 Beedrill, 4 Butterfree, 5 Pinsir, 6 Scyther.",
+    "Bug Catching Contest! Roll d6: Paras, Metapod, Beedrill, Butterfree, Pinsir or Scyther.",
     rollTable(1, 6, [
       { min: 1, max: 1, instruction: "Paras: awful. Drink 1." },
       { min: 2, max: 2, instruction: "Metapod: give 1." },
@@ -526,7 +526,7 @@ const deck: CardDefinition[] = [
     "missingno",
     "Missingno",
     "challenge",
-    "A wild Missingno glitched in! Roll d20. 1-5: the game breaks; everyone drinks 3. Higher: drink 2.",
+    "A wild Missingno glitched in! Roll d20. 1-5: game breaks, everyone drinks 3. 6+: drink 2.",
     rollTable(1, 20, [
       // The standing natural 1 (owner, 2026-10-17); Missingno has no good
       // roll for a natural 20 to double.
@@ -575,7 +575,7 @@ const deck: CardDefinition[] = [
     "skarmory",
     "Skarmory",
     "rule",
-    "Steel Wing! Drink 3. Until your next turn, drinks given to you bounce to the player on your right.",
+    "Steel Wing! Drink 3. Until your next turn, drinks given to you bounce to your right neighbor.",
   ),
   card(
     "tropius",
@@ -605,7 +605,7 @@ const deck: CardDefinition[] = [
     "ditto",
     "Ditto",
     "challenge",
-    "Ditto used Transform! Do an impression of someone here; the table guesses who. Nobody gets it: drink 2.",
+    "Ditto used Transform! Impersonate someone here; the table guesses. Nobody gets it: drink 2.",
   ),
   card(
     "psyduck",
@@ -617,7 +617,7 @@ const deck: CardDefinition[] = [
     "lapras",
     "Lapras",
     "rule",
-    "Lapras used Confuse Ray! Pick a player. Until your next turn, they speak in questions or drink 1.",
+    "Lapras used Confuse Ray! Pick a player: questions only until your next turn, or drink 1.",
   ),
   card(
     "tentacool",
@@ -673,13 +673,13 @@ const deck: CardDefinition[] = [
     "geodude",
     "Geodude",
     "group",
-    "Magnitude! Drink as many as you want; the player on your left drinks one less. Go around the table.",
+    "Magnitude! Drink any number; your left neighbor drinks one less, and so on around the table.",
   ),
   card(
     "wartortle",
     "Wartortle",
     "challenge",
-    "Wartortle used Skull Bash! Crush a beer can against your head to avoid 3 drinks, and give those 3 to one player.",
+    "Wartortle used Skull Bash! Crush a can on your head and give 3 to a player, or drink 3.",
   ),
   card(
     "ursaring",
@@ -709,13 +709,13 @@ const deck: CardDefinition[] = [
     "murkcrow",
     "Murkrow",
     "challenge",
-    "Murkrow used Mimic! Repeat a player's last sentence in their voice. The table calls it bad: drink 2.",
+    "Murkrow used Mimic! Say a player's last sentence in their voice. Bad impression: drink 2.",
   ),
   card(
     "sudowoodo",
     "Sudowoodo",
     "challenge",
-    "A wild Sudowoodo blocks the path! Reveal an embarrassing truth to avoid 2 drinks, and everyone else drinks.",
+    "Sudowoodo blocks the path! Drink 2, or spill an embarrassing truth and everyone else drinks.",
   ),
   card(
     "whismur",
@@ -745,7 +745,7 @@ const deck: CardDefinition[] = [
     "contest-hall",
     "Contest Hall",
     "challenge",
-    "Hoenn Contest Hall! Runway walk to a group-chosen song. Give 5 if you do it; drink 3 if you don't.",
+    "Hoenn Contest Hall! Runway walk to a song the table picks. Do it: give 5. Don't: drink 3.",
   ),
   card(
     "spinda",
@@ -769,13 +769,13 @@ const deck: CardDefinition[] = [
     "seaking",
     "Seaking",
     "group",
-    "Seaking used Waterfall! Everyone drinks in a waterfall; stop only when the player before you stops.",
+    "Seaking used Waterfall! Everyone drinks; nobody stops until the player before them does.",
   ),
   card(
     "spheal",
     "Spheal",
     "group",
-    "Spheal used Ice Ball! Drink 1; the player on your left drinks 2, then 3, around the table until everyone has drunk.",
+    "Spheal used Ice Ball! Drink 1, your left neighbor 2, the next 3, and so on around the table.",
   ),
   card(
     "clamperl",
@@ -799,7 +799,7 @@ const deck: CardDefinition[] = [
     "claydol",
     "Claydol",
     "challenge",
-    "Claydol used Double-Edge! Give as many drinks as you want, then drink half in recoil, rounded up.",
+    "Claydol used Double-Edge! Give any number of drinks, then drink half that, rounded up.",
   ),
   card(
     "rare-candy",
@@ -837,7 +837,7 @@ const deck: CardDefinition[] = [
     "pelipper",
     "Pelipper",
     "challenge",
-    "Pelipper used Stockpile! Mix a splash of everyone's drink. Roll d6. Even: swallow it. Odd: choose who drinks it.",
+    "Pelipper used Stockpile! Mix a splash of everyone's drink, then roll d6 to see who swallows it.",
     rollTable(1, 6, [
       {
         min: 1,
@@ -858,7 +858,7 @@ const deck: CardDefinition[] = [
     "barboach",
     "Barboach",
     "rule",
-    "Barboach used Mud-slap! Name a player. For the rest of the game, they may slap you once after a full drink.",
+    "Barboach used Mud-slap! Pick a player. Rest of the game: they get one slap after a full drink.",
   ),
   card(
     "mawile",
@@ -876,7 +876,7 @@ const deck: CardDefinition[] = [
     "relicanth",
     "Relicanth",
     "challenge",
-    "Relicanth used Dive! Duck under the table and hold your breath for 10 seconds. Surface early: drink 2.",
+    "Relicanth used Dive! Under the table, hold your breath 10 seconds. Surface early: drink 2.",
   ),
   card(
     "koffing",

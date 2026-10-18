@@ -95,7 +95,7 @@ md.push(
   "  a fuse burns for a hidden time in its range, a clock counts down in view,",
   "  and the card can't be put aside until time is up.",
   "- Rules target 90 characters / 18 words; the build warns above that and",
-  "  rejects over 120 characters / 24 words.",
+  "  rejects over 100 characters / 20 words.",
   "- Rank cards for 9 / 10 / Jack / Queen are intentionally covered by the",
   "  existing Rhyme Time, Categories, Rulemaster and Questions Only cards.",
   "",

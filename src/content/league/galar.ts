@@ -89,7 +89,7 @@ export const galar: Region = {
       "piers",
       "Piers",
       "Dark",
-      "Piers is a punk. Scream a verse of any song like you mean it. Table votes not punk enough: drink 6.",
+      "Piers is a punk. Scream a verse of any song like you mean it. Not punk enough: drink 6.",
     ),
     leader(
       7,

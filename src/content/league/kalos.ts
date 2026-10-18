@@ -63,7 +63,7 @@ export const kalos: Region = {
       "clemont",
       "Clemont",
       "Voltage",
-      'Clemont\'s invention is about to blow. Shout "The future is now, thanks to science!" and roll d20.',
+      'Clemont\'s invention will blow. Shout "The future is now, thanks to science!" and roll d20.',
       d20(
         GYM_NEED[4],
         "It explodes. Drink 5 and shout the slogan again.",
@@ -79,7 +79,7 @@ export const kalos: Region = {
       "valerie",
       "Valerie",
       "Fairy",
-      "Valerie's orders: swap a piece of clothing with your right neighbor. Either refuses: both drink 6.",
+      "Valerie's orders: trade an item of clothing with your right neighbor. Refuse: both drink 6.",
     ),
     leader(
       6,
@@ -102,7 +102,7 @@ export const kalos: Region = {
       "wulfric",
       "Wulfric",
       "Iceberg",
-      "Wulfric loves a bear hug. Bear-hug three players while holding your breath. Breathe early: drink 7.",
+      "Wulfric loves a bear hug. Hug three players on one breath. Breathe early: drink 7.",
     ),
   ],
 
@@ -111,7 +111,7 @@ export const kalos: Region = {
       "malva",
       "Malva",
       "Fire",
-      "Malva reads the news. Break a scandal about a player in your anchor voice. Nobody laughs: drink 5.",
+      "Malva reads the news. Break a scandal about a player, anchor voice. Nobody laughs: drink 5.",
     ),
     eliteFour(
       "siebold",
@@ -128,7 +128,7 @@ export const kalos: Region = {
       "wikstrom",
       "Wikstrom",
       "Steel",
-      "Sir Wikstrom wants a duel. Straw-fence your right neighbor; first one poked loses. Lose: drink 5.",
+      "Sir Wikstrom wants a duel. Straw-fence your right neighbor; first poked loses. Lose: drink 5.",
     ),
     eliteFour(
       "drasna",

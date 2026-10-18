@@ -45,7 +45,7 @@ export const hideouts = [
         "Team Rocket",
         "rocket-grunt-spinner",
         "Spinner Tiles",
-        "The hideout floor is spinner tiles. A Grunt laughs while you spin. Spin in your chair, roll d20.",
+        "Spinner tiles! A Grunt laughs while you spin in your chair. Then roll d20.",
         vs(
           "Dizzy and beaten. Drink 3, then stand and walk a straight line.",
           "You spin into him. Give 3.",
@@ -261,7 +261,7 @@ export const hideouts = [
         "Team Plasma",
         "plasma-n",
         "N",
-        "N talks very fast about truth and ideals. Your left neighbor does N for five seconds; you roll 2d6.",
+        "N rambles about truth and ideals. Your left neighbor does N for 5 seconds; you roll 2d6.",
         pair(
           "You can't keep up. Drink 3.",
           "N spins away on a Ferris wheel. Give 3.",

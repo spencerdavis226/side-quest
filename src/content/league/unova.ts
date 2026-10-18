@@ -49,7 +49,7 @@ export const unova: Region = {
       "elesa",
       "Elesa",
       "Bolt",
-      "Elesa wants a runway walk. Strut to the door and back. The table scores you; under 7 of 10: drink 5.",
+      "Elesa wants a runway walk. Strut to the door and back. Table scores you under 7/10: drink 5.",
     ),
     leader(
       4,
@@ -87,14 +87,14 @@ export const unova: Region = {
       "brycen",
       "Brycen",
       "Freeze",
-      "Brycen was a movie star. Act out a movie; the table has 20 seconds to name it. They can't: drink 6.",
+      "Brycen was a movie star. Act out a movie. Table can't name it in 20 seconds: drink 6.",
     ),
     leader(
       7,
       "drayden",
       "Drayden",
       "Legend",
-      "Drayden is the mayor, ancient, and owns a dragon. Make the table a campaign promise, then roll d20.",
+      "Drayden: mayor, ancient, owns a dragon. Make the table a campaign promise, then roll d20.",
       d20(
         GYM_NEED[7],
         "Voted out. Drink 6 and give a concession speech.",

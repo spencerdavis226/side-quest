@@ -30,7 +30,7 @@ export const vipCards: CardDefinition[] = [
     "sidekick",
     "Choose a Sidekick",
     "sip",
-    "The VIP picks a sidekick who drinks with them for the rest of the game and holds their hair later.",
+    "The VIP picks a sidekick to drink with them the rest of the game, and hold their hair later.",
   ),
   vipCard(
     "tax",

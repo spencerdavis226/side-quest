@@ -320,7 +320,7 @@ export const rooftop: FloorCards = {
       8,
       "gargoyle-king",
       "The Gargoyle King",
-      "The biggest gargoyle in the city, and every other one on the roof just turned to look. Roll d20.",
+      "The city's biggest gargoyle. Every other one on the roof just turned to look. Roll d20.",
       "Stone fist. Drink 6.",
       "You crown yourself. Give 6.",
       [

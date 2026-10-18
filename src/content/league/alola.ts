@@ -39,7 +39,7 @@ export const alola: Region = {
       "Hala",
       "Kahuna",
       "Fightinium Z",
-      "Hala wants a sumo match. Palm-push your right neighbor; first to move a foot loses. Lose: drink 5.",
+      "Hala wants sumo. Palm-push your right neighbor; first to move a foot loses. Lose: drink 5.",
     ),
     islandTrial(
       2,
@@ -72,7 +72,7 @@ export const alola: Region = {
       "Mallow",
       "Trial Captain",
       "Grassium Z",
-      "Mallow's cooking: pour a splash of three players' drinks into yours, then down it. Gag: drink 6.",
+      "Mallow's cooking: splash three players' drinks into yours, then down it. Gag: drink 6.",
     ),
     islandTrial(
       5,
@@ -96,7 +96,7 @@ export const alola: Region = {
       "Nanu",
       "Kahuna",
       "Darkinium Z",
-      "Nanu's a cop who can't be bothered. Get anyone here to confess a crime in 30 seconds or drink 6.",
+      "Nanu's a cop who can't be bothered. Get anyone to confess a crime in 30 seconds or drink 6.",
     ),
     islandTrial(
       7,
@@ -128,7 +128,7 @@ export const alola: Region = {
       "kahili",
       "Kahili",
       "Flying",
-      "Kahili golfs. Flick a bottle cap into a cup across the table in 3 tries. Miss all three: drink 5.",
+      "Kahili golfs. Flick a bottle cap into a cup across the table in 3 tries. All miss: drink 5.",
     ),
     eliteFour(
       "molayne",

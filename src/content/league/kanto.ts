@@ -161,7 +161,7 @@ export const kanto: Region = {
         "agatha",
         "Agatha",
         "Ghost",
-        "Agatha's ghosts eat names. For one minute nobody says one. Anyone slips: drink 3. You slip: lost.",
+        "Agatha's ghosts eat names. No names for a minute. Anyone slips: drink 3. You slip: lost.",
       ),
       jinx: {
         name: "No Names",
@@ -200,7 +200,7 @@ export const kanto: Region = {
       "red",
       "Red",
       "Kanto",
-      "Red hasn't spoken in 25 years. The whole table fights in silence. Anyone talks: drink 2. Roll d20.",
+      "Red hasn't spoken since 1996. The table fights in silence. Anyone talks: drink 2. Roll d20.",
       d20(
         CHAMPION_NEED,
         "Pikachu Volt Tackles the table. Everyone drinks 4 in silence.",

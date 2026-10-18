@@ -178,7 +178,7 @@ export const johto: Region = {
     legendary(
       "beasts",
       "Raikou, Entei, Suicune",
-      "Three dogs, and they run the moment you look at them. Point at the guiltiest player, then roll d20.",
+      "Three dogs that bolt the moment you look. Point at the guiltiest player, then roll d20.",
       d20(
         LEGENDARY_NEED,
         "It ran away. Again. You and the guilty one drink 3.",
