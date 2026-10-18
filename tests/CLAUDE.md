@@ -12,4 +12,5 @@
 - Always set `TEST_PORT` locally. `reuseExistingServer` is on outside CI, so a stale preview on `:4173` silently tests an old build. Build with `BASE_PATH=/side-quest/` first.
 - Do not run two Playwright runners at once; they share `test-results/` and corrupt each other's traces (this caused a false failure before).
 - Never loosen an assertion to make a failure pass. If a test is flaky because of host load, say so and rerun it isolated; do not call the suite green with a failing or untracked test.
+- `tests/fixtures/saves/` are real saves from earlier releases; never edit or delete one to make a test pass (see AGENTS.md).
 - Count assertions (`tests/workshop.test.ts`, `game.spec.ts`) change when cards or packs are added; update them with the content.

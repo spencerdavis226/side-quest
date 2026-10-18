@@ -87,10 +87,17 @@ function App() {
   useEffect(() => {
     if (!save(SETTINGS_KEY, prefs)) setNotice(true);
   }, [prefs]);
+  // The League's Ancient Mew pair is decoded only once the League is chosen
+  // or in play: it is about 7 MB of image memory no other game uses.
+  const league =
+    (prefs.choice === "quest" && prefs.config.quest === LEAGUE_QUEST) ||
+    display?.config.quest === LEAGUE_QUEST;
+  useEffect(() => {
+    if (league) for (const src of leagueSurfaces) void preloadUrl(src);
+  }, [league]);
   useEffect(() => {
     // Shared surfaces only: hero illustrations are retired from card fronts.
-    for (const src of [...coreFrameSurfaces, ...leagueSurfaces])
-      void preloadUrl(src);
+    for (const src of coreFrameSurfaces) void preloadUrl(src);
     for (const path of Object.values(theme.assets)) void preloadUrl(path);
     const onVisibility = () => setHidden(document.hidden);
     document.addEventListener("visibilitychange", onVisibility);
@@ -136,12 +143,15 @@ function App() {
   // so the next run is a different dungeon; anything else replays its own
   // snapshot (and so does a crawl whose cards can't load).
   const replay = (s: SessionState) => {
+    if (starting) return;
     if (!s.quest?.party) return controller.start(replaySession(s));
     const ready = loadedPackCards(s.config.packIds);
     if (ready) return controller.start(createSession(s.config, ready, packs));
+    setStarting(true);
     loadPackCards(s.config.packIds)
       .then((cards) => controller.start(createSession(s.config, cards, packs)))
-      .catch(() => controller.start(replaySession(s)));
+      .catch(() => controller.start(replaySession(s)))
+      .finally(() => setStarting(false));
   };
   const finish = (id: number) => controller.finish(id);
   return (
@@ -218,6 +228,7 @@ function App() {
           <Setup
             prefs={prefs}
             packs={packs}
+            starting={starting}
             onChange={setPrefs}
             onStart={start}
           />
@@ -231,6 +242,7 @@ function App() {
               packs.find((p) => p.id === display.quest?.packId)?.quest?.mode
             }
             celebrate={motion === "complete"}
+            starting={starting}
             onReplay={() => replay(display)}
             onSetup={() => controller.clear()}
             onFinish={() => finish(transition)}

@@ -1,5 +1,10 @@
 import { test, expect, type Page } from "@playwright/test";
-import { advance, createSession, currentCard } from "../../src/game/engine";
+import {
+  advance,
+  createSession,
+  currentCard,
+  finaleStage,
+} from "../../src/game/engine";
 import { returnToCard, rollDice } from "../../src/game/dice";
 import type { PartyState, SessionState } from "../../src/game/types";
 import { cards, packs } from "../../src/content/catalog";
@@ -153,10 +158,20 @@ test("@release Pub Crawl opens on an adventurer and tonight's omen, then the que
 test("@release a monster shows its stakes; a smoke bomb flees it", async ({
   page,
 }, info) => {
-  await seed(
-    page,
-    reveal(crawlAt("dungeon.drunk-goblin", STEP.floor1, { loot: ["smoke"] })),
-  );
+  const goblin = crawlAt("dungeon.drunk-goblin", STEP.floor1, {
+    loot: ["smoke"],
+  });
+  // The room after it is an ordinary one: an ambush would read "Ambush in
+  // room 2 of 8" instead.
+  const q = goblin.quest!;
+  const next = q.stages[finaleStage(q).stage].cards.find(
+    (c) => !c.hits && c.id !== currentCard(goblin).id,
+  )!;
+  const finale = [...q.finale];
+  const at = finale.indexOf(next.id);
+  if (at >= 0) finale[at] = finale[STEP.floor1 + 1];
+  finale[STEP.floor1 + 1] = next.id;
+  await seed(page, reveal({ ...goblin, quest: { ...q, finale } }));
   const face = page.locator(".game-card .study-face");
   await expect(face.locator(".stake-loss")).toHaveAccessibleName(
     "Losing costs 1 heart",
