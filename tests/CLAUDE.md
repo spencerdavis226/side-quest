@@ -2,7 +2,8 @@
 
 | Location | Runner | What it needs |
 | --- | --- | --- |
-| `tests/*.test.ts` | `npm test` (Vitest, about 1 s) | nothing; engine, dice, content, presentation tokens, card-logic guards |
+| `tests/*.test.ts` | `npm test` (Vitest, about 8 s) | nothing; engine, dice, content, presentation tokens, card-logic guards |
+| `tests/*.balance.test.ts` | `npm run test:balance` (about 2 min; CI runs it in its own job) | nothing; 4,000 seeded Pub Crawl and League runs each, holding the win rates |
 | `tests/browser/*.spec.ts` | `npm run test:e2e` / `test:release` | a production build; serves `dist` with `vite preview` |
 | `tests/workshop/*.spec.ts` | `npm run test:workshop` | the dev server (`:5175`); never `dist` |
 

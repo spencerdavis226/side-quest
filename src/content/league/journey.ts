@@ -20,7 +20,7 @@ import { describeOmen, leagueOmenWords } from "../../game/omenText";
 // rival, then the League. The table shares Team HP (`party.hearts`). These
 // helpers write the route cards; the bosses live in `pokemon-league.ts`.
 // Tune with the constants below, never card by card, and keep
-// `tests/league.test.ts` passing.
+// `tests/league.balance.test.ts` passing.
 export const card = cardFactory("pokemon");
 
 /** Where a card sits: route 1 to 8 (0 to 7), or Victory Road (8). The

@@ -15,7 +15,7 @@ import { describeOmen, dungeonOmenWords } from "../../game/omenText";
 // Dungeon night's builders and tuning, shared by every floor. A card's
 // numbers (its target, what a loss costs) come from its floor's depth
 // through the constants below, never card by card: retune here and keep
-// `tests/dungeon.test.ts` passing.
+// `tests/dungeon.balance.test.ts` passing.
 //
 // Ribbon colours, one meaning each: gold for a fight, violet for anything
 // found or chosen (treasure, relics, shrines, merchants, forks, landings),

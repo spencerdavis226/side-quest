@@ -11,7 +11,7 @@ import { starter } from "./journey";
 // the evolution banner can name (Bibarel's is a downgrade). Eevee branches;
 // Pikachu never evolves. The powers are written from the numbers (`starter`
 // in `journey.ts`), so the flavor here is only the first sentence. Check
-// every starter's own win rate in `tests/league.test.ts`.
+// every starter's own win rate in `tests/league.balance.test.ts`.
 
 export const starters: CardDefinition[] = [
   // Healing: every heal heals a lot more.

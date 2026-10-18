@@ -42,7 +42,7 @@ import { wine } from "./dungeon/wine";
 // for drinks once between bosses, and every lost fight pours a splash into
 // the Cup, which the end of the run hands to someone. The floor files hold
 // the cards; `dungeon/shared.ts` holds the builders and every tuning
-// constant, measured by `tests/dungeon.test.ts`.
+// constant, measured by `tests/dungeon.balance.test.ts`.
 
 const floors: Record<string, FloorCards> = {
   cellar,

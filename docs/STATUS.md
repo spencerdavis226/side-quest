@@ -1,6 +1,15 @@
 # Current state and implementation plan
 
-Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
+Updated 2026-10-18. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
+
+## Review fixes: tests, docs, accessibility (2026-10-18; branch `review-tests`, PR 4 of the review plan)
+
+- **Faster `npm test`:** the 4,000-run balance simulations ran at module load in `tests/dungeon.test.ts` and `tests/league.test.ts`, so `npm test` took about 97 s. They now live in `tests/dungeon.balance.test.ts` and `tests/league.balance.test.ts` (unchanged), run by `npm run test:balance` (about 1 min 40 s) and excluded from `npm test` (now about 8 s; 221 + 8 = the same 229 tests). CI runs them in a new `balance` job beside build and browser; a deploy needs all three.
+- **Docs:** test times and balance file names in `CLAUDE.md`, `AGENTS.md`, `tests/CLAUDE.md`, `AUTHORING.md`, `GAME_DESIGN.md`, `src/content/CLAUDE.md` and the tuning comments; save sizes in `src/app/CLAUDE.md` (measured: Core 23 KiB, every pack 356 KiB, League 221 KiB, Pub Crawl 265 KiB); the dice budget note; the stale black-translucent comment in `style.css`.
+- **iPad landscape:** `-webkit-text-size-adjust: 100%` on the root, so iOS does not enlarge text in landscape.
+- **Banners for VoiceOver:** stage, evolution and news banners were `role="status"` boxes inserted with their text, which screen readers often skip. They are now `aria-hidden`, and each adds its words as a line to one polite region present from the first render (`Announcer.tsx`, `#banner-announcer`), removed when the banner goes. Two banners at once (a level-up and the next room) are both read. `crawl.spec.ts` checks the region.
+- **Flaky dice test fixed:** "a second tap finishes the moving dice" holds the page clock still from the throw to the finish tap; 16 of 16 and 10 of 10 under three workers (before: 3 of 12 failed, on unmodified code too).
+- **Verification:** `npm test` 221 passed; `npm run test:balance` 8 passed; lint, typecheck, build passed. Chromium (local): `@release` minus fit sweeps 37 passed; `crawl.spec.ts` and `quest.spec.ts` minus fit sweeps 31 passed. WebKit not run locally; VoiceOver and iPad text not checked on a device (checklist items added).
 
 ## Two-across plaques: mark and name centred together (2026-10-18; pushed to `main`, PR #23)
 

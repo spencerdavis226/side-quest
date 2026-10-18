@@ -18,7 +18,7 @@ const key = "side-quest.session.v1";
 
 // Pokémon League plays on the crawl engine since 2026-10-16: a starter, eight
 // routes each closed by a gym, a villain hideout, Victory Road, the rival and
-// the League. The run's balance is tested in tests/league.test.ts.
+// the League. The run's balance is tested in tests/league.balance.test.ts.
 const league = {
   version: 1,
   packIds: ["pokemon"],

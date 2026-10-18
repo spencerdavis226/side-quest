@@ -9,4 +9,4 @@ The only renderer is `@3d-dice/dice-box-threejs`, lazy-loaded through `library.t
 - `result-text.ts` builds the resolved sentence shown on the card; legacy prose snapshots still resolve.
 - `dispose()` must release the WebGL context (`forceContextLoss`) and remove the canvas. iOS limits live contexts, so leaks show up as a blank stage after many rolls. A lost context falls back to the saved result with no replay.
 - The renderer never allocates for restored results, hidden tabs, or Reduced Motion; those reveal the saved outcome directly.
-- Check bundle impact: this stays in the lazy tier (`scripts/check-budget.ts`: 200 KiB gzip lazy, 100 KiB initial).
+- Check bundle impact: this stays in the lazy tier (`scripts/check-budget.ts`: at most 200 KiB gzip per lazy chunk; the initial tier has had no cap since 2026-10-05, but the dice must never join it).
