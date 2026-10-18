@@ -109,7 +109,7 @@ const route1: CardDefinition[] = [
     0,
     "route-bug-catcher",
     "Bug Catcher",
-    "A kid in short shorts bets you can't name five bug Pokémon in 10 seconds. Lose: drink 2.",
+    "A kid with a bug net bets you can't name five bug Pokémon in 10 seconds. Lose: drink 2.",
   ),
   hazard(
     0,
@@ -156,7 +156,7 @@ const route1: CardDefinition[] = [
     0,
     "route-viridian-mart",
     "Viridian Mart",
-    "The clerk won't sell you anything until you deliver Oak's parcel. Fine. Here's the parcel.",
+    "The clerk makes you run Oak's parcel back to Pallet Town first. Fine. Now he'll sell.",
     [
       { label: "Drink 2", loot: "draught" },
       { label: "Drink 4", loot: "smoke" },
@@ -618,7 +618,7 @@ const route4: CardDefinition[] = [
     moves(
       [
         "Flying Press. Drink 4.",
-        "Body slam. Drink 2 while your left neighbor counts to three.",
+        "Body Slam. Drink 2 while your left neighbor counts to three.",
       ],
       [
         "You kick out at two. Give 2.",
@@ -837,8 +837,8 @@ const route5: CardDefinition[] = [
   challenge(
     4,
     "route-black-belt",
-    "Black Belt Kiyo",
-    "Black Belt Kiyo wants twenty push-ups. Everyone counts. Fall short: drink 3.",
+    "Black Belt Kenji",
+    "Black Belt Kenji wants 20 push-ups. Everyone counts. Fall short: drink 3.",
   ),
   hazard(
     4,
@@ -870,7 +870,7 @@ const route5: CardDefinition[] = [
     4,
     "route-silph-scope",
     "Pokémon Tower",
-    "The top floor is haunted by a ghost Marowak. Climb or leave?",
+    "The sixth floor is haunted by a ghost Marowak. Climb or leave?",
     12,
     "Get out... get out... Drink 4.",
     "You put it to rest. Give 4.",
@@ -1291,7 +1291,7 @@ const route7Aces: CardDefinition[] = [
     6,
     "route-ace-scientist",
     "Scientist Blaine Jr.",
-    "Blaine's nephew made a Mewtwo in a jar. He wants to test it on you. Roll d20.",
+    "Blaine's son made a Mewtwo in a jar. He wants to test it on you. Roll d20.",
     vs(
       "Psystrike. Drink 5, and your left neighbor reads your mind aloud.",
       "The jar breaks. Run! Everyone runs in place; the slowest drinks 3.",
@@ -1406,8 +1406,8 @@ const route8: CardDefinition[] = [
   challenge(
     7,
     "route-pokemaniac",
-    "Pokémaniac Ed",
-    "Pokémaniac Ed wants the drawer to name ten Pokémon in fifteen seconds. Miss: drink 4.",
+    "PokéManiac Ed",
+    "PokéManiac Ed dares you to name 10 Pokémon in 15 seconds. Miss: drink 4.",
   ),
   hazard(
     7,

@@ -77,7 +77,9 @@ material, not game content:
   last drinks 2). Spoink guesses the fingers behind another player's back,
   as the source says (the translation had them behind your own), and
   Missingno's rules no longer list a 1 to 5 range that its natural 1
-  contradicts.
+  contradicts. Move names follow the current games: Twineedle, Sand Attack,
+  Self-Destruct, Mud-Slap and Vise Grip (the sheet's Twinneedle,
+  Sand-Attack, Selfdestruct, Mud-slap and Vicegrip).
 
 ## Adding a new reference file
 

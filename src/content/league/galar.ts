@@ -73,7 +73,7 @@ export const galar: Region = {
       "gordie",
       "Gordie",
       "Rock",
-      "Gordie's mom runs the next gym and he won't shut up about it. Yell \"MOM!\" then roll d20.",
+      "Gordie's mom is a gym leader too, and he won't shut up about it. Yell \"MOM!\" then roll d20.",
       d20(
         GYM_NEED[5],
         "Stealth Rock. Drink 5 and yell for your mom again.",
@@ -166,7 +166,7 @@ export const galar: Region = {
       "Leon is unbeaten and always lost. Everyone strikes the Charizard pose. Roll d20.",
       d20(
         CHAMPION_NEED,
-        "Max Wildfire. Everyone drinks 4, still holding the pose.",
+        "G-Max Wildfire. Everyone drinks 4, still holding the pose.",
         "Leon got lost on the way back. Point in a random direction and give 4.",
         {
           crit: "His cape falls off. Give 10.",

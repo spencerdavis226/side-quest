@@ -94,7 +94,7 @@ export const johto: Region = {
       "Rising",
       "Clair says you're too weak for dragons. Tell her she's right, then roll 2d6.",
       rollTable(2, 6, [
-        { min: 2, max: 7, instruction: "Dragonbreath. Drink {total}." },
+        { min: 2, max: 7, instruction: "Dragon Breath. Drink {total}." },
         {
           min: 8,
           max: 12,

@@ -175,7 +175,7 @@ const deck: CardDefinition[] = [
     "beedrill",
     "Beedrill",
     "group",
-    "Beedrill used Twinneedle! Pick two players. Both drink 2.",
+    "Beedrill used Twineedle! Pick two players. Both drink 2.",
   ),
   card(
     "gloom",
@@ -587,7 +587,7 @@ const deck: CardDefinition[] = [
     "sandshrew",
     "Sandshrew",
     "rule",
-    "Sandshrew used Sand-Attack! Drink with your non-dominant hand for the rest of the game.",
+    "Sandshrew used Sand Attack! Drink with your non-dominant hand for the rest of the game.",
   ),
   card(
     "vulpix",
@@ -793,7 +793,7 @@ const deck: CardDefinition[] = [
     "electrode",
     "Electrode",
     "challenge",
-    "Electrode used Selfdestruct! Choose a player and you both finish your drinks.",
+    "Electrode used Self-Destruct! Choose a player and you both finish your drinks.",
   ),
   card(
     "claydol",
@@ -858,13 +858,13 @@ const deck: CardDefinition[] = [
     "barboach",
     "Barboach",
     "rule",
-    "Barboach used Mud-slap! Pick a player. Rest of the game: they get one slap after a full drink.",
+    "Barboach used Mud-Slap! Pick a player. Rest of the game: they get one slap after a full drink.",
   ),
   card(
     "mawile",
     "Mawile",
     "challenge",
-    "Mawile used Vicegrip! Give your left neighbor a 3-second bear hug, then drink 4 and apologize.",
+    "Mawile used Vise Grip! Give your left neighbor a 3-second bear hug, then drink 4 and apologize.",
   ),
   card(
     "fiery-path",
