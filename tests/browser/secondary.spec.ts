@@ -166,3 +166,36 @@ test("dialog copy sits on a quiet panel surface", async ({ page }) => {
   expect(surface.background).toContain("panel.webp");
   expect(surface.background).toContain("linear-gradient");
 });
+test("@release leaving a quest mode takes its pack back out of the deck", async ({
+  page,
+}) => {
+  await page.goto("./");
+  for (const mode of [/^Pub Crawl/, /^Pokémon League/]) {
+    await page.getByRole("button", { name: mode }).click();
+    await page.getByRole("button", { name: /^Standard/ }).click();
+  }
+  // A quest mode picked and left before a reload is remembered as left.
+  await page.reload();
+  await expect(page.getByRole("button", { name: /^Standard/ })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await page.getByRole("button", { name: "Play", exact: true }).click();
+  await expect(page.locator(".progress")).toBeVisible();
+  const session = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key)!),
+    key,
+  );
+  expect(session.config.packIds).toEqual(["core"]);
+  expect(session.cards).toHaveLength(packs[0].cardIds.length);
+});
+test("@release a quest mode chosen before a reload is still chosen", async ({
+  page,
+}) => {
+  await page.goto("./");
+  await page.getByRole("button", { name: /^Pub Crawl/ }).click();
+  await page.reload();
+  await expect(
+    page.getByRole("button", { name: /^Pub Crawl/ }),
+  ).toHaveAttribute("aria-pressed", "true");
+});

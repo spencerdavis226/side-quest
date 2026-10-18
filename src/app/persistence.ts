@@ -50,11 +50,54 @@ export const MODE_LIMITS: Record<DeckChoice, number | null> = {
 export interface Preferences {
   config: GameConfig;
   choice: DeckChoice;
+  /** The pack a quest mode switched on when it was chosen; leaving the mode
+   * switches it off again. Absent when the pack was already selected. */
+  added?: string;
 }
 export const defaults: Preferences = {
   config: { version: 1, packIds: ["core"], limit: 50 },
   choice: "standard",
 };
+/** Leave a quest mode's pack the way the player had it: a pack the mode
+ * switched on goes off again, unless that would empty the selection. */
+function dropAdded(prefs: Preferences): GameConfig {
+  const { quest: _quest, ...config } = prefs.config;
+  const kept = config.packIds.filter((id) => id !== prefs.added);
+  return { ...config, packIds: kept.length ? kept : config.packIds };
+}
+/** Choose a plain length (Standard or Infinite). */
+export function chooseLength(
+  prefs: Preferences,
+  choice: Exclude<DeckChoice, "quest">,
+): Preferences {
+  return {
+    choice,
+    config: { ...dropAdded(prefs), limit: MODE_LIMITS[choice] },
+  };
+}
+/** Choose pack `id`'s quest mode: it plays its own pack, plus whatever else
+ * is selected, and remembers whether it had to switch that pack on. */
+export function chooseQuest(
+  prefs: Preferences,
+  id: string,
+  all: readonly { id: string }[] = packs,
+): Preferences {
+  const config = dropAdded(prefs);
+  const added = !config.packIds.includes(id);
+  return {
+    choice: "quest",
+    config: {
+      ...config,
+      // A quest has no card limit; the settings loader rejects one with it.
+      limit: null,
+      quest: id,
+      packIds: all
+        .filter((p) => p.id === id || config.packIds.includes(p.id))
+        .map((p) => p.id),
+    },
+    ...(added ? { added: id } : {}),
+  };
+}
 /** Keep only installed packs; never let a stale selection empty the deck. */
 const knownPackIds = (ids: readonly string[]) => {
   const known = packs.map((pack) => pack.id).filter((id) => ids.includes(id));
@@ -328,9 +371,13 @@ export function loadPreferences(): Preferences {
         p.choice === "quest" &&
         packs.some((pack) => pack.id === quest && pack.quest)
       ) {
+        const packIds = knownPackIds(config.packIds);
         return {
-          config: { ...config, packIds: knownPackIds(config.packIds), quest },
+          config: { ...config, packIds, quest },
           choice: "quest",
+          ...(p.added === quest && packIds.includes(quest)
+            ? { added: quest }
+            : {}),
         };
       } else if (p.choice === "infinite" || p.choice === "endless") {
         choice = "infinite";
