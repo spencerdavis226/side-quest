@@ -47,7 +47,7 @@ export const cellar: FloorCards = {
       "The thing growing behind the ice machine has feelings and a mouth. Roll d20.",
       "You breathe it in. Drink 3 and cough on your left neighbor.",
       "Bleach. So much bleach. Give 3.",
-      { fumble: "It moves into your lungs. Drink 5." },
+      { fumble: "It moves into your lungs. Drink 6 and cough on both neighbors." },
     ),
     monster(
       0,
@@ -92,7 +92,7 @@ export const cellar: FloorCards = {
       "Eight legs, eight beers, zero manners. Roll d20.",
       "Bitten. Drink 3, and do a spider walk to the fridge and back.",
       "Squished. Give 3.",
-      { crit: "Squished, and its web was full of coasters. Give 5." },
+      { crit: "Squished, and its web was full of coasters. Give 6." },
     ),
     monster(
       0,
@@ -432,7 +432,7 @@ export const cellar: FloorCards = {
         BOSS_NEED[0],
         "The chord hits you in the teeth. Drink 4.",
         "You find the off switch. Give 5.",
-        { fumble: "You join the chord. Hum for 10 seconds, then drink 6." },
+        { fumble: "You join the chord. Hum for 10 seconds, then drink 8." },
       ),
       {
         curse: "bleed",

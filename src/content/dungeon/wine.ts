@@ -69,7 +69,7 @@ export const wine: FloorCards = {
       "She screams that it's five o'clock somewhere, and she means here. Roll d20.",
       "It's five o'clock. Drink 3.",
       "You take her glass away. Give 3 to the biggest wine mom here.",
-      { fumble: "She adopts you. Drink 5." },
+      { fumble: "She tells you about her divorce. All of it. Drink 6." },
     ),
     monster(
       3,
@@ -109,7 +109,7 @@ export const wine: FloorCards = {
       "A crab with corkscrews for claws, opening anything. Including you. Roll d20.",
       "Uncorked. Drink 3 and walk sideways to your seat.",
       "You flip it on its back. Give 3.",
-      { crit: "You open a bottle with it. Give 5." },
+      { crit: "You open a bottle with it. Give 6." },
     ),
     monster(
       3,
@@ -409,7 +409,7 @@ export const wine: FloorCards = {
         BOSS_NEED[0],
         "He names your drink, your year and your ex. Drink 4.",
         "He calls your boxed wine a Bordeaux. Give 5.",
-        { fumble: "He spits your drink back in your glass. Drink 7." },
+        { fumble: "He spits your drink back in your glass. Drink 8." },
       ),
       {
         drops: [

@@ -210,7 +210,7 @@ export const lastCallBosses: CardDefinition[] = [
       "You carve it down to the spit. Give 5.",
       {
         crit: "You eat the whole thing, standing. Everyone else drinks 4.",
-        fumble: "You drop it on the floor and eat it anyway. Drink 8.",
+        fumble: "You drop it on the floor and eat it anyway. Drink 10.",
       },
     ),
   ),

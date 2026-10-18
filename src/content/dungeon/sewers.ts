@@ -65,7 +65,7 @@ export const sewers: FloorCards = {
       "The original pizza rat, nine feet tall now and still dragging the slice. Roll d20.",
       "Slice to the face. Drink 4.",
       "You take the slice. Give 4.",
-      { crit: "You take the slice and eat it. Give 6." },
+      { crit: "You take the slice and eat it. Give 8." },
     ),
     monster(
       4,
