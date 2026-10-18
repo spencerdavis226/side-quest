@@ -90,9 +90,9 @@ test("a Home Screen web app hides Install but keeps the in-game menu", async ({
     });
   });
   await page.goto("./");
-  await expect(page.getByRole("button", { name: "Add to Home Screen help" })).toHaveCount(
-    0,
-  );
+  await expect(
+    page.getByRole("button", { name: "Add to Home Screen help" }),
+  ).toHaveCount(0);
   await expect(page.locator(".topbar")).toHaveCount(0);
   await expect(
     page.getByRole("button", { name: "Play", exact: true }),
@@ -102,9 +102,9 @@ test("a Home Screen web app hides Install but keeps the in-game menu", async ({
   await expect(
     page.getByRole("button", { name: "Open game menu" }),
   ).toBeVisible();
-  await expect(page.getByRole("button", { name: "Add to Home Screen help" })).toHaveCount(
-    0,
-  );
+  await expect(
+    page.getByRole("button", { name: "Add to Home Screen help" }),
+  ).toHaveCount(0);
 });
 
 test("@release first screen waits for its painted art and fonts", async ({
@@ -192,4 +192,48 @@ test("Core logo matches selection, card, pause legend and previous card", async 
   await expect(
     page.locator(".previous-card .card-pack-marks .pack-logo"),
   ).toHaveAttribute("data-seal", /art\/packs\/core.svg$/);
+});
+test.describe("a pack's cards that can't be fetched", () => {
+  // The service worker would serve the precached chunk around the route.
+  test.use({ serviceWorkers: "block" });
+  test("@release reloads once, then says so instead of reloading again", async ({
+    page,
+  }) => {
+    let loads = 0;
+    page.on("load", () => loads++);
+    await page.route("**/assets/sample-*.js", (route) => route.abort());
+    await page.goto("./");
+    // Setup warms Core's cards at once: the first failure reloads the page,
+    // the one after that reload does not.
+    await expect.poll(() => loads).toBe(2);
+    await page.getByRole("button", { name: "Play", exact: true }).click();
+    await expect(page.getByText("Couldn’t load the cards.")).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Play", exact: true }),
+    ).toBeEnabled();
+    expect(loads).toBe(2);
+  });
+  test("@release Play says Dealing… while the cards are on their way", async ({
+    page,
+  }) => {
+    let release: () => void = () => {};
+    const ready = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    await page.route("**/assets/sample-*.js", async (route) => {
+      await ready;
+      await route.continue();
+    });
+    await page.goto("./");
+    await page.getByRole("button", { name: "Play", exact: true }).click();
+    const dealing = page.getByRole("button", { name: "Dealing…" });
+    await expect(dealing).toBeDisabled();
+    release();
+    await expect(page.locator(".progress")).toBeVisible();
+    const session = await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key)!),
+      key,
+    );
+    expect(session.config.packIds).toEqual(["core"]);
+  });
 });

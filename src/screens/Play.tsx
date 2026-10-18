@@ -4,6 +4,8 @@ import {
   useEffect,
   useLayoutEffect,
   useRef,
+  type ComponentProps,
+  type ComponentType,
   type ReactNode,
 } from "react";
 import type { SessionState, CardDefinition, Loot, Offer } from "../game/types";
@@ -39,7 +41,27 @@ import {
   usableItems,
 } from "../components/Crawl";
 import { crawlTheme } from "../components/crawlTheme";
-const FullScreenDice = lazy(() => import("../components/FullScreenDice"));
+// A dice overlay that can't be fetched (offline before it was cached) must
+// not strand a roll: the saved result goes straight to the card instead.
+type DiceProps = ComponentProps<
+  typeof import("../components/FullScreenDice").default
+>;
+const FullScreenDice = lazy(
+  (): Promise<{ default: ComponentType<DiceProps> }> =>
+    import("../components/FullScreenDice").catch(() => ({ default: NoDice })),
+);
+function NoDice({ roll, rolling, onReveal, onFinish }: DiceProps) {
+  const callbacks = useRef({ onReveal, onFinish });
+  useEffect(() => {
+    callbacks.current = { onReveal, onFinish };
+  });
+  useEffect(() => {
+    if (!roll) return;
+    if (rolling) callbacks.current.onFinish();
+    else callbacks.current.onReveal();
+  }, [roll, rolling]);
+  return null;
+}
 export function Play({
   session,
   motion,
