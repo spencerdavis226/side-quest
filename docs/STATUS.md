@@ -2,7 +2,7 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Long rules shrink to fit before they scroll (2026-10-18; branch `rules-fit`)
+## Long rules shrink to fit before they scroll (2026-10-18; pushed to `main`, PR #21)
 
 - **Owner (iPhone 15 Pro, Safari tab, not installed):** Chad's Fake ID's rules faded and cut off at the bottom. Rule text had a 26px floor; Safari's toolbar and the crawl strip (`--hud-strip`, added 2026-10-17) leave a smaller card, so long rules spilled into the scroll fade. The fit sweeps had been skipped (`--grep-invert "fits its face"`) since the header redesign.
 - **Fix:** `CardFace` (`src/components/Cards.tsx`) shrinks a spilling rule via `--rules-fit` on `.study-rules` (applied to `.study-rules p` in `card-front.css`), down to 0.77 (26px to 20px), by binary search, on load, resize and font load; scroll and its fade remain beyond that. Skipped when the root size is enlarged (Larger Text keeps its size and scrolls; `layout.spec.ts` guards this).
