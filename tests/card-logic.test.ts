@@ -34,6 +34,11 @@ describe("card logic sweep", () => {
       expect(textOf(card), card.id).not.toMatch(/next card/i);
   });
 
+  it("never doubles a full stop (an ellipsis is fine)", () => {
+    for (const card of cards)
+      expect(textOf(card), card.id).not.toMatch(/(?<!\.)\.\.(?!\.)/);
+  });
+
   it("gives every lasting rule a whole-game or next-turn horizon", () => {
     for (const card of cards.filter((c) => c.category === "rule")) {
       if (DURATION_EXCEPTIONS.has(card.id)) continue;

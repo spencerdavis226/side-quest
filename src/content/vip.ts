@@ -30,7 +30,7 @@ export const vipCards: CardDefinition[] = [
     "sidekick",
     "Choose a Sidekick",
     "sip",
-    "The VIP picks a sidekick to drink with them the rest of the game, and hold their hair later.",
+    "The VIP picks a sidekick, who drinks 2 now and holds the VIP's hair later.",
   ),
   vipCard(
     "tax",
@@ -42,7 +42,7 @@ export const vipCards: CardDefinition[] = [
     "fan-club",
     "Hottest Quality",
     "group",
-    "Clockwise, name the VIP's hottest quality. The VIP drinks 1 for each one they agree with.",
+    "The VIP names their own hottest quality, straight-faced. Anyone who laughs drinks 2.",
   ),
   vipCard(
     "standing-ovation",

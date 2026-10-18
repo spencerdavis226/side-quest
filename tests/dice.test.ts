@@ -342,6 +342,9 @@ describe("choice cards", () => {
     parseSession(JSON.stringify(persist.mock.calls.at(-1)![0]));
   it("marks the supplied do-it-or-roll rows and rejects bad labels", () => {
     expect(diceCards.filter((c) => c.dice!.choice).map((c) => c.id)).toEqual([
+      // Core dares: answer or rant and skip the roll, or chicken out and roll.
+      "core.truth-or-drink",
+      "core.rant",
       ...[4, 8, 9, 23, 62].map(
         (row) => `house.sheet-0${String(row).padStart(2, "0")}`,
       ),

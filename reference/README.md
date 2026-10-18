@@ -70,6 +70,50 @@ material, not game content:
   Relicanth) under the new 100-character rule limit; every consequence and
   amount is unchanged.
 
+## 2026-10-18 review
+
+A copy review fixed errors in supplied rows and nothing else; the raw sheet
+is unchanged. Sheet style (missing full stops, sentence-case titles, "Else"
+without a comma) is left as supplied.
+
+House rows (`house.sheet-NNN`):
+
+- 009 Steve's Beans: "tell them his beans" → "tell him his beans", and a
+  comma after "Else".
+- 018 Story Time: "Loser drink 4." → "Loser drinks 4."
+- 023 Headache Simulator: "for a round" → "until your next turn" (the game
+  has no rounds).
+- 029 FMK: "Blink 182" → "Blink-182".
+- 045 Drink, bitch: "If you drank last card" → "If you drank on the last
+  card".
+- 046 Fiend: brand names capitalized ("Zyn, Velo").
+- 049 Mexico v China: "chinese" → "Chinese".
+- 056: title "Mt. Krumpit" → "Mt. Crumpit" (the Grinch's mountain).
+- 057 I'm an Idiot: the sentence stopped at "drinks" with no amount; it now
+  ends "drinks 2".
+- 059: title "Bu-bu-buff.." → "Bu-bu-buff…".
+- 060: title "Spirit airlines" → "Spirit Airlines", and "Team" → "Table"
+  (there are no teams). Cabin weekend's card of the same title was renamed.
+- 062 What was that?: "Read the last text message you said out loud" (garbled)
+  → "Read your last text message out loud".
+- 081: title "ABC's" → "ABCs".
+- 096 Knickers: "the person to your rights" → "the person to your right's".
+- 103 Categories: "US Capitols" → "US Capitals".
+
+The roll text under two rows is the app's, not the sheet's, and now matches
+the row: 034 Technophoria rolls for "Anyone who's touched a phone" (it said
+"Everyone"), and 048 Rock, Paper, Scissors rolls for the loser (it said
+"Drink").
+
+VIP rows (`vip.sheet-NNN`):
+
+- 005 One Year Older: "your new age" → "the VIP's new age" (the drawer
+  gives out the VIP's digit, not their own).
+
+The 8 CABIIN rows in Cabin weekend are unchanged. `cabin.ursaring` (sheet
+row 16) shares its title with the Pokémon pack's Ursaring; it stays as
+supplied.
+
 ## Adding a new reference file
 
 Drop the raw file in this folder with a descriptive name, add a row to the

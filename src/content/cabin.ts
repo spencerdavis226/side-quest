@@ -115,7 +115,7 @@ const authored: CardDefinition[] = [
     "michigan",
     "Michigan",
     "sip",
-    "Drink 3 from an ice-cold drink and explain how it's not even cold.",
+    "Drink 3 from an ice-cold drink; explain how it's not even cold. Michigander? Give 3 instead.",
   ),
   card(
     "yoink",
@@ -278,7 +278,14 @@ const authored: CardDefinition[] = [
     "Voltorb",
     "challenge",
     "Roll d6. Pick that many players to finish their drinks.",
-    roll(1, 6, "Pick {total} players to finish their drinks."),
+    rollTable(1, 6, [
+      { min: 1, max: 1, instruction: "Pick 1 player to finish their drink." },
+      {
+        min: 2,
+        max: 6,
+        instruction: "Pick {total} players to finish their drinks.",
+      },
+    ]),
   ),
   card(
     "ow-scratchies",
@@ -313,7 +320,7 @@ const authored: CardDefinition[] = [
     "cave-herpes",
     "Cave Herpes",
     "challenge",
-    "Roll d6. 4–5: you escape and give 2. Anything else: you're stuck, drink 2.",
+    "Roll d6. 4 or 5: you escape and give 2. Anything else: you're stuck, drink 2.",
     rollTable(1, 6, [
       { min: 1, max: 3, instruction: "Stuck in the cave. Drink 2." },
       { min: 4, max: 5, instruction: "You escape. Give 2." },
@@ -448,7 +455,7 @@ const authored: CardDefinition[] = [
     "son-of-a-bitch",
     "Son of a Bitch, I'm In",
     "challenge",
-    "Anyone can offer you a drink and an amount. Accept and you both drink it.",
+    "Until your next turn, anyone can offer you a drink and an amount. You're in: you both drink.",
   ),
   card(
     "get-good",
@@ -474,7 +481,7 @@ const authored: CardDefinition[] = [
     "challenge",
     "Abra's dumbass brother. Swap seats with anyone.",
   ),
-  card("its-gotta-go", "It's Gotta Go", "challenge", "Finish your drink."),
+  card("its-gotta-go", "Send It", "challenge", "Finish your drink."),
 
   // --- Rule ------------------------------------------------------------------
   card(
@@ -497,9 +504,9 @@ const authored: CardDefinition[] = [
   ),
   card(
     "spirit-airlines",
-    "Spirit Airlines",
+    "Ultra Low Fare",
     "rule",
-    "Drink 3. Until your next turn, any 1 rolled counts as 0.",
+    "Drink 3. Until your next turn, anyone whose die lands on 1 pays the bag fee: drink 1 more.",
   ),
   card(
     "stonks",
@@ -511,7 +518,7 @@ const authored: CardDefinition[] = [
     "asshole",
     "Asshole",
     "rule",
-    "Until your next turn, do whatever anyone tells you.",
+    "Until your next turn, do whatever anyone tells you. Refuse: drink 3.",
   ),
   card(
     "childrens-cabin",
@@ -535,13 +542,13 @@ const authored: CardDefinition[] = [
     "deez-nuts",
     "Deez Nuts",
     "rule",
-    "You are Deez for the rest of the game. Fall for a deez nuts joke: drink 3.",
+    "You are Deez for the rest of the game. Anyone who falls for your deez nuts joke drinks 3.",
   ),
   card(
     "ohio",
     "Ohio",
     "rule",
-    "That sucks. Drink 2, and until your next turn answer everything with 'It's not that bad.'",
+    'That sucks. Drink 2, and until your next turn answer everything with "It\'s not that bad."',
   ),
   card(
     "part-of-the-crew",
@@ -559,7 +566,7 @@ const authored: CardDefinition[] = [
     "president",
     "President",
     "rule",
-    "Until your next turn, give anyone orders. Refuse: drink 2.",
+    "Until your next turn, give anyone orders. Anyone who refuses drinks 2.",
   ),
   card(
     "christmas",
