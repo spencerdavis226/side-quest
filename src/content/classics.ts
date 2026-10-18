@@ -110,7 +110,7 @@ export const classicCards: CardDefinition[] = [
     "waterfall",
     "Ace Is Waterfall",
     "group",
-    "Start a waterfall. Everyone drinks until the player before them stops.",
+    "You start drinking; clockwise, everyone joins. Nobody stops until the player before them does.",
   ),
   card(
     "kings-two",
@@ -147,13 +147,13 @@ export const classicCards: CardDefinition[] = [
     "dungeon-master",
     "Dungeon Master",
     "rule",
-    "Until your next turn, you narrate in third person. Slip = drink 2.",
+    "Until your next turn, you speak only in third person, like a narrator. Slip: drink 2.",
   ),
   card(
     "prophecy",
     "Prophecy",
     "challenge",
-    "Predict who finishes their drink next. Right: give 3. Wrong: drink 3.",
+    "Predict who finishes their drink next. When someone does: right, give 3. Wrong, drink 3.",
   ),
   card(
     "side-quest",

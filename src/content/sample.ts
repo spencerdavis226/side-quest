@@ -71,7 +71,7 @@ export const sampleCards: CardDefinition[] = [
     "cheers-idiots",
     "Cheers, Idiots",
     "group",
-    "Everyone clinks with everyone. Break eye contact and it's seven years of bad sex. Drink 2.",
+    "Everyone clinks with everyone and drinks 2. Break eye contact: seven years of bad sex.",
     undefined,
     "art/cheers.webp",
   ),

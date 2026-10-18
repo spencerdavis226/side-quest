@@ -73,15 +73,19 @@ const drafts: Draft[] = [
     "lap-dance",
     "Lap Dance Roulette",
     "challenge",
-    "Roll d6 and count that many seats to your left. That's who gets a 10-second lap dance.",
-    roll(1, 6, "{total} seats left. Dance for them or drink 5."),
+    "Roll d6, count that many players left, skipping yourself. They get a 10-second lap dance.",
+    roll(
+      1,
+      6,
+      "{total} players left, skipping you. Dance for them or drink 5.",
+    ),
   ],
   [
     "hot-seat",
     "Hot Seat",
     "challenge",
-    "Roll d6. That many players each ask you a yes-or-no question. Lie and the table knows.",
-    roll(1, 6, "{total} questions. Each lie: drink 3."),
+    "Roll d6 and answer that many yes-or-no questions from the table. Lie and it costs you.",
+    roll(1, 6, "{total} questions. Each one the table calls a lie: drink 3."),
   ],
   [
     "nat-one",
@@ -133,7 +137,7 @@ const drafts: Draft[] = [
     "dating-profile",
     "Dating Profile",
     "challenge",
-    "Your right neighbor pitches you as a dating profile. Table swipes left: they drink 3. Right: you do.",
+    "Your right neighbor pitches your dating profile. Table swipes left: they drink 3. Right: you do.",
   ],
   [
     "bad-kisser",
@@ -225,7 +229,7 @@ const drafts: Draft[] = [
     "phone-check",
     "Phone Check",
     "group",
-    "Everyone puts their phone face up on the table. First to buzz drinks 3 and reads it aloud.",
+    "Everyone's phone goes face up until your next turn. First to buzz drinks 3 and reads it aloud.",
   ],
   [
     "screenshot",
