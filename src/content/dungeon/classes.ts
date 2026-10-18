@@ -9,7 +9,7 @@ import { adventurer } from "./shared";
 // worst by design, and levelling it up makes it worse (the table can rest
 // instead). Powers are written from the numbers, so the flavor here is only
 // the first sentence. Check every class's own win rate in
-// `tests/dungeon.test.ts`.
+// `tests/dungeon.balance.test.ts`.
 
 export const classes: CardDefinition[] = [
   // Boss killer who runs into traps.

@@ -193,6 +193,7 @@ test("@release a second tap finishes the moving dice, then reveals the bold amou
   page,
 }) => {
   test.skip(!(await webgl(page)), "WebGL unavailable");
+  await page.clock.install();
   await seed(page);
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
@@ -205,6 +206,16 @@ test("@release a second tap finishes the moving dice, then reveals the bold amou
     const box = (await page.locator(".game-card").boundingBox())!;
     await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
   };
+  // Hold the page's clock still from the throw to the finish tap: on a busy
+  // runner the throw could otherwise land on its own before the test sees it
+  // moving (it failed about 1 in 4 under three local workers).
+  await expect(page.locator(".roll-stage")).toHaveAttribute(
+    "data-renderer",
+    "ready",
+  );
+  await page.clock.pauseAt(
+    await page.evaluate(() => Math.ceil(Date.now() / 1000) * 1000 + 1000),
+  );
   await tapCard();
   const committed = await saved(page);
   await expect(page.locator(".roll-stage")).toHaveAttribute(
@@ -215,6 +226,7 @@ test("@release a second tap finishes the moving dice, then reveals the bold amou
     "Finish dice roll",
   );
   await tapCard();
+  await page.clock.resume();
   await expect(page.locator(".roll-layer")).toBeVisible();
   await expect(page.locator(".roll-stage")).toHaveAttribute(
     "data-face-values",

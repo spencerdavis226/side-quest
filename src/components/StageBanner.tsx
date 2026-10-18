@@ -13,12 +13,50 @@ import { describeChange } from "../game/omenText";
 import { crawlTheme } from "./crawlTheme";
 import { packs } from "../content/manifest.generated";
 import { stageArt } from "../presentation/league-art";
+import { useAnnounce } from "./Announcer";
 
 /** The banner that sweeps across the table as each finale stage begins (the
  * Legendary, the Elite Four, the Champion; a crawl's floors and bosses):
  * shown while the stage's first card is dealt face down, once per stage. It never takes a tap; the card
  * underneath stays playable. */
 export function StageBanner({ session }: { session: SessionState }) {
+  const banner = stageBanner(session);
+  useAnnounce(
+    banner
+      ? [
+          banner.mode,
+          banner.intro,
+          banner.wanted && `${banner.wantedWord}: ${banner.wanted}`,
+        ]
+          .filter(Boolean)
+          .join(". ")
+      : "",
+    banner?.key ?? null,
+  );
+  if (!banner) return null;
+  const { tone, art, mode, intro, wanted, wantedWord } = banner;
+  return (
+    <div
+      // Keyed by stage so a new stage replays the sweep.
+      key={banner.stage}
+      className={`stage-banner banner-${tone}`}
+      aria-hidden="true"
+    >
+      <div className={`stage-banner-cloth${art ? " painted-banner" : ""}`}>
+        {art && <img className="stage-banner-art" src={art} alt="" />}
+        <small>{mode}</small>
+        <strong>{intro}</strong>
+        {wanted && (
+          <span className="banner-wanted">
+            {wantedWord}: {wanted}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+/** What the stage banner shows now, or null when none is up. */
+function stageBanner(session: SessionState) {
   const quest = session.quest;
   if (!quest?.due || session.phase !== "hidden") return null;
   const stage = finaleStage(quest);
@@ -33,30 +71,21 @@ export function StageBanner({ session }: { session: SessionState }) {
     stage.label;
   // The banner takes the stage's ribbon finish (pearl, violet, crimson).
   const tone = quest.stages[stage.stage].cards[0]?.ribbonTone ?? "gold";
-  const banner = quest.packId === "pokemon" ? stageArt(tone) : undefined;
+  const art = quest.packId === "pokemon" ? stageArt(tone) : undefined;
   // A floor of rooms names the boss waiting at the bottom (Pub Crawl).
   const wantedWord = crawlTheme(quest.packId).words.wanted;
   const wanted =
     wantedWord && stage.size > 1 ? wantedBoss(quest)?.title : undefined;
-  return (
-    <div
-      // Keyed by stage so a new stage replays the sweep.
-      key={stage.stage}
-      className={`stage-banner banner-${tone}`}
-      role="status"
-    >
-      <div className={`stage-banner-cloth${banner ? " painted-banner" : ""}`}>
-        {banner && <img className="stage-banner-art" src={banner} alt="" />}
-        <small>{rules?.mode}</small>
-        <strong>{intro}</strong>
-        {wanted && (
-          <span className="banner-wanted">
-            {wantedWord}: {wanted}
-          </span>
-        )}
-      </div>
-    </div>
-  );
+  return {
+    key: `${stage.stage}:${session.discarded}`,
+    stage: stage.stage,
+    mode: rules?.mode,
+    intro,
+    tone,
+    art,
+    wanted,
+    wantedWord,
+  };
 }
 
 /** The banner when the starter evolves mid-run: "What? Charmander is
@@ -93,12 +122,18 @@ export function EvolutionBanner({ session }: { session: SessionState }) {
     seen.current = form;
   }, [form, quest]);
   const evolving = crawlTheme(quest?.packId).words.evolving;
+  useAnnounce(
+    shown && evolving
+      ? `${evolving(shown.from)} ${shown.to}. ${shown.change}`
+      : "",
+    shown && evolving ? `${shown.from}>${shown.to}` : null,
+  );
   if (!shown || !evolving) return null;
   return (
     <div
       key={shown.to}
       className="stage-banner banner-pearl evolution-banner"
-      role="status"
+      aria-hidden="true"
     >
       <div className="stage-banner-cloth">
         <small>{evolving(shown.from)}</small>
@@ -194,12 +229,18 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
       });
     }
   }, [boons, jinx, passed, cup, quest, party, words]);
+  useAnnounce(
+    shown
+      ? [shown.kicker, shown.title, shown.line].filter(Boolean).join(". ")
+      : "",
+    shown?.key ?? null,
+  );
   if (!shown) return null;
   return (
     <div
       key={shown.key}
       className={`stage-banner banner-${shown.tone} evolution-banner news-banner`}
-      role="status"
+      aria-hidden="true"
     >
       <div className="stage-banner-cloth">
         <small>{shown.kicker}</small>

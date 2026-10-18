@@ -9,6 +9,9 @@
   background: #271c11;
   font-synthesis: none;
   font-size: 16px;
+  /* iOS enlarges text in landscape (iPad plays there) unless told not to. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
   --gold: #dfb76f;
   --cream: #f5e6c8;
   /* The wood's edge colour. iOS shows the page background (cached at launch)
@@ -36,7 +39,7 @@ body {
   overflow: hidden auto;
   overscroll-behavior: none;
 }
-/* Installed iOS web app (black-translucent status bar). WebKit lays the page
+/* Installed iOS web app (default status bar since 2026-10-17; see index.html). WebKit lays the page
    out one status-bar inset short of the screen (svh/dvh/100% all short) and
    leaves a flat strip, either under the page or under the status bar, unless
    the document itself is as tall as the screen; only lvh reports that height.

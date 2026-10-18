@@ -99,9 +99,22 @@ jobs:
         with:
           name: browser-failures-${{ matrix.project }}-${{ matrix.shard }}
           path: test-results/
+  # The crawl and League balance simulations (4,000 seeded runs each) take
+  # about two minutes, so they run beside the build and browser jobs instead
+  # of inside `npm test`; a deploy still waits for them.
+  balance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run test:balance
   deploy:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-    needs: [build, browser]
+    needs: [build, browser, balance]
     runs-on: ubuntu-latest
     permissions:
       pages: write

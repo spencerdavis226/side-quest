@@ -2,9 +2,11 @@
 
 Updated 2026-10-18. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Review follow-up plan (2026-10-18; owner approved)
+## Review follow-up plan (2026-10-18; owner approved; all four merged to `main`)
 
-An app-wide review found the bugs and gaps below. The owner approved four PRs, in order; each is a branch and a draft PR, merged only on the owner's word.
+An app-wide review found the bugs and gaps below. The owner approved four PRs, in order, and then their merge ("Go ahead"): #24, #25, #26 and #27 are on `main`. Each was merged with `main` brought in first and CI green on that head; the combined tree was checked locally before the first merge (`npm test` 251, `test:balance` 8, lint, typecheck, build, Chromium browser suite minus the fit sweeps 136 passed).
+
+**Next:** the device checks added to `docs/DEVICE_CHECKLIST.md` on 2026-10-18 (idle table, Grenze subset, VoiceOver banners, iPad landscape text) need the owner's iPhone and iPad.
 
 1. **Bugs** (`review-bugs`, below).
 2. **Saved games:** frozen example saves from seeded runs (`tests/fixtures/saves/`) that every release must still load; a rule that a change to save checks or card rules adds a fixture and never edits one; a backup of a save that fails to load (`side-quest.session.corrupt.v1`) before it is cleared.
@@ -13,7 +15,7 @@ An app-wide review found the bugs and gaps below. The owner approved four PRs, i
 
 Not doing (owner left it to my call): dropping a crawl's unused deck cards from its save. It would change what a valid save is for about 130 KiB.
 
-## Review fixes: bugs (2026-10-18; branch `review-bugs`)
+## Review fixes: bugs (2026-10-18; merged to `main`, PR #24)
 
 - **A quest mode's pack leaked into plain games.** Choosing Pub Crawl (or the League) switched its pack on, and going back to Standard or Infinite kept it: a Standard game had 341 cards instead of Core's 96. `chooseQuest` and `chooseLength` (`src/app/persistence.ts`, used by `Setup.tsx`) now record the pack a mode switched on in `Preferences.added` and switch it off when the mode is left; a pack the player had chosen stays, and the selection is never emptied.
 - **A quest mode chosen and not yet played was forgotten on reload.** Choosing one kept Standard's 50-card limit, which `loadPreferences` rejects with a quest, so setup came back as the defaults. Quest choices now set `limit: null`, plain ones their own limit.
@@ -23,7 +25,7 @@ Not doing (owner left it to my call): dropping a crawl's unused deck cards from 
 - **Tests:** `tests/presentation.test.ts` (5 new: leaving a mode, a pack already chosen, quest to quest, never empty, reload); browser: `secondary.spec.ts` (the leak, a quest mode kept across a reload), `pages.spec.ts` (one reload then the notice, with the service worker blocked; "Dealing…"). The reload test fails on the old code (the notice never shows).
 - **Verification:** `npm test` 234 passed; lint, typecheck and build passed. Chromium (local, the container's Chromium via a local config): touched specs 15 passed; the smoke-bomb test 20 of 20 with `--repeat-each=20`; `@release` minus fit sweeps 40 passed, 1 failed ("a second tap finishes the moving dice": fails the same way on unmodified code under three workers, passes 6 of 6 alone). WebKit not run locally; no device check.
 
-## Review fixes: saved games survive updates (2026-10-18; branch `review-saves`, PR 2 of the review plan)
+## Review fixes: saved games survive updates (2026-10-18; merged to `main`, PR #25)
 
 - **Frozen saves.** `npm run fixtures:saves` (`scripts/save-fixtures.ts`) plays seeded games through the engine (`scripts/table-play.ts`) and freezes the first save in each of 21 situations in `tests/fixtures/saves/2026-10-18-*.json`: Standard mid-game, a roll in flight, a roll on the card, complete; Infinite in its second round, a choice waiting; a timed card, a secret card; the League on its starter, evolved, mid-gym, with a bag and a status, in the Hall of Fame; Pub Crawl with boons and a jinx, after a Quaff, pressing its luck, mid-boss, cursed with the Cup, wiped, survived; and a version-1 save. The script never rewrites a file; regenerating gives byte-identical files. 3.5 MB on disk, one-line JSON, marked `-diff linguist-generated` (`.gitattributes`) and skipped by Prettier (`.prettierignore`).
 - **Test:** `tests/save-fixtures.test.ts` loads every fixture with `parseSession`, then plays up to 40 moves on, re-loading each state. Tightening the ribbon limit in `validate.ts` from 32 to 10 characters fails it on every League and crawl fixture.
@@ -32,7 +34,7 @@ Not doing (owner left it to my call): dropping a crawl's unused deck cards from 
 - **Not covered:** League saves from before the gauntlet or the crawl (meter mode) can't be produced by today's code, so no fixture holds one; their load path keeps its existing unit tests.
 - **Verification:** `npm test` 254 passed; lint, typecheck, build passed. Chromium (local): `game.spec.ts` 17 passed; `@release` minus fit sweeps and the known flaky dice test 36 passed. WebKit not run locally.
 
-## Review fixes: performance (2026-10-18; branch `review-perf`, PR 3 of the review plan)
+## Review fixes: performance (2026-10-18; merged to `main`, PR #26)
 
 - **Timers:** a fuse sets one timeout for when it goes off, a countdown one per second turning over (`CardActions.tsx`); both still catch up on return from the background. Measured with a React commit counter in Chromium over 10 s of a running timer: fuse 52 → 0 commits, countdown 53 → 12.
 - **League art:** the Ancient Mew front and back (about 7 MB decoded) are decoded only once the League mode is chosen or a League game is on the table, not on every launch (`main.tsx`). The first-render hold for a resumed League game is unchanged.
@@ -40,6 +42,15 @@ Not doing (owner left it to my call): dropping a crawl's unused deck cards from 
 - **Fonts:** Grenze (both styles) is subset to the 200 characters `src/` and `index.html` use plus Latin-1, keeping every OpenType feature, the variable weight axis and the OFL name records: 134.6 KB → 76.8 KB (43%). Originals in `assets/fonts/`; `npm run fonts` (Python fonttools) regenerates byte-identical files; `validate-content.ts` fails the build on a character outside `assets/fonts/subset.json`. Source Serif 4 is left whole: Adobe reserves the name "Source" and the OFL bars a modified font from keeping it. All fonts: 216 KB → 158 KB (27%, a little under the 30% bar set in the plan; kept because it is 58 KB off the first screen at no runtime cost). Runtime 3,816 → 3,760 KiB. Screenshots of setup, How to play, three cards and the pause menu are pixel-identical before and after (Chromium).
 - **Tests:** `game.spec.ts` (idle after a minute, woken by a tap, with the page clock), `pages.spec.ts` (no League art request until the League is chosen).
 - **Verification:** `npm test` 229 passed; lint, typecheck, build passed. Chromium (local): `@release` minus fit sweeps and the known flaky dice test 38 passed; `title-fit`, `secrets`, `motion` and `game` specs 37 passed. WebKit not run locally; no device check.
+
+## Review fixes: tests, docs, accessibility (2026-10-18; merged to `main`, PR #27)
+
+- **Faster `npm test`:** the 4,000-run balance simulations ran at module load in `tests/dungeon.test.ts` and `tests/league.test.ts`, so `npm test` took about 97 s. They now live in `tests/dungeon.balance.test.ts` and `tests/league.balance.test.ts` (unchanged), run by `npm run test:balance` (about 1 min 40 s) and excluded from `npm test` (now about 8 s; 221 + 8 = the same 229 tests). CI runs them in a new `balance` job beside build and browser; a deploy needs all three.
+- **Docs:** test times and balance file names in `CLAUDE.md`, `AGENTS.md`, `tests/CLAUDE.md`, `AUTHORING.md`, `GAME_DESIGN.md`, `src/content/CLAUDE.md` and the tuning comments; save sizes in `src/app/CLAUDE.md` (measured: Core 23 KiB, every pack 356 KiB, League 221 KiB, Pub Crawl 265 KiB); the dice budget note; the stale black-translucent comment in `style.css`.
+- **iPad landscape:** `-webkit-text-size-adjust: 100%` on the root, so iOS does not enlarge text in landscape.
+- **Banners for VoiceOver:** stage, evolution and news banners were `role="status"` boxes inserted with their text, which screen readers often skip. They are now `aria-hidden`, and each adds its words as a line to one polite region present from the first render (`Announcer.tsx`, `#banner-announcer`), removed when the banner goes. Two banners at once (a level-up and the next room) are both read. `crawl.spec.ts` checks the region.
+- **Flaky dice test fixed:** "a second tap finishes the moving dice" holds the page clock still from the throw to the finish tap; 16 of 16 and 10 of 10 under three workers (before: 3 of 12 failed, on unmodified code too).
+- **Verification:** `npm test` 221 passed; `npm run test:balance` 8 passed; lint, typecheck, build passed. Chromium (local): `@release` minus fit sweeps 37 passed; `crawl.spec.ts` and `quest.spec.ts` minus fit sweeps 31 passed. WebKit not run locally; VoiceOver and iPad text not checked on a device (checklist items added).
 
 ## Two-across plaques: mark and name centred together (2026-10-18; pushed to `main`, PR #23)
 

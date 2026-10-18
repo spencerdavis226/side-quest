@@ -45,6 +45,7 @@ import {
   StageBanner,
 } from "./components/StageBanner";
 import { PartyPulse } from "./components/Crawl";
+import { Announcer } from "./components/Announcer";
 import "./style.css";
 import "./presentation/theme.css";
 import "./presentation/card-front.css";
@@ -156,6 +157,7 @@ function App() {
   return (
     <>
       <Atmosphere hidden={hidden} />
+      <Announcer />
       <PortraitGate />
       <main
         className={`${active ? "app playing" : "app"} ${hidden ? "suspended" : ""} ${

@@ -118,6 +118,15 @@ test("@release Pub Crawl opens on an adventurer and tonight's omen, then the que
   await expect(page.locator(".stage-banner")).toHaveText(
     /Pub Crawl\s*Who's going down tonight\?/,
   );
+  // The banner is read out through the page's one waiting live region.
+  const spoken = page
+    .getByRole("status")
+    .and(page.locator("#banner-announcer"));
+  await expect(spoken).toHaveText("Pub Crawl. Who's going down tonight?");
+  await expect(page.locator(".stage-banner")).toHaveAttribute(
+    "aria-hidden",
+    "true",
+  );
   await page.locator(".game-card").click();
   await expect(page.locator(".game-card .card-ribbon")).toHaveText(
     "Your adventurer",
@@ -139,6 +148,7 @@ test("@release Pub Crawl opens on an adventurer and tonight's omen, then the que
   await expect(page.locator(".stage-banner")).toHaveText(
     /Pub Crawl\s*The Quarter-Zips cut in/,
   );
+  await expect(spoken).toHaveText(/^Pub Crawl\. The Quarter-Zips cut in/);
   const s = await saved(page);
   expect(s.config.packIds).toEqual(["dungeon"]);
   expect(s.quest.party.omen).toBe(s.quest.finale[0]);
@@ -390,6 +400,14 @@ test("@release a landing levels the adventurer up for drinks, or rests", async (
   await plaques.nth(0).click();
   await expect(page.locator(".evolution-banner")).toHaveText(
     /Barbarian levels up!\s*Berserker\s*\+2 max hearts\. \+2 to elite and boss rolls\./,
+  );
+  // Two banners at once, the level-up and the hidden room: both are read.
+  const spoken = page.locator("#banner-announcer");
+  await expect(spoken).toContainText(
+    "Barbarian levels up! Berserker. +2 max hearts. +2 to elite and boss rolls.",
+  );
+  await expect(spoken).toContainText(
+    "Behind the bookcase. Wanted: The Proprietor",
   );
   // Next comes the hidden room behind the bookcase; its banner names the
   // keeper waiting inside.
