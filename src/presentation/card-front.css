@@ -162,8 +162,12 @@
 }
 
 .study-rules p {
-  font: 400 clamp(1.625rem, 7.8cqw, max(2.125rem, 7.23cqw)) / 1.28
-    var(--font-tavern);
+  /* --rules-fit (Cards.tsx) shrinks a rule that would otherwise scroll. */
+  font: 400
+    calc(
+      clamp(1.625rem, 7.8cqw, max(2.125rem, 7.23cqw)) * var(--rules-fit, 1)
+    ) /
+    1.28 var(--font-tavern);
   margin: 0;
   text-wrap: pretty;
   color: #372412;

@@ -7,6 +7,9 @@ import { readTotal, rollWins } from "../game/dice";
 import { CardPackMarks } from "./PackMarks";
 import { badgeArt } from "../presentation/league-art";
 type Overflow = "none" | "top" | "bottom" | "both";
+/** The smallest a rule's text shrinks to fit the card: 26px becomes 20px. */
+const RULES_FIT_MIN = 0.77;
+
 export function CardFace({
   card,
   packIds,
@@ -124,15 +127,43 @@ export function CardFace({
     };
   }, [card.title]);
   useEffect(() => {
-    updateOverflow();
+    // A rule too long for a small card (Safari's toolbar, an SE) shrinks
+    // its text, down to RULES_FIT_MIN of the size, before it has to scroll.
+    // Larger Text (an enlarged root size) is the reader's choice: it scrolls.
+    const fitRules = () => {
+      const el = rulesRef.current;
+      if (!el) return;
+      const spills = () => el.scrollHeight > el.clientHeight + 1;
+      el.style.removeProperty("--rules-fit");
+      const root = parseFloat(
+        getComputedStyle(document.documentElement).fontSize,
+      );
+      if (root > 16 || !spills()) return;
+      let low = RULES_FIT_MIN;
+      let high = 1;
+      el.style.setProperty("--rules-fit", String(low));
+      if (!spills())
+        for (let i = 0; i < 6; i++) {
+          const middle = (low + high) / 2;
+          el.style.setProperty("--rules-fit", String(middle));
+          if (spills()) high = middle;
+          else low = middle;
+        }
+      el.style.setProperty("--rules-fit", String(low));
+    };
+    const refit = () => {
+      fitRules();
+      updateOverflow();
+    };
+    refit();
     const el = rulesRef.current;
     if (!el || typeof ResizeObserver === "undefined") return;
-    const observer = new ResizeObserver(updateOverflow);
+    const observer = new ResizeObserver(refit);
     observer.observe(el);
     // Web fonts change the wrapped line count without resizing the scroller
     // box, so observe the content and re-measure once fonts settle.
     for (const child of el.children) observer.observe(child);
-    document.fonts?.ready.then(updateOverflow).catch(() => undefined);
+    document.fonts?.ready.then(refit).catch(() => undefined);
     return () => observer.disconnect();
   }, [resolved, card.id, shown]);
   return (

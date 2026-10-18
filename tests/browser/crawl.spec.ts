@@ -693,11 +693,11 @@ test("tonight's omen is kept in the party dialog", async ({ page }, info) => {
   await page.screenshot({ path: info.outputPath("omen-party.png") });
 });
 
-test("every Dungeon night card fits its face with its plaques at 375x667", async ({
+test("every Dungeon night card fits its face with its plaques at 393x640", async ({
   page,
 }) => {
   test.setTimeout(400000);
-  await page.setViewportSize({ width: 375, height: 667 });
+  await page.setViewportSize({ width: 393, height: 640 });
   const ids = cards.filter((c) => c.id.startsWith("dungeon.")).map((c) => c.id);
   // Where each card is dealt: its stage's first step on the route that has
   // it (an elite, behind a fork, one room later).

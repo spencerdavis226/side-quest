@@ -2,6 +2,13 @@
 
 Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Long rules shrink to fit before they scroll (2026-10-18; branch `rules-fit`)
+
+- **Owner (iPhone 15 Pro, Safari tab, not installed):** Chad's Fake ID's rules faded and cut off at the bottom. Rule text had a 26px floor; Safari's toolbar and the crawl strip (`--hud-strip`, added 2026-10-17) leave a smaller card, so long rules spilled into the scroll fade. The fit sweeps had been skipped (`--grep-invert "fits its face"`) since the header redesign.
+- **Fix:** `CardFace` (`src/components/Cards.tsx`) shrinks a spilling rule via `--rules-fit` on `.study-rules` (applied to `.study-rules p` in `card-front.css`), down to 0.77 (26px to 20px), by binary search, on load, resize and font load; scroll and its fade remain beyond that. Skipped when the root size is enlarged (Larger Text keeps its size and scrolls; `layout.spec.ts` guards this).
+- **Sweeps:** both "fits its face" sweeps now run at 393x640 (the iPhone 15 Pro Safari tab measured from the owner's screenshot) instead of 375x667. Without the fix 79+ Dungeon cards overflow there; with it none do, and every League card fits.
+- **Verification:** `npm test` 229 passed; typecheck, lint, build passed; full Playwright (Chromium and WebKit, minus sweeps) 130 passed; both sweeps (Chromium) passed. Not checked on a device.
+
 ## Hearts stud: optical centring (2026-10-17; pushed to `main`, PR #20)
 
 - **Owner (iPhone screenshot):** the heart is not centred in the top-left stud. Measured: its box is centred to within 1px; it reads high because the lobes carry its weight. `.meter-heart.heart-shape` sits 2px lower (`src/presentation/crawl.css`); `CrawlMeterFace` adds `heart-shape` only when the theme keeps the stock heart, so the League's round Poke Ball is unchanged.

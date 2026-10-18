@@ -432,11 +432,11 @@ test("@release every card of a League game wears the Ancient Mew pair", async ({
   expect(await bg(".game-card .study-face")).not.toContain("league-front");
 });
 
-test("every League card fits its face with its plaques at 375x667", async ({
+test("every League card fits its face with its plaques at 393x640", async ({
   page,
 }) => {
   test.setTimeout(300000);
-  await page.setViewportSize({ width: 375, height: 667 });
+  await page.setViewportSize({ width: 393, height: 640 });
   const pack = packs.find((p) => p.id === "pokemon")!;
   const deck = new Set(pack.cardIds);
   const ids = cards
