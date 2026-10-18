@@ -162,7 +162,7 @@ export const unova: Region = {
         "Volcarona burns the table. Everyone drinks 3 and blows on their fingers.",
         "Alder spills his beer on you. Give 4 and sip anyone's drink.",
         {
-          crit: "Alder passes out. Give 10.",
+          crit: "Alder nods off mid-battle. Give 10.",
           fumble: "He's still up at 4 a.m. Everyone finishes their drink.",
         },
       ),
@@ -177,7 +177,7 @@ export const unova: Region = {
         "Beaten by a child. Everyone drinks 4 and apologizes to her.",
         "You land one on a kid. The table boos you; give 4 anyway.",
         {
-          crit: "She sends you to bed. Give 10.",
+          crit: "You send her to bed. Give 10.",
           fumble: "Outrage. Everyone finishes their drink.",
         },
       ),

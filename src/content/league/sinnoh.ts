@@ -135,7 +135,7 @@ export const sinnoh: Region = {
         "Singed. Pat out your hair, then drink 5.",
         "You put out the afro. Pat out your left neighbor's head; they drink 3.",
         {
-          fumble: "Flare Blitz. Take a spicy shot.",
+          fumble: "Flare Blitz. Drink 5, then take a spicy shot.",
         },
       ),
     ),

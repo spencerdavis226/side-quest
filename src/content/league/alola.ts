@@ -62,7 +62,7 @@ export const alola: Region = {
         "Totem Marowak falls. Give 5.",
         {
           crit: "Inferno Overdrive. Give a shot.",
-          fumble: "Third-degree burns. Take a spicy shot.",
+          fumble: "Third-degree burns. Drink 5, then take a spicy shot.",
         },
       ),
     ),

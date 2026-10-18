@@ -60,7 +60,7 @@ const route1: CardDefinition[] = [
     vs(
       "Dizzy. Drink {total}.",
       "Pickup! Steal a sip from any drink at the table.",
-      { fumble: "You zag straight into a wall. Drink 3 and sit on the floor." },
+      { fumble: "You zag straight into a wall. Drink 6 and sit on the floor." },
     ),
   ),
   wild(
@@ -135,15 +135,15 @@ const route1: CardDefinition[] = [
     "A stranger in a trench coat hands you an egg. It's warm. Too warm.",
     9,
     "It hatches into a Togepi and pisses on you. Drink 3.",
-    "It's a pack of ammo for the bag. Give 2.",
+    "It hatches into something useful. Give 2.",
     ["Hand it back", "Crack it"],
     "die",
   ),
   item(
     0,
     "route-potion-ground",
-    "Potion on the Ground",
-    "Someone dropped a Potion in the grass. Finders keepers. Everyone drinks 1 to celebrate.",
+    "Finders Keepers",
+    "Someone dropped something in the grass. It's yours now. Everyone drinks 1 to celebrate.",
     "draught",
   ),
   center(
@@ -167,8 +167,8 @@ const route1: CardDefinition[] = [
     0,
     "route-two-paths",
     "Two Paths",
-    "A short path through tall grass, or a long one past a kid yelling about his Pokémon.",
-    ["Tall grass", "The loud kid"],
+    "A short path through tall grass, or a long one where a trainer is spoiling for a fight.",
+    ["Tall grass", "Pick a fight"],
   ),
 ];
 const route1Aces: CardDefinition[] = [
@@ -198,7 +198,7 @@ const route1Aces: CardDefinition[] = [
     "Lass Tiffany says you looked at her. Battle to prove you didn't. Roll d20.",
     vs(
       "You did. Drink 3, and look only at the floor until your next turn.",
-      "She leaves you a Protect out of respect. Give 3.",
+      "She backs off out of respect. Give 3.",
     ),
     "shield",
   ),
@@ -329,7 +329,7 @@ const route2: CardDefinition[] = [
     1,
     "route-pewter-mart",
     "Pewter Mart",
-    "The Pewter Mart only sells rocks, Potions and something called an Escape Rope.",
+    "The Pewter Mart sells mostly rocks. The clerk is also mostly rock.",
     [
       { label: "Drink 2", loot: "draught" },
       { label: "Drink 3", loot: "smoke" },
@@ -340,14 +340,14 @@ const route2: CardDefinition[] = [
     1,
     "route-mt-moon-fork",
     "Mt. Moon Fork",
-    "Through the cave, or around it past a Super Nerd guarding a fossil.",
-    ["The cave", "The Super Nerd"],
+    "Through the cave, or around it, past trainers who haven't seen daylight in weeks.",
+    ["The cave", "Around it"],
   ),
   item(
     1,
     "route-moon-stone",
     "Shiny Rock",
-    "You find a shiny rock and decide it's an X Attack now. The drawer gives 1.",
+    "You find a shiny rock and decide it's a weapon now. Give 1.",
     "die",
   ),
 ];
@@ -521,7 +521,7 @@ const route3: CardDefinition[] = [
     2,
     "route-nugget-bridge",
     "Nugget Bridge",
-    "Cross the bridge with five trainers on it, or swim under it.",
+    "Cross the bridge, trainers and all, or swim under it.",
     ["Swim under", "The bridge"],
   ),
   item(
@@ -607,7 +607,7 @@ const route4: CardDefinition[] = [
     "Wild Sandile is wearing sunglasses and doesn't care about you. Roll d20.",
     vs(
       "Sand in every crack. Drink 3 and squirm.",
-      "You steal the sunglasses. Wear them and give 3.",
+      "You steal its sunglasses. Give 3, looking cool.",
     ),
   ),
   wild(
@@ -642,12 +642,13 @@ const route4: CardDefinition[] = [
     3,
     "route-biker",
     "Biker Gang",
-    "A Biker on Cycling Road revs at you. Make the engine noise, roll d20.",
+    "The Biker Gang revs at you on Cycling Road. Make the engine noise, then roll d20.",
     vs(
       "Run over. Drink {total}.",
-      "He wipes out. Give 3 to whoever looks most like they own a motorcycle.",
+      "They wipe out. Give 3 to whoever looks most like they own a motorcycle.",
       {
-        fumble: "He runs you over twice. Make the engine noise, then drink 3.",
+        fumble:
+          "The whole gang runs you over. Make the engine noise, then finish your drink.",
       },
     ),
   ),
@@ -711,8 +712,8 @@ const route4: CardDefinition[] = [
     3,
     "route-game-corner",
     "Game Corner",
-    "Walk past the Game Corner, or go in and find the poster behind the counter.",
-    ["Walk past", "The poster"],
+    "Walk past the Game Corner, or go in and see who's still at the tables.",
+    ["Walk past", "Go in"],
   ),
   gamble(
     3,
@@ -898,7 +899,7 @@ const route5: CardDefinition[] = [
     4,
     "route-cycling-road",
     "Cycling Road",
-    "Walk the long way, or bike down Cycling Road where the gang hangs out.",
+    "Walk the long way, or bike down Cycling Road, where trouble hangs out.",
     ["Long way", "Cycling Road"],
   ),
   item(
@@ -1078,7 +1079,7 @@ const route6: CardDefinition[] = [
     5,
     "route-dojo",
     "The Fighting Dojo",
-    "Walk past the Fighting Dojo, or kick the door in and challenge the Karate King.",
+    "Walk past the Fighting Dojo, or kick the door in and fight whoever's training.",
     ["Walk past", "Kick the door"],
   ),
   item(
@@ -1157,7 +1158,7 @@ const route7: CardDefinition[] = [
     vs(
       "Bitten three times. Drink {total}.",
       "The heads fight each other. Pick three players; they drink 1 each.",
-      { fumble: "All three heads bite at once. Drink 6." },
+      { fumble: "All three heads bite at once. Finish your drink." },
     ),
   ),
   wild(
@@ -1316,7 +1317,7 @@ const route8: CardDefinition[] = [
     7,
     "route-tyranitar",
     "Tyranitar",
-    "Wild Tyranitar kicks up a sandstorm. Cover your drink and roll d20.",
+    "Wild Tyranitar kicks up a sandstorm. Everyone covers their drink. Roll d20.",
     vs(
       "Stone Edge. Drink 5; anyone whose drink wasn't covered drinks 2.",
       "You weather the storm. Give 4.",
@@ -1466,14 +1467,14 @@ const route8: CardDefinition[] = [
     7,
     "route-ace-gate",
     "The Badge Gate",
-    "The gate guard checks your badges. Go quietly, or show off to the trainers waiting past it.",
+    "The guard checks your badges. Slip through, or show off to whoever's waiting.",
     ["Go quietly", "Show off"],
   ),
   item(
     7,
     "route-max-revive",
-    "Max Revive",
-    "A Max Revive in a hidden alcove. The drawer gives 2.",
+    "Hidden Alcove",
+    "Something shiny in a hidden alcove. Pocket it and give 2.",
     "draught",
   ),
 ];
@@ -1581,7 +1582,7 @@ const victoryRoad: CardDefinition[] = [
     8,
     "route-victory-fork",
     "Two Ladders",
-    "Two ladders. One leads up. The other leads to the Ace Trainers nobody warned you about.",
+    "Two ladders. One leads up. The other, to a trainer nobody warned you about.",
     ["Up", "The other one"],
   ),
 ];
@@ -1592,7 +1593,7 @@ const victoryAces: CardDefinition[] = [
     "Ace Trainer Ilse",
     "Ace Trainer Ilse has six Pokémon and no mercy. Roll d6 for how many you beat.",
     moves(
-      ["None. Drink 6.", "One. Drink 5.", "Two. Drink 4.", "Three. Drink 3."],
+      ["One. Drink 6.", "Two. Drink 5.", "Three. Drink 4.", "Four. Drink 3."],
       ["Five of six. Give 4.", "All six. Give 6."],
     ),
     "die",
@@ -1668,14 +1669,11 @@ export const rivals: CardDefinition[] = [
   rival(
     "rival-nemona",
     "Nemona",
-    "Nemona just wants to battle. Again. And again. She loves this. Roll d20.",
+    "Nemona skipped class to fight you. She's been stretching for an hour. Roll d20.",
     vs(
-      "She loves this. Drink {total}, and she wants a rematch.",
-      "She loves losing too. Give 4, then high-five everyone.",
-      {
-        fumble:
-          "She wants a rematch now, and another. Drink 5 and high-five her twice.",
-      },
+      "She's warmed up. Drink {total} and stretch with her.",
+      "She asks to go again. Give 4, then high-five everyone.",
+      { fumble: "She was going easy on you. Finish your drink." },
     ),
   ),
 ];

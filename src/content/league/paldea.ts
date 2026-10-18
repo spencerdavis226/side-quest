@@ -201,7 +201,7 @@ export const paldea: Region = {
         "Tera Blast. Everyone drinks 4 and replies all.",
         "The meeting ends early. Give 4 and leave the room for five seconds.",
         {
-          crit: "You're the boss now. Give 10.",
+          crit: "You take over the meeting. Give 10.",
           fumble: "Mandatory overtime. Everyone finishes their drink.",
         },
       ),
@@ -216,7 +216,7 @@ export const paldea: Region = {
         'Rematch! Everyone drinks 3 and says "one more!"',
         "She loves it. Give 4, and hug your left neighbor for her.",
         {
-          crit: "She finally needs a nap. Give 10.",
+          crit: "She needs a water break. Give 10.",
           fumble: "One more battle! Everyone finishes their drink.",
         },
       ),

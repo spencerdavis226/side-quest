@@ -30,7 +30,7 @@ export const johto: Region = {
         ...Array.from({ length: 8 }, (_, i) => ({
           min: i + 3,
           max: i + 3,
-          instruction: `Bitten. Drink ${Math.ceil((i + 3) / 2)}.`,
+          instruction: `Bitten. Drink ${Math.ceil((10 - i) / 2)}.`,
         })),
         {
           min: 11,
@@ -141,7 +141,8 @@ export const johto: Region = {
         {
           min: 11,
           max: 20,
-          instruction: "Hall of Fame! Make a rule for the rest of the game.",
+          instruction:
+            "Dragonite staggers. Make a rule for the rest of the game.",
           win: true,
         },
       ]),
@@ -152,12 +153,12 @@ export const johto: Region = {
     legendary(
       "lugia",
       "Lugia",
-      "Lugia floods the table. Roll d20; miss it and everyone drinks that many seconds.",
+      "Lugia floods the table. Roll d20; miss, and everyone drinks for that many seconds.",
       d20(
         LEGENDARY_NEED,
         "Aeroblast. Everyone drinks for {total} seconds.",
-        "Caught! Everyone else drinks for 10 seconds.",
-        { fumble: "It floods the table. Everyone drinks for 5 seconds." },
+        "A hit! Everyone else drinks for 10 seconds.",
+        { fumble: "It floods the table. Everyone drinks for 15 seconds." },
       ),
     ),
     legendary(
@@ -167,12 +168,20 @@ export const johto: Region = {
       rollTable(
         1,
         6,
-        [1, 2, 3, 4, 5, 6].map((n) => ({
-          min: n,
-          max: n,
-          instruction: `Drink ${n}, then give ${n * 2}.`,
-          ...(n >= 4 ? { win: true } : {}),
-        })),
+        [1, 2, 3, 4, 5, 6].map((n) =>
+          n >= 4
+            ? {
+                min: n,
+                max: n,
+                instruction: `You ride the fire. Give ${n - 2}, then ${(n - 2) * 2} more.`,
+                win: true,
+              }
+            : {
+                min: n,
+                max: n,
+                instruction: `Sacred Fire. Drink ${5 - n}, then ${(5 - n) * 2} more.`,
+              },
+        ),
       ),
     ),
     legendary(

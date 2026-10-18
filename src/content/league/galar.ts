@@ -50,7 +50,7 @@ export const galar: Region = {
         "Burnt out. Drink 5, then ten more jumping jacks.",
         "You outlast the old man. Give 5.",
         {
-          fumble: "Fire Spin. Take a spicy shot.",
+          fumble: "Fire Spin. Drink 5, then take a spicy shot.",
         },
       ),
     ),
@@ -186,7 +186,7 @@ export const galar: Region = {
         "Behemoth Blade. Drink 5 and fetch something for the table.",
         "Good dog. Everyone pets you; give 5.",
         {
-          crit: "Belly rubs. Give 8.",
+          crit: "Belly rubs. Give 10.",
         },
       ),
     ),
@@ -197,7 +197,7 @@ export const galar: Region = {
       d20(
         LEGENDARY_NEED,
         "Eternabeam. Drink 6 while everyone keeps looking up.",
-        "You end the Darkest Day. The last player still looking up drinks 4.",
+        "You push back the Darkest Day. The last player still looking up drinks 4.",
         {
           fumble: "The Darkest Day. Finish your drink.",
         },

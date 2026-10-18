@@ -61,7 +61,7 @@ export const hideouts = [
         ["Persian's Slash. Drink 5.", "Earthquake. Drink 4 and kiss his ring."],
         [
           "He looks up. Give 4.",
-          "Team Rocket disbands. For now. Give 4.",
+          "He finally looks worried. Give 4.",
           "Persian switches sides. Give 4 and meow.",
           "He says you remind him of his son. Give 5.",
         ],
@@ -100,7 +100,7 @@ export const hideouts = [
           "Yours wins. Give 3.",
           "A pair! Everyone laughs evilly; the worst laugh drinks 3.",
         ),
-        { curse: "bleed" },
+        { rank: "Admin", curse: "bleed" },
       ),
     ],
     villain(
@@ -157,7 +157,7 @@ export const hideouts = [
           "Asleep. Drink 3 with your eyes shut.",
           "Awake. The first player who yawned drinks 2.",
         ),
-        { curse: "hex" },
+        { rank: "Admin", curse: "hex" },
       ),
     ],
     villain(
@@ -194,6 +194,7 @@ export const hideouts = [
         "Commander Mars wants your Pokémon for science. Roll d20.",
         vs("For science. Drink 3.", "Science denied. Give 3."),
         {
+          rank: "Commander",
           jinx: {
             name: "Lab Rat",
             rule: "Everyone calls the jinxed player Subject 7. Slip: drink 1.",
@@ -217,7 +218,7 @@ export const hideouts = [
             "It zaps your left neighbor. They drink 3.",
           ],
         ),
-        { curse: "hex" },
+        { rank: "Scientist", curse: "hex" },
       ),
     ],
     villain(
@@ -227,7 +228,7 @@ export const hideouts = [
       "Cyrus wants to erase all emotion. Everyone hold a straight face while the drawer rolls d20.",
       vs(
         "Feelings erased. Drink 5 without any expression.",
-        "Cyrus learns to feel. The first player who smiled drinks 3.",
+        "Cyrus flinches. The first player who smiled drinks 3.",
       ),
       "hex",
     ),
@@ -256,6 +257,7 @@ export const hideouts = [
           "Lectured. Drink 3, then lecture the table for five seconds.",
           "You walk out. Give 3.",
         ),
+        { rank: "Sage" },
       ),
       grunt(
         "Team Plasma",
@@ -267,6 +269,7 @@ export const hideouts = [
           "N spins away on a Ferris wheel. Give 3.",
           "A pair! N asks you onto the Ferris wheel. Pick a date; you both give 3.",
         ),
+        { rank: "King" },
       ),
     ],
     villain(
@@ -313,7 +316,7 @@ export const hideouts = [
             "It's a disco ball. Everyone dances; the stiffest drinks 3.",
           ],
         ),
-        { curse: "bleed" },
+        { rank: "Scientist", curse: "bleed" },
       ),
       grunt(
         "Team Flare",
@@ -324,6 +327,7 @@ export const hideouts = [
           "You paid. Drink 3 and compliment everyone's outfit.",
           "You talk her down. Give 3.",
         ),
+        { rank: "Admin" },
       ),
     ],
     villain(
@@ -377,7 +381,7 @@ export const hideouts = [
             "She joins your side. Give 4.",
           ],
         ),
-        { curse: "bleed" },
+        { rank: "Admin", curse: "bleed" },
       ),
     ],
     villain(
@@ -405,6 +409,7 @@ export const hideouts = [
           "The meeting ran long. Drink 3 and summarize it for the table.",
           "Meeting cancelled. Give 3.",
         ),
+        { rank: "Secretary" },
       ),
       grunt(
         "Macro Cosmos",
@@ -423,6 +428,7 @@ export const hideouts = [
             "He quits. Give 4.",
           ],
         ),
+        { rank: "Intern" },
       ),
       grunt(
         "Macro Cosmos",
@@ -433,7 +439,7 @@ export const hideouts = [
           "You don't have one. Drink 3 and say your full name.",
           "You walk right past. Give 3.",
         ),
-        { curse: "hex" },
+        { rank: "Security", curse: "hex" },
       ),
     ],
     villain(
@@ -474,6 +480,7 @@ export const hideouts = [
           "It stalls. Give 3.",
           "A pair! You hijack it. Give {total}.",
         ),
+        { rank: "Squad Boss" },
       ),
       grunt(
         "Team Star",
@@ -485,7 +492,7 @@ export const hideouts = [
           "Thirty down. Everyone who pointed drinks 1.",
           {
             fumble:
-              "Thirty grunts sit on you. Drink 4, and everyone who pointed points again.",
+              "Thirty grunts sit on you. Finish your drink while everyone points.",
           },
         ),
         { curse: "bleed" },
@@ -502,9 +509,9 @@ export const hideouts = [
           "Double twist: she's also your left neighbor. You both drink 3.",
         ],
         [
-          "Team Star disbands. Give 4.",
-          "She hands over the Star Badge. Give 4.",
-          "Everyone makes up. Give 4.",
+          "Her Sylveon flinches. Give 4.",
+          "Her Umbreon trips. Give 4.",
+          "Her headset glitches. Give 4.",
           "She cries. Give 5.",
         ],
       ),

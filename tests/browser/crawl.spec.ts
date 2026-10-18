@@ -404,7 +404,7 @@ test("@release a landing levels the adventurer up for drinks, or rests", async (
   // Two banners at once, the level-up and the hidden room: both are read.
   const spoken = page.locator("#banner-announcer");
   await expect(spoken).toContainText(
-    "Barbarian levels up! Berserker. +2 max hearts. +2 to elite and boss rolls.",
+    "Barbarian levels up! Berserker. +2 max hearts. +2 to elite and boss d20s.",
   );
   await expect(spoken).toContainText(
     "Behind the bookcase. Wanted: The Proprietor",
