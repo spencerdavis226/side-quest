@@ -86,10 +86,17 @@ function App() {
   useEffect(() => {
     if (!save(SETTINGS_KEY, prefs)) setNotice(true);
   }, [prefs]);
+  // The League's Ancient Mew pair is decoded only once the League is chosen
+  // or in play: it is about 7 MB of image memory no other game uses.
+  const league =
+    (prefs.choice === "quest" && prefs.config.quest === LEAGUE_QUEST) ||
+    display?.config.quest === LEAGUE_QUEST;
+  useEffect(() => {
+    if (league) for (const src of leagueSurfaces) void preloadUrl(src);
+  }, [league]);
   useEffect(() => {
     // Shared surfaces only: hero illustrations are retired from card fronts.
-    for (const src of [...coreFrameSurfaces, ...leagueSurfaces])
-      void preloadUrl(src);
+    for (const src of coreFrameSurfaces) void preloadUrl(src);
     for (const path of Object.values(theme.assets)) void preloadUrl(path);
     const onVisibility = () => setHidden(document.hidden);
     document.addEventListener("visibilitychange", onVisibility);

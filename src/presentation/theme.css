@@ -579,6 +579,24 @@ dialog.closing {
 .suspended:after {
   animation-play-state: paused !important;
 }
+/* A minute without a tap (Atmosphere.tsx, owner 2026-10-18): the glow holds
+   where it is and the embers and dust fade out and stop, so a game left on
+   the table stops redrawing the whole screen. The next tap brings them back. */
+.embers {
+  position: absolute;
+  inset: 0;
+}
+.embers,
+.dust {
+  transition: opacity 1.2s ease;
+}
+.atmosphere.idle .embers,
+.atmosphere.idle .dust {
+  opacity: 0;
+}
+.atmosphere.idle * {
+  animation-play-state: paused;
+}
 @keyframes panel-enter {
   from {
     opacity: 0;

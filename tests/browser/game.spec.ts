@@ -666,3 +666,28 @@ test("a game saved before the rename to Side Quest resumes", async ({
   expect(moved.session.order).toEqual(saved.order);
   expect(moved.session.position).toBe(saved.position);
 });
+test("@release the table goes still after a minute without a tap, and a tap wakes it", async ({
+  page,
+}) => {
+  await page.clock.install();
+  await page.goto("./");
+  await page.getByRole("button", { name: "Play", exact: true }).click();
+  await expect(page.locator(".progress")).toBeVisible();
+  const atmosphere = page.locator(".atmosphere");
+  const state = () =>
+    atmosphere.evaluate((el) => ({
+      glow: getComputedStyle(el.querySelector(".firelight")!)
+        .animationPlayState,
+      motes: getComputedStyle(el.querySelector(".embers")!).opacity,
+      dust: getComputedStyle(el.querySelector(".dust")!).opacity,
+    }));
+  await page.clock.runFor(59_000);
+  await expect(atmosphere).not.toHaveClass(/idle/);
+  await page.clock.runFor(2_000);
+  await expect(atmosphere).toHaveClass(/idle/);
+  await expect.poll(state).toEqual({ glow: "paused", motes: "0", dust: "0" });
+  // The next tap, on the card, wakes it.
+  await page.getByRole("button", { name: "Reveal card" }).click();
+  await expect(atmosphere).not.toHaveClass(/idle/);
+  await expect.poll(state).toEqual({ glow: "running", motes: "1", dust: "1" });
+});

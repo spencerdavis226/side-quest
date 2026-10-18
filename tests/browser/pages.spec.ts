@@ -90,9 +90,9 @@ test("a Home Screen web app hides Install but keeps the in-game menu", async ({
     });
   });
   await page.goto("./");
-  await expect(page.getByRole("button", { name: "Add to Home Screen help" })).toHaveCount(
-    0,
-  );
+  await expect(
+    page.getByRole("button", { name: "Add to Home Screen help" }),
+  ).toHaveCount(0);
   await expect(page.locator(".topbar")).toHaveCount(0);
   await expect(
     page.getByRole("button", { name: "Play", exact: true }),
@@ -102,9 +102,9 @@ test("a Home Screen web app hides Install but keeps the in-game menu", async ({
   await expect(
     page.getByRole("button", { name: "Open game menu" }),
   ).toBeVisible();
-  await expect(page.getByRole("button", { name: "Add to Home Screen help" })).toHaveCount(
-    0,
-  );
+  await expect(
+    page.getByRole("button", { name: "Add to Home Screen help" }),
+  ).toHaveCount(0);
 });
 
 test("@release first screen waits for its painted art and fonts", async ({
@@ -192,4 +192,19 @@ test("Core logo matches selection, card, pause legend and previous card", async 
   await expect(
     page.locator(".previous-card .card-pack-marks .pack-logo"),
   ).toHaveAttribute("data-seal", /art\/packs\/core.svg$/);
+});
+test("@release the League's card art loads only once the League is chosen", async ({
+  page,
+}) => {
+  const league: string[] = [];
+  page.on("request", (r) => {
+    if (/league-front|card-back-league/.test(r.url())) league.push(r.url());
+  });
+  await page.goto("./");
+  await page.getByRole("button", { name: "Play", exact: true }).waitFor();
+  // Give setup's own preloads time to go out.
+  await page.waitForLoadState("networkidle");
+  expect(league).toEqual([]);
+  await page.getByRole("button", { name: /^Pokémon League/ }).click();
+  await expect.poll(() => league.length).toBe(2);
 });
