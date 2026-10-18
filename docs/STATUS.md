@@ -7,7 +7,7 @@ Updated 2026-10-17. **Single authoritative handoff.** Read `AGENTS.md` first. Ol
 - **Owner:** "do the professional, no cut-corners moves" after PR #21 (shrink-to-fit). The fit handles screen size; this keeps text large by keeping copy short.
 - **Copy:** all 66 rules over 95 characters rewritten to 95 or fewer with the same actors, durations, amounts and dice (9 Dungeon, 1 House row 60, 55 Pokémon incl. 21 sheet cards and three starter flavor lines, 1 VIP). Recorded in `reference/README.md`.
 - **Limit:** `scripts/validate-content.ts` now rejects rules over 100 characters or 20 words (was 120 / 24); the 90 / 18 review warning stays. Docs updated (`AUTHORING.md`, `GAME_DESIGN.md`, `ART_DIRECTION.md`, `src/content/CLAUDE.md`, `cards-review.ts`); `docs/CARD_REVIEW.md` and the manifest regenerated. Saved games keep their snapshot text.
-- **Verification:** `npm test` 229 passed (card-logic caught a dropped "rest of the game" on Barboach, fixed); lint and typecheck clean; build validated 1,580 cards. Playwright and both sweeps: see the commit that marks this pushed.
+- **Verification:** `npm test` 229 passed (card-logic caught a dropped "rest of the game" on Barboach, fixed); lint and typecheck clean; build validated 1,580 cards. Red's line became "hasn't spoken since 1996". Full Playwright (Chromium and WebKit, minus sweeps) 129 passed, 1 failed: the Chromium keyboard-focus test "readable fallback when artwork fails" (load timing, flaky earlier in this session); it passed 3/3 alone and `game.spec.ts` passed 17/17 on rerun. Both sweeps at 393x640 passed.
 
 ## Long rules shrink to fit before they scroll (2026-10-18; pushed to `main`, PR #21)
 
