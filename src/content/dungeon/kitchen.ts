@@ -274,8 +274,8 @@ export const kitchen: FloorCards = {
       "The Dishwasher",
       "The dishwasher has seen everything, and he'll sell you some of it, for drinks or blood.",
       [
-        { label: "Drink 5", loot: "shield" },
-        { label: "Bleed for it", cost: 1, loot: "draught" },
+        { label: "Drink 5", loot: "draught" },
+        { label: "Bleed for it", cost: 1, loot: "shield" },
         { label: "Walk on" },
       ],
     ),

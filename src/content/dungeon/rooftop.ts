@@ -313,7 +313,7 @@ export const rooftop: FloorCards = {
       "You buy the floor below his. Give 6.",
       [
         trinket("Penthouse Key", { satchel: 4, loot: ["draught"] }),
-        trinket("Silk Robe", { hearts: 2 }),
+        trinket("Rooftop Putter", { roll: { monster: 1, trap: 1 } }),
       ],
     ),
     elite(

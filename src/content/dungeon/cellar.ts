@@ -314,7 +314,7 @@ export const cellar: FloorCards = {
       "You seal the lid. Something shiny's stuck to it. Give 4.",
       [
         trinket("Grease-Proof Apron", { hurt: { trap: -1 } }),
-        trinket("Deep-Fried Snack", { heal: 1 }),
+        trinket("Greasy Knuckles", { roll: { monster: 1 } }),
       ],
     ),
     elite(

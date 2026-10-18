@@ -330,7 +330,7 @@ export const catacombs: FloorCards = {
       "You hug her. She packs you something for the road. Give 5.",
       [
         trinket("Mom's Packed Lunch", { heal: 1, loot: ["draught"] }),
-        trinket("Mom's Cardigan", { hearts: 2 }),
+        trinket("Mom's Slipper", { roll: { monster: 1, ambush: 1 } }),
       ],
     ),
     elite(

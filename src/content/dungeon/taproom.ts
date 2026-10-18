@@ -280,7 +280,7 @@ export const taproom: FloorCards = {
       "A hooded figure in a pedal boat takes you across, for a price, and sells extras.",
       [
         { label: "Drink 5", loot: "revive" },
-        { label: "Bleed for it", cost: 2, loot: "draught" },
+        { label: "Bleed for it", cost: 1, loot: "smoke" },
         { label: "Walk on" },
       ],
     ),

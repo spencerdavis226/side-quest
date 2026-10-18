@@ -125,7 +125,7 @@ export const hiddenRooms: HiddenRoom[] = [
         },
         drops: [
           trinket("Velvet Rope", { hurt: { monster: -1 } }),
-          trinket("Comp Wristband", { hearts: 2 }),
+          trinket("The Guest List", { roll: { ambush: 1, boss: 1 } }),
         ],
       },
     ),
