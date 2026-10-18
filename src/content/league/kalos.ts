@@ -52,7 +52,7 @@ export const kalos: Region = {
       d20(
         GYM_NEED[3],
         "Leech Seed. Drink 5, and your right neighbor steals a sip of yours.",
-        "You prune the old man. Give 5, and talk like him until your next turn.",
+        "You prune the old man. Give 5 in his grumpy voice.",
         {
           fumble: "Rototilled. Finish your drink.",
         },
@@ -111,7 +111,7 @@ export const kalos: Region = {
       "malva",
       "Malva",
       "Fire",
-      "Malva reads the news. Break a scandal about a player, anchor voice. Nobody laughs: drink 5.",
+      "Malva reads the news. Break a player's scandal in an anchor voice. Nobody laughs: drink 5.",
     ),
     eliteFour(
       "siebold",

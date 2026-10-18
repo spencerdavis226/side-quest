@@ -110,7 +110,7 @@ export const johto: Region = {
       "will",
       "Will",
       "Psychic",
-      "The table secretly picks a number from 1 to 10. Three guesses; each miss: drink 2.",
+      "The table secretly picks a number from 1 to 10. Guess it in three tries; each miss: drink 2.",
     ),
     eliteFour(
       "karen",
@@ -187,10 +187,10 @@ export const johto: Region = {
     legendary(
       "beasts",
       "Raikou, Entei, Suicune",
-      "Three dogs that bolt the moment you look. Point at the guiltiest player, then roll d20.",
+      "Three dogs that bolt when you look. Point at whoever's likeliest to bolt too, then roll d20.",
       d20(
         LEGENDARY_NEED,
-        "It ran away. Again. You and the guilty one drink 3.",
+        "It ran away. Again. You and your pick drink 3.",
         "Cornered one. Give 4.",
         { fumble: "All three bite. Finish your drink." },
       ),

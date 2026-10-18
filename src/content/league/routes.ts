@@ -150,7 +150,7 @@ const route1: CardDefinition[] = [
     0,
     "route-viridian-center",
     "Viridian Center",
-    "Nurse Joy takes your team and gives it back in five seconds. Everyone toasts Nurse Joy.",
+    "Nurse Joy takes your team and gives it back in 5 seconds. Everyone toasts Nurse Joy.",
   ),
   mart(
     0,
@@ -323,7 +323,7 @@ const route2: CardDefinition[] = [
     1,
     "route-pewter-center",
     "Pewter Center",
-    "The Pokémon Center smells like antiseptic and Brock's cologne. Everyone breathes in.",
+    "The Pokémon Center smells like antiseptic and Brock's cologne. Everyone breathes in and drinks 1.",
   ),
   mart(
     1,
@@ -383,7 +383,7 @@ const route3: CardDefinition[] = [
     2,
     "route-psyduck",
     "Psyduck",
-    "Wild Psyduck has a headache. So do you. Hold your head and roll d20.",
+    "Wild Psyduck is clutching its head and staring at nothing. Clutch yours, then roll d20.",
     vs("Confusion. Drink 3.", "It waddles off, still confused. Give 2."),
     {
       curse: "hex",
@@ -432,7 +432,7 @@ const route3: CardDefinition[] = [
     2,
     "route-pikipek",
     "Pikipek",
-    "Wild Pikipek is drilling into a tree. Then your skull. Knock on the table, roll 2d6.",
+    "Wild Pikipek is drilling into a tree. Then your skull. Knock on the table, then roll 2d6.",
     pair(
       "Woodpecked. Drink 3.",
       "It finds a better tree. Give 2.",
@@ -443,7 +443,7 @@ const route3: CardDefinition[] = [
     2,
     "route-nickit",
     "Nickit",
-    "Wild Nickit steals the drink nearest the drawer. Roll d20 to get it back.",
+    "Wild Nickit steals the drink nearest you. Roll d20 to get it back.",
     vs(
       "It's gone. Finish whatever you have.",
       "Recovered, with a tip. Give 3.",
@@ -463,7 +463,7 @@ const route3: CardDefinition[] = [
     2,
     "route-juggler",
     "Juggler Rico",
-    "Juggler Rico juggles three Voltorb. Juggle any two things for five seconds or drink 3.",
+    "Juggler Rico juggles three Voltorb. Juggle any two things for 5 seconds or drink 3.",
   ),
   // A loss lays Meowth's catchphrase.
   {
@@ -484,7 +484,7 @@ const route3: CardDefinition[] = [
     ),
     jinx: {
       name: "That's Right!",
-      rule: "The jinxed player ends every sentence with 'that's right!' Forget: drink 1.",
+      rule: 'The jinxed player ends every sentence with "That\'s right!" Slip: drink 1.',
     },
   },
   catchable(
@@ -504,7 +504,7 @@ const route3: CardDefinition[] = [
     2,
     "route-cerulean-center",
     "Cerulean Center",
-    "Nurse Joy. Again. Same face, different town. Everyone points at the drawer and asks who she is.",
+    "Nurse Joy. Again. Same face, different town. Everyone swears it's the same one and drinks 1.",
   ),
   mart(
     2,
@@ -581,10 +581,10 @@ const route4: CardDefinition[] = [
     3,
     "route-sableye",
     "Sableye",
-    "Wild Sableye stares at you with gem eyes from a cave. It's always staring. Roll d20.",
+    "Wild Sableye eyes your teeth like they're gems. Grin wide, then roll d20.",
     vs(
       "It steals your soul. Drink 3 and sit in silence for 10 seconds.",
-      "You stare it down. The first player to look away from you drinks 3.",
+      "It goes for a bigger grin. The widest smile at the table drinks 3.",
     ),
     { curse: "hex" },
   ),
@@ -592,7 +592,7 @@ const route4: CardDefinition[] = [
     3,
     "route-croagunk",
     "Croagunk",
-    "Wild Croagunk pokes you in the kidney and laughs. Poke your right neighbor, roll 2d6.",
+    "Wild Croagunk pokes you in the kidney and laughs. Poke your right neighbor, then roll 2d6.",
     pair(
       "Poison Jab. Drink 3.",
       "You poke back harder. Give 3.",
@@ -614,7 +614,7 @@ const route4: CardDefinition[] = [
     3,
     "route-hawlucha",
     "Hawlucha",
-    "Wild Hawlucha leaps off a tree and elbow-drops the table. Slam the table, roll d6.",
+    "Wild Hawlucha leaps off a tree and elbow-drops the table. Slam it, then roll d6.",
     moves(
       [
         "Flying Press. Drink 4.",
@@ -744,7 +744,7 @@ const route4Aces: CardDefinition[] = [
     "route-ace-gambler",
     "Gambler Lou",
     "Gambler Lou bets his whole stack on one battle. Push your drink to the middle, then roll d20.",
-    vs("You lose his money too. Drink 4.", "You clean him out. Give 4.", {
+    vs("He takes the pot. Drink 4.", "You clean him out. Give 4.", {
       crit: "He hands over his lucky coin too. Give 8.",
     }),
     "shield",
@@ -817,10 +817,10 @@ const route5: CardDefinition[] = [
     4,
     "route-toxtricity",
     "Toxtricity",
-    "Wild Toxtricity air-guitars at you. Air-guitar back for five seconds, then roll d20.",
+    "Wild Toxtricity air-guitars at you. Air-guitar back for 5 seconds, then roll d20.",
     vs(
       "Booed off stage. Drink 3 and play one more riff.",
-      "Encore! Pick a bandmate: they air-guitar for five seconds or drink 3.",
+      "Encore! Pick a bandmate: they air-guitar for 5 seconds or drink 3.",
     ),
     { curse: "bleed" },
   ),
@@ -1086,7 +1086,7 @@ const route6: CardDefinition[] = [
     5,
     "route-silph-gift",
     "Silph Gift",
-    "The Silph Co. president gives you a gift for saving the building. The drawer gives 2.",
+    "The Silph Co. president gives you a gift for saving the building. Give 2.",
     "die",
   ),
 ];
@@ -1239,7 +1239,7 @@ const route7: CardDefinition[] = [
     6,
     "route-eevee-gift",
     "Gift Eevee",
-    "A man in a mansion gives you an Eevee and doesn't explain. Take it.",
+    "A man in a mansion gives you an Eevee and doesn't explain. Take it?",
     3,
     2,
   ),
@@ -1247,13 +1247,13 @@ const route7: CardDefinition[] = [
     6,
     "route-evolving-2",
     "It's Evolving Again!",
-    "Your starter is glowing mid-battle. Everyone hums the music again, louder.",
+    "Your starter is glowing mid-battle. Everyone hums the evolution music, loud.",
   ),
   center(
     6,
     "route-cinnabar-center",
     "Cinnabar Center",
-    "A Pokémon Center on a volcano. Nurse Joy is sweating. Everyone wipes their brow.",
+    "A Pokémon Center on a volcano. Nurse Joy is sweating. Everyone wipes their brow and drinks 1.",
   ),
   mart(
     6,
@@ -1396,7 +1396,7 @@ const route8: CardDefinition[] = [
     7,
     "route-cooltrainer-pair",
     "Cooltrainer Duo",
-    "Two Cooltrainers with matching jackets and matching Dragonites. Pick a partner, roll 2d6.",
+    "Two Cooltrainers with matching jackets and matching Dragonites. Pick a partner, then roll 2d6.",
     pair(
       "Double Outrage. You and your partner drink 4.",
       "Their jackets are ruined. You and your partner give 2 each.",
@@ -1660,10 +1660,10 @@ export const rivals: CardDefinition[] = [
   rival(
     "rival-hop",
     "Hop",
-    "Hop wants to beat you to impress his brother. Roll d20.",
+    "Hop made curry for the road and wants it rated. Rate it out loud, then roll d20.",
     vs(
-      "Leon claps for him. Drink 5 and strike the Charizard pose.",
-      "Hop needs a pep talk. Give him your best one, then give 4.",
+      "He took that personally. Drink 5 and rate it higher.",
+      "He takes notes for next time. Give 4, mate.",
     ),
   ),
   rival(

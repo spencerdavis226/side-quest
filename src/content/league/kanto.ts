@@ -55,7 +55,7 @@ export const kanto: Region = {
             win: true,
           },
         ]),
-        doubles: "Paralyzed. Finish your drink.",
+        doubles: "A pair! Paralyzed. Finish your drink.",
       },
     ),
     leader(
@@ -135,17 +135,17 @@ export const kanto: Region = {
       "lorelei",
       "Lorelei",
       "Ice",
-      "Chug a glass of ice water, then roll d6. Lorelei likes it cold.",
+      "Lorelei freezes you solid. Hold perfectly still, mid-pose, while you roll d6.",
       rollTable(1, 6, [
         ...[1, 2, 3, 4].map((n) => ({
           min: n,
           max: n,
-          instruction: `Brain freeze. Drink ${5 - n}.`,
+          instruction: `Frozen solid. Drink ${5 - n}.`,
         })),
         ...[5, 6].map((n) => ({
           min: n,
           max: n,
-          instruction: `You keep it down. Give ${n}.`,
+          instruction: `You crack the ice. Give ${n}.`,
           win: true,
         })),
       ]),
@@ -154,7 +154,7 @@ export const kanto: Region = {
       "bruno",
       "Bruno",
       "Fighting",
-      "Arm-wrestle the two strongest players back to back. Each loss: drink 5.",
+      "Bruno trains to the limit. Handstand against a wall for 10 seconds. Drop: drink 5.",
     ),
     {
       ...eliteFour(
@@ -258,7 +258,7 @@ export const kanto: Region = {
     legendary(
       "mewtwo",
       "Mewtwo",
-      "Mewtwo reads your mind and tells the table your worst thought. Roll d20.",
+      "Mewtwo reads your mind. Tell the table your worst thought, then roll d20.",
       d20(
         LEGENDARY_NEED,
         "Overpowered. Finish your drink.",

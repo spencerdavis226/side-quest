@@ -79,7 +79,11 @@ material, not game content:
   Missingno's rules no longer list a 1 to 5 range that its natural 1
   contradicts. Move names follow the current games: Twineedle, Sand Attack,
   Self-Destruct, Mud-Slap and Vise Grip (the sheet's Twinneedle,
-  Sand-Attack, Selfdestruct, Mud-slap and Vicegrip).
+  Sand-Attack, Selfdestruct, Mud-slap and Vicegrip). Wording only, same
+  consequences: Barboach says who slaps whom, Clefairy's drinker is whoever
+  you point at (not touch), Lapras's questions-only rule has a slip, Rival
+  Silver pours 1 for every two players, Mankey's handshake is taught to the
+  table, and Rare Candy says phone, not device.
 
 ## Adding a new reference file
 

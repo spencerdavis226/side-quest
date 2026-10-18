@@ -42,7 +42,7 @@ export const unova: Region = {
       "burgh",
       "Burgh",
       "Insect",
-      "Burgh is an artist. Draw a bug on your left neighbor's arm. Table can't name it: drink 4.",
+      "Burgh's art test: finger-draw a bug on your neighbor's back. They can't name it: drink 4.",
     ),
     leader(
       3,

@@ -133,7 +133,7 @@ export const galar: Region = {
       ),
       jinx: {
         name: "Mate",
-        rule: "The jinxed player ends every sentence with 'mate'. Forget: drink 1.",
+        rule: 'The jinxed player ends every sentence with "mate." Slip: drink 1.',
       },
     },
     cupFinalist(

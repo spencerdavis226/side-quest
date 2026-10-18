@@ -281,7 +281,7 @@ const deck: CardDefinition[] = [
     "silver",
     "Rival Silver",
     "group",
-    "Rival Silver appears. Drink half the table, rounded up. He's still smug.",
+    "Rival Silver appears. Drink 1 for every two players, rounded up. He's still smug.",
   ),
   card(
     "wally",
@@ -563,7 +563,7 @@ const deck: CardDefinition[] = [
     "mankey",
     "Mankey",
     "rule",
-    "Mankey used Swagger! Teach a handshake. Until your next turn, fumbles drink 1.",
+    "Mankey used Swagger! Teach the table a secret handshake. Until your next turn, fumble it: drink 1.",
   ),
   card(
     "aipom",
@@ -617,7 +617,7 @@ const deck: CardDefinition[] = [
     "lapras",
     "Lapras",
     "rule",
-    "Lapras used Confuse Ray! Pick a player: questions only until your next turn, or drink 1.",
+    "Lapras used Confuse Ray! Pick a player: questions only until your next turn. Slip: drink 1.",
   ),
   card(
     "tentacool",
@@ -697,7 +697,7 @@ const deck: CardDefinition[] = [
     "clefairy",
     "Clefairy",
     "challenge",
-    "Clefairy used Metronome! Close your eyes and point at a player. Whoever you touch drinks 3.",
+    "Clefairy used Metronome! Close your eyes and point. Whoever you're pointing at drinks 3.",
   ),
   card(
     "razor-leaf",
@@ -805,7 +805,7 @@ const deck: CardDefinition[] = [
     "rare-candy",
     "Rare Candy",
     "sip",
-    "Rare Candy! Level up: take another card now. No passing the device.",
+    "Rare Candy! Level up: take another card now. No passing the phone.",
   ),
   card(
     "bellsprout",
@@ -858,7 +858,7 @@ const deck: CardDefinition[] = [
     "barboach",
     "Barboach",
     "rule",
-    "Barboach used Mud-Slap! Pick a player. Rest of the game: they get one slap after a full drink.",
+    "Barboach's Mud-Slap! Pick a player. Rest of the game: they can finish a full drink to slap you once.",
   ),
   card(
     "mawile",

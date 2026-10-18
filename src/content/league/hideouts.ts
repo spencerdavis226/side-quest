@@ -152,10 +152,10 @@ export const hideouts = [
         "Team Aqua",
         "aqua-admin-shelly",
         "Shelly",
-        "Admin Shelly yawns at you. Everyone yawns. Roll d20.",
+        "Admin Shelly yawns at you, big. Everyone else: don't yawn back. Roll d20.",
         vs(
           "Asleep. Drink 3 with your eyes shut.",
-          "Awake. The first player who yawned drinks 2.",
+          "Awake. Anyone who yawned drinks 2.",
         ),
         { rank: "Admin", curse: "hex" },
       ),
@@ -205,7 +205,7 @@ export const hideouts = [
         "Team Galactic",
         "galactic-scientist-charon",
         "Charon",
-        "Charon the scientist cackles and points a ray gun at the drawer. Roll d6.",
+        "Charon the scientist cackles and points a ray gun at you. Roll d6.",
         moves(
           [
             "Zapped. Drink 3.",
@@ -254,7 +254,7 @@ export const hideouts = [
         "Sage",
         "One of the Seven Sages lectures you about Pokémon liberation. Roll d20.",
         vs(
-          "Lectured. Drink 3, then lecture the table for five seconds.",
+          "Lectured. Drink 3, then lecture the table for 5 seconds.",
           "You walk out. Give 3.",
         ),
         { rank: "Sage" },
@@ -276,7 +276,7 @@ export const hideouts = [
       "Team Plasma",
       "boss-ghetsis",
       "Ghetsis",
-      "Ghetsis, in a cape with eyes on it, calls you a worthless trash. Roll d20.",
+      "Ghetsis, in a cape with eyes on it, calls you worthless trash. Roll d20.",
       vs(
         "Worthless. Drink 5 and call yourself trash.",
         "His cape rips. Give 4.",
@@ -474,7 +474,7 @@ export const hideouts = [
         "Team Star",
         "star-car",
         "Starmobile",
-        "A boss revs a Starmobile, a car made of Revavroom. Rev with your mouth, roll 2d6.",
+        "A boss revs a Starmobile, a car made of Revavroom. Rev with your mouth, then roll 2d6.",
         pair(
           "Run over. Drink 3.",
           "It stalls. Give 3.",
@@ -486,7 +486,7 @@ export const hideouts = [
         "Team Star",
         "star-squad",
         "Star Squad",
-        "Thirty grunts. Thirty seconds. Everyone points at the drawer. Roll d20.",
+        "Thirty grunts. Thirty seconds. Everyone points at you. Roll d20.",
         vs(
           "Overrun. Drink {total}.",
           "Thirty down. Everyone who pointed drinks 1.",

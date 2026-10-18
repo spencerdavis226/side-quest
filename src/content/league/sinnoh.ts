@@ -48,14 +48,14 @@ export const sinnoh: Region = {
       "crasher-wake",
       "Crasher Wake",
       "Fen",
-      "Crasher Wake is a luchador. Put on an imaginary mask, flex at the table, and roll d20.",
+      "Crasher Wake makes a splash. Blow bubbles in your drink for 5 seconds, then roll d20.",
       d20(
         GYM_NEED[3],
-        "Body slam. Drink 5, then flex again.",
-        "You pin him for three. Give 5.",
+        "Hydro Pump. Drink 5, then blow more bubbles.",
+        "You ride his wave. Give 5.",
         {
-          crit: "You unmask him. Give a shot.",
-          fumble: "Piledriver. Finish your drink.",
+          crit: "You wipe him out. Give a shot.",
+          fumble: "Swallowed by the wave. Finish your drink.",
         },
       ),
     ),
@@ -115,7 +115,7 @@ export const sinnoh: Region = {
       "Aaron loves bugs. Eat a crumb off the floor, or fake it well, then roll d20.",
       d20(
         ELITE_NEED,
-        "Bug Bite. Drink 5 and buzz for five seconds.",
+        "Bug Bite. Drink 5 and buzz for 5 seconds.",
         "You squash his bugs. Slap the table and give 5.",
       ),
     ),
@@ -205,7 +205,7 @@ export const sinnoh: Region = {
       ),
       jinx: {
         name: "Backwards",
-        rule: "Everyone calls the jinxed player their name backwards. Slip: drink 1.",
+        rule: "Everyone calls the jinxed player by their name said backwards. Slip: drink 1.",
       },
     },
     legendary(
@@ -231,7 +231,7 @@ export const sinnoh: Region = {
         "God blinks. Give 6.",
         {
           crit: "You caught God. Everyone else finishes their drink.",
-          fumble: "Smited. Finish your drink.",
+          fumble: "Smote. Finish your drink.",
         },
       ),
     ),
