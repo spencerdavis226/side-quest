@@ -132,7 +132,7 @@ export const wine: FloorCards = {
       3,
       "blind-tasting",
       "Blind Tasting",
-      "Eyes shut. Your left neighbor hands you someone's drink. Name whose it is. Wrong: drink 3.",
+      "Eyes shut. Your left neighbor hands you a drink. Name whose it is. Wrong: drink 3.",
     ),
     trial(
       3,
@@ -144,7 +144,7 @@ export const wine: FloorCards = {
       3,
       "swirl-sniff-lie",
       "Swirl, Sniff, Lie",
-      "Describe your drink like a sommelier for 15 seconds without laughing. Laugh: drink 3.",
+      "Review your drink like a sommelier for 15 seconds. Crack a smile: drink 3.",
     ),
     trial(
       3,

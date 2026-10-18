@@ -159,7 +159,7 @@ export const kitchen: FloorCards = {
       5,
       "the-pitch",
       "The Pitch",
-      "Pitch the table a new dish in 20 seconds. Everyone votes; fewer than half love it: drink 5.",
+      "Pitch the table a new dish in 20 seconds. Fewer than half would eat it: drink 5.",
     ),
     trap(
       5,

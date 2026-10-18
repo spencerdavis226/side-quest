@@ -34,7 +34,7 @@ export const omens: CardDefinition[] = [
   omen(
     "cargo-shorts",
     "Cargo Shorts",
-    "You wore cargo shorts. Drink 3 for it. One more satchel slot, and a draught in a pocket.",
+    "You wore cargo shorts: drink 3. One more satchel slot, and a draught in a pocket.",
     { satchel: 4, loot: ["draught"] },
   ),
   omen(
@@ -46,7 +46,7 @@ export const omens: CardDefinition[] = [
   omen(
     "blood-moon",
     "Blood Moon",
-    "Blood on the moon. Every monster, elite and ambush costs a heart more. Start with two more.",
+    "Blood moon. Monsters, elites and ambushes cost a heart more. Start with two more hearts.",
     { hurt: { monster: 1, elite: 1, ambush: 1 }, hearts: 2 },
   ),
   omen(

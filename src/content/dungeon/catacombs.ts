@@ -157,7 +157,7 @@ export const catacombs: FloorCards = {
       1,
       "the-seance",
       "The Séance",
-      "Everyone holds hands while you summon a spirit. Make someone laugh in 20 seconds, or drink 4.",
+      "Hands joined, you summon a spirit. Make someone laugh in 20 seconds, or drink 4.",
     ),
     trap(
       1,
@@ -219,7 +219,7 @@ export const catacombs: FloorCards = {
       1,
       "bone-dice",
       "The Bone Dice",
-      "A skeleton rattles a cup of finger bones. Win, then cash out or throw again, harder. Roll d20.",
+      "A skeleton's finger-bone dice. Win, then cash out or throw again, harder. Roll d20.",
       "Snake eyes. Drink 4.",
       "He clacks his jaw. Give 3.",
       ["die", "smoke", "revive"],
@@ -309,7 +309,7 @@ export const catacombs: FloorCards = {
       1,
       "the-split",
       "The Split",
-      "The tunnel splits. Left: silence. Right: drums, chanting, and what might be a conga line.",
+      "The tunnel splits. Left: silence. Right: drums, chanting, maybe a conga line.",
       ["Left, quiet", "Right, loud"],
     ),
     fork(
@@ -405,7 +405,7 @@ export const catacombs: FloorCards = {
       1,
       "dj-ossuary",
       "DJ Ossuary",
-      "A skeleton DJ who only plays the Macarena. Everyone does the Macarena, then you roll d20.",
+      "A skeleton DJ, Macarena on loop. Everyone does the Macarena, then you roll d20.",
       d20(
         BOSS_NEED[1],
         "He drops the bass on you. Drink 5.",

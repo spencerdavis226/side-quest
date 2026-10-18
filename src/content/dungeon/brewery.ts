@@ -151,7 +151,7 @@ export const brewery: FloorCards = {
       6,
       "brewers-riddle",
       "The Brewer's Riddle",
-      "Your right neighbor names a drink. Describe its taste in one word. The table boos: drink 3.",
+      "Your right neighbor names a drink. Sum up its taste in one word. Booed: drink 3.",
     ),
     trial(
       6,
@@ -292,7 +292,7 @@ export const brewery: FloorCards = {
       6,
       "two-vats",
       "Two Vats",
-      "Two vats big enough to climb through. One is empty. The other is bubbling and humming.",
+      "Two vats to climb through. One is empty. The other bubbles and hums.",
       ["The empty vat", "The bubbling vat"],
     ),
     fork(

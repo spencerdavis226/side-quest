@@ -99,7 +99,7 @@ export const hiddenRooms: HiddenRoom[] = [
         vip,
         "the-influencer",
         "The Influencer",
-        "Take the most flattering photo of the table in 10 seconds. The table hates it: drink 3.",
+        "Take the most flattering photo of the table in 10 seconds. They hate it: drink 3.",
         null,
       ),
       guard(

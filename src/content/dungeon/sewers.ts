@@ -137,7 +137,7 @@ export const sewers: FloorCards = {
       4,
       "the-smell",
       "The Smell",
-      "Hold your nose and talk normally about your day for 30 seconds. Let go: drink 4.",
+      "Hold your nose and describe your day for 30 seconds. Let go: drink 4.",
     ),
     trial(
       4,
@@ -211,7 +211,7 @@ export const sewers: FloorCards = {
       4,
       "fishing-the-drain",
       "Fishing the Drain",
-      "A rod, a hook and the big drain. Catch, then cash out or cast again, harder. Roll d20.",
+      "A rod and the big drain. Catch, then cash out or cast again, harder. Roll d20.",
       "You hook a rat. Drink 4.",
       "Something shiny. Give 3.",
       ["smoke", "round", "shield"],
@@ -296,7 +296,7 @@ export const sewers: FloorCards = {
       4,
       "two-pipes",
       "Two Pipes",
-      "Two pipes, big enough to crawl. One drips. The other gurgles, and it sounds like laughing.",
+      "Two pipes. One drips. The other gurgles, and it sounds like laughing.",
       ["Dripping pipe", "Gurgling pipe"],
     ),
     fork(
@@ -430,7 +430,7 @@ export const sewers: FloorCards = {
       4,
       "the-pipe-worm",
       "The Pipe Worm",
-      "It's been living in the plumbing for eighty years and it's as long as the city. Roll d20.",
+      "Eighty years in the plumbing, and now it's as long as the city. Roll d20.",
       d20(
         BOSS_NEED[1],
         "It wraps around you twice. Drink 5.",

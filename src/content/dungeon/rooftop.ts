@@ -151,7 +151,7 @@ export const rooftop: FloorCards = {
       8,
       "the-slow-dance",
       "The Slow Dance",
-      "Slow-dance with your right neighbor, eyes locked, for 10 seconds. Either laughs: you drink 5.",
+      "10-second slow dance with your right neighbor, eyes locked. Either laughs: you drink 5.",
     ),
     trial(
       8,
@@ -213,7 +213,7 @@ export const rooftop: FloorCards = {
       8,
       "ring-toss",
       "Ring Toss",
-      "A ring toss over the bottles on the bar. Throw, then cash out or throw again, harder. Roll d20.",
+      "Ring toss over the bottles. Win, then cash out or throw again, harder. Roll d20.",
       "The ring goes off the roof. Drink 5.",
       "Ringer. Give 4.",
       ["draught", "die", "revive"],
@@ -292,7 +292,7 @@ export const rooftop: FloorCards = {
       8,
       "the-two-terraces",
       "Two Terraces",
-      "The quiet terrace with the fairy lights, or the loud one with the bass and the private party.",
+      "The quiet terrace with fairy lights, or the loud one with the private party.",
       ["Quiet terrace", "Private party"],
     ),
     fork(
@@ -332,7 +332,7 @@ export const rooftop: FloorCards = {
       8,
       "storm-chaser",
       "The Storm Chaser",
-      "He's out here every storm with a lightning rod, and tonight he's brought a spare. Roll d20.",
+      "He chases storms with a lightning rod, and tonight he brought you one. Roll d20.",
       "Struck. Drink 6.",
       "You ground him. Give 6.",
       [

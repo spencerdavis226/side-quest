@@ -209,7 +209,7 @@ export const taproom: FloorCards = {
       2,
       "claw-machine",
       "The Claw Machine",
-      "Half underwater and still taking coins. Win, then cash out or play again, harder. Roll d20.",
+      "Half sunk, still taking coins. Win, then cash out or play again, harder. Roll d20.",
       "The claw drops it. Again. Drink 5.",
       "It holds. Give 4.",
       ["draught", "shield", "candy"],
@@ -288,7 +288,7 @@ export const taproom: FloorCards = {
       2,
       "two-taps",
       "Two Taps",
-      "Two taps behind the bar. One pours water. The other pours something that screams.",
+      "Two taps. One pours water. The other pours something that screams.",
       ["Water tap", "Screaming tap"],
     ),
     fork(
