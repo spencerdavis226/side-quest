@@ -56,7 +56,7 @@ const sheetRows: CardDefinition[] = [
     "sheet-009",
     "Steve's Beans",
     "challenge",
-    "Text Steve and tell them his beans are good. Else drink 2d6",
+    "Text Steve and tell him his beans are good. Else, drink 2d6",
     choice(roll(2, 6, "Drink {total}."), "Text Steve", "Refuse"),
   ),
   houseCard(
@@ -111,7 +111,7 @@ const sheetRows: CardDefinition[] = [
     "sheet-018",
     "Story Time",
     "category",
-    "Say a word. The next person repeats and adds on. Loser drink 4.",
+    "Say a word. The next person repeats and adds on. Loser drinks 4.",
   ),
   houseCard(
     "sheet-019",
@@ -126,7 +126,7 @@ const sheetRows: CardDefinition[] = [
     "sheet-023",
     "Headache Simulator",
     "challenge",
-    "Wear Becca's glasses for a round. Else drink 2d6",
+    "Wear Becca's glasses until your next turn. Else drink 2d6",
     choice(roll(2, 6, "Drink {total}."), "Wear them", "Refuse"),
   ),
   houseCard(
@@ -155,7 +155,7 @@ const sheetRows: CardDefinition[] = [
     "Give d6 drinks",
     roll(1, 6, "Give {total}."),
   ),
-  houseCard("sheet-029", "FMK", "challenge", "Blink 182, Green Day, Weezer"),
+  houseCard("sheet-029", "FMK", "challenge", "Blink-182, Green Day, Weezer"),
   houseCard(
     "sheet-030",
     "Potty Mouth",
@@ -175,7 +175,7 @@ const sheetRows: CardDefinition[] = [
     "Technophoria",
     "group",
     "Anyone who has touched a phone drinks 1d6",
-    roll(1, 6, "Everyone drinks {total}."),
+    roll(1, 6, "Anyone who's touched a phone drinks {total}."),
   ),
   houseCard("sheet-035", "Categories", "category", "Countries"),
   houseCard(
@@ -234,13 +234,13 @@ const sheetRows: CardDefinition[] = [
     "sheet-045",
     "Drink, bitch",
     "sip",
-    "If you drank last card, drink again, bitch",
+    "If you drank on the last card, drink again, bitch",
   ),
   houseCard(
     "sheet-046",
     "Fiend",
     "challenge",
-    "Pop in a fresh zyn, velo, nic pouch",
+    "Pop in a fresh Zyn, Velo, nic pouch",
   ),
   houseCard(
     "sheet-047",
@@ -253,13 +253,13 @@ const sheetRows: CardDefinition[] = [
     "Rock, Paper, Scissors",
     "challenge",
     "Challenge a player, loser drinks 1d6",
-    roll(1, 6, "Drink {total}."),
+    roll(1, 6, "Loser drinks {total}."),
   ),
   houseCard(
     "sheet-049",
     "Mexico v China",
     "group",
-    "Thumbs up for Mexican food, thumbs down for chinese. Minority drinks",
+    "Thumbs up for Mexican food, thumbs down for Chinese. Minority drinks",
   ),
   houseCard(
     "sheet-050",
@@ -290,7 +290,7 @@ const sheetRows: CardDefinition[] = [
   houseCard("sheet-055", "Could ya just", "sip", "Drink 1"),
   houseCard(
     "sheet-056",
-    "Mt. Krumpit",
+    "Mt. Crumpit",
     "challenge",
     "Dump out your drink and get a fresh one",
   ),
@@ -298,7 +298,7 @@ const sheetRows: CardDefinition[] = [
     "sheet-057",
     "I'm an Idiot",
     "challenge",
-    "Say I'm an idiot. Whoever replies \"you're an idiot\" drinks ",
+    "Say I'm an idiot. Whoever replies \"you're an idiot\" drinks 2",
   ),
   houseCard(
     "sheet-058",
@@ -309,16 +309,16 @@ const sheetRows: CardDefinition[] = [
   ),
   houseCard(
     "sheet-059",
-    "Bu-bu-buff..",
+    "Bu-bu-buff…",
     "sip",
     "Drink 1d6 for almost getting buffaloed",
     roll(1, 6, "Drink {total}."),
   ),
   houseCard(
     "sheet-060",
-    "Spirit airlines",
+    "Spirit Airlines",
     "challenge",
-    "Tell your worst vacation story. Team agrees it's bad: give 2. Team says not bad: drink 2.",
+    "Tell your worst vacation story. Table agrees it's bad: give 2. Table says not bad: drink 2.",
   ),
   houseCard(
     "sheet-061",
@@ -330,7 +330,7 @@ const sheetRows: CardDefinition[] = [
     "sheet-062",
     "What was that?",
     "challenge",
-    "Read the last text message you said out loud. Else, drink 1d6.",
+    "Read your last text message out loud. Else, drink 1d6.",
     choice(roll(1, 6, "Drink {total}."), "Read it", "Refuse"),
   ),
   houseCard("sheet-063", "Straight to jail", "sip", "Finish your drink"),
@@ -429,7 +429,7 @@ const sheetRows: CardDefinition[] = [
   ),
   houseCard(
     "sheet-081",
-    "ABC's",
+    "ABCs",
     "challenge",
     "Say the alphabet backwards, every mistake is a drink",
   ),
@@ -507,7 +507,7 @@ const sheetRows: CardDefinition[] = [
     "sheet-096",
     "Knickers",
     "challenge",
-    "Guess the person to your rights underwear color. You right, they drink. You wrong, you drink",
+    "Guess the person to your right's underwear color. You right, they drink. You wrong, you drink",
   ),
   houseCard(
     "sheet-097",
@@ -540,7 +540,7 @@ const sheetRows: CardDefinition[] = [
     "Until your next turn, you have to peel your drink like a banana",
   ),
   houseCard("sheet-102", "Vowels", "sip", "Drink for every vowel in your name"),
-  houseCard("sheet-103", "Categories", "category", "US Capitols"),
+  houseCard("sheet-103", "Categories", "category", "US Capitals"),
   houseCard(
     "sheet-104",
     "Opinions",
@@ -594,7 +594,7 @@ export const customVipCards: CardDefinition[] = [
     "sheet-005",
     "One Year Older",
     "sip",
-    "Give out the ones place of your new age",
+    "Give out the ones place of the VIP's new age",
   ),
   vipCard(
     "sheet-006",
