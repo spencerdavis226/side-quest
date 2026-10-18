@@ -48,7 +48,7 @@ const prompts: Prompt[] = [
   ['swear they\'re "not even that drunk"'],
   ["still be awake at 4 a.m."],
   ["need to be carried home", "finish"],
-  ["lie about how many drinks they've had"],
+  ["finish someone else's drink and deny it"],
   ["order the most expensive shot on the menu", "shot"],
   ["dance on a table"],
   ["get cut off by a bartender", 3],
@@ -65,7 +65,7 @@ const prompts: Prompt[] = [
   ["order pizza to the bar"],
   ["get a tattoo on a dare", 3],
   ["throw up in an Uber", 3],
-  ["insist on one more bar"],
+  ["order a fishbowl and drink it alone"],
   ["be the last one to leave every party"],
   ["lose their friends and find new ones"],
 
@@ -91,7 +91,7 @@ const prompts: Prompt[] = [
   ["join a pyramid scheme"],
   ["get a parking ticket in their own driveway"],
   null, // 71: retired 2026-10-07 ("burn water")
-  ["send a screenshot to the person in it", 3],
+  ["talk shit about someone standing right behind them", 3],
   null, // 73: retired 2026-10-07 ("microwave something metal")
   null, // 74: retired 2026-10-07 ("forget their own phone number")
   ["lose their wallet twice on one trip"],
@@ -143,15 +143,15 @@ const prompts: Prompt[] = [
   ["explain the universe to a bartender"],
   null, // 120: retired 2026-10-07 ("name their houseplants")
   ["get distracted by a bird mid-argument"],
-  ['say "bro, what if…" the most'],
+  ['start every sentence with "bro, what if…"'],
   null, // 123: retired 2026-10-07 ("play one album all night")
   ["fall asleep during a movie they picked"],
   ["eat something off the floor"],
   ["own a bong with a name"],
   ["raid someone else's fridge uninvited"],
-  ["think they can talk to animals"],
+  ["get chased by a raccoon on the way home"],
   null, // 129: retired 2026-10-07 ("forget their own birthday")
-  ["order half the menu at a drive-through"],
+  ["eat fries off a stranger's plate"],
 
   // --- Spicy -------------------------------------------------------------------
   ["marry someone they met on vacation", 3],
@@ -180,7 +180,7 @@ const prompts: Prompt[] = [
   ["have a celebrity hall pass ready"],
   ["be the first one here to get married"],
   ["be the last one here to get married"],
-  ["elope without telling anyone"],
+  ["get divorced before the thank-you cards go out"],
   ["make out in a public bathroom"],
   ["have had a crush on a cartoon character"],
   ["tattoo a partner's name on themselves", 3],
@@ -234,7 +234,7 @@ const prompts: Prompt[] = [
   ["live in a van by choice"],
   ["show up on a true crime show"],
   ["fake their own death", 3],
-  ["get rich on crypto, then lose it"],
+  ["bet their rent on one hand of blackjack"],
   ["get a face tattoo at 50"],
 
   // --- The group -----------------------------------------------------------------
@@ -269,12 +269,12 @@ const prompts: Prompt[] = [
   ["cheat at board games"],
   ["take a game way too seriously"],
   ["flip the board when they lose"],
-  ["blame the dice for losing", 3],
+  ["lick the dice for luck", 3],
   null, // 243: retired 2026-10-07 ("read the rules and still not get it")
   null, // 244: retired 2026-10-07 ("keep score when nobody asked")
   null, // 245: retired 2026-10-07 ("bring a lucky charm to game night")
   ["be the reason we can't go back somewhere", 3],
-  ["get banned from a restaurant"],
+  ["yell at a waiter, then tip 40%"],
   null, // 248: retired 2026-10-07 ("have a secret talent nobody knows")
   ["survive on gas station food for a week"],
   ["be talking about this game tomorrow", "finish"],
@@ -293,12 +293,12 @@ const prompts: Prompt[] = [
   ["send a nude to the family group chat", "shot"],
   ["get caught masturbating", 3],
   ["keep a burner account to spy on exes"],
-  ["make out with someone just to make someone else jealous"],
-  ["hook up in a bar bathroom", 3],
+  ["make out with someone to make an ex jealous"],
+  ["hook up in a hot tub", 3],
   ["sleep with someone whose name they never learned", 3],
-  ["get kicked out of a strip club", 3],
+  ["tip a stripper in loose change", 3],
   ["call someone the wrong name in bed", 3],
-  ["puke on someone they were hooking up with", "finish"],
+  ["puke on someone mid-hookup", "finish"],
   ["scream during a Brazilian wax"],
   ["lie about their body count"],
   ["hook up with a married person", "shot"],
@@ -306,8 +306,8 @@ const prompts: Prompt[] = [
   ["pay for someone's OnlyFans", 3],
   ["pee in a sink at a party"],
   ["eat ass on a first date", 3],
-  ["sext the wrong person"],
-  ["have sex at a family wedding", 3],
+  ["get caught sexting at the dinner table"],
+  ["hook up with someone at a funeral", 3],
   ["clog a hookup's toilet", 3],
   ["shit with the door open"],
   ["sniff their own fingers"],
@@ -320,10 +320,10 @@ const prompts: Prompt[] = [
   ["flash a cop", 3],
   ["get crabs"],
   ["have had a threesome", 3],
-  ["lose a phone with a sex tape on it", "shot"],
+  ["do the walk of shame on someone's Ring camera", "shot"],
   ["sleep with their boss", 3],
   ["jerk off at work"],
-  ["get caught peeing in public", 3],
+  ["fall asleep on the toilet at a party", 3],
   ["throw up in their mouth and swallow it"],
   ["lick a stranger on a dare"],
   ["get a hickey after 30"],
@@ -331,14 +331,14 @@ const prompts: Prompt[] = [
   ["streak through somewhere public", 3],
   ["make out with a stranger in front of their date", 3],
   ["use their roommate's toothbrush"],
-  ["lose their virginity somewhere embarrassing"],
+  ["have the most embarrassing virginity story"],
   ["talk dirty and make it weird"],
   ["google their symptoms after a hookup"],
   ["shit in the woods this weekend"],
   ["get a nipple piercing on a whim"],
   ["moan in their sleep"],
   ["have sex in a pool and lie about it", 3],
-  ["get walked in on by a parent", 3],
+  ["walk in on their parents", 3],
   ["fall asleep mid-hookup"],
 ];
 
