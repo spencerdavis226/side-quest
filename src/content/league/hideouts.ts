@@ -474,7 +474,7 @@ export const hideouts = [
         "Team Star",
         "star-car",
         "Starmobile",
-        "A boss revs a Starmobile, a car made of Revavroom. Rev with your mouth, then roll 2d6.",
+        "A boss revs a Starmobile made of Revavroom. Rev with your mouth, then roll 2d6.",
         pair(
           "Run over. Drink 3.",
           "It stalls. Give 3.",

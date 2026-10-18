@@ -75,7 +75,7 @@ export const hoenn: Region = {
       "norman",
       "Norman",
       "Balance",
-      "Norman is your dad and he's disappointed. Make the table laugh within 30 seconds or drink 6.",
+      "Your dad Norman is disappointed. Make the table laugh in 30 seconds or drink 6.",
     ),
     leader(
       5,
@@ -295,7 +295,7 @@ export const hoenn: Region = {
     legendary(
       "regi-trio",
       "The Regi Trio",
-      "Three golems behind a puzzle nobody solved without a guide. Admit you used one, then roll d20.",
+      "Nobody beat the Regi puzzle without a guide. Admit you used one, then roll d20.",
       d20(
         LEGENDARY_NEED,
         "Explosion. Drink 5, and admit what else you looked up a guide for.",

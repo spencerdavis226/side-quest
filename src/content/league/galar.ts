@@ -73,7 +73,7 @@ export const galar: Region = {
       "gordie",
       "Gordie",
       "Rock",
-      "Gordie's mom is a gym leader too, and he won't shut up about it. Yell \"MOM!\" then roll d20.",
+      "Gordie's mom is a gym leader too, and he won't shut up. Yell \"MOM!\" then roll d20.",
       d20(
         GYM_NEED[5],
         "Stealth Rock. Drink 5 and yell for your mom again.",
@@ -114,7 +114,7 @@ export const galar: Region = {
       "marnie",
       "Marnie",
       "Dark",
-      "Lead the table in a Team Yell chant for Marnie. Anyone doesn't join in: you drink 5.",
+      "Lead the table in a Team Yell chant for Marnie. Anyone sits it out: you drink 5.",
     ),
     {
       ...cupFinalist(
@@ -140,7 +140,7 @@ export const galar: Region = {
       "bede",
       "Bede",
       "Fairy",
-      "Bede is a spoiled brat. Throw a 10-second tantrum. Table votes not bratty enough: drink 5.",
+      "Bede is a brat. Throw a 10-second tantrum. Table says too tame: drink 5.",
     ),
     cupFinalist(
       "allister",

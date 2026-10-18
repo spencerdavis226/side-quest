@@ -112,7 +112,7 @@ export const unova: Region = {
       "shauntal",
       "Shauntal",
       "Ghost",
-      "Shauntal writes smut about trainers. Narrate 20 seconds of it about two players. Stop: drink 5.",
+      "Shauntal writes smut. Narrate 20 seconds of it about two players. Stop: drink 5.",
     ),
     eliteFour(
       "grimsley",

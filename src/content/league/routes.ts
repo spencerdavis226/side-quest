@@ -167,7 +167,7 @@ const route1: CardDefinition[] = [
     0,
     "route-two-paths",
     "Two Paths",
-    "A short path through tall grass, or a long one where a trainer is spoiling for a fight.",
+    "A short path through tall grass, or a long one where a trainer wants a fight.",
     ["Tall grass", "Pick a fight"],
   ),
 ];
@@ -278,9 +278,9 @@ const route2: CardDefinition[] = [
     1,
     "route-hiker",
     "Hiker Dave",
-    "Hiker Dave hasn't showered since Mt. Moon and wants a hug. Hug your left neighbor, roll d20.",
+    "Hiker Dave hasn't showered since Mt. Moon. Hug your left neighbor. Roll d20.",
     vs(
-      "Geodude to the face. Drink 3 and hug him again.",
+      "Geodude to the face. Drink 3 and hug them again.",
       "Dave heads back up the mountain. Your left neighbor drinks 2 for the smell.",
     ),
   ),
@@ -323,7 +323,7 @@ const route2: CardDefinition[] = [
     1,
     "route-pewter-center",
     "Pewter Center",
-    "The Pokémon Center smells like antiseptic and Brock's cologne. Everyone breathes in and drinks 1.",
+    "The Center reeks of antiseptic and Brock's cologne. Everyone breathes in and drinks 1.",
   ),
   mart(
     1,
@@ -383,7 +383,7 @@ const route3: CardDefinition[] = [
     2,
     "route-psyduck",
     "Psyduck",
-    "Wild Psyduck is clutching its head and staring at nothing. Clutch yours, then roll d20.",
+    "Wild Psyduck clutches its head, staring at nothing. Clutch yours, then roll d20.",
     vs("Confusion. Drink 3.", "It waddles off, still confused. Give 2."),
     {
       curse: "hex",
@@ -432,7 +432,7 @@ const route3: CardDefinition[] = [
     2,
     "route-pikipek",
     "Pikipek",
-    "Wild Pikipek is drilling into a tree. Then your skull. Knock on the table, then roll 2d6.",
+    "Wild Pikipek drills a tree. Then your skull. Knock on the table, then roll 2d6.",
     pair(
       "Woodpecked. Drink 3.",
       "It finds a better tree. Give 2.",
@@ -471,7 +471,7 @@ const route3: CardDefinition[] = [
       2,
       "route-team-rocket",
       "Prepare for Trouble",
-      "Jessie and James net you from their balloon. Recite what you can of their motto, then roll d6.",
+      "Jessie and James net you from their balloon. Recite their motto, then roll d6.",
       moves(
         ["Netted. Drink 3.", "Meowth scratches. Drink 2."],
         [
@@ -498,13 +498,13 @@ const route3: CardDefinition[] = [
     2,
     "route-evolving-1",
     "What? It's Evolving!",
-    "Your starter starts glowing in the middle of the road. Everyone hum the evolution music.",
+    "Your starter glows in the middle of the road. Everyone hums the evolution music.",
   ),
   center(
     2,
     "route-cerulean-center",
     "Cerulean Center",
-    "Nurse Joy. Again. Same face, different town. Everyone swears it's the same one and drinks 1.",
+    "Nurse Joy again. Same face, new town. Everyone swears it's the same one and drinks 1.",
   ),
   mart(
     2,
@@ -537,7 +537,7 @@ const route3Aces: CardDefinition[] = [
     2,
     "route-ace-rocket-recruiter",
     "The Recruiter",
-    "The last guy on Nugget Bridge gives you a nugget, then asks you to join Team Rocket. Roll d20.",
+    "Nugget Bridge's last man hands you a nugget and a Team Rocket pitch. Roll d20.",
     vs(
       "You signed something. Drink 4 and do the Rocket pose.",
       "You keep the nugget and don't join. Give 3.",
@@ -592,7 +592,7 @@ const route4: CardDefinition[] = [
     3,
     "route-croagunk",
     "Croagunk",
-    "Wild Croagunk pokes you in the kidney and laughs. Poke your right neighbor, then roll 2d6.",
+    "Wild Croagunk pokes your kidney and laughs. Poke your right neighbor, then roll 2d6.",
     pair(
       "Poison Jab. Drink 3.",
       "You poke back harder. Give 3.",
@@ -656,7 +656,7 @@ const route4: CardDefinition[] = [
     3,
     "route-psychic",
     "Psychic Tyron",
-    "Think of a number from 1 to 5. Psychic Tyron (your left neighbor) guesses it. Right: drink 3.",
+    "Think of a number from 1 to 5. Your left neighbor guesses it. Right: drink 3.",
   ),
   hazard(
     3,
@@ -743,7 +743,7 @@ const route4Aces: CardDefinition[] = [
     3,
     "route-ace-gambler",
     "Gambler Lou",
-    "Gambler Lou bets his whole stack on one battle. Push your drink to the middle, then roll d20.",
+    "Gambler Lou bets his whole stack. Push your drink to the middle, then roll d20.",
     vs("He takes the pot. Drink 4.", "You clean him out. Give 4.", {
       crit: "He hands over his lucky coin too. Give 8.",
     }),
@@ -1215,7 +1215,7 @@ const route7: CardDefinition[] = [
     6,
     "route-sage",
     "Sage Li",
-    "Sage Li asks: what has keys but opens no locks? Answer in five seconds. Wrong: drink 4.",
+    "Sage Li asks: what has keys but opens no locks? 5 seconds. Wrong: drink 4.",
   ),
   hazard(
     6,
@@ -1253,7 +1253,7 @@ const route7: CardDefinition[] = [
     6,
     "route-cinnabar-center",
     "Cinnabar Center",
-    "A Pokémon Center on a volcano. Nurse Joy is sweating. Everyone wipes their brow and drinks 1.",
+    "A Pokémon Center on a volcano. Nurse Joy is sweating. Everyone mops up and drinks 1.",
   ),
   mart(
     6,
@@ -1396,7 +1396,7 @@ const route8: CardDefinition[] = [
     7,
     "route-cooltrainer-pair",
     "Cooltrainer Duo",
-    "Two Cooltrainers with matching jackets and matching Dragonites. Pick a partner, then roll 2d6.",
+    "Two Cooltrainers, matching jackets, matching Dragonites. Pick a partner, then roll 2d6.",
     pair(
       "Double Outrage. You and your partner drink 4.",
       "Their jackets are ruined. You and your partner give 2 each.",

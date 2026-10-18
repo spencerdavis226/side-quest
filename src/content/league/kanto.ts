@@ -83,7 +83,7 @@ export const kanto: Region = {
       "koga",
       "Koga",
       "Soul",
-      "Ninja test: within 30 seconds, sip someone else's drink without them noticing. Caught: drink 5.",
+      "Ninja test: sneak a sip of someone's drink within 30 seconds. Caught: drink 5.",
     ),
     leader(
       5,
@@ -97,7 +97,7 @@ export const kanto: Region = {
       "blaine",
       "Blaine",
       "Volcano",
-      "Quiz time! The table asks you 3 trivia questions. Get 2 right to win. Each miss: drink 3.",
+      "Quiz! The table asks 3 trivia questions. Get 2 right. Each miss: drink 3.",
     ),
     leader(
       7,
@@ -175,7 +175,7 @@ export const kanto: Region = {
       "blue",
       "Blue",
       "Kanto",
-      "Your rival got here first and smells like your mom's perfume. The whole table fights. Roll d20.",
+      "Blue got here first and smells like your mom. The whole table fights. Roll d20.",
       rollTable(1, 20, [
         {
           min: 1,

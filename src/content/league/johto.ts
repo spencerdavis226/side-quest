@@ -64,7 +64,7 @@ export const johto: Region = {
       "morty",
       "Morty",
       "Fog",
-      "Morty's Gastly stares you down. Staring contest with the player opposite. Blink first: drink 4.",
+      "Morty's Gastly stares. Out-stare the player opposite you. Blink first: drink 4.",
     ),
     leader(
       4,
@@ -78,7 +78,7 @@ export const johto: Region = {
       "jasmine",
       "Jasmine",
       "Mineral",
-      "Hold a full drink at arm's length for 30 seconds. Lower it: finish it. Make it: give 4.",
+      "Hold a full drink at arm's length, 30 seconds. Lower it: finish it. Win: give 4.",
     ),
     leader(
       6,
@@ -110,7 +110,7 @@ export const johto: Region = {
       "will",
       "Will",
       "Psychic",
-      "The table secretly picks a number from 1 to 10. Guess it in three tries; each miss: drink 2.",
+      "The table secretly picks a number from 1 to 10. Guess it in three; each miss: drink 2.",
     ),
     eliteFour(
       "karen",
@@ -187,7 +187,7 @@ export const johto: Region = {
     legendary(
       "beasts",
       "Raikou, Entei, Suicune",
-      "Three dogs that bolt when you look. Point at whoever's likeliest to bolt too, then roll d20.",
+      "Three dogs that bolt when you look. Point at whoever's likeliest to bolt, then roll d20.",
       d20(
         LEGENDARY_NEED,
         "It ran away. Again. You and your pick drink 3.",

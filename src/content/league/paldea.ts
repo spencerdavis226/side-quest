@@ -83,7 +83,7 @@ export const paldea: Region = {
       "ryme",
       "Ryme",
       "Ghost",
-      "Ryme is a rapper. Freestyle four bars about your left neighbor. Table votes trash: drink 6.",
+      "Ryme raps. Freestyle 4 bars on your left neighbor. Table votes trash: drink 6.",
     ),
     leader(
       6,
@@ -149,7 +149,7 @@ export const paldea: Region = {
       "hassel",
       "Hassel",
       "Dragon",
-      "Hassel weeps at art. Describe the table like a painting. Nobody laughs or tears up: drink 5.",
+      "Hassel weeps at art. Paint the table in words. No laugh or tear: drink 5.",
     ),
     eliteFour(
       "crispin",
@@ -169,7 +169,7 @@ export const paldea: Region = {
       "amarys",
       "Amarys",
       "Steel",
-      'Amarys doesn\'t do friends. Get your right neighbor to say "friend" in 30 seconds or drink 5.',
+      'Amarys hates friends. Get a neighbor to say "friend" in 30 seconds or drink 5.',
     ),
     eliteFour(
       "lacey",

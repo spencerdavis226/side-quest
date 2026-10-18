@@ -41,7 +41,7 @@ export const sinnoh: Region = {
       "maylene",
       "Maylene",
       "Cobble",
-      "Maylene fights barefoot. Shoes off, then thumb-wrestle your left neighbor. Lose: drink 5.",
+      "Maylene fights barefoot. Shoes off, thumb-war your left neighbor. Lose: drink 5.",
     ),
     leader(
       3,
@@ -64,14 +64,14 @@ export const sinnoh: Region = {
       "fantina",
       "Fantina",
       "Relic",
-      "Fantina wants ze dance. Dance 15 seconds with no music. Table votes not magnifique: drink 5.",
+      "Dance for Fantina: 15 seconds, no music. Table says not magnifique: drink 5.",
     ),
     leader(
       5,
       "byron",
       "Byron",
       "Mine",
-      "Byron is Roark's dad and louder about it. Shout your biggest flex at the table, then roll d20.",
+      "Byron is Roark's dad, and louder. Shout your biggest flex, then roll d20.",
       d20(
         GYM_NEED[5],
         "Iron Defense. Drink 5, and the table rates your flex out of 10.",
@@ -143,7 +143,7 @@ export const sinnoh: Region = {
       "lucian",
       "Lucian",
       "Psychic",
-      "Lucian reads mid-battle. Dramatically read your last sent text. Refuse: finish your drink.",
+      "Lucian reads mid-battle. Perform your last sent text. Refuse: finish your drink.",
     ),
   ],
 
