@@ -225,21 +225,10 @@ p {
      never rendered soft. Zero without a top inset (desktop, SE-sized phones). */
   margin-top: min(20px, var(--top-safe));
 }
+/* The icon button's chrome (colour, border, size, shadow) is in theme.css. */
 .icon-button {
   display: grid;
   place-items: center;
-  border: 1px solid #ab88516b;
-  border-radius: 14px;
-  width: 50px;
-  height: 50px;
-  background: linear-gradient(#4d3726c9, #231a15ed);
-  box-shadow:
-    inset 0 1px #e3be7040,
-    0 3px 0 #110b08,
-    0 5px 12px #0006;
-  font-size: 2rem;
-  color: #e4c38e;
-  line-height: 0;
 }
 .ui-icon {
   display: block;
@@ -389,15 +378,12 @@ p {
   padding: 13px 5px;
   margin: 10px auto 0;
   color: #edcc90;
-  font-size: 1.1rem;
 }
 .notice {
   background: #47331c;
   border: 1px solid #b49768;
   padding: 14px;
   border-radius: 10px;
-  font-size: 1rem;
-  line-height: 1.5;
   margin: 16px 0;
 }
 /* A selected pack's one-line setup reminder; quieter than a Notice. */
@@ -626,15 +612,6 @@ dialog {
   max-height: calc(var(--app-height) * 0.85);
   overflow: auto;
   color: #f4dfb7;
-  border: 2px solid #967144;
-  border-radius: 18px 14px 17px 13px;
-  padding: 24px;
-  background:
-    linear-gradient(#241b13e8, #1b150feb),
-    url("/art/table.webp") center/cover;
-  box-shadow:
-    inset 0 1px #e1bc6e55,
-    0 25px 90px #000a;
 }
 dialog::backdrop {
   background:
@@ -657,8 +634,6 @@ dialog.closing::backdrop {
     serif;
 }
 dialog p {
-  font-size: 1.08rem;
-  line-height: 1.55;
   margin-bottom: 24px;
 }
 .menu-row {
@@ -668,10 +643,8 @@ dialog p {
   background: none;
   border: 0;
   border-bottom: 1px solid #a7825144;
-  min-height: 64px;
   width: 100%;
   padding: 12px 0;
-  font-size: 1.15rem;
   text-align: left;
 }
 .menu-row > span {
@@ -717,25 +690,12 @@ dialog p {
   padding: 12px;
   border: 1px solid #b89763;
   border-radius: 10px;
-  background: #2b2418;
   color: #ebc98d;
-  font-size: 1.1rem;
   min-height: 50px;
-}
-@media (min-height: 760px) {
-  .intro {
-    padding: 15px 0 42px;
-  }
-  .setup-section {
-    margin-bottom: 32px;
-  }
 }
 @media (min-width: 700px) {
   .app {
     padding-top: max(26px, var(--top-safe));
-  }
-  .intro {
-    padding-top: 35px;
   }
   .playing {
     --play-chrome: calc(
@@ -747,16 +707,10 @@ dialog p {
     padding-top: 16px;
   }
 }
+/* The one live rule of the narrow-phone block (theme.css restyles the rest). */
 @media (max-width: 360px) {
-  .lengths {
-    gap: 5px;
-  }
   .pack {
     gap: 6px;
-    padding-right: 12px;
-  }
-  .pack-copy strong {
-    font-size: 1.25rem;
   }
 }
 /* Reduce Motion: every animation and transition runs to its end at once

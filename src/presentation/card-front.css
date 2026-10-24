@@ -252,8 +252,7 @@
   }
 }
 
-.enlarged .study-rules p,
-.enlarged .card-copy p {
+.enlarged .study-rules p {
   font-size: clamp(2.125rem, 9.5cqw, max(2.625rem, 8.94cqw));
 }
 
