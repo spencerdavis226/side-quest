@@ -1,12 +1,12 @@
 # Card review sheet
 
-Generated 2026-10-18 by `npm run cards:review`. Do not edit by hand — edit the
+Generated 2026-10-24 by `npm run cards:review`. Do not edit by hand — edit the
 source modules under `src/content` and regenerate. Each row is one card;
 the Review column is intentionally blank so you can mark it up.
 
 ## The Core deck (`core`)
 
-96 cards · 13 sip · 21 group · 10 category · 37 challenge · 15 rule · 16 dice
+275 cards · 64 sip · 47 group · 24 category · 99 challenge · 41 rule · 54 dice
 
 | Review | Title | ID | Cat | Rules | Dice, secret or timer |
 | --- | --- | --- | --- | --- | --- |
@@ -23,96 +23,6 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Walk of Shame | `core.walk-of-shame` | sip | Roll d6 to find out where you woke up this morning. | 1d6 — 1-1: Behind a Waffle House. Finish your drink. 2-3: Your ex's couch. Drink 3. 4-5: Your own bed, alone. Drink 1. 6-6: A yacht. Give 6. |
 | ☐ | Still Following | `core.still-following` | sip | Drink 1 for every ex you still follow. The table may audit your phone. |  |
 | ☐ | Sloppy Seconds | `core.sloppy-seconds` | sip | Finish your left neighbor's drink, then get them a fresh one. |  |
-| ☐ | Last Call | `core.last-call` | group | Everyone drinks 2. Look around: one of these people is your best option tonight. |  |
-| ☐ | Cheap Date | `core.cheap-date` | group | Cheapest drink at the table drinks 3. Broke behavior. |  |
-| ☐ | Big Money | `core.baller` | group | Priciest drink at the table gives 4. Trickle-down economics. |  |
-| ☐ | Group Project | `core.group-project` | group | Hands up. Last hand up drinks 3 and does all the work. |  |
-| ☐ | Cheers, Idiots | `core.cheers-idiots` | group | Everyone clinks with everyone. Break eye contact and it's seven years of bad sex. Drink 2. |  |
-| ☐ | Girls Drink | `core.girls-drink` | group | Girls drink 2. Anyone who's cried in a bar bathroom this year drinks 2 more. |  |
-| ☐ | Guys Drink | `core.guys-drink` | group | Guys drink 2. Anyone who's ever peed in a sink drinks 2 more. |  |
-| ☐ | Big Friendly Giant | `core.tallest` | group | Tallest player drinks 2. Shortest player gives 2 and finally feels powerful. |  |
-| ☐ | New Blood | `core.new-blood` | group | First time Side Quest players drink 13. Get absolutely fucked. |  |
-| ☐ | Fashionably Late | `core.late-arrival` | group | Last to arrive drinks 2 and gives the real reason. We all know it was a poop. |  |
-| ☐ | Couples Drink | `core.couples` | group | Couples drink 2 and say where they last had sex. Singles give 2 and pretend not to care. |  |
-| ☐ | Ace Is Waterfall | `core.waterfall` | group | Start a waterfall. Everyone drinks until the player before them stops. |  |
-| ☐ | Body Count | `core.body-count` | group | Roll d20. Anyone whose body count beats it drinks 3. Lying is between you and God. | 1d20 — Body count over {total}? Drink 3. |
-| ☐ | Who Farted | `core.who-farted` | group | On three, point at whoever farted. Most pointed drinks 3. Denying it costs 2 more. |  |
-| ☐ | Phone Check | `core.phone-check` | group | Everyone puts their phone face up on the table. First to buzz drinks 3 and reads it aloud. |  |
-| ☐ | Screenshot | `core.screenshot` | group | Everyone opens their last screenshot. The most damning, by vote, drinks 3. |  |
-| ☐ | Spicy Camera Roll | `core.camera-roll` | group | Anyone with a nude in their camera roll right now drinks 2. Liars burn in hell. |  |
-| ☐ | Toilet Talk | `core.toilet-talk` | group | Everyone says how long their longest dump lasted. Longest drinks 3. Call bullshit freely. |  |
-| ☐ | Ex Files | `core.ex-files` | group | Anyone who's hooked up with someone at this table drinks 3. Don't look at each other. |  |
-| ☐ | Wipe Check | `core.wipe-check` | group | Everyone says whether they wipe standing or sitting. The smaller side drinks 2. |  |
-| ☐ | Nipple Check | `core.nipple-check` | group | Pierced nipples, past or present, give 3. Everyone else drinks 1 out of respect. |  |
-| ☐ | Categories | `core.categories` | category | Pick a category. First repeat or blank drinks 3. |  |
-| ☐ | Rhyme Time | `core.rhyme-time` | category | Pick a word. Clockwise, rhyme it. First bad rhyme or blank drinks 3. |  |
-| ☐ | Never Have I Ever | `core.never-have-i` | category | Say one. Make it dirty. Anyone who has drinks 2. |  |
-| ☐ | Story Time | `core.story-time` | category | Clockwise, build an erotic story one word at a time. First to stall or laugh drinks 2. |  |
-| ☐ | Bad Baby Names | `core.bad-baby-names` | category | Name terrible baby names. First repeat or blank drinks 3. |  |
-| ☐ | Ex-Cuses | `core.ex-cuses` | category | Clockwise, name reasons you dumped someone. First repeat or blank drinks 3. |  |
-| ☐ | Cheap Beers | `core.cheap-beers` | category | Name cheap beers. First repeat or blank drinks 3. |  |
-| ☐ | Euphemisms | `core.euphemisms` | category | Clockwise, name words for a penis. First repeat or blank drinks 3. |  |
-| ☐ | Kama Sutra | `core.kama-sutra` | category | Clockwise, name sex positions; made-up ones count. First repeat or blank drinks 3. |  |
-| ☐ | Pillow Talk | `core.pillow-talk` | category | Clockwise, name things you should never say during sex. First repeat or blank drinks 3. |  |
-| ☐ | Dice Tax | `core.dice-tax` | challenge | The IRS is auditing your drink. Roll d6. | 1d6 — 1-2: Clean books. Drink 1. 3-4: Creative accounting. Drink 2. 5-6: Fraud. Drink 4 and open your banking app for the table. |
-| ☐ | Give a Shit | `core.give-a-shit` | challenge | Roll d6. Give that many to whoever you'd least want to see naked. | 1d6 — Give {total} to whoever you'd least want to see naked. |
-| ☐ | Big Dick Energy | `core.high-roller` | challenge | Roll d6. That's your size. | 1d6 — 1-2: Two inches. Drink 4 and sit quietly. 3-4: Average. Drink 2. Nobody's impressed. 5-6: Hung. Give 5 and adjust yourself. |
-| ☐ | Same Shit | `core.same-shit` | challenge | Roll 2d6. Matching dice means you're exactly as basic as we thought. | 2d6 — 2-12: Weirdly original. Give 3. |
-| ☐ | Fuck Around & Find Out | `core.fuck-around` | challenge | Roll d20 and find out. | 1d20 — 1-1: Natural 1! Take a shot and tell us your worst hookup. 2-19: Drink 2. You found out nothing. 20-20: Natural 20! Give a shot. Smug bastard. |
-| ☐ | God's Drunkest Soldier | `core.chosen-one` | challenge | Roll d20. Odd: drink it. Even: give it. God gave you this burden. | 1d20 — 1-19: Drink {total}. 2-20: Give {total}. |
-| ☐ | Rock Paper Drink | `core.rock-paper-drink` | challenge | Rock paper scissors anyone you want. Loser drinks 3 and calls the winner daddy. |  |
-| ☐ | Four Is Floor | `core.kings-four` | challenge | Everyone touches the floor. Last one down drinks 2. |  |
-| ☐ | Truth or Drink | `core.truth-or-drink` | challenge | The table asks you one filthy question. Answer honestly, or roll d6 and drink it. | 1d6 — Coward. Drink {total}. |
-| ☐ | Rant Mode | `core.rant` | challenge | Rant for 20 seconds about something you hate. Run dry early: roll d6 and drink it. | 1d6 — Ran out of hate. Drink {total}. |
-| ☐ | Do the Impression | `core.impression` | challenge | Do an impression of someone here having sex. You both drink 3. |  |
-| ☐ | Stare Down | `core.stare-down` | challenge | Stare down someone. First to blink or laugh drinks 2. |  |
-| ☐ | Dragon's Breath | `core.dragon-breath` | challenge | Breathe on the person to your right. They rate it out of 10. Over 5: you drink 3. |  |
-| ☐ | Prophecy | `core.prophecy` | challenge | Predict who finishes their drink next. Right: give 3. Wrong: drink 3. |  |
-| ☐ | Side Quest | `core.side-quest` | challenge | Give the table a dare. Anyone who refuses drinks 2. |  |
-| ☐ | Gas Station Sushi | `core.gas-station-sushi` | challenge | You ate the gas station sushi. Roll d6. | 1d6 — 1-1: You shit yourself. Finish your drink. 2-3: Cold sweats. Drink 3. 4-5: Rumbling, but holding. Drink 2. 6-6: Iron gut. Give 4. |
-| ☐ | Lap Dance Roulette | `core.lap-dance` | challenge | Roll d6 and count that many seats to your left. That's who gets a 10-second lap dance. | 1d6 — {total} seats left. Dance for them or drink 5. |
-| ☐ | Hot Seat | `core.hot-seat` | challenge | Roll d6. That many players each ask you a yes-or-no question. Lie and the table knows. | 1d6 — {total} questions. Each lie: drink 3. |
-| ☐ | Nat One | `core.nat-one` | challenge | Roll d20. Pray. | 1d20 — 1-1: Natural 1! Critical fail. Finish your drink and confess your worst hookup. 2-19: Drink 3. The gods are bored. 20-20: Natural 20! Make anyone finish their drink. |
-| ☐ | Hostage Video | `core.hostage-video` | challenge | Film a hostage video begging your mom for bail. Show the table. Weak acting: drink 3. |  |
-| ☐ | Dramatic Reading | `core.dramatic-reading` | challenge | Your left neighbor picks one of your texts. Read it aloud like erotica. Refuse: drink 4. |  |
-| ☐ | Search History | `core.search-history` | challenge | Read your last three searches aloud. Each one you won't read: drink 2. |  |
-| ☐ | Hall Pass | `core.hall-pass` | challenge | Name your celebrity hall pass. If anyone laughs, drink 3. |  |
-| ☐ | Dating Profile | `core.dating-profile` | challenge | Your right neighbor pitches you as a dating profile. Hate it: drink 3. Love it: they do. |  |
-| ☐ | Bad Kisser | `core.bad-kisser` | challenge | Describe your worst kiss in detail. Anyone winces: give 3. Nobody winces: drink 3. |  |
-| ☐ | Pickup Artist | `core.pickup-artist` | challenge | Try your worst pickup line on someone. They laugh: give 3. They don't: drink 3. |  |
-| ☐ | Drunk Dial | `core.drunk-dial` | challenge | Call the third person in your recents and say "I know what you did." Chicken out: drink 4. |  |
-| ☐ | Meg Ryan | `core.meg-ryan` | challenge | Fake an orgasm for the table. Weak effort, as judged by the table: drink 3. |  |
-| ☐ | Confession Booth | `core.confession-booth` | challenge | Confess the grossest thing you did this year. Not gross enough for the table: drink 3. |  |
-| ☐ | Roast Me | `core.roast-me` | challenge | Clockwise, everyone describes you in one word. Drink 1 for every word that stings. |  |
-| ☐ | Wet Willy | `core.wet-willy` | challenge | Pick someone. They take a wet willy from you or drink 3. Their call. |  |
-| ☐ | Smell Check | `core.smell-check` | challenge | Sniff your right neighbor's armpit and rate it out loud. Under 5: they drink 3. |  |
-| ☐ | Ugly Crier | `core.ugly-crier` | challenge | Do your best ugly cry for 10 seconds. If the table isn't moved, drink 3. |  |
-| ☐ | Useless Fact | `core.useless-fact` | challenge | Share an impressive useless fact. If nobody reacts, drink 2. |  |
-| ☐ | The Receipt | `core.the-receipt` | challenge | Read your last purchase aloud. Cringe? Drink 3. |  |
-| ☐ | Gym Class | `core.gym-class` | challenge | Do 10 jumping jacks or drink 3. Anyone caught watching too closely drinks 1. |  |
-| ☐ | Debate Club | `core.debate-club` | challenge | Defend an opinion nobody shares. Lose the vote: drink 3. |  |
-| ☐ | Rulemaster | `core.rulemaster` | rule | Make a rule for the rest of the game. Make it stupid. Breakers drink 2. |  |
-| ☐ | Who the Fuck Are You? | `core.no-names` | rule | Until your next turn, nobody uses names. Slip = drink 2. |  |
-| ☐ | Church Mode | `core.potty-mouth` | rule | Until your next turn, nobody swears. Slip = drink 2. |  |
-| ☐ | Cursed Number | `core.cursed-number` | rule | Roll d6. Nobody may say that number until your next turn. Slip = drink 2. | 1d6 — {total} is banned until your next turn. Say it: drink 2. |
-| ☐ | Buffalo | `core.buffalo` | rule | It's gotta go. |  |
-| ☐ | Little Green Man | `core.little-green-man` | rule | Until your next turn, everyone removes the tiny man before drinking. Slip = drink 2. |  |
-| ☐ | Question Master | `core.question-master` | rule | Until your next turn: anyone who answers your question drinks 2. |  |
-| ☐ | Eight Is Mate | `core.kings-eight` | rule | Pick a mate until your next turn. When one of you drinks, both drink, holding hands. |  |
-| ☐ | Dungeon Master | `core.dungeon-master` | rule | Until your next turn, you narrate in third person. Slip = drink 2. |  |
-| ☐ | Phone Sex Operator | `core.phone-sex` | rule | Until your next turn, everyone talks like a phone sex operator. Slip: drink 2. |  |
-| ☐ | Mom's Here | `core.moms-here` | rule | Until your next turn, everyone acts like their mom is here. Anything she'd hate: drink 2. |  |
-| ☐ | That's What She Said | `core.what-she-said` | rule | For the rest of the game, the first to call "that's what she said" on a setup gives 2. |  |
-| ☐ | Hall Monitor | `core.hall-monitor` | rule | Until your next turn, nobody pees without asking you. Ask nicely or drink 2. |  |
-| ☐ | Horny Jail | `core.horny-jail` | rule | Until your next turn, anyone who says something horny gets bonked and drinks 2. |  |
-| ☐ | Formal Night | `core.formal-night` | rule | Until your next turn, everyone addresses others as my liege. Slip: drink 2. |  |
-
-## The House deck (`house`)
-
-94 cards · 29 sip · 15 group · 14 category · 27 challenge · 9 rule · 15 dice
-
-| Review | Title | ID | Cat | Rules | Dice, secret or timer |
-| --- | --- | --- | --- | --- | --- |
 | ☐ | California Sober | `house.sheet-004` | sip | Get pitted and smoke something, then drink 1d6 water. Else, take a shot. | 1d6 — Drink {total} water. |
 | ☐ | The Game Giveth | `house.sheet-006` | sip | Give 3 drinks. If "The Game Taketh" was already played, multiply by 1d6. |  |
 | ☐ | The Game Taketh | `house.sheet-007` | sip | Take 3 drinks. If "The Game Giveth" was already played, multiply by 1d6. |  |
@@ -122,11 +32,11 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Same | `house.sheet-036` | sip | You called Same, give d6 | 1d6 — Give {total}. |
 | ☐ | Same | `house.sheet-037` | sip | You didn't call Same, take d6 | 1d6 — Drink {total}. |
 | ☐ | The Rock | `house.sheet-038` | sip | Finish your drink, you don't get to pass it along |  |
-| ☐ | Drink, bitch | `house.sheet-045` | sip | If you drank last card, drink again, bitch |  |
+| ☐ | Drink, bitch | `house.sheet-045` | sip | If you drank on the last card, drink again, bitch |  |
 | ☐ | Never Have I Ever | `house.sheet-050` | sip | Drink if you've flown First Class. Drink 3 if you've joined the mile-high club |  |
 | ☐ | The Cino | `house.sheet-051` | sip | Drink if you've lost money in the casino |  |
 | ☐ | Could ya just | `house.sheet-055` | sip | Drink 1 |  |
-| ☐ | Bu-bu-buff.. | `house.sheet-059` | sip | Drink 1d6 for almost getting buffaloed | 1d6 — Drink {total}. |
+| ☐ | Bu-bu-buff… | `house.sheet-059` | sip | Drink 1d6 for almost getting buffaloed | 1d6 — Drink {total}. |
 | ☐ | Straight to jail | `house.sheet-063` | sip | Finish your drink |  |
 | ☐ | Singles | `house.sheet-064` | sip | Drink if you're single. Drink 2 more if it's "by choice" |  |
 | ☐ | Couples | `house.sheet-065` | sip | Take 1 drink for every year you've been in a relationship |  |
@@ -142,14 +52,57 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Split the G | `house.sheet-079` | sip | You fucking blew it, drink 1d6 drinks | 1d6 — Drink {total}. |
 | ☐ | Blessing & a Curse | `house.sheet-094` | sip | Give 1d6 drinks and take a different 1d6 drinks | 2d6 — Give {first} and drink {second}. |
 | ☐ | Vowels | `house.sheet-102` | sip | Drink for every vowel in your name |  |
+| ☐ | Fuck You In Particular | `cabin.fuck-you` | sip | The game has a personal problem with you. Roll d6 and take it. | 1d6 — 1-1: It hates you a lot. Drink 9. 2-2: Drink 8. 3-3: Drink 7. 4-4: Drink 6. 5-5: Drink 5. 6-6: It only mildly hates you. Drink 4. |
+| ☐ | For Safety | `cabin.for-safety` | sip | Make your next drink a water or something hydrating. |  |
+| ☐ | International Eric | `cabin.international-eric` | sip | Take a shot of liquor. You like it now. |  |
+| ☐ | Drinks On Me | `cabin.drinks-on-me` | sip | Get someone a fresh drink. They pay you something. You both drink 1. |  |
+| ☐ | Ride the Bus | `cabin.ride-the-bus` | sip | You picked a suit and you're totally wrong. Drink 4. |  |
+| ☐ | Atlanta Airport | `cabin.atlanta-airport` | sip | These planes are sus. Roll d6 and drink that many. | 1d6 — Drink {total}. |
+| ☐ | Going the Distance | `cabin.going-the-distance` | sip | Give 1 for every hour it took you to get here. Idle time doesn't count. |  |
+| ☐ | Bartender Greg | `cabin.bartender-greg` | sip | Hit on someone. Roll d6. You both drink that many. | 1d6 — You both drink {total}. |
+| ☐ | Allegiant Airlines | `cabin.allegiant-airlines` | sip | Cheap as fuck until it's not. Roll d6 and give that many. | 1d6 — Give {total}. |
+| ☐ | Soooo It's Thursday | `cabin.soooo-thursday` | sip | Give 3 to someone to calm their nerves. |  |
+| ☐ | Get Natured | `cabin.get-natured` | sip | Go outside and drink 1 out there. |  |
+| ☐ | How Many Holes? | `cabin.how-many-holes` | sip | Give 1 for every drink you've finished tonight, plus 1. |  |
+| ☐ | Miller Mike | `cabin.miller-mike` | sip | The group picks your next full drink. No complaints. |  |
+| ☐ | Lance | `cabin.lance` | sip | The dragon champion. He's dragon his nuts across your face. Drink 4. |  |
+| ☐ | Michigan | `cabin.michigan` | sip | Drink 3 from an ice-cold drink; explain how it's not even cold. Michigander? Give 3 instead. |  |
+| ☐ | Yoink! | `cabin.yoink` | sip | Pick someone. Roll d6. They drink that many. | 1d6 — They drink {total}. |
+| ☐ | God's Chosen | `cabin.gods-chosen` | sip | Had COVID? Drink 3. Never had it? Give 3. |  |
+| ☐ | Do Not Cum | `cabin.do-not-cum` | sip | Roll d6. Cum. Drink that many. | 1d6 — Drink {total}. |
+| ☐ | Mustard Tiger | `cabin.mustard-tiger` | sip | Drink as much as whoever has drunk the most this game. |  |
+| ☐ | Ursaring | `cabin.ursaring` | sip | Give 13 and apologize |  |
+| ☐ | No take, Give | `cabin.no-take-give` | sip | Give d6 drinks | 1d6 — Give {total}. |
+| ☐ | Whinnie the Pooh | `cabin.whinnie-the-pooh` | sip | Pooh-bear 1d6 drinks | 1d6 — Drink {total}. |
+| ☐ | Last Call | `core.last-call` | group | Everyone drinks 2. Look around: one of these people is your best option tonight. |  |
+| ☐ | Cheap Date | `core.cheap-date` | group | Cheapest drink at the table drinks 3. Broke behavior. |  |
+| ☐ | Big Money | `core.baller` | group | Priciest drink at the table gives 4. Trickle-down economics. |  |
+| ☐ | Group Project | `core.group-project` | group | Pick someone to carry you. They drink 4 for the both of you; you take the credit. |  |
+| ☐ | Cheers, Idiots | `core.cheers-idiots` | group | Everyone clinks with everyone and drinks 2. Break eye contact: seven years of bad sex. |  |
+| ☐ | Girls Drink | `core.girls-drink` | group | Girls drink 2. Anyone who's cried in a bar bathroom this year drinks 2 more. |  |
+| ☐ | Guys Drink | `core.guys-drink` | group | Guys drink 2. Anyone who's ever peed in a sink drinks 2 more. |  |
+| ☐ | Big Friendly Giant | `core.tallest` | group | Tallest player drinks 2. Shortest player gives 2 and finally feels powerful. |  |
+| ☐ | New Blood | `core.new-blood` | group | First time Side Quest players drink 13. Get absolutely fucked. |  |
+| ☐ | Fashionably Late | `core.late-arrival` | group | Last to arrive drinks 2 and gives the real reason. We all know it was a poop. |  |
+| ☐ | Couples Drink | `core.couples` | group | Couples drink 2 and say where they last had sex. Singles give 2 and pretend not to care. |  |
+| ☐ | Ace Is Waterfall | `core.waterfall` | group | You drink first; clockwise, everyone joins. Nobody stops until the player before them does. |  |
+| ☐ | Body Count | `core.body-count` | group | Roll d20. Anyone whose body count beats it drinks 3. Lying is between you and God. | 1d20 — Body count over {total}? Drink 3. |
+| ☐ | Who Farted | `core.who-farted` | group | On three, point at whoever farted. Most pointed drinks 3. Denying it costs 2 more. |  |
+| ☐ | Phone Check | `core.phone-check` | group | All phones face up until your next turn. First to buzz drinks 3 and reads it aloud. |  |
+| ☐ | Screenshot | `core.screenshot` | group | Everyone opens their last screenshot. The most damning, by vote, drinks 3. |  |
+| ☐ | Spicy Camera Roll | `core.camera-roll` | group | Anyone with a nude in their camera roll right now drinks 2. Liars burn in hell. |  |
+| ☐ | Toilet Talk | `core.toilet-talk` | group | Everyone says how long their longest dump lasted. Longest drinks 3. Call bullshit freely. |  |
+| ☐ | Ex Files | `core.ex-files` | group | Anyone who's hooked up with someone at this table drinks 3. Don't look at each other. |  |
+| ☐ | Wipe Check | `core.wipe-check` | group | Everyone says whether they wipe standing or sitting. The smaller side drinks 2. |  |
+| ☐ | Nipple Check | `core.nipple-check` | group | Pierced nipples, past or present, give 3. Everyone else drinks 1 out of respect. |  |
 | ☐ | Dog Vision | `house.sheet-005` | group | Anyone wearing blue or yellow gives 2 |  |
 | ☐ | Ron Stop | `house.sheet-013` | group | Everyone drinks for as long as you can say "Ron stop" |  |
 | ☐ | And the Chicks | `house.sheet-019` | group | 1 guy drinks. All girls drink |  |
 | ☐ | Weinerschnitzel | `house.sheet-020` | group | All dudes drink |  |
-| ☐ | Technophoria | `house.sheet-034` | group | Anyone who has touched a phone drinks 1d6 | 1d6 — Everyone drinks {total}. |
+| ☐ | Technophoria | `house.sheet-034` | group | Anyone who has touched a phone drinks 1d6 | 1d6 — Anyone who's touched a phone drinks {total}. |
 | ☐ | QUICK | `house.sheet-043` | group | Both hands up, last person to do it drinks |  |
 | ☐ | Points | `house.sheet-044` | group | Count to 3 and everyone points at a person to drink. Drink how many points you get |  |
-| ☐ | Mexico v China | `house.sheet-049` | group | Thumbs up for Mexican food, thumbs down for chinese. Minority drinks |  |
+| ☐ | Mexico v China | `house.sheet-049` | group | Thumbs up for Mexican food, thumbs down for Chinese. Minority drinks |  |
 | ☐ | Damn, you're old | `house.sheet-061` | group | Oldest takes a drink and tells us what sex was like before phones |  |
 | ☐ | Big Baby | `house.sheet-076` | group | Drink if you're the youngest, then explain one slang word to the oldest |  |
 | ☐ | GOALLLL | `house.sheet-082` | group | Everyone drinks while the person on your left says GOAAAAALLLLL |  |
@@ -157,7 +110,28 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Call Out | `house.sheet-084` | group | Who reads the group chat but never replies? They drink |  |
 | ☐ | Call Out | `house.sheet-085` | group | Who uses their notes app the most? They drink |  |
 | ☐ | Call Out | `house.sheet-092` | group | Who is most likely to suggest shots? They drink (a shot if they're not scared) |  |
-| ☐ | Story Time | `house.sheet-018` | category | Say a word. The next person repeats and adds on. Loser drink 4. |  |
+| ☐ | Thanos Snap | `cabin.thanos-snap` | group | Pick half the table. Everyone you didn't pick drinks 2. |  |
+| ☐ | Corporate Meeting | `cabin.corporate-meeting` | group | This could have been an email. Anyone working tomorrow drinks 3. |  |
+| ☐ | Café d'Époque | `cabin.cafe-depoque` | group | Everyone here is a total skank. Now you are too. Hit on someone; you both drink 2. |  |
+| ☐ | Neighbors | `cabin.neighbors` | group | Anyone not sleeping under your roof tonight drinks 1. |  |
+| ☐ | Comradery | `cabin.comradery` | group | Make up a table cheer. Everyone shouts it, then drinks 2. |  |
+| ☐ | 85.21% Birthday | `cabin.birthday` | group | Pick someone. You both drink 85.21% of a drink of your choosing. |  |
+| ☐ | Team Speech | `cabin.team-speech` | group | Clockwise from you, build a speech one word per person. Then everyone drinks 1. |  |
+| ☐ | Someone Call 9-1 | `cabin.someone-call-911` | group | Everyone drinks 1 for every injury on this trip so far. |  |
+| ☐ | Final Showdown | `cabin.final-showdown` | group | Play Thunderstruck. Anyone who finishes 2 drinks before it ends gives 5. |  |
+| ☐ | Medium Rare Chicken | `cabin.medium-rare-chicken` | group | Everyone drinks 2 for every player who has thrown up this trip. |  |
+| ☐ | Ski Team | `cabin.ski-team` | group | Skier? Skiers drink 2. Snowboarder? Snowboarders drink 2. Neither? Drink 4 and grow up. |  |
+| ☐ | Categories | `core.categories` | category | Pick a category. Clockwise, name one each. First repeat or blank drinks 3. |  |
+| ☐ | Rhyme Time | `core.rhyme-time` | category | Pick a word. Clockwise, rhyme it. First bad rhyme or blank drinks 3. |  |
+| ☐ | Never Have I Ever | `core.never-have-i` | category | Say one. Make it dirty. Anyone who has drinks 2. |  |
+| ☐ | Dirty Story | `core.story-time` | category | Clockwise, build an erotic story one word at a time. First to stall or laugh drinks 2. |  |
+| ☐ | Bad Baby Names | `core.bad-baby-names` | category | Clockwise, name terrible baby names. First repeat or blank drinks 3. |  |
+| ☐ | Ex-Cuses | `core.ex-cuses` | category | Clockwise, name reasons you dumped someone. First repeat or blank drinks 3. |  |
+| ☐ | Cheap Beers | `core.cheap-beers` | category | Clockwise, name cheap beers. First repeat or blank drinks 3. |  |
+| ☐ | Euphemisms | `core.euphemisms` | category | Clockwise, name words for a penis. First repeat or blank drinks 3. |  |
+| ☐ | Kama Sutra | `core.kama-sutra` | category | Clockwise, name sex positions; made-up ones count. First repeat or blank drinks 3. |  |
+| ☐ | Pillow Talk | `core.pillow-talk` | category | Clockwise, name things you should never say during sex. First repeat or blank drinks 3. |  |
+| ☐ | Story Time | `house.sheet-018` | category | Say a word. The next person repeats and adds on. Loser drinks 4. |  |
 | ☐ | Categories | `house.sheet-021` | category | Disney Movies |  |
 | ☐ | Categories | `house.sheet-022` | category | Taco Bell menu items |  |
 | ☐ | Categories | `house.sheet-025` | category | Things you lick |  |
@@ -169,35 +143,122 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Categories | `house.sheet-086` | category | Animated movies |  |
 | ☐ | Categories | `house.sheet-087` | category | Sales at Freddies |  |
 | ☐ | Categories | `house.sheet-095` | category | Things in a kitchen |  |
-| ☐ | Categories | `house.sheet-103` | category | US Capitols |  |
+| ☐ | Categories | `house.sheet-103` | category | US Capitals |  |
 | ☐ | Categories | `house.sheet-105` | category | Things you should never say to a police officer |  |
+| ☐ | Dice Tax | `core.dice-tax` | challenge | The IRS is auditing your drink. Roll d6. | 1d6 — 1-2: Clean books. Drink 1. 3-4: Creative accounting. Drink 2. 5-6: Fraud. Drink 4 and open your banking app for the table. |
+| ☐ | Give a Shit | `core.give-a-shit` | challenge | Roll d6. Give that many to whoever you'd least want to see naked. | 1d6 — Give {total} to whoever you'd least want to see naked. |
+| ☐ | Big Dick Energy | `core.high-roller` | challenge | Roll d6. That's your size. | 1d6 — 1-2: Two inches. Drink 4 and sit quietly. 3-4: Average. Drink 2. Nobody's impressed. 5-6: Hung. Give 5 and adjust yourself. |
+| ☐ | Same Shit | `core.same-shit` | challenge | Roll 2d6. Matching dice means you're exactly as basic as we thought. | 2d6 — 2-12: Weirdly original. Give 3. |
+| ☐ | Fuck Around & Find Out | `core.fuck-around` | challenge | Roll d20 and find out. | 1d20 — 1-1: Natural 1! Take a shot and tell us your worst hookup. 2-19: Drink 2. You found out nothing. 20-20: Natural 20! Give a shot. Smug bastard. |
+| ☐ | God's Drunkest Soldier | `core.chosen-one` | challenge | Roll d20. Odd: drink it. Even: give it. God gave you this burden. | 1d20 — 1-19: Drink {total}. 2-20: Give {total}. |
+| ☐ | Thumb War | `core.rock-paper-drink` | challenge | Thumb-war anyone you want. Loser drinks 3 and calls the winner daddy. |  |
+| ☐ | Four Is Floor | `core.kings-four` | challenge | Everyone touches the floor. Last one down drinks 2. |  |
+| ☐ | Truth or Drink | `core.truth-or-drink` | challenge | The table asks you one filthy question. Answer honestly, or roll d6 and drink it. | 1d6 — Coward. Drink {total}. |
+| ☐ | Rant Mode | `core.rant` | challenge | Rant for 20 seconds about something you hate. Run dry early: roll d6 and drink it. | 1d6 — Ran out of hate. Drink {total}. |
+| ☐ | Do the Impression | `core.impression` | challenge | Do an impression of someone here having sex. You both drink 3. |  |
+| ☐ | Mirror Mirror | `core.stare-down` | challenge | Mirror someone's every move and word for 20 seconds. First of you to laugh drinks 2. |  |
+| ☐ | Dragon's Breath | `core.dragon-breath` | challenge | Dragon-roar in your right neighbor's face. They flinch: they drink 3. They don't: you do. |  |
+| ☐ | Prophecy | `core.prophecy` | challenge | Predict who finishes their drink next. When someone does: right, give 3. Wrong, drink 3. |  |
+| ☐ | Side Quest | `core.side-quest` | challenge | Give the table a dare. Anyone who refuses drinks 2. |  |
+| ☐ | Gas Station Sushi | `core.gas-station-sushi` | challenge | You ate the gas station sushi. Roll d6. | 1d6 — 1-1: You shit yourself. Finish your drink. 2-3: Cold sweats. Drink 3. 4-5: Rumbling, but holding. Drink 2. 6-6: Iron gut. Give 4. |
+| ☐ | Lap Dance Roulette | `core.lap-dance` | challenge | Roll d6, count that many players left, skipping yourself. They get a 10-second lap dance. | 1d6 — {total} players left, skipping you. Dance for them or drink 5. |
+| ☐ | Hot Seat | `core.hot-seat` | challenge | Roll d6 and answer that many yes-or-no questions from the table. Lie and it costs you. | 1d6 — {total} questions. Each one the table calls a lie: drink 3. |
+| ☐ | Nat One | `core.nat-one` | challenge | Roll d20. Pray. | 1d20 — 1-1: Natural 1! Critical fail. Finish your drink; the table picks your next one. 2-10: Miss. Drink 3. The gods are bored. 11-19: Hit. Give 3. The gods nod, barely. 20-20: Natural 20! Make anyone finish their drink. |
+| ☐ | Hostage Video | `core.hostage-video` | challenge | Film a hostage video begging your mom for bail. Show the table. Weak acting: drink 3. |  |
+| ☐ | Dramatic Reading | `core.dramatic-reading` | challenge | Your left neighbor picks one of your texts. Read it aloud like erotica. Refuse: drink 4. |  |
+| ☐ | Search History | `core.search-history` | challenge | Read your last three searches aloud. Each one you won't read: drink 2. |  |
+| ☐ | Hall Pass | `core.hall-pass` | challenge | Name your celebrity hall pass. If anyone laughs, drink 3. |  |
+| ☐ | Dating Profile | `core.dating-profile` | challenge | Right neighbor pitches your dating profile. Table swipes left: they drink 3. Right: you do. |  |
+| ☐ | Bad Kisser | `core.bad-kisser` | challenge | Describe your worst kiss in detail. Anyone winces: give 3. Nobody winces: drink 3. |  |
+| ☐ | Pickup Artist | `core.pickup-artist` | challenge | Try your worst pickup line on someone. They laugh: give 3. They don't: drink 3. |  |
+| ☐ | Drunk Dial | `core.drunk-dial` | challenge | Call the third person in your recents and say "I know what you did." Chicken out: drink 4. |  |
+| ☐ | Meg Ryan | `core.meg-ryan` | challenge | Fake an orgasm for the table. Weak effort, as judged by the table: drink 3. |  |
+| ☐ | Confession Booth | `core.confession-booth` | challenge | Confess the grossest thing you did this year. Not gross enough for the table: drink 3. |  |
+| ☐ | Roast Me | `core.roast-me` | challenge | Clockwise, everyone describes you in one word. Drink 1 for every word that stings. |  |
+| ☐ | Wet Willy | `core.wet-willy` | challenge | Pick someone. They take a wet willy from you or drink 3. Their call. |  |
+| ☐ | Smell Check | `core.smell-check` | challenge | Sniff your right neighbor's armpit and rate it out of 10. Under 5: they drink 3. |  |
+| ☐ | Ugly Crier | `core.ugly-crier` | challenge | Do your best ugly cry for 10 seconds. If the table isn't moved, drink 3. |  |
+| ☐ | Useless Fact | `core.useless-fact` | challenge | Share an impressive useless fact. If nobody reacts, drink 2. |  |
+| ☐ | The Receipt | `core.the-receipt` | challenge | Read your last purchase aloud. Cringe? Drink 3. |  |
+| ☐ | Gym Class | `core.gym-class` | challenge | Do 10 jumping jacks or drink 3. Anyone caught watching too closely drinks 1. |  |
+| ☐ | Debate Club | `core.debate-club` | challenge | Defend an opinion nobody shares. Lose the vote: drink 3. |  |
 | ☐ | That's Two Beers? | `house.sheet-003` | challenge | Give 4d6 drinks | 4d6 — Give {total}. |
 | ☐ | Fetch | `house.sheet-008` | challenge | Get something from outside in under 30 seconds or drink 1d20 | 1d20 — Drink {total}. |
-| ☐ | Steve's Beans | `house.sheet-009` | challenge | Text Steve and tell them his beans are good. Else drink 2d6 | 2d6 — Drink {total}. |
+| ☐ | Steve's Beans | `house.sheet-009` | challenge | Text Steve and tell him his beans are good. Else, drink 2d6 | 2d6 — Drink {total}. |
 | ☐ | Drink at Ron | `house.sheet-011` | challenge | If Ron is there, drink at him. Else, call and drink at him. Else else, drink 2 |  |
 | ☐ | Medusa | `house.sheet-014` | challenge | The first person you make eye contact with must get stoned. |  |
 | ☐ | Send Help | `house.sheet-017` | challenge | Convince someone to drink 1. Else, take a shot. |  |
-| ☐ | Headache Simulator | `house.sheet-023` | challenge | Wear Becca's glasses for a round. Else drink 2d6 | 2d6 — Drink {total}. |
-| ☐ | FMK | `house.sheet-029` | challenge | Blink 182, Green Day, Weezer |  |
-| ☐ | Fiend | `house.sheet-046` | challenge | Pop in a fresh zyn, velo, nic pouch |  |
+| ☐ | Headache Simulator | `house.sheet-023` | challenge | Wear Becca's glasses until your next turn. Else drink 2d6 | 2d6 — Drink {total}. |
+| ☐ | FMK | `house.sheet-029` | challenge | Blink-182, Green Day, Weezer |  |
+| ☐ | Fiend | `house.sheet-046` | challenge | Pop in a fresh Zyn, Velo, nic pouch |  |
 | ☐ | Battery Life | `house.sheet-047` | challenge | Closest guess to your phone's battery gives 2 drinks |  |
-| ☐ | Rock, Paper, Scissors | `house.sheet-048` | challenge | Challenge a player, loser drinks 1d6 | 1d6 — Drink {total}. |
-| ☐ | Mt. Krumpit | `house.sheet-056` | challenge | Dump out your drink and get a fresh one |  |
-| ☐ | I'm an Idiot | `house.sheet-057` | challenge | Say I'm an idiot. Whoever replies "you're an idiot" drinks  |  |
+| ☐ | Rock, Paper, Scissors | `house.sheet-048` | challenge | Challenge a player, loser drinks 1d6 | 1d6 — Loser drinks {total}. |
+| ☐ | Mt. Crumpit | `house.sheet-056` | challenge | Dump out your drink and get a fresh one |  |
+| ☐ | I'm an Idiot | `house.sheet-057` | challenge | Say I'm an idiot. Whoever replies "you're an idiot" drinks 2 |  |
 | ☐ | Accent | `house.sheet-058` | challenge | Speak like a high lord and give 1d6 drinks | 1d6 — Give {total}. |
-| ☐ | Spirit airlines | `house.sheet-060` | challenge | Tell your worst vacation story. Team agrees it's bad: give 2. Team says not bad: drink 2. |  |
-| ☐ | What was that? | `house.sheet-062` | challenge | Read the last text message you said out loud. Else, drink 1d6. | 1d6 — Drink {total}. |
+| ☐ | Spirit Airlines | `house.sheet-060` | challenge | Tell your worst vacation story. Table agrees it's bad: give 2. Table says not bad: drink 2. |  |
+| ☐ | What was that? | `house.sheet-062` | challenge | Read your last text message out loud. Else, drink 1d6. | 1d6 — Drink {total}. |
 | ☐ | Nicetitties | `house.sheet-077` | challenge | Say something genuinely nice about the person to your right |  |
 | ☐ | Work it | `house.sheet-080` | challenge | Do a runway walk. The table scores it; under 7, drink 3 |  |
-| ☐ | ABC's | `house.sheet-081` | challenge | Say the alphabet backwards, every mistake is a drink |  |
+| ☐ | ABCs | `house.sheet-081` | challenge | Say the alphabet backwards, every mistake is a drink |  |
 | ☐ | Tin Hat Society | `house.sheet-088` | challenge | One conspiracy theory you really believe |  |
 | ☐ | Happy Holidays | `house.sheet-089` | challenge | You have 10 seconds to come up with a fake holiday. Drink 2 if you blow it |  |
 | ☐ | Stare down | `house.sheet-090` | challenge | Challenge someone to a staring contest. Loser drinks |  |
 | ☐ | Spelling Contest | `house.sheet-093` | challenge | The person to your left gives you a word to spell. U wrong U drink. U right, they drink |  |
-| ☐ | Knickers | `house.sheet-096` | challenge | Guess the person to your rights underwear color. You right, they drink. You wrong, you drink |  |
+| ☐ | Knickers | `house.sheet-096` | challenge | Guess the person to your right's underwear color. You right, they drink. You wrong, you drink |  |
 | ☐ | Weatherman | `house.sheet-098` | challenge | Give your best weather forecast for the vibes for the rest of the day/night |  |
 | ☐ | Dare | `house.sheet-100` | challenge | Balance your drink on your head for 10 seconds |  |
 | ☐ | Opinions | `house.sheet-104` | challenge | Give your most Joe/Becca opinion |  |
+| ☐ | Smooth Brain | `cabin.smooth-brain` | challenge | Tell a story about a time you were REAL dumb. Drink 2. |  |
+| ☐ | FaceTime Trivia | `cabin.facetime-trivia` | challenge | The group asks you trivia. Wrong: drink 2 and nobody talks to you until your next turn. |  |
+| ☐ | County Commissioner | `cabin.county-commissioner` | challenge | Campaign to be in charge. Drink 1 per player who wouldn't vote for you. |  |
+| ☐ | Drunken Clam | `cabin.drunken-clam` | challenge | How the fuck did this get here? Roll d6. 1: drink 1. Else finish your drink. | 1d6 — 1-1: Drink 1. 2-6: Blindsided. Finish your drink. |
+| ☐ | Mint Chev | `cabin.mint-chev` | challenge | Crush a full beer and leave the can on the table. Else roll d6 and drink. | 1d6 — 1-3: Drink 1. 4-6: Drink 2. |
+| ☐ | I Don't Know Shit | `cabin.i-dont-know-shit` | challenge | Tell the group something you embarrassingly don't understand. Everyone drinks 2. |  |
+| ☐ | Dafuq Did I Just Hear? | `cabin.dafuq` | challenge | You just admitted to loving Lance. Drink until the group is happy. |  |
+| ☐ | Alakazam | `cabin.alakazam` | challenge | Pick someone. Spoon them and you both drink 3. |  |
+| ☐ | Voltorb | `cabin.voltorb` | challenge | Roll d6. Pick that many players to finish their drinks. | 1d6 — 1-1: Pick 1 player to finish their drink. 2-6: Pick {total} players to finish their drinks. |
+| ☐ | Ow Scratchies | `cabin.ow-scratchies` | challenge | Show the group a scar and explain it. Everyone drinks 2 in pain. |  |
+| ☐ | Chaud | `cabin.chaud` | challenge | Microwave your drink. |  |
+| ☐ | That's Two Beers | `cabin.thats-two-beers` | challenge | Give out 24 drinks. |  |
+| ☐ | Guess I'll Die | `cabin.guess-ill-die` | challenge | Roll 2d6. Doubles: finish your drink. Else drink 2. | 2d6 — 2-12: Drink 2. |
+| ☐ | We're Not That Drunk | `cabin.not-that-drunk` | challenge | Pound a full drink, then take another card now. |  |
+| ☐ | Cave Herpes | `cabin.cave-herpes` | challenge | Roll d6. 4 or 5: you escape and give 2. Anything else: you're stuck, drink 2. | 1d6 — 1-3: Stuck in the cave. Drink 2. 4-5: You escape. Give 2. 6-6: Stuck in the cave. Drink 2. |
+| ☐ | 4th Meal | `cabin.fourth-meal` | challenge | Fly to Ireland and get a tattoo right now. Else roll d6 and drink. | 1d6 — 1-3: Drink 1. 4-6: Drink 2. |
+| ☐ | Wisconsin | `cabin.wisconsin` | challenge | The real mitten state. Roll d6. From Wisconsin? You give instead of drinking. | 1d6 — 1-1: Drink 6. From Wisconsin? Give 6. 2-2: Drink 5. From Wisconsin? Give 5. 3-3: Drink 4. From Wisconsin? Give 4. 4-4: Drink 3. From Wisconsin? Give 3. 5-5: Drink 2. From Wisconsin? Give 2. 6-6: Drink 1. From Wisconsin? Give 1. |
+| ☐ | Samesies | `cabin.samesies` | challenge | Roll 2d6. Matching dice means the universe agrees with you. | 2d6 — 2-2: Drink 1. 3-4: Drink 2. 5-6: Drink 3. 7-8: Drink 4. 9-10: Drink 5. 11-12: Drink 6. |
+| ☐ | Numbers | `cabin.numbers` | challenge | Drink for every number that exists, or until the group is happy. |  |
+| ☐ | King of the Hill | `cabin.king-of-the-hill` | challenge | Roll d6. A 6: everyone else drinks 2. Anything else: drink 2. | 1d6 — 1-5: Drink 2. 6-6: King of the Hill. Everyone else drinks 2. |
+| ☐ | I Can't Believe This | `cabin.cant-believe-this` | challenge | Pour out someone's drink. They get a fresh one and drink 2. |  |
+| ☐ | Silly Salmon | `cabin.silly-salmon` | challenge | Flop on the floor like a fish. Drink 1. |  |
+| ☐ | Florida | `cabin.florida` | challenge | Tell everyone how nice Florida is, then roll d6. From Florida? You give instead. | 1d6 — 1-2: Drink 1, warm. From Florida? Give 1. 3-4: Drink 2, warm. From Florida? Give 2. 5-6: Drink 3, warm. From Florida? Give 3. |
+| ☐ | Almost Lost My Cool | `cabin.almost-lost-my-cool` | challenge | If someone here is mad, calm them and give 3. Else rage and drink 3. |  |
+| ☐ | Crypto | `cabin.crypto` | challenge | You bought the dip. Roll d6 to see if it kept dipping. | 1d6 — 1-5: Rug pulled. Drink {total}. 2-6: To the moon. Give {total}. |
+| ☐ | What an Idiot | `cabin.what-an-idiot` | challenge | Make someone finish their drink. |  |
+| ☐ | I'm Sorry Baby | `cabin.im-sorry-baby` | challenge | Roll d6 to find out how sorry you are. | 1d6 — 1-1: You're a nobody. Drink 4. 2-4: Smoochie-smoochie. Drink 2. 5-6: The night closes in. Give 3. |
+| ☐ | Son of a Bitch, I'm In | `cabin.son-of-a-bitch` | challenge | Until your next turn, anyone can offer you a drink and an amount. You're in: you both drink. |  |
+| ☐ | Get Good | `cabin.get-good` | challenge | Insult someone's skills. They prove you wrong or drink 3. |  |
+| ☐ | What Is? Give | `cabin.what-is-give` | challenge | Have someone get you the drink they have. Roll d6. You both drink your roll minus 3. | 1d6 — 1-3: Nobody drinks. 4-4: You both drink 1. 5-5: You both drink 2. 6-6: You both drink 3. |
+| ☐ | Kadabra | `cabin.kadabra` | challenge | Abra's dumbass brother. Swap seats with anyone. |  |
+| ☐ | Send It | `cabin.its-gotta-go` | challenge | Finish your drink. |  |
+| ☐ | 3rd World Christmas | `cabin.christmas` | challenge | Give someone an imaginary gift and describe it. They act thrilled, or drink 3. |  |
+| ☐ | Maddy Booty | `cabin.maddy-booty` | challenge | Roll 1d20. You drink until the group counts to it, or you finish your drink. | 1d20 — Drink until the group counts to {total}, or finish your drink. |
+| ☐ | Pet that dog | `cabin.pet-that-dog` | challenge | Better pet any dog in the room, or take 1d6 | 1d6 — Drink {total}. |
+| ☐ | Rulemaster | `core.rulemaster` | rule | Make a rule for the rest of the game. Make it stupid. Breakers drink 2. |  |
+| ☐ | Who the Fuck Are You? | `core.no-names` | rule | Until your next turn, nobody uses names. Slip: drink 2. |  |
+| ☐ | Church Mode | `core.potty-mouth` | rule | Until your next turn, everyone whispers like they're in church. Slip: drink 2. |  |
+| ☐ | Cursed Number | `core.cursed-number` | rule | Roll d6. Nobody may say that number until your next turn. Slip: drink 2. | 1d6 — {total} is banned until your next turn. Say it: drink 2. |
+| ☐ | Buffalo | `core.buffalo` | rule | It's gotta go. |  |
+| ☐ | Little Green Man | `core.little-green-man` | rule | Until your next turn, everyone removes the tiny man before drinking. Slip: drink 2. |  |
+| ☐ | Question Master | `core.question-master` | rule | Until your next turn, anyone who answers your question drinks 2. |  |
+| ☐ | Eight Is Mate | `core.kings-eight` | rule | Pick a mate until your next turn. When one of you drinks, both drink, holding hands. |  |
+| ☐ | Dungeon Master | `core.dungeon-master` | rule | Until your next turn, you speak only in third person, like a narrator. Slip: drink 2. |  |
+| ☐ | Phone Sex Operator | `core.phone-sex` | rule | Until your next turn, everyone talks like a phone sex operator. Slip: drink 2. |  |
+| ☐ | Mom's Here | `core.moms-here` | rule | Until your next turn, everyone acts like their mom is here. Anything she'd hate: drink 2. |  |
+| ☐ | That's What She Said | `core.what-she-said` | rule | For the rest of the game, the first to call "that's what she said" on a setup gives 2. |  |
+| ☐ | Hall Monitor | `core.hall-monitor` | rule | Until your next turn, nobody pees without asking you. Ask nicely or drink 2. |  |
+| ☐ | Horny Jail | `core.horny-jail` | rule | Until your next turn, anyone who says something horny gets bonked and drinks 2. |  |
+| ☐ | Formal Night | `core.formal-night` | rule | Until your next turn, everyone addresses others as my liege. Slip: drink 2. |  |
 | ☐ | Caveman | `house.sheet-010` | rule | You can only grunt until your next turn |  |
 | ☐ | Mr Freeze | `house.sheet-015` | rule | Anyone you touch can't move or talk until you stop touching them |  |
 | ☐ | Potty Mouth | `house.sheet-030` | rule | No more cursing for the rest of the game. Drink when you fuck up. |  |
@@ -207,6 +268,23 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Da Rulez | `house.sheet-097` | rule | Until your next turn, you can't use your hands to drink |  |
 | ☐ | Da Rulez | `house.sheet-099` | rule | Until your next turn, the next person to say "beer" drinks |  |
 | ☐ | Da Rulez | `house.sheet-101` | rule | Until your next turn, you have to peel your drink like a banana |  |
+| ☐ | Bitch Babe | `cabin.bitch-babe` | rule | Give 2. Until your next turn, call your left neighbor babe and everyone else bitch. |  |
+| ☐ | Freddie's Run | `cabin.freddies-run` | rule | Until your next turn, fetch anything anyone asks for. Refuse: drink 3. |  |
+| ☐ | I'm the Captain Now | `cabin.im-the-captain-now` | rule | Reverse the turn order for the rest of the game, then take another card now. |  |
+| ☐ | Ultra Low Fare | `cabin.spirit-airlines` | rule | Drink 3. Until your next turn, anyone whose die lands on 1 pays the bag fee: drink 1 more. |  |
+| ☐ | Stonks | `cabin.stonks` | rule | Smoke something if you're cool. Until your next turn, you're immune to drinks. |  |
+| ☐ | Asshole | `cabin.asshole` | rule | Until your next turn, do whatever anyone tells you. Refuse: drink 3. |  |
+| ☐ | Children's Cabin | `cabin.childrens-cabin` | rule | Get absolutely stoned, or drink 1 whenever anyone draws until your next turn. |  |
+| ☐ | Like I Said | `cabin.like-i-said` | rule | Drink 2. Until your next turn, mimic the next player. |  |
+| ☐ | Steve's Spyder Beanie | `cabin.steves-beanie` | rule | Until your next turn, send every drink given to you back to the sender. |  |
+| ☐ | Deez Nuts | `cabin.deez-nuts` | rule | You are Deez for the rest of the game. Anyone who falls for your deez nuts joke drinks 3. |  |
+| ☐ | Ohio | `cabin.ohio` | rule | That sucks. Drink 2, and until your next turn answer everything with "It's not that bad." |  |
+| ☐ | Part of the Crew | `cabin.part-of-the-crew` | rule | Pick up to 3 crew. Until your next turn, when one of you drinks, all of you drink. |  |
+| ☐ | Dream Team | `cabin.dream-team` | rule | Until your next turn, you may split your drinks with anyone beside you. |  |
+| ☐ | President | `cabin.president` | rule | Until your next turn, give anyone orders. Anyone who refuses drinks 2. |  |
+| ☐ | Wench | `cabin.wench` | rule | You are the drink wench until your next turn |  |
+| ☐ | Pokemon | `cabin.first-name-only` | rule | Speak only your first name until your next turn |  |
+| ☐ | Abra like a Slut | `cabin.abra-like-a-slut` | rule | Reverse the turn order for the rest of the game |  |
 
 ## VIP night (`vip`)
 
@@ -215,11 +293,11 @@ the Review column is intentionally blank so you can mark it up.
 | Review | Title | ID | Cat | Rules | Dice, secret or timer |
 | --- | --- | --- | --- | --- | --- |
 | ☐ | Dirty Toast | `vip.toast` | sip | Clockwise, toast the VIP with something their mom shouldn't hear. Then the VIP drinks 2. |  |
-| ☐ | Choose a Sidekick | `vip.sidekick` | sip | The VIP picks a sidekick to drink with them the rest of the game, and hold their hair later. |  |
+| ☐ | Choose a Sidekick | `vip.sidekick` | sip | The VIP picks a sidekick, who drinks 2 now and holds the VIP's hair later. |  |
 | ☐ | The VIP Tax | `vip.tax` | sip | The VIP drinks 3 and names the worst person they've ever kissed. |  |
-| ☐ | One Year Older | `vip.sheet-005` | sip | Give out the ones place of your new age |  |
+| ☐ | One Year Older | `vip.sheet-005` | sip | Give out the ones place of the VIP's new age |  |
 | ☐ | It's Gotta Go | `vip.sheet-006` | sip | Congrats, the VIP finishes their drink |  |
-| ☐ | Hottest Quality | `vip.fan-club` | group | Clockwise, name the VIP's hottest quality. The VIP drinks 1 for each one they agree with. |  |
+| ☐ | Hottest Quality | `vip.fan-club` | group | The VIP names their own hottest quality, straight-faced. Anyone who laughs drinks 2. |  |
 | ☐ | Standing Ovation | `vip.standing-ovation` | group | Give the VIP a standing ovation. Last to stand drinks 3. The VIP bows and drinks 1. |  |
 | ☐ | Seen It All | `vip.favors` | group | Anyone who's seen the VIP naked drinks 2. The VIP drinks 1 for each of them. |  |
 | ☐ | Your Big Night | `vip.sheet-004` | group | Everyone has to say something nice about the VIP. Then everyone drinks. |  |
@@ -720,98 +798,6 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Slowpoke | `pokemon.starter-slowpoke` | rule | Slowpoke chose you. Eventually. Every heal heals 2 more. Bosses take 1 more hit. |  |
 | ☐ | Psyduck | `pokemon.starter-psyduck` | rule | Psyduck chose you. It has a headache. So do you. Max HP 20. Natural 1 on a 1 or 2. |  |
 
-## Cabin weekend (`cabin`)
-
-85 cards · 22 sip · 11 group · 0 category · 35 challenge · 17 rule · 23 dice
-
-| Review | Title | ID | Cat | Rules | Dice, secret or timer |
-| --- | --- | --- | --- | --- | --- |
-| ☐ | Fuck You In Particular | `cabin.fuck-you` | sip | The game has a personal problem with you. Roll d6 and take it. | 1d6 — 1-1: It hates you a lot. Drink 9. 2-2: Drink 8. 3-3: Drink 7. 4-4: Drink 6. 5-5: Drink 5. 6-6: It only mildly hates you. Drink 4. |
-| ☐ | For Safety | `cabin.for-safety` | sip | Make your next drink a water or something hydrating. |  |
-| ☐ | International Eric | `cabin.international-eric` | sip | Take a shot of liquor. You like it now. |  |
-| ☐ | Drinks On Me | `cabin.drinks-on-me` | sip | Get someone a fresh drink. They pay you something. You both drink 1. |  |
-| ☐ | Ride the Bus | `cabin.ride-the-bus` | sip | You picked a suit and you're totally wrong. Drink 4. |  |
-| ☐ | Atlanta Airport | `cabin.atlanta-airport` | sip | These planes are sus. Roll d6 and drink that many. | 1d6 — Drink {total}. |
-| ☐ | Going the Distance | `cabin.going-the-distance` | sip | Give 1 for every hour it took you to get here. Idle time doesn't count. |  |
-| ☐ | Bartender Greg | `cabin.bartender-greg` | sip | Hit on someone. Roll d6. You both drink that many. | 1d6 — You both drink {total}. |
-| ☐ | Allegiant Airlines | `cabin.allegiant-airlines` | sip | Cheap as fuck until it's not. Roll d6 and give that many. | 1d6 — Give {total}. |
-| ☐ | Soooo It's Thursday | `cabin.soooo-thursday` | sip | Give 3 to someone to calm their nerves. |  |
-| ☐ | Get Natured | `cabin.get-natured` | sip | Go outside and drink 1 out there. |  |
-| ☐ | How Many Holes? | `cabin.how-many-holes` | sip | Give 1 for every drink you've finished tonight, plus 1. |  |
-| ☐ | Miller Mike | `cabin.miller-mike` | sip | The group picks your next full drink. No complaints. |  |
-| ☐ | Lance | `cabin.lance` | sip | The dragon champion. He's dragon his nuts across your face. Drink 4. |  |
-| ☐ | Michigan | `cabin.michigan` | sip | Drink 3 from an ice-cold drink and explain how it's not even cold. |  |
-| ☐ | Yoink! | `cabin.yoink` | sip | Pick someone. Roll d6. They drink that many. | 1d6 — They drink {total}. |
-| ☐ | God's Chosen | `cabin.gods-chosen` | sip | Had COVID? Drink 3. Never had it? Give 3. |  |
-| ☐ | Do Not Cum | `cabin.do-not-cum` | sip | Roll d6. Cum. Drink that many. | 1d6 — Drink {total}. |
-| ☐ | Mustard Tiger | `cabin.mustard-tiger` | sip | Drink as much as whoever has drunk the most this game. |  |
-| ☐ | Ursaring | `cabin.ursaring` | sip | Give 13 and apologize |  |
-| ☐ | No take, Give | `cabin.no-take-give` | sip | Give d6 drinks | 1d6 — Give {total}. |
-| ☐ | Whinnie the Pooh | `cabin.whinnie-the-pooh` | sip | Pooh-bear 1d6 drinks | 1d6 — Drink {total}. |
-| ☐ | Thanos Snap | `cabin.thanos-snap` | group | Pick half the table. Everyone you didn't pick drinks 2. |  |
-| ☐ | Corporate Meeting | `cabin.corporate-meeting` | group | This could have been an email. Anyone working tomorrow drinks 3. |  |
-| ☐ | Café d'Époque | `cabin.cafe-depoque` | group | Everyone here is a total skank. Now you are too. Hit on someone; you both drink 2. |  |
-| ☐ | Neighbors | `cabin.neighbors` | group | Anyone not sleeping under your roof tonight drinks 1. |  |
-| ☐ | Comradery | `cabin.comradery` | group | Make up a table cheer. Everyone shouts it, then drinks 2. |  |
-| ☐ | 85.21% Birthday | `cabin.birthday` | group | Pick someone. You both drink 85.21% of a drink of your choosing. |  |
-| ☐ | Team Speech | `cabin.team-speech` | group | Clockwise from you, build a speech one word per person. Then everyone drinks 1. |  |
-| ☐ | Someone Call 9-1 | `cabin.someone-call-911` | group | Everyone drinks 1 for every injury on this trip so far. |  |
-| ☐ | Final Showdown | `cabin.final-showdown` | group | Play Thunderstruck. Anyone who finishes 2 drinks before it ends gives 5. |  |
-| ☐ | Medium Rare Chicken | `cabin.medium-rare-chicken` | group | Everyone drinks 2 for every player who has thrown up this trip. |  |
-| ☐ | Ski Team | `cabin.ski-team` | group | Skier? Skiers drink 2. Snowboarder? Snowboarders drink 2. Neither? Drink 4 and grow up. |  |
-| ☐ | Smooth Brain | `cabin.smooth-brain` | challenge | Tell a story about a time you were REAL dumb. Drink 2. |  |
-| ☐ | FaceTime Trivia | `cabin.facetime-trivia` | challenge | The group asks you trivia. Wrong: drink 2 and nobody talks to you until your next turn. |  |
-| ☐ | County Commissioner | `cabin.county-commissioner` | challenge | Campaign to be in charge. Drink 1 per player who wouldn't vote for you. |  |
-| ☐ | Drunken Clam | `cabin.drunken-clam` | challenge | How the fuck did this get here? Roll d6. 1: drink 1. Else finish your drink. | 1d6 — 1-1: Drink 1. 2-6: Blindsided. Finish your drink. |
-| ☐ | Mint Chev | `cabin.mint-chev` | challenge | Crush a full beer and leave the can on the table. Else roll d6 and drink. | 1d6 — 1-3: Drink 1. 4-6: Drink 2. |
-| ☐ | I Don't Know Shit | `cabin.i-dont-know-shit` | challenge | Tell the group something you embarrassingly don't understand. Everyone drinks 2. |  |
-| ☐ | Dafuq Did I Just Hear? | `cabin.dafuq` | challenge | You just admitted to loving Lance. Drink until the group is happy. |  |
-| ☐ | Alakazam | `cabin.alakazam` | challenge | Pick someone. Spoon them and you both drink 3. |  |
-| ☐ | Voltorb | `cabin.voltorb` | challenge | Roll d6. Pick that many players to finish their drinks. | 1d6 — Pick {total} players to finish their drinks. |
-| ☐ | Ow Scratchies | `cabin.ow-scratchies` | challenge | Show the group a scar and explain it. Everyone drinks 2 in pain. |  |
-| ☐ | Chaud | `cabin.chaud` | challenge | Microwave your drink. |  |
-| ☐ | That's Two Beers | `cabin.thats-two-beers` | challenge | Give out 24 drinks. |  |
-| ☐ | Guess I'll Die | `cabin.guess-ill-die` | challenge | Roll 2d6. Doubles: finish your drink. Else drink 2. | 2d6 — 2-12: Drink 2. |
-| ☐ | We're Not That Drunk | `cabin.not-that-drunk` | challenge | Pound a full drink, then take another card now. |  |
-| ☐ | Cave Herpes | `cabin.cave-herpes` | challenge | Roll d6. 4–5: you escape and give 2. Anything else: you're stuck, drink 2. | 1d6 — 1-3: Stuck in the cave. Drink 2. 4-5: You escape. Give 2. 6-6: Stuck in the cave. Drink 2. |
-| ☐ | 4th Meal | `cabin.fourth-meal` | challenge | Fly to Ireland and get a tattoo right now. Else roll d6 and drink. | 1d6 — 1-3: Drink 1. 4-6: Drink 2. |
-| ☐ | Wisconsin | `cabin.wisconsin` | challenge | The real mitten state. Roll d6. From Wisconsin? You give instead of drinking. | 1d6 — 1-1: Drink 6. From Wisconsin? Give 6. 2-2: Drink 5. From Wisconsin? Give 5. 3-3: Drink 4. From Wisconsin? Give 4. 4-4: Drink 3. From Wisconsin? Give 3. 5-5: Drink 2. From Wisconsin? Give 2. 6-6: Drink 1. From Wisconsin? Give 1. |
-| ☐ | Samesies | `cabin.samesies` | challenge | Roll 2d6. Matching dice means the universe agrees with you. | 2d6 — 2-2: Drink 1. 3-4: Drink 2. 5-6: Drink 3. 7-8: Drink 4. 9-10: Drink 5. 11-12: Drink 6. |
-| ☐ | Numbers | `cabin.numbers` | challenge | Drink for every number that exists, or until the group is happy. |  |
-| ☐ | King of the Hill | `cabin.king-of-the-hill` | challenge | Roll d6. A 6: everyone else drinks 2. Anything else: drink 2. | 1d6 — 1-5: Drink 2. 6-6: King of the Hill. Everyone else drinks 2. |
-| ☐ | I Can't Believe This | `cabin.cant-believe-this` | challenge | Pour out someone's drink. They get a fresh one and drink 2. |  |
-| ☐ | Silly Salmon | `cabin.silly-salmon` | challenge | Flop on the floor like a fish. Drink 1. |  |
-| ☐ | Florida | `cabin.florida` | challenge | Tell everyone how nice Florida is, then roll d6. From Florida? You give instead. | 1d6 — 1-2: Drink 1, warm. From Florida? Give 1. 3-4: Drink 2, warm. From Florida? Give 2. 5-6: Drink 3, warm. From Florida? Give 3. |
-| ☐ | Almost Lost My Cool | `cabin.almost-lost-my-cool` | challenge | If someone here is mad, calm them and give 3. Else rage and drink 3. |  |
-| ☐ | Crypto | `cabin.crypto` | challenge | You bought the dip. Roll d6 to see if it kept dipping. | 1d6 — 1-5: Rug pulled. Drink {total}. 2-6: To the moon. Give {total}. |
-| ☐ | What an Idiot | `cabin.what-an-idiot` | challenge | Make someone finish their drink. |  |
-| ☐ | I'm Sorry Baby | `cabin.im-sorry-baby` | challenge | Roll d6 to find out how sorry you are. | 1d6 — 1-1: You're a nobody. Drink 4. 2-4: Smoochie-smoochie. Drink 2. 5-6: The night closes in. Give 3. |
-| ☐ | Son of a Bitch, I'm In | `cabin.son-of-a-bitch` | challenge | Anyone can offer you a drink and an amount. Accept and you both drink it. |  |
-| ☐ | Get Good | `cabin.get-good` | challenge | Insult someone's skills. They prove you wrong or drink 3. |  |
-| ☐ | What Is? Give | `cabin.what-is-give` | challenge | Have someone get you the drink they have. Roll d6. You both drink your roll minus 3. | 1d6 — 1-3: Nobody drinks. 4-4: You both drink 1. 5-5: You both drink 2. 6-6: You both drink 3. |
-| ☐ | Kadabra | `cabin.kadabra` | challenge | Abra's dumbass brother. Swap seats with anyone. |  |
-| ☐ | It's Gotta Go | `cabin.its-gotta-go` | challenge | Finish your drink. |  |
-| ☐ | 3rd World Christmas | `cabin.christmas` | challenge | Give someone an imaginary gift and describe it. They act thrilled, or drink 3. |  |
-| ☐ | Maddy Booty | `cabin.maddy-booty` | challenge | Roll 1d20. You drink until the group counts to it, or you finish your drink. | 1d20 — Drink until the group counts to {total}, or finish your drink. |
-| ☐ | Pet that dog | `cabin.pet-that-dog` | challenge | Better pet any dog in the room, or take 1d6 | 1d6 — Drink {total}. |
-| ☐ | Bitch Babe | `cabin.bitch-babe` | rule | Give 2. Until your next turn, call your left neighbor babe and everyone else bitch. |  |
-| ☐ | Freddie's Run | `cabin.freddies-run` | rule | Until your next turn, fetch anything anyone asks for. Refuse: drink 3. |  |
-| ☐ | I'm the Captain Now | `cabin.im-the-captain-now` | rule | Reverse the turn order for the rest of the game, then take another card now. |  |
-| ☐ | Spirit Airlines | `cabin.spirit-airlines` | rule | Drink 3. Until your next turn, any 1 rolled counts as 0. |  |
-| ☐ | Stonks | `cabin.stonks` | rule | Smoke something if you're cool. Until your next turn, you're immune to drinks. |  |
-| ☐ | Asshole | `cabin.asshole` | rule | Until your next turn, do whatever anyone tells you. |  |
-| ☐ | Children's Cabin | `cabin.childrens-cabin` | rule | Get absolutely stoned, or drink 1 whenever anyone draws until your next turn. |  |
-| ☐ | Like I Said | `cabin.like-i-said` | rule | Drink 2. Until your next turn, mimic the next player. |  |
-| ☐ | Steve's Spyder Beanie | `cabin.steves-beanie` | rule | Until your next turn, send every drink given to you back to the sender. |  |
-| ☐ | Deez Nuts | `cabin.deez-nuts` | rule | You are Deez for the rest of the game. Fall for a deez nuts joke: drink 3. |  |
-| ☐ | Ohio | `cabin.ohio` | rule | That sucks. Drink 2, and until your next turn answer everything with 'It's not that bad.' |  |
-| ☐ | Part of the Crew | `cabin.part-of-the-crew` | rule | Pick up to 3 crew. Until your next turn, when one of you drinks, all of you drink. |  |
-| ☐ | Dream Team | `cabin.dream-team` | rule | Until your next turn, you may split your drinks with anyone beside you. |  |
-| ☐ | President | `cabin.president` | rule | Until your next turn, give anyone orders. Refuse: drink 2. |  |
-| ☐ | Wench | `cabin.wench` | rule | You are the drink wench until your next turn |  |
-| ☐ | Pokemon | `cabin.first-name-only` | rule | Speak only your first name until your next turn |  |
-| ☐ | Abra like a Slut | `cabin.abra-like-a-slut` | rule | Reverse the turn order for the rest of the game |  |
-
 ## Most Likely To (`likely`)
 
 250 cards · 0 sip · 250 group · 0 category · 0 challenge · 0 rule · 0 dice
@@ -839,16 +825,16 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Most Likely To | `likely.019` | group | Leave their card at the bar. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.020` | group | Drunk-text the group chat a paragraph. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.021` | group | Fall down the stairs and call it a bit. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.022` | group | Hit the drive-through at 3 a.m.. Point on three: most votes drinks 2. |  |
+| ☐ | Most Likely To | `likely.022` | group | Hit the drive-through at 3 a.m. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.023` | group | Start drinking before noon on vacation. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.024` | group | Forget a conversation they started. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.025` | group | Tip 50% because they love the bartender. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.026` | group | Go swimming fully clothed. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.027` | group | Try to fight a goose. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.028` | group | Swear they're "not even that drunk". Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.029` | group | Still be awake at 4 a.m.. Point on three: most votes drinks 2. |  |
+| ☐ | Most Likely To | `likely.029` | group | Still be awake at 4 a.m. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.030` | group | Need to be carried home. Point on three: most votes finishes their drink. |  |
-| ☐ | Most Likely To | `likely.031` | group | Lie about how many drinks they've had. Point on three: most votes drinks 2. |  |
+| ☐ | Most Likely To | `likely.031` | group | Finish someone else's drink and deny it. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.032` | group | Order the most expensive shot on the menu. Point on three: most votes takes a shot. |  |
 | ☐ | Most Likely To | `likely.033` | group | Dance on a table. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.034` | group | Get cut off by a bartender. Point on three: most votes drinks 3. |  |
@@ -865,7 +851,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Most Likely To | `likely.045` | group | Order pizza to the bar. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.046` | group | Get a tattoo on a dare. Point on three: most votes drinks 3. |  |
 | ☐ | Most Likely To | `likely.047` | group | Throw up in an Uber. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.048` | group | Insist on one more bar. Point on three: most votes drinks 2. |  |
+| ☐ | Most Likely To | `likely.048` | group | Order a fishbowl and drink it alone. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.049` | group | Be the last one to leave every party. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.050` | group | Lose their friends and find new ones. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.051` | group | Lock themselves out of the house. Point on three: most votes drinks 2. |  |
@@ -878,7 +864,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Most Likely To | `likely.068` | group | Like a three-year-old photo by accident. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.069` | group | Join a pyramid scheme. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.070` | group | Get a parking ticket in their own driveway. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.072` | group | Send a screenshot to the person in it. Point on three: most votes drinks 3. |  |
+| ☐ | Most Likely To | `likely.072` | group | Talk shit about someone standing right behind them. Point on three: most votes drinks 3. |  |
 | ☐ | Most Likely To | `likely.075` | group | Lose their wallet twice on one trip. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.077` | group | Set the kitchen on fire. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.078` | group | Fall for an obvious prank. Point on three: most votes drinks 2. |  |
@@ -902,19 +888,19 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Most Likely To | `likely.107` | group | Order delivery twice in one night. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.108` | group | Laugh at nothing for five straight minutes. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.109` | group | Start a conspiracy podcast. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.111` | group | Pitch a genius business idea at 2 a.m.. Point on three: most votes drinks 2. |  |
+| ☐ | Most Likely To | `likely.111` | group | Pitch a genius business idea at 2 a.m. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.112` | group | Get paranoid about a cop who isn't there. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.114` | group | Buy crystals and mean it. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.117` | group | Reply "lol" to a serious text. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.119` | group | Explain the universe to a bartender. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.121` | group | Get distracted by a bird mid-argument. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.122` | group | Say "bro, what if…" the most. Point on three: most votes drinks 2. |  |
+| ☐ | Most Likely To | `likely.122` | group | Start every sentence with "bro, what if…". Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.124` | group | Fall asleep during a movie they picked. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.125` | group | Eat something off the floor. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.126` | group | Own a bong with a name. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.127` | group | Raid someone else's fridge uninvited. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.128` | group | Think they can talk to animals. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.130` | group | Order half the menu at a drive-through. Point on three: most votes drinks 2. |  |
+| ☐ | Most Likely To | `likely.128` | group | Get chased by a raccoon on the way home. Point on three: most votes drinks 2. |  |
+| ☐ | Most Likely To | `likely.130` | group | Eat fries off a stranger's plate. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.131` | group | Marry someone they met on vacation. Point on three: most votes drinks 3. |  |
 | ☐ | Most Likely To | `likely.132` | group | Get back with their ex. Point on three: most votes drinks 3. |  |
 | ☐ | Most Likely To | `likely.133` | group | Fall in love on a dating app in a week. Point on three: most votes drinks 2. |  |
@@ -940,7 +926,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Most Likely To | `likely.154` | group | Have a celebrity hall pass ready. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.155` | group | Be the first one here to get married. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.156` | group | Be the last one here to get married. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.157` | group | Elope without telling anyone. Point on three: most votes drinks 2. |  |
+| ☐ | Most Likely To | `likely.157` | group | Get divorced before the thank-you cards go out. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.158` | group | Make out in a public bathroom. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.159` | group | Have had a crush on a cartoon character. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.160` | group | Tattoo a partner's name on themselves. Point on three: most votes drinks 3. |  |
@@ -978,7 +964,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Most Likely To | `likely.206` | group | Live in a van by choice. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.207` | group | Show up on a true crime show. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.208` | group | Fake their own death. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.209` | group | Get rich on crypto, then lose it. Point on three: most votes drinks 2. |  |
+| ☐ | Most Likely To | `likely.209` | group | Bet their rent on one hand of blackjack. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.210` | group | Get a face tattoo at 50. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.211` | group | Be late to their own wedding. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.213` | group | Start drama and act surprised. Point on three: most votes drinks 2. |  |
@@ -1002,9 +988,9 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Most Likely To | `likely.239` | group | Cheat at board games. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.240` | group | Take a game way too seriously. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.241` | group | Flip the board when they lose. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.242` | group | Blame the dice for losing. Point on three: most votes drinks 3. |  |
+| ☐ | Most Likely To | `likely.242` | group | Lick the dice for luck. Point on three: most votes drinks 3. |  |
 | ☐ | Most Likely To | `likely.246` | group | Be the reason we can't go back somewhere. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.247` | group | Get banned from a restaurant. Point on three: most votes drinks 2. |  |
+| ☐ | Most Likely To | `likely.247` | group | Yell at a waiter, then tip 40%. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.249` | group | Survive on gas station food for a week. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.250` | group | Be talking about this game tomorrow. Point on three: most votes finishes their drink. |  |
 | ☐ | Most Likely To | `likely.251` | group | Have sex in a car this year. Point on three: most votes drinks 3. |  |
@@ -1021,12 +1007,12 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Most Likely To | `likely.262` | group | Send a nude to the family group chat. Point on three: most votes takes a shot. |  |
 | ☐ | Most Likely To | `likely.263` | group | Get caught masturbating. Point on three: most votes drinks 3. |  |
 | ☐ | Most Likely To | `likely.264` | group | Keep a burner account to spy on exes. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.265` | group | Make out with someone just to make someone else jealous. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.266` | group | Hook up in a bar bathroom. Point on three: most votes drinks 3. |  |
+| ☐ | Most Likely To | `likely.265` | group | Make out with someone to make an ex jealous. Point on three: most votes drinks 2. |  |
+| ☐ | Most Likely To | `likely.266` | group | Hook up in a hot tub. Point on three: most votes drinks 3. |  |
 | ☐ | Most Likely To | `likely.267` | group | Sleep with someone whose name they never learned. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.268` | group | Get kicked out of a strip club. Point on three: most votes drinks 3. |  |
+| ☐ | Most Likely To | `likely.268` | group | Tip a stripper in loose change. Point on three: most votes drinks 3. |  |
 | ☐ | Most Likely To | `likely.269` | group | Call someone the wrong name in bed. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.270` | group | Puke on someone they were hooking up with. Point on three: most votes finishes their drink. |  |
+| ☐ | Most Likely To | `likely.270` | group | Puke on someone mid-hookup. Point on three: most votes finishes their drink. |  |
 | ☐ | Most Likely To | `likely.271` | group | Scream during a Brazilian wax. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.272` | group | Lie about their body count. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.273` | group | Hook up with a married person. Point on three: most votes takes a shot. |  |
@@ -1034,8 +1020,8 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Most Likely To | `likely.275` | group | Pay for someone's OnlyFans. Point on three: most votes drinks 3. |  |
 | ☐ | Most Likely To | `likely.276` | group | Pee in a sink at a party. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.277` | group | Eat ass on a first date. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.278` | group | Sext the wrong person. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.279` | group | Have sex at a family wedding. Point on three: most votes drinks 3. |  |
+| ☐ | Most Likely To | `likely.278` | group | Get caught sexting at the dinner table. Point on three: most votes drinks 2. |  |
+| ☐ | Most Likely To | `likely.279` | group | Hook up with someone at a funeral. Point on three: most votes drinks 3. |  |
 | ☐ | Most Likely To | `likely.280` | group | Clog a hookup's toilet. Point on three: most votes drinks 3. |  |
 | ☐ | Most Likely To | `likely.281` | group | Shit with the door open. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.282` | group | Sniff their own fingers. Point on three: most votes drinks 2. |  |
@@ -1048,10 +1034,10 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Most Likely To | `likely.289` | group | Flash a cop. Point on three: most votes drinks 3. |  |
 | ☐ | Most Likely To | `likely.290` | group | Get crabs. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.291` | group | Have had a threesome. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.292` | group | Lose a phone with a sex tape on it. Point on three: most votes takes a shot. |  |
+| ☐ | Most Likely To | `likely.292` | group | Do the walk of shame on someone's Ring camera. Point on three: most votes takes a shot. |  |
 | ☐ | Most Likely To | `likely.293` | group | Sleep with their boss. Point on three: most votes drinks 3. |  |
 | ☐ | Most Likely To | `likely.294` | group | Jerk off at work. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.295` | group | Get caught peeing in public. Point on three: most votes drinks 3. |  |
+| ☐ | Most Likely To | `likely.295` | group | Fall asleep on the toilet at a party. Point on three: most votes drinks 3. |  |
 | ☐ | Most Likely To | `likely.296` | group | Throw up in their mouth and swallow it. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.297` | group | Lick a stranger on a dare. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.298` | group | Get a hickey after 30. Point on three: most votes drinks 2. |  |
@@ -1059,19 +1045,19 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Most Likely To | `likely.300` | group | Streak through somewhere public. Point on three: most votes drinks 3. |  |
 | ☐ | Most Likely To | `likely.301` | group | Make out with a stranger in front of their date. Point on three: most votes drinks 3. |  |
 | ☐ | Most Likely To | `likely.302` | group | Use their roommate's toothbrush. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.303` | group | Lose their virginity somewhere embarrassing. Point on three: most votes drinks 2. |  |
+| ☐ | Most Likely To | `likely.303` | group | Have the most embarrassing virginity story. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.304` | group | Talk dirty and make it weird. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.305` | group | Google their symptoms after a hookup. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.306` | group | Shit in the woods this weekend. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.307` | group | Get a nipple piercing on a whim. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.308` | group | Moan in their sleep. Point on three: most votes drinks 2. |  |
 | ☐ | Most Likely To | `likely.309` | group | Have sex in a pool and lie about it. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.310` | group | Get walked in on by a parent. Point on three: most votes drinks 3. |  |
+| ☐ | Most Likely To | `likely.310` | group | Walk in on their parents. Point on three: most votes drinks 3. |  |
 | ☐ | Most Likely To | `likely.311` | group | Fall asleep mid-hookup. Point on three: most votes drinks 2. |  |
 
 ## Secrets & fuses (`secrets`)
 
-150 cards · 2 sip · 52 group · 18 category · 75 challenge · 3 rule · 0 dice
+156 cards · 2 sip · 52 group · 18 category · 81 challenge · 3 rule · 0 dice
 
 | Review | Title | ID | Cat | Rules | Dice, secret or timer |
 | --- | --- | --- | --- | --- | --- |
@@ -1089,7 +1075,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Paranoia | `secrets.paranoia-10` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here has the most embarrassing search history? |
 | ☐ | Paranoia | `secrets.paranoia-11` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here is secretly the most competitive? |
 | ☐ | Paranoia | `secrets.paranoia-12` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here would you trust to dress you for a wedding? |
-| ☐ | Paranoia | `secrets.paranoia-13` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here dies first in a horror movie? |
+| ☐ | Paranoia | `secrets.paranoia-13` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here would you eat first after a plane crash? |
 | ☐ | Paranoia | `secrets.paranoia-14` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here has the highest body count? |
 | ☐ | Paranoia | `secrets.paranoia-15` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here would you least want to share a bed with? |
 | ☐ | Paranoia | `secrets.paranoia-16` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here is most likely to have a dark side nobody's seen? |
@@ -1112,7 +1098,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Fact or Cap | `secrets.fact-03` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: FACT: Honey found in ancient Egyptian tombs was still edible. |
 | ☐ | Fact or Cap | `secrets.fact-04` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: CAP: You can see the Great Wall of China from space with the naked eye. |
 | ☐ | Fact or Cap | `secrets.fact-05` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: FACT: Bananas are berries, but strawberries are not. |
-| ☐ | Fact or Cap | `secrets.fact-06` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: FACT: A day on Venus is longer than its year. |
+| ☐ | Fact or Cap | `secrets.fact-06` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: FACT: Venus is hotter than Mercury. |
 | ☐ | Fact or Cap | `secrets.fact-07` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: CAP: Bulls charge because the color red makes them angry. |
 | ☐ | Fact or Cap | `secrets.fact-08` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: FACT: Scotland's national animal is the unicorn. |
 | ☐ | Fact or Cap | `secrets.fact-09` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: CAP: Napoleon was unusually short for his time. |
@@ -1124,21 +1110,21 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Fact or Cap | `secrets.fact-15` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: CAP: Shaving makes hair grow back thicker. |
 | ☐ | Fact or Cap | `secrets.fact-16` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: FACT: Sharks have been around longer than trees. |
 | ☐ | Dead Silence | `secrets.clock-silence` | group | Start the clock. Everyone stays silent until time's up; first to make a sound drinks 3. | Clock 30 s: Time. Everyone who stayed silent gives 1. |
-| ☐ | Flamingo | `secrets.clock-flamingo` | group | Start the clock. Everyone stands on one leg; the first to touch down drinks 3. | Clock 30 s: Time. Everyone still standing gives 1. |
+| ☐ | Flamingo | `secrets.clock-flamingo` | group | Start the clock. Everyone stands on one leg; the first to touch down drinks 3. | Clock 30 s: Time. Everyone still on one leg gives 1. |
 | ☐ | Hum That Tune | `secrets.clock-hum` | group | Start the clock and hum a song. Everyone else races to name it. | Clock 30 s: Time. Named? You and the guesser give 2. Nobody? Drink 3. |
-| ☐ | Compliment Bomb | `secrets.fuse-compliment` | group | Light the fuse. Compliment your left neighbor, then pass them a beer. | Fuse 15–45 s: Boom. Whoever's holding the beer drinks 3. |
+| ☐ | Compliment Bomb | `secrets.fuse-compliment` | group | Light the fuse. Compliment your left neighbor and pass them a beer; they do the same. | Fuse 15–45 s: Boom. Whoever's holding the beer drinks 3. |
 | ☐ | Buzz Bomb | `secrets.fuse-buzz` | group | Light the fuse. Pass a beer left counting up; say buzz on 7s and multiples of 7. | Fuse 15–45 s: Boom. Whoever's holding the beer drinks 3. |
 | ☐ | Short Fuse | `secrets.fuse-short` | group | Light the fuse. Say a swear word, pass a beer left fast. No repeats. | Fuse 5–15 s: Boom. Whoever's holding the beer takes a shot. |
-| ☐ | Three in Five | `secrets.quick-01` | category | Start the clock: name three beers you'd actually order before it ends. Table judges duds. | Clock 5 s: Time. Didn't get three? Drink 3. Did? Give 3. |
-| ☐ | Three in Five | `secrets.quick-02` | category | Start the clock: name three things in a junk drawer before it ends. Table judges duds. | Clock 5 s: Time. Didn't get three? Drink 3. Did? Give 3. |
-| ☐ | Three in Five | `secrets.quick-03` | category | Start the clock: name three reasons to call in sick before it ends. Table judges duds. | Clock 5 s: Time. Didn't get three? Drink 3. Did? Give 3. |
-| ☐ | Three in Five | `secrets.quick-04` | category | Start the clock: name three things never to say on a date before it ends. Table judges duds. | Clock 5 s: Time. Didn't get three? Drink 3. Did? Give 3. |
-| ☐ | Three in Five | `secrets.quick-05` | category | Start the clock: name three wrong pizza toppings before it ends. Table judges duds. | Clock 5 s: Time. Didn't get three? Drink 3. Did? Give 3. |
-| ☐ | Three in Five | `secrets.quick-06` | category | Start the clock: name three drinking games before it ends. Table judges duds. | Clock 5 s: Time. Didn't get three? Drink 3. Did? Give 3. |
-| ☐ | Three in Five | `secrets.quick-07` | category | Start the clock: name three things at a frat house before it ends. Table judges duds. | Clock 5 s: Time. Didn't get three? Drink 3. Did? Give 3. |
-| ☐ | Three in Five | `secrets.quick-08` | category | Start the clock: name three excuses to leave a party before it ends. Table judges duds. | Clock 5 s: Time. Didn't get three? Drink 3. Did? Give 3. |
-| ☐ | Three in Five | `secrets.quick-09` | category | Start the clock: name three songs everyone knows before it ends. Table judges duds. | Clock 5 s: Time. Didn't get three? Drink 3. Did? Give 3. |
-| ☐ | Three in Five | `secrets.quick-10` | category | Start the clock: name three texts not to send your boss before it ends. Table judges duds. | Clock 5 s: Time. Didn't get three? Drink 3. Did? Give 3. |
+| ☐ | Three in Five | `secrets.quick-01` | category | Start the clock and name three beers you'd actually order. The table calls duds. | Clock 5 s: Time. Didn't get three? Drink 3. Did? Give 3. |
+| ☐ | Three in Five | `secrets.quick-02` | category | Start the clock and name three things in a junk drawer. The table calls duds. | Clock 5 s: Time. Didn't get three? Drink 3. Did? Give 3. |
+| ☐ | Three in Five | `secrets.quick-03` | category | Start the clock and name three reasons to call in sick. The table calls duds. | Clock 5 s: Time. Didn't get three? Drink 3. Did? Give 3. |
+| ☐ | Three in Five | `secrets.quick-04` | category | Start the clock and name three things never to say on a date. The table calls duds. | Clock 5 s: Time. Didn't get three? Drink 3. Did? Give 3. |
+| ☐ | Three in Five | `secrets.quick-05` | category | Start the clock and name three wrong pizza toppings. The table calls duds. | Clock 5 s: Time. Didn't get three? Drink 3. Did? Give 3. |
+| ☐ | Three in Five | `secrets.quick-06` | category | Start the clock and name three drinking games. The table calls duds. | Clock 5 s: Time. Didn't get three? Drink 3. Did? Give 3. |
+| ☐ | Three in Five | `secrets.quick-07` | category | Start the clock and name three things at a frat house. The table calls duds. | Clock 5 s: Time. Didn't get three? Drink 3. Did? Give 3. |
+| ☐ | Three in Five | `secrets.quick-08` | category | Start the clock and name three excuses to leave a party. The table calls duds. | Clock 5 s: Time. Didn't get three? Drink 3. Did? Give 3. |
+| ☐ | Three in Five | `secrets.quick-09` | category | Start the clock and name three songs everyone knows. The table calls duds. | Clock 5 s: Time. Didn't get three? Drink 3. Did? Give 3. |
+| ☐ | Three in Five | `secrets.quick-10` | category | Start the clock and name three texts not to send your boss. The table calls duds. | Clock 5 s: Time. Didn't get three? Drink 3. Did? Give 3. |
 | ☐ | Hot Potato | `secrets.potato-01` | category | Light the fuse. Name a beer brand, then pass a beer left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding the beer drinks 3. |
 | ☐ | Hot Potato | `secrets.potato-02` | category | Light the fuse. Name a fast-food chain, then pass a beer left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding the beer drinks 3. |
 | ☐ | Hot Potato | `secrets.potato-03` | category | Light the fuse. Name a Pokémon, then pass a beer left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding the beer drinks 4. |
@@ -1146,75 +1132,81 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Hot Potato | `secrets.potato-05` | category | Light the fuse. Name a Taylor Swift song, then pass a beer left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding the beer drinks 4. |
 | ☐ | Hot Potato | `secrets.potato-06` | category | Light the fuse. Name a word for "drunk", then pass a beer left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding the beer finishes it. |
 | ☐ | Rhyme Bomb | `secrets.fuse-rhyme` | category | Light the fuse. Rhyme with beer, then pass a beer left. No repeats. | Fuse 15–45 s: Boom. Whoever's holding the beer drinks 3. |
-| ☐ | Last Letter | `secrets.fuse-last-letter` | category | Light the fuse. Start a word with the last word's last letter, then pass a beer left. | Fuse 15–45 s: Boom. Whoever's holding the beer drinks 3. |
-| ☐ | Secret Mission | `secrets.mission-01` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to say the word "literally." |
-| ☐ | Secret Mission | `secrets.mission-02` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to give you a high five. |
-| ☐ | Secret Mission | `secrets.mission-03` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get two people to cheers with you at once. |
-| ☐ | Secret Mission | `secrets.mission-04` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to tell you what time it is. |
-| ☐ | Secret Mission | `secrets.mission-05` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Work the word "pineapple" into conversation twice. |
-| ☐ | Secret Mission | `secrets.mission-06` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to repeat a sentence back to you. |
-| ☐ | Secret Mission | `secrets.mission-07` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to stand up. |
-| ☐ | Secret Mission | `secrets.mission-08` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to hand you something. |
-| ☐ | Secret Mission | `secrets.mission-09` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get the table singing, even one line. |
-| ☐ | Secret Mission | `secrets.mission-10` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to show you a photo on their phone. |
-| ☐ | Secret Mission | `secrets.mission-11` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Make someone say "what?" three times. |
-| ☐ | Secret Mission | `secrets.mission-12` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to swap seats with you. |
-| ☐ | Secret Mission | `secrets.mission-13` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to say your name. |
-| ☐ | Secret Mission | `secrets.mission-14` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to agree with an obviously false fact. |
-| ☐ | Secret Mission | `secrets.mission-15` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Say one full sentence in a British accent without explaining it. |
-| ☐ | Secret Mission | `secrets.mission-16` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Tell a terrible joke and get someone to laugh at it. |
-| ☐ | Secret Mission | `secrets.mission-17` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to ask you about your childhood. |
-| ☐ | Secret Mission | `secrets.mission-18` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to say "I love you." |
-| ☐ | Secret Mission | `secrets.mission-19` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Make someone drink at the same moment as you, three times. |
-| ☐ | Secret Mission | `secrets.mission-20` | challenge | Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to compliment your outfit. |
-| ☐ | Worst Date | `secrets.story-01` | challenge | Read alone, tell your worst date story. Table votes truth or lie; wrong voters drink 2. | Secret: Lie. Make it up and sell it. |
-| ☐ | Police Story | `secrets.story-02` | challenge | Read alone, tell your best cop story. Table votes truth or lie; wrong voters drink 2. | Secret: Tell the truth. Every word. |
-| ☐ | Celebrity Sighting | `secrets.story-03` | challenge | Read alone, tell your best celebrity story. Table votes truth or lie; wrong voters drink 2. | Secret: Lie. Make it up and sell it. |
-| ☐ | ER Visit | `secrets.story-04` | challenge | Read alone, tell your dumbest injury story. Table votes truth or lie; wrong voters drink 2. | Secret: Tell the truth. Every word. |
-| ☐ | Worst Job | `secrets.story-05` | challenge | Read alone, tell your worst job story. Table votes truth or lie; wrong voters drink 2. | Secret: Lie. Make it up and sell it. |
-| ☐ | Worst Hangover | `secrets.story-06` | challenge | Read alone, tell your worst hangover story. Table votes truth or lie; wrong voters drink 2. | Secret: Tell the truth. Every word. |
-| ☐ | Forehead | `secrets.forehead-01` | challenge | Start the clock. Phone on your forehead, press Hold to read. Table gives clues; you guess. | Secret: Hangover · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
-| ☐ | Forehead | `secrets.forehead-02` | challenge | Start the clock. Phone on your forehead, press Hold to read. Table gives clues; you guess. | Secret: Karaoke · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
-| ☐ | Forehead | `secrets.forehead-03` | challenge | Start the clock. Phone on your forehead, press Hold to read. Table gives clues; you guess. | Secret: Bachelor party · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
-| ☐ | Forehead | `secrets.forehead-04` | challenge | Start the clock. Phone on your forehead, press Hold to read. Table gives clues; you guess. | Secret: Designated driver · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
-| ☐ | Forehead | `secrets.forehead-05` | challenge | Start the clock. Phone on your forehead, press Hold to read. Table gives clues; you guess. | Secret: Walk of shame · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
-| ☐ | Forehead | `secrets.forehead-06` | challenge | Start the clock. Phone on your forehead, press Hold to read. Table gives clues; you guess. | Secret: Beer pong · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
-| ☐ | Forehead | `secrets.forehead-07` | challenge | Start the clock. Phone on your forehead, press Hold to read. Table gives clues; you guess. | Secret: Group chat · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
-| ☐ | Forehead | `secrets.forehead-08` | challenge | Start the clock. Phone on your forehead, press Hold to read. Table gives clues; you guess. | Secret: Pub crawl · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
-| ☐ | Forehead | `secrets.forehead-09` | challenge | Start the clock. Phone on your forehead, press Hold to read. Table gives clues; you guess. | Secret: Tailgate · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
-| ☐ | Forehead | `secrets.forehead-10` | challenge | Start the clock. Phone on your forehead, press Hold to read. Table gives clues; you guess. | Secret: Hot tub · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
-| ☐ | Forehead | `secrets.forehead-11` | challenge | Start the clock. Phone on your forehead, press Hold to read. Table gives clues; you guess. | Secret: Bar fight · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
-| ☐ | Forehead | `secrets.forehead-12` | challenge | Start the clock. Phone on your forehead, press Hold to read. Table gives clues; you guess. | Secret: Spring break · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
-| ☐ | Forehead | `secrets.forehead-13` | challenge | Start the clock. Phone on your forehead, press Hold to read. Table gives clues; you guess. | Secret: Wine mom · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
-| ☐ | Forehead | `secrets.forehead-14` | challenge | Start the clock. Phone on your forehead, press Hold to read. Table gives clues; you guess. | Secret: Ugly sweater · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
-| ☐ | Forehead | `secrets.forehead-15` | challenge | Start the clock. Phone on your forehead, press Hold to read. Table gives clues; you guess. | Secret: Fake ID · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
-| ☐ | Forehead | `secrets.forehead-16` | challenge | Start the clock. Phone on your forehead, press Hold to read. Table gives clues; you guess. | Secret: Jägerbomb · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
-| ☐ | No Saying It | `secrets.banned-01` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: TEQUILA. Banned: shot, Mexico, lime, salt, margarita. · Clock 60 s: Time. Guessed? Give 3. Not guessed, or a banned word slipped? Drink 3. |
-| ☐ | No Saying It | `secrets.banned-02` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: WEDDING. Banned: marry, bride, groom, ring, dress. · Clock 60 s: Time. Guessed? Give 3. Not guessed, or a banned word slipped? Drink 3. |
-| ☐ | No Saying It | `secrets.banned-03` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: BARTENDER. Banned: bar, drink, serve, tip, cocktail. · Clock 60 s: Time. Guessed? Give 3. Not guessed, or a banned word slipped? Drink 3. |
-| ☐ | No Saying It | `secrets.banned-04` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: VEGAS. Banned: casino, gamble, Nevada, strip, Elvis. · Clock 60 s: Time. Guessed? Give 3. Not guessed, or a banned word slipped? Drink 3. |
-| ☐ | No Saying It | `secrets.banned-05` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: DATING APP. Banned: swipe, date, match, profile, phone. · Clock 60 s: Time. Guessed? Give 3. Not guessed, or a banned word slipped? Drink 3. |
-| ☐ | No Saying It | `secrets.banned-06` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: CAMPFIRE. Banned: fire, camp, s'mores, wood, marshmallow. · Clock 60 s: Time. Guessed? Give 3. Not guessed, or a banned word slipped? Drink 3. |
-| ☐ | No Saying It | `secrets.banned-07` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: BRUNCH. Banned: mimosa, eggs, Sunday, breakfast, lunch. · Clock 60 s: Time. Guessed? Give 3. Not guessed, or a banned word slipped? Drink 3. |
-| ☐ | No Saying It | `secrets.banned-08` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: SUNBURN. Banned: sun, beach, red, burn, lotion. · Clock 60 s: Time. Guessed? Give 3. Not guessed, or a banned word slipped? Drink 3. |
-| ☐ | No Saying It | `secrets.banned-09` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: KARAOKE. Banned: sing, song, microphone, bar, lyrics. · Clock 60 s: Time. Guessed? Give 3. Not guessed, or a banned word slipped? Drink 3. |
-| ☐ | No Saying It | `secrets.banned-10` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: PIZZA. Banned: cheese, slice, pepperoni, Italy, delivery. · Clock 60 s: Time. Guessed? Give 3. Not guessed, or a banned word slipped? Drink 3. |
-| ☐ | No Saying It | `secrets.banned-11` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: UBER. Banned: car, ride, app, driver, Lyft. · Clock 60 s: Time. Guessed? Give 3. Not guessed, or a banned word slipped? Drink 3. |
-| ☐ | No Saying It | `secrets.banned-12` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: AIRPORT. Banned: plane, flight, gate, security, TSA. · Clock 60 s: Time. Guessed? Give 3. Not guessed, or a banned word slipped? Drink 3. |
-| ☐ | No Saying It | `secrets.banned-13` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: BEACH. Banned: sand, ocean, sun, waves, towel. · Clock 60 s: Time. Guessed? Give 3. Not guessed, or a banned word slipped? Drink 3. |
-| ☐ | No Saying It | `secrets.banned-14` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: WINE. Banned: grape, red, white, glass, bottle. · Clock 60 s: Time. Guessed? Give 3. Not guessed, or a banned word slipped? Drink 3. |
-| ☐ | No Saying It | `secrets.banned-15` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: BACHELORETTE. Banned: bride, party, wedding, sash, Nashville. · Clock 60 s: Time. Guessed? Give 3. Not guessed, or a banned word slipped? Drink 3. |
-| ☐ | No Saying It | `secrets.banned-16` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: TATTOO. Banned: ink, needle, skin, arm, artist. · Clock 60 s: Time. Guessed? Give 3. Not guessed, or a banned word slipped? Drink 3. |
-| ☐ | Act It Out | `secrets.charade-01` | challenge | Read this alone. Start the clock and act it out, no words or sounds. The table guesses. | Secret: Parallel parking a limo. · Clock 45 s: Time. Someone guessed? You both give 2. Nobody did? You drink 3. |
-| ☐ | Act It Out | `secrets.charade-02` | challenge | Read this alone. Start the clock and act it out, no words or sounds. The table guesses. | Secret: Sneaking in at 4 a.m. and getting caught. · Clock 45 s: Time. Someone guessed? You both give 2. Nobody did? You drink 3. |
-| ☐ | Act It Out | `secrets.charade-03` | challenge | Read this alone. Start the clock and act it out, no words or sounds. The table guesses. | Secret: A bartender ignoring you. · Clock 45 s: Time. Someone guessed? You both give 2. Nobody did? You drink 3. |
-| ☐ | Act It Out | `secrets.charade-04` | challenge | Read this alone. Start the clock and act it out, no words or sounds. The table guesses. | Secret: Dropping your phone in a pool. · Clock 45 s: Time. Someone guessed? You both give 2. Nobody did? You drink 3. |
-| ☐ | Act It Out | `secrets.charade-05` | challenge | Read this alone. Start the clock and act it out, no words or sounds. The table guesses. | Secret: Doing a keg stand. · Clock 45 s: Time. Someone guessed? You both give 2. Nobody did? You drink 3. |
-| ☐ | Act It Out | `secrets.charade-06` | challenge | Read this alone. Start the clock and act it out, no words or sounds. The table guesses. | Secret: Walking into a glass door. · Clock 45 s: Time. Someone guessed? You both give 2. Nobody did? You drink 3. |
-| ☐ | Act It Out | `secrets.charade-07` | challenge | Read this alone. Start the clock and act it out, no words or sounds. The table guesses. | Secret: A group selfie going wrong. · Clock 45 s: Time. Someone guessed? You both give 2. Nobody did? You drink 3. |
-| ☐ | Act It Out | `secrets.charade-08` | challenge | Read this alone. Start the clock and act it out, no words or sounds. The table guesses. | Secret: Opening a beer with your teeth. · Clock 45 s: Time. Someone guessed? You both give 2. Nobody did? You drink 3. |
-| ☐ | Act It Out | `secrets.charade-09` | challenge | Read this alone. Start the clock and act it out, no words or sounds. The table guesses. | Secret: Failing a sobriety test. · Clock 45 s: Time. Someone guessed? You both give 2. Nobody did? You drink 3. |
-| ☐ | Act It Out | `secrets.charade-10` | challenge | Read this alone. Start the clock and act it out, no words or sounds. The table guesses. | Secret: Building IKEA furniture drunk. · Clock 45 s: Time. Someone guessed? You both give 2. Nobody did? You drink 3. |
+| ☐ | Last Letter | `secrets.fuse-last-letter` | category | Light the fuse. Say any word, pass a beer left; the next starts on its last letter. | Fuse 15–45 s: Boom. Whoever's holding the beer drinks 3. |
+| ☐ | Secret Mission | `secrets.mission-01` | challenge | Read alone; do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to say the word "literally." |
+| ☐ | Secret Mission | `secrets.mission-02` | challenge | Read alone; do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to give you a high five. |
+| ☐ | Secret Mission | `secrets.mission-03` | challenge | Read alone; do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get two people to cheers with you at once. |
+| ☐ | Secret Mission | `secrets.mission-04` | challenge | Read alone; do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to tell you what time it is. |
+| ☐ | Secret Mission | `secrets.mission-05` | challenge | Read alone; do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Work the word "pineapple" into conversation twice. |
+| ☐ | Secret Mission | `secrets.mission-06` | challenge | Read alone; do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to repeat a sentence back to you. |
+| ☐ | Secret Mission | `secrets.mission-07` | challenge | Read alone; do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to stand up. |
+| ☐ | Secret Mission | `secrets.mission-08` | challenge | Read alone; do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to hand you something. |
+| ☐ | Secret Mission | `secrets.mission-09` | challenge | Read alone; do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get the table singing, even one line. |
+| ☐ | Secret Mission | `secrets.mission-10` | challenge | Read alone; do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to show you a photo on their phone. |
+| ☐ | Secret Mission | `secrets.mission-11` | challenge | Read alone; do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Make someone say "what?" three times. |
+| ☐ | Secret Mission | `secrets.mission-12` | challenge | Read alone; do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to swap seats with you. |
+| ☐ | Secret Mission | `secrets.mission-13` | challenge | Read alone; do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to say your name. |
+| ☐ | Secret Mission | `secrets.mission-14` | challenge | Read alone; do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to agree with an obviously false fact. |
+| ☐ | Secret Mission | `secrets.mission-15` | challenge | Read alone; do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Say one full sentence in a British accent without explaining it. |
+| ☐ | Secret Mission | `secrets.mission-16` | challenge | Read alone; do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Tell a terrible joke and get someone to laugh at it. |
+| ☐ | Secret Mission | `secrets.mission-17` | challenge | Read alone; do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to ask you about your childhood. |
+| ☐ | Secret Mission | `secrets.mission-18` | challenge | Read alone; do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to say "I love you." |
+| ☐ | Secret Mission | `secrets.mission-19` | challenge | Read alone; do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Make someone drink at the same moment as you, three times. |
+| ☐ | Secret Mission | `secrets.mission-20` | challenge | Read alone; do it before your next turn. Done: others drink 3. Caught: you drink 3. | Secret: Get someone to compliment your outfit. |
+| ☐ | Worst Date | `secrets.story-01` | challenge | Read alone, tell your worst date story. Truth or lie? Wrong voters drink 2. | Secret: Lie. Make it up and sell it. |
+| ☐ | Police Story | `secrets.story-02` | challenge | Read alone, tell your best cop story. Truth or lie? Wrong voters drink 2. | Secret: Tell the truth. Every word. No story of your own? Tell a true one about someone here. |
+| ☐ | Celebrity Sighting | `secrets.story-03` | challenge | Read alone, tell your best celebrity story. Truth or lie? Wrong voters drink 2. | Secret: Lie. Make it up and sell it. |
+| ☐ | ER Visit | `secrets.story-04` | challenge | Read alone, tell your dumbest injury story. Truth or lie? Wrong voters drink 2. | Secret: Tell the truth. Every word. No story of your own? Tell a true one about someone here. |
+| ☐ | Worst Job | `secrets.story-05` | challenge | Read alone, tell your worst job story. Truth or lie? Wrong voters drink 2. | Secret: Lie. Make it up and sell it. |
+| ☐ | Worst Hangover | `secrets.story-06` | challenge | Read alone, tell your worst hangover story. Truth or lie? Wrong voters drink 2. | Secret: Tell the truth. Every word. No story of your own? Tell a true one about someone here. |
+| ☐ | Worst Date | `secrets.story-07` | challenge | Read alone, tell your worst date story. Truth or lie? Wrong voters drink 2. | Secret: Tell the truth. Every word. No story of your own? Tell a true one about someone here. |
+| ☐ | Police Story | `secrets.story-08` | challenge | Read alone, tell your best cop story. Truth or lie? Wrong voters drink 2. | Secret: Lie. Make it up and sell it. |
+| ☐ | Celebrity Sighting | `secrets.story-09` | challenge | Read alone, tell your best celebrity story. Truth or lie? Wrong voters drink 2. | Secret: Tell the truth. Every word. No story of your own? Tell a true one about someone here. |
+| ☐ | ER Visit | `secrets.story-10` | challenge | Read alone, tell your dumbest injury story. Truth or lie? Wrong voters drink 2. | Secret: Lie. Make it up and sell it. |
+| ☐ | Worst Job | `secrets.story-11` | challenge | Read alone, tell your worst job story. Truth or lie? Wrong voters drink 2. | Secret: Tell the truth. Every word. No story of your own? Tell a true one about someone here. |
+| ☐ | Worst Hangover | `secrets.story-12` | challenge | Read alone, tell your worst hangover story. Truth or lie? Wrong voters drink 2. | Secret: Lie. Make it up and sell it. |
+| ☐ | Forehead | `secrets.forehead-01` | challenge | Start the clock. Phone on forehead, press Hold to read; guess from the table's clues. | Secret: Hangover · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
+| ☐ | Forehead | `secrets.forehead-02` | challenge | Start the clock. Phone on forehead, press Hold to read; guess from the table's clues. | Secret: Skinny dipping · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
+| ☐ | Forehead | `secrets.forehead-03` | challenge | Start the clock. Phone on forehead, press Hold to read; guess from the table's clues. | Secret: Bachelor party · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
+| ☐ | Forehead | `secrets.forehead-04` | challenge | Start the clock. Phone on forehead, press Hold to read; guess from the table's clues. | Secret: Designated driver · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
+| ☐ | Forehead | `secrets.forehead-05` | challenge | Start the clock. Phone on forehead, press Hold to read; guess from the table's clues. | Secret: Walk of shame · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
+| ☐ | Forehead | `secrets.forehead-06` | challenge | Start the clock. Phone on forehead, press Hold to read; guess from the table's clues. | Secret: Beer pong · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
+| ☐ | Forehead | `secrets.forehead-07` | challenge | Start the clock. Phone on forehead, press Hold to read; guess from the table's clues. | Secret: Group chat · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
+| ☐ | Forehead | `secrets.forehead-08` | challenge | Start the clock. Phone on forehead, press Hold to read; guess from the table's clues. | Secret: Pub crawl · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
+| ☐ | Forehead | `secrets.forehead-09` | challenge | Start the clock. Phone on forehead, press Hold to read; guess from the table's clues. | Secret: Tailgate · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
+| ☐ | Forehead | `secrets.forehead-10` | challenge | Start the clock. Phone on forehead, press Hold to read; guess from the table's clues. | Secret: Hot tub · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
+| ☐ | Forehead | `secrets.forehead-11` | challenge | Start the clock. Phone on forehead, press Hold to read; guess from the table's clues. | Secret: Bar fight · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
+| ☐ | Forehead | `secrets.forehead-12` | challenge | Start the clock. Phone on forehead, press Hold to read; guess from the table's clues. | Secret: Spring break · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
+| ☐ | Forehead | `secrets.forehead-13` | challenge | Start the clock. Phone on forehead, press Hold to read; guess from the table's clues. | Secret: Wine mom · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
+| ☐ | Forehead | `secrets.forehead-14` | challenge | Start the clock. Phone on forehead, press Hold to read; guess from the table's clues. | Secret: Ugly sweater · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
+| ☐ | Forehead | `secrets.forehead-15` | challenge | Start the clock. Phone on forehead, press Hold to read; guess from the table's clues. | Secret: Fake ID · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
+| ☐ | Forehead | `secrets.forehead-16` | challenge | Start the clock. Phone on forehead, press Hold to read; guess from the table's clues. | Secret: Jägerbomb · Clock 30 s: Time. Got it? Give 3. Still guessing? Drink 3. |
+| ☐ | No Saying It | `secrets.banned-01` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: TEQUILA. Banned: shot, Mexico, lime, salt, margarita. · Clock 60 s: Time. Guessed clean? Give 3. Banned word or no guess? Drink 3. |
+| ☐ | No Saying It | `secrets.banned-02` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: WEDDING. Banned: marry, bride, groom, ring, dress. · Clock 60 s: Time. Guessed clean? Give 3. Banned word or no guess? Drink 3. |
+| ☐ | No Saying It | `secrets.banned-03` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: BARTENDER. Banned: bar, drink, serve, tip, cocktail. · Clock 60 s: Time. Guessed clean? Give 3. Banned word or no guess? Drink 3. |
+| ☐ | No Saying It | `secrets.banned-04` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: VEGAS. Banned: casino, gamble, Nevada, strip, Elvis. · Clock 60 s: Time. Guessed clean? Give 3. Banned word or no guess? Drink 3. |
+| ☐ | No Saying It | `secrets.banned-05` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: DATING APP. Banned: swipe, date, match, profile, phone. · Clock 60 s: Time. Guessed clean? Give 3. Banned word or no guess? Drink 3. |
+| ☐ | No Saying It | `secrets.banned-06` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: CAMPFIRE. Banned: fire, camp, s'mores, wood, marshmallow. · Clock 60 s: Time. Guessed clean? Give 3. Banned word or no guess? Drink 3. |
+| ☐ | No Saying It | `secrets.banned-07` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: BRUNCH. Banned: mimosa, eggs, Sunday, breakfast, lunch. · Clock 60 s: Time. Guessed clean? Give 3. Banned word or no guess? Drink 3. |
+| ☐ | No Saying It | `secrets.banned-08` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: SUNBURN. Banned: sun, beach, red, burn, lotion. · Clock 60 s: Time. Guessed clean? Give 3. Banned word or no guess? Drink 3. |
+| ☐ | No Saying It | `secrets.banned-09` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: KARAOKE. Banned: sing, song, microphone, bar, lyrics. · Clock 60 s: Time. Guessed clean? Give 3. Banned word or no guess? Drink 3. |
+| ☐ | No Saying It | `secrets.banned-10` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: PIZZA. Banned: cheese, slice, pepperoni, Italy, delivery. · Clock 60 s: Time. Guessed clean? Give 3. Banned word or no guess? Drink 3. |
+| ☐ | No Saying It | `secrets.banned-11` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: UBER. Banned: car, ride, app, driver, Lyft. · Clock 60 s: Time. Guessed clean? Give 3. Banned word or no guess? Drink 3. |
+| ☐ | No Saying It | `secrets.banned-12` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: AIRPORT. Banned: plane, flight, gate, security, TSA. · Clock 60 s: Time. Guessed clean? Give 3. Banned word or no guess? Drink 3. |
+| ☐ | No Saying It | `secrets.banned-13` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: BEACH. Banned: sand, ocean, sun, waves, towel. · Clock 60 s: Time. Guessed clean? Give 3. Banned word or no guess? Drink 3. |
+| ☐ | No Saying It | `secrets.banned-14` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: WINE. Banned: grape, red, white, glass, bottle. · Clock 60 s: Time. Guessed clean? Give 3. Banned word or no guess? Drink 3. |
+| ☐ | No Saying It | `secrets.banned-15` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: BACHELORETTE. Banned: bride, party, wedding, sash, Nashville. · Clock 60 s: Time. Guessed clean? Give 3. Banned word or no guess? Drink 3. |
+| ☐ | No Saying It | `secrets.banned-16` | challenge | Read alone. Start the clock; get the table to guess the word without a banned word. | Secret: TATTOO. Banned: ink, needle, skin, arm, artist. · Clock 60 s: Time. Guessed clean? Give 3. Banned word or no guess? Drink 3. |
+| ☐ | Act It Out | `secrets.charade-01` | challenge | Read alone. Start the clock and act it out, no words or sounds. The table guesses. | Secret: Parallel parking a limo. · Clock 45 s: Time. Someone guessed? You both give 2. Nobody did? You drink 3. |
+| ☐ | Act It Out | `secrets.charade-02` | challenge | Read alone. Start the clock and act it out, no words or sounds. The table guesses. | Secret: Sneaking in at 4 a.m. and getting caught. · Clock 45 s: Time. Someone guessed? You both give 2. Nobody did? You drink 3. |
+| ☐ | Act It Out | `secrets.charade-03` | challenge | Read alone. Start the clock and act it out, no words or sounds. The table guesses. | Secret: A bartender ignoring you. · Clock 45 s: Time. Someone guessed? You both give 2. Nobody did? You drink 3. |
+| ☐ | Act It Out | `secrets.charade-04` | challenge | Read alone. Start the clock and act it out, no words or sounds. The table guesses. | Secret: Dropping your phone in a pool. · Clock 45 s: Time. Someone guessed? You both give 2. Nobody did? You drink 3. |
+| ☐ | Act It Out | `secrets.charade-05` | challenge | Read alone. Start the clock and act it out, no words or sounds. The table guesses. | Secret: Doing a keg stand. · Clock 45 s: Time. Someone guessed? You both give 2. Nobody did? You drink 3. |
+| ☐ | Act It Out | `secrets.charade-06` | challenge | Read alone. Start the clock and act it out, no words or sounds. The table guesses. | Secret: Walking into a glass door. · Clock 45 s: Time. Someone guessed? You both give 2. Nobody did? You drink 3. |
+| ☐ | Act It Out | `secrets.charade-07` | challenge | Read alone. Start the clock and act it out, no words or sounds. The table guesses. | Secret: A group selfie going wrong. · Clock 45 s: Time. Someone guessed? You both give 2. Nobody did? You drink 3. |
+| ☐ | Act It Out | `secrets.charade-08` | challenge | Read alone. Start the clock and act it out, no words or sounds. The table guesses. | Secret: Opening a beer with your teeth. · Clock 45 s: Time. Someone guessed? You both give 2. Nobody did? You drink 3. |
+| ☐ | Act It Out | `secrets.charade-09` | challenge | Read alone. Start the clock and act it out, no words or sounds. The table guesses. | Secret: Failing a sobriety test. · Clock 45 s: Time. Someone guessed? You both give 2. Nobody did? You drink 3. |
+| ☐ | Act It Out | `secrets.charade-10` | challenge | Read alone. Start the clock and act it out, no words or sounds. The table guesses. | Secret: Building IKEA furniture drunk. · Clock 45 s: Time. Someone guessed? You both give 2. Nobody did? You drink 3. |
 | ☐ | Staring Contest | `secrets.clock-stare` | challenge | Start the clock and stare down your left neighbor. First to look away or laugh drinks 3. | Clock 30 s: Time. Nobody broke? You both drink 2. |
 | ☐ | Straight Face | `secrets.clock-straight-face` | challenge | Start the clock. Everyone tries to make you laugh; keep a straight face the whole time. | Clock 30 s: Time. Cracked? Drink 3. Held it? Everyone else drinks 2. |
 | ☐ | Plank It | `secrets.clock-plank` | challenge | Start the clock and hold a plank until time's up. Drop early and you drink 4. | Clock 30 s: Time. Still up? Give 4. |
@@ -1222,9 +1214,9 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Wall Sit | `secrets.clock-wall-sit` | challenge | Start the clock and wall sit until time's up. Stand early and you drink 4. | Clock 30 s: Time. Still sitting? Give 4. |
 | ☐ | No Blinking | `secrets.clock-no-blinking` | challenge | Start the clock and don't blink until time's up. Your left neighbor watches. | Clock 15 s: Time. Blinked? Drink 3. Didn't? Give 3. |
 | ☐ | Tongue Twister | `secrets.clock-tongue-twister` | challenge | Start the clock and say "red lorry, yellow lorry" five times before time runs out. | Clock 10 s: Time. Tripped up or ran out? Drink 3. Nailed it? Give 3. |
-| ☐ | Secret Rule | `secrets.rule-01` | rule | Read alone. This rule holds the rest of the game; anyone you catch breaking it drinks 2. | Secret: Nobody may say the word "drink." |
-| ☐ | Secret Rule | `secrets.rule-02` | rule | Read alone. This rule holds the rest of the game; anyone you catch breaking it drinks 2. | Secret: Nobody may point with a finger. |
-| ☐ | Secret Rule | `secrets.rule-03` | rule | Read alone. This rule holds the rest of the game; anyone you catch breaking it drinks 2. | Secret: Nobody may say anyone's name. |
+| ☐ | Secret Rule | `secrets.rule-01` | rule | Read alone. It holds the rest of the game; anyone you catch breaking it drinks 2. | Secret: Nobody may say the word "drink." |
+| ☐ | Secret Rule | `secrets.rule-02` | rule | Read alone. It holds the rest of the game; anyone you catch breaking it drinks 2. | Secret: Nobody may point with a finger. |
+| ☐ | Secret Rule | `secrets.rule-03` | rule | Read alone. It holds the rest of the game; anyone you catch breaking it drinks 2. | Secret: Nobody may say anyone's name. |
 
 ## Dungeon night (`dungeon`)
 
