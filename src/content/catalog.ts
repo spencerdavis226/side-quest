@@ -1,35 +1,31 @@
-import { coreCards, samplePack } from "./sample";
-import { houseCards, housePack } from "./custom";
+import { coreDeckCards, corePack } from "./core-deck";
 import { vipCards, vipPack } from "./vip";
 import { pokemonCards, pokemonPack } from "./pokemon";
-import { cabinCards, cabinPack } from "./cabin";
 import { likelyCards, likelyPack } from "./likely";
 import { secretsCards, secretsPack } from "./secrets";
 import { dungeonCards, dungeonPack } from "./dungeon";
 import type { CardDefinition, PackDefinition } from "../game/types";
 export { validateCatalog } from "./validate";
 
-// The runtime catalog. Eight opt-in packs: the generated main deck, the
-// supplied Sheet1 house deck (verbatim), VIP night, the Pokémon board-sheet
-// translation, Cabin weekend (the CABIIN 2.0 board game, off the board),
-// Most Likely To (vote cards), and Secrets & fuses (hold-to-read secrets and
-// timed cards), and Dungeon night (monsters and the Pub Crawl mode). Card content is provided sample material and is expected to change.
+// The runtime catalog. Six opt-in packs: the Core deck (the generated main
+// deck, the supplied Sheet1 house sheet verbatim, and the CABIIN 2.0 cabin
+// weekend: all plain cards), VIP night, the Pokémon board-sheet translation
+// and its League mode, Most Likely To (vote cards), Secrets & fuses
+// (hold-to-read secrets and timed cards), and Dungeon night (monsters and the
+// Pub Crawl mode). Card content is provided sample material and is expected
+// to change.
 export const cards: CardDefinition[] = [
-  ...coreCards,
-  ...houseCards,
+  ...coreDeckCards,
   ...vipCards,
   ...pokemonCards,
-  ...cabinCards,
   ...likelyCards,
   ...secretsCards,
   ...dungeonCards,
 ];
 export const packs: PackDefinition[] = [
-  samplePack,
-  housePack,
+  corePack,
   vipPack,
   pokemonPack,
-  cabinPack,
   likelyPack,
   secretsPack,
   dungeonPack,

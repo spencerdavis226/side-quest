@@ -1,4 +1,4 @@
-import type { CardDefinition, PackDefinition } from "../game/types";
+import type { CardDefinition } from "../game/types";
 import { cardFactory, choice, roll, rollTable } from "./author";
 import { cabinSheetCards } from "./custom";
 
@@ -578,13 +578,3 @@ const authored: CardDefinition[] = [
 
 // The CABIIN spaces from the house sheet join the authored cards.
 export const cabinCards: CardDefinition[] = [...authored, ...cabinSheetCards];
-
-export const cabinPack: PackDefinition = {
-  version: 1,
-  id: "cabin",
-  logo: "art/packs/cabin.svg",
-  title: "Cabin weekend",
-  description:
-    "CABIIN 2.0, off the board: trips, home states, airports and the crew's worst decisions.",
-  cardIds: cabinCards.map((card) => card.id),
-};

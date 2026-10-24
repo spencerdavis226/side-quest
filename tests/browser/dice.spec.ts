@@ -566,11 +566,11 @@ test("a finish request during lazy loading survives startup without another roll
 
 async function seedChoice(page: Page) {
   const card = cards.find((c) => c.id === "house.sheet-023")!;
-  const house = packs.find((p) => p.id === "house")!;
+  const core = packs.find((p) => p.id === "core")!;
   const session = createSession(
-    { version: 1, packIds: ["house"], limit: 3 },
+    { version: 1, packIds: ["core"], limit: 3 },
     [card],
-    [{ ...house, cardIds: [card.id] }],
+    [{ ...core, cardIds: [card.id] }],
   );
   session.phase = "revealed";
   await page.goto("./");

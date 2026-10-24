@@ -2,6 +2,10 @@
 
 Updated 2026-10-18. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## One plain deck (2026-10-24; owner)
+
+The owner: Core, the House sheet and Cabin weekend are "basically the same thing" and "don't change gameplay", so they are one pack. `core` now holds the three (275 cards; `src/content/core-deck.ts`); card IDs keep their origin (`core.*`, `house.sheet-*`, `cabin.*`). The `house` and `cabin` pack IDs are retired: a saved selection or game that names one reads as `core` (`RETIRED_PACKS` in `src/app/persistence.ts`, covered by `tests/presentation.test.ts` and the fixture `tests/fixtures/saves/2026-10-24-retired-house-and-cabin-packs.json`). VIP night stays separate (its cards say "the VIP"), as do the Pokémon and Dungeon packs (they own modes), Most Likely To (votes) and Secrets & fuses (hold-to-read and timers). Pack logos `house.svg` and `cabin.svg` were removed. Stacked on PR #28 (card copy).
+
 ## Review follow-up plan (2026-10-18; owner approved; all four merged to `main`)
 
 An app-wide review found the bugs and gaps below. The owner approved four PRs, in order, and then their merge ("Go ahead"): #24, #25, #26 and #27 are on `main`. Each was merged with `main` brought in first and CI green on that head; the combined tree was checked locally before the first merge (`npm test` 251, `test:balance` 8, lint, typecheck, build, Chromium browser suite minus the fit sweeps 136 passed).
