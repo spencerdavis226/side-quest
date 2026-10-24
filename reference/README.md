@@ -69,6 +69,21 @@ material, not game content:
   Sudowoodo, Contest Hall, Seaking, Spheal, Claydol, Pelipper, Barboach,
   Relicanth) under the new 100-character rule limit; every consequence and
   amount is unchanged.
+  The 2026-10-18 League review put back source consequences that had
+  drifted without a record: Castform's snow gives 3 again (it had become
+  "rain or snow: drink 3"), Sentret's pick finishes their drink (was drink
+  4), Krabby's target finishes their drink (was "drink 5 or finish"), and
+  Jigglypuff's Pound has everyone pound their drink (was pounding the table,
+  last drinks 2). Spoink guesses the fingers behind another player's back,
+  as the source says (the translation had them behind your own), and
+  Missingno's rules no longer list a 1 to 5 range that its natural 1
+  contradicts. Move names follow the current games: Twineedle, Sand Attack,
+  Self-Destruct, Mud-Slap and Vise Grip (the sheet's Twinneedle,
+  Sand-Attack, Selfdestruct, Mud-slap and Vicegrip). Wording only, same
+  consequences: Barboach says who slaps whom, Clefairy's drinker is whoever
+  you point at (not touch), Lapras's questions-only rule has a slip, Rival
+  Silver pours 1 for every two players, Mankey's handshake is taught to the
+  table, and Rare Candy says phone, not device.
 
 ## 2026-10-18 review
 

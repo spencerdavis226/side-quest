@@ -21,14 +21,14 @@ export const hoenn: Region = {
       "roxanne",
       "Roxanne",
       "Stone",
-      "Name 8 Pokémon types in 10 seconds. Drink 2 for each one you miss.",
+      "Name 8 Pokémon types in 10 seconds. Miss any and you lose: drink 2 per miss.",
     ),
     leader(
       1,
       "brawly",
       "Brawly",
       "Knuckle",
-      "Ten push-ups in 20 seconds. Fall short: drink 6.",
+      "Brawly wants 10 push-ups in 20 seconds. Fall short: drink 6.",
     ),
     leader(
       2,
@@ -46,7 +46,7 @@ export const hoenn: Region = {
             win: true,
           },
         ]),
-        doubles: "Overcharge. Everyone else drinks {total}.",
+        doubles: "A pair! Overcharge. Everyone else drinks {total}.",
         doublesWin: true,
       },
     ),
@@ -75,7 +75,7 @@ export const hoenn: Region = {
       "norman",
       "Norman",
       "Balance",
-      "Norman is your dad and he's disappointed. Make the table laugh within 30 seconds or drink 6.",
+      "Your dad Norman is disappointed. Make the table laugh in 30 seconds or drink 6.",
     ),
     leader(
       5,
@@ -100,11 +100,11 @@ export const hoenn: Region = {
           {
             min: 8,
             max: 12,
-            instruction: "You hold them off. You both drink 2.",
+            instruction: "You hold them off. You both give 2.",
             win: true,
           },
         ]),
-        doubles: "Perfect sync. You both give 8.",
+        doubles: "A pair! Perfect sync. You both give 8.",
         doublesWin: true,
       },
     ),
@@ -150,7 +150,7 @@ export const hoenn: Region = {
         {
           min: 13,
           max: 19,
-          instruction: "You thaw out. Drink 3.",
+          instruction: "You thaw out. Give 4.",
           win: true,
         },
         {
@@ -170,7 +170,7 @@ export const hoenn: Region = {
         ...Array.from({ length: 9 }, (_, i) => ({
           min: i + 3,
           max: i + 3,
-          instruction: `Drink ${Math.ceil((i + 3) / 2) + 2}.`,
+          instruction: `Drink ${Math.ceil((11 - i) / 2) + 2}.`,
         })),
         {
           min: 12,
@@ -197,7 +197,8 @@ export const hoenn: Region = {
         {
           min: 8,
           max: 12,
-          instruction: "Champion! Give {total}, split however you like.",
+          instruction:
+            "Metagross staggers. Give {total}, split however you like.",
           win: true,
         },
       ]),
@@ -212,7 +213,7 @@ export const hoenn: Region = {
         "Ugly. Everyone drinks 3; the table names the ugliest pose and that player drinks 2 more.",
         "Stunning hit. The table names the best pose; that player gives 4.",
         {
-          crit: "Contest winner. Make a rule for the rest of the game.",
+          crit: "Ribbon-worthy. Make a rule for the rest of the game.",
           fumble: "Milotic sweeps. Everyone finishes their drink.",
         },
       ),
@@ -223,7 +224,7 @@ export const hoenn: Region = {
     legendary(
       "eon-duo",
       "Latias & Latios",
-      "Pick a partner. Spoon them while you roll 2d6. 8 or more, or doubles, catches the pair.",
+      "Pick a partner and spoon them while you roll 2d6.",
       {
         ...rollTable(2, 6, [
           ...Array.from({ length: 6 }, (_, i) => ({
@@ -234,24 +235,24 @@ export const hoenn: Region = {
           {
             min: 8,
             max: 12,
-            instruction: "Caught both! You both give 6.",
+            instruction: "They falter. You both give 6.",
             win: true,
           },
         ]),
-        doubles: "Caught both! You both give 10.",
+        doubles: "A pair! They collide midair. You both give 10.",
         doublesWin: true,
       },
     ),
     legendary(
       "deoxys",
       "Deoxys",
-      "A space virus with a laser. Roll d20.",
+      "A space virus with a laser. Everyone covers their mouth. Roll d20.",
       d20(
         LEGENDARY_NEED,
         "Psycho Boost lands. Drink 6; anyone who uncovered their mouth drinks 2.",
-        "Caught! Give 6.",
+        "A hit! Give 6.",
         {
-          crit: "Caught clean! Give 10.",
+          crit: "Caught clean! Give 12.",
         },
       ),
     ),
@@ -264,7 +265,7 @@ export const hoenn: Region = {
         "Drought. Drink 4, panting.",
         "You crack its crust. Give 5.",
         {
-          fumble: "Precipice Blades. Take a spicy shot.",
+          fumble: "Precipice Blades. Drink 4, then take a spicy shot.",
         },
       ),
     ),
@@ -294,7 +295,7 @@ export const hoenn: Region = {
     legendary(
       "regi-trio",
       "The Regi Trio",
-      "Three golems behind a puzzle nobody solved without a guide. Admit you used one, then roll d20.",
+      "Nobody beat the Regi puzzle without a guide. Admit you used one, then roll d20.",
       d20(
         LEGENDARY_NEED,
         "Explosion. Drink 5, and admit what else you looked up a guide for.",

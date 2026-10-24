@@ -42,7 +42,7 @@ export const unova: Region = {
       "burgh",
       "Burgh",
       "Insect",
-      "Burgh is an artist. Draw a bug on your left neighbor's arm. Table can't name it: drink 4.",
+      "Burgh's art test: finger-draw a bug on your neighbor's back. They can't name it: drink 4.",
     ),
     leader(
       3,
@@ -112,7 +112,7 @@ export const unova: Region = {
       "shauntal",
       "Shauntal",
       "Ghost",
-      "Shauntal writes smut about trainers. Narrate 20 seconds of it about two players. Stop: drink 5.",
+      "Shauntal writes smut. Narrate 20 seconds of it about two players. Stop: drink 5.",
     ),
     eliteFour(
       "grimsley",
@@ -162,7 +162,7 @@ export const unova: Region = {
         "Volcarona burns the table. Everyone drinks 3 and blows on their fingers.",
         "Alder spills his beer on you. Give 4 and sip anyone's drink.",
         {
-          crit: "Alder passes out. Give 10.",
+          crit: "Alder nods off mid-battle. Give 10.",
           fumble: "He's still up at 4 a.m. Everyone finishes their drink.",
         },
       ),
@@ -177,7 +177,7 @@ export const unova: Region = {
         "Beaten by a child. Everyone drinks 4 and apologizes to her.",
         "You land one on a kid. The table boos you; give 4 anyway.",
         {
-          crit: "She sends you to bed. Give 10.",
+          crit: "You send her to bed. Give 10.",
           fumble: "Outrage. Everyone finishes their drink.",
         },
       ),

@@ -41,21 +41,21 @@ export const sinnoh: Region = {
       "maylene",
       "Maylene",
       "Cobble",
-      "Maylene fights barefoot. Shoes off, then thumb-wrestle your left neighbor. Lose: drink 5.",
+      "Maylene fights barefoot. Shoes off, thumb-war your left neighbor. Lose: drink 5.",
     ),
     leader(
       3,
       "crasher-wake",
       "Crasher Wake",
       "Fen",
-      "Crasher Wake is a luchador. Put on an imaginary mask, flex at the table, and roll d20.",
+      "Crasher Wake makes a splash. Blow bubbles in your drink for 5 seconds, then roll d20.",
       d20(
         GYM_NEED[3],
-        "Body slam. Drink 5, then flex again.",
-        "You pin him for three. Give 5.",
+        "Hydro Pump. Drink 5, then blow more bubbles.",
+        "You ride his wave. Give 5.",
         {
-          crit: "You unmask him. Give a shot.",
-          fumble: "Piledriver. Finish your drink.",
+          crit: "You wipe him out. Give a shot.",
+          fumble: "Swallowed by the wave. Finish your drink.",
         },
       ),
     ),
@@ -64,14 +64,14 @@ export const sinnoh: Region = {
       "fantina",
       "Fantina",
       "Relic",
-      "Fantina wants ze dance. Dance 15 seconds with no music. Table votes not magnifique: drink 5.",
+      "Dance for Fantina: 15 seconds, no music. Table says not magnifique: drink 5.",
     ),
     leader(
       5,
       "byron",
       "Byron",
       "Mine",
-      "Byron is Roark's dad and louder about it. Shout your biggest flex at the table, then roll d20.",
+      "Byron is Roark's dad, and louder. Shout your biggest flex, then roll d20.",
       d20(
         GYM_NEED[5],
         "Iron Defense. Drink 5, and the table rates your flex out of 10.",
@@ -115,7 +115,7 @@ export const sinnoh: Region = {
       "Aaron loves bugs. Eat a crumb off the floor, or fake it well, then roll d20.",
       d20(
         ELITE_NEED,
-        "Bug Bite. Drink 5 and buzz for five seconds.",
+        "Bug Bite. Drink 5 and buzz for 5 seconds.",
         "You squash his bugs. Slap the table and give 5.",
       ),
     ),
@@ -135,7 +135,7 @@ export const sinnoh: Region = {
         "Singed. Pat out your hair, then drink 5.",
         "You put out the afro. Pat out your left neighbor's head; they drink 3.",
         {
-          fumble: "Flare Blitz. Take a spicy shot.",
+          fumble: "Flare Blitz. Drink 5, then take a spicy shot.",
         },
       ),
     ),
@@ -143,7 +143,7 @@ export const sinnoh: Region = {
       "lucian",
       "Lucian",
       "Psychic",
-      "Lucian reads mid-battle. Dramatically read your last sent text. Refuse: finish your drink.",
+      "Lucian reads mid-battle. Perform your last sent text. Refuse: finish your drink.",
     ),
   ],
 
@@ -205,7 +205,7 @@ export const sinnoh: Region = {
       ),
       jinx: {
         name: "Backwards",
-        rule: "Everyone calls the jinxed player their name backwards. Slip: drink 1.",
+        rule: "Everyone calls the jinxed player by their name said backwards. Slip: drink 1.",
       },
     },
     legendary(
@@ -231,7 +231,7 @@ export const sinnoh: Region = {
         "God blinks. Give 6.",
         {
           crit: "You caught God. Everyone else finishes their drink.",
-          fumble: "Smited. Finish your drink.",
+          fumble: "Smote. Finish your drink.",
         },
       ),
     ),

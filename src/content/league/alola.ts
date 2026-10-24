@@ -39,7 +39,7 @@ export const alola: Region = {
       "Hala",
       "Kahuna",
       "Fightinium Z",
-      "Hala wants sumo. Palm-push your right neighbor; first to move a foot loses. Lose: drink 5.",
+      "Hala's sumo: palm-push your right neighbor. Move a foot first: drink 5.",
     ),
     islandTrial(
       2,
@@ -47,7 +47,7 @@ export const alola: Region = {
       "Lana",
       "Trial Captain",
       "Waterium Z",
-      "Lana lies about everything. Tell two truths and a lie. The table spots the lie: drink 5.",
+      "Lana lies. Tell two truths and a lie. The table spots the lie: drink 5.",
     ),
     islandTrial(
       3,
@@ -62,7 +62,7 @@ export const alola: Region = {
         "Totem Marowak falls. Give 5.",
         {
           crit: "Inferno Overdrive. Give a shot.",
-          fumble: "Third-degree burns. Take a spicy shot.",
+          fumble: "Third-degree burns. Drink 5, then take a spicy shot.",
         },
       ),
     ),
@@ -96,7 +96,7 @@ export const alola: Region = {
       "Nanu",
       "Kahuna",
       "Darkinium Z",
-      "Nanu's a cop who can't be bothered. Get anyone to confess a crime in 30 seconds or drink 6.",
+      "Nanu's a lazy cop. Get someone to confess a crime in 30 seconds or drink 6.",
     ),
     islandTrial(
       7,
@@ -122,7 +122,7 @@ export const alola: Region = {
       "acerola",
       "Acerola",
       "Ghost",
-      "Hide your drink. Acerola (your left neighbor) gets 15 seconds to find it. Found: drink 5.",
+      "Hide your drink. Your left neighbor hunts it for 15 seconds. Found: drink 5.",
     ),
     eliteFour(
       "kahili",

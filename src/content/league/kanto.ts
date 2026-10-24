@@ -26,7 +26,7 @@ export const kanto: Region = {
         {
           min: 13,
           max: 19,
-          instruction: "You chip through. Drink 2.",
+          instruction: "You chip through. Give 3.",
           win: true,
         },
         { min: 20, max: 20, instruction: "Critical hit. Give 6.", win: true },
@@ -55,7 +55,7 @@ export const kanto: Region = {
             win: true,
           },
         ]),
-        doubles: "Paralyzed. Finish your drink.",
+        doubles: "A pair! Paralyzed. Finish your drink.",
       },
     ),
     leader(
@@ -68,7 +68,7 @@ export const kanto: Region = {
         ...[1, 2, 3, 4].map((n) => ({
           min: n,
           max: n,
-          instruction: `Asleep. Drink ${n + 2} with your eyes shut.`,
+          instruction: `Asleep. Drink ${7 - n} with your eyes shut.`,
         })),
         {
           min: 5,
@@ -83,7 +83,7 @@ export const kanto: Region = {
       "koga",
       "Koga",
       "Soul",
-      "Ninja test: within 30 seconds, sip someone else's drink without them noticing. Caught: drink 5.",
+      "Ninja test: sneak a sip of someone's drink within 30 seconds. Caught: drink 5.",
     ),
     leader(
       5,
@@ -97,7 +97,7 @@ export const kanto: Region = {
       "blaine",
       "Blaine",
       "Volcano",
-      "Quiz time! The table asks you 3 trivia questions. Get 2 right to win. Each miss: drink 3.",
+      "Quiz! The table asks 3 trivia questions. Get 2 right. Each miss: drink 3.",
     ),
     leader(
       7,
@@ -114,7 +114,7 @@ export const kanto: Region = {
         {
           min: 11,
           max: 19,
-          instruction: "You scrape by. Drink 4.",
+          instruction: "You scrape by. Give 4.",
           win: true,
         },
         {
@@ -135,17 +135,17 @@ export const kanto: Region = {
       "lorelei",
       "Lorelei",
       "Ice",
-      "Chug a glass of ice water, then roll d6. Lorelei likes it cold.",
+      "Lorelei freezes you solid. Hold perfectly still, mid-pose, while you roll d6.",
       rollTable(1, 6, [
         ...[1, 2, 3, 4].map((n) => ({
           min: n,
           max: n,
-          instruction: `Brain freeze. Drink ${n}.`,
+          instruction: `Frozen solid. Drink ${5 - n}.`,
         })),
         ...[5, 6].map((n) => ({
           min: n,
           max: n,
-          instruction: `You keep it down. Give ${n}.`,
+          instruction: `You crack the ice. Give ${n}.`,
           win: true,
         })),
       ]),
@@ -154,7 +154,7 @@ export const kanto: Region = {
       "bruno",
       "Bruno",
       "Fighting",
-      "Arm-wrestle the two strongest players back to back. Each loss: drink 5.",
+      "Bruno trains to the limit. Handstand against a wall for 10 seconds. Drop: drink 5.",
     ),
     {
       ...eliteFour(
@@ -175,7 +175,7 @@ export const kanto: Region = {
       "blue",
       "Blue",
       "Kanto",
-      "Your rival got here first and smells like your mom's perfume. The whole table fights. Roll d20.",
+      "Blue got here first and smells like your mom. The whole table fights. Roll d20.",
       rollTable(1, 20, [
         {
           min: 1,
@@ -191,7 +191,7 @@ export const kanto: Region = {
         {
           min: 11,
           max: 20,
-          instruction: "Champion! Hand out 10 and take a victory lap.",
+          instruction: "A clean hit. Hand out 10.",
           win: true,
         },
       ]),
@@ -225,7 +225,7 @@ export const kanto: Region = {
           instruction:
             "Frozen. Everyone drinks 3; the first to stop shivering drinks 2 more.",
         },
-        { min: 14, max: 20, instruction: "Caught! Give 8.", win: true },
+        { min: 14, max: 20, instruction: "A hit! Give 8.", win: true },
       ]),
     ),
     legendary(
@@ -238,7 +238,12 @@ export const kanto: Region = {
           max: 7,
           instruction: "Struck. You and both neighbors drink {total}.",
         },
-        { min: 8, max: 12, instruction: "Caught! Give {total}.", win: true },
+        {
+          min: 8,
+          max: 12,
+          instruction: "You ground it. Give {total}.",
+          win: true,
+        },
       ]),
     ),
     legendary(
@@ -247,13 +252,13 @@ export const kanto: Region = {
       "Moltres is on fire and so is your throat. Roll d20.",
       rollTable(1, 20, [
         { min: 1, max: 12, instruction: "Scorched. Take a high-proof shot." },
-        { min: 13, max: 20, instruction: "Caught! Give a shot.", win: true },
+        { min: 13, max: 20, instruction: "A hit! Give a shot.", win: true },
       ]),
     ),
     legendary(
       "mewtwo",
       "Mewtwo",
-      "Mewtwo reads your mind and tells the table your worst thought. Roll d20.",
+      "Mewtwo reads your mind. Tell the table your worst thought, then roll d20.",
       d20(
         LEGENDARY_NEED,
         "Overpowered. Finish your drink.",

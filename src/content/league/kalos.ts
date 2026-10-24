@@ -41,7 +41,7 @@ export const kalos: Region = {
       "korrina",
       "Korrina",
       "Rumble",
-      "Korrina's on roller skates. Spin around 5 times, then walk a straight line. Wobble: drink 5.",
+      "Korrina's on skates. Spin 5 times, then walk a straight line. Wobble: drink 5.",
     ),
     leader(
       3,
@@ -52,7 +52,7 @@ export const kalos: Region = {
       d20(
         GYM_NEED[3],
         "Leech Seed. Drink 5, and your right neighbor steals a sip of yours.",
-        "You prune the old man. Give 5, and talk like him until your next turn.",
+        "You prune the old man. Give 5 in his grumpy voice.",
         {
           fumble: "Rototilled. Finish your drink.",
         },
@@ -111,7 +111,7 @@ export const kalos: Region = {
       "malva",
       "Malva",
       "Fire",
-      "Malva reads the news. Break a scandal about a player, anchor voice. Nobody laughs: drink 5.",
+      "Malva reads the news. Break a player's scandal, anchor voice. Nobody laughs: drink 5.",
     ),
     eliteFour(
       "siebold",
@@ -128,7 +128,7 @@ export const kalos: Region = {
       "wikstrom",
       "Wikstrom",
       "Steel",
-      "Sir Wikstrom wants a duel. Straw-fence your right neighbor; first poked loses. Lose: drink 5.",
+      "Sir Wikstrom duels. Finger-fence your right neighbor. Poked first: drink 5.",
     ),
     eliteFour(
       "drasna",

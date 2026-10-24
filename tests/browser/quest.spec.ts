@@ -201,7 +201,7 @@ test("@release a starter evolves on a route, and the banner says what changed", 
   await expect(dialog.locator(".crawl-omen strong")).toHaveText("Charmeleon");
   await expect(
     dialog.locator(".crawl-omen > span:not(.crawl-icon)"),
-  ).toHaveText("Max HP 18. +2 to route battle rolls.");
+  ).toHaveText("Max HP 18. +2 to route battle d20s.");
   await page.screenshot({ path: info.outputPath("team-dialog.png") });
   // How to play, from the pause menu, speaks the League's words: no Quaff,
   // no Cup.

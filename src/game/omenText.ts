@@ -70,17 +70,18 @@ function hurtSentences(
 }
 
 const signed = (n: number) => `${n < 0 ? "−" : "+"}${Math.abs(n)}`;
-/** "+1 to every battle roll. +2 to rolls against route battles." */
+/** "+1 to every battle d20. +2 to route battle d20s." Bonuses apply only
+ * to single-d20 battles (`rollDice`), so the words say d20. */
 function rollSentences(roll: OmenEffect["roll"], words: OmenWords) {
   const out: string[] = [];
-  if (roll?.all) out.push(`${signed(roll.all)} to every battle roll`);
+  if (roll?.all) out.push(`${signed(roll.all)} to every battle d20`);
   const byValue = new Map<number, string[]>();
   for (const kind of Object.keys(words.rollKinds) as Encounter[]) {
     const n = roll?.[kind] ?? 0;
     if (n) byValue.set(n, [...(byValue.get(n) ?? []), words.rollKinds[kind]!]);
   }
   for (const [n, kinds] of byValue)
-    out.push(`${signed(n)} to ${join(kinds)} rolls`);
+    out.push(`${signed(n)} to ${join(kinds)} d20s`);
   return out;
 }
 const critSentence = (crit = 20) =>

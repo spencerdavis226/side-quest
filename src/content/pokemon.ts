@@ -96,7 +96,7 @@ const deck: CardDefinition[] = [
     "castform",
     "Castform",
     "sip",
-    "Castform used Weather Ball! Clear outside: drink 2. Cloudy: give 2. Rain or snow: drink 3.",
+    "Castform used Weather Ball! Clear: drink 2. Cloudy: give 2. Rain: drink 3. Snow: give 3.",
   ),
   card(
     "tauros",
@@ -157,13 +157,13 @@ const deck: CardDefinition[] = [
     "sentret",
     "Sentret",
     "sip",
-    "Sentret used Foresight! Choose someone who didn't see it coming; they drink 4.",
+    "Sentret used Foresight! You didn't see this coming: pick someone to finish their drink.",
   ),
   card(
     "krabby",
     "Krabby",
     "challenge",
-    "Krabby used Crabhammer! Pick someone. They drink 5 or finish their drink.",
+    "Krabby used Crabhammer! Bring it down on someone: they finish their drink.",
   ),
   card(
     "fearow",
@@ -175,7 +175,7 @@ const deck: CardDefinition[] = [
     "beedrill",
     "Beedrill",
     "group",
-    "Beedrill used Twinneedle! Pick two players. Both drink 2.",
+    "Beedrill used Twineedle! Pick two players. Both drink 2.",
   ),
   card(
     "gloom",
@@ -281,7 +281,7 @@ const deck: CardDefinition[] = [
     "silver",
     "Rival Silver",
     "group",
-    "Rival Silver appears. Drink half the table, rounded up. He's still smug.",
+    "Rival Silver appears. Drink 1 for every two players, rounded up. He's still smug.",
   ),
   card(
     "wally",
@@ -526,7 +526,7 @@ const deck: CardDefinition[] = [
     "missingno",
     "Missingno",
     "challenge",
-    "A wild Missingno glitched in! Roll d20. 1-5: game breaks, everyone drinks 3. 6+: drink 2.",
+    "Missingno glitched in! Roll d20. 5 or under breaks the game and everyone drinks. 6+: drink 2.",
     rollTable(1, 20, [
       // The standing natural 1 (owner, 2026-10-17); Missingno has no good
       // roll for a natural 20 to double.
@@ -563,7 +563,7 @@ const deck: CardDefinition[] = [
     "mankey",
     "Mankey",
     "rule",
-    "Mankey used Swagger! Teach a handshake. Until your next turn, fumbles drink 1.",
+    "Mankey used Swagger! Teach the table a secret handshake. Until your next turn, fumble it: drink 1.",
   ),
   card(
     "aipom",
@@ -587,7 +587,7 @@ const deck: CardDefinition[] = [
     "sandshrew",
     "Sandshrew",
     "rule",
-    "Sandshrew used Sand-Attack! Drink with your non-dominant hand for the rest of the game.",
+    "Sandshrew used Sand Attack! Drink with your non-dominant hand for the rest of the game.",
   ),
   card(
     "vulpix",
@@ -617,7 +617,7 @@ const deck: CardDefinition[] = [
     "lapras",
     "Lapras",
     "rule",
-    "Lapras used Confuse Ray! Pick a player: questions only until your next turn, or drink 1.",
+    "Lapras used Confuse Ray! Pick a player: questions only until your next turn. Slip: drink 1.",
   ),
   card(
     "tentacool",
@@ -697,7 +697,7 @@ const deck: CardDefinition[] = [
     "clefairy",
     "Clefairy",
     "challenge",
-    "Clefairy used Metronome! Close your eyes and point at a player. Whoever you touch drinks 3.",
+    "Clefairy used Metronome! Close your eyes and point. Whoever you're pointing at drinks 3.",
   ),
   card(
     "razor-leaf",
@@ -763,7 +763,7 @@ const deck: CardDefinition[] = [
     "spoink",
     "Spoink",
     "challenge",
-    "Spoink's Psychic! Guess the fingers behind your back. Wrong: drink that many. Right: they do.",
+    "Spoink's Psychic! Guess the fingers behind a player's back. Wrong: drink that many. Right: they do.",
   ),
   card(
     "seaking",
@@ -793,7 +793,7 @@ const deck: CardDefinition[] = [
     "electrode",
     "Electrode",
     "challenge",
-    "Electrode used Selfdestruct! Choose a player and you both finish your drinks.",
+    "Electrode used Self-Destruct! Choose a player and you both finish your drinks.",
   ),
   card(
     "claydol",
@@ -805,7 +805,7 @@ const deck: CardDefinition[] = [
     "rare-candy",
     "Rare Candy",
     "sip",
-    "Rare Candy! Level up: take another card now. No passing the device.",
+    "Rare Candy! Level up: take another card now. No passing the phone.",
   ),
   card(
     "bellsprout",
@@ -823,7 +823,7 @@ const deck: CardDefinition[] = [
     "pound",
     "Pound",
     "group",
-    "Jigglypuff used Pound! Everyone pounds the table. Last to pound drinks 2.",
+    "Jigglypuff used Pound! Everyone pounds their drink.",
   ),
 
   // --- Restored source cards (consequences kept as written) ----------------
@@ -858,13 +858,13 @@ const deck: CardDefinition[] = [
     "barboach",
     "Barboach",
     "rule",
-    "Barboach used Mud-slap! Pick a player. Rest of the game: they get one slap after a full drink.",
+    "Barboach's Mud-Slap! Pick a player. Rest of the game: they can finish a full drink to slap you once.",
   ),
   card(
     "mawile",
     "Mawile",
     "challenge",
-    "Mawile used Vicegrip! Give your left neighbor a 3-second bear hug, then drink 4 and apologize.",
+    "Mawile used Vise Grip! Give your left neighbor a 3-second bear hug, then drink 4 and apologize.",
   ),
   card(
     "fiery-path",
