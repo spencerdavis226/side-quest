@@ -7,11 +7,9 @@ import { packs } from "./manifest.generated";
 // save carries its own card snapshot. `loadPackCards` keeps the chosen packs'
 // cards and their quest finales.
 const loaders: Record<string, () => Promise<CardDefinition[]>> = {
-  core: () => import("./sample").then((m) => m.coreCards),
-  house: () => import("./custom").then((m) => m.houseCards),
+  core: () => import("./core-deck").then((m) => m.coreDeckCards),
   vip: () => import("./vip").then((m) => m.vipCards),
   pokemon: () => import("./pokemon").then((m) => m.pokemonCards),
-  cabin: () => import("./cabin").then((m) => m.cabinCards),
   likely: () => import("./likely").then((m) => m.likelyCards),
   secrets: () => import("./secrets").then((m) => m.secretsCards),
   dungeon: () => import("./dungeon").then((m) => m.dungeonCards),
