@@ -191,7 +191,9 @@ function App() {
           <TopBar
             session={display}
             disabled={!!motion}
-            onOpenMeter={() => setModal("badges")}
+            onOpenMeter={() =>
+              setModal(display.quest?.party ? "party" : "badges")
+            }
             onOpenMenu={() => setModal("menu")}
             onOpenPrevious={() => setModal("recap")}
             onOpenStrip={setModal}

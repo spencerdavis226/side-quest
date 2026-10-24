@@ -6,6 +6,7 @@ import { selectedPacks } from "../presentation/packs";
 import { findCard, questRecord } from "../game/engine";
 import { QuestRecord } from "../components/QuestRecord";
 import { CrawlRecord } from "../components/Crawl";
+import { badgesLocked } from "../components/LeagueMarks";
 import { Guide } from "../components/Guide";
 import { crawlTheme } from "../components/crawlTheme";
 import { CardFrame } from "../components/Cards";
@@ -16,6 +17,8 @@ export type DialogName =
   | "end"
   | "install"
   | "badges"
+  // A crawl's party, from the hearts stud.
+  | "party"
   | "satchel"
   | "quaff"
   | "cup"
@@ -148,7 +151,8 @@ export function GameDialogs({
     );
   const record = session && questRecord(session);
   if (
-    (displayed === "badges" ||
+    (displayed === "party" ||
+      displayed === "badges" ||
       displayed === "satchel" ||
       displayed === "quaff" ||
       displayed === "cup" ||
@@ -159,9 +163,13 @@ export function GameDialogs({
     const crawl = crawlTheme(session?.quest?.packId);
     const { words } = crawl;
     // The hearts open the party; each chip on the strip opens its own thing.
-    const part = displayed === "badges" ? "party" : displayed;
+    // A crawl without badges (Pub Crawl) reads a stray "badges" as the party.
+    const part = displayed === "badges" && !words.badges ? "party" : displayed;
+    // A card asking for the badges from memory keeps the case shut.
+    if (part === "badges" && badgesLocked(session!, crawl)) return null;
     const title = {
       party: words.party,
+      badges: words.badges ?? words.party,
       satchel: words.Satchel,
       quaff: `The ${words.quaff ?? "Quaff"}`,
       cup: words.cup?.name ?? "The Cup",

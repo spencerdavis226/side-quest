@@ -46,6 +46,28 @@ const picks: Record<string, string> = {
   "league/bag": "lorc/swap-bag",
   "league/whited-out": "skoll/knockout",
   "league/starter": "delapouite/koholint-egg",
+  // The eighteen types (2026-10-24): each gym's badge and each starter's
+  // panel wear their type's mark (src/presentation/pokemon-types.ts).
+  "league/types/normal": "delapouite/round-star",
+  "league/types/fire": "carl-olsen/flame",
+  "league/types/water": "sbed/water-drop",
+  "league/types/grass": "lorc/three-leaves",
+  "league/types/electric": "lorc/power-lightning",
+  "league/types/ice": "lorc/snowflake-2",
+  "league/types/fighting": "lorc/fist",
+  "league/types/poison": "lorc/poison-bottle",
+  "league/types/ground": "lorc/earth-crack",
+  "league/types/flying": "lorc/feathered-wing",
+  "league/types/psychic": "lorc/third-eye",
+  "league/types/bug": "delapouite/ladybug",
+  "league/types/rock": "lorc/rock",
+  "league/types/ghost": "lorc/ghost",
+  "league/types/dragon": "lorc/dragon-head",
+  "league/types/dark": "lorc/moon",
+  "league/types/steel": "lorc/cog",
+  "league/types/fairy": "lorc/fairy",
+  // The Striaton trio's badge: three leaders, three types.
+  "league/types/trio": "lorc/triple-yin",
 };
 
 // Drawn marks, in the same 512 box: a Poké Ball, its two halves split by
@@ -64,7 +86,7 @@ const svg = (paths: string[]) =>
     .join("")}</svg>\n`;
 
 await mkdir("public/art/crawl", { recursive: true });
-await mkdir("public/art/league", { recursive: true });
+await mkdir("public/art/league/types", { recursive: true });
 for (const [out, source] of Object.entries(picks)) {
   const file = await readFile(`assets/icons/game-icons/${source}.svg`, "utf8");
   const paths = [...file.matchAll(/<path[^>]*\sd="([^"]+)"[^>]*\/>/g)]

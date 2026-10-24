@@ -112,6 +112,10 @@ export interface CrawlTheme {
     /** A floor's banner names the boss waiting at the bottom. */
     wanted?: string;
   };
+  /** Cards that ask the table to name the badges from memory: while one is
+   * face up, the badge case stays shut (owner, 2026-10-24). `why` ends the
+   * locked chip's spoken label. */
+  badgeLock?: { cards: string[]; why: string };
   /** What the setup screen counts as the run's length (floors, gyms);
    * by default every stage of several rooms. */
   lengthOf?: (stages: QuestStage[]) => number;
@@ -384,6 +388,10 @@ const league: CrawlTheme = {
     },
   },
   lengthOf: (stages) => stages.filter((st) => /^Gym \d/.test(st.label)).length,
+  badgeLock: {
+    cards: ["pokemon.route-veteran-victory"],
+    why: "locked, name them from memory",
+  },
   legend: [
     "HP the team loses if the battle is lost",
     "A status on a loss, until the next gym falls",

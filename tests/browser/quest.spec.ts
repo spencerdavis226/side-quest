@@ -199,9 +199,12 @@ test("@release a starter evolves on a route, and the banner says what changed", 
   const dialog = page.getByRole("dialog", { name: "The team" });
   // Only the starter it is now, and its power.
   await expect(dialog.locator(".crawl-omen strong")).toHaveText("Charmeleon");
-  await expect(
-    dialog.locator(".crawl-omen > span:not(.crawl-icon)"),
-  ).toHaveText("Max HP 18. +2 to route battle d20s.");
+  await expect(dialog.locator(".crawl-omen .omen-rules")).toHaveText(
+    "Max HP 18. +2 to route battle d20s.",
+  );
+  // It wears its type, and the badges have their own dialog.
+  await expect(dialog.locator(".type-chip")).toHaveText(["Fire"]);
+  await expect(dialog.locator(".crawl-badges")).toHaveCount(0);
   await page.screenshot({ path: info.outputPath("team-dialog.png") });
   // How to play, from the pause menu, speaks the League's words: no Quaff,
   // no Cup.
@@ -334,18 +337,52 @@ test("@release a gym leader is a boss battle, and beating it earns a badge", asy
     page.getByRole("button", { name: "Lost", exact: true }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Won", exact: true }).click();
-  await meter(page).click();
-  const dialog = page.getByRole("dialog", { name: "The team" });
+  // The badges chip opens the badge case, not the team.
+  await page.locator(".tag-badges").click();
+  const dialog = page.getByRole("dialog", { name: "Badges" });
   // The five gyms before it count as beaten in this seeded run.
   await expect(dialog.locator(".crawl-badges")).toHaveAccessibleName(
     "Badges: 6 of 8",
   );
   await expect(dialog.locator(".crawl-badges .full")).toHaveCount(6);
+  // Each badge wears its gym's type, named with its leader.
+  await expect(dialog.locator(".crawl-badges .full").last()).toContainText(
+    "Mineral",
+  );
+  await expect(dialog.locator(".crawl-badges .full").last()).toContainText(
+    "Jasmine",
+  );
+  await expect(
+    dialog.locator(".crawl-badges .full").last().locator(".type-steel"),
+  ).toHaveCount(1);
   const box = await dialog.boundingBox();
   expect(box!.x).toBeGreaterThanOrEqual(0);
   expect(box!.x + box!.width).toBeLessThanOrEqual(320);
   await expect(dialog).toContainText("One for each gym beaten.");
   await page.screenshot({ path: info.outputPath("badges-320.png") });
+});
+
+test("Veteran Ada shuts the badge case until her card is put aside", async ({
+  page,
+}, info) => {
+  await seed(page, reveal(leagueAt("pokemon.route-veteran-victory")));
+  const chip = page.locator(".tag-badges");
+  await expect(chip).toBeDisabled();
+  await expect(chip).toHaveAccessibleName(
+    /^Badges: \d of 8, locked, name them from memory$/,
+  );
+  await expect(chip.locator(".chip-lock")).toHaveCount(1);
+  await page.screenshot({ path: info.outputPath("badges-locked.png") });
+  // The team dialog still opens, and shows no badges.
+  await meter(page).click();
+  const team = page.getByRole("dialog", { name: "The team" });
+  await expect(team.locator(".crawl-badges")).toHaveCount(0);
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  // Settling her battle opens the case again.
+  await page.getByRole("button", { name: "Won", exact: true }).click();
+  await expect(chip).toBeEnabled();
+  await expect(chip.locator(".chip-lock")).toHaveCount(0);
 });
 
 test("losing the last HP whites the team out", async ({ page }, info) => {

@@ -859,24 +859,179 @@
   color: #d9c7a4;
   font-size: 0.95rem;
 }
-/* The badge case: one gold badge per gym, earned ones lit. */
-.crawl-badges {
-  display: flex;
-  justify-content: center;
-  gap: 6px;
+/* The League's type marks (2026-10-24): a medallion in its type's two tones
+   with the type's mark in ivory, rimmed in gold like the frame. */
+.type-mark {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: var(--mark-size, 40px);
+  height: var(--mark-size, 40px);
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle at 34% 26%,
+      rgb(255 255 255 / 0.5) 0,
+      rgb(255 255 255 / 0) 42%
+    ),
+    radial-gradient(
+      circle at 50% 38%,
+      var(--type-light) 0%,
+      var(--type-deep) 82%
+    );
+  box-shadow:
+    inset 0 0 0 2px #e9c46a,
+    inset 0 0 0 3px rgb(60 36 8 / 0.6),
+    inset 0 -4px 8px rgb(0 0 0 / 0.35),
+    0 2px 0 #1a120a,
+    0 4px 10px rgb(0 0 0 / 0.45);
+}
+/* The Striaton trio: fire, water and grass in thirds. */
+.type-mark.type-trio {
+  background:
+    radial-gradient(
+      circle at 34% 26%,
+      rgb(255 255 255 / 0.45) 0,
+      rgb(255 255 255 / 0) 42%
+    ),
+    conic-gradient(
+      from -30deg,
+      #d2522a 0 120deg,
+      #2f63b8 120deg 240deg,
+      #3c8a34 240deg 360deg
+    );
+}
+.type-glyph {
+  width: 58%;
+  height: 58%;
+  background: #fffaf0;
+  mask: center / contain no-repeat;
+  -webkit-mask: center / contain no-repeat;
+}
+/* An empty socket: a badge still to win, unnamed. */
+.type-mark.empty {
+  background: radial-gradient(circle at 50% 40%, #1d2f2c, #0d1a18 80%);
+  box-shadow:
+    inset 0 0 0 1.5px #857b70,
+    inset 0 3px 6px rgb(0 0 0 / 0.6);
+}
+
+/* The badge case: four sockets a row, each earned badge named, with the
+   leader who paid it under it. */
+.badge-case {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px 6px;
   margin: 0;
+  padding: 0;
+  list-style: none;
 }
-.crawl-badges .crawl-icon {
-  width: clamp(20px, 6.5vw, 28px);
-  height: clamp(20px, 6.5vw, 28px);
+.badge-socket {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 4px;
+  min-width: 0;
+  text-align: center;
+  --mark-size: clamp(42px, 13vw, 56px);
 }
-.crawl-badges .full {
-  background: linear-gradient(160deg, #fff1b8 0%, #e2b54a 45%, #8a5f14 100%);
-  filter: drop-shadow(0 1px 0 #2a1a05);
+.badge-socket .type-mark {
+  margin-bottom: 2px;
 }
-.crawl-badges .spent {
-  background: #857b70;
+.badge-socket strong {
+  max-width: 100%;
+  color: #fff0cf;
+  font: 700 0.95rem / 1.1 var(--font-tavern);
+  overflow-wrap: anywhere;
 }
+.badge-socket small {
+  max-width: 100%;
+  color: #c9b893;
+  font-size: 0.78rem;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+/* A badge just earned lands with a small pop. */
+.badge-socket.full .type-mark {
+  animation: badge-land 420ms cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+@keyframes badge-land {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+}
+
+/* The badges chip, shut while a card asks for the badges from memory: dimmed,
+   with a red cross over it. */
+.tag-badges.locked {
+  color: #8f7c5c;
+}
+.tag-badges.locked > :not(.chip-lock) {
+  opacity: 0.55;
+}
+.chip-lock {
+  position: absolute;
+  inset: 4px 8px;
+  pointer-events: none;
+}
+.chip-lock::before,
+.chip-lock::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 3.5px;
+  border-radius: 2px;
+  background: #e2493a;
+  box-shadow: 0 1px 0 #2a0605;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.chip-lock::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* A League starter's panel wears its type: the border and wash take its
+   colour, and its types sit under its power. */
+.typed-omen {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-color: var(--type-light);
+  background: rgb(10 22 20 / 0.6);
+}
+.typed-omen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(100deg, var(--type-deep) 0%, transparent 80%);
+  opacity: 0.6;
+}
+.typed-omen .type-mark {
+  grid-row: span 3;
+  --mark-size: 48px;
+}
+.type-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 2px;
+}
+.type-chips .type-chip {
+  padding: 3px 9px 2px;
+  border: 1px solid rgb(255 240 207 / 0.4);
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--type-light), var(--type-deep));
+  color: #fffaf0;
+  font: 700 0.7rem / 1 var(--font-tavern);
+  font-style: normal;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 1px rgb(0 0 0 / 0.6);
+}
+
 .crawl-curse .crawl-icon {
   grid-row: span 2;
   width: 26px;
