@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { SessionState } from "../game/types";
 import {
   finaleCard,
@@ -88,6 +88,21 @@ function stageBanner(session: SessionState) {
   };
 }
 
+/** How long the evolution and news banners stay up: their 5.2 s sweep
+ * (theme.css), plus a little. */
+const BANNER_MS = 5600;
+
+/** Takes a banner down once its sweep ends, or after `BANNER_MS` if the
+ * animation never reports its end (animations off, a paused tab), so a
+ * banner can never be left standing over the table. */
+function useBannerTimeout(key: string | null, clear: () => void) {
+  useEffect(() => {
+    if (key === null) return;
+    const id = setTimeout(clear, BANNER_MS);
+    return () => clearTimeout(id);
+  }, [key, clear]);
+}
+
 /** The banner when the starter evolves mid-run: "What? Charmander is
  * evolving!" over its new form's name. Shown once per evolution, never on a
  * resumed game; it sits high so a stage banner below it stays readable. */
@@ -122,6 +137,8 @@ export function EvolutionBanner({ session }: { session: SessionState }) {
     seen.current = form;
   }, [form, quest]);
   const evolving = crawlTheme(quest?.packId).words.evolving;
+  const clear = useCallback(() => setShown(null), []);
+  useBannerTimeout(shown && `${shown.from}>${shown.to}`, clear);
   useAnnounce(
     shown && evolving
       ? `${evolving(shown.from)} ${shown.to}. ${shown.change}`
@@ -135,7 +152,12 @@ export function EvolutionBanner({ session }: { session: SessionState }) {
       className="stage-banner banner-pearl evolution-banner"
       aria-hidden="true"
     >
-      <div className="stage-banner-cloth">
+      <div
+        className="stage-banner-cloth"
+        onAnimationEnd={(e) => {
+          if (e.target === e.currentTarget) clear();
+        }}
+      >
         <small>{evolving(shown.from)}</small>
         <strong>{shown.to}</strong>
         {shown.change && <span>{shown.change}</span>}
@@ -229,6 +251,8 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
       });
     }
   }, [boons, jinx, passed, cup, quest, party, words]);
+  const clear = useCallback(() => setShown(null), []);
+  useBannerTimeout(shown?.key ?? null, clear);
   useAnnounce(
     shown
       ? [shown.kicker, shown.title, shown.line].filter(Boolean).join(". ")
@@ -242,7 +266,12 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
       className={`stage-banner banner-${shown.tone} evolution-banner news-banner`}
       aria-hidden="true"
     >
-      <div className="stage-banner-cloth">
+      <div
+        className="stage-banner-cloth"
+        onAnimationEnd={(e) => {
+          if (e.target === e.currentTarget) clear();
+        }}
+      >
         <small>{shown.kicker}</small>
         <strong>{shown.title}</strong>
         {shown.line && <span>{shown.line}</span>}

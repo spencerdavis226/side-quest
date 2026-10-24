@@ -234,9 +234,13 @@ test("reduced motion still opens and closes dialogs", async ({ page }) => {
   await page.getByRole("button", { name: "Open game menu" }).click();
   const dialog = page.locator("dialog[open]");
   await expect(dialog).toBeVisible();
-  expect(
-    await dialog.evaluate((el) => getComputedStyle(el).animationName),
-  ).toBe("none");
+  // Reduce Motion ends every animation at once (0.01ms) rather than removing
+  // it, so fill modes and animationend still work; nothing visibly moves.
+  const duration = await dialog.evaluate(
+    (el) => getComputedStyle(el).animationDuration,
+  );
+  const seconds = parseFloat(duration) / (duration.endsWith("ms") ? 1000 : 1);
+  expect(seconds).toBeLessThan(0.001);
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).toHaveCount(0);
 });

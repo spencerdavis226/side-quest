@@ -63,6 +63,14 @@ for (const file of files) {
     )
       throw Error("Developer workshop leaked into production");
   }
+  // The workshop's stylesheets must stay out of the shipped CSS too.
+  if (file.startsWith("dist/assets/") && file.endsWith(".css")) {
+    const css = await readFile(file, "utf8");
+    if (
+      /\.workshop|\.card-review|\.review-|\.icon-browser|\.icon-grid/.test(css)
+    )
+      throw Error(`Developer workshop styles leaked into production: ${file}`);
+  }
 }
 // Card text loads per pack when a game starts (src/content/loaders.ts); a
 // static import of a content module would quietly put it back on the

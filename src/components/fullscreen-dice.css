@@ -2,7 +2,7 @@
 .roll-layer {
   position: fixed;
   inset: 0;
-  z-index: 40;
+  z-index: var(--z-dice);
   pointer-events: none;
   opacity: 1;
   transition: opacity 180ms ease-out;
@@ -10,9 +10,11 @@
 .roll-layer.revealing {
   opacity: 0;
 }
+/* Inside the safe areas, so a die never comes to rest under the Dynamic
+   Island or the home indicator. */
 .roll-stage-band {
   position: fixed;
-  inset: 0;
+  inset: var(--top-safe) 0 var(--bottom-safe);
   overflow: hidden;
 }
 .roll-stage {

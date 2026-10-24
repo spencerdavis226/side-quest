@@ -1,6 +1,6 @@
 # Physical-device release checklist
 
-Automated browser emulation is not evidence of actual iOS Home Screen behavior. Complete this on a real small iPhone, a large iPhone, and an iPad before sharing a polished release.
+Automated browser emulation is not evidence of actual iOS Home Screen behavior. Complete this on a real small iPhone, a large iPhone, and an iPad before sharing a polished release. The oldest supported system is iOS/iPadOS 16 (the CSS needs container query units); if an older device is at hand, check setup and one card on it.
 
 - [ ] Top-edge blur (2026-10-17, owner report on iPhone 15 Pro): remove the Home Screen icon and add it again (the status-bar setting is read only then). The status bar should be a solid dark brown with light text, the header below it sharp, and the wood should reach the bottom edge with no gap or cut-off card. Check setup and a game. After the 14px strip (2026-10-17): no softened band of wood just below the status bar either.
 - [ ] Header redesign (2026-10-17): in a plain game, Pub Crawl and Pokémon League, check the studs, the plaque and (crawls) the strip read from across the table, the strip's chips open the satchel, effects and party dialogs, and nothing sits under the status-bar frost in the installed app.

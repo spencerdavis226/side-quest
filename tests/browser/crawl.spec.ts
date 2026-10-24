@@ -194,6 +194,51 @@ test("@release a monster shows its stakes; a smoke bomb flees it", async ({
   expect(s.quest.step).toBe(STEP.floor1 + 1);
 });
 
+// A levelled Rogue's five-slot satchel, the Quaff, the Cup and a jinx (or a
+// curse and a jinx) on the narrowest phones: every chip stays on screen.
+for (const width of [320, 375])
+  for (const curse of [false, true])
+    test(`a full strip fits at ${width}px${curse ? " with a curse" : ""}`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width, height: 700 });
+      const s = crawlAt(
+        "dungeon.bone-sommelier",
+        STEP.floor2 + 1,
+        {
+          loot: ["draught", "shield", "die", "smoke", "draught"],
+          form: 2,
+          cup: 3,
+          curse: curse ? "bleed" : null,
+        },
+        { adventurer: "rogue" },
+      );
+      const q = s.quest!;
+      const finale = [...q.finale];
+      const at = finale.indexOf("dungeon.goblin-shaman");
+      if (at >= 0) finale[at] = finale[STEP.floor1];
+      finale[STEP.floor1] = "dungeon.goblin-shaman";
+      await seed(page, {
+        ...s,
+        quest: {
+          ...q,
+          finale,
+          party: { ...q.party!, jinx: "dungeon.goblin-shaman" },
+        },
+      });
+      const chips = page.locator(".hud-strip .hud-chip");
+      await expect(chips).toHaveCount(curse ? 5 : 4);
+      for (const box of await chips.evaluateAll((els) =>
+        els.map((e) => e.getBoundingClientRect().toJSON()),
+      )) {
+        expect(box.left).toBeGreaterThanOrEqual(8);
+        expect(box.right).toBeLessThanOrEqual(width - 8);
+      }
+      expect(
+        await page.evaluate(() => document.documentElement.scrollWidth),
+      ).toBe(width);
+    });
+
 test("a loaded die rerolls a lost fight", async ({ page }, info) => {
   await seed(
     page,
@@ -374,6 +419,39 @@ test("a lost fight can lay a jinx, shown on the meter and in a banner", async ({
   await expect(page.locator(".tag-jinx")).toBeVisible();
   await expect(meter(page)).toHaveAccessibleName(/Jinx: Goblin Tongue/);
   await page.screenshot({ path: info.outputPath("jinx.png") });
+});
+
+test("with Reduce Motion a banner fades and goes, and the splat stays centred", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await seed(
+    page,
+    rolled(reveal(crawlAt("dungeon.goblin-shaman", STEP.floor1)), 2),
+  );
+  await page.locator(".game-card").click();
+  const banner = page.locator(".news-banner");
+  await expect(banner).toHaveText(/Jinxed!\s*Goblin Tongue/);
+  // The banner fades rather than vanishing at once: still shown a moment in.
+  await page.waitForTimeout(400);
+  await expect(banner.locator(".stage-banner-cloth")).not.toHaveCSS(
+    "opacity",
+    "0",
+  );
+  // The lost hearts float off the heart, centred on it.
+  const [splat, heart] = await Promise.all([
+    page.locator(".heart-splat").boundingBox(),
+    meter(page).boundingBox(),
+  ]);
+  expect(
+    Math.abs(splat!.x + splat!.width / 2 - (heart!.x + heart!.width / 2)),
+  ).toBeLessThanOrEqual(1);
+  expect(
+    Math.abs(splat!.y + splat!.height / 2 - (heart!.y + heart!.height / 2)),
+  ).toBeLessThanOrEqual(1);
+  // Before 2026-10-18 no animation ran at all, so the banner never left.
+  await expect(banner).toHaveCount(0, { timeout: 8000 });
+  await expect(page.locator(".tag-jinx")).toBeVisible();
 });
 
 test("@release a landing levels the adventurer up for drinks, or rests", async ({
@@ -636,6 +714,8 @@ test("a merchant sells on plaques, and a price in hearts needs a spare heart", a
   const plaques = page.locator(".card-choice.offers .card-choice-option");
   await expect(plaques).toHaveCount(3);
   await expect(plaques.nth(1)).toBeDisabled();
+  // Greyed but solid: the frame must not show through.
+  await expect(plaques.nth(1)).toHaveCSS("opacity", "1");
   await expect(plaques.nth(0)).toHaveAccessibleName(
     "Drink 3: a Healing Draught",
   );

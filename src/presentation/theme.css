@@ -23,13 +23,7 @@
   --font-tavern: Grenze, Georgia, serif;
   --font-card-title: "Source Serif 4 Title", Georgia, serif;
   --color-card-title: #fff0cf;
-  --walnut: #17100c;
-  --leather: #16312e;
-  --bronze: #bd9457;
   --parchment: #f4dfb4;
-  --ink: #392713;
-  --shadow-contact: 0 5px 6px #0009;
-  --shadow-lift: 0 22px 35px #0008;
   font-family: var(--font-tavern);
 }
 button,
@@ -333,18 +327,18 @@ dialog p,
   font-size: 1rem;
   white-space: nowrap;
 }
-.pack-selector small span:last-child {
+.pack-selector small > span:last-child {
   margin-left: 3px;
 }
-/* Six or more marks: smaller marks, and the count takes its own line when
-   the row still can't hold it (seven packs on a 320px phone). */
+/* Six or more marks: smaller marks (18px, from 22px), and the count takes its
+   own line when the row still can't hold it (seven packs on a 320px phone). */
 .pack-selector small.many {
   flex-wrap: wrap;
   gap: 2px 5px;
 }
 .pack-selector small.many .pack-logo {
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
 }
 .pack-selector > span:last-child {
   margin-left: auto;
@@ -380,7 +374,7 @@ dialog.closing {
 }
 .orientation-gate {
   width: min(calc(100% - 32px), 420px);
-  max-height: calc(100svh - 32px);
+  max-height: calc(var(--app-height) - 32px);
   padding: 28px 20px;
   text-align: center;
 }
@@ -531,7 +525,11 @@ dialog.closing {
   background: #f0d79a;
   opacity: 0;
   box-shadow: 0 0 4px #ffcf7a55;
-  animation: dust-drift linear infinite;
+  /* Longhands: the shorthand would reset the duration to 0s at a
+     specificity the per-mote .dust-N rules can't beat. */
+  animation-name: dust-drift;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
   will-change: transform, opacity;
 }
 .dust-0 {
@@ -744,17 +742,12 @@ dialog.closing {
   dialog {
     padding: 10px 8px;
     border-width: 20px;
+    border-image-width: 20px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
   .atmosphere {
     display: none !important;
-  }
-  *,
-  *:before,
-  *:after {
-    animation: none !important;
-    transition: none !important;
   }
 }
 .previous-card {
@@ -876,12 +869,17 @@ dialog.closing {
 }
 .icon-button.hud-stud {
   grid-column: 1;
-  width: 56px;
-  height: 56px;
+  width: var(--stud-size);
+  height: var(--stud-size);
   color: #f0d29b;
 }
+/* Disabled for the length of every flip like the menu stud, which must not
+   blink each time a card is played; only a stud with nothing behind it dims
+   (no previous card yet). */
 .icon-button.hud-stud:disabled {
   opacity: 1;
+}
+.icon-button.hud-stud.no-previous:disabled {
   color: #8a7552;
 }
 .hud-stud .ui-icon {
@@ -982,6 +980,14 @@ dialog.closing {
   flex-direction: column;
   margin-top: 8px;
 }
+.quest-mode .pack-logo {
+  width: 34px;
+  height: 34px;
+}
+.quest-mode > span:last-child {
+  display: grid;
+  gap: 2px;
+}
 .lengths .choice.quest-mode {
   flex-direction: row;
   justify-content: flex-start;
@@ -1010,7 +1016,7 @@ dialog.closing {
     width: 26px;
     height: 26px;
   }
-  .quest-mode strong {
+  .lengths .choice.quest-mode strong {
     font-size: clamp(0.95rem, 4.6cqw, 1.15rem);
     line-height: 1.1;
   }
@@ -1019,14 +1025,6 @@ dialog.closing {
   }
 }
 
-.quest-mode .pack-logo {
-  width: 34px;
-  height: 34px;
-}
-.quest-mode > span:last-child {
-  display: grid;
-  gap: 2px;
-}
 /* A pack quest's meter takes the free left slot: the pack's mark beside a
    small label and the count, on the same dark teal as the medallion. */
 .quest-meters {
@@ -1107,8 +1105,8 @@ dialog.closing {
 .icon-button.menu-button {
   grid-column: 3;
   justify-self: end;
-  width: 56px;
-  height: 56px;
+  width: var(--stud-size);
+  height: var(--stud-size);
   color: #f0d29b;
 }
 /* The stud is disabled for the length of every flip and discard; it must not
@@ -1143,11 +1141,6 @@ dialog.closing {
   .plaque-count .muted {
     font-size: 18px;
   }
-  .icon-button.menu-button,
-  .icon-button.hud-stud {
-    width: 66px;
-    height: 66px;
-  }
   .quest-meter {
     min-height: 54px;
     padding: 5px 14px 5px 9px;
@@ -1174,7 +1167,6 @@ dialog.closing {
    cards move (it is disabled then, like the menu stud). */
 button.quest-meter {
   margin: 0;
-  font: inherit;
   font-family: var(--font-tavern);
   text-align: left;
   cursor: pointer;
@@ -1378,7 +1370,7 @@ button.quest-meter:active:not(:disabled) {
 .stage-banner {
   position: fixed;
   inset: 0;
-  z-index: 5;
+  z-index: var(--z-banner);
   display: grid;
   place-items: center;
   pointer-events: none;
@@ -1396,7 +1388,7 @@ button.quest-meter:active:not(:disabled) {
     0 100%,
     22px 50%
   );
-  background: linear-gradient(180deg, #f3d48a 0%, #d3a24f 55%, #a87632 100%);
+  background: linear-gradient(180deg, #f3d48a 0%, #d3a24f 55%, #c28a3c 100%);
   color: #3a2208;
   text-align: center;
   box-shadow:
@@ -1419,7 +1411,7 @@ button.quest-meter:active:not(:disabled) {
   animation-duration: 5200ms;
 }
 .evolution-banner span {
-  font: 600 15px/1.25 var(--font-tavern);
+  font: 600 17px/1.25 var(--font-tavern);
 }
 .evolution-banner {
   place-items: start center;
@@ -1430,18 +1422,18 @@ button.quest-meter:active:not(:disabled) {
   color: #2b2c40;
 }
 .banner-violet .stage-banner-cloth {
-  background: linear-gradient(180deg, #a98bd9 0%, #6b47a8 55%, #432a72 100%);
+  background: linear-gradient(180deg, #7552b8 0%, #5a3a96 55%, #432a72 100%);
   color: #fbefff;
   text-shadow: 0 1px 0 #1d0d36;
 }
 .banner-crimson .stage-banner-cloth {
-  background: linear-gradient(180deg, #d9534a 0%, #a3231f 55%, #6a1210 100%);
+  background: linear-gradient(180deg, #b03a34 0%, #a3231f 55%, #6a1210 100%);
   color: #ffe6a6;
   text-shadow: 0 1px 0 #3b0605;
 }
 /* The Cup's first splash: amber, like the Quaff. */
 .banner-amber .stage-banner-cloth {
-  background: linear-gradient(180deg, #f6d68a 0%, #d39a45 55%, #8e5a1f 100%);
+  background: linear-gradient(180deg, #f6d68a 0%, #d39a45 55%, #b9782c 100%);
   color: #2b1806;
   text-shadow: 0 1px 0 #f9e6b8;
 }
@@ -1471,7 +1463,7 @@ button.quest-meter:active:not(:disabled) {
   transform: translateY(8px);
 }
 .painted-banner small {
-  font-size: clamp(9px, 2.3vw, 13px);
+  font-size: clamp(12px, 2.3vw, 14px);
 }
 .painted-banner strong {
   font-size: clamp(18px, 5.2vw, 32px);
@@ -1496,8 +1488,14 @@ button.quest-meter:active:not(:disabled) {
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  /* A fade in place of the sweep, at the sweep's own length (the global
+     reduced-motion rule would otherwise end it at once). */
   .stage-banner-cloth {
     animation-name: banner-fade;
+    animation-duration: 2600ms !important;
+  }
+  .evolution-banner .stage-banner-cloth {
+    animation-duration: 5200ms !important;
   }
   @keyframes banner-fade {
     0%,

@@ -4,6 +4,13 @@ import { VitePWA } from "vite-plugin-pwa";
 const base = process.env.BASE_PATH || "/";
 export default defineConfig({
   base,
+  build: {
+    // iOS 16 is the oldest Safari the app supports: its CSS uses container
+    // query units (cqw), which arrived in Safari 16.0. Name it, so a newer
+    // esbuild default never drops the transforms older Safari needs.
+    target: ["es2020", "safari16"],
+    cssTarget: ["safari16"],
+  },
   plugins: [
     react(),
     VitePWA({
