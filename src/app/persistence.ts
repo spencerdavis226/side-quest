@@ -98,9 +98,19 @@ export function chooseQuest(
     ...(added ? { added: id } : {}),
   };
 }
+/** Packs folded into another since they shipped (2026-10-24: the House sheet
+ * and Cabin weekend became part of Core). A selection or a save that names one
+ * means the pack that now holds its cards. */
+const RETIRED_PACKS: Record<string, string> = { house: "core", cabin: "core" };
+const currentPackIds = (ids: readonly string[]) => [
+  ...new Set(ids.map((id) => RETIRED_PACKS[id] ?? id)),
+];
 /** Keep only installed packs; never let a stale selection empty the deck. */
 const knownPackIds = (ids: readonly string[]) => {
-  const known = packs.map((pack) => pack.id).filter((id) => ids.includes(id));
+  const current = currentPackIds(ids);
+  const known = packs
+    .map((pack) => pack.id)
+    .filter((id) => current.includes(id));
   return known.length ? known : [packs[0].id];
 };
 function validateQuest(s: SessionState) {
@@ -264,6 +274,7 @@ export function parseSession(raw: string): SessionState {
     !s.cards.length
   )
     throw Error("Invalid save");
+  s.config.packIds = currentPackIds(s.config.packIds);
   validateCatalog(s.cards, []);
   if (
     !Array.isArray(s.order) ||

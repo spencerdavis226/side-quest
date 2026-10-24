@@ -32,7 +32,12 @@ test("seeded workshop preserves the pool and reproduces order", () => {
 });
 test("Core composition matches the trimmed content brief", () => {
   const core = packs.find((p) => p.id === "core")!;
-  const coreCards = cards.filter((c) => core.cardIds.includes(c.id));
+  // The Core deck is three plain sources (2026-10-24, owner): the generated
+  // main deck, the supplied house sheet and Cabin weekend.
+  expect(core.cardIds).toHaveLength(275);
+  const coreCards = cards.filter(
+    (c) => core.cardIds.includes(c.id) && c.id.startsWith("core."),
+  );
   // The 2026-10-07 rewrite: sample set (25), classics (24) and the standard
   // expansion (47), with the bare roll-and-pour cards cut.
   expect(coreCards).toHaveLength(96);
@@ -47,7 +52,7 @@ test("Core composition matches the trimmed content brief", () => {
   expect(coreCards.filter((c) => c.dice)).toHaveLength(16);
 });
 
-// Sheet rows that are CABIIN board spaces play in Cabin weekend instead.
+// Sheet rows that are CABIIN board spaces keep their `cabin.*` IDs.
 const cabinRows: Record<number, string> = {
   12: "maddy-booty",
   16: "ursaring",
@@ -58,16 +63,20 @@ const cabinRows: Record<number, string> = {
   53: "abra-like-a-slut",
   54: "whinnie-the-pooh",
 };
-test("each supplied sheet row lands in the House deck, Cabin weekend or VIP night", () => {
+test("each supplied sheet row lands in the Core deck (House or CABIIN IDs) or VIP night", () => {
   const core = packs.find((p) => p.id === "core")!;
-  const house = packs.find((p) => p.id === "house")!;
+  const house = {
+    cardIds: core.cardIds.filter((id) => id.startsWith("house.")),
+  };
   const vip = packs.find((p) => p.id === "vip")!;
   // Rows 3–106 minus the blank row 75 and the description-less row 106.
   const sheetRows = Array.from(
     { length: 104 },
     (_, offset) => offset + 3,
   ).filter((row) => row !== 75 && row !== 106);
-  const cabin = packs.find((p) => p.id === "cabin")!;
+  const cabin = {
+    cardIds: core.cardIds.filter((id) => id.startsWith("cabin.")),
+  };
   expect(house.cardIds).toHaveLength(94);
   for (const row of sheetRows)
     if (cabinRows[row]) {
@@ -79,8 +88,6 @@ test("each supplied sheet row lands in the House deck, Cabin weekend or VIP nigh
       expect(house.cardIds).toContain(
         `house.sheet-${String(row).padStart(3, "0")}`,
       );
-  // The generated main deck no longer carries the supplied sheet.
-  expect(core.cardIds.some((id) => id.startsWith("house."))).toBe(false);
   expect(vip.cardIds.slice(-4)).toEqual(
     [3, 4, 5, 6].map((row) => `vip.sheet-${String(row).padStart(3, "0")}`),
   );
@@ -106,15 +113,16 @@ test("League gyms come in eight tiers, one leader per region in each", () => {
     expect(c, c.id).toMatchObject({ battle: true, encounter: "boss" });
 });
 
-test("Cabin weekend owns its CABIIN cards and shares none", () => {
-  const cabin = packs.find((p) => p.id === "cabin")!;
+test("the CABIIN cards sit in Core under their own IDs and are shared by none", () => {
+  const core = packs.find((p) => p.id === "core")!;
+  const cabin = {
+    cardIds: core.cardIds.filter((id) => id.startsWith("cabin.")),
+  };
   expect(cabin.cardIds).toHaveLength(85);
-  expect(cabin.cardIds.every((id) => id.startsWith("cabin."))).toBe(true);
   // No card is in two packs.
   const all = packs.flatMap((p) => p.cardIds);
   expect(new Set(all).size).toBe(all.length);
-  // Moved, not duplicated: Core no longer carries the CABIIN-born cards.
-  const core = packs.find((p) => p.id === "core")!;
+  // Moved, not duplicated: the CABIIN-born cards kept their cabin.* IDs.
   for (const id of ["smooth-brain", "samesies", "thanos-snap", "for-safety"]) {
     expect(core.cardIds).not.toContain(`core.${id}`);
     expect(cabin.cardIds).toContain(`cabin.${id}`);

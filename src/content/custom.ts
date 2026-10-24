@@ -1,4 +1,4 @@
-import type { CardDefinition, PackDefinition } from "../game/types";
+import type { CardDefinition } from "../game/types";
 import { cardFactory, choice, roll } from "./author";
 
 // "The House deck": one card per nonblank row of the supplied Sheet1 CSV
@@ -603,13 +603,3 @@ export const customVipCards: CardDefinition[] = [
     "Congrats, the VIP finishes their drink",
   ),
 ];
-
-export const housePack: PackDefinition = {
-  version: 1,
-  id: "house",
-  logo: "art/packs/house.svg",
-  title: "The House deck",
-  description:
-    "The supplied house sheet, played exactly as written. Cabin call-outs, private jokes, and zero permission slips.",
-  cardIds: houseCards.map((card) => card.id),
-};
