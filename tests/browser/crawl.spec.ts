@@ -346,7 +346,7 @@ test("a boss shows its wounds, its trinket, and comes back until it falls", asyn
   await page.screenshot({ path: info.outputPath("spoils.png") });
   await spoils.nth(0).click();
   await expect(page.locator(".news-banner")).toHaveText(
-    /Trinket found\s*Hydra Tooth\s*\+2 to boss rolls\./,
+    /Trinket found\s*Hydra Tooth\s*\+2 to boss d20s\./,
   );
   await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
     "The Lower Landing",
@@ -399,7 +399,7 @@ test("@release a landing levels the adventurer up for drinks, or rests", async (
   await page.screenshot({ path: info.outputPath("landing.png") });
   await plaques.nth(0).click();
   await expect(page.locator(".evolution-banner")).toHaveText(
-    /Barbarian levels up!\s*Berserker\s*\+2 max hearts\. \+2 to elite and boss rolls\./,
+    /Barbarian levels up!\s*Berserker\s*\+2 max hearts\. \+2 to elite and boss d20s\./,
   );
   // Two banners at once, the level-up and the hidden room: both are read.
   const spoken = page.locator("#banner-announcer");
