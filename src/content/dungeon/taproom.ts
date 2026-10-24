@@ -25,7 +25,7 @@ export const taproom: FloorCards = {
       2,
       "sommelier-kraken",
       "Sommelier Kraken",
-      "Eight arms, eight wine glasses, and every one of them is yours. Roll d20.",
+      "A kraken with a wine glass in every arm, and every glass is yours. Roll d20.",
       "Squeezed. Drink 5.",
       "Calamari. Give 5, split however you like.",
     ),
@@ -50,7 +50,7 @@ export const taproom: FloorCards = {
       "foam-leviathan",
       "Foam Leviathan",
       "A head of foam the size of a city bus rises out of the taps. Roll d20.",
-      "It washes over you. Drink 5, and wear the moustache.",
+      "It washes over you. Drink 5, and wear the mustache.",
       "You blow the head off. Give 5.",
     ),
     monster(
@@ -70,7 +70,7 @@ export const taproom: FloorCards = {
           [
             "You drink them first. Give 4.",
             "You net them with a coaster. Give 5.",
-            "You serve them to your rival. Everyone else drinks 2.",
+            "You set them loose on the bar. Everyone else drinks 2.",
           ],
         ),
       },
@@ -147,7 +147,7 @@ export const taproom: FloorCards = {
       2,
       "last-round",
       "The Last Round",
-      "Carry every drink here across the room and back. Spill a drop: drink 5.",
+      "Last round's on you: name everyone's drink order from memory. Miss one: drink 5.",
     ),
     trial(
       2,
@@ -198,8 +198,8 @@ export const taproom: FloorCards = {
     ambush(
       2,
       "mermaid-hens",
-      "The Mermaid Hens",
-      "A mermaid hen party with sashes, and they're out of prosecco. Roll d20.",
+      "Mermaid Bachelorettes",
+      "A mermaid bachelorette party in sashes, and they're out of prosecco. Roll d20.",
       "They take yours. Drink 4.",
       "You find them prosecco. They cry. Give 4.",
     ),
@@ -209,7 +209,7 @@ export const taproom: FloorCards = {
       2,
       "claw-machine",
       "The Claw Machine",
-      "Half underwater and still taking coins. Win, then cash out or play again. Roll d20.",
+      "Half sunk, still taking coins. Win, then cash out or play again, harder. Roll d20.",
       "The claw drops it. Again. Drink 5.",
       "It holds. Give 4.",
       ["draught", "shield", "candy"],
@@ -280,7 +280,7 @@ export const taproom: FloorCards = {
       "A hooded figure in a pedal boat takes you across, for a price, and sells extras.",
       [
         { label: "Drink 5", loot: "revive" },
-        { label: "Bleed for it", cost: 2, loot: "draught" },
+        { label: "Bleed for it", cost: 1, loot: "smoke" },
         { label: "Walk on" },
       ],
     ),
@@ -288,7 +288,7 @@ export const taproom: FloorCards = {
       2,
       "two-taps",
       "Two Taps",
-      "Two taps behind the bar. One pours water. The other pours something that screams.",
+      "Two taps. One pours water. The other pours something that screams.",
       ["Water tap", "Screaming tap"],
     ),
     fork(

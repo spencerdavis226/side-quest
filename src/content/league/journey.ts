@@ -389,17 +389,18 @@ export const rival = (
   damage: RIVAL_HURT,
 });
 
-/** A hideout's grunt: a fight at the hideout's odds. */
+/** A hideout's grunt (or an admin, by `rank`): a fight at the hideout's
+ * odds. */
 export const grunt = (
   team: string,
   id: string,
   title: string,
   rules: string,
   fight: Roll,
-  more: Extra = {},
+  { rank = "Grunt", ...more }: Extra & { rank?: string } = {},
 ): CardDefinition => ({
   ...wild(HIDEOUT_LEG, id, title, rules, fight, more),
-  ribbon: `${team} · Grunt`,
+  ribbon: `${team} · ${rank}`,
 });
 
 /** A hideout's boss: dealt again until beaten twice. Its curse lands on a

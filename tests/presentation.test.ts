@@ -134,6 +134,46 @@ describe("preferences compatibility", () => {
       config: { version: 1, packIds: ["core"], limit: null },
     });
   });
+  it("reads the retired House and Cabin packs as Core (2026-10-24)", () => {
+    const stored = (packIds: string[]) => ({
+      config: { version: 1, packIds, limit: 50 },
+      choice: "standard",
+    });
+    for (const [before, after] of [
+      [["house"], ["core"]],
+      [
+        ["cabin", "vip"],
+        ["core", "vip"],
+      ],
+      [
+        ["core", "house", "cabin", "likely"],
+        ["core", "likely"],
+      ],
+    ] as const) {
+      vi.stubGlobal("localStorage", {
+        getItem: () => JSON.stringify(stored([...before])),
+      });
+      expect(loadPreferences().config.packIds).toEqual(after);
+    }
+  });
+  it("opens a save made with the retired packs on Core", () => {
+    const session = createSession(
+      { version: 1, packIds: ["core"], limit: 5 },
+      cards,
+      packs,
+      () => 0.5,
+    );
+    for (const [before, after] of [
+      [["house"], ["core"]],
+      [["core", "house", "cabin"], ["core"]],
+    ] as const) {
+      const saved = {
+        ...session,
+        config: { ...session.config, packIds: [...before] },
+      };
+      expect(parseSession(JSON.stringify(saved)).config.packIds).toEqual(after);
+    }
+  });
   it("falls back to defaults for unusable preferences", () => {
     vi.stubGlobal("localStorage", {
       getItem: () => JSON.stringify({ sound: true, atmosphere: false }),

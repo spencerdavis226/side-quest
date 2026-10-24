@@ -69,7 +69,7 @@ export const wine: FloorCards = {
       "She screams that it's five o'clock somewhere, and she means here. Roll d20.",
       "It's five o'clock. Drink 3.",
       "You take her glass away. Give 3 to the biggest wine mom here.",
-      { fumble: "She adopts you. Drink 5." },
+      { fumble: "She tells you about her divorce. All of it. Drink 6." },
     ),
     monster(
       3,
@@ -109,7 +109,7 @@ export const wine: FloorCards = {
       "A crab with corkscrews for claws, opening anything. Including you. Roll d20.",
       "Uncorked. Drink 3 and walk sideways to your seat.",
       "You flip it on its back. Give 3.",
-      { crit: "You open a bottle with it. Give 5." },
+      { crit: "You open a bottle with it. Give 6." },
     ),
     monster(
       3,
@@ -132,25 +132,25 @@ export const wine: FloorCards = {
       3,
       "blind-tasting",
       "Blind Tasting",
-      "Eyes shut. Your left neighbor hands you someone's drink. Name whose it is. Wrong: drink 3.",
+      "Eyes shut. Your left neighbor hands you a drink. Name whose it is. Wrong: drink 3.",
     ),
     trial(
       3,
       "coaster-nose",
-      "Coaster on the Nose",
-      "Balance a coaster on your nose for 10 seconds. It falls: drink 3.",
+      "The Flamingo",
+      "Stand on one leg with your eyes shut for 10 seconds. Wobble or peek: drink 3.",
     ),
     trial(
       3,
       "swirl-sniff-lie",
       "Swirl, Sniff, Lie",
-      "Describe your drink like a sommelier for 15 seconds without laughing. Laugh: drink 3.",
+      "Review your drink like a sommelier for 15 seconds. Crack a smile: drink 3.",
     ),
     trial(
       3,
       "the-toast",
       "The Toast",
-      "Give a toast to the person on your right, sincere, 20 seconds. Anyone laughs: drink 3.",
+      "Toast your right neighbor, sincerely, for 20 seconds. Anyone laughs: you drink 3.",
     ),
     trap(
       3,
@@ -208,7 +208,7 @@ export const wine: FloorCards = {
       "Wine Roulette",
       "Six glasses, one of them corked. Win, then cash out or pick again, harder. Roll d20.",
       "Corked. Drink 3.",
-      "Lovely. Give 2.",
+      "A good year. Give 2.",
       ["draught", "draught", "shield"],
     ),
     relic(
@@ -250,7 +250,7 @@ export const wine: FloorCards = {
       3,
       "the-magnum",
       "The Magnum",
-      "A magnum of something nice behind the racks. Everyone gets a splash; save a swig. Drink 1.",
+      "A magnum of something nice behind the racks. Drink 1, and cork the rest for later.",
       "draught",
     ),
     shrine(
@@ -409,7 +409,7 @@ export const wine: FloorCards = {
         BOSS_NEED[0],
         "He names your drink, your year and your ex. Drink 4.",
         "He calls your boxed wine a Bordeaux. Give 5.",
-        { fumble: "He spits your drink back in your glass. Drink 7." },
+        { fumble: "He spits your drink back in your glass. Drink 8." },
       ),
       {
         drops: [

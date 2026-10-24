@@ -21,17 +21,17 @@ export const queueCards: CardDefinition[] = [
   queue(
     "knows-the-owner",
     "Brad Knows the Owner",
-    "The Quarter-Zips cut the line: Brad's cousin knows the owner. Name-drop harder. Roll d20.",
+    "Brad's cousin knows the owner, so the Quarter-Zips cut in. Drop a bigger name. Roll d20.",
     vs(
       "His cousin really does know the owner. Drink 3.",
-      "The owner has never heard of him. Give 3 to the best name-dropper here.",
+      "The owner has never heard of Brad. Give 3.",
     ),
     { loot: "draught" },
   ),
   queue(
     "fake-id",
     "Chad's Fake ID",
-    "Chad (left neighbor) and you: 10 seconds of Canadian accent each. Chad wins the vote: drink 3.",
+    "You and your left neighbor (Chad) do 10 seconds of Canadian each. Chad wins: drink 3.",
     null,
     { loot: "smoke" },
   ),
@@ -49,10 +49,10 @@ export const queueCards: CardDefinition[] = [
   queue(
     "group-name",
     "The Group Name",
-    "The Quarter-Zips have a group name, a hashtag and matching vests. Look cooler. Roll d20.",
+    "The Quarter-Zips have a group name, a hashtag and matching vests. Roll d20.",
     vs(
-      "Nobody could look cooler. Drink 3.",
-      "Your vest is a jacket. It's better. Give 3.",
+      "They look cooler than you. Drink 3.",
+      "You have a jacket. It beats a vest. Give 3.",
     ),
     {
       loot: "die",
@@ -99,7 +99,7 @@ export const closingCards: CardDefinition[] = [
     "Thad is giving a toast about 'the boys', eleven minutes in. Roll d20 to cut him off.",
     vs(
       "It's moving, somehow. Raise a glass and drink 4.",
-      "You raise a glass mid-sentence and everyone drinks. Give 4.",
+      "You raise a glass mid-sentence, and it's over. Give 4.",
       { fumble: "You cry at it. Finish your drink." },
     ),
   ),
@@ -157,7 +157,7 @@ export const lastCallBosses: CardDefinition[] = [
     2,
     "last-call-lich",
     "The Last Call Lich",
-    "Lights up. Music off. It's last call forever unless you kill it. Roll d20.",
+    "A bony hand rings the bell. It's last call forever unless you kill it. Roll d20.",
     d20(
       BOSS_NEED[2],
       "Closing time. Everyone drinks 4.",
@@ -210,7 +210,7 @@ export const lastCallBosses: CardDefinition[] = [
       "You carve it down to the spit. Give 5.",
       {
         crit: "You eat the whole thing, standing. Everyone else drinks 4.",
-        fumble: "You drop it on the floor and eat it anyway. Drink 8.",
+        fumble: "You drop it on the floor and eat it anyway. Drink 10.",
       },
     ),
   ),

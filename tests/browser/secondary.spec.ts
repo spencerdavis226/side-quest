@@ -78,10 +78,8 @@ test("@release the pack count stays readable with every pack selected", async ({
   await page.getByRole("button", { name: "Choose packs" }).click();
   const dialog = page.getByRole("dialog");
   for (const name of [
-    "The House deck",
     "VIP night",
     "Pokémon night",
-    "Cabin weekend",
     "Most Likely To",
     "Secrets & fuses",
   ]) {
@@ -93,8 +91,8 @@ test("@release the pack count stays readable with every pack selected", async ({
   }
   await dialog.getByRole("button", { name: "Done" }).click();
   const row = page.locator(".pack-selector");
-  await expect(row.locator(".pack-logo")).toHaveCount(7);
-  const count = row.getByText("811 cards");
+  await expect(row.locator(".pack-logo")).toHaveCount(5);
+  const count = row.getByText("817 cards");
   await expect(count).toBeVisible();
   expect(
     await count.evaluate((el) => {
@@ -103,9 +101,9 @@ test("@release the pack count stays readable with every pack selected", async ({
       return el.scrollWidth <= el.clientWidth + 1 && text.right <= box.right;
     }),
   ).toBe(true);
-  await row.screenshot({ path: test.info().outputPath("seven-packs.png") });
+  await row.screenshot({ path: test.info().outputPath("five-packs.png") });
 });
-test("@release House and VIP are selectable add-ons and Core can be deselected", async ({
+test("@release VIP is a selectable add-on and Core can be deselected", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 320, height: 568 });
@@ -113,16 +111,14 @@ test("@release House and VIP are selectable add-ons and Core can be deselected",
   await page.getByRole("button", { name: "Choose packs" }).click();
   const dialog = page.getByRole("dialog");
   const vip = dialog.getByRole("button", { name: "VIP night", exact: true });
-  const house = dialog.getByRole("button", { name: /The House deck/ });
   await expect(vip).toHaveAttribute("aria-pressed", "false");
-  await expect(house).toHaveAttribute("aria-pressed", "false");
   expect(
     await dialog.evaluate((dialogEl) => {
       const rect = dialogEl.getBoundingClientRect();
       return rect.left >= 0 && rect.right <= innerWidth;
     }),
   ).toBe(true);
-  await house.click();
+  await vip.click();
   await page.getByRole("button", { name: "Done" }).click();
   await page.getByRole("button", { name: "Play", exact: true }).click();
   await expect(page.locator(".progress")).toBeVisible();
@@ -130,8 +126,9 @@ test("@release House and VIP are selectable add-ons and Core can be deselected",
     (key) => JSON.parse(localStorage.getItem(key)!),
     key,
   );
-  expect(session.config.packIds).toEqual(["core", "house"]);
-  expect(session.cards).toHaveLength(190);
+  expect(session.config.packIds).toEqual(["core", "vip"]);
+  // Core holds the house sheet and Cabin weekend too: 275 + 16 VIP cards.
+  expect(session.cards).toHaveLength(291);
   expect(
     session.cards.some((card: { id: string }) => card.id === "house.sheet-091"),
   ).toBe(true);

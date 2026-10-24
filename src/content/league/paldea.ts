@@ -37,7 +37,7 @@ export const paldea: Region = {
       "brassius",
       "Brassius",
       "Grass",
-      "Brassius demands art. Napkin-sculpt a Pokémon in 20 seconds. Nobody can name it: drink 4.",
+      "Brassius demands art. Pose as a Pokémon statue. Nobody names it: drink 4.",
     ),
     leader(
       2,
@@ -47,7 +47,7 @@ export const paldea: Region = {
       "Iono is streaming this. Say hi to chat in your best influencer voice, then roll d20.",
       d20(
         GYM_NEED[2],
-        "Chat hates you. Drink 4 and read your own hate comment aloud.",
+        "Chat hates you. Drink 4, then roast yourself like a hater would.",
         "You're trending. Shout out a player by name; they drink 3.",
         {
           crit: "Top donor. Give 8.",
@@ -83,7 +83,7 @@ export const paldea: Region = {
       "ryme",
       "Ryme",
       "Ghost",
-      "Ryme is a rapper. Freestyle four bars about your left neighbor. Table votes trash: drink 6.",
+      "Ryme raps. Freestyle 4 bars on your left neighbor. Table votes trash: drink 6.",
     ),
     leader(
       6,
@@ -106,7 +106,7 @@ export const paldea: Region = {
       "grusha",
       "Grusha",
       "Ice",
-      "Grusha wrecked his knees snowboarding. Wall-sit for 30 seconds. Drop early: drink 7.",
+      "Grusha shreds. Mime a snowboard run, tricks and all. Table votes lame: drink 7.",
     ),
   ],
 
@@ -124,7 +124,7 @@ export const paldea: Region = {
       "Poppy is eight and has a hammer. Let your left neighbor bonk your head, then roll d20.",
       d20(
         ELITE_NEED,
-        "Gigaton Hammer. Drink 5, and she bonks you again.",
+        "Gigaton Hammer. Drink 5, and your left neighbor bonks you again.",
         "You take her toy. Bonk a player once; they drink 3.",
         {
           fumble: "Bonked silly. Finish your drink.",
@@ -149,7 +149,7 @@ export const paldea: Region = {
       "hassel",
       "Hassel",
       "Dragon",
-      "Hassel weeps at art. Describe the table like a painting. Nobody laughs or tears up: drink 5.",
+      "Hassel weeps at art. Paint the table in words. No laugh or tear: drink 5.",
     ),
     eliteFour(
       "crispin",
@@ -169,13 +169,13 @@ export const paldea: Region = {
       "amarys",
       "Amarys",
       "Steel",
-      'Amarys doesn\'t do friends. Get your right neighbor to say "friend" in 30 seconds or drink 5.',
+      'Amarys hates friends. Get a neighbor to say "friend" in 30 seconds or drink 5.',
     ),
     eliteFour(
       "lacey",
       "Lacey",
       "Fairy",
-      "Lacey's quiz: spell your full name backwards in 10 seconds. Slip once: drink 5.",
+      "Lacey's pop quiz: count down from 30 by threes in 15 seconds. Slip once: drink 5.",
     ),
     eliteFour(
       "drayton",
@@ -199,9 +199,9 @@ export const paldea: Region = {
       d20(
         CHAMPION_NEED,
         "Tera Blast. Everyone drinks 4 and replies all.",
-        "The meeting ends early. Give 4 and leave the room for five seconds.",
+        "The meeting ends early. Give 4 and leave the room for 5 seconds.",
         {
-          crit: "You're the boss now. Give 10.",
+          crit: "You take over the meeting. Give 10.",
           fumble: "Mandatory overtime. Everyone finishes their drink.",
         },
       ),
@@ -216,7 +216,7 @@ export const paldea: Region = {
         'Rematch! Everyone drinks 3 and says "one more!"',
         "She loves it. Give 4, and hug your left neighbor for her.",
         {
-          crit: "She finally needs a nap. Give 10.",
+          crit: "She needs a water break. Give 10.",
           fumble: "One more battle! Everyone finishes their drink.",
         },
       ),

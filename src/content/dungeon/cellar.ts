@@ -47,14 +47,17 @@ export const cellar: FloorCards = {
       "The thing growing behind the ice machine has feelings and a mouth. Roll d20.",
       "You breathe it in. Drink 3 and cough on your left neighbor.",
       "Bleach. So much bleach. Give 3.",
-      { fumble: "It moves into your lungs. Drink 5." },
+      {
+        fumble:
+          "It moves into your lungs. Drink 6 and cough on both neighbors.",
+      },
     ),
     monster(
       0,
       "drunk-goblin",
       "Drunk Goblin",
       "A goblin who's had nine. He wants to fight you, then hug you. Roll d20.",
-      "He wins both. Drink 3 and hug the person on your right.",
+      "He wins both. Drink 3 and hug your right neighbor.",
       "He passes out on you. Loot his pockets. Give 2.",
       { loot: "smoke" },
     ),
@@ -92,7 +95,7 @@ export const cellar: FloorCards = {
       "Eight legs, eight beers, zero manners. Roll d20.",
       "Bitten. Drink 3, and do a spider walk to the fridge and back.",
       "Squished. Give 3.",
-      { crit: "Squished, and its web was full of coasters. Give 5." },
+      { crit: "Squished, and its web was full of coasters. Give 6." },
     ),
     monster(
       0,
@@ -153,14 +156,14 @@ export const cellar: FloorCards = {
       0,
       "keg-stand-off",
       "Keg Stand-Off",
-      "Stare down your right neighbor. First to blink or laugh drinks 3. You blink: drink 3.",
+      "Staring contest with your right neighbor. You blink or laugh first: drink 3.",
     ),
     trap(
       0,
       "sticky-floor",
       "Sticky Floor",
       "Your shoes are glued to forty years of spilled lager. Roll d20 to pull free.",
-      "You leave a shoe behind. Drink 2 and take one shoe off.",
+      "You leave a shoe behind. Drink 2, and stay one shoe down until your next turn.",
       "You peel free. Give 2.",
     ),
     trap(
@@ -169,7 +172,7 @@ export const cellar: FloorCards = {
       "Tripwire",
       "Someone strung Christmas lights across the stairs at shin height. Roll d20.",
       "You eat the stairs. Drink 2.",
-      "You hop it. Give 2 to whoever strung them.",
+      "You hop it. Give 2 to the clumsiest player here.",
     ),
     trap(
       0,
@@ -197,8 +200,8 @@ export const cellar: FloorCards = {
       0,
       "lost-bridesmaids",
       "Lost Bridesmaids",
-      "Two bridesmaids looking for the bathroom found you instead. They want a photo. Roll d20.",
-      "You're in forty photos. Drink 2, and pose for one now.",
+      "Two lost bridesmaids have decided you're the groom. Roll d20.",
+      "First dance. Drink 2, then sway with your right neighbor.",
       "You point them upstairs. Give 2.",
     ),
     ambush(
@@ -260,7 +263,7 @@ export const cellar: FloorCards = {
       0,
       "wishing-drain",
       "Wishing Drain",
-      "A floor drain full of coins and one fry. Toss something in. Everyone toasts the drain.",
+      "A floor drain full of coins and one fry. Everyone makes a wish out loud and toasts it.",
     ),
     shrine(
       0,
@@ -294,13 +297,14 @@ export const cellar: FloorCards = {
       0,
       "two-hatches",
       "Two Hatches",
-      "Two hatches in the floor. One is quiet. The other is playing Nickelback, loud, on purpose.",
+      "Two hatches. One is quiet. The other is blasting Nickelback, on purpose.",
+      ["Quiet hatch", "Loud hatch"],
     ),
     fork(
       0,
       "staff-only",
       "Staff Only",
-      "Two doors: STAFF ONLY, and REALLY STAFF ONLY. Something growls behind the second.",
+      "Two doors: STAFF ONLY and REALLY STAFF ONLY. The second one growls.",
       ["Staff only", "Really staff only"],
     ),
   ],
@@ -311,10 +315,10 @@ export const cellar: FloorCards = {
       "Grease Trap Horror",
       "The grease trap has been fed fries for twenty years. Now it's hungry. Roll d20.",
       "It slurps you in. Drink 4, then wash your hands in shame.",
-      "You seal the lid. Something shiny's stuck to it. Give 4.",
+      "You seal the lid and sit on it. Give 4.",
       [
         trinket("Grease-Proof Apron", { hurt: { trap: -1 } }),
-        trinket("Deep-Fried Snack", { heal: 1 }),
+        trinket("Greasy Knuckles", { roll: { monster: 1 } }),
       ],
     ),
     elite(
@@ -368,7 +372,7 @@ export const cellar: FloorCards = {
       0,
       "rat-king",
       "The Rat King",
-      "Forty rats in one crown, holding court in the grease trap. Bow, then roll d20.",
+      "Forty rats in one crown, holding court by the drain. Kiss the ring, then roll d20.",
       d20(
         BOSS_NEED[0],
         "The court finds you guilty. Drink 4.",
@@ -432,7 +436,7 @@ export const cellar: FloorCards = {
         BOSS_NEED[0],
         "The chord hits you in the teeth. Drink 4.",
         "You find the off switch. Give 5.",
-        { fumble: "You join the chord. Hum for 10 seconds, then drink 6." },
+        { fumble: "You join the chord. Hum for 10 seconds, then drink 8." },
       ),
       {
         curse: "bleed",

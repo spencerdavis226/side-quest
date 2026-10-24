@@ -30,7 +30,7 @@ export const johto: Region = {
         ...Array.from({ length: 8 }, (_, i) => ({
           min: i + 3,
           max: i + 3,
-          instruction: `Bitten. Drink ${Math.ceil((i + 3) / 2)}.`,
+          instruction: `Bitten. Drink ${Math.ceil((10 - i) / 2)}.`,
         })),
         {
           min: 11,
@@ -64,7 +64,7 @@ export const johto: Region = {
       "morty",
       "Morty",
       "Fog",
-      "Morty's Gastly stares you down. Staring contest with the player opposite. Blink first: drink 4.",
+      "Morty's Gastly stares. Out-stare the player opposite you. Blink first: drink 4.",
     ),
     leader(
       4,
@@ -78,7 +78,7 @@ export const johto: Region = {
       "jasmine",
       "Jasmine",
       "Mineral",
-      "Hold a full drink at arm's length for 30 seconds. Lower it: finish it. Make it: give 4.",
+      "Hold a full drink at arm's length, 30 seconds. Lower it: finish it. Win: give 4.",
     ),
     leader(
       6,
@@ -94,7 +94,7 @@ export const johto: Region = {
       "Rising",
       "Clair says you're too weak for dragons. Tell her she's right, then roll 2d6.",
       rollTable(2, 6, [
-        { min: 2, max: 7, instruction: "Dragonbreath. Drink {total}." },
+        { min: 2, max: 7, instruction: "Dragon Breath. Drink {total}." },
         {
           min: 8,
           max: 12,
@@ -110,7 +110,7 @@ export const johto: Region = {
       "will",
       "Will",
       "Psychic",
-      "The table secretly picks a number from 1 to 10. Three guesses; each miss: drink 2.",
+      "The table secretly picks a number from 1 to 10. Guess it in three; each miss: drink 2.",
     ),
     eliteFour(
       "karen",
@@ -141,7 +141,8 @@ export const johto: Region = {
         {
           min: 11,
           max: 20,
-          instruction: "Hall of Fame! Make a rule for the rest of the game.",
+          instruction:
+            "Dragonite staggers. Make a rule for the rest of the game.",
           win: true,
         },
       ]),
@@ -152,12 +153,12 @@ export const johto: Region = {
     legendary(
       "lugia",
       "Lugia",
-      "Lugia floods the table. Roll d20; miss it and everyone drinks that many seconds.",
+      "Lugia floods the table. Roll d20; miss, and everyone drinks for that many seconds.",
       d20(
         LEGENDARY_NEED,
         "Aeroblast. Everyone drinks for {total} seconds.",
-        "Caught! Everyone else drinks for 10 seconds.",
-        { fumble: "It floods the table. Everyone drinks for 5 seconds." },
+        "A hit! Everyone else drinks for 10 seconds.",
+        { fumble: "It floods the table. Everyone drinks for 15 seconds." },
       ),
     ),
     legendary(
@@ -167,21 +168,29 @@ export const johto: Region = {
       rollTable(
         1,
         6,
-        [1, 2, 3, 4, 5, 6].map((n) => ({
-          min: n,
-          max: n,
-          instruction: `Drink ${n}, then give ${n * 2}.`,
-          ...(n >= 4 ? { win: true } : {}),
-        })),
+        [1, 2, 3, 4, 5, 6].map((n) =>
+          n >= 4
+            ? {
+                min: n,
+                max: n,
+                instruction: `You ride the fire. Give ${n - 2}, then ${(n - 2) * 2} more.`,
+                win: true,
+              }
+            : {
+                min: n,
+                max: n,
+                instruction: `Sacred Fire. Drink ${5 - n}, then ${(5 - n) * 2} more.`,
+              },
+        ),
       ),
     ),
     legendary(
       "beasts",
       "Raikou, Entei, Suicune",
-      "Three dogs that bolt the moment you look. Point at the guiltiest player, then roll d20.",
+      "Three dogs that bolt when you look. Point at whoever's likeliest to bolt, then roll d20.",
       d20(
         LEGENDARY_NEED,
-        "It ran away. Again. You and the guilty one drink 3.",
+        "It ran away. Again. You and your pick drink 3.",
         "Cornered one. Give 4.",
         { fumble: "All three bite. Finish your drink." },
       ),

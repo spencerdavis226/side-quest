@@ -15,19 +15,19 @@ export const upperLandings: CardDefinition[] = [
   landing(
     "smoking-area",
     "The Smoking Area",
-    "Fresh air, a broken heater and somebody's vape. Everyone tells the table one thing so far.",
+    "Fresh air, a dead heater, somebody's vape. Everyone names their best moment so far.",
     "Breathe",
   ),
   landing(
     "coat-check",
     "The Coat Check",
-    "Nobody's working the coat check. Everyone tries on one coat. Level up, or nap on the pile.",
+    "An empty coat check. Everyone names the coat they'd steal. Level up, or nap on the pile.",
     "Nap",
   ),
   landing(
     "bathroom-line",
     "The Bathroom Line",
-    "The line is twelve people long and everyone is your best friend. Hype up the person beside you.",
+    "Twelve deep, and everyone's best friends now. Everyone hypes their left neighbor.",
     "Wait it out",
   ),
 ];
@@ -37,7 +37,7 @@ export const lowerLandings: CardDefinition[] = [
   landing(
     "boiler-room",
     "The Boiler Room",
-    "Warm pipes and a cot someone lives on. Everyone warms their hands. Level up, or lie down.",
+    "Warm pipes and somebody's cot. Everyone warms their hands. Level up, or lie down.",
     "Lie down",
   ),
   landing(
@@ -48,7 +48,7 @@ export const lowerLandings: CardDefinition[] = [
   landing(
     "staff-room",
     "The Staff Room",
-    "A kettle and a sign: WASH YOUR OWN MUG. Everyone mimes it. Level up, or put the kettle on.",
+    "A kettle and a sign: WASH YOUR OWN MUG. Everyone mimes washing one.",
     "Kettle on",
   ),
   landing(

@@ -4,7 +4,6 @@ import { createSession, advance } from "../../src/game/engine";
 import { cards, packs } from "../../src/content/catalog";
 const key = "side-quest.session.v1";
 const core = packs.find((p) => p.id === "core")!;
-const house = packs.find((p) => p.id === "house")!;
 const vip = packs.find((p) => p.id === "vip")!;
 const pokemon = packs.find((p) => p.id === "pokemon")!;
 const plain = cards.filter((c) => !c.dice && core.cardIds.includes(c.id));
@@ -90,7 +89,7 @@ test("every pack seal stays inside the parchment at supported widths", async ({
     { width: 768, height: 1024 },
   ]) {
     await page.setViewportSize(viewport);
-    for (const pack of [core, house, vip, pokemon]) {
+    for (const pack of [core, vip, pokemon]) {
       const card = cards.find((candidate) =>
         pack.cardIds.includes(candidate.id),
       )!;
@@ -188,7 +187,7 @@ test("@release home fits Safari's visible height without moving Install into the
         choice: "quest",
         config: {
           version: 1,
-          packIds: ["core", "house", "vip", "pokemon"],
+          packIds: ["core", "vip", "pokemon"],
           limit: null,
           quest: "pokemon",
         },

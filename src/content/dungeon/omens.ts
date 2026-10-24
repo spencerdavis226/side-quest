@@ -34,7 +34,7 @@ export const omens: CardDefinition[] = [
   omen(
     "cargo-shorts",
     "Cargo Shorts",
-    "Somebody wore cargo shorts. One more satchel slot tonight, and one pocket has a draught.",
+    "You wore cargo shorts: drink 3. One more satchel slot, and a draught in a pocket.",
     { satchel: 4, loot: ["draught"] },
   ),
   omen(
@@ -46,13 +46,13 @@ export const omens: CardDefinition[] = [
   omen(
     "blood-moon",
     "Blood Moon",
-    "Blood on the moon. Every monster costs one more heart, but you start with two more.",
+    "Blood moon. Monsters, elites and ambushes cost a heart more. Start with two more hearts.",
     { hurt: { monster: 1, elite: 1, ambush: 1 }, hearts: 2 },
   ),
   omen(
     "lefty-night",
     "Lefty Night",
-    "Drink with your off hand all crawl. Caught using the other: drink 1. That's all. Probably.",
+    "Everyone drinks with their off hand all crawl. Caught using the other: drink 1.",
   ),
   omen(
     "karaoke-night",
@@ -62,19 +62,19 @@ export const omens: CardDefinition[] = [
   omen(
     "the-regulars",
     "The Regulars",
-    "The bartender likes you. You start with two more hearts.",
+    "The bartender knows you, and your tab. Everyone drinks 2. Start with two more hearts.",
     { hearts: 2 },
   ),
   omen(
     "thin-walls",
     "Thin Walls",
-    "Every trial costs one more heart tonight, but every heal heals one more.",
+    "Everyone can hear you. Every trial costs a heart more, but every heal heals one more.",
     { hurt: { trial: 1 }, heal: 1 },
   ),
   omen(
     "cold-open",
-    "Cold Open",
-    "Everyone drinks before the first door. Start a heart short, with a loaded die and shield.",
+    "The Pregame",
+    "Everyone drinks 1 at the door. Start a heart short, with a loaded die and a shield.",
     { hearts: -1, loot: ["die", "shield"] },
   ),
 ];

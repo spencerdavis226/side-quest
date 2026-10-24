@@ -28,6 +28,8 @@ import type { GameConfig, SessionState } from "../src/game/types";
 
 const DIR = "tests/fixtures/saves";
 const date = process.argv[2] ?? new Date().toISOString().slice(0, 10);
+// `npm run fixtures:saves <date> <name>` writes only the situation <name>.
+const only = process.argv[3];
 
 /** Every state a seeded game passes through, as the app would save it. */
 function* play(config: GameConfig, seed: number) {
@@ -45,8 +47,8 @@ const config = (
   limit: number | null,
   quest?: string,
 ): GameConfig => ({ version: 1, packIds, limit, ...(quest ? { quest } : {}) });
-const standard = config(["core", "house"], 50);
-const plain = config(["core", "house", "vip", "cabin", "likely"], null);
+const standard = config(["core"], 50);
+const plain = config(["core", "vip", "likely"], null);
 const secrets = config(["core", "secrets"], null);
 const league = config(["pokemon"], null, "pokemon");
 const crawl = config(["dungeon"], null, "dungeon");
@@ -143,8 +145,16 @@ function legacy() {
   return { ...rest, version: 1 };
 }
 
+/** A save from before 2026-10-24, when House and Cabin weekend were packs of
+ * their own: its config names them, and no pack of that name exists now. */
+function retiredPacks() {
+  const s = find(standard, (s) => s.discarded >= 12 && s.phase === "hidden");
+  return { ...s, config: { ...s.config, packIds: ["house", "cabin"] } };
+}
+
 mkdirSync(DIR, { recursive: true });
 const write = (name: string, session: unknown) => {
+  if (only && name !== only) return;
   const file = join(DIR, `${date}-${name}.json`);
   if (existsSync(file)) return console.log(`kept   ${file}`);
   // Only a save the app loads today is worth freezing.
@@ -152,5 +162,7 @@ const write = (name: string, session: unknown) => {
   writeFileSync(file, JSON.stringify(session) + "\n");
   console.log(`wrote  ${file}`);
 };
-for (const [name, cfg, match] of situations) write(name, find(cfg, match));
+for (const [name, cfg, match] of situations)
+  if (!only || name === only) write(name, find(cfg, match));
+write("retired-house-and-cabin-packs", retiredPacks());
 write("legacy-v1", legacy());
