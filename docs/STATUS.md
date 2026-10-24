@@ -2,6 +2,11 @@
 
 Updated 2026-10-18. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Home Screen icon (2026-10-24; owner request; not pushed)
+
+- The bezel is gone: the painted tankard (`assets/source/tankard.png`, the same art as before) now sits on a flat teal gradient (the frame's teal) with a light sheen and a soft shadow. `scripts/icons.ts` (`npm run generate:icons`) writes the four PNGs in `public/`. Opaque square, no rounding (iOS masks it); the tankard fills 74% of the side, 60% in `icon-maskable.png` so Android's circle crop keeps it whole. (A flat silhouette version was drafted first; the owner chose the painted tankard.)
+- Installed iPhones keep the old icon until the app is removed and re-added to the Home Screen. Not checked on a device.
+
 ## Pokémon and League copy review (2026-10-18; branch `review-league-copy`, not merged or pushed)
 
 - **Bugs:** wins that made the drawer drink now give (Brock, gym Giovanni, Tate & Liza, Glacia; Ho-Oh's losses drink, wins give); per-face losses no longer pour more nearer the win (Erika, Lorelei, Bugsy, Drake). Plain wins on 2- and 3-hit bosses read as a swing, not the fall. Natural 1s cost at least twice the worst loss and natural 20s give at least double (Zigzagoon, Biker Gang, Hydreigon, rival Nemona, Star Squad, Lugia, the shot fumbles; Deoxys, Zacian). Starter and adventurer roll bonuses say "d20" (`omenText.ts`; also Pub Crawl's lines; `quest.spec.ts` and `crawl.spec.ts` expectations follow). Hideout ribbons carry ranks (`grunt(..., { rank })`). Forks no longer promise a specific elite; route rules no longer name items; Ilse's faces match the count.

@@ -233,7 +233,7 @@ The approved card back, parchment, tankard, and tabletop remain the permanent re
 
 ## Reusable control artwork
 
-Built-in image-generation tool, using the approved card back and front as reference inputs. `assets/source/ui-chrome.png` preserves the first generation; `assets/source/ui-chrome-final.png` preserves the final dark-background sheet. `scripts/chrome.ts` exports the observed button, panel, and bezel rectangles to `public/art/button.webp`, `panel.webp`, and `bezel.webp`. `scripts/icons.ts` composites the painted tankard inside the bezel and exports optimized PNG Home Screen icons.
+Built-in image-generation tool, using the approved card back and front as reference inputs. `assets/source/ui-chrome.png` preserves the first generation; `assets/source/ui-chrome-final.png` preserves the final dark-background sheet. `scripts/chrome.ts` exports the observed button, panel, and bezel rectangles to `public/art/button.webp`, `panel.webp`, and `bezel.webp`. `scripts/icons.ts` places the painted tankard (`assets/source/tankard.png`) on a flat teal gradient for the Home Screen icon (since 2026-10-24; before that it sat inside the bezel) and exports optimized PNGs.
 
 Generation prompt:
 
