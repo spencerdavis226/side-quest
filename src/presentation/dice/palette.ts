@@ -100,6 +100,17 @@ export function diceColors(palette?: DicePalette): DiceColors {
     ring: mix(primary, CREAM, 0.38),
     ink: ink(),
     shade: light ? deep : shade(primary, 0.55),
-    specular: [shade(secondary, -0.6), shade(primary, -0.6)],
+    specular: [shade(secondary, -0.6), enamelSpecular(primary)],
   };
+}
+
+/** The enamel's highlight, tinted by its colour but never stronger than the
+ * house teal's: the top face meets the light and camera head on, so a
+ * brighter tint at that shininess glares out the numerals on pale enamels. */
+function enamelSpecular(primary: string) {
+  const cap = luminance(houseDice.specular[1]);
+  let tint = shade(primary, -0.6);
+  for (let i = 0; i < 40 && luminance(tint) > cap; i++)
+    tint = shade(tint, -0.08);
+  return tint;
 }

@@ -15,6 +15,11 @@ An app-wide review found the bugs and gaps below. The owner approved four PRs, i
 
 Not doing (owner left it to my call): dropping a crawl's unused deck cards from its save. It would change what a valid save is for about 130 KiB.
 
+## Dice glare on pale palettes (2026-10-24; on `main`)
+
+- **Pale starter and adventurer dice glared out their top numerals** (owner report; the house teal was fine). `diceColors` tinted the enamel specular as 40% of the primary, 4–8× the house teal's on pale enamels (Cinderace, High Priest, Cleric, Pikachu, Psyduck, Slowpoke…), and at shininess 100 the head-on top face washed toward white. `enamelSpecular` (`src/presentation/dice/palette.ts`) keeps the tint but caps its luminance at the house enamel's; the metal specular is unchanged.
+- **Verification:** `npm test` 252 passed (new: "never lets a pale enamel's highlight glare out its numerals" in `tests/dice-palette.test.ts`), lint, typecheck. Rendered in the dev server (Chromium): Cinderace d20 and Pikachu d6 read on the top face. No device check.
+
 ## Review fixes: bugs (2026-10-18; merged to `main`, PR #24)
 
 - **A quest mode's pack leaked into plain games.** Choosing Pub Crawl (or the League) switched its pack on, and going back to Standard or Infinite kept it: a Standard game had 341 cards instead of Core's 96. `chooseQuest` and `chooseLength` (`src/app/persistence.ts`, used by `Setup.tsx`) now record the pack a mode switched on in `Preferences.added` and switch it off when the mode is left; a pack the player had chosen stays, and the selection is never emptied.

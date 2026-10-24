@@ -4,6 +4,7 @@ import {
   contrast,
   diceColors,
   houseDice,
+  luminance,
 } from "../src/presentation/dice/palette";
 
 // The dice wear the starter's colours (owner, 2026-10-17), and since
@@ -32,6 +33,14 @@ describe("dice palettes", () => {
       expect(contrast(c.ink, c.body[1]), title).toBeGreaterThanOrEqual(4.5);
       expect(contrast(c.ink, c.body[0]), title).toBeGreaterThanOrEqual(3);
     }
+  });
+
+  it("never lets a pale enamel's highlight glare out its numerals", () => {
+    const cap = luminance(houseDice.specular[1]);
+    for (const [title, p] of palettes)
+      expect(luminance(diceColors(p).specular[1]), title).toBeLessThanOrEqual(
+        cap,
+      );
   });
 
   it("keeps the house dice as they were without a palette", () => {
