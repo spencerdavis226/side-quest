@@ -36,7 +36,7 @@ export function TopBar({
         />
       ) : (
         <IconButton
-          className="hud-stud previous-button"
+          className={`hud-stud previous-button${session.previousId ? "" : " no-previous"}`}
           label="Show the last card"
           disabled={disabled || !session.previousId}
           onClick={onOpenPrevious}

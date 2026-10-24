@@ -6,7 +6,7 @@
   gap: 0;
   justify-content: stretch;
   overflow: hidden;
-  border-radius: max(15px, 3.2cqw);
+  border-radius: var(--card-radius);
   position: relative;
 }
 
@@ -16,7 +16,7 @@
   width: 100%;
   height: 100%;
   min-height: 0;
-  border-radius: max(15px, 3.2cqw);
+  border-radius: var(--card-radius);
   color: #372412;
   position: relative;
   isolation: isolate;
@@ -230,7 +230,7 @@
 .dice-result-bonus {
   color: #6b3f12;
 }
-.dice-result-flinch {
+.study-rules p.dice-result-flinch {
   margin: 0;
   color: #6b4a2a;
   font: italic 600 clamp(13px, 3.6cqw, 16px) / 1.2 var(--font-tavern);
@@ -283,7 +283,7 @@
   border: 0;
   background: none;
   text-align: center;
-  width: min(100%, calc(58svh * 2 / 3), 306.667px);
+  width: min(100%, calc(var(--app-height) * 0.58 * 2 / 3), 306.667px);
   height: auto;
   aspect-ratio: 2 / 3;
   margin: 0 auto;
@@ -295,7 +295,7 @@
 
 @media (max-height: 620px) and (orientation: portrait) {
   .previous-card {
-    width: min(100%, calc(50svh * 2 / 3), 306.667px);
+    width: min(100%, calc(var(--app-height) * 0.5 * 2 / 3), 306.667px);
   }
 }
 
@@ -377,8 +377,10 @@
   position: relative;
   z-index: 1;
   align-self: center;
-  margin: max(6px, 1.3cqw) 0 0;
-  padding: max(3px, 0.75cqw) max(16px, 3.8cqw);
+  /* Wider than the rules' padding: the longest ("Victory Road · Pokémon
+     Center") would otherwise be clipped at both ends on a 320px phone. */
+  margin: max(6px, 1.3cqw) calc(-1 * max(12px, 2.55cqw)) 0;
+  padding: max(3px, 0.75cqw) max(12px, 3cqw);
   overflow: hidden;
   clip-path: polygon(
     0 0,
@@ -388,10 +390,10 @@
     0 100%,
     max(9px, 2cqw) 50%
   );
-  background: linear-gradient(180deg, #f3d48a 0%, #d3a24f 55%, #a87632 100%);
+  background: linear-gradient(180deg, #f3d48a 0%, #d3a24f 55%, #c28a3c 100%);
   color: #3a2208;
-  font: 700 max(11px, 2.55cqw) / 1.1 var(--font-tavern);
-  letter-spacing: 0.06em;
+  font: 700 max(13px, 2.8cqw) / 1.1 var(--font-tavern);
+  letter-spacing: 0.03em;
   text-transform: uppercase;
   white-space: nowrap;
   box-shadow:
@@ -447,12 +449,12 @@
   color: #2b2c40;
 }
 .tone-violet .card-ribbon {
-  background: linear-gradient(180deg, #a98bd9 0%, #6b47a8 55%, #432a72 100%);
+  background: linear-gradient(180deg, #7552b8 0%, #5a3a96 55%, #432a72 100%);
   color: #fbefff;
   text-shadow: 0 1px 0 #1d0d36;
 }
 .tone-crimson .card-ribbon {
-  background: linear-gradient(180deg, #d9534a 0%, #a3231f 55%, #6a1210 100%);
+  background: linear-gradient(180deg, #b03a34 0%, #a3231f 55%, #6a1210 100%);
   color: #ffe6a6;
   text-shadow: 0 1px 0 #3b0605;
   box-shadow:
@@ -518,7 +520,7 @@
   -webkit-user-select: none;
   -webkit-touch-callout: none;
 }
-.card-hold.held {
+.card-choice-option.card-hold.held {
   transform: translateY(2px);
   filter: brightness(1.06);
   box-shadow:
@@ -602,7 +604,7 @@
 .timer-blast {
   position: fixed;
   inset: 0;
-  z-index: 60;
+  z-index: var(--z-blast);
   display: grid;
   place-items: center;
   pointer-events: none;

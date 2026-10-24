@@ -246,6 +246,20 @@ test("@release Eevee's evolution lets the table pick its form", async ({
     plaques(page).nth(3).boundingBox(),
   ]);
   expect(last!.x + last!.width).toBeLessThanOrEqual(card!.x + card!.width);
+  // Nothing spills out of a plaque, and a form's name stays whole.
+  for (const spilled of await plaques(page).evaluateAll((els) =>
+    els.map((e) => [
+      e.scrollHeight - e.clientHeight,
+      e.scrollWidth - e.clientWidth,
+    ]),
+  ))
+    expect(Math.max(...spilled)).toBeLessThanOrEqual(1);
+  await expect(plaques(page).nth(0).locator(".offer-name")).toHaveText(
+    "Vaporeon",
+  );
+  await expect(plaques(page).nth(0).locator(".offer-price")).toHaveText(
+    "drink 3",
+  );
   await page.screenshot({ path: info.outputPath("eevee-320.png") });
   await plaques(page).nth(1).click();
   await expect(page.locator(".evolution-banner")).toHaveText(

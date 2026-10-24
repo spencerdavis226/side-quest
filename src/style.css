@@ -25,6 +25,26 @@
      viewport; the installed app overrides both below. */
   --app-height: 100svh;
   --backdrop-height: 100dvh;
+  /* One corner for every card silhouette (back, deck layers, lifted card and
+     front), so the outline holds still through the flip. Container units:
+     they resolve against the card stage or previous card. */
+  --card-radius: max(15px, 3.2cqw);
+  /* The brass studs in the play header (menu, previous card, hearts). */
+  --stud-size: 56px;
+  /* The crawl's strip of chips under the header. */
+  --strip-h: 34px;
+  /* Stacking above the table: banners, the dice, the party's flush, and the
+     timer's blast. */
+  --z-banner: 5;
+  --z-dice: 40;
+  --z-pulse: 41;
+  --z-blast: 60;
+}
+@media (min-width: 700px) {
+  :root {
+    --stud-size: 66px;
+    --strip-h: 42px;
+  }
 }
 /* Keep browser chrome outside the game's scroll surface. Only overflowing
    content inside #root (or a dialog/rules panel) may scroll. */
@@ -156,9 +176,12 @@ button:disabled {
   cursor: default;
   opacity: 0.45;
 }
+/* No outer rings (owner convention), but a keyboard user still has to see
+   where they are: a gold ring inside the edge. */
 button:focus-visible {
   outline: none;
   filter: brightness(1.08);
+  box-shadow: inset 0 0 0 3px #f8d38c !important;
 }
 input:focus-visible {
   outline: 3px solid #f8d38c;
@@ -168,8 +191,16 @@ input:focus-visible {
   /* Never draw or filter the full 3D card as a focus halo. */
   outline: none;
   filter: none;
+  box-shadow: none !important;
 }
-button:active:not(:disabled) {
+/* Its face takes the inset ring instead (the back, or the front's frame). */
+.game-card:focus-visible .card-back,
+.game-card:focus-visible .study-face {
+  box-shadow: inset 0 0 0 4px #f8d38c;
+}
+/* Not the card: a filter on the 3D card flattens it and re-rasters it on
+   every press. */
+button:active:not(:disabled, .game-card) {
   filter: brightness(0.94);
 }
 h1,
@@ -181,7 +212,7 @@ p {
   width: min(100%, 560px);
   margin: auto;
   padding: max(16px, var(--top-safe)) max(24px, env(safe-area-inset-right))
-    max(24px, var(--bottom-safe));
+    max(24px, var(--bottom-safe)) max(24px, env(safe-area-inset-left));
   min-height: var(--app-height);
 }
 .topbar {
@@ -397,12 +428,8 @@ p {
 }
 /* A crawl's header carries the strip of the party's chips. */
 .playing.crawl-deck {
-  --hud-strip: 44px;
-}
-@media (min-width: 700px) {
-  .playing.crawl-deck {
-    --hud-strip: 54px;
-  }
+  /* The strip's height (--strip-h) and the 10px above it. */
+  --hud-strip: calc(var(--strip-h) + 10px);
 }
 .table {
   display: flex;
@@ -454,7 +481,7 @@ p {
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: 4%;
+  border-radius: var(--card-radius);
   background: url("/art/card-back.webp") center/100% 100%;
   box-shadow:
     0 3px 0 #6a4c2f,
@@ -485,7 +512,7 @@ p {
   min-width: 0;
   display: grid;
   border: 0;
-  border-radius: 4%;
+  border-radius: var(--card-radius);
   padding: 0;
   background: none;
   transform-style: preserve-3d;
@@ -501,7 +528,7 @@ p {
   width: 100%;
   height: 100%;
   min-height: 0;
-  border-radius: 4%;
+  border-radius: var(--card-radius);
   /* The lifted card owns its shadow so it foreshortens with the turn instead of
      reading as a stationary slab behind an edge-on surface. */
   box-shadow:
@@ -524,7 +551,7 @@ p {
   width: 100%;
   height: 100%;
   min-height: 0;
-  border-radius: 4%;
+  border-radius: var(--card-radius);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   background-size: 100% 100%;
@@ -596,7 +623,7 @@ p {
 }
 dialog {
   width: min(calc(100% - 32px), 440px);
-  max-height: 85svh;
+  max-height: calc(var(--app-height) * 0.85);
   overflow: auto;
   color: #f4dfb7;
   border: 2px solid #967144;
