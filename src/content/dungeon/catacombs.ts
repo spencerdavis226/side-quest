@@ -45,7 +45,7 @@ export const catacombs: FloorCards = {
       1,
       "bone-sommelier",
       "Bone Sommelier",
-      "A skeleton swirls a glass, sniffs yours, and calls it cute. Roll d20.",
+      "A skeleton in a sommelier's chain rates your drink. Out of ten, it's a two. Roll d20.",
       "Shamed. Drink 4.",
       "You pour his on the floor. Give 4.",
     ),
@@ -156,8 +156,8 @@ export const catacombs: FloorCards = {
     trial(
       1,
       "the-seance",
-      "The Seance",
-      "Everyone holds hands while you summon a spirit. Make someone laugh in 20 seconds, or drink 4.",
+      "The Séance",
+      "Hands joined, you summon a spirit. Make someone laugh in 20 seconds, or drink 4.",
     ),
     trap(
       1,
@@ -181,7 +181,7 @@ export const catacombs: FloorCards = {
       "Fog of Regret",
       "A green fog that smells like the tequila from your 21st. Roll d20.",
       "Flashbacks. Drink 3.",
-      "You hold your breath. Give 2 to whoever was there.",
+      "You hold your breath. Give 2 to whoever had the worst 21st.",
       {
         jinx: {
           name: "Tequila Flashback",
@@ -219,7 +219,7 @@ export const catacombs: FloorCards = {
       1,
       "bone-dice",
       "The Bone Dice",
-      "A skeleton rattles a cup of finger bones at you. Win, then cash out or go again. Roll d20.",
+      "A skeleton's finger-bone dice. Win, then cash out or throw again, harder. Roll d20.",
       "Snake eyes. Drink 4.",
       "He clacks his jaw. Give 3.",
       ["die", "smoke", "revive"],
@@ -309,7 +309,7 @@ export const catacombs: FloorCards = {
       1,
       "the-split",
       "The Split",
-      "The tunnel splits. Left: silence. Right: drums, chanting, and what might be a conga line.",
+      "The tunnel splits. Left: silence. Right: drums, chanting, maybe a conga line.",
       ["Left, quiet", "Right, loud"],
     ),
     fork(
@@ -317,7 +317,7 @@ export const catacombs: FloorCards = {
       "two-crypts",
       "Two Crypts",
       "Two crypt doors. One says REST. The other says PARTY, in fresh blood.",
-      ["Rest", "Party"],
+      ["The REST door", "The PARTY door"],
     ),
   ],
   elites: [
@@ -330,7 +330,7 @@ export const catacombs: FloorCards = {
       "You hug her. She packs you something for the road. Give 5.",
       [
         trinket("Mom's Packed Lunch", { heal: 1, loot: ["draught"] }),
-        trinket("Mom's Cardigan", { hearts: 2 }),
+        trinket("Mom's Slipper", { roll: { monster: 1, ambush: 1 } }),
       ],
     ),
     elite(
@@ -350,7 +350,7 @@ export const catacombs: FloorCards = {
       "bone-dragon",
       "The Bone Dragon",
       "A dragon skeleton with a tiny hat, guarding a pile of bottle caps. Roll d20.",
-      "It sits on you. Drink 5.",
+      "It lies down on you, hat and all. Drink 5.",
       "You take the hat. It deflates. Give 5.",
       [
         trinket("The Tiny Hat", { roll: { all: 1 } }),
@@ -405,7 +405,7 @@ export const catacombs: FloorCards = {
       1,
       "dj-ossuary",
       "DJ Ossuary",
-      "A skeleton DJ who only plays the Macarena. Everyone does the Macarena, then you roll d20.",
+      "A skeleton DJ, Macarena on loop. Everyone does the Macarena, then you roll d20.",
       d20(
         BOSS_NEED[1],
         "He drops the bass on you. Drink 5.",

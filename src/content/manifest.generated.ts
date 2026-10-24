@@ -1804,7 +1804,7 @@ export const packs: PackDefinition[] = [
         },
         {
           label: "Tonight's omen",
-          intro: "Tonight's omen",
+          intro: "Something in the air",
           pick: 1,
           cardIds: [
             "dungeon.omen-flooded-stairs",
@@ -2305,7 +2305,7 @@ export const packs: PackDefinition[] = [
             [
               {
                 label: "The Drowned Taproom",
-                intro: "The Drowned Taproom",
+                intro: "The taps never stopped",
                 pick: 8,
                 cardIds: [
                   "dungeon.sommelier-kraken",
@@ -2452,7 +2452,7 @@ export const packs: PackDefinition[] = [
           ],
         },
         {
-          label: "Last call",
+          label: "Last Call",
           intro: "Last call. The Cup waits",
           pick: 1,
           cardIds: [

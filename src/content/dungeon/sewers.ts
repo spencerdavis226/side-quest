@@ -46,8 +46,8 @@ export const sewers: FloorCards = {
       "hazmat-goblin",
       "Hazmat Goblin",
       "A goblin in a hazmat suit who loves it down here. Loves it. Roll d20.",
-      "He hugs you. Drink 4.",
-      "You pull his air hose. He drops a smoke bomb. Give 3.",
+      "He hugs you, suit and all. Drink 4.",
+      "You pull his air hose. He leaves something smoky behind. Give 3.",
       { loot: "smoke" },
     ),
     monster(
@@ -65,7 +65,7 @@ export const sewers: FloorCards = {
       "The original pizza rat, nine feet tall now and still dragging the slice. Roll d20.",
       "Slice to the face. Drink 4.",
       "You take the slice. Give 4.",
-      { crit: "You take the slice and eat it. Give 6." },
+      { crit: "You take the slice and eat it. Give 8." },
     ),
     monster(
       4,
@@ -137,7 +137,7 @@ export const sewers: FloorCards = {
       4,
       "the-smell",
       "The Smell",
-      "Hold your nose and talk normally about your day for 30 seconds. Let go: drink 4.",
+      "Hold your nose and describe your day for 30 seconds. Let go: drink 4.",
     ),
     trial(
       4,
@@ -155,7 +155,7 @@ export const sewers: FloorCards = {
       4,
       "rat-race",
       "Rat Race",
-      "Race your left neighbor to finish a sip and say 'rat' three times. Lose: drink 4.",
+      "Race your left neighbor: take a sip, then say 'rat' three times. Slower: drink 4.",
     ),
     trap(
       4,
@@ -178,8 +178,8 @@ export const sewers: FloorCards = {
       "swamp-gas",
       "Swamp Gas",
       "Somebody lit a cigarette. Down here. Roll d20.",
-      "Eyebrows gone. Drink 3.",
-      "You dive into the sludge. Give 2 to the smoker here, if there is one.",
+      "Whoomph. Drink 3, and pat out your hair.",
+      "You dive into the sludge. Give 2 to whoever you blame.",
     ),
     trap(
       4,
@@ -211,7 +211,7 @@ export const sewers: FloorCards = {
       4,
       "fishing-the-drain",
       "Fishing the Drain",
-      "A rod, a hook and the big drain. Catch, then keep it or cast again, harder. Roll d20.",
+      "A rod and the big drain. Catch, then cash out or cast again, harder. Roll d20.",
       "You hook a rat. Drink 4.",
       "Something shiny. Give 3.",
       ["smoke", "round", "shield"],
@@ -255,7 +255,7 @@ export const sewers: FloorCards = {
       4,
       "maintenance-locker",
       "Maintenance Locker",
-      "A hard hat and a thermos of something brown. Wear one, drink from the other. Drink 1.",
+      "A hard hat on a hook, and a thermos of something brown. Drink 1 from the thermos.",
       "shield",
     ),
     shrine(
@@ -268,7 +268,7 @@ export const sewers: FloorCards = {
       4,
       "dry-ledge",
       "The Dry Ledge",
-      "A ledge above the waterline with a cooler and two lawn chairs. Everyone rests a sip.",
+      "A dry ledge, a cooler and two lawn chairs. Everyone sits back and takes one slow sip.",
     ),
     merchant(
       4,
@@ -296,7 +296,7 @@ export const sewers: FloorCards = {
       4,
       "two-pipes",
       "Two Pipes",
-      "Two pipes, big enough to crawl. One drips. The other gurgles, and it sounds like laughing.",
+      "Two pipes. One drips. The other gurgles, and it sounds like laughing.",
       ["Dripping pipe", "Gurgling pipe"],
     ),
     fork(
@@ -326,7 +326,7 @@ export const sewers: FloorCards = {
       "Rat Captain",
       "A rat in a captain's hat with a tiny cutlass and a big grudge. Roll d20.",
       "Keelhauled. Drink 5, and say 'aye aye, captain'.",
-      "You take his hat. Give 5.",
+      "You take his hat and his ship. Give 5.",
       [
         trinket("Captain's Hat", { satchel: 4, loot: ["die"] }),
         trinket("Tiny Cutlass", { roll: { monster: 2 } }),
@@ -411,12 +411,12 @@ export const sewers: FloorCards = {
     boss(
       4,
       "the-crocodile-mom",
-      "Mama Croc",
+      "Mama Gator",
       "Gator Junior's mother has heard what you did. Roll d20.",
       d20(
         BOSS_NEED[1],
         "She sits on you, gently, for an hour. Drink 5.",
-        "You apologise to her face. She weeps. Give 4.",
+        "You apologize to her face. She weeps. Give 4.",
         { fumble: "She adopts you. Finish your drink, then call her mom." },
       ),
       {
@@ -430,7 +430,7 @@ export const sewers: FloorCards = {
       4,
       "the-pipe-worm",
       "The Pipe Worm",
-      "It's been living in the plumbing for eighty years and it's as long as the city. Roll d20.",
+      "Eighty years in the plumbing, and now it's as long as the city. Roll d20.",
       d20(
         BOSS_NEED[1],
         "It wraps around you twice. Drink 5.",

@@ -164,7 +164,7 @@ describe("Pub Crawl", () => {
       ["The Lower Landing", 1],
       ["The Drowned Taproom", 8],
       ["Closing Time", 1],
-      ["Last call", 1],
+      ["Last Call", 1],
     ]);
     expect(s.quest!.finale).toHaveLength(36);
     expect(currentCard(s).omen).toBeDefined();
@@ -207,7 +207,7 @@ describe("Pub Crawl", () => {
       "The Lower Landing",
       "The Kitchen",
       "Closing Time",
-      "Last call",
+      "Last Call",
     ]);
     roundTrip(make(OTHER));
     const fresh = make(NEW);
@@ -225,7 +225,7 @@ describe("Pub Crawl", () => {
       "The Lower Landing",
       "The Rooftop Bar",
       "Closing Time",
-      "Last call",
+      "Last Call",
     ]);
     roundTrip(fresh);
   });

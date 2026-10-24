@@ -36,7 +36,7 @@ export const hiddenRooms: HiddenRoom[] = [
         speakeasy,
         "flapper-fran",
         "Flapper Fran",
-        "Fran challenges you to a Charleston. Do five seconds of it, then roll d20.",
+        "Fran challenges you to a Charleston. Do 5 seconds of it, then roll d20.",
         vs("Two left feet. Drink 3.", "The room applauds. Give 3."),
       ),
       guard(
@@ -99,7 +99,7 @@ export const hiddenRooms: HiddenRoom[] = [
         vip,
         "the-influencer",
         "The Influencer",
-        "Take the most flattering photo of the table in 10 seconds. The table hates it: drink 3.",
+        "Take the most flattering photo of the table in 10 seconds. They hate it: drink 3.",
         null,
       ),
       guard(
@@ -115,7 +115,7 @@ export const hiddenRooms: HiddenRoom[] = [
       "the-promoter",
       "The Promoter",
       "He's put your name on a list. You don't know which list. Roll d20.",
-      vs("The bad list. Drink 4.", "You're on his list now. Give 4.", {
+      vs("The bad list. Drink 4.", "You're on the good list. Give 4.", {
         fumble: "You're the promoter now. Finish your drink.",
       }),
       {
@@ -125,7 +125,7 @@ export const hiddenRooms: HiddenRoom[] = [
         },
         drops: [
           trinket("Velvet Rope", { hurt: { monster: -1 } }),
-          trinket("Comp Wristband", { hearts: 2 }),
+          trinket("The Guest List", { roll: { ambush: 1, boss: 1 } }),
         ],
       },
     ),
@@ -139,7 +139,10 @@ export const hiddenRooms: HiddenRoom[] = [
         "the-accountant",
         "The Accountant",
         "He's found a discrepancy in the books, and it's you. Roll d20.",
-        vs("Audited. Drink 3.", "You find his discrepancy. Give 3."),
+        vs(
+          "You're the discrepancy. Drink 3.",
+          "You find his discrepancy. Give 3.",
+        ),
       ),
       guard(
         office,
@@ -156,7 +159,7 @@ export const hiddenRooms: HiddenRoom[] = [
         moves(
           ["The alarm goes off. Drink 3.", "A dye pack. Drink 3, blue."],
           [
-            "It's empty. Give 2.",
+            "Cracked it. Empty, but you look cool. Give 2.",
             "Petty cash. Give 3.",
             "Petty cash and a bottle. Give 3.",
             "It was the owner's birthday. Everyone else drinks 1.",
@@ -203,7 +206,7 @@ export const hiddenRooms: HiddenRoom[] = [
         poker,
         "the-tell",
         "The Tell",
-        "Tell two truths and a lie. Anyone at the table spots the lie: drink 3.",
+        "Tell two truths and a lie. Anyone spots the lie: you drink 3.",
         null,
       ),
       guard(
@@ -242,7 +245,7 @@ export const hiddenRooms: HiddenRoom[] = [
         basement,
         "arm-wrestle",
         "The Arm Wrestle",
-        "Arm-wrestle the player on your right, best of one. Lose: drink 3.",
+        "Arm-wrestle your right neighbor, best of one. Lose: drink 3.",
         null,
       ),
       guard(
@@ -260,7 +263,7 @@ export const hiddenRooms: HiddenRoom[] = [
         moves(
           ["Jab, jab, hook. Drink 3.", "Headlock. Drink 3."],
           [
-            "You duck. Give 2.",
+            "You slip the jab. Give 2.",
             "You counter. Give 3.",
             "You knock him out of the ring. Give 3.",
             "The crowd lifts you up. Everyone else drinks 1.",

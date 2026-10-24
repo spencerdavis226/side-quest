@@ -40,7 +40,7 @@ export const rooftop: FloorCards = {
       {
         roll: moves(
           [
-            "He drops the bass on you. Drink 5.",
+            "He drops your ringtone into the mix. Drink 5.",
             "He plays your ex's song. Drink 5.",
             "An air horn, in your ear. Drink 5.",
           ],
@@ -68,7 +68,7 @@ export const rooftop: FloorCards = {
       "It's eyeing your fries. You don't have fries. It's eyeing you. Roll d20.",
       "It takes a bite. Drink 5.",
       "You stare it down. Give 5.",
-      { fumble: "It takes your drink, and flies. Finish your drink." },
+      { fumble: "It goes for your eyes, then your drink. Finish your drink." },
     ),
     monster(
       8,
@@ -97,7 +97,7 @@ export const rooftop: FloorCards = {
       8,
       "the-gargoyle",
       "The Gargoyle",
-      "A stone gargoyle on the ledge, and it's been pretending to be stone. Roll d20.",
+      "A gargoyle on the ledge, and it's only been pretending to be stone. Roll d20.",
       "It drops on you. Drink 5.",
       "You push it off the ledge. Give 5.",
       { curse: "bleed" },
@@ -121,10 +121,10 @@ export const rooftop: FloorCards = {
       8,
       "the-proposal",
       "The Proposal",
-      "A stranger is proposing at the railing and needs you to film it. Roll d20.",
+      "A guy is proposing to his girlfriend at the railing, and you're filming. Roll d20.",
       "She says no, and it's somehow your fault. Drink 5.",
       "She says yes. Champagne for the table. Give 5.",
-      { crit: "You catch the ring. Give 10." },
+      { crit: "He drops the ring, and you catch it. Give 10." },
     ),
     monster(
       8,
@@ -151,7 +151,7 @@ export const rooftop: FloorCards = {
       8,
       "the-slow-dance",
       "The Slow Dance",
-      "Slow-dance with the player on your right for ten seconds, eye contact. Either laughs: drink 5.",
+      "10-second slow dance with your right neighbor, eyes locked. Either laughs: you drink 5.",
     ),
     trial(
       8,
@@ -213,7 +213,7 @@ export const rooftop: FloorCards = {
       8,
       "ring-toss",
       "Ring Toss",
-      "A ring toss over the bottles on the bar. Throw, then cash out or throw again, harder. Roll d20.",
+      "Ring toss over the bottles. Win, then cash out or throw again, harder. Roll d20.",
       "The ring goes off the roof. Drink 5.",
       "Ringer. Give 4.",
       ["draught", "die", "revive"],
@@ -243,8 +243,8 @@ export const rooftop: FloorCards = {
     treasure(
       8,
       "rooftop-lost-found",
-      "The Lost and Found",
-      "A box behind the bar: three sunglasses, a shoe, and a smoke bomb. Drink 1.",
+      "Left Behind",
+      "A box behind the bar: one shoe, one earring and a smoke bomb. Drink 1.",
       "smoke",
     ),
     treasure(
@@ -292,7 +292,7 @@ export const rooftop: FloorCards = {
       8,
       "the-two-terraces",
       "Two Terraces",
-      "The quiet terrace with the fairy lights, or the loud one with the bass and the private party.",
+      "The quiet terrace with fairy lights, or the loud one with the private party.",
       ["Quiet terrace", "Private party"],
     ),
     fork(
@@ -308,12 +308,12 @@ export const rooftop: FloorCards = {
       8,
       "penthouse-owner",
       "The Penthouse Owner",
-      "He owns the building, the roof, and he thinks, you. Roll d20.",
+      "He owns the building, the roof and, he thinks, you. Roll d20.",
       "He has you thrown off the guest list. Drink 6.",
       "You buy the floor below his. Give 6.",
       [
         trinket("Penthouse Key", { satchel: 4, loot: ["draught"] }),
-        trinket("Silk Robe", { hearts: 2 }),
+        trinket("Rooftop Putter", { roll: { monster: 1, trap: 1 } }),
       ],
     ),
     elite(
@@ -332,7 +332,7 @@ export const rooftop: FloorCards = {
       8,
       "storm-chaser",
       "The Storm Chaser",
-      "He's out here every storm with a lightning rod, and tonight he's brought a spare. Roll d20.",
+      "He chases storms with a lightning rod, and tonight he brought you one. Roll d20.",
       "Struck. Drink 6.",
       "You ground him. Give 6.",
       [
