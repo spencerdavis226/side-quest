@@ -27,7 +27,7 @@ test("every pack has a loader that returns exactly its cards", async () => {
   }
 });
 
-test("shared cards load once when overlapping packs are chosen", async () => {
-  const loaded = await loadPackCards(["house", "cabin"]);
+test("shared cards load once when several packs are chosen", async () => {
+  const loaded = await loadPackCards(["core", "vip", "likely"]);
   expect(new Set(loaded.map((c) => c.id)).size).toBe(loaded.length);
 });

@@ -9,12 +9,12 @@ import type { CardDefinition } from "../src/game/types";
 const pack = packs.find((p) => p.id === "secrets")!;
 
 describe("Secrets & fuses pack", () => {
-  it("ships 150 cards: 75 secrets, 63 on the clock, 12 beer fuses", () => {
-    expect(pack.cardIds).toHaveLength(150);
+  it("ships 156 cards: 81 secrets, 63 on the clock, 12 beer fuses", () => {
+    expect(pack.cardIds).toHaveLength(156);
     const fuses = secretsCards.filter((c) => c.timer?.kind === "fuse");
     const clocks = secretsCards.filter((c) => c.timer?.kind === "countdown");
     const secretsOnly = secretsCards.filter((c) => c.secret && !c.timer);
-    expect(secretsOnly).toHaveLength(75);
+    expect(secretsOnly).toHaveLength(81);
     expect(clocks).toHaveLength(63);
     expect(fuses).toHaveLength(12);
     // Every card in the pack is a secret or a timer; none rolls dice.
@@ -36,6 +36,19 @@ describe("Secrets & fuses pack", () => {
         expect(c.rules, c.id).toMatch(/Start the clock/);
       if (c.secret && !/Hold to read/.test(c.rules))
         expect(c.rules, c.id).toMatch(/\bread(s)?\b.*\balone\b/i);
+    }
+  });
+
+  it("deals every story title as a truth and as a lie", () => {
+    const stories = secretsCards.filter((c) =>
+      c.id.startsWith("secrets.story-"),
+    );
+    const titles = new Set(stories.map((c) => c.title));
+    for (const title of titles) {
+      const secrets = stories
+        .filter((c) => c.title === title)
+        .map((c) => c.secret!.split(".")[0]);
+      expect(secrets.sort(), title).toEqual(["Lie", "Tell the truth"]);
     }
   });
 

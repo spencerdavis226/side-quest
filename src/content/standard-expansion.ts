@@ -73,15 +73,19 @@ const drafts: Draft[] = [
     "lap-dance",
     "Lap Dance Roulette",
     "challenge",
-    "Roll d6 and count that many seats to your left. That's who gets a 10-second lap dance.",
-    roll(1, 6, "{total} seats left. Dance for them or drink 5."),
+    "Roll d6, count that many players left, skipping yourself. They get a 10-second lap dance.",
+    roll(
+      1,
+      6,
+      "{total} players left, skipping you. Dance for them or drink 5.",
+    ),
   ],
   [
     "hot-seat",
     "Hot Seat",
     "challenge",
-    "Roll d6. That many players each ask you a yes-or-no question. Lie and the table knows.",
-    roll(1, 6, "{total} questions. Each lie: drink 3."),
+    "Roll d6 and answer that many yes-or-no questions from the table. Lie and it costs you.",
+    roll(1, 6, "{total} questions. Each one the table calls a lie: drink 3."),
   ],
   [
     "nat-one",
@@ -93,9 +97,10 @@ const drafts: Draft[] = [
         min: 1,
         max: 1,
         instruction:
-          "Natural 1! Critical fail. Finish your drink and confess your worst hookup.",
+          "Natural 1! Critical fail. Finish your drink; the table picks your next one.",
       },
-      { min: 2, max: 19, instruction: "Drink 3. The gods are bored." },
+      { min: 2, max: 10, instruction: "Miss. Drink 3. The gods are bored." },
+      { min: 11, max: 19, instruction: "Hit. Give 3. The gods nod, barely." },
       {
         min: 20,
         max: 20,
@@ -133,7 +138,7 @@ const drafts: Draft[] = [
     "dating-profile",
     "Dating Profile",
     "challenge",
-    "Your right neighbor pitches you as a dating profile. Hate it: drink 3. Love it: they do.",
+    "Right neighbor pitches your dating profile. Table swipes left: they drink 3. Right: you do.",
   ],
   [
     "bad-kisser",
@@ -181,7 +186,7 @@ const drafts: Draft[] = [
     "smell-check",
     "Smell Check",
     "challenge",
-    "Sniff your right neighbor's armpit and rate it out loud. Under 5: they drink 3.",
+    "Sniff your right neighbor's armpit and rate it out of 10. Under 5: they drink 3.",
   ],
   [
     "ugly-crier",
@@ -225,7 +230,7 @@ const drafts: Draft[] = [
     "phone-check",
     "Phone Check",
     "group",
-    "Everyone puts their phone face up on the table. First to buzz drinks 3 and reads it aloud.",
+    "All phones face up until your next turn. First to buzz drinks 3 and reads it aloud.",
   ],
   [
     "screenshot",
@@ -281,7 +286,7 @@ const drafts: Draft[] = [
     "bad-baby-names",
     "Bad Baby Names",
     "category",
-    "Name terrible baby names. First repeat or blank drinks 3.",
+    "Clockwise, name terrible baby names. First repeat or blank drinks 3.",
   ],
   [
     "ex-cuses",
@@ -293,7 +298,7 @@ const drafts: Draft[] = [
     "cheap-beers",
     "Cheap Beers",
     "category",
-    "Name cheap beers. First repeat or blank drinks 3.",
+    "Clockwise, name cheap beers. First repeat or blank drinks 3.",
   ],
   [
     "euphemisms",

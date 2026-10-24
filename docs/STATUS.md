@@ -2,6 +2,18 @@
 
 Updated 2026-10-18. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Pokémon and League copy review (2026-10-18; branch `review-league-copy`, not merged or pushed)
+
+- **Bugs:** wins that made the drawer drink now give (Brock, gym Giovanni, Tate & Liza, Glacia; Ho-Oh's losses drink, wins give); per-face losses no longer pour more nearer the win (Erika, Lorelei, Bugsy, Drake). Plain wins on 2- and 3-hit bosses read as a swing, not the fall. Natural 1s cost at least twice the worst loss and natural 20s give at least double (Zigzagoon, Biker Gang, Hydreigon, rival Nemona, Star Squad, Lugia, the shot fumbles; Deoxys, Zacian). Starter and adventurer roll bonuses say "d20" (`omenText.ts`; also Pub Crawl's lines; `quest.spec.ts` and `crawl.spec.ts` expectations follow). Hideout ribbons carry ranks (`grunt(..., { rank })`). Forks no longer promise a specific elite; route rules no longer name items; Ilse's faces match the count.
+- **Facts, clarity, consistency, fit:** Gordie, Pokémon Tower 6F, Blaine Jr., Kenji, current move names; who acts and what wins on a dozen cards; props removed (Burgh, Brassius, Wikstrom, Sandile); "A pair!" on every doubles; League jinxes end "Slip: drink 1." (docs example too); repeated jokes for characters who meet twice in a run rewritten (Lorelei, Bruno, Grusha, Lacey, Sableye, Crasher Wake, rival Hop, rival Nemona, route Psyduck); the 33 listed fight and ribbon rules are 80 characters or fewer.
+- **Sheet cards** (recorded in `reference/README.md`): Castform, Sentret, Krabby and Pound get their supplied consequences back; Spoink and Missingno fixed; move names; Barboach, Clefairy, Lapras, Silver, Mankey and Rare Candy reworded.
+- **Docs:** League bosses are all battles (`AUTHORING.md`); 23 starters and 362 League-only cards (`AGENTS.md`, `GAME_DESIGN.md`, `src/content/CLAUDE.md`).
+- **Not changed:** Whitney's Rollout (rising pours are the joke) and the `{total}` losses that grow toward the win (a documented graded loss).
+- **Verification:** `npm test` 251 passed; `npm run test:balance` 8 passed; lint, typecheck and `validate-content` passed; Prettier clean on touched TypeScript. Fit judged by character count, not measured in a browser; browser specs not run.
+## One plain deck (2026-10-24; owner)
+
+The owner: Core, the House sheet and Cabin weekend are "basically the same thing" and "don't change gameplay", so they are one pack. `core` now holds the three (275 cards; `src/content/core-deck.ts`); card IDs keep their origin (`core.*`, `house.sheet-*`, `cabin.*`). The `house` and `cabin` pack IDs are retired: a saved selection or game that names one reads as `core` (`RETIRED_PACKS` in `src/app/persistence.ts`, covered by `tests/presentation.test.ts` and the fixture `tests/fixtures/saves/2026-10-24-retired-house-and-cabin-packs.json`). VIP night stays separate (its cards say "the VIP"), as do the Pokémon and Dungeon packs (they own modes), Most Likely To (votes) and Secrets & fuses (hold-to-read and timers). Pack logos `house.svg` and `cabin.svg` were removed. Stacked on PR #28 (card copy).
+
 ## Review follow-up plan (2026-10-18; owner approved; all four merged to `main`)
 
 An app-wide review found the bugs and gaps below. The owner approved four PRs, in order, and then their merge ("Go ahead"): #24, #25, #26 and #27 are on `main`. Each was merged with `main` brought in first and CI green on that head; the combined tree was checked locally before the first merge (`npm test` 251, `test:balance` 8, lint, typecheck, build, Chromium browser suite minus the fit sweeps 136 passed).
@@ -14,6 +26,11 @@ An app-wide review found the bugs and gaps below. The owner approved four PRs, i
 4. **Tests and docs:** `npm test` without the 4,000-run balance simulations, which move to `npm run test:balance` (CI runs both); stale docs fixed (test time, save sizes, the black-translucent comment, the dice budget note); `-webkit-text-size-adjust: 100%`; banners announced through one persistent live region; the dice test "a second tap finishes the moving dice" made robust (it fails about 1 in 4 under three local workers, before and after PR 1, because the roll can finish before the test sees it rolling).
 
 Not doing (owner left it to my call): dropping a crawl's unused deck cards from its save. It would change what a valid save is for about 130 KiB.
+
+## Dice glare on pale palettes (2026-10-24; on `main`)
+
+- **Pale starter and adventurer dice glared out their top numerals** (owner report; the house teal was fine). `diceColors` tinted the enamel specular as 40% of the primary, 4–8× the house teal's on pale enamels (Cinderace, High Priest, Cleric, Pikachu, Psyduck, Slowpoke…), and at shininess 100 the head-on top face washed toward white. `enamelSpecular` (`src/presentation/dice/palette.ts`) keeps the tint but caps its luminance at the house enamel's; the metal specular is unchanged.
+- **Verification:** `npm test` 252 passed (new: "never lets a pale enamel's highlight glare out its numerals" in `tests/dice-palette.test.ts`), lint, typecheck. Rendered in the dev server (Chromium): Cinderace d20 and Pikachu d6 read on the top face. No device check.
 
 ## Review fixes: bugs (2026-10-18; merged to `main`, PR #24)
 

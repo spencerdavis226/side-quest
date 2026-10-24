@@ -8,7 +8,7 @@ async function revealTitleCard(page: Page) {
     localStorage.setItem(
       "side-quest.settings.v1",
       JSON.stringify({
-        config: { version: 1, packIds: ["cabin"], limit: 50 },
+        config: { version: 1, packIds: ["core"], limit: 50 },
         choice: "standard",
       }),
     );

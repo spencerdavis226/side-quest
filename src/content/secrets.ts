@@ -55,7 +55,7 @@ const paranoia = [
   "Who here has the most embarrassing search history?",
   "Who here is secretly the most competitive?",
   "Who here would you trust to dress you for a wedding?",
-  "Who here dies first in a horror movie?",
+  "Who here would you eat first after a plane crash?",
   "Who here has the highest body count?",
   "Who here would you least want to share a bed with?",
   "Who here is most likely to have a dark side nobody's seen?",
@@ -106,7 +106,7 @@ const facts = [
   "FACT: Honey found in ancient Egyptian tombs was still edible.",
   "CAP: You can see the Great Wall of China from space with the naked eye.",
   "FACT: Bananas are berries, but strawberries are not.",
-  "FACT: A day on Venus is longer than its year.",
+  "FACT: Venus is hotter than Mercury.",
   "CAP: Bulls charge because the color red makes them angry.",
   "FACT: Scotland's national animal is the unicorn.",
   "CAP: Napoleon was unusually short for his time.",
@@ -119,15 +119,26 @@ const facts = [
   "FACT: Sharks have been around longer than trees.",
 ];
 
-const TRUTH = "Tell the truth. Every word.";
+const TRUTH =
+  "Tell the truth. Every word. No story of your own? Tell a true one about someone here.";
 const LIE = "Lie. Make it up and sell it.";
-const stories: [title: string, topic: string, secret: string][] = [
+// Each title is dealt once as a truth and once as a lie (story-07 onwards
+// flip story-01 to 06), so knowing the card never gives the answer away.
+const storyTopics: [title: string, topic: string, first: string][] = [
   ["Worst Date", "your worst date story", LIE],
   ["Police Story", "your best cop story", TRUTH],
   ["Celebrity Sighting", "your best celebrity story", LIE],
   ["ER Visit", "your dumbest injury story", TRUTH],
   ["Worst Job", "your worst job story", LIE],
   ["Worst Hangover", "your worst hangover story", TRUTH],
+];
+const stories: [title: string, topic: string, secret: string][] = [
+  ...storyTopics,
+  ...storyTopics.map(([title, topic, first]): [string, string, string] => [
+    title,
+    topic,
+    first === LIE ? TRUTH : LIE,
+  ]),
 ];
 
 const secretRules = [
@@ -154,7 +165,7 @@ const secretCards: CardDefinition[] = [
         id("mission", i),
         "Secret Mission",
         "challenge",
-        "Read alone, then do it before your next turn. Done: others drink 3. Caught: you drink 3.",
+        "Read alone; do it before your next turn. Done: others drink 3. Caught: you drink 3.",
       ),
       mission,
     ),
@@ -176,7 +187,7 @@ const secretCards: CardDefinition[] = [
         id("story", i),
         title,
         "challenge",
-        `Read alone, tell ${topic}. Table votes truth or lie; wrong voters drink 2.`,
+        `Read alone, tell ${topic}. Truth or lie? Wrong voters drink 2.`,
       ),
       secret,
     ),
@@ -187,7 +198,7 @@ const secretCards: CardDefinition[] = [
         id("rule", i),
         "Secret Rule",
         "rule",
-        "Read alone. This rule holds the rest of the game; anyone you catch breaking it drinks 2.",
+        "Read alone. It holds the rest of the game; anyone you catch breaking it drinks 2.",
       ),
       rule,
     ),
@@ -198,7 +209,7 @@ const secretCards: CardDefinition[] = [
 
 const foreheadWords = [
   "Hangover",
-  "Karaoke",
+  "Skinny dipping",
   "Bachelor party",
   "Designated driver",
   "Walk of shame",
@@ -268,7 +279,7 @@ const clockCards: CardDefinition[] = [
           id("forehead", i),
           "Forehead",
           "challenge",
-          "Start the clock. Phone on your forehead, press Hold to read. Table gives clues; you guess.",
+          "Start the clock. Phone on forehead, press Hold to read; guess from the table's clues.",
         ),
         word,
       ),
@@ -288,7 +299,7 @@ const clockCards: CardDefinition[] = [
       ),
       countdown(
         60,
-        "Time. Guessed? Give 3. Not guessed, or a banned word slipped? Drink 3.",
+        "Time. Guessed clean? Give 3. Banned word or no guess? Drink 3.",
       ),
     ),
   ),
@@ -299,7 +310,7 @@ const clockCards: CardDefinition[] = [
           id("charade", i),
           "Act It Out",
           "challenge",
-          "Read this alone. Start the clock and act it out, no words or sounds. The table guesses.",
+          "Read alone. Start the clock and act it out, no words or sounds. The table guesses.",
         ),
         scene,
       ),
@@ -315,7 +326,7 @@ const clockCards: CardDefinition[] = [
         id("quick", i),
         "Three in Five",
         "category",
-        `Start the clock: name three ${topic} before it ends. Table judges duds.`,
+        `Start the clock and name three ${topic}. The table calls duds.`,
       ),
       countdown(5, "Time. Didn't get three? Drink 3. Did? Give 3."),
     ),
@@ -390,7 +401,7 @@ const clockCards: CardDefinition[] = [
       "group",
       "Start the clock. Everyone stands on one leg; the first to touch down drinks 3.",
     ),
-    countdown(30, "Time. Everyone still standing gives 1."),
+    countdown(30, "Time. Everyone still on one leg gives 1."),
   ),
   withTimer(
     card(
@@ -451,7 +462,7 @@ const fuseCards: CardDefinition[] = [
       "fuse-compliment",
       "Compliment Bomb",
       "group",
-      "Light the fuse. Compliment your left neighbor, then pass them a beer.",
+      "Light the fuse. Compliment your left neighbor and pass them a beer; they do the same.",
     ),
     fuse(BEER_3),
   ),
@@ -478,7 +489,7 @@ const fuseCards: CardDefinition[] = [
       "fuse-last-letter",
       "Last Letter",
       "category",
-      "Light the fuse. Start a word with the last word's last letter, then pass a beer left.",
+      "Light the fuse. Say any word, pass a beer left; the next starts on its last letter.",
     ),
     fuse(BEER_3),
   ),

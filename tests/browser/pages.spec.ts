@@ -201,7 +201,7 @@ test.describe("a pack's cards that can't be fetched", () => {
   }) => {
     let loads = 0;
     page.on("load", () => loads++);
-    await page.route("**/assets/sample-*.js", (route) => route.abort());
+    await page.route("**/assets/core-deck-*.js", (route) => route.abort());
     await page.goto("./");
     // Setup warms Core's cards at once: the first failure reloads the page,
     // the one after that reload does not.
@@ -220,7 +220,7 @@ test.describe("a pack's cards that can't be fetched", () => {
     const ready = new Promise<void>((resolve) => {
       release = resolve;
     });
-    await page.route("**/assets/sample-*.js", async (route) => {
+    await page.route("**/assets/core-deck-*.js", async (route) => {
       await ready;
       await route.continue();
     });

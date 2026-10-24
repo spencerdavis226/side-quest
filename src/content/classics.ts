@@ -1,5 +1,5 @@
 import type { CardDefinition } from "../game/types";
-import { cardFactory, roll } from "./author";
+import { cardFactory, choice, roll } from "./author";
 
 /**
  * Classic party and King's Cup content for the generated main deck. Traditional
@@ -64,14 +64,14 @@ export const classicCards: CardDefinition[] = [
     "Truth or Drink",
     "challenge",
     "The table asks you one filthy question. Answer honestly, or roll d6 and drink it.",
-    roll(1, 6, "Coward. Drink {total}."),
+    choice(roll(1, 6, "Coward. Drink {total}."), "Answered", "Coward"),
   ),
   card(
     "rant",
     "Rant Mode",
     "challenge",
     "Rant for 20 seconds about something you hate. Run dry early: roll d6 and drink it.",
-    roll(1, 6, "Ran out of hate. Drink {total}."),
+    choice(roll(1, 6, "Ran out of hate. Drink {total}."), "Ranted", "Ran dry"),
   ),
   card(
     "impression",
@@ -81,13 +81,13 @@ export const classicCards: CardDefinition[] = [
   ),
   card(
     "stare-down",
-    "Stare Down",
+    "Mirror Mirror",
     "challenge",
-    "Stare down someone. First to blink or laugh drinks 2.",
+    "Mirror someone's every move and word for 20 seconds. First of you to laugh drinks 2.",
   ),
   card(
     "story-time",
-    "Story Time",
+    "Dirty Story",
     "category",
     "Clockwise, build an erotic story one word at a time. First to stall or laugh drinks 2.",
   ),
@@ -97,20 +97,20 @@ export const classicCards: CardDefinition[] = [
     "little-green-man",
     "Little Green Man",
     "rule",
-    "Until your next turn, everyone removes the tiny man before drinking. Slip = drink 2.",
+    "Until your next turn, everyone removes the tiny man before drinking. Slip: drink 2.",
   ),
   card(
     "question-master",
     "Question Master",
     "rule",
-    "Until your next turn: anyone who answers your question drinks 2.",
+    "Until your next turn, anyone who answers your question drinks 2.",
   ),
   // --- King's Cup ranks ----------------------------------------------------
   card(
     "waterfall",
     "Ace Is Waterfall",
     "group",
-    "Start a waterfall. Everyone drinks until the player before them stops.",
+    "You drink first; clockwise, everyone joins. Nobody stops until the player before them does.",
   ),
   card(
     "kings-two",
@@ -135,7 +135,7 @@ export const classicCards: CardDefinition[] = [
     "dragon-breath",
     "Dragon's Breath",
     "challenge",
-    "Breathe on the person to your right. They rate it out of 10. Over 5: you drink 3.",
+    "Dragon-roar in your right neighbor's face. They flinch: they drink 3. They don't: you do.",
   ),
   card(
     "potion-courage",
@@ -147,13 +147,13 @@ export const classicCards: CardDefinition[] = [
     "dungeon-master",
     "Dungeon Master",
     "rule",
-    "Until your next turn, you narrate in third person. Slip = drink 2.",
+    "Until your next turn, you speak only in third person, like a narrator. Slip: drink 2.",
   ),
   card(
     "prophecy",
     "Prophecy",
     "challenge",
-    "Predict who finishes their drink next. Right: give 3. Wrong: drink 3.",
+    "Predict who finishes their drink next. When someone does: right, give 3. Wrong, drink 3.",
   ),
   card(
     "side-quest",
