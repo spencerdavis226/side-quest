@@ -8,6 +8,9 @@
 - `artwork.ts`, `imprint.ts`, `imprint/`: legacy artwork resolver and the generated icon sprite (`npm run imprint`). Keep both for saved-content compatibility; card fronts do not render illustrations.
 - `dice/`: see its own CLAUDE.md.
 
+- Reduced Motion: `style.css` has the one global block; it ends every animation and transition in 0.01ms (never `animation: none`, which strands fill modes: a banner that hides through its last keyframe would never leave, and the heart splat is centred only by its keyframes). A component that wants a gentler fade restores its own duration with `!important` beside its keyframes (banners, heart splat, party pulse, timer flash). Anything that unmounts on an animation's end needs a timer fallback (`StageBanner.tsx`).
+- Tokens on `:root` in `style.css`: `--card-radius` (every card silhouette), `--stud-size`, `--strip-h` (with `--hud-strip` derived), and the `--z-*` layers. Use them instead of repeating the numbers.
+
 ## iOS constraints that bite here
 
 - Size layout with `var(--app-height)` and the backdrop with `var(--backdrop-height)` (`style.css`), not raw `svh`/`dvh`, plus `env(safe-area-inset-*)`; `--top-safe` exists so tests can pose an inset. In the installed iOS app WebKit lays the page out one top inset short of the screen and only `lvh` reports the real height, so `html.standalone` makes the document exactly `100lvh`, stops the root scrolling (tall content scrolls inside `#root`), and `main.tsx` holds `scrollY` at 0. Remove any of those three and a flat strip returns at the bottom or behind the status bar. Measured in the iOS 18.5 and 27.0 simulators; see STATUS.md. Keep controls below the top inset.
