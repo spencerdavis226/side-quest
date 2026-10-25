@@ -102,7 +102,7 @@ const route1: CardDefinition[] = [
     "Joey says his Rattata is in the top percentage of Rattata. Prove him wrong. Roll d20.",
     vs(
       "It was. Drink 3 and apologize to Joey.",
-      "Top percentage, bottom of the bracket. Give 2.",
+      "Top percentage, bottom of the bracket. The player on your right plays Joey, sobbing, or drinks 2.",
     ),
   ),
   challenge(
@@ -135,7 +135,7 @@ const route1: CardDefinition[] = [
     "A stranger in a trench coat hands you an egg. It's warm. Too warm.",
     9,
     "It hatches into a Togepi and pisses on you. Drink 3.",
-    "It hatches into something useful. Give 2.",
+    "It hatches into something useful. Name it: the player on your left gives 2 and does its cry.",
     ["Hand it back", "Crack it"],
     "die",
   ),
@@ -183,8 +183,8 @@ const route1Aces: CardDefinition[] = [
         'Rattata crits. Drink 3 and say "good game, Kenny."',
       ],
       [
-        "Kenny cries. Give 3.",
-        "Kenny calls his mom. Give 3.",
+        'Kenny cries. Everyone says "aww"; the last to say it drinks 3.',
+        "Kenny calls his mom. The player on your right plays her and scolds him, or drinks 3.",
         "Kenny quits forever. Give 4.",
         "Kenny gives you his hat. Give 4.",
       ],
@@ -240,7 +240,7 @@ const route2: CardDefinition[] = [
     "Wild Wurmple appeared! Nobody knows what it becomes. Not even Wurmple. Roll 2d6.",
     pair(
       "Existential dread. Drink 2 and name your biggest regret.",
-      "It becomes a footnote. Give 2.",
+      "It becomes a footnote. Everyone says what they'd evolve into; the dullest answer drinks 2.",
       "A pair! It evolves mid-fight into something nobody predicted. Give {total}.",
     ),
   ),
@@ -401,7 +401,7 @@ const route3: CardDefinition[] = [
     "Wild Machop wants to arm-wrestle. Flex for the table, then roll d20.",
     vs(
       'Karate Chop to the junk. Drink 3 and say "thank you, sensei."',
-      "You flex harder. Give 2.",
+      "You flex harder. Pick a player to arm-wrestle you: the loser drinks 2.",
     ),
   ),
   strike(
@@ -432,8 +432,8 @@ const route3: CardDefinition[] = [
     "Pikipek",
     "Wild Pikipek drills a tree. Then your skull. Knock on the table, then roll 2d6.",
     pair(
-      "Woodpecked. Drink 3.",
-      "It finds a better tree. Give 2.",
+      "Woodpecked. Drink 3 and rub your head.",
+      "It finds a better tree. Everyone knocks on the table; the last to stop drinks 2.",
       "A pair! It drums a beat. Everyone drums the table; the last to stop drinks 3.",
     ),
   ),
@@ -444,7 +444,7 @@ const route3: CardDefinition[] = [
     "Wild Nickit steals the drink nearest you. Roll d20 to get it back.",
     vs(
       "It's gone. Finish whatever you have.",
-      "Recovered, with a tip. Give 3.",
+      "Recovered, with a tip. Steal a sip from any drink at the table.",
     ),
   ),
   trainer(
@@ -553,7 +553,7 @@ const route3Aces: CardDefinition[] = [
         "Her Alakazam reads your mind. Drink 3 and read your last text aloud.",
       ],
       [
-        "You sweep her back. Give 3.",
+        "You sweep her back. Everyone sweeps an arm; the slowest drinks 3.",
         "She rage-quits. Give 3.",
         "She asks for your number. Give 4.",
         "She retires on the spot. Give 4.",
@@ -593,8 +593,8 @@ const route4: CardDefinition[] = [
     "Croagunk",
     "Wild Croagunk pokes your kidney and laughs. Poke your right neighbor, then roll 2d6.",
     pair(
-      "Poison Jab. Drink 3.",
-      "You poke back harder. Give 3.",
+      'Poison Jab. Drink 3 and say "ow" like a toad.',
+      "You poke back harder. Your right neighbor drinks 3 and groans.",
       "A pair! Croagunk laughs at the player you poked. They drink {total}.",
     ),
     { curse: "bleed" },
@@ -723,7 +723,7 @@ const route4: CardDefinition[] = [
     "One more pull. You can feel it. Pull or walk?",
     11,
     "The house wins. Drink 4.",
-    "Jackpot. Give 4.",
+    "Jackpot! Everyone cheers; the quietest drinks 4.",
     ["Walk away", "Pull it"],
     "die",
   ),
@@ -736,7 +736,7 @@ const route4Aces: CardDefinition[] = [
     "Behind the poster: a Rocket executive with a Raticate the size of a dog. Roll d20.",
     vs(
       "Hyper Fang to the shin. Drink 4 and hop.",
-      "He drops the Silph Scope. Give 4.",
+      "He drops the Silph Scope. Point it at a player: they drink 4 and confess a guilty pleasure.",
     ),
     "die",
   ),
@@ -745,9 +745,13 @@ const route4Aces: CardDefinition[] = [
     "route-ace-gambler",
     "Gambler Lou",
     "Gambler Lou bets his whole stack. Push your drink to the middle, then roll d20.",
-    vs("He takes the pot. Drink 4.", "You clean him out. Give 4.", {
-      crit: "He hands over his lucky coin too. Give 8.",
-    }),
+    vs(
+      "He takes the pot. Drink 4.",
+      "You clean him out. Pick a player to pay your winnings: they drink 4 and call you boss.",
+      {
+        crit: "He hands over his lucky coin too. Give 8.",
+      },
+    ),
     "shield",
   ),
 ];
@@ -792,8 +796,8 @@ const route5: CardDefinition[] = [
     "Bronzor",
     "Wild Bronzor is a frying pan that floats. It hums. Hum back, then roll 2d6.",
     pair(
-      "It hums louder. Drink 3.",
-      "You use it as a frying pan. Give 3.",
+      "It hums louder. Drink 3 and hum along.",
+      "You use it as a frying pan. Everyone names a breakfast food; the first to stall drinks 3.",
       "A pair! It rings like a gong. Everyone else drinks 2.",
     ),
   ),
@@ -868,7 +872,7 @@ const route5: CardDefinition[] = [
     "The sixth floor is haunted by a ghost Marowak. Climb or leave?",
     12,
     "Get out... get out... Drink 4.",
-    "You put it to rest. Give 4.",
+    'You put it to rest. Everyone whispers "rest"; the loudest drinks 4.',
     ["Leave", "Climb"],
     "shield",
     "hex",
@@ -946,7 +950,7 @@ const route6: CardDefinition[] = [
     "Gyarados",
     "You fished for a Magikarp and got its angry dad. Roll 2d6.",
     pair(
-      "Hyper Beam. Drink 4.",
+      "Hyper Beam. Drink 4, then recharge: say nothing until your next turn.",
       "It's yours. Somehow. Give 3.",
       "A pair! It's a red one. Give {total}.",
     ),
@@ -1168,8 +1172,8 @@ const route7: CardDefinition[] = [
     "Aegislash",
     "Wild Aegislash switches between sword and shield every time you swing. Roll 2d6.",
     pair(
-      "King's Shield. Drink 4.",
-      "You sheathe it. Give 3.",
+      "King's Shield. Drink 4 and block your face with one hand.",
+      "You sheathe it. Everyone mimes a sword fight; the worst swordsman drinks 3.",
       "A pair! You pull the sword out. Make a rule until your next turn.",
     ),
   ),
@@ -1321,7 +1325,7 @@ const route8: CardDefinition[] = [
     "Wild Tyranitar kicks up a sandstorm. Everyone covers their drink. Roll d20.",
     vs(
       "Stone Edge. Drink 5; anyone whose drink wasn't covered drinks 2.",
-      "You weather the storm. Give 4.",
+      "You weather the storm. Everyone shakes sand from their hair; the last to finish drinks 4.",
     ),
   ),
   wild(
@@ -1330,8 +1334,8 @@ const route8: CardDefinition[] = [
     "Metagross",
     "Wild Metagross is four brains in a steel X. It already knows your roll. Roll 2d6.",
     pair(
-      "It knew. Drink 5.",
-      "It miscounted. Give 4.",
+      'It knew. Drink 5 and say "I knew it" like a robot.',
+      "It miscounted. Think of a number from 1 to 10; your left neighbor guesses it, and drinks 4 if wrong.",
       "A pair! It did not see that coming. Give {total}.",
     ),
   ),
@@ -1444,7 +1448,7 @@ const route8: CardDefinition[] = [
     "There's a truck by the S.S. Anne. Everyone knows Mew is under it. Strength it?",
     14,
     "Nothing there. You pulled a muscle. Drink 5.",
-    "Mew. Kind of. Give 5.",
+    "Mew. Kind of. Everyone points at it; the last to point drinks 5.",
     ["Leave it", "Push the truck"],
     "shield",
   ),

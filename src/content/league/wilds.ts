@@ -91,7 +91,7 @@ export const moreWilds: CardDefinition[][] = [
       "A Poké Ball on the path. Pick it up? It's a Voltorb. Roll d20.",
       vs(
         "Self-Destruct, in your hand. Drink 3.",
-        "You roll it gently into the bushes. Give 2.",
+        "You roll it to your left neighbor, who drinks 2 and screams.",
       ),
     ),
     strike(
@@ -137,7 +137,7 @@ export const moreWilds: CardDefinition[][] = [
       "Wild Ralts senses your feelings and looks worried. Roll d20.",
       vs(
         "It cries with you. Drink 3 for your feelings.",
-        "It feels better, so do you. Give 3.",
+        "It feels better. Compliment the player on your left: they give 3.",
       ),
     ),
     wild(
@@ -146,8 +146,8 @@ export const moreWilds: CardDefinition[][] = [
       "Phanpy",
       "Wild Phanpy sprays you with its trunk. Trumpet back, then roll 2d6.",
       pair(
-        "Rollout, right into your chair. Drink 3.",
-        "You out-trumpet it. Give 3.",
+        "Rollout, right into your chair. Drink 3 and scoot back.",
+        "You out-trumpet it. Everyone trumpets; the weakest trumpet drinks 3.",
       ),
     ),
   ],
@@ -171,7 +171,7 @@ export const moreWilds: CardDefinition[][] = [
       "Engineer Bernie's Magnemite stick to your phone. Roll d20.",
       vs(
         "Thunder Wave. Drink 3 without moving.",
-        "You peel them off like fridge magnets. Give 3.",
+        "You stick them on the player across from you. They drink 3 and can't move until your next turn.",
       ),
     ),
     strike(
@@ -194,8 +194,8 @@ export const moreWilds: CardDefinition[][] = [
       "Sudowoodo",
       "A tree blocks the road and won't make eye contact. Roll d20.",
       vs(
-        "It's Sudowoodo. Rock Throw. Drink 3.",
-        "You water it. It panics and runs. Give 3.",
+        "It's Sudowoodo. Drink 3 and stand still like a tree.",
+        "You water it. It panics and runs. Everyone runs in place; the last to stop drinks 3.",
       ),
     ),
     strike(
@@ -229,8 +229,8 @@ export const moreWilds: CardDefinition[][] = [
       "Ruin Maniac Liz",
       "Ruin Maniac Liz's Donphan rolls at you like a monster truck tire. Roll d20.",
       vs(
-        "Rollout. Drink 4.",
-        "You step aside and it rolls into a ruin. Give 3.",
+        "Rollout. Drink 4 and roll your head in a circle.",
+        "You step aside and it rolls into a ruin. Pick a player to dig it out: they drink 3 and name the treasure.",
       ),
     ),
     wild(
@@ -240,7 +240,7 @@ export const moreWilds: CardDefinition[][] = [
       "Wild Gardevoir would give its life for its trainer. You are not its trainer. Roll d20.",
       vs(
         "It reads your search history aloud. Drink 4.",
-        "It teleports away, blushing. Give 3.",
+        "It teleports away, blushing. Pick a player to blush like it: they drink 3.",
       ),
     ),
     strike(
@@ -263,8 +263,8 @@ export const moreWilds: CardDefinition[][] = [
       "Rhyperior",
       "Wild Rhyperior fires rocks out of its hands. Duck, then roll 2d6.",
       pair(
-        "Rock Wrecker, square on. Drink 4.",
-        "You catch one and keep it. Give 4.",
+        "Rock Wrecker, square on. Drink 4 and hold a rock pose.",
+        "You catch one and keep it. Throw it back at someone: they drink 4.",
       ),
     ),
     strike(
