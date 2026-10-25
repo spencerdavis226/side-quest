@@ -263,6 +263,12 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         !c.spoils.every(goodBoon))
     )
       fail(`Invalid spoils: ${c.id}`);
+    // An adventurer's starting gear (2026-10-25): one piece with a slot.
+    if (
+      c.kit !== undefined &&
+      (c.omen === undefined || !goodBoon(c.kit) || !c.kit.slot)
+    )
+      fail(`Invalid kit: ${c.id}`);
     // Push your luck: one to three prizes, on a plain single-d20 battle.
     if (
       c.press !== undefined &&

@@ -765,6 +765,14 @@ const EQUIPMENT = {
   satchel: "Into the satchel",
 } as const;
 
+/** Tonight's omen, kept in the boons: an omen card's boon with no slot. */
+const isOmenBoon = (b: { card: CardDefinition; boon: Boon }) =>
+  b.card.encounter === "omen" && !b.boon.slot;
+/** What a worn piece does now: its power without the items it came with,
+ * which were handed out when it was taken. */
+const wornRules = (boon: Boon) =>
+  boon.rules.replace(/\s*Comes with [^.]*\./g, "").trim() || boon.rules;
+
 /** A piece of gear's mark: its slot's, a trinket's for a legacy piece, or
  * the satchel's for one that only brings items. */
 const gearIcon = (boon: Boon): CrawlIconName =>
@@ -833,23 +841,30 @@ export function SpoilsSheet({
             : isLasting(boon)
               ? theme.words.trinkets
               : words.satchel;
-          const old = olds[i].map((o) => o.boon.name).join(" and ");
+          const old = olds[i]
+            .map((o) => `${o.boon.name}: ${wornRules(o.boon)}`)
+            .join(" And ");
           return (
             <button
               key={boon.name}
               className={`spoils-row gear-${boon.slot ?? (isLasting(boon) ? "trinket" : "satchel")}`}
               onClick={() => onTake(i)}
-              aria-label={`Take the ${boon.name}, ${slot}: ${boon.rules}${old ? ` ${words.replaces} ${old}.` : ""}`}
+              aria-label={`Take the ${boon.name}, ${slot}: ${boon.rules}${old ? ` ${words.replaces} ${old}` : ""}`}
             >
               <CrawlIcon name={gearIcon(boon)} theme={theme} />
               <small className="spoils-slot">{slot}</small>
               <strong>{boon.name}</strong>
               <span>{boon.rules}</span>
-              {old && (
-                <span className="spoils-replaces">
-                  {words.replaces} {old}
+              {olds[i].map((o) => (
+                // The piece it would replace, as its own small card, so the
+                // table sees what it gives up.
+                <span key={o.key} className="spoils-worn">
+                  <small className="spoils-worn-label">{words.replaces}</small>
+                  <CrawlIcon name={gearIcon(o.boon)} theme={theme} />
+                  <b>{o.boon.name}</b>
+                  <span>{wornRules(o.boon)}</span>
                 </span>
-              )}
+              ))}
             </button>
           );
         })}
@@ -1011,24 +1026,24 @@ export function CrawlRecord({
       )}
       {show("party") && !ending && record.boons.length > 0 && (
         <ul className="crawl-boons" aria-label={words.trinkets}>
-          {record.boons.map(({ card, boon, key }) => (
+          {record.boons.map((b) => (
             <li
-              key={key}
-              className={`crawl-omen ${card.encounter === "omen" ? "boon-omen" : "boon-trinket"}`}
+              key={b.key}
+              className={`crawl-omen ${isOmenBoon(b) ? "boon-omen" : "boon-trinket"}`}
             >
               <CrawlIcon
-                name={card.encounter === "omen" ? "omen" : gearIcon(boon)}
+                name={isOmenBoon(b) ? "omen" : gearIcon(b.boon)}
                 theme={theme}
               />
               <strong>
-                {boon.slot && (
+                {b.boon.slot && (
                   <small className="gear-slot">
-                    {(theme.equipment ?? EQUIPMENT).slots[boon.slot]}
+                    {(theme.equipment ?? EQUIPMENT).slots[b.boon.slot]}
                   </small>
                 )}
-                {boon.name}
+                {b.boon.name}
               </strong>
-              <span>{boon.rules}</span>
+              <span>{b.boon.rules}</span>
             </li>
           ))}
         </ul>
@@ -1260,8 +1275,10 @@ function RunTab({
       if (now >= 3) taken.push(levels[path + 2].title);
     } else taken.push(...levels.slice(0, now).map((e) => e.title));
   }
-  const omen = record.boons.find((b) => b.card.encounter === "omen");
-  const trinkets = record.boons.filter((b) => b.card.encounter !== "omen");
+  // Tonight's omen is the one boon that is neither gear nor a trinket; a
+  // class's starting gear (2026-10-25) comes from an omen card too.
+  const omen = record.boons.find((b) => isOmenBoon(b));
+  const trinkets = record.boons.filter((b) => !isOmenBoon(b));
   const rows: [string, string][] = [
     ...(taken.length
       ? [["Adventurer", taken.join(" → ")] as [string, string]]

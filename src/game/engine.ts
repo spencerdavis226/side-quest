@@ -408,7 +408,12 @@ export function partyBoons(quest: QuestState | undefined) {
   return (quest?.party?.boons ?? []).flatMap((key) => {
     const [id, pick] = key.split("#");
     const card = quest ? finaleCard(quest, id) : undefined;
-    const boon = pick === undefined ? card?.boon : card?.spoils?.[Number(pick)];
+    const boon =
+      pick === undefined
+        ? card?.boon
+        : pick === "k"
+          ? card?.kit
+          : card?.spoils?.[Number(pick)];
     return card && boon ? [{ card, boon, key }] : [];
   });
 }
@@ -1014,10 +1019,18 @@ function gainBoon(
   party: PartyState,
   card: CardDefinition,
   quest: QuestState,
-  spoil?: number,
+  spoil?: number | "kit",
 ): PartyState {
-  const boon = spoil === undefined ? card.boon : card.spoils?.[spoil];
-  const key = spoil === undefined ? card.id : `${card.id}#${spoil}`;
+  const boon =
+    spoil === undefined
+      ? card.boon
+      : spoil === "kit"
+        ? card.kit
+        : card.spoils?.[spoil];
+  const key =
+    spoil === undefined
+      ? card.id
+      : `${card.id}#${spoil === "kit" ? "k" : spoil}`;
   if (!boon || party.boons?.some((k) => k.split("#")[0] === card.id))
     return party;
   // Equipment (2026-10-25): the slot's old piece comes off first, and its
@@ -1113,6 +1126,8 @@ function settleParty(
       loot: [...next.loot, ...loot].slice(0, satchel),
       omen: card.id,
     };
+    // An adventurer's starting gear goes on with it (2026-10-25).
+    if (card.kit) next = gainBoon(next, card, quest, "kit");
   }
   if (card.curse && (outcome === null || outcome === "lost"))
     next = { ...next, curse: card.curse };

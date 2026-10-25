@@ -616,7 +616,8 @@ describe("Pub Crawl", () => {
     // A Tome picks the path too (2026-10-25): the Sorcerer, or the
     // Illusionist.
     const read = spendLoot(s, "candy", Math.random, 0);
-    expect(party(read)).toMatchObject({ form: 1, max: H - 1 });
+    // The Sorcerer's −1, and the Pointy Hat's +1 (2026-10-25).
+    expect(party(read)).toMatchObject({ form: 1, max: H });
     expect(party(read).loot).toEqual(["die", "die", "die"]);
     roundTrip(read);
     const smoke = spendLoot(s, "candy", Math.random, 1);
@@ -1193,5 +1194,25 @@ describe("Pub Crawl", () => {
       "dungeon.grease-trap-horror#1",
       "dungeon.keg-mimic-queen#1",
     ]);
+  });
+
+  it("an adventurer walks in wearing its starting gear, until a piece replaces it", () => {
+    // The Barbarian's Rusty Greataxe, a weapon.
+    const s = adventure("barbarian");
+    const axe = findCard(s, "dungeon.class-barbarian")!.kit!;
+    expect(axe).toMatchObject({ name: "Rusty Greataxe", slot: "weapon" });
+    expect(party(s).boons).toEqual(["dungeon.class-barbarian#k"]);
+    expect(omenEffect(s.quest)!.roll).toMatchObject({ monster: 1, boss: 2 });
+    roundTrip(s);
+    // Every class but the Alchemist and the Bartender has a kit with a slot,
+    // and its card names it.
+    for (const c of cards.filter((c) => c.id.startsWith("dungeon.class-"))) {
+      const bare = ["dungeon.class-alchemist", "dungeon.class-bartender"];
+      expect(!!c.kit, c.id).toBe(!bare.includes(c.id));
+      if (c.kit) {
+        expect(c.kit.slot, c.id).toBeDefined();
+        expect(c.rules, c.id).toContain(`Wears ${c.kit.name}.`);
+      }
+    }
   });
 });

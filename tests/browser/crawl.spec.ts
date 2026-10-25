@@ -153,7 +153,12 @@ test("@release Pub Crawl opens on an adventurer and tonight's omen, then the que
   const s = await saved(page);
   expect(s.config.packIds).toEqual(["dungeon"]);
   expect(s.quest.party.omen).toBe(s.quest.finale[0]);
-  expect(s.quest.party.boons).toEqual([s.quest.finale[1]]);
+  // The class's starting gear (2026-10-25), if it has one, then the omen.
+  const kit = cards.find((c) => c.id === s.quest.finale[0])?.kit;
+  expect(s.quest.party.boons).toEqual([
+    ...(kit ? [`${s.quest.finale[0]}#k`] : []),
+    s.quest.finale[1],
+  ]);
 });
 
 test("@release a monster shows its stakes; a smoke bomb flees it", async ({
@@ -404,8 +409,14 @@ test("a boss shows its wounds, its trinket, and comes back until it falls", asyn
   const rows = sheet.locator(".spoils-row");
   await expect(rows).toHaveCount(2);
   await expect(rows.nth(0)).toHaveAccessibleName(
-    "Take the Hydra Tooth, Weapon: +2 to boss d20s. Replaces Royal Jelly Shot.",
+    "Take the Hydra Tooth, Weapon: +2 to boss d20s. Replaces Royal Jelly Shot: +1 to monster d20s.",
   );
+  // What it would replace shows as its own small card: its name and what
+  // it does now (its Healing Draught was handed out when it was taken).
+  await expect(rows.nth(0).locator(".spoils-worn")).toHaveText(
+    "ReplacesRoyal Jelly Shot+1 to monster d20s.",
+  );
+  await expect(rows.nth(1).locator(".spoils-worn")).toHaveCount(0);
   await expect(rows.nth(1)).toHaveAccessibleName(
     "Take the Hydra Scale, Armor: +2 max hearts.",
   );

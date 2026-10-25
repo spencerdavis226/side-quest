@@ -1817,24 +1817,24 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Open Bar | `dungeon.omen-open-bar` | rule | A wedding upstairs has an open bar. Take two draughts, but one satchel slot fewer. |  |
 | ☐ | Name Tags | `dungeon.omen-name-tags` | rule | Everyone picks a fantasy name at the door and answers only to it. Wrong name: drink 1. |  |
 | ☐ | Lucky Penny | `dungeon.omen-lucky-penny` | rule | A lucky penny on the stairs. Every d20 fight rolls 1 higher, but start two hearts short. |  |
-| ☐ | Barbarian | `dungeon.class-barbarian` | rule | Rage first. Questions never. +2 to boss d20s. Traps hurt 1 more. |  |
-| ☐ | Rogue | `dungeon.class-rogue` | rule | Already has your wallet. +2 to trap and relic d20s. +1 satchel slot. Starts with a Smoke Bomb. |  |
-| ☐ | Cleric | `dungeon.class-cleric` | rule | Blesses every drink, loudly. Every heal heals 1 more. |  |
-| ☐ | Wizard | `dungeon.class-wizard` | rule | Reads the menu like a spellbook. −2 max hearts. Starts with 2 Loaded Dice. |  |
-| ☐ | Bard | `dungeon.class-bard` | rule | Brought a guitar. Nobody asked. +1 max heart. Natural 20 on a 19 or 20. |  |
-| ☐ | Paladin | `dungeon.class-paladin` | rule | Sworn to guard the table's drinks. +1 max heart. Starts with a Coaster Shield. |  |
-| ☐ | Ranger | `dungeon.class-ranger` | rule | Tracks the bar by smell. +2 to monster d20s. Bosses hurt 1 more. |  |
-| ☐ | Drunken Monk | `dungeon.class-monk` | rule | Starts drunk. Gets better. −1 max heart. Natural 1 on a 1 or 2. |  |
-| ☐ | Necromancer | `dungeon.class-necromancer` | rule | Has died twice tonight already. −3 max hearts. Starts with a Second Wind. |  |
+| ☐ | Barbarian | `dungeon.class-barbarian` | rule | Rage first. Questions never. +2 to boss d20s. Traps hurt 1 more. Wears Rusty Greataxe. |  |
+| ☐ | Rogue | `dungeon.class-rogue` | rule | Has your wallet. +2 to trap and relic d20s. +1 satchel slot. Starts with a Smoke Bomb. Wears Shiv. |  |
+| ☐ | Cleric | `dungeon.class-cleric` | rule | Blesses every drink, loudly. Every heal heals 1 more. Wears Holy Vestments. |  |
+| ☐ | Wizard | `dungeon.class-wizard` | rule | Reads the menu like a spellbook. −2 max hearts. Starts with 2 Loaded Dice. Wears Pointy Hat. |  |
+| ☐ | Bard | `dungeon.class-bard` | rule | Brought a guitar. Nobody asked. +1 max heart. Natural 20 on a 19 or 20. Wears Battered Lute. |  |
+| ☐ | Paladin | `dungeon.class-paladin` | rule | Sworn to guard the table's drinks. +1 max heart. Starts with a Coaster Shield. Wears Holy Mace. |  |
+| ☐ | Ranger | `dungeon.class-ranger` | rule | Tracks the bar by smell. +2 to monster d20s. Bosses hurt 1 more. Wears Bar Darts. |  |
+| ☐ | Drunken Monk | `dungeon.class-monk` | rule | Starts drunk. Gets better. −1 max heart. Natural 1 on a 1 or 2. Wears Hip Flask. |  |
+| ☐ | Necromancer | `dungeon.class-necromancer` | rule | Has died twice tonight already. −3 max hearts. Starts with a Second Wind. Wears Bone Wand. |  |
 | ☐ | Alchemist | `dungeon.class-alchemist` | rule | Has a flask for every flask. +1 max heart. +1 satchel slot. Starts with 2 Healing Draughts. |  |
-| ☐ | Warlock | `dungeon.class-warlock` | rule | Sold their soul for a better seat. −3 max hearts. +2 to every battle d20. |  |
-| ☐ | Bouncer | `dungeon.class-bouncer` | rule | Checked your ID twice. +2 max hearts. Ambushes hurt 1 less. |  |
+| ☐ | Warlock | `dungeon.class-warlock` | rule | Sold their soul for a better seat. −3 max hearts. +2 to every battle d20. Wears Hellfire Hoodie. |  |
+| ☐ | Bouncer | `dungeon.class-bouncer` | rule | Checked your ID twice. +2 max hearts. Ambushes hurt 1 less. Wears Heavy Flashlight. |  |
 | ☐ | Bartender | `dungeon.class-bartender` | rule | Knows everyone's order. +1 max heart. +1 satchel slot. Starts with a Bar Tab and a Healing Draught. |  |
-| ☐ | Mercenary | `dungeon.class-mercenary` | rule | Will fight anything for a drink. +1 to monster d20s. +3 to elite d20s. |  |
-| ☐ | Druid | `dungeon.class-druid` | rule | Smells like moss. Talks to the plants. +1 max heart. +2 to trap d20s. |  |
-| ☐ | The Plus-One | `dungeon.class-plus-one` | rule | Nobody knows who invited them. −3 max hearts. −1 to boss d20s. Every 20 is rerolled. |  |
-| ☐ | The Intern | `dungeon.class-intern` | rule | Unpaid. Here for the experience. −2 max hearts. Natural 1 on a 1 or 2. −2 satchel slots. |  |
-| ☐ | The Mimic | `dungeon.class-mimic` | rule | A chest. Thinks it's one of you. −4 max hearts. −1 to every battle d20. +2 satchel slots. |  |
+| ☐ | Mercenary | `dungeon.class-mercenary` | rule | Will fight anything for a drink. +1 to monster d20s. +3 to elite d20s. Wears Kevlar Vest. |  |
+| ☐ | Druid | `dungeon.class-druid` | rule | Smells like moss. Talks to the plants. +1 max heart. +2 to trap d20s. Wears Pet Ferret. |  |
+| ☐ | The Plus-One | `dungeon.class-plus-one` | rule | Nobody invited them. −3 max hearts. −1 to boss d20s. Every 20 is rerolled. Wears Borrowed Blazer. |  |
+| ☐ | The Intern | `dungeon.class-intern` | rule | Unpaid, sadly. −2 max hearts. Natural 1 on a 1 or 2. −2 satchel slots. Wears Visitor Lanyard. |  |
+| ☐ | The Mimic | `dungeon.class-mimic` | rule | A very confused chest. −4 max hearts. −1 to every battle d20. +2 satchel slots. Wears Its Own Lid. |  |
 
 ## Notes for review
 

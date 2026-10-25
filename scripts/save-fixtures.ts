@@ -181,6 +181,14 @@ const situations: [string, GameConfig, Find][] = [
       s.phase === "hidden" &&
       new Set(partyBoons(s.quest).flatMap((b) => b.boon.slot ?? [])).size >= 2,
   ],
+  // A class's starting gear, worn (2026-10-25).
+  [
+    "crawl-starting-gear",
+    crawl,
+    (s) =>
+      s.phase === "hidden" &&
+      (party(s).boons ?? []).some((k) => k.endsWith("#k")),
+  ],
   [
     "crawl-spoils-would-replace",
     crawl,

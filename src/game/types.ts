@@ -139,6 +139,10 @@ export interface CardDefinition {
    * puts the card aside (`takeSpoils`); it is kept as `<card id>#<index>`
    * in `party.boons`. Never beside `boon`. */
   spoils?: Boon[];
+  /** Pub Crawl (2026-10-25): an adventurer's starting equipment, worn from
+   * the moment the class is put aside, until a piece for its slot replaces
+   * it. Kept in `party.boons` as "<card id>#k". */
+  kit?: Boon;
   /** Pub Crawl (2026-10-17): push your luck. Each won roll banks the next
    * prize and offers Cash out or Again; each Again rolls 2 lower; a loss
    * forfeits everything banked. A single-d20 battle only. */
