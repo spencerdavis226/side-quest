@@ -2,7 +2,11 @@
 
 Updated 2026-10-25. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Pub Crawl equipment (2026-10-25; owner; branch `claude/crawl-equipment`, stacked on #46)
+## Shipped 2026-10-25: League variety, Pub Crawl strikes and equipment (#47, squash of #42 to #47, `576552a`)
+
+The owner said "Merge and deploy" and to keep Pub Crawl's win rate where it landed (22.8%). The six stacked PRs went to `main` as one squash commit through #47 (#42 to #46 closed as included). The sections below record each part. **Next (owner):** read the new copy (`docs/CARD_REVIEW.md`: 63 League strikes, 40 table moments, 36 rewritten route outcomes, 54 Pub Crawl strikes, 15 starting-gear pieces) and ask for any rewording; run a device pass on an iPhone (the strike line on a card, the spoils sheet with a "Replaces" card, the party dialog's gear) and record it in `docs/DEVICE_CHECKLIST.md`. Open follow-ups: show a Pub Crawl strike's knack on a lost strike (its ribbon), gym and gauntlet variety in the League (duels, a catch-style Legendary, jinx gym rules), Pub Crawl table moments and a roll-outcome rewrite.
+
+## Pub Crawl equipment (2026-10-25; owner; shipped in #47)
 
 Owner asks: equipment as its own item type, slots so the party carries one of each, about three slots (weapon, armor, trinket), and a pop-up to choose when a new piece takes a full slot. Owner answers: Weapon/Armor/Trinket is fine; combined screen if the UI is clean (the bottom plaques were already crammed); Pub Crawl only, for differentiation; the rest the agent's call.
 
@@ -10,7 +14,7 @@ Done: the existing trinkets (142, from bosses and elites) are the equipment. Eac
 
 Follow-up (owner, 2026-10-25: classes may start with equipment; show what a swap gives up): **starting gear** (`dungeon/kits.ts`, `CardDefinition.kit`, kept in `party.boons` as `<class id>#k`, put on when the adventurer is put aside). Every class but the Alchemist and the Bartender (whose thing is a full satchel) wears one small signature piece in one slot: Barbarian Rusty Greataxe, Rogue Shiv, Paladin Holy Mace, Ranger Bar Darts, Necromancer Bone Wand, Bouncer Heavy Flashlight (weapons); Cleric Holy Vestments, Wizard Pointy Hat, Warlock Hellfire Hoodie, Mercenary Kevlar Vest (armor); Bard Battered Lute, Drunken Monk Hip Flask, Druid Pet Ferret (trinkets, +1 heal); the joke classes wear something a little worse than nothing (Plus-One's Borrowed Blazer, the Intern's Visitor Lanyard, the Mimic's Its Own Lid). Each class card ends "Wears <piece>."; to fit 100 characters four flavor lines were shortened (Rogue "Has your wallet.", Plus-One "Nobody invited them.", Intern "Unpaid, sadly.", Mimic "A very confused chest."). **The spoils sheet shows the piece a row would replace as its own small card** (its mark, name and what it does now, without the items it came with). The party dialog and the end screen's tab tell tonight's omen from a class's gear by its slot. Balance: Pub Crawl won 22.8%, classes 18% to 36%, jokes 3% to 7%; fixture `crawl-starting-gear`. Checks: `npm test` 319, lint, typecheck, `npm run test:balance`, build, `tests/browser/crawl.spec.ts` on Chromium (33).
 
-## Next after the League rework: the same pass on Pub Crawl (owner, 2026-10-25: "it's all kinda same-y as well")
+## Pub Crawl variety pass (owner, 2026-10-25: "it's all kinda same-y as well"; strikes shipped in #47)
 
 **Owner steer (2026-10-25): "Let's make more roll free fights. Simple is better in an already complicated game. We can still have interactions and effects happen with roll free as well."** Strikes are the main lever.
 
@@ -18,7 +22,7 @@ Follow-up (owner, 2026-10-25: classes may start with equipment; show what a swap
 
 Original note: do it after the League stack (#42 to #45) is read and merged. Measured before any change (shares of a run's weighted draws, crude): about 62% single rolls, 13% Won/Lost plaque fights, 7% push-your-luck gambles, 6% merchants, 4% forks, 8% rests and rewards; of 782 rolled outcomes, about 79% are one flavor line plus a bare "Drink N" or "Give N". The League's tools carry over: a roll-free fight settled by a matchup (here the adventurer's knack, `dungeon/knacks.ts`, in place of a type), table moments with no stakes (the Quarter-Zips' schemes, bar games, a toast that heals), duels, and outcomes that make someone do something. Plan: audit the 40-room floor pools, then a strike-like card keyed to knacks, table moments per floor, a roll-outcome rewrite, a retune (`tests/dungeon.balance.test.ts` bands: win 18% to 40%, classes 10% to 50%, joke classes 1% to 10%), save fixtures for any new card rule, and the same owner read of every new line.
 
-## League variety rework (2026-10-25; owner approved the plan; phase 1 done locally, not committed or pushed)
+## League variety rework (2026-10-25; owner approved the plan; shipped in #47)
 
 Goal (owner): the League's cards and gameplay were same-y. About 63% of a run's cards are one d20/d6/2d6 roll with flavor and another 16% are Won/Lost plaque fights; 78% of dice outcomes are a bare "Drink N" or "Give N". Not everything needs to be a challenge: "you lost a battle, drink 2" is fine, and type advantages still apply. Owner answers to the open questions: take the recommendations (an even matchup costs a drink and no HP; scope is the League only, the 120 deck-mode cards stay; the mix below; this note is the plan of record).
 
