@@ -2,6 +2,52 @@
 
 Updated 2026-10-25. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Pub Crawl depth plan (2026-10-25; owner approved the ideas, plan not yet started)
+
+Goal (owner): bring Pub Crawl up to the League's fun and depth, distinct from it, without making it complex; add many cards; UI must read for drunk players at a distance (phone or mirrored TV). Nothing below is built. Findings from reading the code (not run: `node_modules` was absent, so no build or test was run):
+
+- **Push your luck already exists** (`press`, `gamble()` in `dungeon/shared.ts`, `PressPlaques`): 9 gambles, one per floor, prizes are `Loot[]` only. Greed work is an expansion, not a new system.
+- **Class is readable by cards**: `party.omen` holds the adventurer's card ID (`class-barbarian`), and `omenForm()` resolves its form. Class-reactive rooms need no new save field.
+- **Branching exists only as "pick one, and that is the last form"** (`card.branches`, Eevee; `evolve()` in `engine.ts` takes a `branch`). Crawl classes level twice in a line, so a fork needs a small engine extension (below).
+- **The end screen already lists floors, bosses and the Cup** (`CrawlRecord`, `Completion.tsx`); a trophy wall is a visual upgrade, not new state.
+- **Rival**: the Quarter-Zips appear only at the door (`queue`, 5 cards) and closing time (`closing`). A `set-piece` stage kind already exists for a one-card stage.
+- Dungeon content gzips to about 43 KB as source (proxy, not the built chunk) against a 200 KiB per-chunk cap, so roughly 130 more cards should fit; confirm with `check-budget` after each phase.
+
+### Design rules for every new screen (distance and drunk readability)
+
+1. One decision per card; at most three plaques; plaque = icon + at most two words + one short line (28 characters or fewer).
+2. Meaning never rides on colour alone: every new state gets a shape or icon as well (like the League's chevrons).
+3. Reuse existing surfaces: the strip, plaques, banners (`StageBanner`), the level-up banner. No new dialog on the path of play; dialogs only for review.
+4. Nothing new on the strip except one chip at a time; the card face shows a new element only when it changes the decision.
+5. Sizes: plaque tap targets 44 px or more, labels at the existing plaque size or larger, checked at 320 px by a Playwright assertion (no clipped text, as in the existing fit sweeps).
+6. Emulated WebKit is not an iPhone and not a TV: legibility from across a room goes on `DEVICE_CHECKLIST.md` as an owner check, not a claim.
+
+### Phases (one PR each, in order; each keeps `npm run test:balance` in band: crawl win rate 18% to 40%, every class and omen 10% to 50%, the Plus-One 1% to 10%)
+
+**0. Spike, no content (small).** Confirm in a throwaway branch: (a) the forked-level engine below; (b) the class-knack edge reusing the League's roll-twice machinery (`DiceRoll.edge`, `dropped`, `EdgeMark`); (c) which end-screen stats are derivable from existing saved state. Report before building.
+
+**1. Content with no engine change.**
+- Greed: 27 new gambles (3 more on each of the 9 floors, 4 per floor and 36 in all), including mimic chests, a cursed-tab bet and a "double or nothing" bartender. Same `press` mechanic, same plaques.
+- Nemesis: a guaranteed `set-piece` stage after the lower landing, "The Quarter-Zips on the stairs" (5 cards: Brad, Chad and Thad schemes); 3 more queue cards and 3 more closing-time cards. Each of the three meetings escalates the joke (door, stairs, closing). No memory of past meetings in v1.
+- Odds and ends: 8 more omens (20), 16 more boss and elite trinkets, 4 more landings per depth, 6 more rooms per floor (54).
+
+**2. Forked level-ups (engine, save fixtures).** At a landing or a Dog-Eared Tome, the first level offers two paths (Barbarian: Berserker or Warlord; each path then has its own second level). Implementation: keep `evolves` flat as `[A1, B1, A2, B2]` so `party.form` stays an index; a new optional `fork` flag on the adventurer card makes the first level a pick of A1 or B1 and the second step forced to A2 or B2. Existing linear classes and every saved run are untouched (saves hold the card snapshot). UI: the landing's Level up plaque opens the same branch picker the League's Eevee uses, two big plaques, each with the form's name, icon and a 28-character tagline (authored, because the auto-written power lines are too long to read at distance). Sidegrade rule: both paths of a level sum to the same power budget; `dungeon.balance.test.ts` checks each path's win rate. Adds 4 new classes (16 in all, 64 forms), with 2 tags each (below).
+
+**3. Class knacks.** Five tags (Brawn, Sneak, Magic, Charm, Faith); each class carries two. A tagged room (about 6 per floor) names one tag, and a class with it rolls the fight twice and keeps the better, shown by the existing green chevron chip with the tag's icon. Positive only: no class is ever put at a disadvantage, so it never reads as the League's types. Authoring target: 1.5 to 2.5 knack moments per run, asserted by a seeded-run test. New card field and chip logic need fixtures (`npm run fixtures:saves`).
+
+**4. Trophy wall and closing tab.** The end screen gets the felled bosses as large trophies on a bar wall (the badge case's sockets, reused), the trinkets kept, the class path taken, hearts left and the Cup's fate, in one screenshot-friendly view. Any stat that is not derivable from saved state is dropped rather than added to the save, unless the phase 0 spike shows an optional counter is worth a fixture.
+
+**5. Polish and gates.** `npm test`, `npm run test:balance`, lint, typecheck, `BASE_PATH=/side-quest/ npm run build` (budgets), `cards:review`, the workshop card-count assertions, Playwright `crawl.spec.ts`, `quest.spec.ts` fit sweeps at 320 px, and the new legibility assertions. Add the distance and TV checks to `DEVICE_CHECKLIST.md` for the owner.
+
+**Optional wave 2 (needs approval):** a fourth floor at each depth (3 new floors, about 100 cards), taking dungeons from 27 to 64 combinations.
+
+### Risks
+
+- Forks, knacks and extra gambles each add power; the crawl sits at about 28% wins, so expect one retune per phase (`dungeon/shared.ts`).
+- The fork touches `evolve()`, which the League also uses; League balance and the evolution tests must stay unchanged.
+- Card-count assertions (`tests/workshop.test.ts`), the manifest (`npm run content:manifest`), imprint entries and the card length rules apply to every new card.
+- Nothing is pushed or merged without the owner's go-ahead; each phase is a separate branch and PR.
+
 ## League types (2026-10-25; owner; branch `claude/league-types`, PR #35)
 
 The owner asked for Pokémon types: one type per starter for the run, a type on every League card where it makes sense, advantage against types the starter beats and disadvantage against types that beat it, shown ahead of the roll. They approved every recommendation in the plan (both-ways matchups, ±1 HP on plaque fights, d6 sets rolled twice, a starter's first type for the run, rivals by their ace), then asked for at least one starter of every type, a new item if it adds no bloat, balance through more opponent cards rather than perks ("fun and flavor are drastically more important than balance"), and a cleaner UI: "a logo or something", not banners and text.
