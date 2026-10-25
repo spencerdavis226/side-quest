@@ -29,6 +29,12 @@ import {
   type CrawlIconName,
   type CrawlTheme,
 } from "./crawlTheme";
+import { BadgeCase, TypeMark, badgesLocked } from "./LeagueMarks";
+import {
+  formType,
+  pokemonTypes,
+  typeStyle,
+} from "../presentation/pokemon-types";
 
 // Pub Crawl furniture: the party's hearts, the satchel, the floor's rooms and
 // the boss's wounds. Everything a crawl shows lives here; the engine decides.
@@ -240,8 +246,8 @@ export function CrawlProgress({ quest }: { quest: QuestState }) {
   );
 }
 
-/** What the strip opens: the satchel, the party itself (the League's
- * badges), or one thing on the party, on its own. */
+/** What the strip opens: the satchel, the League's badge case, or one thing
+ * on the party, on its own. */
 export type StripDialog =
   "satchel" | "badges" | "quaff" | "cup" | "curse" | "jinx";
 
@@ -266,18 +272,20 @@ export function CrawlStrip({
   const { words } = theme;
   const jinx = party.jinx ? finaleCard(quest, party.jinx)?.jinx : undefined;
   const quaffReady = party.quaff !== undefined && !party.quaffed;
+  const locked = badgesLocked(session, theme);
   const chip = (
     className: string,
     label: string,
     dialog: StripDialog,
     children: React.ReactNode,
+    shut = false,
   ) => (
     <button
       type="button"
       className={`hud-chip ${className}`}
       aria-label={label}
       aria-haspopup="dialog"
-      disabled={disabled}
+      disabled={disabled || shut}
       onClick={(event) => {
         // Safari does not focus a tapped button; the dialog gives focus back.
         event.currentTarget.focus();
@@ -310,15 +318,18 @@ export function CrawlStrip({
       {words.badges &&
         record.badges.of > 0 &&
         chip(
-          "tag-badges",
-          `${words.badges}: ${record.badges.earned} of ${record.badges.of}`,
+          `tag-badges${locked ? " locked" : ""}`,
+          `${words.badges}: ${record.badges.earned} of ${record.badges.of}${locked ? `, ${theme.badgeLock!.why}` : ""}`,
           "badges",
           <>
             <CrawlIcon name="boss" theme={theme} />
             <b>
               {record.badges.earned}/{record.badges.of}
             </b>
+            {/* A card asking for the badges from memory shuts the case. */}
+            {locked && <i className="chip-lock" aria-hidden="true" />}
           </>,
+          locked,
         )}
       {words.quaff &&
         party.quaff !== undefined &&
@@ -714,8 +725,7 @@ export function SpoilsPlaque({
 
 type RunRecord = NonNullable<ReturnType<typeof questRecord>>;
 /** One dialog's share of the run (`CrawlRecord`'s `part`). */
-export type RecordPart =
-  "party" | "satchel" | Exclude<StripDialog, "satchel" | "badges">;
+export type RecordPart = "party" | StripDialog;
 
 /** The run so far, for the satchel dialog and the end screens: the hearts,
  * the satchel (a draught can be drunk from here), the curse, and on the end
@@ -732,9 +742,9 @@ export function CrawlRecord({
   session?: SessionState | null;
   onUse?: (item: Loot) => void;
   /** In play, each dialog shows its own part: the party (hearts, the
-   * adventurer or starter, boons, badges), the satchel, or one thing on the
-   * party (the Quaff, the Cup, a curse, a jinx). The end screens show
-   * everything. */
+   * adventurer or starter, boons), the satchel, the League's badges, or one
+   * thing on the party (the Quaff, the Cup, a curse, a jinx). The end
+   * screens show everything. */
   part?: RecordPart;
 }) {
   const show = (p: RecordPart) => !part || part === p;
@@ -807,12 +817,7 @@ export function CrawlRecord({
         </div>
       )}
       {show("party") && record.form && (
-        <p className="crawl-omen">
-          <CrawlIcon name="adventurer" theme={theme} />
-          {/* Only the starter it is now (owner, 2026-10-17), with its power. */}
-          <strong>{record.form.title}</strong>
-          <span>{record.form.rules}</span>
-        </p>
+        <FormPanel form={record.form} theme={theme} />
       )}
       {show("party") && record.boons.length > 0 && (
         <ul className="crawl-boons" aria-label={words.trinkets}>
@@ -831,23 +836,14 @@ export function CrawlRecord({
           ))}
         </ul>
       )}
-      {show("party") && words.badges && record.badges.of > 0 && (
-        <p
-          className="crawl-badges"
-          role="img"
-          aria-label={`${words.badges}: ${record.badges.earned} of ${record.badges.of}`}
-        >
-          {Array.from({ length: record.badges.of }, (_, i) => (
-            <CrawlIcon
-              key={i}
-              name="boss"
-              theme={theme}
-              className={i < record.badges.earned ? "full" : "spent"}
-            />
-          ))}
-        </p>
+      {show("badges") && words.badges && record.badges.of > 0 && (
+        <BadgeCase
+          record={record}
+          packId={session?.quest?.packId ?? "pokemon"}
+          label={words.badges}
+        />
       )}
-      {show("party") && words.badgesNote && record.badges.of > 0 && (
+      {show("badges") && words.badgesNote && record.badges.of > 0 && (
         <p className="crawl-note">{words.badgesNote}</p>
       )}
       {part === "quaff" && words.quaff && party.quaff !== undefined && (
@@ -972,6 +968,49 @@ export function CrawlRecord({
         </ol>
       )}
     </div>
+  );
+}
+
+/** The starter or adventurer it is now (owner, 2026-10-17), with its
+ * power. A League starter wears its type: the medallion, a tint, and its
+ * types named under it. */
+function FormPanel({
+  form,
+  theme,
+}: {
+  form: { title: string; rules: string };
+  theme: CrawlTheme;
+}) {
+  const types = theme.words.badges ? formType(form.title) : undefined;
+  if (!types)
+    return (
+      <p className="crawl-omen">
+        <CrawlIcon name="adventurer" theme={theme} />
+        <strong>{form.title}</strong>
+        <span className="omen-rules">{form.rules}</span>
+      </p>
+    );
+  const [lead] = types;
+  return (
+    <p
+      className={`crawl-omen typed-omen type-${lead}`}
+      style={typeStyle(lead) as CSSProperties}
+    >
+      <TypeMark type={lead} />
+      <strong>{form.title}</strong>
+      <span className="omen-rules">{form.rules}</span>
+      <small className="type-chips">
+        {types.map((t) => (
+          <span
+            key={t}
+            className="type-chip"
+            style={typeStyle(t) as CSSProperties}
+          >
+            {pokemonTypes[t].name}
+          </span>
+        ))}
+      </small>
+    </p>
   );
 }
 
