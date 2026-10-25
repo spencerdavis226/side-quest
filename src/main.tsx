@@ -286,7 +286,7 @@ function App() {
           <PartyPulse party={display.quest.party} hidden={hidden} />
         )}
         <GameDialogs
-          onSpend={(item) => controller.spend(item)}
+          onSpend={(item, branch) => controller.spend(item, branch)}
           modal={modal}
           setModal={setModal}
           session={session}

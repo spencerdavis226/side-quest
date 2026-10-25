@@ -61,6 +61,11 @@ export const QUEUE_NEED = 8;
 export const QUEUE_HURT = 1;
 export const CLOSING_NEED = 12;
 export const CLOSING_HURT = 3;
+/** The rival party on the stairs, between the second landing and the third
+ * floor (2026-10-25): one fight, between the door's odds and closing
+ * time's. */
+export const STAIRS_NEED = 10;
+export const STAIRS_HURT = 2;
 /** A push-your-luck room's first pull, depth by depth; each pull after is
  * 2 harder (`PRESS_STEP` in the engine). */
 export const GAMBLE_NEED = [7, 8, 9] as const;
@@ -481,13 +486,15 @@ export const omen = (
  * grows as it levels up (`evolves`, each level replacing the one before)
  * at a landing or with a Dog-Eared Tome. Every power is written from its
  * numbers, so the card says exactly what the engine does: `flavor` leads
- * the card, and each level's rules are its power alone. */
+ * the card, and each level's rules are its power alone. Four levels
+ * (2026-10-25) are two paths, `[A1, B1, A2, B2]`: the first level up picks
+ * one (`fork`), each with a `tagline` for its plaque. */
 export const adventurer = (
   id: string,
   title: string,
   flavor: string,
   effect: OmenEffect,
-  levels: { title: string; omen: OmenEffect }[],
+  levels: { title: string; omen: OmenEffect; tagline?: string }[],
 ): CardDefinition => ({
   ...card(
     `class-${id}`,
@@ -501,6 +508,7 @@ export const adventurer = (
   ribbonTone: "pearl",
   encounter: "omen",
   omen: effect,
+  ...(levels.length === 4 ? { fork: true as const } : {}),
   evolves: levels.map((e) => ({
     ...e,
     rules: describeOmen(e.omen, dungeonOmenWords, PARTY_HEARTS, false),
@@ -546,6 +554,31 @@ export const queue = (
   encounter: "ambush",
   battle: true,
   damage: QUEUE_HURT,
+  ...stakes(more),
+});
+
+/** The rival party on the stairs (2026-10-25): one fight, or a trial the
+ * table calls (`null`), and the winner gets whatever they dropped. Pub
+ * Crawl only. */
+export const stairs = (
+  id: string,
+  title: string,
+  rules: string,
+  fight: Roll | null,
+  more: Stakes = {},
+): CardDefinition => ({
+  ...card(
+    `stairs-${id}`,
+    title,
+    "challenge",
+    rules,
+    fight ? fight(STAIRS_NEED) : undefined,
+  ),
+  ribbon: "The Stairs · Rival",
+  ribbonTone: "crimson",
+  encounter: "ambush",
+  battle: true,
+  damage: STAIRS_HURT,
   ...stakes(more),
 });
 

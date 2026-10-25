@@ -90,9 +90,10 @@ const STEP = {
   floor2: 16,
   boss2: 24,
   landing2: 25,
-  floor3: 26,
-  closing: 34,
-  lastCall: 35,
+  stairs: 26,
+  floor3: 27,
+  closing: 35,
+  lastCall: 36,
 };
 // The run past the door, with no adventurer or omen: the Cellar's first
 // room.
@@ -162,11 +163,12 @@ describe("Pub Crawl", () => {
       ["The Catacombs", 8],
       ["Catacombs boss", 1],
       ["The Lower Landing", 1],
+      ["The Stairs", 1],
       ["The Drowned Taproom", 8],
       ["Closing Time", 1],
       ["Last Call", 1],
     ]);
-    expect(s.quest!.finale).toHaveLength(36);
+    expect(s.quest!.finale).toHaveLength(37);
     expect(currentCard(s).omen).toBeDefined();
     const at = (step: number) => findCard(s, s.quest!.finale[step])!;
     expect(at(STEP.hidden).ribbon).toBe("Speakeasy · Guard");
@@ -175,6 +177,12 @@ describe("Pub Crawl", () => {
     expect(at(STEP.omen).boon).toBeDefined();
     expect(at(STEP.queue)).toMatchObject({ encounter: "ambush", battle: true });
     expect(at(STEP.queue).hits).toBeUndefined();
+    // The Quarter-Zips again on the stairs, one fight (2026-10-25).
+    expect(at(STEP.stairs)).toMatchObject({
+      encounter: "ambush",
+      battle: true,
+    });
+    expect(at(STEP.stairs).hits).toBeUndefined();
     expect(
       [STEP.boss1, STEP.boss2, STEP.lastCall].map((step) => [
         at(step).encounter,
@@ -192,6 +200,19 @@ describe("Pub Crawl", () => {
     expect(at(STEP.boss1).spoils).toHaveLength(2);
     expect(at(STEP.boss2).spoils).toHaveLength(2);
     expect(at(STEP.lastCall).spoils).toBeUndefined();
+    // The end screen's trophy wall (2026-10-25): the two floor bosses, the
+    // keeper, closing time and Last Call; never the queue or the stairs.
+    expect(
+      questRecord(s)!
+        .stages.filter((st) => st.trophy)
+        .map((st) => st.label),
+    ).toEqual([
+      "Cellar boss",
+      "Speakeasy boss",
+      "Catacombs boss",
+      "Closing Time",
+      "Last Call",
+    ]);
     roundTrip(s);
     expect(make(OTHER).quest!.stages.map((st) => st.label)).toEqual([
       "Your adventurer",
@@ -205,6 +226,7 @@ describe("Pub Crawl", () => {
       "The Sewers",
       "Sewers boss",
       "The Lower Landing",
+      "The Stairs",
       "The Kitchen",
       "Closing Time",
       "Last Call",
@@ -223,6 +245,7 @@ describe("Pub Crawl", () => {
       "The Walk-in Freezer",
       "Freezer boss",
       "The Lower Landing",
+      "The Stairs",
       "The Rooftop Bar",
       "Closing Time",
       "Last Call",
@@ -238,7 +261,7 @@ describe("Pub Crawl", () => {
     for (let seed = 1; seed <= 400; seed++) {
       const s = createSession(crawl, cards, packs, seeded(seed));
       const labels = s.quest!.stages.map((st) => st.label);
-      [labels[3], labels[8], labels[11]].forEach((l, i) => floors[i].add(l));
+      [labels[3], labels[8], labels[12]].forEach((l, i) => floors[i].add(l));
       rooms.add(labels[6]);
       adventurers.add(s.quest!.finale[STEP.adventurer]);
       omens.add(s.quest!.finale[STEP.omen]);
@@ -246,8 +269,8 @@ describe("Pub Crawl", () => {
     // Three floors at each depth, and one of five hidden rooms: 135 routes.
     expect(floors.map((f) => f.size)).toEqual([3, 3, 3]);
     expect(rooms.size).toBe(5);
-    expect(adventurers.size).toBe(12);
-    expect(omens.size).toBe(12);
+    expect(adventurers.size).toBe(18);
+    expect(omens.size).toBe(20);
   });
 
   it("a lost room fight costs the party hearts, pours into the Cup, and the run moves on", () => {
@@ -516,9 +539,12 @@ describe("Pub Crawl", () => {
       loot: ["shield"],
       omen: "dungeon.class-paladin",
     });
+    // Its first level up picks one of two paths (2026-10-25).
     expect(omenForm(s.quest)).toMatchObject({
       title: "Paladin",
-      next: "Crusader",
+      next: null,
+      branches: ["Crusader", "Oathbreaker"],
+      taglines: ["Bosses hurt less", "Broke the oath, hits harder"],
       palette: { primary: "#2f5a8c" },
     });
     roundTrip(s);
@@ -543,34 +569,70 @@ describe("Pub Crawl", () => {
       "Level up · drink 3",
       "Rest",
     ]);
-    const up = takeOffer(s, 0);
+    // The first level up picks a path: the Berserker, or the Brute.
+    const up = takeOffer(s, 0, Math.random, 0);
     expect(party(up)).toMatchObject({ form: 1, max: H + 2, hearts: H + 2 });
     expect(omenForm(up.quest)).toMatchObject({
       title: "Berserker",
       next: "Warlord",
+      nextTagline: "Bosses fear the Warlord",
     });
     expect(up.quest!.step).toBe(STEP.hidden);
     roundTrip(up);
+    const brute = takeOffer(s, 0, Math.random, 1);
+    expect(party(brute)).toMatchObject({ form: 2, max: H + 4 });
+    expect(omenForm(brute.quest)).toMatchObject({
+      title: "Brute",
+      next: "Juggernaut",
+    });
+    // A pick that isn't a path is refused.
+    expect(takeOffer(s, 0, Math.random, 2)).toBe(s);
     s.quest!.party!.hearts = H - 4;
     expect(party(takeOffer(s, 1))).toMatchObject({ hearts: H - 1 });
-    // A fully levelled adventurer can only rest.
-    s.quest!.party!.form = 2;
-    expect(canTakeOffer(s, 0)).toBe(false);
-    expect(canTakeOffer(s, 1)).toBe(true);
-    // The Plus-One levels up into something worse.
-    const plus = takeOffer(at("plus-one"), 0);
+    // A fully levelled adventurer (either path's second level) can only
+    // rest.
+    for (const form of [3, 4]) {
+      s.quest!.party!.form = form;
+      expect(canTakeOffer(s, 0)).toBe(false);
+      expect(canTakeOffer(s, 1)).toBe(true);
+    }
+    // The Plus-One levels up into something worse, either way.
+    const plus = takeOffer(at("plus-one"), 0, Math.random, 0);
     expect(party(plus)).toMatchObject({ max: H - 4, form: 1 });
     expect(satchelSize(plus.quest)).toBe(2);
+    const ex = takeOffer(at("plus-one"), 0, Math.random, 1);
+    expect(omenForm(ex.quest)!.title).toBe("The Ex");
   });
 
   it("a Dog-Eared Tome levels the adventurer up on the spot", () => {
     const s = adventure("wizard");
     s.quest!.party!.loot = [...party(s).loot, "candy"];
     expect(canUseLoot(s, "candy")).toBe(true);
-    const read = spendLoot(s, "candy");
+    // A Tome picks the path too (2026-10-25): the Sorcerer, or the
+    // Illusionist.
+    const read = spendLoot(s, "candy", Math.random, 0);
     expect(party(read)).toMatchObject({ form: 1, max: H - 1 });
     expect(party(read).loot).toEqual(["die", "die", "die"]);
     roundTrip(read);
+    const smoke = spendLoot(s, "candy", Math.random, 1);
+    expect(omenForm(smoke.quest)!.title).toBe("Illusionist");
+    expect(spendLoot(s, "candy", Math.random, 2)).toBe(s);
+    // The second Tome follows the path.
+    smoke.quest!.party!.loot = [...party(smoke).loot.slice(0, 2), "candy"];
+    const grand = spendLoot(smoke, "candy");
+    expect(omenForm(grand.quest)!.title).toBe("Grand Illusionist");
+    expect(
+      canUseLoot(
+        {
+          ...grand,
+          quest: {
+            ...grand.quest!,
+            party: { ...party(grand), loot: ["candy"] },
+          },
+        },
+        "candy",
+      ),
+    ).toBe(false);
   });
 
   it("tonight's omen is a boon that stacks with the adventurer", () => {
@@ -898,7 +960,7 @@ describe("Pub Crawl", () => {
       seeded(3),
     );
     expect(s.quest).toBeUndefined();
-    expect(s.cards).toHaveLength(245);
+    expect(s.cards).toHaveLength(308);
     expect(s.cards.some((c) => c.reward && !c.battle)).toBe(false);
     expect(
       s.cards.some(
@@ -906,7 +968,8 @@ describe("Pub Crawl", () => {
           c.offers ||
           c.omen ||
           c.encounter === "omen" ||
-          c.id.includes("queue-"),
+          c.id.includes("queue-") ||
+          c.id.includes("stairs-"),
       ),
     ).toBe(false);
     // A trial is put aside with a tap, no verdict; a jinx card plays plain.

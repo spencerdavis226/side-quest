@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import type {
   CardDefinition,
+  Knack,
   Loot,
   Offer,
   PartyState,
@@ -19,6 +20,8 @@ import {
   finaleStage,
   hitsNeeded,
   isBossCard,
+  knackEdge,
+  omenForm,
   questRecord,
   stageKind,
   wantedBoss,
@@ -254,7 +257,15 @@ export function CrawlProgress({ quest }: { quest: QuestState }) {
 /** What the strip opens: the satchel, the League's badge case, or one thing
  * on the party, on its own. */
 export type StripDialog =
-  "satchel" | "badges" | "quaff" | "cup" | "curse" | "jinx" | "matchup";
+  | "satchel"
+  | "badges"
+  | "quaff"
+  | "cup"
+  | "curse"
+  | "jinx"
+  | "matchup"
+  // Pub Crawl's knack on the fight face up (2026-10-25).
+  | "knack";
 
 /** The strip under the top row in a crawl (2026-10-17): everything the party
  * carries, each a chip that reads at a glance and opens its own dialog. The
@@ -283,6 +294,12 @@ export function CrawlStrip({
   const matchup =
     session.phase === "revealed"
       ? cardMatchup(quest, currentCardOf(session))
+      : null;
+  // Pub Crawl's knack (2026-10-25): the same green arrows, with the knack's
+  // mark; never against the party, so never red.
+  const knack =
+    session.phase === "revealed" && !matchup?.edge
+      ? knackEdge(quest, currentCardOf(session))
       : null;
   const chip = (
     className: string,
@@ -320,6 +337,17 @@ export function CrawlStrip({
           `${matchup.tera ? "Terastallized: advantage" : matchup.edge === "advantage" ? "Type advantage" : "Type disadvantage"}`,
           "matchup",
           <EdgeMark edge={matchup.edge} />,
+        )}
+      {knack &&
+        theme.knacks &&
+        chip(
+          "tag-edge edge-advantage tag-knack",
+          `Knack: ${theme.knacks[knack].name}, advantage`,
+          "knack",
+          <>
+            <EdgeMark edge="advantage" />
+            <CrawlIcon name={`knack-${knack}`} theme={theme} />
+          </>,
         )}
       {chip(
         "tag-satchel",
@@ -534,8 +562,9 @@ export function OfferPlaque({
   can: boolean;
   onTake: (index: number, branch?: number) => void;
   theme: CrawlTheme;
-  /** One of a branching starter's forms, on its own evolve plaque. */
-  branch?: { name: string; index: number };
+  /** One of a branching starter's forms, on its own evolve plaque, with a
+   * forked adventurer's tagline. */
+  branch?: { name: string; index: number; tagline?: string };
 }) {
   // A branch plaque names its form, with its price ("drink 3") under the
   // name: four across leave no room for the whole label ("Evolve · drink 3"),
@@ -574,7 +603,7 @@ export function OfferPlaque({
       className={`card-choice-option offer-plaque ${offer.elite ? "offer-loud" : icon ? "offer-buy" : "offer-pass"}`}
       style={{ animationDelay: `${index * 70}ms` }}
       disabled={!can}
-      aria-label={`${branch ? `${branch.name}${price ? ` · ${price}` : ""}` : offer.label}${offer.cost ? `, ${heartCount(theme, offer.cost)}` : ""}: ${brings}`}
+      aria-label={`${branch ? `${branch.name}${branch.tagline ? `, ${branch.tagline}` : ""}${price ? ` · ${price}` : ""}` : offer.label}${offer.cost ? `, ${heartCount(theme, offer.cost)}` : ""}: ${brings}`}
       onClick={() => onTake(index, branch?.index)}
     >
       <span className="offer-goods" aria-hidden="true">
@@ -591,6 +620,10 @@ export function OfferPlaque({
       </span>
       <span className="offer-label">
         <span className="offer-name">{branch ? branch.name : offer.label}</span>
+        {/* A path's tagline sits between its name and its price. */}
+        {branch?.tagline && (
+          <small className="offer-price offer-tagline">{branch.tagline}</small>
+        )}
         {under && <small className="offer-price">{under}</small>}
       </span>
     </button>
@@ -763,7 +796,7 @@ export function CrawlRecord({
   record: RunRecord;
   theme: CrawlTheme;
   session?: SessionState | null;
-  onUse?: (item: Loot) => void;
+  onUse?: (item: Loot, branch?: number) => void;
   /** In play, each dialog shows its own part: the party (hearts, the
    * adventurer or starter, boons), the satchel, the League's badges, or one
    * thing on the party (the Quaff, the Cup, a curse, a jinx). The end
@@ -772,6 +805,11 @@ export function CrawlRecord({
 }) {
   const show = (p: RecordPart) => !part || part === p;
   const party = record.party!;
+  // A forked adventurer still to pick a path (a Tome's two buttons).
+  const paths =
+    session && omenForm(session.quest)?.card.fork
+      ? omenForm(session.quest)?.branches
+      : null;
   const { words } = theme;
   const quest = session?.quest;
   // The boss waiting at the bottom of this floor, while the run is on.
@@ -813,6 +851,9 @@ export function CrawlRecord({
       });
   }
   const jinx = record.jinx?.jinx;
+  // Pub Crawl's end screens (2026-10-25): the trophy wall and the tab stand
+  // in for the adventurer's and trinkets' panels.
+  const ending = !session && !!words.trophies && !!words.tab;
   return (
     <div className="crawl-record">
       {show("party") && (
@@ -848,10 +889,42 @@ export function CrawlRecord({
             <MatchupPanel matchup={m} card={card} starter={record.form.title} />
           ) : null;
         })()}
-      {show("party") && record.form && (
-        <FormPanel form={record.form} theme={theme} />
+      {part === "knack" &&
+        session &&
+        theme.knacks &&
+        (() => {
+          const card = currentCardOf(session);
+          const k = knackEdge(session.quest, card);
+          return k && record.form ? (
+            <KnackPanel
+              knack={k}
+              adventurer={record.form.title}
+              dice={!!card.dice}
+              theme={theme}
+            />
+          ) : null;
+        })()}
+      {ending && (
+        <TrophyWall record={record} theme={theme} label={words.trophies!} />
       )}
-      {show("party") && record.boons.length > 0 && (
+      {ending && (
+        <RunTab
+          record={record}
+          theme={theme}
+          label={words.tab!}
+          rooms={floors
+            .filter((f) => !f.piece)
+            .reduce((n, f) => n + f.rooms, 0)}
+        />
+      )}
+      {show("party") && !ending && record.form && (
+        <FormPanel
+          form={record.form}
+          theme={theme}
+          knacks={record.form.card.knacks}
+        />
+      )}
+      {show("party") && !ending && record.boons.length > 0 && (
         <ul className="crawl-boons" aria-label={words.trinkets}>
           {record.boons.map(({ card, boon, key }) => (
             <li
@@ -952,11 +1025,28 @@ export function CrawlRecord({
                   <strong>{theme.loot[item].name}</strong>
                   <small>{theme.loot[item].does}</small>
                 </span>
-                {usable && (
-                  <button className="satchel-use" onClick={() => onUse!(item)}>
-                    {item === "candy" ? theme.eat : theme.drink}
-                  </button>
-                )}
+                {/* A Tome on a forked adventurer picks its path: one button
+                    a path, named for it (2026-10-25). */}
+                {usable &&
+                  (item === "candy" && paths ? (
+                    paths.map((name: string, b: number) => (
+                      <button
+                        key={name}
+                        className="satchel-use"
+                        aria-label={`${theme.eat}: ${name}`}
+                        onClick={() => onUse!(item, b)}
+                      >
+                        {name}
+                      </button>
+                    ))
+                  ) : (
+                    <button
+                      className="satchel-use"
+                      onClick={() => onUse!(item)}
+                    >
+                      {item === "candy" ? theme.eat : theme.drink}
+                    </button>
+                  ))}
               </li>
             );
           })}
@@ -1003,6 +1093,110 @@ export function CrawlRecord({
   );
 }
 
+/** Pub Crawl's trophy wall (2026-10-25): one medallion for each fight
+ * dealt until it fell, in run order. A fallen one is gold and named; one
+ * not yet beaten is an empty socket, so nothing ahead is spoiled. */
+function TrophyWall({
+  record,
+  theme,
+  label,
+}: {
+  record: RunRecord;
+  theme: CrawlTheme;
+  label: string;
+}) {
+  const trophies = record.stages.filter((st) => st.trophy);
+  const won = trophies.filter((st) => st.cards.length).length;
+  return (
+    <section
+      className="trophy-wall"
+      aria-label={`${label}: ${won} of ${trophies.length}`}
+      style={{ "--trophies": trophies.length } as CSSProperties}
+    >
+      <h2>
+        {label}{" "}
+        <small>
+          {won} of {trophies.length}
+        </small>
+      </h2>
+      <ol>
+        {trophies.map((st) => {
+          const fell = st.cards[0];
+          return (
+            <li key={st.label} className={fell ? "won" : "empty"}>
+              <span className="trophy-medal" aria-hidden="true">
+                {fell ? (
+                  <CrawlIcon name={st.boss ? "boss" : "ambush"} theme={theme} />
+                ) : (
+                  "?"
+                )}
+              </span>
+              <span className="trophy-name">{fell ? fell.title : "?"}</span>
+            </li>
+          );
+        })}
+      </ol>
+    </section>
+  );
+}
+
+/** Pub Crawl's tab (2026-10-25): the run on one receipt, for the table's
+ * screenshot. Everything comes from the save; nothing new is kept. */
+function RunTab({
+  record,
+  theme,
+  label,
+  rooms,
+}: {
+  record: RunRecord;
+  theme: CrawlTheme;
+  label: string;
+  rooms: number;
+}) {
+  const party = record.party!;
+  const form = record.form;
+  // The adventurer's line as it was taken: a forked class's path only.
+  const taken: string[] = [];
+  if (form) {
+    const { card } = form;
+    const levels = card.evolves ?? [];
+    const now = party.form ?? 0;
+    taken.push(card.title);
+    if (card.fork) {
+      const path = (now - 1) % 2;
+      if (now >= 1) taken.push(levels[path].title);
+      if (now >= 3) taken.push(levels[path + 2].title);
+    } else taken.push(...levels.slice(0, now).map((e) => e.title));
+  }
+  const omen = record.boons.find((b) => b.card.encounter === "omen");
+  const trinkets = record.boons.filter((b) => b.card.encounter !== "omen");
+  const rows: [string, string][] = [
+    ...(taken.length
+      ? [["Adventurer", taken.join(" → ")] as [string, string]]
+      : []),
+    ...(omen ? [["Tonight's omen", omen.boon.name] as [string, string]] : []),
+    ["Rooms", String(rooms)],
+    [
+      "Trinkets",
+      trinkets.length ? trinkets.map((t) => t.boon.name).join(", ") : "None",
+    ],
+    [theme.words.Hearts, `${party.hearts} of ${party.max}`],
+  ];
+  return (
+    <section className="run-tab" aria-label={label}>
+      <h2>{label}</h2>
+      <dl>
+        {rows.map(([name, value]) => (
+          <div key={name}>
+            <dt>{name}</dt>
+            <dd>{value}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  );
+}
+
 /** The starter or adventurer it is now (owner, 2026-10-17), with its
  * power. A League starter wears its type (2026-10-25: one for the run): the
  * medallion, a tint, its type named under it, and the types it is strong
@@ -1010,9 +1204,12 @@ export function CrawlRecord({
 function FormPanel({
   form,
   theme,
+  knacks,
 }: {
   form: { title: string; rules: string; type?: PokemonType };
   theme: CrawlTheme;
+  /** A Pub Crawl adventurer's knacks (2026-10-25). */
+  knacks?: Knack[];
 }) {
   const type = theme.words.badges ? form.type : undefined;
   if (!type)
@@ -1021,6 +1218,18 @@ function FormPanel({
         <CrawlIcon name="adventurer" theme={theme} />
         <strong>{form.title}</strong>
         <span className="omen-rules">{form.rules}</span>
+        {theme.knacks && (
+          <small className="knack-chips">
+            {knacks?.length
+              ? knacks.map((k) => (
+                  <span key={k} className="knack-chip">
+                    <CrawlIcon name={`knack-${k}`} theme={theme} />
+                    {theme.knacks![k].name}
+                  </span>
+                ))
+              : "No knacks. Obviously."}
+          </small>
+        )}
       </p>
     );
   return (
@@ -1037,6 +1246,40 @@ function FormPanel({
         </span>
       </small>
       <TypeEdges type={type} />
+    </div>
+  );
+}
+
+/** The strip's knack dialog (2026-10-25): which knack, and what it does
+ * here. */
+function KnackPanel({
+  knack,
+  adventurer,
+  dice,
+  theme,
+}: {
+  knack: Knack;
+  adventurer: string;
+  dice: boolean;
+  theme: CrawlTheme;
+}) {
+  const { name, rooms } = theme.knacks![knack];
+  return (
+    <div className="knack-panel">
+      <span className="knack-medal" aria-hidden="true">
+        <CrawlIcon name={`knack-${knack}`} theme={theme} />
+      </span>
+      <strong>
+        {adventurer} has {name}
+      </strong>
+      <span>
+        {dice
+          ? "This fight is rolled with double the dice, keeping the best."
+          : "Losing this fight costs a heart less."}
+      </span>
+      <small>
+        {name} is for {rooms}.
+      </small>
     </div>
   );
 }

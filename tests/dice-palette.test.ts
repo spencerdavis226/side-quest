@@ -19,9 +19,9 @@ const palettes = omens.flatMap((c) => [
 
 describe("dice palettes", () => {
   it("gives every starter and adventurer level its own colours", () => {
-    // 35 starters and their 60 later forms; 12 adventurers and their 23
-    // later levels.
-    expect(palettes.length).toBe(35 + 60 + 12 + 23);
+    // 35 starters and their 60 later forms; 18 adventurers and their 72
+    // later levels (two paths of two each since 2026-10-25).
+    expect(palettes.length).toBe(35 + 60 + 18 + 72);
     for (const [title, p] of palettes) expect(p, title).toBeDefined();
     const keys = palettes.map(([, p]) => `${p!.primary}${p!.secondary}`);
     expect(new Set(keys).size).toBe(keys.length);

@@ -117,7 +117,11 @@ const sameRoll = (a: OmenEffect["roll"], b: OmenEffect["roll"]) =>
   );
 
 const healSentence = (heal = 0) =>
-  heal ? `Every heal heals ${heal} more` : "Heals heal as written";
+  heal > 0
+    ? `Every heal heals ${heal} more`
+    : heal < 0
+      ? `Every heal heals ${-heal} less`
+      : "Heals heal as written";
 const bagSentence = (words: OmenWords, size = 3) =>
   `${words.bag} holds ${size}`;
 const bossSentence = (hits = 0) =>

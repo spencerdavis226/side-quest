@@ -26,9 +26,10 @@ const STEP = {
   floor2: 16,
   boss2: 24,
   landing2: 25,
-  floor3: 26,
-  closing: 34,
-  lastCall: 35,
+  stairs: 26,
+  floor3: 27,
+  closing: 35,
+  lastCall: 36,
 };
 
 // A Pub Crawl seeded at `step` with `id` in play, the party as given. The
@@ -207,7 +208,8 @@ for (const width of [320, 375])
         STEP.floor2 + 1,
         {
           loot: ["draught", "shield", "die", "smoke", "draught"],
-          form: 2,
+          // The Shadow (path A's second level since 2026-10-25).
+          form: 3,
           cup: 3,
           curse: curse ? "bleed" : null,
         },
@@ -468,12 +470,17 @@ test("@release a landing levels the adventurer up for drinks, or rests", async (
       ),
     ),
   );
+  // The first level up picks one of two paths, each with its tagline
+  // (2026-10-25), beside the rest.
   const plaques = page.locator(".card-choice.offers .card-choice-option");
-  await expect(plaques).toHaveCount(2);
+  await expect(plaques).toHaveCount(3);
   await expect(plaques.nth(0)).toHaveAccessibleName(
-    "Berserker · drink 3: your adventurer levels up into Berserker",
+    "Berserker, Hits bosses and elites · drink 3: your adventurer levels up into Berserker",
   );
-  await expect(plaques.nth(1)).toHaveAccessibleName("Rest: 3 hearts back");
+  await expect(plaques.nth(1)).toHaveAccessibleName(
+    "Brute, Big, dumb, hard to kill · drink 3: your adventurer levels up into Brute",
+  );
+  await expect(plaques.nth(2)).toHaveAccessibleName("Rest: 3 hearts back");
   await page.screenshot({ path: info.outputPath("landing.png") });
   await plaques.nth(0).click();
   await expect(page.locator(".evolution-banner")).toHaveText(
@@ -495,6 +502,134 @@ test("@release a landing levels the adventurer up for drinks, or rests", async (
   );
   await page.screenshot({ path: info.outputPath("level-up.png") });
   expect(s.quest.party).toMatchObject({ form: 1, max: H + 2 });
+});
+
+// Forked levels (2026-10-25): the paths read at a glance on a 320px phone,
+// the second level follows the path taken, and a Tome asks which path.
+test("@release a forked level up shows both paths, then follows the one taken", async ({
+  page,
+}, info) => {
+  await page.setViewportSize({ width: 320, height: 640 });
+  await seed(
+    page,
+    reveal(
+      crawlAt(
+        "dungeon.landing-stairwell",
+        STEP.landing1,
+        {},
+        { adventurer: "barbarian" },
+      ),
+    ),
+  );
+  const plaques = page.locator(".card-choice.offers .card-choice-option");
+  await expect(plaques).toHaveCount(3);
+  // Every plaque's name and line fit, and each is a full touch target.
+  for (let i = 0; i < 3; i++) {
+    const box = (await plaques.nth(i).boundingBox())!;
+    expect(box.height).toBeGreaterThanOrEqual(44);
+    expect(box.x).toBeGreaterThanOrEqual(0);
+    expect(box.x + box.width).toBeLessThanOrEqual(320);
+    const clipped = await plaques
+      .nth(i)
+      .locator(".offer-name, .offer-price")
+      .evaluateAll((els) =>
+        els.some((el) => el.scrollWidth > el.clientWidth + 1),
+      );
+    expect(clipped, `plaque ${i}`).toBe(false);
+  }
+  await page.screenshot({ path: info.outputPath("paths-320.png") });
+  await plaques.nth(1).click();
+  await expect(page.locator(".evolution-banner")).toContainText("Brute");
+  expect((await saved(page)).quest.party).toMatchObject({ form: 2 });
+  // The second landing offers only the Brute's next level.
+  const second = crawlAt(
+    "dungeon.landing-boiler-room",
+    STEP.landing2,
+    { form: 2 },
+    { adventurer: "barbarian" },
+  );
+  await seed(page, reveal(second));
+  await expect(plaques).toHaveCount(2);
+  await expect(plaques.nth(0)).toHaveAccessibleName(
+    "Juggernaut, Walks through walls · drink 3: your adventurer levels up into Juggernaut",
+  );
+  await plaques.nth(0).click();
+  await expect(page.locator(".evolution-banner")).toHaveText(
+    /Brute levels up!\s*Juggernaut/,
+  );
+  expect((await saved(page)).quest.party).toMatchObject({ form: 4 });
+});
+
+// Knacks (2026-10-25): a room that calls for the class's knack shows the
+// green chevrons with the knack's mark; the dialog says what it does, and
+// the party dialog lists the class's two.
+test("a knack's room shows its chip, and the dialog explains it", async ({
+  page,
+}, info) => {
+  await page.setViewportSize({ width: 320, height: 640 });
+  await seed(
+    page,
+    reveal(
+      crawlAt(
+        "dungeon.christmas-lights",
+        STEP.floor1,
+        {},
+        { adventurer: "rogue" },
+      ),
+    ),
+  );
+  const chip = page.locator(".tag-knack");
+  await expect(chip).toHaveAccessibleName("Knack: Sneak, advantage");
+  const box = (await chip.boundingBox())!;
+  expect(box.x + box.width).toBeLessThanOrEqual(320);
+  await page.screenshot({ path: info.outputPath("knack-chip.png") });
+  await chip.click();
+  const dialog = page.getByRole("dialog", { name: "Knack" });
+  await expect(dialog).toContainText("Rogue has Sneak");
+  await expect(dialog).toContainText("double the dice");
+  await page.screenshot({ path: info.outputPath("knack-dialog.png") });
+  await dialog.getByRole("button", { name: /close/i }).click();
+  await meter(page).click();
+  const party = page.getByRole("dialog", { name: "The party" });
+  await expect(party.locator(".knack-chip")).toHaveText(["Sneak", "Charm"]);
+  // The Barbarian has no Sneak: no chip.
+  await seed(
+    page,
+    reveal(
+      crawlAt(
+        "dungeon.christmas-lights",
+        STEP.floor1,
+        {},
+        { adventurer: "barbarian" },
+      ),
+    ),
+  );
+  await expect(page.locator(".hud-strip")).toBeVisible();
+  await expect(page.locator(".tag-knack")).toHaveCount(0);
+});
+
+test("a Dog-Eared Tome asks which path a forked adventurer takes", async ({
+  page,
+}) => {
+  await seed(
+    page,
+    reveal(
+      crawlAt(
+        "dungeon.drunk-goblin",
+        STEP.floor1,
+        { loot: ["candy"] },
+        { adventurer: "wizard" },
+      ),
+    ),
+  );
+  await page.locator(".tag-satchel").click();
+  const dialog = page.getByRole("dialog");
+  const read = dialog.locator(".satchel-use");
+  await expect(read).toHaveCount(2);
+  await expect(read.nth(0)).toHaveText("Sorcerer");
+  await expect(read.nth(1)).toHaveText("Illusionist");
+  await read.nth(1).click();
+  await expect.poll(async () => (await saved(page)).quest.party.form).toBe(2);
 });
 
 test("the party dialog lays out the run: adventurer, boons, jinx and the Cup", async ({
@@ -582,7 +717,11 @@ test("the party dialog lays out the run: adventurer, boons, jinx and the Cup", a
   await page.getByRole("button", { name: "Open game menu" }).click();
   await page.getByRole("button", { name: "How to play" }).click();
   const guide = page.getByRole("dialog", { name: "How to play" });
-  await expect(guide.locator(".guide-rows li")).toHaveCount(8);
+  // Since 2026-10-25 a row for knacks too.
+  await expect(guide.locator(".guide-rows li")).toHaveCount(9);
+  await expect(guide.locator(".guide-rows")).toContainText(
+    "A room that calls for one shows green arrows",
+  );
   await expect(guide.locator(".guide-rows")).toContainText(
     "Lost a d20? Drink 4 to roll it again.",
   );
@@ -615,14 +754,15 @@ test("@release losing the last heart wipes the party, and the Cup goes to the la
   await expect(page.locator(".crawl-cup")).toContainText(
     "Whoever drew the last card drinks the Cup.",
   );
-  // The queue, three floors and the hidden room, closing time, Last Call.
+  // The queue, three floors and the hidden room, the stairs, closing time,
+  // Last Call.
   await expect(page.locator(".crawl-floors li").first()).toContainText(
     "The Queue",
   );
   await expect(page.locator(".crawl-floors li").nth(1)).toContainText(
     "The Cellar",
   );
-  await expect(page.locator(".crawl-floors li")).toHaveCount(7);
+  await expect(page.locator(".crawl-floors li")).toHaveCount(8);
   await page.screenshot({ path: info.outputPath("wiped.png") });
   await page.getByRole("button", { name: "Play again" }).click();
   await expect(meter(page)).toHaveAccessibleName(full);
@@ -646,6 +786,97 @@ test("felling the Last Call boss wins the crawl", async ({ page }, info) => {
     "Whoever landed the last swing hands the Cup to anyone.",
   );
   await page.screenshot({ path: info.outputPath("won.png") });
+});
+
+// The end screen (2026-10-25): the trophy wall (one medallion a boss and
+// closing time, gold when felled, a socket otherwise) and the tab (the
+// adventurer's path, tonight's omen, rooms, trinkets, hearts), both
+// screenshot-ready on a phone.
+for (const width of [320, 390])
+  test(`the end screen hangs the trophies and the tab at ${width}px`, async ({
+    page,
+  }, info) => {
+    await page.setViewportSize({ width, height: 844 });
+    // A Barbarian down the Brute's path (form 4, the Juggernaut), with
+    // Happy Hour and a trinket kept, fells Last Call.
+    let s = crawlAt(
+      "dungeon.last-call-lich",
+      STEP.lastCall,
+      { hits: 2, rounds: 2, cup: 7, form: 4 },
+      { adventurer: "barbarian" },
+    );
+    const q = s.quest!;
+    const finale = [...q.finale];
+    const swap = (id: string, step: number) => {
+      const at = finale.indexOf(id);
+      if (at >= 0) finale[at] = finale[step];
+      finale[step] = id;
+    };
+    swap("dungeon.omen-happy-hour", STEP.omen);
+    swap("dungeon.keg-golem", STEP.boss1);
+    s = {
+      ...s,
+      quest: {
+        ...q,
+        finale,
+        party: {
+          ...q.party!,
+          boons: ["dungeon.omen-happy-hour", "dungeon.keg-golem#0"],
+        },
+      },
+    };
+    s = rolled({ ...reveal(s), discarded: STEP.lastCall + 2 }, 18);
+    await seed(page, s);
+    await page.locator(".game-card").click();
+    const wall = page.locator(".trophy-wall");
+    await expect(wall).toHaveAccessibleName("Trophy wall: 5 of 5");
+    await expect(wall.locator("li.won")).toHaveCount(5);
+    await expect(wall.locator("li").first()).toContainText("Keg Golem");
+    await expect(wall.locator("li").last()).toContainText("The Last Call Lich");
+    const tab = page.locator(".run-tab");
+    await expect(tab).toContainText("Barbarian → Brute → Juggernaut");
+    await expect(tab).toContainText("Happy Hour");
+    await expect(tab).toContainText("Golem's Spigot");
+    // No trophy's name breaks inside a word.
+    const broken = await wall
+      .locator(".trophy-name")
+      .evaluateAll((els) =>
+        els.some((el) => el.scrollWidth > el.clientWidth + 1),
+      );
+    expect(broken).toBe(false);
+    // Nothing on either runs off the side of the phone.
+    for (const el of [wall, tab]) {
+      const box = (await el.boundingBox())!;
+      expect(box.x).toBeGreaterThanOrEqual(0);
+      expect(box.x + box.width).toBeLessThanOrEqual(width);
+    }
+    // The tab stands in for the adventurer's and trinkets' panels.
+    await expect(page.locator(".crawl-end .crawl-boons")).toHaveCount(0);
+    await page.screenshot({ path: info.outputPath(`end-${width}.png`) });
+  });
+
+test("a wiped run's wall shows the bosses felled and empty sockets", async ({
+  page,
+}) => {
+  await seed(
+    page,
+    rolled(
+      reveal(
+        crawlAt("dungeon.bachelor-ghosts", STEP.floor2 + 2, { hearts: 1 }),
+      ),
+      1,
+    ),
+  );
+  await page.locator(".game-card").click();
+  await expect(page.locator(".crawl-end.wiped h1")).toBeVisible();
+  const wall = page.locator(".trophy-wall");
+  // The Cellar's boss and the hidden room's keeper fell; three wait.
+  await expect(wall).toHaveAccessibleName("Trophy wall: 2 of 5");
+  await expect(wall.locator("li.empty .trophy-name")).toHaveText([
+    "?",
+    "?",
+    "?",
+  ]);
 });
 
 for (const width of [320, 390])
@@ -799,9 +1030,9 @@ test("tonight's omen is kept in the party dialog", async ({ page }, info) => {
   await expect(dialog.locator(".crawl-boons")).toContainText(
     "Bosses take 1 more hit.",
   );
-  // The Lock-In's Loaded Die is in the satchel, on the strip.
+  // The Lock-In's Loaded Die and shield are in the satchel, on the strip.
   await expect(page.locator(".tag-satchel")).toHaveAccessibleName(
-    "Satchel: Loaded Die",
+    "Satchel: Loaded Die, Coaster Shield",
   );
   await page.screenshot({ path: info.outputPath("omen-party.png") });
 });
@@ -809,7 +1040,9 @@ test("tonight's omen is kept in the party dialog", async ({ page }, info) => {
 test("every Dungeon night card fits its face with its plaques at 393x640", async ({
   page,
 }) => {
-  test.setTimeout(400000);
+  // 530 cards since 2026-10-25 (5.7 minutes alone in Chromium), each
+  // reloaded.
+  test.setTimeout(900000);
   await page.setViewportSize({ width: 393, height: 640 });
   const ids = cards.filter((c) => c.id.startsWith("dungeon.")).map((c) => c.id);
   // Where each card is dealt: its stage's first step on the route that has

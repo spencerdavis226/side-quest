@@ -205,6 +205,64 @@ export const freezer: FloorCards = {
       "Peas down your shirt. Drink 3.",
       "You ice your knee with them. Give 3.",
     ),
+    // More of the Walk-in Freezer (2026-10-25).
+    monster(
+      7,
+      "popsicle-golem",
+      "Popsicle Golem",
+      "A golem of a thousand stuck-together popsicles, in every flavor you hate. Roll d20.",
+      "Banana. Drink 4.",
+      "You lick it to death. Give 4.",
+    ),
+    monster(
+      7,
+      "thawed-caveman",
+      "The Thawed Caveman",
+      "A caveman thawed out and wants to know what a phone is. Roll d20.",
+      "He clubs yours. Drink 4.",
+      "You show him a meme and he worships you. Give 4.",
+    ),
+    monster(
+      7,
+      "ice-goblin",
+      "Ice Goblin",
+      "A goblin juggling ice cubes, and aiming them down your back. Roll d6.",
+      "",
+      "",
+      {
+        roll: moves(
+          ["Down your shirt. Drink 4.", "Into your drink. Drink 4."],
+          [
+            "You duck. Give 3.",
+            "You catch one. Give 4.",
+            "You melt him with a hug. Give 4.",
+            "You juggle better. Everyone else drinks 1.",
+          ],
+        ),
+      },
+    ),
+    trial(
+      7,
+      "chattering-teeth",
+      "Chattering Teeth",
+      "Say 'she sells seashells' three times through chattering teeth. Fumble it: drink 4.",
+    ),
+    trap(
+      7,
+      "ice-machine",
+      "The Ice Machine",
+      "The ice machine is jammed and shaking. Roll d20 before it blows.",
+      "Ice everywhere, mostly on you. Drink 3.",
+      "You unplug it in time. Give 3.",
+    ),
+    ambush(
+      7,
+      "ski-lodge-crew",
+      "Ski Lodge Crew",
+      "Five people in ski gear who never made it to the slopes. Roll d20.",
+      "They make you join their shot ski. Drink 3.",
+      "You send them to the hot tub. Give 3.",
+    ),
   ],
   finds: [
     gamble(
@@ -300,6 +358,33 @@ export const freezer: FloorCards = {
       "Duck under the empty hooks, or push through the full ones, swinging on their own.",
       ["Empty hooks", "Full hooks"],
     ),
+    gamble(
+      7,
+      "ice-fishing",
+      "Ice Fishing",
+      "A hole in the ice, a line in it. Cash out or cast again, harder. Roll d20.",
+      "You fall in. Drink 4.",
+      "A bite. Give 3.",
+      ["draught", "die", "candy"],
+    ),
+    gamble(
+      7,
+      "mimic-fridge",
+      "Mimic Fridge",
+      "A mini fridge with a heartbeat. It pays out until it bites. Roll d20.",
+      "It bites. Drink 4.",
+      "A cold one. Give 3.",
+      ["shield", "draught", "revive"],
+    ),
+    gamble(
+      7,
+      "snow-globe",
+      "The Snow Globe",
+      "Shake the giant snow globe. Win, then cash out or shake again, harder. Roll d20.",
+      "It cracks. Drink 4.",
+      "Something floats up. Give 3.",
+      ["smoke", "shield", "round"],
+    ),
   ],
   elites: [
     elite(
@@ -336,6 +421,18 @@ export const freezer: FloorCards = {
       [
         trinket("Brass Knuckles", { crit: 19 }),
         trinket("Cement Shoes", { hearts: 1, hurt: { trap: -1 } }),
+      ],
+    ),
+    elite(
+      7,
+      "freezer-witch",
+      "The Freezer Witch",
+      "She keeps her ex in a block of ice, and there's room for one more. Roll d20.",
+      "You're on ice. Drink 5.",
+      "You thaw the ex, and they take your side. Give 5.",
+      [
+        trinket("Ice Heart", { hearts: 2, hurt: { boss: 1 } }),
+        trinket("Frost Wand", { roll: { monster: 1, ambush: 1 } }),
       ],
     ),
   ],

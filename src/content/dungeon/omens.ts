@@ -28,8 +28,9 @@ export const omens: CardDefinition[] = [
   omen(
     "lock-in",
     "The Lock-In",
-    "Locked in until sunrise. Every boss takes one more hit to fall. Have a loaded die for it.",
-    { bossHits: 1, loot: ["die"] },
+    "Locked in until sunrise. Every boss takes one more hit. Take a loaded die and a shield.",
+    // A shield since 2026-10-25: the stairs fight left it near the floor.
+    { bossHits: 1, loot: ["die", "shield"] },
   ),
   omen(
     "cargo-shorts",
@@ -76,5 +77,53 @@ export const omens: CardDefinition[] = [
     "The Pregame",
     "Everyone drinks 1 at the door. Start a heart short, with a loaded die and a shield.",
     { hearts: -1, loot: ["die", "shield"] },
+  ),
+  // Eight more (2026-10-25).
+  omen(
+    "payday",
+    "Payday",
+    "Everyone got paid today. Gambles and relics roll 2 higher. Start a heart short.",
+    { roll: { relic: 2 }, hearts: -1 },
+  ),
+  omen(
+    "designated-driver",
+    "Designated Driver",
+    "The DD packed a draught. One more satchel slot, but bosses cost a heart more.",
+    { satchel: 4, loot: ["draught"], hurt: { boss: 1 } },
+  ),
+  omen(
+    "friday-13th",
+    "Friday the 13th",
+    "Bad luck and good luck: natural 1s land on a 2 too, natural 20s on a 19.",
+    { fumble: 2, crit: 19 },
+  ),
+  omen(
+    "trivia-night",
+    "Trivia Night",
+    "Trivia upstairs, so everyone's sharp. Trials cost a heart less, traps a heart more.",
+    { hurt: { trial: -1, trap: 1 } },
+  ),
+  omen(
+    "brads-birthday",
+    "Brad's Birthday",
+    "Brad's birthday: the Quarter-Zips are feral. Ambushes cost a heart more. Take a shield.",
+    { hurt: { ambush: 1 }, loot: ["shield"] },
+  ),
+  omen(
+    "open-bar",
+    "Open Bar",
+    "A wedding upstairs has an open bar. Take two draughts, but one satchel slot fewer.",
+    { loot: ["draught", "draught"], satchel: 2 },
+  ),
+  omen(
+    "name-tags",
+    "Name Tags",
+    "Everyone picks a fantasy name at the door and answers only to it. Wrong name: drink 1.",
+  ),
+  omen(
+    "lucky-penny",
+    "Lucky Penny",
+    "A lucky penny on the stairs. Every d20 fight rolls 1 higher, but start two hearts short.",
+    { roll: { all: 1 }, hearts: -2 },
   ),
 ];

@@ -1,7 +1,9 @@
 import type {
   CardDefinition,
   DiceRoll,
+  Edge,
   GameConfig,
+  Knack,
   Loot,
   OmenEffect,
   PackDefinition,
@@ -311,7 +313,18 @@ export function questRecord(s: SessionState) {
     const boss = stage.cards.some(isBossCard);
     const omen = stage.cards.every((c) => c.encounter === "omen");
     const kind = stageKind(stage);
-    return { label: stage.label, size: stage.pick, cards, boss, omen, kind };
+    // A fight dealt again until it falls (a boss, closing time's rival):
+    // a trophy on Pub Crawl's end screen (2026-10-25).
+    const trophy = stage.pick === 1 && stage.cards.some((c) => !!c.hits);
+    return {
+      label: stage.label,
+      size: stage.pick,
+      cards,
+      boss,
+      omen,
+      kind,
+      trophy,
+    };
   });
   return {
     label: q.label,
@@ -360,12 +373,7 @@ export function wantedBoss(quest: QuestState): CardDefinition | undefined {
  * adventurer), tonight's omen, a landing, a boss, a lone set piece (the
  * queue, closing time, the League's rival), or a floor of rooms. */
 export type StageKind =
-  | "adventurer"
-  | "omen"
-  | "rest"
-  | "boss"
-  | "set-piece"
-  | "floor";
+  "adventurer" | "omen" | "rest" | "boss" | "set-piece" | "floor";
 export function stageKind(stage: QuestState["stages"][number]): StageKind {
   const { cards, pick } = stage;
   if (cards.every((c) => c.encounter === "omen"))
@@ -462,32 +470,69 @@ export function omenForm(quest: QuestState | undefined) {
   const now = form ? forms[form - 1] : undefined;
   // A branching starter evolves once, into the form the table picks.
   const branching = !!card.branches;
-  const canEvolve = branching
-    ? form === 0 && forms.length > 0
-    : form < forms.length;
+  // A forked adventurer (`fork`) picks a path, then follows it: forms 1 and
+  // 2 are the paths' first levels, 3 and 4 their second.
+  const fork = !!card.fork;
+  const canEvolve = fork
+    ? form < 3
+    : branching
+      ? form === 0 && forms.length > 0
+      : form < forms.length;
+  const pick = branching || (fork && form === 0);
+  const path = fork && form ? (form - 1) % 2 : 0;
   return {
     card,
     form,
     title: now?.title ?? card.title,
     rules: now?.rules ?? card.rules,
-    line: branching
-      ? [card.title, now ? now.title : forms.map((e) => e.title).join(" / ")]
-      : [card.title, ...forms.map((e) => e.title)],
+    line: fork
+      ? [
+          card.title,
+          form ? forms[path].title : `${forms[0].title} / ${forms[1].title}`,
+          ...(form ? [forms[path + 2].title] : []),
+        ]
+      : branching
+        ? [card.title, now ? now.title : forms.map((e) => e.title).join(" / ")]
+        : [card.title, ...forms.map((e) => e.title)],
     canEvolve,
-    /** The forms the table picks from, while a branching starter can
-     * still evolve. */
-    branches: branching && canEvolve ? forms.map((e) => e.title) : null,
+    /** The forms the table picks from, while a branching starter (or a
+     * forked adventurer's first level) can still evolve. */
+    branches:
+      pick && canEvolve
+        ? (fork ? forms.slice(0, 2) : forms).map((e) => e.title)
+        : null,
+    /** Each pick's tagline, beside `branches` (a forked adventurer's). */
+    taglines:
+      pick && canEvolve && fork
+        ? forms.slice(0, 2).map((e) => e.tagline ?? "")
+        : null,
     /** How many later forms the card has. */
     forms: forms.length,
     /** The League type of the form it is now (none before 2026-10-25). */
     type: now?.type ?? card.type,
     /** The dice colours of the form it is now. */
     palette: now ? (now.palette ?? card.palette) : card.palette,
-    /** The form an evolution brings next, while one evolves in a line. */
-    next: !branching && canEvolve ? forms[form].title : null,
+    /** The form an evolution brings next, while one evolves in a line (or
+     * down a forked adventurer's chosen path). */
+    next: fork
+      ? form && canEvolve
+        ? forms[path + 2].title
+        : null
+      : !branching && canEvolve
+        ? forms[form].title
+        : null,
+    /** The tagline of the form `next` brings (a forked adventurer's). */
+    nextTagline:
+      fork && form && canEvolve ? forms[path + 2].tagline : undefined,
     /** The effect of the form before this one (for what an evolution
      * changed); the card's own for its first form. */
-    before: form > 1 && !branching ? forms[form - 2].omen : card.omen,
+    before: fork
+      ? form > 2
+        ? forms[path].omen
+        : card.omen
+      : form > 1 && !branching
+        ? forms[form - 2].omen
+        : card.omen,
   };
 }
 /** The starter's next form: its effect replaces the current one. The change
@@ -496,7 +541,13 @@ export function omenForm(quest: QuestState | undefined) {
 function evolve(party: PartyState, quest: QuestState, branch = 0): PartyState {
   const now = omenForm(quest);
   if (!now?.canEvolve) return party;
-  const target = now.branches ? branch : now.form;
+  // A forked adventurer's second level is its path's: forms 1 and 2 go on
+  // to entries 2 and 3 of `evolves`.
+  const target = now.branches
+    ? branch
+    : now.card.fork
+      ? now.form + 1
+      : now.form;
   const before = formEffect(quest) ?? {};
   const after = now.card.evolves![target].omen;
   const delta = (after.hearts ?? 0) - (before.hearts ?? 0);
@@ -529,6 +580,29 @@ export function cardMatchup(
   if (quest.party.tera === card.id) return teraMatchup(mine, card.type);
   return matchup(mine, card.type);
 }
+/** Pub Crawl (2026-10-25): a fight that calls for a knack the adventurer
+ * has is fought with the edge; one it lacks is fought as written. */
+export function knackEdge(
+  quest: QuestState | undefined,
+  card: CardDefinition,
+): Knack | null {
+  const id = quest?.party?.omen;
+  if (!card.battle || !card.knack || !id) return null;
+  return finaleCard(quest, id)?.knacks?.includes(card.knack)
+    ? card.knack
+    : null;
+}
+/** The edge a fight is fought with: a League type matchup, else a crawl
+ * knack (always the advantage). */
+export function cardEdge(
+  quest: QuestState | undefined,
+  card: CardDefinition,
+): Edge | null {
+  return (
+    cardMatchup(quest, card)?.edge ??
+    (knackEdge(quest, card) ? "advantage" : null)
+  );
+}
 /** A plaque-settled fight has no roll to bend: a lost one costs one HP less
  * with the edge, one more against it. */
 export function verdictShift(
@@ -536,7 +610,7 @@ export function verdictShift(
   card: CardDefinition,
 ): number {
   if (card.dice) return 0;
-  const edge = cardMatchup(quest, card)?.edge;
+  const edge = cardEdge(quest, card);
   return edge === "advantage" ? -1 : edge === "disadvantage" ? 1 : 0;
 }
 /** How many items the satchel holds. */
@@ -697,7 +771,8 @@ export function takeOffer(
   if (offer.heal)
     party.hearts = Math.min(
       party.max,
-      party.hearts + offer.heal + (omenEffect(now)?.heal ?? 0),
+      // A worse heal (a joke class's) never turns a heal into harm.
+      party.hearts + Math.max(0, offer.heal + (omenEffect(now)?.heal ?? 0)),
     );
   if (offer.loot && party.loot.length < satchelSize(now))
     party.loot = [...party.loot, offer.loot];
@@ -798,8 +873,10 @@ export function canUseLoot(s: SessionState, item: Loot): boolean {
     case "revive":
       return false; // Each works on its own, when it is needed.
     case "candy": {
+      // A branching starter picks its form on an evolution card; a forked
+      // adventurer's Tome picks its path (`spendLoot`'s `branch`).
       const form = omenForm(s.quest);
-      return !!form?.canEvolve && !form.branches;
+      return !!form?.canEvolve && (!form.branches || !!form.card.fork);
     }
   }
 }
@@ -809,8 +886,16 @@ export function spendLoot(
   s: SessionState,
   item: Loot,
   random: Random = Math.random,
+  /** A Tome on a forked adventurer that has yet to pick a path: 0 or 1. */
+  branch = 0,
 ): SessionState {
   if (!canUseLoot(s, item)) return s;
+  if (
+    item === "candy" &&
+    omenForm(s.quest)?.branches &&
+    !(branch === 0 || branch === 1)
+  )
+    return s;
   const party = s.quest!.party!;
   const loot = [...party.loot];
   loot.splice(loot.indexOf(item), 1);
@@ -838,7 +923,10 @@ export function spendLoot(
     case "candy":
       return {
         ...used,
-        quest: { ...used.quest, party: evolve(used.quest.party!, used.quest) },
+        quest: {
+          ...used.quest,
+          party: evolve(used.quest.party!, used.quest, branch),
+        },
       };
     case "round":
       return {
@@ -947,7 +1035,7 @@ function settleParty(
         ...next,
         hearts: Math.min(
           next.max,
-          next.hearts + (heal + (omen?.heal ?? 0)) * times,
+          next.hearts + Math.max(0, heal + (omen?.heal ?? 0)) * times,
         ),
       };
   }

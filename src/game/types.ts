@@ -101,6 +101,17 @@ export interface CardDefinition {
    * picks one of them (Eevee: Vaporeon, Jolteon or Flareon), and that is
    * its last. */
   branches?: true;
+  /** Pub Crawl (2026-10-25): `evolves` is two paths of two levels, flat as
+   * `[A1, B1, A2, B2]`. The first level picks A1 or B1 (`party.form` 1 or
+   * 2), and the second follows that path (3 or 4). */
+  fork?: true;
+  /** Pub Crawl (2026-10-25): an adventurer's knacks, two (none for a joke
+   * class). */
+  knacks?: Knack[];
+  /** Pub Crawl (2026-10-25): the knack a fight calls for. An adventurer
+   * with it has the edge: the dice fight is rolled with advantage, a
+   * plaque fight's loss costs one heart less. Never a disadvantage. */
+  knack?: Knack;
   /** A crawl omen's dice colours while it holds (`DicePalette`). */
   palette?: DicePalette;
   /** Pub Crawl (2026-10-17): an effect the party keeps for the rest of the
@@ -150,6 +161,9 @@ export interface Evolution {
   palette?: DicePalette;
   /** The form's type, when it differs from the starter's (Eevee's). */
   type?: PokemonType;
+  /** A forked adventurer's path, in a few words for its plaque (at most
+   * 28 characters), read from across the table (2026-10-25). */
+  tagline?: string;
 }
 /** A crawl omen's (or a starter form's) dice colours: `primary` is the
  * enamel, `secondary` the metal and trim (2026-10-17). Display only. */
@@ -183,6 +197,10 @@ export const POKEMON_TYPES = [
 export type PokemonType = (typeof POKEMON_TYPES)[number];
 /** How a type matchup bends a roll. */
 export type Edge = "advantage" | "disadvantage";
+/** Pub Crawl's knacks (2026-10-25): what a class is good at. A room that
+ * calls for one rolls with the edge for an adventurer who has it. */
+export const KNACKS = ["brawn", "sneak", "magic", "charm", "faith"] as const;
+export type Knack = (typeof KNACKS)[number];
 export const ENCOUNTERS = [
   "monster",
   "elite",

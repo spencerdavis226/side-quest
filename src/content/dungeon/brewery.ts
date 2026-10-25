@@ -207,6 +207,67 @@ export const brewery: FloorCards = {
       "Hush money. Drink 2.",
       "You take a cut. Give 2.",
     ),
+    // More of the Brewery (2026-10-25).
+    monster(
+      6,
+      "spent-grain-golem",
+      "Spent Grain Golem",
+      "A golem of spent grain, still warm, looking for a bakery. Roll d20.",
+      "It crumbles all over you. Drink 3.",
+      "You feed it to the pigs out back. Give 3.",
+    ),
+    monster(
+      6,
+      "hazy-wraith",
+      "Hazy Wraith",
+      "A ghost so cloudy you can't see through it. It's 9 percent. Roll d20.",
+      "It haunts your palate. Drink 3.",
+      "You hold it to the light and it flees. Give 3.",
+    ),
+    monster(
+      6,
+      "forklift-goblin",
+      "Forklift Goblin",
+      "A goblin learned to drive a forklift. He has not learned to stop. Roll d6.",
+      "",
+      "",
+      {
+        roll: moves(
+          [
+            "A pallet to the shins. Drink 3.",
+            "He reverses over your foot. Drink 3.",
+          ],
+          [
+            "You dodge. Give 2.",
+            "You take the keys. Give 3.",
+            "You wave him into a vat. Give 3.",
+            "You ride the forks. Everyone else drinks 1.",
+          ],
+        ),
+      },
+    ),
+    trial(
+      6,
+      "quality-control",
+      "Quality Control",
+      "Say 'the brewer brewed better beer' five times fast. Trip up: drink 3.",
+    ),
+    trap(
+      6,
+      "loose-hose",
+      "The Loose Hose",
+      "A wash-down hose is loose and whipping across the floor. Roll d20 to jump it.",
+      "It wraps your ankles. Drink 2.",
+      "You stamp it flat. Give 2.",
+    ),
+    ambush(
+      6,
+      "homebrew-club",
+      "Homebrew Club",
+      "Four beards with growlers want your opinion. All of it. Roll d20.",
+      "You give it. Drink 2.",
+      "You say 'it's very you' and they leave. Give 2.",
+    ),
   ],
   finds: [
     gamble(
@@ -302,6 +363,33 @@ export const brewery: FloorCards = {
       "Duck under the bottling line, or ride the belt into the noisy room.",
       ["Duck under", "Ride the belt"],
     ),
+    gamble(
+      6,
+      "bottle-flip",
+      "Bottle Flip",
+      "Bottle flips with the brewers. Win, then cash out or flip again, harder. Roll d20.",
+      "It smashes. Drink 3.",
+      "It lands. Give 2.",
+      ["shield", "die", "candy"],
+    ),
+    gamble(
+      6,
+      "mimic-fermenter",
+      "Mimic Fermenter",
+      "A fermenter that burps out prizes until it bites. Win, then cash out or poke it. Roll d20.",
+      "It bites. Drink 3.",
+      "It burps. Give 2.",
+      ["draught", "shield", "revive"],
+    ),
+    gamble(
+      6,
+      "keg-toss",
+      "Keg Toss",
+      "The brewers toss empty kegs for prizes. Win, then cash out or throw again. Roll d20.",
+      "Keg to the foot. Drink 3.",
+      "Clean toss. Give 2.",
+      ["smoke", "draught", "round"],
+    ),
   ],
   elites: [
     elite(
@@ -338,6 +426,18 @@ export const brewery: FloorCards = {
       [
         trinket("Tap Handle", { crit: 19 }),
         trinket("Brewery Lease", { satchel: 4, loot: ["shield"] }),
+      ],
+    ),
+    elite(
+      6,
+      "head-brewer",
+      "The Head Brewer",
+      "She's tasted every batch since 1998, and she hates yours. Roll d20.",
+      "She pours it out in front of you. Drink 4.",
+      "She asks for the recipe. Give 4.",
+      [
+        trinket("Brewer's Paddle", { hearts: 1, roll: { boss: 1 } }),
+        trinket("Starter Culture", { heal: 1 }),
       ],
     ),
   ],

@@ -713,6 +713,14 @@
   font-size: max(13px, 0.78em);
   opacity: 0.85;
 }
+/* A forked adventurer's path (2026-10-25): what it does, at full strength,
+   over its price. */
+.offer-tagline {
+  opacity: 1;
+}
+.offer-tagline + .offer-price {
+  margin-top: 1px;
+}
 /* A price the party can't pay: solid (the frame must not show through), but
    greyed and flat. */
 .offer-plaque:disabled {
@@ -1059,6 +1067,78 @@
   border-color: #9a3a30;
 }
 
+/* Pub Crawl's knack chip (2026-10-25): the green chevrons and the knack's
+   mark, side by side. */
+.tag-knack {
+  gap: 2px;
+}
+.tag-knack .crawl-icon {
+  width: 20px;
+  height: 20px;
+  color: #bff0cf;
+}
+/* The adventurer's two knacks under its power, in the party dialog. */
+.crawl-omen .knack-chips {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+  color: #c9b893;
+  font-size: 0.85rem;
+}
+.crawl-omen .knack-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px 3px 7px;
+  border: 1px solid rgb(127 227 160 / 0.45);
+  border-radius: 999px;
+  background: rgb(20 60 36 / 0.55);
+  color: #e6ffe9;
+  font: 700 0.75rem / 1 var(--font-tavern);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.crawl-omen .knack-chip .crawl-icon {
+  grid-row: auto;
+  width: 16px;
+  height: 16px;
+  color: #7fe3a0;
+}
+/* The knack dialog: the knack's mark large, what it does, where it helps. */
+.knack-panel {
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  text-align: center;
+}
+.knack-medal {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border: 2px solid #c9a227;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #3f9a63, #14402a);
+}
+.knack-medal .crawl-icon {
+  width: 38px;
+  height: 38px;
+  color: #f5ffe9;
+}
+.knack-panel strong {
+  color: #7fe3a0;
+  font: 700 1.15rem / 1.2 var(--font-tavern);
+}
+.knack-panel span {
+  color: #e9d7b0;
+}
+.knack-panel small {
+  color: #c9b893;
+  font-size: 0.85rem;
+}
+
 /* The matchup dialog: the starter and the foe, the chevrons between. */
 .matchup-panel {
   display: grid;
@@ -1267,6 +1347,115 @@
 .crawl-floors em {
   color: #f0c56f;
   font-style: normal;
+}
+
+/* Pub Crawl's end screen (2026-10-25): the trophy wall, a row of gold
+   medallions for the bosses felled (empty sockets for the rest), and the
+   tab, the run on one receipt. Both read from across the table. */
+.trophy-wall,
+.run-tab {
+  display: grid;
+  gap: 8px;
+  padding: 10px 12px 12px;
+  border: 1px solid #e5c27c;
+  border-radius: 12px;
+  background: rgb(0 0 0 / 0.28);
+}
+.trophy-wall h2,
+.run-tab h2 {
+  margin: 0;
+  color: #d9b877;
+  font: 600 14px/1.2 var(--font-tavern);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.trophy-wall h2 small {
+  float: right;
+  color: #fff0cf;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+}
+/* Five across where a name fits whole (62px each); on the narrowest
+   phones the row wraps, centred, rather than breaking a name mid-word. */
+.trophy-wall ol {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.trophy-wall li {
+  display: grid;
+  flex: 0 1 calc((100% - 6px * (var(--trophies, 5) - 1)) / var(--trophies, 5));
+  min-width: 62px;
+  justify-items: center;
+  align-content: start;
+  gap: 4px;
+  text-align: center;
+}
+.trophy-medal {
+  display: grid;
+  place-items: center;
+  width: min(54px, 100%);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  color: #ac9472;
+  font: 700 1.3rem/1 var(--font-tavern);
+}
+.trophy-wall .won .trophy-medal {
+  border: 2px solid #f0d090;
+  background: radial-gradient(circle at 35% 30%, #f3d58c, #a8742f 70%);
+  box-shadow: 0 3px 8px #000a;
+}
+.trophy-wall .empty .trophy-medal {
+  border: 2px dashed rgb(217 184 119 / 0.45);
+  background: rgb(0 0 0 / 0.25);
+}
+.trophy-medal .crawl-icon {
+  width: 62%;
+  height: 62%;
+  color: #3a2208;
+}
+.trophy-name {
+  color: #fff0cf;
+  font-size: 0.8rem;
+  line-height: 1.15;
+}
+.trophy-wall .empty .trophy-name {
+  color: #ac9472;
+}
+.run-tab dl {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+}
+.run-tab dl > div {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+/* A receipt's dotted leader between the line and its amount. */
+.run-tab dt {
+  flex: none;
+  color: #d9b877;
+  font-size: 0.95rem;
+}
+.run-tab dl > div::after {
+  content: "";
+  order: 1;
+  flex: 1 1 12px;
+  min-width: 12px;
+  border-bottom: 2px dotted rgb(217 184 119 / 0.4);
+}
+.run-tab dd {
+  order: 2;
+  margin: 0;
+  max-width: 70%;
+  color: #fff0cf;
+  font-size: 1rem;
+  text-align: right;
 }
 
 /* --- Setup: the crawl in brief ------------------------------------------- */

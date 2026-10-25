@@ -1,4 +1,4 @@
-import type { Curse, Loot, QuestStage } from "../game/types";
+import type { Curse, Knack, Loot, QuestStage } from "../game/types";
 import { DRAUGHT_DRINKS, DRAUGHT_HEAL } from "../game/engine";
 import {
   dungeonOmenWords,
@@ -26,7 +26,9 @@ export type CrawlIconName =
   | "cup"
   | "quaff"
   | "rest"
-  | "jinx";
+  | "jinx"
+  // Pub Crawl's knacks (2026-10-25).
+  | `knack-${Knack}`;
 
 /** One row of the how-to-play guide: a mark, a name, one line. */
 export interface GuideRow {
@@ -52,6 +54,9 @@ export interface CrawlTheme {
   /** Pokémon League: its starters' powers and evolutions are written from
    * their numbers in these words (`game/omenText.ts`). */
   omenWords?: OmenWords;
+  /** Pub Crawl's knacks (2026-10-25): each one's name, and the rooms that
+   * call for it. */
+  knacks?: Record<Knack, { name: string; rooms: string }>;
   /** `public/<folder>/<file>.svg` for a mark; a mark not listed is the
    * crawl's own (`art/crawl/<name>.svg`). */
   icons: { folder: string; files: Partial<Record<CrawlIconName, string>> };
@@ -96,6 +101,10 @@ export interface CrawlTheme {
      * starter", "Your adventurer". */
     adventurer: string;
     /** On an evolve plaque: who grows, and what it is once it can't. */
+    /** Pub Crawl's end screen (2026-10-25): the felled bosses' wall and
+     * the run's tab. */
+    trophies?: string;
+    tab?: string;
     grows: { who: string; verb: string; done: string };
     /** Pub Crawl only (2026-10-17): the boons kept for the run, a jinx, the
      * Quaff and the Cup. A theme without them never shows them. */
@@ -174,6 +183,16 @@ const dungeon: CrawlTheme = {
   eat: "Read",
   drink: "Drink",
   omenWords: dungeonOmenWords,
+  knacks: {
+    brawn: { name: "Brawn", rooms: "the big and the physical" },
+    sneak: { name: "Sneak", rooms: "traps and footwork" },
+    magic: {
+      name: "Magic",
+      rooms: "spells and things that shouldn't be alive",
+    },
+    charm: { name: "Charm", rooms: "anyone you can talk round" },
+    faith: { name: "Faith", rooms: "the dead and the haunted" },
+  },
   icons: { folder: "art/crawl", files: {} },
   words: {
     heart: "heart",
@@ -198,6 +217,8 @@ const dungeon: CrawlTheme = {
     setupHearts: "hearts",
     setupFloors: "floors",
     evolving: (from) => `${from} levels up!`,
+    trophies: "Trophy wall",
+    tab: "The tab",
     adventurer: "Your adventurer",
     grows: {
       who: "your adventurer",
@@ -263,7 +284,12 @@ const dungeon: CrawlTheme = {
       {
         icon: "rest",
         title: "Landings",
-        line: "After a boss: level up your adventurer for 3 drinks, or rest for 3 hearts.",
+        line: "After a boss: level up your adventurer for 3 drinks, or rest for 3 hearts. The first level up picks one of two paths.",
+      },
+      {
+        icon: "knack-brawn",
+        title: "Knacks",
+        line: "Each adventurer has two. A room that calls for one shows green arrows: roll twice, keep the best.",
       },
       {
         icon: "satchel",
