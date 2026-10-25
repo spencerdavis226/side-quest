@@ -57,3 +57,8 @@
     700 32px "Source Serif 4 Title",
     serif;
 }
+/* A type edge's dropped attempt, faded beside the kept faces. */
+.roll-static-result span.dropped {
+  opacity: 0.35;
+  filter: grayscale(0.7);
+}

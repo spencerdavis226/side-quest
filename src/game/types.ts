@@ -38,6 +38,11 @@ export interface DiceRoll {
   natural?: 20 | 1;
   /** A 20 was rolled and rerolled away (`OmenEffect.reroll20`). */
   flinched?: true;
+  /** Pokémon League (2026-10-25): the fight was rolled twice for a type
+   * matchup and the better (`advantage`) or worse (`disadvantage`) attempt
+   * kept. `values` are the kept faces; `dropped` the other attempt's. */
+  edge?: Edge;
+  dropped?: number[];
 }
 export interface CardDefinition {
   version: 1;
@@ -113,6 +118,11 @@ export interface CardDefinition {
    * prize and offers Cash out or Again; each Again rolls 2 lower; a loss
    * forfeits everything banked. A single-d20 battle only. */
   press?: { prizes: Loot[] };
+  /** Pokémon League (2026-10-25): the Pokémon type a fight is against, or a
+   * starter's type. A dice fight against a type the starter beats is rolled
+   * with advantage, one that beats it with disadvantage; a fight settled
+   * with plaques costs one HP less or more when lost (`matchup.ts`). */
+  type?: PokemonType;
   /** Pub Crawl (2026-10-17): a spoken rule the table keeps until the
    * floor's boss falls, laid when the card is put aside (a battle only when
    * lost). The app shows it and lifts it; nobody has to remember. */
@@ -138,6 +148,8 @@ export interface Evolution {
   rules: string;
   omen: OmenEffect;
   palette?: DicePalette;
+  /** The form's type, when it differs from the starter's (Eevee's). */
+  type?: PokemonType;
 }
 /** A crawl omen's (or a starter form's) dice colours: `primary` is the
  * enamel, `secondary` the metal and trim (2026-10-17). Display only. */
@@ -145,6 +157,32 @@ export interface DicePalette {
   primary: string;
   secondary: string;
 }
+/** The eighteen Pokémon types, and the Striaton trio's badge, which plays
+ * as whichever of fire, water and grass beats the starter (`matchup.ts`). */
+export const POKEMON_TYPES = [
+  "normal",
+  "fire",
+  "water",
+  "grass",
+  "electric",
+  "ice",
+  "fighting",
+  "poison",
+  "ground",
+  "flying",
+  "psychic",
+  "bug",
+  "rock",
+  "ghost",
+  "dragon",
+  "dark",
+  "steel",
+  "fairy",
+  "trio",
+] as const;
+export type PokemonType = (typeof POKEMON_TYPES)[number];
+/** How a type matchup bends a roll. */
+export type Edge = "advantage" | "disadvantage";
 export const ENCOUNTERS = [
   "monster",
   "elite",
@@ -218,6 +256,9 @@ export const LOOT = [
   "candy",
   // A lost fight's drinks go to someone else (2026-10-17).
   "round",
+  // Pokémon League (2026-10-25): before a typed battle's roll, the starter
+  // Terastallizes into the type that beats the foe, for that fight.
+  "tera",
 ] as const;
 export type Loot = (typeof LOOT)[number];
 /** Pub Crawl curses, to the end of the floor. `bleed`: every heart loss
@@ -339,6 +380,10 @@ export interface PartyState {
   /** The draw (`SessionState.discarded`) whose lost drinks were passed on
    * with a `round`, so it is passed once. */
   passed?: number;
+  /** The card in play the starter has Terastallized against (a Tera Orb):
+   * the fight is rolled with advantage. Cleared when the card is put
+   * aside, so a boss dealt again needs another orb. */
+  tera?: string;
 }
 export interface PackDefinition {
   version: 1;

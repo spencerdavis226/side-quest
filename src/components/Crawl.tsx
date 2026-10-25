@@ -7,12 +7,14 @@ import type {
   PartyState,
   QuestState,
   SessionState,
+  PokemonType,
 } from "../game/types";
 import {
   currentCard as currentCardOf,
   PRESS_STEP,
   canQuaff,
   canUseLoot,
+  cardMatchup,
   finaleCard,
   finaleStage,
   hitsNeeded,
@@ -29,12 +31,15 @@ import {
   type CrawlIconName,
   type CrawlTheme,
 } from "./crawlTheme";
-import { BadgeCase, TypeMark, badgesLocked } from "./LeagueMarks";
 import {
-  formType,
-  pokemonTypes,
-  typeStyle,
-} from "../presentation/pokemon-types";
+  BadgeCase,
+  EdgeMark,
+  MatchupPanel,
+  TypeEdges,
+  TypeMark,
+  badgesLocked,
+} from "./LeagueMarks";
+import { pokemonTypes, typeStyle } from "../presentation/pokemon-types";
 
 // Pub Crawl furniture: the party's hearts, the satchel, the floor's rooms and
 // the boss's wounds. Everything a crawl shows lives here; the engine decides.
@@ -249,7 +254,7 @@ export function CrawlProgress({ quest }: { quest: QuestState }) {
 /** What the strip opens: the satchel, the League's badge case, or one thing
  * on the party, on its own. */
 export type StripDialog =
-  "satchel" | "badges" | "quaff" | "cup" | "curse" | "jinx";
+  "satchel" | "badges" | "quaff" | "cup" | "curse" | "jinx" | "matchup";
 
 /** The strip under the top row in a crawl (2026-10-17): everything the party
  * carries, each a chip that reads at a glance and opens its own dialog. The
@@ -273,6 +278,12 @@ export function CrawlStrip({
   const jinx = party.jinx ? finaleCard(quest, party.jinx)?.jinx : undefined;
   const quaffReady = party.quaff !== undefined && !party.quaffed;
   const locked = badgesLocked(session, theme);
+  // The League's type edge on the battle face up (2026-10-25): a mark
+  // only; the dialog says what it does.
+  const matchup =
+    session.phase === "revealed"
+      ? cardMatchup(quest, currentCardOf(session))
+      : null;
   const chip = (
     className: string,
     label: string,
@@ -303,6 +314,13 @@ export function CrawlStrip({
       role="group"
       aria-label={words.party}
     >
+      {matchup?.edge &&
+        chip(
+          `tag-edge edge-${matchup.edge}`,
+          `${matchup.tera ? "Terastallized" : matchup.edge === "advantage" ? "Super effective" : "Not very effective"}: ${matchup.edge}`,
+          "matchup",
+          <EdgeMark edge={matchup.edge} />,
+        )}
       {chip(
         "tag-satchel",
         `${words.Satchel}: ${party.loot.length ? party.loot.map((l) => theme.loot[l].name).join(", ") : "empty"}`,
@@ -385,13 +403,16 @@ export function CardStakes({
   party,
   hits = 0,
   theme,
+  shift = 0,
 }: {
   card: CardDefinition;
   party: PartyState;
   hits?: number;
   theme: CrawlTheme;
+  /** A League type edge on a plaque-settled fight: the loss moves by one. */
+  shift?: number;
 }) {
-  const damage = card.battle && card.damage;
+  const damage = card.battle && card.damage && card.damage + shift;
   const gain = card.reward?.loot ?? (card.reward?.heal ? "heal" : null);
   // Tonight's omen is a boon too, but its card says so in words; a boss or
   // an elite offers its spoils.
@@ -577,10 +598,10 @@ export function OfferPlaque({
 }
 
 /** Items the party can use on the card in play, offered as plaques at the
- * card's foot: a smoke bomb before a room fight, a loaded die after a lost
- * roll. The draught waits in the satchel (the meter). */
+ * card's foot: a Tera Orb or a smoke bomb before a fight, a loaded die after
+ * a lost roll. The draught waits in the satchel (the meter). */
 export function usableItems(s: SessionState): Loot[] {
-  return (["smoke", "die", "round"] as const).filter((item) =>
+  return (["tera", "smoke", "die", "round"] as const).filter((item) =>
     canUseLoot(s, item),
   );
 }
@@ -605,7 +626,9 @@ export function LootPlaque({
           ? theme.flee
           : item === "round"
             ? theme.pass
-            : theme.reroll}
+            : item === "tera"
+              ? theme.tera
+              : theme.reroll}
       </span>
     </button>
   );
@@ -816,6 +839,15 @@ export function CrawlRecord({
           ))}
         </div>
       )}
+      {part === "matchup" &&
+        session &&
+        (() => {
+          const card = currentCardOf(session);
+          const m = cardMatchup(session.quest, card);
+          return m?.edge && record.form ? (
+            <MatchupPanel matchup={m} card={card} starter={record.form.title} />
+          ) : null;
+        })()}
       {show("party") && record.form && (
         <FormPanel form={record.form} theme={theme} />
       )}
@@ -972,17 +1004,18 @@ export function CrawlRecord({
 }
 
 /** The starter or adventurer it is now (owner, 2026-10-17), with its
- * power. A League starter wears its type: the medallion, a tint, and its
- * types named under it. */
+ * power. A League starter wears its type (2026-10-25: one for the run): the
+ * medallion, a tint, its type named under it, and the types it is strong
+ * and weak against, so the table can plan ahead. */
 function FormPanel({
   form,
   theme,
 }: {
-  form: { title: string; rules: string };
+  form: { title: string; rules: string; type?: PokemonType };
   theme: CrawlTheme;
 }) {
-  const types = theme.words.badges ? formType(form.title) : undefined;
-  if (!types)
+  const type = theme.words.badges ? form.type : undefined;
+  if (!type)
     return (
       <p className="crawl-omen">
         <CrawlIcon name="adventurer" theme={theme} />
@@ -990,27 +1023,21 @@ function FormPanel({
         <span className="omen-rules">{form.rules}</span>
       </p>
     );
-  const [lead] = types;
   return (
-    <p
-      className={`crawl-omen typed-omen type-${lead}`}
-      style={typeStyle(lead) as CSSProperties}
+    <div
+      className={`crawl-omen typed-omen type-${type}`}
+      style={typeStyle(type) as CSSProperties}
     >
-      <TypeMark type={lead} />
+      <TypeMark type={type} />
       <strong>{form.title}</strong>
       <span className="omen-rules">{form.rules}</span>
       <small className="type-chips">
-        {types.map((t) => (
-          <span
-            key={t}
-            className="type-chip"
-            style={typeStyle(t) as CSSProperties}
-          >
-            {pokemonTypes[t].name}
-          </span>
-        ))}
+        <span className="type-chip" style={typeStyle(type) as CSSProperties}>
+          {pokemonTypes[type].name}
+        </span>
       </small>
-    </p>
+      <TypeEdges type={type} />
+    </div>
   );
 }
 

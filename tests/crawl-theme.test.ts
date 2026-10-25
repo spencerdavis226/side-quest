@@ -105,6 +105,7 @@ describe("how to play", () => {
     expect(rows.map((r) => r.title)).toEqual([
       "Team HP",
       "Battles",
+      "Types",
       "Gyms and badges",
       "Evolution",
       "Bag",

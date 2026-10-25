@@ -214,8 +214,14 @@ export default function FullScreenDice({
       }
       if (expedited.current) renderer.finish();
       setStatus("rolling");
-      const actual = await renderer.roll(card.dice!.sides, roll.values);
+      // A type edge throws both attempts; the dropped one fades once they
+      // land, leaving the kept dice lit.
+      const actual = await renderer.roll(card.dice!.sides, [
+        ...roll.values,
+        ...(roll.dropped ?? []),
+      ]);
       if (canceled) return;
+      if (roll.dropped) renderer.dim(roll.values.length);
       clearTimeout(timeout);
       setRollMs(Math.round(performance.now() - started));
       setStatus(`settled:${actual.join(",")}`);
@@ -285,6 +291,11 @@ export default function FullScreenDice({
         <div className="roll-static-result">
           {roll.values.map((value, index) => (
             <span key={index}>{value}</span>
+          ))}
+          {roll.dropped?.map((value, index) => (
+            <span key={`dropped-${index}`} className="dropped">
+              {value}
+            </span>
           ))}
         </div>
       )}

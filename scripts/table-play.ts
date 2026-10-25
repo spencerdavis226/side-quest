@@ -44,6 +44,7 @@ export function nextMove(s: SessionState, random: Random): SessionState {
   else if (party && party.hearts <= 3 && can("draught"))
     next = spendLoot(s, "draught", random);
   else if (can("candy")) next = spendLoot(s, "candy", random);
+  else if (can("tera") && random() < 0.5) next = spendLoot(s, "tera", random);
   else if (can("smoke") && random() < 0.3) next = spendLoot(s, "smoke", random);
   else if (awaitingChoice(s))
     next = random() < 0.5 ? skipRoll(s, random) : rollDice(s, random);

@@ -30,7 +30,9 @@ export const legName = (leg: Leg) =>
   leg === 8 ? "Victory Road" : `Route ${leg + 1}`;
 
 /** The d20 a wild Pokémon or a trainer needs, leg by leg. */
-export const WILD_NEED = [4, 5, 6, 7, 8, 8, 9, 9, 10] as const;
+// Routes 5 to 8 eased by one on 2026-10-25, when each route grew three
+// more fights (`wilds.ts`); a d6 fight keeps its losing faces at these.
+export const WILD_NEED = [4, 5, 6, 7, 7, 7, 8, 8, 10] as const;
 /** Team HP a lost route fight costs. */
 export const WILD_HURT = [1, 1, 1, 1, 1, 1, 2, 2, 2] as const;
 /** The d20 a hazard's save needs; a hazard only ever costs one. */

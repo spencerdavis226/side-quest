@@ -43,6 +43,8 @@ export interface CrawlTheme {
   reroll: string;
   /** The plaque that passes a lost fight's drinks on (`round`). */
   pass: string;
+  /** The plaque that spends a Tera Orb before a battle (`tera`). */
+  tera: string;
   /** Drink the draught from the satchel dialog. */
   drink: string;
   /** Use the candy from the satchel dialog. */
@@ -158,6 +160,8 @@ const dungeon: CrawlTheme = {
       name: "Bar Tab",
       does: "A lost fight's drinks go to someone else",
     },
+    // The League's Tera Orb; nothing below the bar deals it.
+    tera: { name: "Prism Shard", does: "Turns a fight your way" },
   },
   curses: {
     bleed: { name: "Bleeding", does: "Every heart loss costs one more" },
@@ -166,6 +170,7 @@ const dungeon: CrawlTheme = {
   flee: "Flee",
   reroll: "Reroll",
   pass: "Pass it",
+  tera: "Attune",
   eat: "Read",
   drink: "Drink",
   omenWords: dungeonOmenWords,
@@ -324,6 +329,10 @@ const league: CrawlTheme = {
       name: "Baton Pass",
       does: "A lost battle's drinks go to someone else",
     },
+    tera: {
+      name: "Tera Orb",
+      does: "Before a battle: your starter takes the type that beats it",
+    },
   },
   curses: {
     bleed: { name: "Poisoned", does: "Every HP loss costs one more" },
@@ -332,6 +341,7 @@ const league: CrawlTheme = {
   flee: "Escape",
   reroll: "Reroll",
   pass: "Pass it",
+  tera: "Terastallize",
   drink: "Use",
   eat: "Use",
   omenWords: leagueOmenWords,
@@ -346,6 +356,7 @@ const league: CrawlTheme = {
       revive: "revive",
       candy: "rare-candy",
       round: "baton-pass",
+      tera: "tera-orb",
       bleed: "poison",
       hex: "confused",
       boss: "badge",
@@ -421,6 +432,11 @@ const league: CrawlTheme = {
         icon: "die",
         title: "Battles",
         line: "Roll the d20 and meet the number to win. No dice: the table judges, then taps Won or Lost.",
+      },
+      {
+        icon: "omen",
+        title: "Types",
+        line: "Your starter has a type. Super effective: roll twice and keep the better. Not very effective: keep the worse. No dice: a loss costs 1 HP less or more.",
       },
       {
         icon: "boss",

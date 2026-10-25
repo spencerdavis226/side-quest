@@ -1032,6 +1032,121 @@
   text-shadow: 0 1px 1px rgb(0 0 0 / 0.6);
 }
 
+/* A type edge (2026-10-25): two stacked chevrons, green up or red down. */
+.edge-mark {
+  display: block;
+  width: auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.edge-mark.edge-advantage {
+  color: #4fd27a;
+}
+.edge-mark.edge-disadvantage {
+  color: #f0564a;
+}
+.tag-edge .edge-mark {
+  height: 24px;
+  filter: drop-shadow(0 1px 0 rgb(0 0 0 / 0.6));
+}
+.tag-edge.edge-advantage {
+  border-color: #2f8a52;
+}
+.tag-edge.edge-disadvantage {
+  border-color: #9a3a30;
+}
+
+/* The matchup dialog: the starter and the foe, the chevrons between. */
+.matchup-panel {
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  text-align: center;
+}
+.matchup-sides {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+.matchup-sides > .edge-mark {
+  height: 36px;
+}
+.matchup-side {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  --mark-size: 56px;
+}
+.matchup-side strong {
+  color: #fff0cf;
+  font: 700 1rem / 1.15 var(--font-tavern);
+}
+.matchup-side small {
+  color: #c9b893;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.matchup-verdict {
+  margin: 8px 0 0;
+  font: 700 1.25rem / 1.1 var(--font-tavern);
+}
+.matchup-panel.edge-advantage .matchup-verdict {
+  color: #7fe3a0;
+}
+.matchup-panel.edge-disadvantage .matchup-verdict {
+  color: #ff8a7e;
+}
+.matchup-effect {
+  margin: 0;
+  color: #e9d7b0;
+}
+
+/* What the starter's type beats and what beats it: two rows of chips under
+   its power, so the table can plan around the fights ahead. */
+.type-edges {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 6px;
+  margin: 8px 0 0;
+  padding-top: 8px;
+  border-top: 1px solid rgb(255 240 207 / 0.18);
+}
+.type-edges > div {
+  display: grid;
+  gap: 4px;
+}
+.type-edges dt {
+  color: #e9d7b0;
+  font: 700 0.72rem / 1.2 var(--font-tavern);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.type-edges dd {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+  color: #c9b893;
+  font-size: 0.85rem;
+}
+.type-edges .type-chip {
+  padding: 3px 8px 2px;
+  border: 1px solid rgb(255 240 207 / 0.35);
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--type-light), var(--type-deep));
+  color: #fffaf0;
+  font: 700 0.66rem / 1 var(--font-tavern);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 1px rgb(0 0 0 / 0.6);
+}
+
 .crawl-curse .crawl-icon {
   grid-row: span 2;
   width: 26px;

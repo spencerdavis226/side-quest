@@ -12,6 +12,7 @@ import type {
   SessionState,
 } from "./types";
 import { rollWins } from "./dice";
+import { matchup, teraMatchup, type Matchup } from "./matchup";
 export type Random = () => number;
 export function shuffle(
   ids: string[],
@@ -478,6 +479,8 @@ export function omenForm(quest: QuestState | undefined) {
     branches: branching && canEvolve ? forms.map((e) => e.title) : null,
     /** How many later forms the card has. */
     forms: forms.length,
+    /** The League type of the form it is now (none before 2026-10-25). */
+    type: now?.type ?? card.type,
     /** The dice colours of the form it is now. */
     palette: now ? (now.palette ?? card.palette) : card.palette,
     /** The form an evolution brings next, while one evolves in a line. */
@@ -506,6 +509,35 @@ function evolve(party: PartyState, quest: QuestState, branch = 0): PartyState {
     hearts: Math.min(max, Math.max(1, party.hearts + delta)),
     loot: [...party.loot, ...(after.loot ?? [])].slice(0, size),
   };
+}
+/** The starter's type as it stands (an Eevee's form changes it). Games
+ * saved before types (2026-10-25) have none. */
+export function partyType(quest: QuestState | undefined) {
+  const id = quest?.party?.omen;
+  const card = id ? finaleCard(quest, id) : undefined;
+  const form = quest?.party?.form ?? 0;
+  return (form ? card?.evolves?.[form - 1]?.type : undefined) ?? card?.type;
+}
+/** A League fight's type matchup against the starter: only a battle with a
+ * type, once the starter has one. */
+export function cardMatchup(
+  quest: QuestState | undefined,
+  card: CardDefinition,
+): Matchup | null {
+  const mine = partyType(quest);
+  if (!quest?.party || !card.battle || !card.type || !mine) return null;
+  if (quest.party.tera === card.id) return teraMatchup(mine, card.type);
+  return matchup(mine, card.type);
+}
+/** A plaque-settled fight has no roll to bend: a lost one costs one HP less
+ * with the edge, one more against it. */
+export function verdictShift(
+  quest: QuestState | undefined,
+  card: CardDefinition,
+): number {
+  if (card.dice) return 0;
+  const edge = cardMatchup(quest, card)?.edge;
+  return edge === "advantage" ? -1 : edge === "disadvantage" ? 1 : 0;
 }
 /** How many items the satchel holds. */
 export const satchelSize = (quest: QuestState | undefined) =>
@@ -746,6 +778,19 @@ export function canUseLoot(s: SessionState, item: Loot): boolean {
         !card.dice?.choice &&
         !party.press
       );
+    case "tera": {
+      // Before a typed battle's roll (or its verdict), when the starter
+      // doesn't already have the edge.
+      const edge = cardMatchup(s.quest, card)?.edge;
+      return (
+        s.phase === "revealed" &&
+        !s.roll &&
+        !card.dice?.choice &&
+        !party.press &&
+        edge !== undefined &&
+        edge !== "advantage"
+      );
+    }
     case "shield":
     case "revive":
       return false; // Each works on its own, when it is needed.
@@ -779,6 +824,14 @@ export function spendLoot(
       return { ...used, roll: null };
     case "smoke":
       return discard(used, random, "fled");
+    case "tera":
+      return {
+        ...used,
+        quest: {
+          ...used.quest,
+          party: { ...used.quest.party!, tera: currentCard(s).id },
+        },
+      };
     case "candy":
       return {
         ...used,
@@ -876,7 +929,8 @@ function settleParty(
     next = hurt(
       next,
       (card.damage +
-        (card.encounter ? (omen?.hurt?.[card.encounter] ?? 0) : 0)) *
+        (card.encounter ? (omen?.hurt?.[card.encounter] ?? 0) : 0) +
+        verdictShift(quest, card)) *
         (nat === 1 ? 2 : 1),
     );
   if (outcome === null || outcome === "won") {
@@ -924,6 +978,11 @@ function settleParty(
     }
     next = { ...next };
     delete next.press;
+  }
+  // A Tera Orb lasts the one fight.
+  if (next.tera !== undefined) {
+    next = { ...next };
+    delete next.tera;
   }
   // A boss's or an ambush's boon comes when it falls (`discard`).
   if (!card.hits && (outcome === null || outcome === "won"))
