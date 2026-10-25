@@ -29,8 +29,8 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Tequila Water | `house.sheet-026` | sip | Never have I ever been to Mexico. Drink if you have, 3 if you drank the water and blamed tequila |  |
 | ☐ | Michael Mouse | `house.sheet-027` | sip | How many distinct Disney parks have you been to? Drink that many |  |
 | ☐ | Batrick | `house.sheet-031` | sip | Take a (rabies) shot |  |
-| ☐ | Same | `house.sheet-036` | sip | You called Same, give d6 | 1d6 — Give {total}. |
-| ☐ | Same | `house.sheet-037` | sip | You didn't call Same, take d6 | 1d6 — Drink {total}. |
+| ☐ | Called It | `house.sheet-036` | sip | Ride the Bus: you called Same and it was Same. Right! Roll d6 and give that many. | 1d6 — Give {total}. |
+| ☐ | Same Card, Wrong | `house.sheet-037` | sip | Ride the Bus: you called higher or lower, but it was Same. Wrong! Roll d6 and drink that many. | 1d6 — Drink {total}. |
 | ☐ | The Rock | `house.sheet-038` | sip | Finish your drink, you don't get to pass it along |  |
 | ☐ | Drink, bitch | `house.sheet-045` | sip | If you drank on the last card, drink again, bitch |  |
 | ☐ | Mile High | `house.sheet-050` | sip | Never have I ever flown First Class. Drink if you have, 3 if you've joined the mile-high club |  |
@@ -48,8 +48,8 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Lost in Thailand | `house.sheet-072` | sip | Never have I ever been to Thailand. Drink if you have, 3 if you can't say what happened there |  |
 | ☐ | Vending Roulette | `house.sheet-073` | sip | Never have I ever been to Japan. Drink if you have, 3 if a vending machine sold you something weird |  |
 | ☐ | Code Brown | `house.sheet-074` | sip | Never have I ever shit my pants. Drink if you have, 2 if you've shit yourself at the cabin. |  |
-| ☐ | Split the G | `house.sheet-078` | sip | Congrats ya nailed it, give 1d6 drinks | 1d6 — Give {total}. |
-| ☐ | Split the G | `house.sheet-079` | sip | You fucking blew it, drink 1d6 drinks | 1d6 — Drink {total}. |
+| ☐ | Clean Split | `house.sheet-078` | sip | Split the G: drink a Guinness to the middle of the G. Nailed it! Roll d6 and give that many. | 1d6 — Give {total}. |
+| ☐ | Missed the G | `house.sheet-079` | sip | Split the G: drink a Guinness to the middle of the G. Missed it! Roll d6 and drink that many. | 1d6 — Drink {total}. |
 | ☐ | Blessing & a Curse | `house.sheet-094` | sip | Give 1d6 drinks and take a different 1d6 drinks | 2d6 — Give {first} and drink {second}. |
 | ☐ | Vowels | `house.sheet-102` | sip | Drink for every vowel in your name |  |
 | ☐ | Fuck You In Particular | `cabin.fuck-you` | sip | The game has a personal problem with you. Roll d6 and take it. | 1d6 — 1-1: It hates you a lot. Drink 9. 2-2: Drink 8. 3-3: Drink 7. 4-4: Drink 6. 5-5: Drink 5. 6-6: It only mildly hates you. Drink 4. |
@@ -248,7 +248,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Who the Fuck Are You? | `core.no-names` | rule | Until your next turn, nobody uses names. Slip: drink 2. |  |
 | ☐ | Church Mode | `core.potty-mouth` | rule | Until your next turn, everyone whispers like they're in church. Slip: drink 2. |  |
 | ☐ | Cursed Number | `core.cursed-number` | rule | Roll d6. Nobody may say that number until your next turn. Slip: drink 2. | 1d6 — {total} is banned until your next turn. Say it: drink 2. |
-| ☐ | Buffalo | `core.buffalo` | rule | It's gotta go. |  |
+| ☐ | Buffalo | `core.buffalo` | rule | Buffalo! Finish your drink. It's gotta go. |  |
 | ☐ | Little Green Man | `core.little-green-man` | rule | Until your next turn, everyone removes the tiny man before drinking. Slip: drink 2. |  |
 | ☐ | Question Master | `core.question-master` | rule | Until your next turn, anyone who answers your question drinks 2. |  |
 | ☐ | Eight Is Mate | `core.kings-eight` | rule | Pick a mate until your next turn. When one of you drinks, both drink, holding hands. |  |

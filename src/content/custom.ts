@@ -210,16 +210,16 @@ const sheetRows: CardDefinition[] = [
   ),
   houseCard(
     "sheet-036",
-    "Same",
+    "Called It",
     "sip",
-    "You called Same, give d6",
+    "Ride the Bus: you called Same and it was Same. Right! Roll d6 and give that many.",
     roll(1, 6, "Give {total}."),
   ),
   houseCard(
     "sheet-037",
-    "Same",
+    "Same Card, Wrong",
     "sip",
-    "You didn't call Same, take d6",
+    "Ride the Bus: you called higher or lower, but it was Same. Wrong! Roll d6 and drink that many.",
     roll(1, 6, "Drink {total}."),
   ),
   houseCard(
@@ -454,16 +454,16 @@ const sheetRows: CardDefinition[] = [
   ),
   houseCard(
     "sheet-078",
-    "Split the G",
+    "Clean Split",
     "sip",
-    "Congrats ya nailed it, give 1d6 drinks",
+    "Split the G: drink a Guinness to the middle of the G. Nailed it! Roll d6 and give that many.",
     roll(1, 6, "Give {total}."),
   ),
   houseCard(
     "sheet-079",
-    "Split the G",
+    "Missed the G",
     "sip",
-    "You fucking blew it, drink 1d6 drinks",
+    "Split the G: drink a Guinness to the middle of the G. Missed it! Roll d6 and drink that many.",
     roll(1, 6, "Drink {total}."),
   ),
   houseCard(

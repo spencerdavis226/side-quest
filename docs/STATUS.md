@@ -2,6 +2,12 @@
 
 Updated 2026-10-25. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Cards that leaned on their titles (2026-10-25; owner; branch `claude/standalone-cards`)
+
+A sweep of all 1,624 cards for bodies that only make sense with the title found six (the Most Likely To fix is PR #39). Buffalo now says "Buffalo! Finish your drink. It's gotta go." (owner: Buffalo means finish your drink). Sheet rows 036 and 037 are the Ride the Bus "Same" joke ("Called It", "Same Card, Wrong"), rows 078 and 079 the Guinness challenge ("Clean Split", "Missed the G"); the d6 rolls are unchanged. Recorded in `reference/README.md`. `core.buffalo` left the duration exceptions in `tests/card-logic.test.ts` (it no longer lasts). **Open:** House Tin Hat Society (`house.sheet-088`, "One conspiracy theory you really believe") is a fragment with no consequence; the owner has not said what it should do.
+
+- **Verification:** `npm test` 286 passed; lint, typecheck and `BASE_PATH=/side-quest/ npm run build` passed. Browser specs not run; title fit unmeasured.
+
 ## League types (2026-10-25; owner; branch `claude/league-types`, PR #35)
 
 The owner asked for Pokémon types: one type per starter for the run, a type on every League card where it makes sense, advantage against types the starter beats and disadvantage against types that beat it, shown ahead of the roll. They approved every recommendation in the plan (both-ways matchups, ±1 HP on plaque fights, d6 sets rolled twice, a starter's first type for the run, rivals by their ace), then asked for at least one starter of every type, a new item if it adds no bloat, balance through more opponent cards rather than perks ("fun and flavor are drastically more important than balance"), and a cleaner UI: "a logo or something", not banners and text.

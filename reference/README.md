@@ -154,3 +154,13 @@ Drop the raw file in this folder with a descriptive name, add a row to the
 table above, and (if it has a structured parse) add a small `scripts/*-reference.ts`
 script plus an npm alias. Keep parsers read-only against the raw file and write
 their JSON next to it. See `docs/AUTHORING.md` for House-content rules.
+
+## 2026-10-25 Cards that leaned on their titles
+
+At the owner's request, cards whose title carried half the instruction now say
+it in the body. Buffalo (`core.buffalo`) says to finish your drink. The four
+sheet rows 036, 037, 078 and 079 get their own titles ("Called It", "Same Card,
+Wrong", "Clean Split", "Missed the G") and say what happened: Same is the Ride
+the Bus joke where a higher-or-lower guess loses to a matching card; Split the
+G is drinking a Guinness down to the middle of the G on the glass. The dice
+(d6, give or drink) are unchanged. The raw sheet is unchanged.
