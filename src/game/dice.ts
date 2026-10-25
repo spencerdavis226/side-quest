@@ -200,22 +200,51 @@ export function rollDice(
     }
     return { values, reading, flinched };
   };
-  // A League dice fight with a type edge is rolled twice: advantage keeps
-  // the better attempt (a win over a loss, else the higher total) and
-  // disadvantage the worse.
+  // A League dice fight with a type edge rolls double the dice and keeps
+  // the best of them (advantage) or the worst (disadvantage): a d20 keeps
+  // the better or worse of two (a win over a loss, then the higher total);
+  // 2d6 keeps the two highest or lowest of four (owner, 2026-10-25: four
+  // dice on screen read as four dice, so they are one pool, not two pairs).
   const edge = cardMatchup(session.quest, card)?.edge;
   let kept = attempt();
   let dropped: number[] | undefined;
   if (edge) {
-    const other = attempt();
-    const rank = (a: typeof kept) =>
-      (rollWins(dice, a.values, a.reading) ? 1000 : 0) +
-      readTotal(dice, a.values, a.reading);
-    const better = rank(other) > rank(kept);
-    if (better === (edge === "advantage")) {
-      dropped = kept.values;
-      kept = other;
-    } else dropped = other.values;
+    const rank = (values: number[], reading?: RollReading) =>
+      (rollWins(dice, values, reading) ? 1000 : 0) +
+      readTotal(dice, values, reading);
+    const better = (a: number, b: number) =>
+      edge === "advantage" ? a > b : a < b;
+    if (dice.count === 1) {
+      // Each die has its own omen reading (its natural, a flinch).
+      const other = attempt();
+      if (
+        better(
+          rank(other.values, other.reading),
+          rank(kept.values, kept.reading),
+        )
+      ) {
+        dropped = kept.values;
+        kept = other;
+      } else dropped = other.values;
+    } else {
+      const pool = [
+        ...kept.values,
+        ...Array.from({ length: dice.count }, sample),
+      ];
+      // The highest faces with the edge, the lowest against it: what the
+      // table sees (the kept dice stay lit), and never a pool that can't
+      // win (keeping the worst-reading pair made a doubles-lose gym
+      // unwinnable).
+      const pick = pool
+        .map((_, i) => i)
+        .sort((i, j) =>
+          edge === "advantage" ? pool[j] - pool[i] : pool[i] - pool[j],
+        )
+        .slice(0, dice.count)
+        .sort((i, j) => i - j);
+      kept = { ...kept, values: pick.map((i) => pool[i]) };
+      dropped = pool.filter((_, i) => !pick.includes(i));
+    }
   }
   const { values, reading, flinched } = kept;
   const total = values.reduce((a, b) => a + b, 0);

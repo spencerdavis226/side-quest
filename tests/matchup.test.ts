@@ -322,4 +322,31 @@ describe("type edge in a League run", () => {
     const lost = settleBattle(gym, false);
     expect(lost.quest!.step).toBe(gym.quest!.step);
   });
+
+  it("rolls 2d6 with an edge as four dice, keeping the highest or lowest two", () => {
+    // A 2d6 gym, against a starter its type beats and one that beats it.
+    const pair = gyms.find((c) => c.dice?.count === 2 && c.dice.sides === 6)!;
+    const starters = cards.filter((c) => c.id.startsWith("pokemon.starter-"));
+    const edged = (edge: string) =>
+      starters.find(
+        (st) =>
+          cardMatchup(facing(st.id.slice(16), pair.id).quest, pair)?.edge ===
+          edge,
+      )!;
+    for (const edge of ["advantage", "disadvantage"] as const) {
+      const who = edged(edge).id.replace("pokemon.starter-", "");
+      for (let seed = 1; seed <= 40; seed++) {
+        const roll = rollDice(facing(who, pair.id), seeded(seed)).roll!;
+        expect(roll.edge).toBe(edge);
+        expect(roll.values).toHaveLength(2);
+        expect(roll.dropped).toHaveLength(2);
+        // The two highest faces with the edge, the two lowest against it.
+        const sorted = [...roll.values, ...roll.dropped!].sort((a, b) => a - b);
+        expect([...roll.values].sort((a, b) => a - b)).toEqual(
+          edge === "advantage" ? sorted.slice(2) : sorted.slice(0, 2),
+        );
+        validateRoll(roll, pair.dice);
+      }
+    }
+  });
 });

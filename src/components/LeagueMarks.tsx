@@ -80,9 +80,9 @@ export function MatchupPanel({
       </p>
       <p className="matchup-effect">
         {card.dice
-          ? good
-            ? "Roll twice and keep the better."
-            : "Roll twice and keep the worse."
+          ? card.dice.count === 1
+            ? `Roll two dice and keep the ${good ? "better" : "worse"}.`
+            : `Roll ${card.dice.count * 2} dice and keep the ${good ? "highest" : "lowest"} ${card.dice.count}.`
           : good
             ? "A loss costs 1 HP less."
             : "A loss costs 1 HP more."}
