@@ -62,7 +62,9 @@ describe("League type marks", () => {
   it("types only League cards, and only fights and starters", () => {
     for (const c of allCards.filter((c) => c.type)) {
       expect(leagueIds.has(c.id), c.id).toBe(true);
-      expect(!!c.battle || c.encounter === "omen", c.id).toBe(true);
+      expect(!!c.battle || !!c.strike || c.encounter === "omen", c.id).toBe(
+        true,
+      );
     }
     for (const id of Object.keys(leagueTypes))
       expect(
@@ -75,7 +77,7 @@ describe("League type marks", () => {
     // A new League fight must be typed in `league/types.ts` or added here
     // with the reason it has none.
     const untyped = league
-      .filter((c) => c.battle && !c.type)
+      .filter((c) => (c.battle || c.strike) && !c.type)
       .map((c) => c.id.replace("pokemon.", ""))
       .sort();
     expect(untyped).toEqual(

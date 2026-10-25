@@ -80,10 +80,32 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         fail(`Invalid battle: ${c.id}`);
     } else if (c.dice?.outcomes?.some((o) => o.win) || c.dice?.doublesWin)
       fail(`Win outcome on a card that is not a battle: ${c.id}`);
+    // A strike is a fight the type matchup settles: three lines, and nothing
+    // that would put the card aside another way.
+    if (
+      c.strike !== undefined &&
+      (!c.strike ||
+        c.battle ||
+        c.dice ||
+        c.timer ||
+        c.secret ||
+        c.offers ||
+        c.hits ||
+        (["even", "advantage", "disadvantage"] as const).some(
+          (k) =>
+            typeof c.strike![k] !== "string" ||
+            !c.strike![k].trim() ||
+            c.strike![k].length > 60,
+        ))
+    )
+      fail(`Invalid strike: ${c.id}`);
     // Pub Crawl stakes: hearts lost, boss swings, rewards and curses.
     const count = (n: unknown, max: number) =>
       Number.isSafeInteger(n) && (n as number) >= 1 && (n as number) <= max;
-    if (c.damage !== undefined && (!c.battle || !count(c.damage, 5)))
+    if (
+      c.damage !== undefined &&
+      (!(c.battle || c.strike) || !count(c.damage, 5))
+    )
       fail(`Invalid damage: ${c.id}`);
     if (c.hits !== undefined && (!c.battle || !count(c.hits, 5)))
       fail(`Invalid boss hits: ${c.id}`);
@@ -153,7 +175,8 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
     // trio), on a fight or a starter, and on a starter's form.
     if (
       (c.type !== undefined &&
-        (!POKEMON_TYPES.includes(c.type) || (!c.battle && !c.omen))) ||
+        (!POKEMON_TYPES.includes(c.type) ||
+          (!c.battle && !c.omen && !c.strike))) ||
       (Array.isArray(c.evolves) &&
         c.evolves.some(
           (e) =>

@@ -432,15 +432,20 @@ export function CardStakes({
   hits = 0,
   theme,
   shift = 0,
+  strike,
 }: {
   card: CardDefinition;
   party: PartyState;
   hits?: number;
   theme: CrawlTheme;
+  /** A strike's matchup: it costs hearts only against the starter's type. */
+  strike?: "advantage" | "disadvantage" | "even";
   /** A League type edge on a plaque-settled fight: the loss moves by one. */
   shift?: number;
 }) {
-  const damage = card.battle && card.damage && card.damage + shift;
+  const damage = card.strike
+    ? strike === "disadvantage" && card.damage
+    : card.battle && card.damage && card.damage + shift;
   const gain = card.reward?.loot ?? (card.reward?.heal ? "heal" : null);
   // Tonight's omen is a boon too, but its card says so in words; a boss or
   // an elite offers its spoils.
@@ -461,7 +466,7 @@ export function CardStakes({
         {damage ? (
           <span
             className="stake stake-loss"
-            aria-label={`Losing costs ${heartCount(theme, damage + bleed)}`}
+            aria-label={`${card.strike ? "Costs" : "Losing costs"} ${heartCount(theme, damage + bleed)}`}
           >
             <b>−{damage + bleed}</b>
             <CrawlIcon name="heart" theme={theme} />

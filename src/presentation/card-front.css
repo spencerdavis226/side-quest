@@ -284,6 +284,21 @@
 .dice-result .resolved-instruction {
   margin: 0;
 }
+/* A strike (League): the setup, a rule, then the line its matchup picked. */
+.card-strike {
+  width: 100%;
+  margin-block: auto;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 3.4cqw, max(16px, 3cqw));
+}
+.card-strike p {
+  margin: 0;
+}
+.card-strike .strike-line {
+  padding-top: clamp(8px, 2.6cqw, max(12px, 2.2cqw));
+  border-top: 1.5px solid rgb(55 36 18 / 0.35);
+}
 
 @keyframes result-reveal {
   from {

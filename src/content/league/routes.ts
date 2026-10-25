@@ -13,6 +13,7 @@ import {
   moves,
   pair,
   rival,
+  strike,
   trainer,
   vs,
   wild,
@@ -27,31 +28,27 @@ import { moreEvolutions, moreWilds, teraRaid } from "./wilds";
 
 // --- Route 1 -----------------------------------------------------------------
 const route1: CardDefinition[] = [
-  wild(
+  strike(
     0,
     "route-pidgey",
     "Pidgey",
-    "Wild Pidgey appeared! Shield your eyes and roll d6 for its move.",
-    moves(
-      ["Sand Attack, right in the eyes. Drink 2 with them shut."],
-      [
-        "Gust. Your hair is ruined. Give 1.",
-        "Tackle. Adorable. Give 2.",
-        "Quick Attack, into a window. Give 2.",
-        "It pecks your left neighbor instead. They drink 2.",
-        "Whirlwind blows it into the next town. Give 3.",
-      ],
-    ),
+    "Wild Pidgey appeared! It throws Sand Attack right at your eyes.",
+    {
+      even: "Eyes shut. Drink 2 without looking.",
+      advantage: "Quick Attack first. Give 2.",
+      disadvantage: "Gust ruins your hair. Drink 3.",
+    },
   ),
-  wild(
+  strike(
     0,
     "route-rattata",
     "Rattata",
-    "Wild Rattata appeared! It is chewing on your shoelaces like it pays rent. Roll d20.",
-    vs(
-      "It bites your ankle. Drink 2 standing on one foot.",
-      "Evicted. Whoever has the worst shoes drinks 2.",
-    ),
+    "Wild Rattata is chewing your shoelaces like it pays rent.",
+    {
+      even: "Evicted. Whoever has the worst shoes drinks 2.",
+      advantage: "Top percentage Rattata! Give 2.",
+      disadvantage: "It bites your ankle. Drink 4 on one foot.",
+    },
   ),
   wild(
     0,
@@ -75,26 +72,27 @@ const route1: CardDefinition[] = [
       "A pair! Bidoof proposes. Your left neighbor officiates and drinks 3.",
     ),
   ),
-  wild(
+  strike(
     0,
     "route-wooloo",
     "Wooloo",
-    "Wild Wooloo rolls at you like a drunk sheep down a hill. Roll d20.",
-    vs(
-      "Bowled over. Drink 2, then baa like you mean it.",
-      "You hop it like a hurdle. Give 2.",
-      { crit: "You shear it and keep the sweater. Give 4." },
-    ),
+    "Wild Wooloo rolls at you like a drunk sheep down a hill.",
+    {
+      even: "You hop it like a hurdle. Give 2.",
+      advantage: "You shear it and keep the sweater. Give 3.",
+      disadvantage: "Bowled over. Drink 4, then baa.",
+    },
   ),
-  wild(
+  strike(
     0,
     "route-lechonk",
     "Lechonk",
-    "Wild Lechonk is snorting your snacks. Everyone oinks at it; the drawer rolls d20.",
-    vs(
-      "It eats the whole bag. Oink, then drink 2.",
-      "Bacon later. The quietest oinker drinks 2.",
-    ),
+    "Wild Lechonk is snorting your snacks. Everyone oinks at it.",
+    {
+      even: "Bacon later. The quietest oinker drinks 2.",
+      advantage: "You steal its snacks. Give 3.",
+      disadvantage: "It eats the whole bag. Drink 4, oink.",
+    },
   ),
   trainer(
     0,

@@ -9,6 +9,7 @@ import type {
   Offer,
   OmenEffect,
   Evolution,
+  Strike,
 } from "../../game/types";
 import { cardFactory, choice, rollTable } from "../author";
 import { withNaturals } from "../naturals";
@@ -182,6 +183,24 @@ export const wild = (
 ): CardDefinition => ({
   ...spot(leg, "Wild", "monster", id, title, rules, fight(WILD_NEED[leg])),
   battle: true,
+  damage: WILD_HURT[leg],
+  ...stakes(more),
+});
+
+/** A strike (2026-10-25): a wild Pokémon with no roll. The type matchup
+ * picks one of three lines and what the card costs: the starter's edge wins
+ * (`loot` comes, nothing is lost), a disadvantage loses (`WILD_HURT` hearts,
+ * a `curse`), and an even matchup is only what its line says. */
+export const strike = (
+  leg: Leg,
+  id: string,
+  title: string,
+  rules: string,
+  lines: Strike,
+  more: Extra = {},
+): CardDefinition => ({
+  ...spot(leg, "Wild", "monster", id, title, rules),
+  strike: lines,
   damage: WILD_HURT[leg],
   ...stakes(more),
 });

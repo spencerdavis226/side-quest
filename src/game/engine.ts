@@ -576,7 +576,8 @@ export function cardMatchup(
   card: CardDefinition,
 ): Matchup | null {
   const mine = partyType(quest);
-  if (!quest?.party || !card.battle || !card.type || !mine) return null;
+  if (!quest?.party || !(card.battle || card.strike) || !card.type || !mine)
+    return null;
   if (quest.party.tera === card.id) return teraMatchup(mine, card.type);
   return matchup(mine, card.type);
 }
@@ -609,9 +610,33 @@ export function verdictShift(
   quest: QuestState | undefined,
   card: CardDefinition,
 ): number {
-  if (card.dice) return 0;
+  // A strike prints its own cost for each matchup.
+  if (card.dice || card.strike) return 0;
   const edge = cardEdge(quest, card);
   return edge === "advantage" ? -1 : edge === "disadvantage" ? 1 : 0;
+}
+/** What a strike comes to: the starter's edge wins it, a disadvantage loses
+ * it, and an even matchup (or no type) is neither. */
+export function strikeOutcome(
+  quest: QuestState | undefined,
+  card: CardDefinition,
+): "won" | "lost" | null {
+  if (!card.strike) return null;
+  const edge = cardMatchup(quest, card)?.edge;
+  return edge === "advantage" ? "won" : edge === "disadvantage" ? "lost" : null;
+}
+/** The line a strike reads for the current matchup. */
+export function strikeText(
+  quest: QuestState | undefined,
+  card: CardDefinition,
+): string | null {
+  if (!card.strike) return null;
+  const outcome = strikeOutcome(quest, card);
+  return outcome === "won"
+    ? card.strike.advantage
+    : outcome === "lost"
+      ? card.strike.disadvantage
+      : card.strike.even;
 }
 /** How many items the satchel holds. */
 export const satchelSize = (quest: QuestState | undefined) =>
@@ -1092,12 +1117,14 @@ function discard(
     previousId = card.id;
   // In a quest only a won battle counts.
   const outcome: Outcome | null =
-    !s.quest || !card.battle
+    !s.quest || !(card.battle || card.strike)
       ? null
-      : (verdict ??
-        (card.dice && s.roll && rollWins(card.dice, s.roll.values, s.roll)
-          ? "won"
-          : "lost"));
+      : card.strike
+        ? strikeOutcome(s.quest, card)
+        : (verdict ??
+          (card.dice && s.roll && rollWins(card.dice, s.roll.values, s.roll)
+            ? "won"
+            : "lost"));
   const lost = outcome === "lost";
   const lostCount = (s.quest?.lost ?? 0) + 1;
   const party = s.quest?.party;

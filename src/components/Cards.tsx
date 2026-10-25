@@ -13,6 +13,14 @@ type Overflow = "none" | "top" | "bottom" | "both";
 /** The smallest a rule's text shrinks to fit the card: 26px becomes 20px. */
 const RULES_FIT_MIN = 0.77;
 
+/** Resolved amounts carry the emphasis. */
+const boldNumbers = (text: string) =>
+  text
+    .split(/(\d+)/)
+    .map((part, index) =>
+      /^\d+$/.test(part) ? <strong key={index}>{part}</strong> : part,
+    );
+
 export function CardFace({
   card,
   packIds,
@@ -41,6 +49,9 @@ export function CardFace({
    * which also counts a Pub Crawl knack); read from `matchup` without it. */
   shift?: number;
 }) {
+  // A strike reads the line for its matchup (the engine's `strikeText`).
+  const strikeEdge = matchup?.edge ?? "even";
+  const strikeLine = card.strike ? card.strike[strikeEdge] : null;
   const gesture = useRef<{
     pointerId: number;
     startX: number;
@@ -302,15 +313,7 @@ export function CardFace({
                 <p className="dice-result-flinch">A 20 was rerolled.</p>
               )}
               <p className="resolved-instruction">
-                {diceResultText(card, roll!)
-                  .split(/(\d+)/)
-                  .map((part, index) =>
-                    /^\d+$/.test(part) ? (
-                      <strong key={index}>{part}</strong>
-                    ) : (
-                      part
-                    ),
-                  )}
+                {boldNumbers(diceResultText(card, roll!))}
               </p>
             </div>
           ) : shown === "secret" && card.secret ? (
@@ -323,6 +326,16 @@ export function CardFace({
             </div>
           ) : shown === "end" && card.timer ? (
             <p className="resolved-instruction timer-end">{card.timer.end}</p>
+          ) : strikeLine ? (
+            // A strike: the setup, then the line its type matchup picked.
+            <div className="card-strike">
+              <p>{card.rules}</p>
+              <p
+                className={`resolved-instruction strike-line strike-${strikeEdge}`}
+              >
+                {boldNumbers(strikeLine)}
+              </p>
+            </div>
           ) : (
             <p>{card.rules}</p>
           )}
@@ -335,6 +348,7 @@ export function CardFace({
               hits={hits}
               theme={crawl}
               shift={shift ?? matchupShift(card, matchup)}
+              strike={card.strike ? strikeEdge : undefined}
             />
           )}
           {/* A crawl plays one pack: its seals take the foot instead. */}
@@ -347,20 +361,27 @@ export function CardFace({
 /** A plaque-settled fight's loss moves by one HP with a type edge (the
  * engine's `verdictShift`). */
 const matchupShift = (card: CardDefinition, matchup: Matchup | null) =>
-  card.dice || !matchup?.edge ? 0 : matchup.edge === "advantage" ? -1 : 1;
+  card.dice || card.strike || !matchup?.edge
+    ? 0
+    : matchup.edge === "advantage"
+      ? -1
+      : 1;
 
 export function CardFrame({
   card,
   packIds,
   roll,
+  matchup,
 }: {
   card: CardDefinition;
   packIds?: readonly string[];
   roll?: DiceRoll | null;
+  /** A strike's matchup, so it reads the line it was put aside with. */
+  matchup?: Matchup | null;
 }) {
   return (
     <article className="previous-card">
-      <CardFace card={card} packIds={packIds} roll={roll} />
+      <CardFace card={card} packIds={packIds} roll={roll} matchup={matchup} />
     </article>
   );
 }

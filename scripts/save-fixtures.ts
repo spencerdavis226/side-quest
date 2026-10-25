@@ -18,6 +18,7 @@ import { cards, packs } from "../src/content/catalog";
 import {
   advance,
   awaitingChoice,
+  cardMatchup,
   createSession,
   currentCard,
   isBossCard,
@@ -112,6 +113,18 @@ const situations: [string, GameConfig, Find][] = [
     league,
     (s) => s.roll?.edge === "disadvantage" && s.roll.returned,
   ],
+  // Strikes (2026-10-25): a fight with no roll, face up, each way the
+  // matchup can go.
+  ...(["advantage", "disadvantage", "even"] as const).map(
+    (edge): [string, GameConfig, Find] => [
+      `league-strike-${edge}`,
+      league,
+      (s) =>
+        s.phase === "revealed" &&
+        !!currentCard(s).strike &&
+        (cardMatchup(s.quest, currentCard(s))?.edge ?? "even") === edge,
+    ],
+  ),
   // A Tera Orb spent on the battle face up, before its roll or verdict.
   ["league-terastallized", league, (s) => !!party(s).tera],
   [

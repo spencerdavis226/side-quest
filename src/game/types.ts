@@ -44,6 +44,13 @@ export interface DiceRoll {
   edge?: Edge;
   dropped?: number[];
 }
+/** A strike's three lines, one for each way the matchup can go. */
+export interface Strike {
+  even: string;
+  advantage: string;
+  disadvantage: string;
+}
+
 export interface CardDefinition {
   version: 1;
   id: string;
@@ -72,7 +79,14 @@ export interface CardDefinition {
    * a quest only a win counts: a lost gym leader goes back into the deck, and
    * a lost finale card is replaced by another from its stage. */
   battle?: true;
-  /** Pub Crawl: hearts the party loses when this battle is lost. */
+  /** Pokémon League (2026-10-25): a fight with no roll and no plaque. The
+   * type matchup picks the line the card reads and what it costs when it is
+   * put aside: the starter's edge wins (a reward and no `damage`), a
+   * disadvantage loses (`damage`, a curse), and anything else, or an untyped
+   * card, is even and costs only what the line says. */
+  strike?: Strike;
+  /** Pub Crawl: hearts the party loses when this battle (or a strike on a
+   * bad matchup) is lost. */
   damage?: number;
   /** A boss: the battle has to be won this many times. Each swing is one
    * deal, and the boss is dealt again, win or lose, until it falls. */

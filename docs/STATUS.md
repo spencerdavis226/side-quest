@@ -2,6 +2,23 @@
 
 Updated 2026-10-25. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## League variety rework (2026-10-25; owner approved the plan; phase 1 done locally, not committed or pushed)
+
+Goal (owner): the League's cards and gameplay were same-y. About 63% of a run's cards are one d20/d6/2d6 roll with flavor and another 16% are Won/Lost plaque fights; 78% of dice outcomes are a bare "Drink N" or "Give N". Not everything needs to be a challenge: "you lost a battle, drink 2" is fine, and type advantages still apply. Owner answers to the open questions: take the recommendations (an even matchup costs a drink and no HP; scope is the League only, the 120 deck-mode cards stay; the mix below; this note is the plan of record).
+
+**Target mix per run (about 53 cards):** rolls 33 to about 13, strikes 0 to about 12, duels (Won/Lost plaques) about 8, do-it, vote and rule cards 0 to about 10, shops, catches and evolutions about 10. A route draws 4 of 18, so the mix is set by each route's list.
+
+**Card shapes:** Strike (new), Duel (existing plaque battle: pick a rival, play a quick game, tap Won or Lost), Do-it (no stakes, may pay +1 HP or an item), Vote, Rule (a `jinx` until a gym falls; the League theme does not use jinx yet), Roll reworked (outcomes are actions and have three tiers or more, no bare drink/give).
+
+**Phases (one PR each):**
+1. **Strike spike (done, local).** `CardDefinition.strike` (three lines), `strikeOutcome`/`strikeText` in `engine.ts` (edge wins, disadvantage loses, even is neither; no new saved state), validation, the face (setup, rule, the matchup line) and the stakes seal (hearts only against the starter's type), Previous Card, 10 Route 1 and 2 wilds converted (`pidgey`, `rattata`, `wooloo`, `lechonk`, `oddish`, `diglett`, `pichu`, `seedot`, `geodude`, `snubbull`), `tests/strike.test.ts`, a browser test, fixtures `league-strike-{advantage,disadvantage,even}`. Checks run: `npm test` (304 pass), lint, typecheck, `npm run test:balance` (both suites pass), `BASE_PATH=/side-quest/ npm run build` and budgets, `tests/browser/quest.spec.ts` on Chromium (18 pass). WebKit is not installed in this container, so the WebKit project has not run; run it in CI or locally before publishing.
+2. **Routes.** Convert about 40% of wilds and trainers to strikes, rework about 30% of the remaining rolls so outcomes are actions, add about 40 do-it and vote cards (about 5 a route, some with a small reward), reshape the d6 move lists.
+3. **Retune.** Strikes cost HP only on a disadvantage, so the drain falls: tighten `WILD_NEED` and `WILD_HURT`, keep the win rate in band (18% to 40%), regenerate `docs/LEAGUE_TYPES.md`.
+4. **Gauntlet, hideouts, rival, Victory Road.** More duels and do-it moments, a catch-style Legendary mini-game, a few jinx gym rules.
+5. **Polish.** League how-to-play, `docs/CARD_REVIEW.md`, count assertions, a 320 px Playwright fit pass, an owner device check in `docs/DEVICE_CHECKLIST.md`.
+
+**Known limits:** strikes make a matchup decisive (no luck), so the Tera Orb and Escape Rope matter more; Previous Card cannot show a Tera Orb's line once the orb is cleared; the 60-character line cap and the 100-character rule cap are tight for a joke plus an action.
+
 ## Pub Crawl depth plan (2026-10-25; owner approved the ideas; all five phases done; merged as PR #41 and deployed)
 
 Goal (owner): bring Pub Crawl up to the League's fun and depth, distinct from it, without making it complex; add many cards; UI must read for drunk players at a distance (phone or mirrored TV). Phases 0 (the spike), 1 (content), 2 (forked levels and joke classes), 3 (knacks), 4 (the trophy wall and the tab) and 5 (polish and gates) are done and recorded below, built on branch `claude/pub-crawl-depth` and squash-merged to `main` as PR #41 (`3036dd3`) on the owner's word ("Merge and deploy"); the deploy run passed every job, WebKit shards included, and published to Pages at 18:14 UTC on 2026-10-25. **Next (owner):** read the new copy (117 cards in phase 1; the 18 classes' paths and taglines; the knack and end-screen words; `docs/CARD_REVIEW.md` lists every card), and run the 2026-10-25 Pub Crawl item in `docs/DEVICE_CHECKLIST.md`; ask for any wording changes as a follow-up. Not started, needs the owner: the optional wave 2 (a fourth floor at each depth, about 100 cards). The owner asked for this plan to be kept here, up to date, as work proceeds. Findings from reading the code:

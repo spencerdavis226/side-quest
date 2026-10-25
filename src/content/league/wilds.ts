@@ -1,5 +1,5 @@
 import type { CardDefinition } from "../../game/types";
-import { evolution, gamble, pair, trainer, vs, wild } from "./journey";
+import { evolution, gamble, pair, strike, trainer, vs, wild } from "./journey";
 
 // Type expansion (owner, 2026-10-25): three more fights on each route, so
 // every starter type meets about as many good matchups as bad ones. The
@@ -12,62 +12,74 @@ import { evolution, gamble, pair, trainer, vs, wild } from "./journey";
 export const moreWilds: CardDefinition[][] = [
   // Route 1
   [
-    wild(
+    strike(
       0,
       "route-oddish",
       "Oddish",
-      "Wild Oddish is a radish with legs, walking in circles. Roll d20.",
-      vs(
-        "It Absorbs your drink. Drink 2.",
-        "You pull it up like a carrot. Give 2.",
-      ),
+      "Wild Oddish is a radish with legs, walking in circles.",
+      {
+        even: "It Absorbs your drink. Drink 2.",
+        advantage: "You pull it up like a carrot. Give 2.",
+        disadvantage: "Sleep Powder. Drink 4 with your eyes closed.",
+      },
     ),
-    wild(
+    strike(
       0,
       "route-diglett",
       "Diglett",
-      "A Diglett pops up between your feet. Stomp once, then roll d20.",
-      vs("Wrong hole. Drink 2.", "Whack-a-mole champion. Give 2."),
+      "A Diglett pops up between your feet. Stomp once.",
+      {
+        even: "Wrong hole. Drink 2.",
+        advantage: "Whack-a-mole champion. Give 3.",
+        disadvantage: "It trips you from below. Drink 4.",
+      },
     ),
-    wild(
+    strike(
       0,
       "route-pichu",
       "Pichu",
-      "Wild Pichu sparks. It shocks itself more than you. Roll d20.",
-      vs(
-        "It shocks you anyway. Drink 2.",
-        "It faints from its own spark. Give 2.",
-      ),
+      "Wild Pichu sparks. It shocks itself more than you.",
+      {
+        even: "It faints from its own spark. Give 2.",
+        advantage: "You ground it. Give 3.",
+        disadvantage: "Thunder Shock. Drink 4.",
+      },
     ),
   ],
   // Route 2
   [
-    wild(
+    strike(
       1,
       "route-seedot",
       "Seedot",
-      "Wild Seedot is an acorn, and it is judging you. Roll d20.",
-      vs(
-        "It headbutts your shin. Drink 2.",
-        "You drop it in a planter. Give 2.",
-      ),
+      "Wild Seedot is an acorn, and it is judging you.",
+      {
+        even: "It headbutts your shin. Drink 2.",
+        advantage: "You drop it in a planter. Give 2.",
+        disadvantage: "Bullet Seed, right in the shin. Drink 4.",
+      },
     ),
-    wild(
+    strike(
       1,
       "route-geodude",
       "Geodude",
-      "The rock you sat on was a Geodude. Stand up, then roll d20.",
-      vs(
-        "Defense Curl, then a headbutt. Drink 2.",
-        "You skip it across the pond. Give 3.",
-      ),
+      "The rock you sat on was a Geodude. Stand up.",
+      {
+        even: "Defense Curl, then a headbutt. Drink 2.",
+        advantage: "You skip it across the pond. Give 3.",
+        disadvantage: "Rock Throw. Drink 4.",
+      },
     ),
-    wild(
+    strike(
       1,
       "route-snubbull",
       "Snubbull",
-      "Wild Snubbull growls through its underbite. Growl back, then roll d20.",
-      vs("It bites and won't let go. Drink 3.", "It wants belly rubs. Give 2."),
+      "Wild Snubbull growls through its underbite. Growl back.",
+      {
+        even: "It wants belly rubs. Give 2.",
+        advantage: "It rolls over for you. Give 3.",
+        disadvantage: "It bites and won't let go. Drink 4.",
+      },
     ),
   ],
   // Route 3
