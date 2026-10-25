@@ -2,9 +2,9 @@
 
 Updated 2026-10-25. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Pub Crawl depth plan (2026-10-25; owner approved the ideas; phases 0 to 4 done, phase 5 next; draft PR #41)
+## Pub Crawl depth plan (2026-10-25; owner approved the ideas; all five phases done; draft PR #41 awaits the owner)
 
-Goal (owner): bring Pub Crawl up to the League's fun and depth, distinct from it, without making it complex; add many cards; UI must read for drunk players at a distance (phone or mirrored TV). Phases 0 (the spike), 1 (content), 2 (forked levels and joke classes), 3 (knacks) and 4 (the trophy wall and the tab) are done and recorded below, all on branch `claude/pub-crawl-depth` (draft PR #41; the owner said on 2026-10-25 to keep moving without asking, which covered pushing this feature branch, never `main`). Phase 5 (polish and gates) is not built. The owner asked for this plan to be kept here, up to date, as work proceeds. Findings from reading the code:
+Goal (owner): bring Pub Crawl up to the League's fun and depth, distinct from it, without making it complex; add many cards; UI must read for drunk players at a distance (phone or mirrored TV). Phases 0 (the spike), 1 (content), 2 (forked levels and joke classes), 3 (knacks) 4 (the trophy wall and the tab) and 5 (polish and gates) are done and recorded below, all on branch `claude/pub-crawl-depth` (draft PR #41; the owner said on 2026-10-25 to keep moving without asking, which covered pushing this feature branch, never `main`). **Next (owner):** read the new copy (117 cards in phase 1; the 18 classes' paths and taglines; the knack and end-screen words; `docs/CARD_REVIEW.md` lists every card), run the 2026-10-25 Pub Crawl item in `docs/DEVICE_CHECKLIST.md`, and decide on merging PR #41 (a merge to `main` deploys). Not started, needs the owner: the optional wave 2 (a fourth floor at each depth, about 100 cards). The owner asked for this plan to be kept here, up to date, as work proceeds. Findings from reading the code:
 
 - **Push your luck already exists** (`press`, `gamble()` in `dungeon/shared.ts`, `PressPlaques`): 9 gambles, one per floor, prizes are `Loot[]` only. Greed work is an expansion, not a new system.
 - **Class is readable by cards**: `party.omen` holds the adventurer's card ID (`class-barbarian`), and `omenForm()` resolves its form. Class-reactive rooms need no new save field.
@@ -40,6 +40,13 @@ Goal (owner): bring Pub Crawl up to the League's fun and depth, distinct from it
 **5. Polish and gates.** `npm test`, `npm run test:balance`, lint, typecheck, `BASE_PATH=/side-quest/ npm run build` (budgets), `cards:review`, the workshop card-count assertions, Playwright `crawl.spec.ts`, `quest.spec.ts` fit sweeps at 320 px, and the new legibility assertions. Add the distance and TV checks to `DEVICE_CHECKLIST.md` for the owner.
 
 **Optional wave 2 (needs approval):** a fourth floor at each depth (3 new floors, about 100 cards), taking dungeons from 27 to 64 combinations.
+
+### Phase 5 results (2026-10-25; polish and gates)
+
+- "a forked level up shows both paths, then follows the one taken" joined `@release` (now 45), so CI's WebKit shards cover the new landing at 320 px; the knack chip, Tome and end-screen tests stay in the full suite.
+- `docs/DEVICE_CHECKLIST.md`: one item for the owner (landing plaques, the Tome, the knack chip and roll, both end screens, the stairs, and whether the joke classes land), read from the far seat and on a TV if one is at hand.
+- CI on PR #41 (GitHub Actions, which runs the release suite in Chromium and three WebKit shards): green on the merge with `main` and on phase 3; the phase 4 run was in progress when this was written.
+- Not done: the original plan's "legibility assertion" for every new surface is covered per surface (plaques, chip, wall, tab each assert fit at 320 px) rather than by one global check.
 
 ### Phase 4 results (2026-10-25; the end screen)
 

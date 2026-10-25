@@ -506,7 +506,7 @@ test("@release a landing levels the adventurer up for drinks, or rests", async (
 
 // Forked levels (2026-10-25): the paths read at a glance on a 320px phone,
 // the second level follows the path taken, and a Tome asks which path.
-test("a forked level up shows both paths, then follows the one taken", async ({
+test("@release a forked level up shows both paths, then follows the one taken", async ({
   page,
 }, info) => {
   await page.setViewportSize({ width: 320, height: 640 });
