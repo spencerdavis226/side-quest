@@ -8,7 +8,6 @@ import {
   merchant,
   monster,
   moves,
-  pair,
   relic,
   shrine,
   trap,
@@ -17,6 +16,7 @@ import {
   trinket,
   BOSS_NEED,
   type FloorCards,
+  strike,
 } from "./shared";
 
 // Floor 2, the other way down: the Sewers. Everything the bar ever flushed
@@ -32,14 +32,17 @@ export const sewers: FloorCards = {
       "Chomp. Drink 4, and do the gator chomp with your arms.",
       "You give him a belly rub. Give 4.",
     ),
-    monster(
+    strike(
       4,
+      "Monster",
       "toilet-mimic",
       "Toilet Mimic",
-      "The only toilet down here is licking its lips. Roll d20.",
-      "Swirlie. Drink 4.",
-      "You flush it. Give 4 to whoever takes longest in the bathroom.",
-      { fumble: "The full swirlie. Finish your drink." },
+      "The only toilet down here is licking its lips.",
+      {
+        even: "It gurgles. Drink 3.",
+        advantage: "You flush it. Give 4 to the slowest in the bathroom.",
+        disadvantage: "Swirlie. Drink 4.",
+      },
     ),
     monster(
       4,
@@ -50,13 +53,17 @@ export const sewers: FloorCards = {
       "You pull his air hose. He leaves something smoky behind. Give 3.",
       { loot: "smoke" },
     ),
-    monster(
+    strike(
       4,
+      "Monster",
       "sludge-bro",
       "Sludge Bro",
-      "A pile of sludge in a muscle shirt asks if you even lift. Roll d20.",
-      "You don't. Drink 4, and do five push-ups or drink 2 more.",
-      "You lift him, into the drain. Give 4.",
+      "A pile of sludge in a muscle shirt asks if you even lift.",
+      {
+        even: "You say yes. Drink 3.",
+        advantage: "You praise his gains; he slides off happy. Give 4.",
+        disadvantage: "You don't. Drink 4 and do five push-ups.",
+      },
     ),
     monster(
       4,
@@ -85,19 +92,16 @@ export const sewers: FloorCards = {
       "You flush it. Give 4.",
       { curse: "bleed" },
     ),
-    monster(
+    strike(
       4,
+      "Monster",
       "sewer-mutant",
       "Sewer Mutant",
-      "A mutant with three arms and a fourth beer wants to arm-wrestle. Roll 2d6.",
-      "",
-      "",
+      "A mutant with three arms and a fourth beer wants to arm-wrestle.",
       {
-        roll: pair(
-          "It has three arms. Drink 4.",
-          "You win, somehow. Give 4.",
-          "A pair! You win with your off hand. Everyone else drinks 2.",
-        ),
+        even: "A draw. Drink 3.",
+        advantage: "You win, somehow. Give 4.",
+        disadvantage: "It has three arms. Drink 4.",
       },
     ),
     monster(
@@ -157,13 +161,17 @@ export const sewers: FloorCards = {
       "Rat Race",
       "Race your left neighbor: take a sip, then say 'rat' three times. Slower: drink 4.",
     ),
-    trap(
+    strike(
       4,
+      "Trap",
       "big-flush",
       "The Big Flush",
-      "Somewhere above, a whole bar flushes at once. Roll d20.",
-      "Swept down the pipe. Drink 3.",
-      "You grab a ladder. Give 2.",
+      "Somewhere above, a whole bar flushes at once.",
+      {
+        even: "Splash. Drink 2.",
+        advantage: "You grab a ladder. Give 3.",
+        disadvantage: "Swept down the pipe. Drink 3.",
+      },
     ),
     trap(
       4,
@@ -206,13 +214,17 @@ export const sewers: FloorCards = {
       "You out-cool them. Give 3.",
     ),
     // More of the Sewers (2026-10-25).
-    monster(
+    strike(
       4,
+      "Monster",
       "flushed-goldfish",
       "The Flushed Goldfish",
-      "A goldfish flushed in 2003 grew to the size of a van. It remembers. Roll d20.",
-      "It remembers you. Drink 4.",
-      "You say sorry and it forgives you. Give 4.",
+      "A goldfish flushed in 2003 grew to the size of a van. It remembers.",
+      {
+        even: "It stares. Drink 3.",
+        advantage: "You say sorry and it forgives you. Give 4.",
+        disadvantage: "It remembers you. Drink 4.",
+      },
     ),
     monster(
       4,
@@ -222,19 +234,16 @@ export const sewers: FloorCards = {
       "Something happens to it. Drink 4.",
       "You make him an offer he can't refuse. Give 4.",
     ),
-    monster(
+    strike(
       4,
+      "Monster",
       "pipe-octopus",
       "Pipe Octopus",
-      "Eight arms out of eight pipes, all at once. Roll 2d6.",
-      "",
-      "",
+      "Eight arms out of eight pipes, all at once.",
       {
-        roll: pair(
-          "It grabs your drink with all eight. Drink 4.",
-          "You tie two arms together. Give 4.",
-          "A pair! It ties itself in a knot. Everyone else drinks 2.",
-        ),
+        even: "It steals a sip. Drink 3.",
+        advantage: "You hex the arms into a knot. Give 4.",
+        disadvantage: "It grabs your drink with all eight. Drink 4.",
       },
     ),
     trial(

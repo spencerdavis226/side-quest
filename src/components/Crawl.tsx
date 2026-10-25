@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import type {
+  Boon,
   CardDefinition,
   Knack,
   Loot,
@@ -20,9 +21,11 @@ import {
   finaleStage,
   hitsNeeded,
   isBossCard,
+  isLasting,
   knackEdge,
   omenForm,
   questRecord,
+  replaces,
   stageKind,
   wantedBoss,
 } from "../game/engine";
@@ -43,6 +46,7 @@ import {
   badgesLocked,
 } from "./LeagueMarks";
 import { pokemonTypes, typeStyle } from "../presentation/pokemon-types";
+import { Modal } from "./UI";
 
 // Pub Crawl furniture: the party's hearts, the satchel, the floor's rooms and
 // the boss's wounds. Everything a crawl shows lives here; the engine decides.
@@ -432,15 +436,21 @@ export function CardStakes({
   hits = 0,
   theme,
   shift = 0,
+  strike,
 }: {
   card: CardDefinition;
   party: PartyState;
   hits?: number;
   theme: CrawlTheme;
+  /** A strike's matchup: it costs hearts only when it is lost (against the
+   * starter's type, or a Pub Crawl room whose knack the class lacks). */
+  strike?: "advantage" | "disadvantage" | "even";
   /** A League type edge on a plaque-settled fight: the loss moves by one. */
   shift?: number;
 }) {
-  const damage = card.battle && card.damage && card.damage + shift;
+  const damage = card.strike
+    ? strike === "disadvantage" && card.damage
+    : card.battle && card.damage && card.damage + shift;
   const gain = card.reward?.loot ?? (card.reward?.heal ? "heal" : null);
   // Tonight's omen is a boon too, but its card says so in words; a boss or
   // an elite offers its spoils.
@@ -461,7 +471,7 @@ export function CardStakes({
         {damage ? (
           <span
             className="stake stake-loss"
-            aria-label={`Losing costs ${heartCount(theme, damage + bleed)}`}
+            aria-label={`${card.strike ? "Costs" : "Losing costs"} ${heartCount(theme, damage + bleed)}`}
           >
             <b>−{damage + bleed}</b>
             <CrawlIcon name="heart" theme={theme} />
@@ -746,36 +756,125 @@ export function PressPlaques({
   );
 }
 
-/** A won fight's spoils, one plaque each: the trinket's mark, its name and
- * its power. Taking one puts the card aside. */
-export function SpoilsPlaque({
-  name,
-  rules,
-  index,
-  onTake,
+/** The spoils sheet's words; the League deals no spoils, so Pub Crawl's. */
+const EQUIPMENT = {
+  slots: { weapon: "Weapon", armor: "Armor", trinket: "Trinket" },
+  spoils: "Spoils",
+  replaces: "Replaces",
+  keep: "Keep my gear",
+  satchel: "Into the satchel",
+} as const;
+
+/** Tonight's omen, kept in the boons: an omen card's boon with no slot. */
+const isOmenBoon = (b: { card: CardDefinition; boon: Boon }) =>
+  b.card.encounter === "omen" && !b.boon.slot;
+/** What a worn piece does now: its power without the items it came with,
+ * which were handed out when it was taken. */
+const wornRules = (boon: Boon) =>
+  boon.rules.replace(/\s*Comes with [^.]*\./g, "").trim() || boon.rules;
+
+/** A piece of gear's mark: its slot's, a trinket's for a legacy piece, or
+ * the satchel's for one that only brings items. */
+const gearIcon = (boon: Boon): CrawlIconName =>
+  boon.slot === "weapon"
+    ? "weapon"
+    : boon.slot === "armor"
+      ? "armor"
+      : isLasting(boon)
+        ? "trinket"
+        : "satchel";
+
+/** A won fight's spoils (2026-10-25): one plaque on the card opens the
+ * sheet, which also opens by itself when the fight is won. */
+export function SpoilsButton({
+  onOpen,
   theme,
 }: {
-  name: string;
-  rules: string;
-  index: number;
-  onTake: (index: number) => void;
+  onOpen: () => void;
   theme: CrawlTheme;
 }) {
+  const words = theme.equipment ?? EQUIPMENT;
   return (
     <button
       className="card-choice-option spoils-plaque"
-      style={{ animationDelay: `${index * 70}ms` }}
-      aria-label={`Take the ${name}: ${rules}`}
-      onClick={() => onTake(index)}
+      aria-haspopup="dialog"
+      onClick={onOpen}
     >
       <span className="offer-goods" aria-hidden="true">
         <CrawlIcon name="trinket" theme={theme} />
       </span>
       <span className="offer-label">
-        <span className="offer-name">{name}</span>
-        <small className="offer-price">{rules}</small>
+        <span className="offer-name">{words.spoils}</span>
+        <small className="offer-price">Pick one</small>
       </span>
     </button>
+  );
+}
+
+/** The spoils sheet (2026-10-25): one row a piece, with its slot, power and
+ * what it would replace, and "Keep my gear" when any would replace one.
+ * Taking a row puts the card aside; closing the sheet leaves the choice
+ * waiting on the card's plaque. */
+export function SpoilsSheet({
+  session,
+  spoils,
+  theme,
+  onTake,
+  onKeep,
+  onClose,
+}: {
+  session: SessionState;
+  spoils: readonly Boon[];
+  theme: CrawlTheme;
+  onTake: (index: number) => void;
+  onKeep: () => void;
+  onClose: () => void;
+}) {
+  const words = theme.equipment ?? EQUIPMENT;
+  const olds = spoils.map((boon) => replaces(session.quest, boon));
+  return (
+    <Modal title={words.spoils} onClose={onClose}>
+      <div className="spoils-sheet" role="group" aria-label={words.spoils}>
+        {spoils.map((boon, i) => {
+          const slot = boon.slot
+            ? words.slots[boon.slot]
+            : isLasting(boon)
+              ? theme.words.trinkets
+              : words.satchel;
+          const old = olds[i]
+            .map((o) => `${o.boon.name}: ${wornRules(o.boon)}`)
+            .join(" And ");
+          return (
+            <button
+              key={boon.name}
+              className={`spoils-row gear-${boon.slot ?? (isLasting(boon) ? "trinket" : "satchel")}`}
+              onClick={() => onTake(i)}
+              aria-label={`Take the ${boon.name}, ${slot}: ${boon.rules}${old ? ` ${words.replaces} ${old}` : ""}`}
+            >
+              <CrawlIcon name={gearIcon(boon)} theme={theme} />
+              <small className="spoils-slot">{slot}</small>
+              <strong>{boon.name}</strong>
+              <span>{boon.rules}</span>
+              {olds[i].map((o) => (
+                // The piece it would replace, as its own small card, so the
+                // table sees what it gives up.
+                <span key={o.key} className="spoils-worn">
+                  <small className="spoils-worn-label">{words.replaces}</small>
+                  <CrawlIcon name={gearIcon(o.boon)} theme={theme} />
+                  <b>{o.boon.name}</b>
+                  <span>{wornRules(o.boon)}</span>
+                </span>
+              ))}
+            </button>
+          );
+        })}
+        {olds.some((o) => o.length > 0) && (
+          <button className="spoils-keep" onClick={onKeep}>
+            {words.keep}
+          </button>
+        )}
+      </div>
+    </Modal>
   );
 }
 
@@ -900,6 +999,7 @@ export function CrawlRecord({
               knack={k}
               adventurer={record.form.title}
               dice={!!card.dice}
+              strike={!!card.strike}
               theme={theme}
             />
           ) : null;
@@ -926,17 +1026,24 @@ export function CrawlRecord({
       )}
       {show("party") && !ending && record.boons.length > 0 && (
         <ul className="crawl-boons" aria-label={words.trinkets}>
-          {record.boons.map(({ card, boon, key }) => (
+          {record.boons.map((b) => (
             <li
-              key={key}
-              className={`crawl-omen ${card.encounter === "omen" ? "boon-omen" : "boon-trinket"}`}
+              key={b.key}
+              className={`crawl-omen ${isOmenBoon(b) ? "boon-omen" : "boon-trinket"}`}
             >
               <CrawlIcon
-                name={card.encounter === "omen" ? "omen" : "trinket"}
+                name={isOmenBoon(b) ? "omen" : gearIcon(b.boon)}
                 theme={theme}
               />
-              <strong>{boon.name}</strong>
-              <span>{boon.rules}</span>
+              <strong>
+                {b.boon.slot && (
+                  <small className="gear-slot">
+                    {(theme.equipment ?? EQUIPMENT).slots[b.boon.slot]}
+                  </small>
+                )}
+                {b.boon.name}
+              </strong>
+              <span>{b.boon.rules}</span>
             </li>
           ))}
         </ul>
@@ -1168,8 +1275,10 @@ function RunTab({
       if (now >= 3) taken.push(levels[path + 2].title);
     } else taken.push(...levels.slice(0, now).map((e) => e.title));
   }
-  const omen = record.boons.find((b) => b.card.encounter === "omen");
-  const trinkets = record.boons.filter((b) => b.card.encounter !== "omen");
+  // Tonight's omen is the one boon that is neither gear nor a trinket; a
+  // class's starting gear (2026-10-25) comes from an omen card too.
+  const omen = record.boons.find((b) => isOmenBoon(b));
+  const trinkets = record.boons.filter((b) => !isOmenBoon(b));
   const rows: [string, string][] = [
     ...(taken.length
       ? [["Adventurer", taken.join(" → ")] as [string, string]]
@@ -1256,11 +1365,14 @@ function KnackPanel({
   knack,
   adventurer,
   dice,
+  strike,
   theme,
 }: {
   knack: Knack;
   adventurer: string;
   dice: boolean;
+  /** A strike (2026-10-25): the knack wins it outright. */
+  strike: boolean;
   theme: CrawlTheme;
 }) {
   const { name, rooms } = theme.knacks![knack];
@@ -1273,9 +1385,11 @@ function KnackPanel({
         {adventurer} has {name}
       </strong>
       <span>
-        {dice
-          ? "This fight is rolled with double the dice, keeping the best."
-          : "Losing this fight costs a heart less."}
+        {strike
+          ? "This fight is won outright, with no roll."
+          : dice
+            ? "This fight is rolled with double the dice, keeping the best."
+            : "Losing this fight costs a heart less."}
       </span>
       <small>
         {name} is for {rooms}.

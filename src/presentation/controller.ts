@@ -15,6 +15,7 @@ import {
   pressOn,
   takeOffer,
   takeSpoils,
+  skipSpoils,
   type Random,
 } from "../game/engine";
 import type { Loot, SessionState } from "../game/types";
@@ -209,6 +210,17 @@ export class PresentationController {
     const { session, motion } = this.state;
     if (!session || motion || !awaitingSpoils(session)) return;
     const next = takeSpoils(session, index, this.random);
+    if (next === session) return;
+    this.persist(next);
+    this.transition(next, "discard", session);
+    this.effect("discard");
+  }
+  /** Keep the party's gear: the won fight's card goes aside, no spoils
+   * taken. */
+  keepGear() {
+    const { session, motion } = this.state;
+    if (!session || motion || !awaitingSpoils(session)) return;
+    const next = skipSpoils(session, this.random);
     if (next === session) return;
     this.persist(next);
     this.transition(next, "discard", session);

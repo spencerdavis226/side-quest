@@ -3,7 +3,12 @@ import type { Loot, SessionState } from "../game/types";
 import { Button, Modal } from "../components/UI";
 import { PackLogo } from "../components/PackMarks";
 import { selectedPacks } from "../presentation/packs";
-import { findCard, questRecord } from "../game/engine";
+import {
+  cardMatchup,
+  findCard,
+  questRecord,
+  strikeOutcome,
+} from "../game/engine";
 import { QuestRecord } from "../components/QuestRecord";
 import { CrawlRecord } from "../components/Crawl";
 import { badgesLocked } from "../components/LeagueMarks";
@@ -151,6 +156,14 @@ export function GameDialogs({
           roll={session.previousRoll}
           packIds={session.config.packIds}
           card={findCard(session, session.previousId)!}
+          matchup={cardMatchup(
+            session.quest,
+            findCard(session, session.previousId)!,
+          )}
+          strike={strikeOutcome(
+            session.quest,
+            findCard(session, session.previousId)!,
+          )}
         />
       </Modal>
     );

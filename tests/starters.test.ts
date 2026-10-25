@@ -109,10 +109,10 @@ describe("League starters", () => {
   });
 
   it("a Revive saves a white-out once, at half the maximum", () => {
-    let s = withStarter("bulbasaur", "pokemon.route-rattata");
+    let s = withStarter("bulbasaur", "pokemon.route-zigzagoon");
     Object.assign(s.quest!.party!, { hearts: 1, loot: ["revive"] });
     s = advance(s, zero);
-    expect(currentCard(s).id).toBe("pokemon.route-rattata");
+    expect(currentCard(s).id).toBe("pokemon.route-zigzagoon");
     s = advance(returnToCard(rollDice(s, zero)), zero);
     expect(s.phase).not.toBe("complete");
     expect(party(s)).toMatchObject({
@@ -122,7 +122,7 @@ describe("League starters", () => {
     });
     expect(party(s).hearts).toBe(8); // Bulbasaur's 15, halved
     // Confused (a sealed bag) keeps the Revive shut.
-    let hexed = withStarter("bulbasaur", "pokemon.route-rattata");
+    let hexed = withStarter("bulbasaur", "pokemon.route-zigzagoon");
     Object.assign(hexed.quest!.party!, {
       hearts: 1,
       loot: ["revive"],
@@ -140,7 +140,7 @@ describe("League starters", () => {
         (n - 1) / 20 + 0.001;
     const fight = (id: string, faces: number[]) => {
       const draws = faces.map(face);
-      let s = withStarter(id, "pokemon.route-rattata");
+      let s = withStarter(id, "pokemon.route-zigzagoon");
       s = advance(s, zero);
       return rollDice(s, () => draws.shift()!());
     };

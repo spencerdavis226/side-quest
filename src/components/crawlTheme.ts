@@ -1,4 +1,4 @@
-import type { Curse, Knack, Loot, QuestStage } from "../game/types";
+import type { Curse, Knack, Loot, QuestStage, Slot } from "../game/types";
 import { DRAUGHT_DRINKS, DRAUGHT_HEAL } from "../game/engine";
 import {
   dungeonOmenWords,
@@ -28,7 +28,10 @@ export type CrawlIconName =
   | "rest"
   | "jinx"
   // Pub Crawl's knacks (2026-10-25).
-  | `knack-${Knack}`;
+  | `knack-${Knack}`
+  // Pub Crawl's equipment slots (2026-10-25); a trinket keeps its mark.
+  | "weapon"
+  | "armor";
 
 /** One row of the how-to-play guide: a mark, a name, one line. */
 export interface GuideRow {
@@ -57,6 +60,15 @@ export interface CrawlTheme {
   /** Pub Crawl's knacks (2026-10-25): each one's name, and the rooms that
    * call for it. */
   knacks?: Record<Knack, { name: string; rooms: string }>;
+  /** Pub Crawl's equipment (2026-10-25): the slots' names and the spoils
+   * sheet's words. */
+  equipment?: {
+    slots: Record<Slot, string>;
+    spoils: string;
+    replaces: string;
+    keep: string;
+    satchel: string;
+  };
   /** `public/<folder>/<file>.svg` for a mark; a mark not listed is the
    * crawl's own (`art/crawl/<name>.svg`). */
   icons: { folder: string; files: Partial<Record<CrawlIconName, string>> };
@@ -193,6 +205,13 @@ const dungeon: CrawlTheme = {
     charm: { name: "Charm", rooms: "anyone you can talk round" },
     faith: { name: "Faith", rooms: "the dead and the haunted" },
   },
+  equipment: {
+    slots: { weapon: "Weapon", armor: "Armor", trinket: "Trinket" },
+    spoils: "Spoils",
+    replaces: "Replaces",
+    keep: "Keep my gear",
+    satchel: "Into the satchel",
+  },
   icons: { folder: "art/crawl", files: {} },
   words: {
     heart: "heart",
@@ -289,12 +308,12 @@ const dungeon: CrawlTheme = {
       {
         icon: "knack-brawn",
         title: "Knacks",
-        line: "Each adventurer has two. A room that calls for one shows green arrows: roll twice, keep the best.",
+        line: "Each adventurer has two. A room that calls for one shows green arrows: roll twice, keep the best. A room with no roll is won with its knack and lost without it.",
       },
       {
         icon: "satchel",
-        title: "Satchel and trinkets",
-        line: "Items show up as buttons on a card when they help. Trinkets from bosses last the run. Tap the hearts to see both.",
+        title: "Satchel and gear",
+        line: "Items show up as buttons on a card when they help. Bosses and elites drop gear: one weapon, one armor, one trinket, and a new piece replaces the old. Tap the hearts to see both.",
       },
       ...(quaff
         ? [
@@ -462,7 +481,7 @@ const league: CrawlTheme = {
       {
         icon: "omen",
         title: "Types",
-        line: "Your starter has a type. Super effective on them: roll double the dice and keep the highest. Super effective on you: keep the lowest. No dice: a loss costs 1 HP less or more.",
+        line: "Your starter has a type. Super effective on them: roll double the dice and keep the highest. Super effective on you: keep the lowest. No dice: a loss costs 1 HP less or more. A strike needs no roll: its type decides the line.",
       },
       {
         icon: "boss",

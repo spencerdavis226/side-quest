@@ -28,6 +28,9 @@ import {
   stackEffects,
   takeOffer,
   takeSpoils,
+  skipSpoils,
+  replaces,
+  isLasting,
   wantedBoss,
   type Random,
 } from "../src/game/engine";
@@ -271,7 +274,9 @@ describe("Pub Crawl", () => {
     expect(rooms.size).toBe(5);
     expect(adventurers.size).toBe(18);
     expect(omens.size).toBe(20);
-  });
+    // 400 sessions, each cloning the deck: about 2 s here, past the 5 s
+    // default on a busy CI runner.
+  }, 30_000);
 
   it("a lost room fight costs the party hearts, pours into the Cup, and the run moves on", () => {
     let s = deal(start(), "dungeon.gelatinous-shot");
@@ -611,7 +616,8 @@ describe("Pub Crawl", () => {
     // A Tome picks the path too (2026-10-25): the Sorcerer, or the
     // Illusionist.
     const read = spendLoot(s, "candy", Math.random, 0);
-    expect(party(read)).toMatchObject({ form: 1, max: H - 1 });
+    // The Sorcerer's −1, and the Pointy Hat's +1 (2026-10-25).
+    expect(party(read)).toMatchObject({ form: 1, max: H });
     expect(party(read).loot).toEqual(["die", "die", "die"]);
     roundTrip(read);
     const smoke = spendLoot(s, "candy", Math.random, 1);
@@ -1078,5 +1084,135 @@ describe("Pub Crawl", () => {
     const forged = structuredClone(start());
     forged.quest!.party!.omen = "dungeon.gelatinous-shot";
     expect(() => parseSession(JSON.stringify(forged))).toThrow();
+  });
+
+  // Equipment (owner, 2026-10-25): one weapon, one armor, one trinket.
+  it("gives every lasting trinket a slot from what it does; item-only ones have none", () => {
+    const gear = cards.flatMap((c) =>
+      c.id.startsWith("dungeon.") ? (c.spoils ?? []) : [],
+    );
+    expect(gear.length).toBeGreaterThan(100);
+    const by = { weapon: 0, armor: 0, trinket: 0, none: 0 };
+    for (const b of gear) {
+      by[b.slot ?? "none"]++;
+      expect(!!b.slot, b.name).toBe(isLasting(b));
+      const keys = Object.keys(b.effect).filter((k) => k !== "loot");
+      if (b.slot === "weapon")
+        expect(
+          keys.every((k) => ["roll", "crit", "bossHits"].includes(k)),
+        ).toBe(true);
+      if (b.slot === "armor")
+        expect(keys.every((k) => ["hearts", "hurt"].includes(k))).toBe(true);
+    }
+    for (const slot of ["weapon", "armor", "trinket"] as const)
+      expect(by[slot], slot).toBeGreaterThan(30);
+  });
+
+  it("a new piece replaces the one in its slot, and the table can keep its gear", () => {
+    // Wearing Greasy Knuckles (a weapon), the Keg Mimic Queen offers Royal
+    // Jelly Shot (a weapon too) and Queen's Tap (a trinket).
+    // (Worn without its card dealt, so only the swap, whose gear is all
+    // dealt, round-trips as a save; `crawl-gear-*` fixtures cover the rest.)
+    let s = deal(fromStep(start(), STEP.floor1 + 1), "dungeon.keg-mimic-queen");
+    s.quest!.party!.boons = ["dungeon.grease-trap-horror#1"];
+    s = rollTo(advance(s), 19);
+    const [tap, jelly] = currentCard(s).spoils!;
+    expect(tap.slot).toBe("trinket");
+    expect(jelly.slot).toBe("weapon");
+    expect(replaces(s.quest, tap)).toHaveLength(0);
+    expect(replaces(s.quest, jelly).map((b) => b.boon.name)).toEqual([
+      "Greasy Knuckles",
+    ]);
+    // Taking the weapon swaps it in.
+    const swapped = takeSpoils(s, 1);
+    expect(party(swapped).boons).toEqual(["dungeon.keg-mimic-queen#1"]);
+    roundTrip(swapped);
+    // Taking the trinket wears both.
+    expect(party(takeSpoils(s, 0)).boons).toEqual([
+      "dungeon.grease-trap-horror#1",
+      "dungeon.keg-mimic-queen#0",
+    ]);
+    // Keeping the gear puts the card aside and changes nothing worn.
+    const kept = skipSpoils(s);
+    expect(party(kept).boons).toEqual(["dungeon.grease-trap-horror#1"]);
+    expect(kept.quest!.step).toBe(STEP.floor1 + 2);
+    expect(skipSpoils(kept)).toBe(kept);
+  });
+
+  it("swapping armor takes its hearts with it", () => {
+    // Wearing the Hairnet (+1 heart), the Grease Trap Horror offers the
+    // Grease-Proof Apron, armor that adds none.
+    let s = deal(
+      fromStep(start(), STEP.floor1 + 1),
+      "dungeon.grease-trap-horror",
+    );
+    const p = party(s);
+    s.quest!.party = {
+      ...p,
+      max: p.max + 1,
+      hearts: p.max + 1,
+      boons: ["dungeon.health-inspector#1"],
+    };
+    s = rollTo(advance(s), 19);
+    expect(currentCard(s).spoils![0].slot).toBe("armor");
+    const next = takeSpoils(s, 0);
+    expect(party(next)).toMatchObject({
+      max: p.max,
+      hearts: p.max,
+      boons: ["dungeon.grease-trap-horror#0"],
+    });
+    roundTrip(next);
+  });
+
+  it("an item-only trinket goes into the satchel and isn't worn", () => {
+    // Death's Intern offers Death's Lanyard: a Second Wind, nothing more.
+    let s = deal(fromStep(start(), STEP.floor2 + 1), "dungeon.deaths-intern");
+    s = rollTo(advance(s), 19);
+    const lanyard = currentCard(s).spoils![0];
+    expect(lanyard.slot).toBeUndefined();
+    const next = takeSpoils(s, 0);
+    expect(party(next).boons ?? []).toEqual([]);
+    expect(party(next).loot).toContain("revive");
+    roundTrip(next);
+  });
+
+  it("an older save's unslotted trinkets keep stacking", () => {
+    // A save from before slots holds its cards as they were then: strip the
+    // slots and two weapons are both kept.
+    let s = deal(fromStep(start(), STEP.floor1 + 1), "dungeon.keg-mimic-queen");
+    const unslot = (id: string) => {
+      for (const st of s.quest!.stages)
+        for (const c of [...st.cards, ...(st.elite ?? [])])
+          if (c.id === id)
+            c.spoils = c.spoils!.map(({ slot: _slot, ...b }) => b);
+    };
+    unslot("dungeon.keg-mimic-queen");
+    unslot("dungeon.grease-trap-horror");
+    s.quest!.party!.boons = ["dungeon.grease-trap-horror#1"];
+    s = rollTo(advance(s), 19);
+    expect(party(takeSpoils(s, 1)).boons).toEqual([
+      "dungeon.grease-trap-horror#1",
+      "dungeon.keg-mimic-queen#1",
+    ]);
+  });
+
+  it("an adventurer walks in wearing its starting gear, until a piece replaces it", () => {
+    // The Barbarian's Rusty Greataxe, a weapon.
+    const s = adventure("barbarian");
+    const axe = findCard(s, "dungeon.class-barbarian")!.kit!;
+    expect(axe).toMatchObject({ name: "Rusty Greataxe", slot: "weapon" });
+    expect(party(s).boons).toEqual(["dungeon.class-barbarian#k"]);
+    expect(omenEffect(s.quest)!.roll).toMatchObject({ monster: 1, boss: 2 });
+    roundTrip(s);
+    // Every class but the Alchemist and the Bartender has a kit with a slot,
+    // and its card names it.
+    for (const c of cards.filter((c) => c.id.startsWith("dungeon.class-"))) {
+      const bare = ["dungeon.class-alchemist", "dungeon.class-bartender"];
+      expect(!!c.kit, c.id).toBe(!bare.includes(c.id));
+      if (c.kit) {
+        expect(c.kit.slot, c.id).toBeDefined();
+        expect(c.rules, c.id).toContain(`Wears ${c.kit.name}.`);
+      }
+    }
   });
 });

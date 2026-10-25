@@ -175,7 +175,9 @@ export function EvolutionBanner({ session }: { session: SessionState }) {
 export function PartyNewsBanner({ session }: { session: SessionState }) {
   const quest = session.quest;
   const party = quest?.party;
-  const boons = party?.boons?.length ?? 0;
+  // The newest piece kept: a swap (2026-10-25) changes it without adding
+  // to the count.
+  const boons = party?.boons?.at(-1) ?? null;
   const jinx = party?.jinx;
   const passed = party?.passed;
   const cup = party?.cup ?? 0;
@@ -205,7 +207,7 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
       });
       return;
     }
-    if (boons > before.boons) {
+    if (boons && boons !== before.boons) {
       const found = partyBoons(quest).at(-1);
       const card = found?.card;
       if (found && card?.encounter !== "omen" && words.trinketFound) {

@@ -74,5 +74,7 @@ describe("Pokémon League journey", () => {
     }
     expect(starters.size).toBe(35);
     expect(hideouts.size).toBe(9);
-  });
+    // 600 sessions, each cloning the deck: about 2 s here, past the 5 s
+    // default on a busy CI runner.
+  }, 30_000);
 });

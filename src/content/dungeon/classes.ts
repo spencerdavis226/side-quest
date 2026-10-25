@@ -50,7 +50,7 @@ export const classes: CardDefinition[] = [
   adventurer(
     "rogue",
     "Rogue",
-    "Already has your wallet.",
+    "Has your wallet.",
     { satchel: 4, loot: ["smoke"], roll: { trap: 2, relic: 2 } },
     [
       {
@@ -475,7 +475,7 @@ export const classes: CardDefinition[] = [
   adventurer(
     "plus-one",
     "The Plus-One",
-    "Nobody knows who invited them.",
+    "Nobody invited them.",
     { hearts: -3, roll: { boss: -1 }, reroll20: true },
     [
       {
@@ -509,7 +509,7 @@ export const classes: CardDefinition[] = [
   adventurer(
     "intern",
     "The Intern",
-    "Unpaid. Here for the experience.",
+    "Unpaid, sadly.",
     { hearts: -2, satchel: 1, fumble: 2 },
     [
       {
@@ -539,7 +539,7 @@ export const classes: CardDefinition[] = [
   adventurer(
     "mimic",
     "The Mimic",
-    "A chest. Thinks it's one of you.",
+    "A very confused chest.",
     { hearts: -4, satchel: 5, roll: { all: -1 } },
     [
       {

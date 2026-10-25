@@ -285,7 +285,7 @@ test("a Rare Candy evolves the starter from the bag", async ({ page }) => {
   await seed(
     page,
     leagueAt(
-      "pokemon.route-pidgey",
+      "pokemon.route-zigzagoon",
       { hearts: 9, loot: ["candy"] },
       0,
       "pokemon.starter-froakie",
@@ -502,6 +502,53 @@ test("a plaque-settled gym against a weaker type costs 1 HP less", async ({
   );
   await page.getByRole("button", { name: "Lost", exact: true }).click();
   expect((await saved(page)).quest.party.hearts).toBe(9);
+});
+
+test("a strike reads the line for its matchup and costs HP only against the starter", async ({
+  page,
+}, info) => {
+  const pidgey = cards.find((c) => c.id === "pokemon.route-pidgey")!;
+  // Pidgey (Flying) against Bulbasaur (Grass): the foe has the edge.
+  await seed(
+    page,
+    reveal(
+      leagueAt(
+        "pokemon.route-pidgey",
+        { hearts: 9 },
+        0,
+        "pokemon.starter-bulbasaur",
+      ),
+    ),
+  );
+  await expect(page.locator(".tag-edge")).toHaveClass(/edge-disadvantage/);
+  await expect(page.locator(".game-card .strike-line")).toHaveText(
+    pidgey.strike!.disadvantage,
+  );
+  await expect(page.locator(".game-card .stake-loss")).toHaveAccessibleName(
+    "Costs 1 HP",
+  );
+  await page.screenshot({ path: info.outputPath("strike-disadvantage.png") });
+  await page.locator(".game-card").click();
+  await expect.poll(async () => (await saved(page)).quest.party.hearts).toBe(8);
+  // Against Pikachu (Electric) it is the starter's edge: the line gives, and
+  // nothing is at stake.
+  await seed(
+    page,
+    reveal(
+      leagueAt(
+        "pokemon.route-pidgey",
+        { hearts: 9 },
+        0,
+        "pokemon.starter-pikachu",
+      ),
+    ),
+  );
+  await expect(page.locator(".game-card .strike-line")).toHaveText(
+    pidgey.strike!.advantage,
+  );
+  await expect(page.locator(".game-card .stake-loss")).toHaveCount(0);
+  await page.locator(".game-card").click();
+  await expect.poll(async () => (await saved(page)).quest.party.hearts).toBe(9);
 });
 
 test("Veteran Ada shuts the badge case until her card is put aside", async ({

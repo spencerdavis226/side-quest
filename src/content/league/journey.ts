@@ -9,6 +9,7 @@ import type {
   Offer,
   OmenEffect,
   Evolution,
+  Strike,
 } from "../../game/types";
 import { cardFactory, choice, rollTable } from "../author";
 import { withNaturals } from "../naturals";
@@ -184,6 +185,41 @@ export const wild = (
   battle: true,
   damage: WILD_HURT[leg],
   ...stakes(more),
+});
+
+/** A strike (2026-10-25): a wild Pokémon with no roll. The type matchup
+ * picks one of three lines and what the card costs: the starter's edge wins
+ * (`loot` comes, nothing is lost), a disadvantage loses (`WILD_HURT` hearts,
+ * a `curse`), and an even matchup is only what its line says. */
+export const strike = (
+  leg: Leg,
+  id: string,
+  title: string,
+  rules: string,
+  lines: Strike,
+  { kind = "Wild", ...more }: Extra & { kind?: string } = {},
+): CardDefinition => ({
+  ...spot(leg, kind, "monster", id, title, rules),
+  strike: lines,
+  damage: WILD_HURT[leg],
+  ...stakes(more),
+});
+
+/** A table moment (2026-10-25): no fight and nothing to win or lose, only
+ * something to do. A `reward` (a heal or an item) is what the table gets for
+ * doing it. */
+export const moment = (
+  leg: Leg,
+  id: string,
+  title: string,
+  kind: string,
+  category: CardDefinition["category"],
+  rules: string,
+  reward?: { heal?: number; loot?: Loot },
+): CardDefinition => ({
+  ...spot(leg, kind, "shrine", id, title, rules, undefined, category),
+  ribbonTone: "violet",
+  ...(reward ? { reward } : {}),
 });
 
 /** A trainer battle: a wild fight with a person attached. */
@@ -402,6 +438,20 @@ export const grunt = (
   { rank = "Grunt", ...more }: Extra & { rank?: string } = {},
 ): CardDefinition => ({
   ...wild(HIDEOUT_LEG, id, title, rules, fight, more),
+  ribbon: `${team} · ${rank}`,
+});
+
+/** A hideout's grunt (or an admin) as a strike: no roll, the type matchup
+ * picks the line. A `curse` lands when the matchup loses. */
+export const gruntStrike = (
+  team: string,
+  id: string,
+  title: string,
+  rules: string,
+  lines: Strike,
+  { rank = "Grunt", ...more }: Extra & { rank?: string } = {},
+): CardDefinition => ({
+  ...strike(HIDEOUT_LEG, id, title, rules, lines, more),
   ribbon: `${team} · ${rank}`,
 });
 

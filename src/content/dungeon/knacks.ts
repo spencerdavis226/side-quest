@@ -114,6 +114,75 @@ export const roomKnacks: Readonly<Record<string, Knack>> = {
   "the-gargoyle": "faith",
 };
 
+/** The strikes (2026-10-25), by card ID: rooms with no roll that a class
+ * with the knack wins and any other loses. Kept apart from `roomKnacks`,
+ * whose eight a floor are rolled with the edge. */
+export const strikeKnacks: Readonly<Record<string, Knack>> = {
+  // The Cellar.
+  "skeleton-barback": "charm",
+  "possessed-mop": "brawn",
+  "cask-bat": "sneak",
+  "fryer-oil-ooze": "magic",
+  "cobweb-bartender": "faith",
+  "falling-taps": "sneak",
+  // The Wine Cellar.
+  "zombie-sommelier": "charm",
+  "barrel-mimic": "brawn",
+  "corkscrew-crab": "sneak",
+  "sulfite-cloud": "magic",
+  "rose-elemental": "faith",
+  "cork-goblin": "charm",
+  // The Catacombs.
+  "hungover-mummy": "faith",
+  "banshee-karaoke": "charm",
+  "zombie-roommate": "brawn",
+  "collapsing-floor": "sneak",
+  "skeleton-mariachi": "magic",
+  "grabbing-hand": "brawn",
+  // The Sewers.
+  "toilet-mimic": "brawn",
+  "sludge-bro": "charm",
+  "flushed-goldfish": "faith",
+  "big-flush": "sneak",
+  "pipe-octopus": "magic",
+  "sewer-mutant": "brawn",
+  // The Drowned Taproom.
+  "sommelier-kraken": "brawn",
+  "drowned-regular": "faith",
+  "piranha-shots": "sneak",
+  "kelp-bouncer": "charm",
+  "drain-vortex": "magic",
+  "snorkel-shark": "brawn",
+  // The Kitchen.
+  "deep-fryer-demon": "magic",
+  "walk-in-yeti": "brawn",
+  "rat-chef": "charm",
+  "swinging-door": "sneak",
+  "dish-pit-horror": "faith",
+  "hot-pan": "sneak",
+  // The Brewery.
+  "hop-goblin": "charm",
+  "yeast-beast": "magic",
+  "foam-ferrets": "sneak",
+  "gruit-druid": "faith",
+  "spent-grain-golem": "brawn",
+  "co2-leak": "sneak",
+  // The Walk-in Freezer.
+  "brain-freeze": "magic",
+  "the-snowman": "brawn",
+  "popsicle-golem": "charm",
+  "the-door-shuts": "sneak",
+  "ice-goblin": "sneak",
+  "tongue-on-the-pole": "magic",
+  // The Rooftop Bar.
+  "the-seagull": "brawn",
+  "the-proposal": "charm",
+  "rogue-drone": "sneak",
+  "the-sprinklers": "magic",
+  "the-fireworks": "faith",
+  "the-heat-lamp": "sneak",
+};
+
 /** Give the classes and rooms their knacks. Throws on an ID that names no
  * card, so a renamed card can't silently lose its knack. */
 export function applyKnacks(cards: CardDefinition[]): void {
@@ -125,5 +194,6 @@ export function applyKnacks(cards: CardDefinition[]): void {
   };
   for (const [id, knacks] of Object.entries(classKnacks))
     find(`class-${id}`).knacks = [...knacks];
-  for (const [id, knack] of Object.entries(roomKnacks)) find(id).knack = knack;
+  for (const [id, knack] of Object.entries({ ...roomKnacks, ...strikeKnacks }))
+    find(id).knack = knack;
 }

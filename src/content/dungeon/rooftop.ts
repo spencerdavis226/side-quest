@@ -14,6 +14,7 @@ import {
   trial,
   trinket,
   type FloorCards,
+  strike,
 } from "./shared";
 
 // Floor 3, the third way down (2026-10-17): the Rooftop Bar. The stairs
@@ -61,14 +62,17 @@ export const rooftop: FloorCards = {
       "You lean into it like a music video. Give 5.",
       { curse: "hex" },
     ),
-    monster(
+    strike(
       8,
+      "Monster",
       "the-seagull",
       "The Seagull",
-      "It's eyeing your fries. You don't have fries. It's eyeing you. Roll d20.",
-      "It takes a bite. Drink 5.",
-      "You stare it down. Give 5.",
-      { fumble: "It goes for your eyes, then your drink. Finish your drink." },
+      "It's eyeing your fries. You don't have fries. It's eyeing you.",
+      {
+        even: "It squawks. Drink 3.",
+        advantage: "You stare it down. Give 5.",
+        disadvantage: "It takes a bite. Drink 5.",
+      },
     ),
     monster(
       8,
@@ -117,14 +121,17 @@ export const rooftop: FloorCards = {
         ),
       },
     ),
-    monster(
+    strike(
       8,
+      "Monster",
       "the-proposal",
       "The Proposal",
-      "A guy is proposing to his girlfriend at the railing, and you're filming. Roll d20.",
-      "She says no, and it's somehow your fault. Drink 5.",
-      "She says yes. Champagne for the table. Give 5.",
-      { crit: "He drops the ring, and you catch it. Give 10." },
+      "A guy is proposing to his girlfriend at the railing, and you're filming.",
+      {
+        even: "Awkward silence. Drink 3.",
+        advantage: "You hype him up. She says yes. Give 5.",
+        disadvantage: "She says no, and it's somehow your fault. Drink 5.",
+      },
     ),
     monster(
       8,
@@ -167,13 +174,17 @@ export const rooftop: FloorCards = {
       "You see your life flash. Drink 4.",
       "You step back, cool as anything. Give 4.",
     ),
-    trap(
+    strike(
       8,
+      "Trap",
       "the-sprinklers",
       "The Sprinklers",
-      "The roof's sprinklers come on, all at once. Roll d20.",
-      "Drenched. Drink 4.",
-      "You hide under the umbrella. Give 4.",
+      "The roof's sprinklers come on, all at once.",
+      {
+        even: "Damp. Drink 3.",
+        advantage: "You stop the water with a wave. Give 4.",
+        disadvantage: "Drenched. Drink 5.",
+      },
     ),
     trap(
       8,
@@ -183,13 +194,17 @@ export const rooftop: FloorCards = {
       "You slide. Drink 4.",
       "You land it like a parkour video. Give 4.",
     ),
-    trap(
+    strike(
       8,
+      "Trap",
       "the-heat-lamp",
       "The Heat Lamp",
-      "You stood under the patio heater too long, and now you're on fire, slightly. Roll d20.",
-      "Your eyebrows go. Drink 4.",
-      "You stop, drop and roll. Give 4.",
+      "You stood under the patio heater too long, and now you're on fire, slightly.",
+      {
+        even: "Warm. Drink 3.",
+        advantage: "You stop, drop and roll. Give 4.",
+        disadvantage: "Your eyebrows go. Drink 5.",
+      },
     ),
     ambush(
       8,
@@ -208,13 +223,17 @@ export const rooftop: FloorCards = {
       "You duck behind the bar. Give 4.",
     ),
     // More of the Rooftop Bar (2026-10-25).
-    monster(
+    strike(
       8,
+      "Monster",
       "rogue-drone",
       "The Rogue Drone",
-      "Somebody's drone is filming you, and now it's dive-bombing. Roll d20.",
-      "Hit in the head, on camera. Drink 5.",
-      "You swat it into the pool. Give 5.",
+      "Somebody's drone is filming you, and now it's dive-bombing.",
+      {
+        even: "It films your bad side. Drink 3.",
+        advantage: "You swat it into the pool. Give 5.",
+        disadvantage: "Hit in the head, on camera. Drink 5.",
+      },
     ),
     monster(
       8,
@@ -224,26 +243,16 @@ export const rooftop: FloorCards = {
       "He's a wizard. Drink 5.",
       "He's just an old man. Give 5.",
     ),
-    monster(
+    strike(
       8,
+      "Monster",
       "the-fireworks",
       "The Fireworks",
-      "Someone's lighting fireworks off the roof, badly. Roll d6.",
-      "",
-      "",
+      "Someone's lighting fireworks off the roof, badly.",
       {
-        roll: moves(
-          [
-            "One goes sideways at you. Drink 5.",
-            "You lose an eyebrow. Drink 5.",
-            "The neighbors call the cops. Drink 5.",
-          ],
-          [
-            "A good one. Give 4.",
-            "You get the perfect photo. Give 4.",
-            "A heart in the sky. Everyone else drinks 2.",
-          ],
-        ),
+        even: "Pretty. Drink 3.",
+        advantage: "A heart in the sky. Make a wish and give 5.",
+        disadvantage: "One goes sideways at you. Drink 5.",
       },
     ),
     trial(

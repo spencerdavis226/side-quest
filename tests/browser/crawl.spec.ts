@@ -153,7 +153,12 @@ test("@release Pub Crawl opens on an adventurer and tonight's omen, then the que
   const s = await saved(page);
   expect(s.config.packIds).toEqual(["dungeon"]);
   expect(s.quest.party.omen).toBe(s.quest.finale[0]);
-  expect(s.quest.party.boons).toEqual([s.quest.finale[1]]);
+  // The class's starting gear (2026-10-25), if it has one, then the omen.
+  const kit = cards.find((c) => c.id === s.quest.finale[0])?.kit;
+  expect(s.quest.party.boons).toEqual([
+    ...(kit ? [`${s.quest.finale[0]}#k`] : []),
+    s.quest.finale[1],
+  ]);
 });
 
 test("@release a monster shows its stakes; a smoke bomb flees it", async ({
@@ -380,18 +385,52 @@ test("a boss shows its wounds, its trinket, and comes back until it falls", asyn
     "Felling it offers a trinket: Hydra Tooth or Hydra Scale",
   );
   await page.screenshot({ path: info.outputPath("boss.png") });
-  // The last swing lands: the table picks a trinket, and it sweeps in.
-  await seed(page, rolled(s, 18));
-  const spoils = page.locator(".card-choice.spoils .card-choice-option");
-  await expect(spoils).toHaveCount(2);
-  await expect(spoils.nth(1)).toHaveAccessibleName(
-    "Take the Hydra Scale: +2 max hearts.",
+  // The last swing lands: the spoils sheet opens by itself (2026-10-25).
+  // The party wears Royal Jelly Shot, a weapon from the Cellar's Keg Mimic
+  // Queen, dealt on the first floor.
+  const finale = [...s.quest!.finale];
+  const queen = "dungeon.keg-mimic-queen";
+  const at = finale.indexOf(queen);
+  if (at >= 0) finale[at] = finale[STEP.floor1 + 1];
+  finale[STEP.floor1 + 1] = queen;
+  const won = rolled(
+    {
+      ...s,
+      quest: {
+        ...s.quest!,
+        finale,
+        party: { ...s.quest!.party!, boons: [`${queen}#1`] },
+      },
+    },
+    18,
   );
-  // A stray tap on the card does nothing; the plaques decide.
+  await seed(page, won);
+  const sheet = page.getByRole("dialog", { name: "Spoils" });
+  const rows = sheet.locator(".spoils-row");
+  await expect(rows).toHaveCount(2);
+  await expect(rows.nth(0)).toHaveAccessibleName(
+    "Take the Hydra Tooth, Weapon: +2 to boss d20s. Replaces Royal Jelly Shot: +1 to monster d20s.",
+  );
+  // What it would replace shows as its own small card: its name and what
+  // it does now (its Healing Draught was handed out when it was taken).
+  await expect(rows.nth(0).locator(".spoils-worn")).toHaveText(
+    "ReplacesRoyal Jelly Shot+1 to monster d20s.",
+  );
+  await expect(rows.nth(1).locator(".spoils-worn")).toHaveCount(0);
+  await expect(rows.nth(1)).toHaveAccessibleName(
+    "Take the Hydra Scale, Armor: +2 max hearts.",
+  );
+  await expect(sheet.locator(".spoils-keep")).toHaveText("Keep my gear");
+  await page.screenshot({ path: info.outputPath("spoils.png") });
+  // Closed, it waits on the card's one plaque; a stray tap does nothing.
+  await page.keyboard.press("Escape");
+  await expect(sheet).toHaveCount(0);
   await page.locator(".game-card").click({ force: true });
   expect((await saved(page)).quest.step).toBe(STEP.boss2);
-  await page.screenshot({ path: info.outputPath("spoils.png") });
-  await spoils.nth(0).click();
+  const plaque = page.locator(".card-choice.spoils .card-choice-option");
+  await expect(plaque).toHaveCount(1);
+  await plaque.click();
+  await rows.nth(0).click();
   await expect(page.locator(".news-banner")).toHaveText(
     /Trinket found\s*Hydra Tooth\s*\+2 to boss d20s\./,
   );
@@ -399,9 +438,16 @@ test("a boss shows its wounds, its trinket, and comes back until it falls", asyn
     "The Lower Landing",
   );
   await page.screenshot({ path: info.outputPath("trinket.png") });
+  // The Tooth replaced the Shot.
   expect((await saved(page)).quest.party.boons).toEqual([
     "dungeon.hangover-hydra#0",
   ]);
+  // The party dialog lists it under its slot.
+  await meter(page).click();
+  const party = page.getByRole("dialog", { name: "The party" });
+  await expect(party.locator(".boon-trinket strong")).toHaveText(
+    "WeaponHydra Tooth",
+  );
 });
 
 test("a lost fight can lay a jinx, shown on the meter and in a banner", async ({
@@ -606,6 +652,53 @@ test("a knack's room shows its chip, and the dialog explains it", async ({
   );
   await expect(page.locator(".hud-strip")).toBeVisible();
   await expect(page.locator(".tag-knack")).toHaveCount(0);
+});
+
+// Strikes (2026-10-25): a room with no roll. The class's knack wins it
+// outright; without it the room is lost and costs its hearts.
+test("a strike is won with its knack and lost without it", async ({
+  page,
+}, info) => {
+  const barback = cards.find((c) => c.id === "dungeon.skeleton-barback")!;
+  // The Rogue has Charm.
+  await seed(
+    page,
+    reveal(
+      crawlAt(barback.id, STEP.floor1, { hearts: 8 }, { adventurer: "rogue" }),
+    ),
+  );
+  await expect(page.locator(".tag-knack")).toHaveAccessibleName(
+    "Knack: Charm, advantage",
+  );
+  await expect(page.locator(".game-card .strike-line")).toHaveText(
+    barback.strike!.advantage,
+  );
+  await expect(page.locator(".game-card .stake-loss")).toHaveCount(0);
+  await page.locator(".tag-knack").click();
+  await expect(page.getByRole("dialog", { name: "Knack" })).toContainText(
+    "won outright",
+  );
+  await page.keyboard.press("Escape");
+  await page.locator(".game-card").click();
+  await expect.poll(async () => (await saved(page)).quest.party.hearts).toBe(8);
+  // The Wizard doesn't: no chip, the losing line, and a heart at stake.
+  await seed(
+    page,
+    reveal(
+      crawlAt(barback.id, STEP.floor1, { hearts: 8 }, { adventurer: "wizard" }),
+    ),
+  );
+  await expect(page.locator(".hud-strip")).toBeVisible();
+  await expect(page.locator(".tag-knack")).toHaveCount(0);
+  await expect(page.locator(".game-card .strike-line")).toHaveText(
+    barback.strike!.disadvantage,
+  );
+  await expect(page.locator(".game-card .stake-loss")).toHaveAccessibleName(
+    "Costs 1 heart",
+  );
+  await page.screenshot({ path: info.outputPath("crawl-strike-lost.png") });
+  await page.locator(".game-card").click();
+  await expect.poll(async () => (await saved(page)).quest.party.hearts).toBe(7);
 });
 
 test("a Dog-Eared Tome asks which path a forked adventurer takes", async ({

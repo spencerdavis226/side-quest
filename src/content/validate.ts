@@ -8,6 +8,8 @@ import {
   LOOT,
   POKEMON_TYPES,
   RIBBON_TONES,
+  SLOTS,
+  type Slot,
 } from "../game/types";
 
 // Structural validation for cards and packs. Kept apart from `catalog.ts` so
@@ -80,10 +82,32 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         fail(`Invalid battle: ${c.id}`);
     } else if (c.dice?.outcomes?.some((o) => o.win) || c.dice?.doublesWin)
       fail(`Win outcome on a card that is not a battle: ${c.id}`);
+    // A strike is a fight the type matchup settles: three lines, and nothing
+    // that would put the card aside another way.
+    if (
+      c.strike !== undefined &&
+      (!c.strike ||
+        c.battle ||
+        c.dice ||
+        c.timer ||
+        c.secret ||
+        c.offers ||
+        c.hits ||
+        (["even", "advantage", "disadvantage"] as const).some(
+          (k) =>
+            typeof c.strike![k] !== "string" ||
+            !c.strike![k].trim() ||
+            c.strike![k].length > 60,
+        ))
+    )
+      fail(`Invalid strike: ${c.id}`);
     // Pub Crawl stakes: hearts lost, boss swings, rewards and curses.
     const count = (n: unknown, max: number) =>
       Number.isSafeInteger(n) && (n as number) >= 1 && (n as number) <= max;
-    if (c.damage !== undefined && (!c.battle || !count(c.damage, 5)))
+    if (
+      c.damage !== undefined &&
+      (!(c.battle || c.strike) || !count(c.damage, 5))
+    )
       fail(`Invalid damage: ${c.id}`);
     if (c.hits !== undefined && (!c.battle || !count(c.hits, 5)))
       fail(`Invalid boss hits: ${c.id}`);
@@ -153,7 +177,8 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
     // trio), on a fight or a starter, and on a starter's form.
     if (
       (c.type !== undefined &&
-        (!POKEMON_TYPES.includes(c.type) || (!c.battle && !c.omen))) ||
+        (!POKEMON_TYPES.includes(c.type) ||
+          (!c.battle && !c.omen && !c.strike))) ||
       (Array.isArray(c.evolves) &&
         c.evolves.some(
           (e) =>
@@ -184,7 +209,8 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
           c.knacks.length > 2 ||
           new Set(c.knacks).size !== c.knacks.length ||
           c.knacks.some((k) => !KNACKS.includes(k)))) ||
-      (c.knack !== undefined && (!c.battle || !KNACKS.includes(c.knack)))
+      (c.knack !== undefined &&
+        (!(c.battle || c.strike) || !KNACKS.includes(c.knack)))
     )
       fail(`Invalid knack: ${c.id}`);
     // A boon: a name, its rules, and an effect like an omen's. It may sit on
@@ -204,7 +230,12 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
       fail(`Invalid boon: ${c.id}`);
     // Spoils: two or three boons offered by a dice fight when it is won.
     const goodBoon = (b: unknown) => {
-      const boon = b as { name?: unknown; rules?: unknown; effect?: unknown };
+      const boon = b as {
+        name?: unknown;
+        rules?: unknown;
+        effect?: unknown;
+        slot?: unknown;
+      };
       return (
         !!boon &&
         typeof boon.name === "string" &&
@@ -213,7 +244,11 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         typeof boon.rules === "string" &&
         !!boon.rules.trim() &&
         !!boon.effect &&
-        typeof boon.effect === "object"
+        typeof boon.effect === "object" &&
+        // Equipment's slot (2026-10-25), on a trinket with a lasting effect.
+        (boon.slot === undefined ||
+          (SLOTS.includes(boon.slot as Slot) &&
+            Object.keys(boon.effect).some((k) => k !== "loot")))
       );
     };
     if (
@@ -228,6 +263,12 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         !c.spoils.every(goodBoon))
     )
       fail(`Invalid spoils: ${c.id}`);
+    // An adventurer's starting gear (2026-10-25): one piece with a slot.
+    if (
+      c.kit !== undefined &&
+      (c.omen === undefined || !goodBoon(c.kit) || !c.kit.slot)
+    )
+      fail(`Invalid kit: ${c.id}`);
     // Push your luck: one to three prizes, on a plain single-d20 battle.
     if (
       c.press !== undefined &&

@@ -6,6 +6,7 @@ import {
   currentCard,
   finaleCard,
   knackEdge,
+  strikeOutcome,
   verdictShift,
   type Random,
 } from "../src/game/engine";
@@ -13,7 +14,8 @@ import { rollDice } from "../src/game/dice";
 import { parseSession } from "../src/app/persistence";
 import { cards, packs } from "../src/content/catalog";
 import { JOKE_CLASSES } from "../src/content/dungeon/classes";
-import { roomKnacks } from "../src/content/dungeon/knacks";
+import { roomKnacks, strikeKnacks } from "../src/content/dungeon/knacks";
+import { STRIKE_HURT } from "../src/content/dungeon/shared";
 import { validateCatalog } from "../src/content/validate";
 import { KNACKS, type GameConfig, type SessionState } from "../src/game/types";
 
@@ -69,7 +71,8 @@ describe("knacks", () => {
   });
 
   it("puts knacks only on fights, about eight a floor, every knack in use", () => {
-    const rooms = cards.filter((c) => c.knack);
+    // Rolled rooms; strikes keep their own knacks (`strikeKnacks`).
+    const rooms = cards.filter((c) => c.knack && c.battle);
     expect(rooms.length).toBe(Object.keys(roomKnacks).length);
     for (const c of rooms) expect(c.battle, c.id).toBe(true);
     const floors = new Map<string, number>();
@@ -130,6 +133,31 @@ describe("knacks", () => {
     expect(verdictShift(rogue.quest, seance)).toBe(0);
   });
 
+  it("settles a strike by its knack: won with it, lost without, as written in the plain modes", () => {
+    // The Skeleton Barback calls for Charm: a Rogue has it, a Wizard doesn't.
+    const barback = byId("dungeon.skeleton-barback");
+    expect(barback.strike).toBeDefined();
+    expect(barback.knack).toBe("charm");
+    let s = facing("rogue", barback.id);
+    expect(strikeOutcome(s.quest, currentCard(s))).toBe("won");
+    const hearts = s.quest!.party!.hearts;
+    s = advance(s);
+    expect(s.quest!.party!.hearts).toBe(hearts);
+    let w = facing("wizard", barback.id);
+    expect(strikeOutcome(w.quest, currentCard(w))).toBe("lost");
+    const before = w.quest!.party!.hearts;
+    w = advance(w);
+    expect(w.quest!.party!.hearts).toBe(before - STRIKE_HURT[0]);
+    expect(parseSession(JSON.stringify(w))).toEqual(w);
+    // Outside a crawl a strike is neither won nor lost.
+    expect(strikeOutcome(undefined, barback)).toBeNull();
+    // Every strike knack names a strike, and none is a rolled room's too.
+    for (const id of Object.keys(strikeKnacks)) {
+      expect(byId(`dungeon.${id}`).strike, id).toBeDefined();
+      expect(roomKnacks[id], id).toBeUndefined();
+    }
+  });
+
   // Sessions clone the deck, so this takes a few seconds beside the
   // other files; it has 30.
   it("brings about two knack fights to a run", () => {
@@ -143,8 +171,10 @@ describe("knacks", () => {
       if (JOKE_CLASSES.includes(adventurer.id)) continue;
       counts.push(
         q.finale.filter((id) => {
-          const k = finaleCard(q, id)?.knack;
-          return !!k && adventurer.knacks!.includes(k);
+          const c = finaleCard(q, id);
+          return (
+            !!c?.battle && !!c.knack && adventurer.knacks!.includes(c.knack)
+          );
         }).length,
       );
     }

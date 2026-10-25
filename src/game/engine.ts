@@ -1,4 +1,5 @@
 import type {
+  Boon,
   CardDefinition,
   DiceRoll,
   Edge,
@@ -407,7 +408,12 @@ export function partyBoons(quest: QuestState | undefined) {
   return (quest?.party?.boons ?? []).flatMap((key) => {
     const [id, pick] = key.split("#");
     const card = quest ? finaleCard(quest, id) : undefined;
-    const boon = pick === undefined ? card?.boon : card?.spoils?.[Number(pick)];
+    const boon =
+      pick === undefined
+        ? card?.boon
+        : pick === "k"
+          ? card?.kit
+          : card?.spoils?.[Number(pick)];
     return card && boon ? [{ card, boon, key }] : [];
   });
 }
@@ -576,7 +582,8 @@ export function cardMatchup(
   card: CardDefinition,
 ): Matchup | null {
   const mine = partyType(quest);
-  if (!quest?.party || !card.battle || !card.type || !mine) return null;
+  if (!quest?.party || !(card.battle || card.strike) || !card.type || !mine)
+    return null;
   if (quest.party.tera === card.id) return teraMatchup(mine, card.type);
   return matchup(mine, card.type);
 }
@@ -587,7 +594,7 @@ export function knackEdge(
   card: CardDefinition,
 ): Knack | null {
   const id = quest?.party?.omen;
-  if (!card.battle || !card.knack || !id) return null;
+  if (!(card.battle || card.strike) || !card.knack || !id) return null;
   return finaleCard(quest, id)?.knacks?.includes(card.knack)
     ? card.knack
     : null;
@@ -609,9 +616,37 @@ export function verdictShift(
   quest: QuestState | undefined,
   card: CardDefinition,
 ): number {
-  if (card.dice) return 0;
+  // A strike prints its own cost for each matchup.
+  if (card.dice || card.strike) return 0;
   const edge = cardEdge(quest, card);
   return edge === "advantage" ? -1 : edge === "disadvantage" ? 1 : 0;
+}
+/** What a strike comes to: the starter's edge wins it, a disadvantage loses
+ * it, and an even matchup (or no type) is neither. In Pub Crawl a strike
+ * calls for a knack instead (2026-10-25): an adventurer with it wins, one
+ * without it loses. Outside a crawl a strike is neither. */
+export function strikeOutcome(
+  quest: QuestState | undefined,
+  card: CardDefinition,
+): "won" | "lost" | null {
+  if (!card.strike) return null;
+  if (card.knack)
+    return quest?.party ? (knackEdge(quest, card) ? "won" : "lost") : null;
+  const edge = cardMatchup(quest, card)?.edge;
+  return edge === "advantage" ? "won" : edge === "disadvantage" ? "lost" : null;
+}
+/** The line a strike reads for the current matchup. */
+export function strikeText(
+  quest: QuestState | undefined,
+  card: CardDefinition,
+): string | null {
+  if (!card.strike) return null;
+  const outcome = strikeOutcome(quest, card);
+  return outcome === "won"
+    ? card.strike.advantage
+    : outcome === "lost"
+      ? card.strike.disadvantage
+      : card.strike.even;
 }
 /** How many items the satchel holds. */
 export const satchelSize = (quest: QuestState | undefined) =>
@@ -703,6 +738,14 @@ export function takeSpoils(
   )
     return s;
   return discard(s, random, undefined, index);
+}
+/** Keep the gear the party wears: a won fight's card goes aside and none
+ * of its spoils are taken (2026-10-25). */
+export function skipSpoils(
+  s: SessionState,
+  random: Random = Math.random,
+): SessionState {
+  return awaitingSpoils(s) ? discard(s, random) : s;
 }
 /** A revealed choice card whose option has not been picked yet. */
 export function awaitingChoice(s: SessionState) {
@@ -976,21 +1019,55 @@ function gainBoon(
   party: PartyState,
   card: CardDefinition,
   quest: QuestState,
-  spoil?: number,
+  spoil?: number | "kit",
 ): PartyState {
-  const boon = spoil === undefined ? card.boon : card.spoils?.[spoil];
-  const key = spoil === undefined ? card.id : `${card.id}#${spoil}`;
+  const boon =
+    spoil === undefined
+      ? card.boon
+      : spoil === "kit"
+        ? card.kit
+        : card.spoils?.[spoil];
+  const key =
+    spoil === undefined
+      ? card.id
+      : `${card.id}#${spoil === "kit" ? "k" : spoil}`;
   if (!boon || party.boons?.some((k) => k.split("#")[0] === card.id))
     return party;
+  // Equipment (2026-10-25): the slot's old piece comes off first, and its
+  // hearts go with it (the party keeps at least one).
+  let base = party;
+  for (const old of boon.slot ? replaces({ ...quest, party }, boon) : []) {
+    const max = Math.max(1, base.max - (old.boon.effect.hearts ?? 0));
+    base = {
+      ...base,
+      max,
+      hearts: Math.min(max, base.hearts),
+      boons: (base.boons ?? []).filter((k) => k !== old.key),
+    };
+  }
   const { hearts = 0, loot = [] } = boon.effect;
-  const max = Math.max(1, party.max + hearts);
-  const next = { ...party, max, boons: [...(party.boons ?? []), key] };
+  const max = Math.max(1, base.max + hearts);
+  // A trinket that only brings items puts them in the satchel and is not
+  // worn.
+  const next = isLasting(boon)
+    ? { ...base, max, boons: [...(base.boons ?? []), key] }
+    : { ...base, max };
   const size = satchelSize({ ...quest, party: next });
   return {
     ...next,
-    hearts: Math.min(max, Math.max(1, party.hearts + hearts)),
-    loot: [...party.loot, ...loot].slice(0, size),
+    hearts: Math.min(max, Math.max(1, base.hearts + hearts)),
+    loot: [...base.loot, ...loot].slice(0, size),
   };
+}
+/** A boon with an effect that lasts: anything but items alone. */
+export const isLasting = (boon: Boon) =>
+  Object.keys(boon.effect).some((k) => k !== "loot");
+/** The pieces of equipment a boon would replace: whatever the party wears
+ * in its slot (one, or more in a save from before slots). */
+export function replaces(quest: QuestState | undefined, boon: Boon) {
+  return boon.slot
+    ? partyBoons(quest).filter((b) => b.boon.slot === boon.slot)
+    : [];
 }
 /** A heart loss: the shield takes it whole unless the satchel is hexed, and
  * bleeding costs one more. */
@@ -1049,6 +1126,8 @@ function settleParty(
       loot: [...next.loot, ...loot].slice(0, satchel),
       omen: card.id,
     };
+    // An adventurer's starting gear goes on with it (2026-10-25).
+    if (card.kit) next = gainBoon(next, card, quest, "kit");
   }
   if (card.curse && (outcome === null || outcome === "lost"))
     next = { ...next, curse: card.curse };
@@ -1092,12 +1171,14 @@ function discard(
     previousId = card.id;
   // In a quest only a won battle counts.
   const outcome: Outcome | null =
-    !s.quest || !card.battle
+    !s.quest || !(card.battle || card.strike)
       ? null
-      : (verdict ??
-        (card.dice && s.roll && rollWins(card.dice, s.roll.values, s.roll)
-          ? "won"
-          : "lost"));
+      : card.strike
+        ? strikeOutcome(s.quest, card)
+        : (verdict ??
+          (card.dice && s.roll && rollWins(card.dice, s.roll.values, s.roll)
+            ? "won"
+            : "lost"));
   const lost = outcome === "lost";
   const lostCount = (s.quest?.lost ?? 0) + 1;
   const party = s.quest?.party;

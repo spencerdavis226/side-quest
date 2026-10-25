@@ -23,6 +23,7 @@ import {
   spendLoot,
   takeOffer,
   takeSpoils,
+  replaces,
   type Random,
 } from "../src/game/engine";
 import { returnToCard, rollDice, rollWins } from "../src/game/dice";
@@ -159,9 +160,12 @@ function playRun(seed: number, adventurer?: string) {
           : cashOut(s, random);
       continue;
     }
-    // Spoils: the table picks either trinket, at random.
+    // Spoils: the table fills an empty equipment slot when it can
+    // (2026-10-25), else picks either piece at random and swaps it in.
     if (awaitingSpoils(s)) {
-      s = takeSpoils(s, random() < 0.5 ? 0 : 1, random);
+      const spoils = currentCard(s).spoils!;
+      const free = spoils.findIndex((b) => !replaces(s.quest, b).length);
+      s = takeSpoils(s, free >= 0 ? free : random() < 0.5 ? 0 : 1, random);
       if (party(s).hearts <= 3) use("draught");
       continue;
     }

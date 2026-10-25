@@ -14,6 +14,7 @@ import {
   trial,
   trinket,
   type FloorCards,
+  strike,
 } from "./shared";
 
 // Floor 3, the other way down: the Kitchen. The dinner rush never ended.
@@ -21,13 +22,17 @@ import {
 
 export const kitchen: FloorCards = {
   fights: [
-    monster(
+    strike(
       5,
+      "Monster",
       "deep-fryer-demon",
       "Deep Fryer Demon",
-      "It'll fry anything. It's looking at your hand. Roll d20.",
-      "Battered. Drink 5.",
-      "You throw ice in it. Give 5.",
+      "It'll fry anything. It's looking at your hand.",
+      {
+        even: "It fries a fry. Drink 3.",
+        advantage: "You freeze the oil with a spell. Give 5.",
+        disadvantage: "Battered. Drink 5.",
+      },
     ),
     monster(
       5,
@@ -91,28 +96,28 @@ export const kitchen: FloorCards = {
       "You comp his meal. He tips you his hip flask. Give 4.",
       { loot: "draught" },
     ),
-    monster(
+    strike(
       5,
+      "Monster",
       "walk-in-yeti",
       "Cold Room Yeti",
-      "Something lives in the cold room, and it ate all the shrimp. Roll d20.",
-      "Cold hug. Drink 5.",
-      "You lock it in. Give 5.",
-      { fumble: "It locks you in. Finish your drink." },
+      "Something lives in the cold room, and it ate all the shrimp.",
+      {
+        even: "Cold breath. Drink 3.",
+        advantage: "You lock it in. Give 5.",
+        disadvantage: "Cold hug. Drink 5.",
+      },
     ),
-    monster(
+    strike(
       5,
+      "Monster",
       "dish-pit-horror",
       "Dish Pit Horror",
-      "Something under the dish pit water has been eating forks. Roll 2d6.",
-      "",
-      "",
+      "Something under the dish pit water has been eating forks.",
       {
-        roll: pair(
-          "It eats your fork. Drink 5.",
-          "You pull the plug. Give 5.",
-          "A pair! You pull the plug and it goes with it. Everyone else drinks 3.",
-        ),
+        even: "It burps up a fork. Drink 3.",
+        advantage: "You bless the water and it sinks. Give 5.",
+        disadvantage: "It eats your fork. Drink 5.",
       },
     ),
     monster(
@@ -177,13 +182,17 @@ export const kitchen: FloorCards = {
       "Down. Drink 4, and lie on the floor for 5 seconds.",
       "You skate it. Give 3.",
     ),
-    trap(
+    strike(
       5,
+      "Trap",
       "swinging-door",
       "The Swinging Door",
-      "One door, in and out, and a server is coming through with a full tray. Roll d20.",
-      "Tray to the face. Drink 4.",
-      "You spin past. Give 3.",
+      "One door, in and out, and a server is coming through with a full tray.",
+      {
+        even: "You flinch. Drink 3.",
+        advantage: "You spin past. Give 4.",
+        disadvantage: "Tray to the face. Drink 5.",
+      },
     ),
     trap(
       5,
@@ -218,13 +227,17 @@ export const kitchen: FloorCards = {
       "You smell like it now. Drink 5.",
       "You open a window and it's gone. Give 5.",
     ),
-    monster(
+    strike(
       5,
+      "Monster",
       "rat-chef",
       "The Rat Chef",
-      "A rat under a chef's hat is steering the line cook. He wants your order. Roll d20.",
-      "He serves you. Drink 5.",
-      "You send it back. Give 5.",
+      "A rat under a chef's hat is steering the line cook. He wants your order.",
+      {
+        even: "You order the special. Drink 3.",
+        advantage: "You compliment the chef. Give 5.",
+        disadvantage: "He serves you. Drink 5.",
+      },
     ),
     monster(
       5,
@@ -247,13 +260,17 @@ export const kitchen: FloorCards = {
       "The Order",
       "Repeat back every drink at the table, in order, from memory. Miss one: drink 5.",
     ),
-    trap(
+    strike(
       5,
+      "Trap",
       "hot-pan",
       "The Hot Pan",
-      "Somebody left a pan on the burner, and the handle's glowing. Roll d20.",
-      "You grab it. Drink 4, then blow on your hand.",
-      "You use a towel like a pro. Give 3.",
+      "Somebody left a pan on the burner, and the handle's glowing.",
+      {
+        even: "Hot. Drink 3.",
+        advantage: "You grab a towel like a pro. Give 4.",
+        disadvantage: "You grab it. Drink 5, then blow on your hand.",
+      },
     ),
     ambush(
       5,

@@ -210,7 +210,9 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
             extra !== undefined ||
             (pick === undefined
               ? !card.boon
-              : !/^\d$/.test(pick) || !card.spoils?.[Number(pick)])
+              : pick === "k"
+                ? !card.kit
+                : !/^\d$/.test(pick) || !card.spoils?.[Number(pick)])
           );
         }) ||
         new Set(p.boons.map((k) => k.split("#")[0])).size !==

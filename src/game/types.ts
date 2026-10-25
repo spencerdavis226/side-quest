@@ -44,6 +44,13 @@ export interface DiceRoll {
   edge?: Edge;
   dropped?: number[];
 }
+/** A strike's three lines, one for each way the matchup can go. */
+export interface Strike {
+  even: string;
+  advantage: string;
+  disadvantage: string;
+}
+
 export interface CardDefinition {
   version: 1;
   id: string;
@@ -72,7 +79,14 @@ export interface CardDefinition {
    * a quest only a win counts: a lost gym leader goes back into the deck, and
    * a lost finale card is replaced by another from its stage. */
   battle?: true;
-  /** Pub Crawl: hearts the party loses when this battle is lost. */
+  /** Pokémon League (2026-10-25): a fight with no roll and no plaque. The
+   * type matchup picks the line the card reads and what it costs when it is
+   * put aside: the starter's edge wins (a reward and no `damage`), a
+   * disadvantage loses (`damage`, a curse), and anything else, or an untyped
+   * card, is even and costs only what the line says. */
+  strike?: Strike;
+  /** Pub Crawl: hearts the party loses when this battle (or a strike on a
+   * bad matchup) is lost. */
   damage?: number;
   /** A boss: the battle has to be won this many times. Each swing is one
    * deal, and the boss is dealt again, win or lose, until it falls. */
@@ -125,6 +139,10 @@ export interface CardDefinition {
    * puts the card aside (`takeSpoils`); it is kept as `<card id>#<index>`
    * in `party.boons`. Never beside `boon`. */
   spoils?: Boon[];
+  /** Pub Crawl (2026-10-25): an adventurer's starting equipment, worn from
+   * the moment the class is put aside, until a piece for its slot replaces
+   * it. Kept in `party.boons` as "<card id>#k". */
+  kit?: Boon;
   /** Pub Crawl (2026-10-17): push your luck. Each won roll banks the next
    * prize and offers Cash out or Again; each Again rolls 2 lower; a loss
    * forfeits everything banked. A single-d20 battle only. */
@@ -145,7 +163,15 @@ export interface Boon {
   name: string;
   rules: string;
   effect: OmenEffect;
+  /** Pub Crawl equipment (2026-10-25): the slot a trinket takes. The party
+   * wears one piece per slot; a new one replaces the old. Absent on
+   * tonight's omen and on older saves' trinkets, which stack as before. */
+  slot?: Slot;
 }
+/** Pub Crawl's equipment slots (2026-10-25): weapons bend the dice, armor
+ * keeps hearts, a trinket does anything else. */
+export const SLOTS = ["weapon", "armor", "trinket"] as const;
+export type Slot = (typeof SLOTS)[number];
 /** A table rule with a name: "Goblin Tongue", "Speak of yourself in the
  * third person. Slip: drink 1." */
 export interface Jinx {

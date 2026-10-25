@@ -27,6 +27,10 @@ const picks: Record<string, string> = {
   // rest and a jinx (2026-10-17).
   "crawl/adventurer": "lorc/visored-helm",
   "crawl/trinket": "lorc/gem-pendant",
+  // Pub Crawl's equipment slots (2026-10-25); the trinket slot keeps the
+  // trinket's mark.
+  "crawl/weapon": "lorc/broadsword",
+  "crawl/armor": "lorc/breastplate",
   "crawl/cup": "lorc/chalice-drops",
   "crawl/quaff": "lorc/beer-stein",
   "crawl/rest": "lorc/campfire",

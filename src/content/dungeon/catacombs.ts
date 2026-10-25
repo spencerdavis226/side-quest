@@ -7,7 +7,6 @@ import {
   fork,
   merchant,
   monster,
-  moves,
   pair,
   relic,
   shrine,
@@ -17,6 +16,7 @@ import {
   trinket,
   BOSS_NEED,
   type FloorCards,
+  strike,
 } from "./shared";
 
 // Floor 2: the Catacombs. Bones, regrets, and a bachelor party that never
@@ -91,34 +91,29 @@ export const catacombs: FloorCards = {
         ),
       },
     ),
-    monster(
+    strike(
       1,
+      "Monster",
       "hungover-mummy",
       "Hungover Mummy",
-      "A mummy wrapped in bar napkins, hungover for three thousand years. Roll d20.",
-      "It throws up sand on you. Drink 4.",
-      "You hand it a Gatorade. It weeps. Give 4.",
+      "A mummy wrapped in bar napkins, hungover for three thousand years.",
+      {
+        even: "It groans at you. Drink 3.",
+        advantage: "You lay it to rest with a Gatorade. Give 4.",
+        disadvantage: "It throws up sand on you. Drink 4.",
+      },
     ),
-    monster(
+    strike(
       1,
+      "Monster",
       "banshee-karaoke",
       "Karaoke Banshee",
-      "A banshee with a mic and a song list. She's picked yours. Roll d6.",
-      "",
-      "",
+      "A banshee with a mic and a song list. She's picked yours.",
       {
-        roll: moves(
-          [
-            "Total Eclipse of the Heart. Sing the chorus, then drink 4.",
-            "She hits the high note. Your ears bleed. Drink 4.",
-          ],
-          [
-            "You unplug the mic. Give 3.",
-            "You out-sing her. Give 4.",
-            "You duet. It's beautiful. Give 4.",
-            "You hit a note so bad she flees. Everyone else drinks 2.",
-          ],
-        ),
+        even: "You hum along. Drink 3.",
+        advantage: "You duet and she swoons. Give 4.",
+        disadvantage:
+          "Total Eclipse of the Heart. Sing the chorus, then drink 4.",
       },
     ),
     monster(
@@ -159,13 +154,17 @@ export const catacombs: FloorCards = {
       "The Séance",
       "Hands joined, you summon a spirit. Make someone laugh in 20 seconds, or drink 4.",
     ),
-    trap(
+    strike(
       1,
+      "Trap",
       "collapsing-floor",
       "Collapsing Floor",
-      "The floor gives way under you. Roll d20 to grab the edge.",
-      "You fall a whole floor. Drink 3.",
-      "You hang on. Give 2.",
+      "The floor gives way under you.",
+      {
+        even: "You wobble. Drink 2.",
+        advantage: "You leap to safety. Give 3.",
+        disadvantage: "You fall a whole floor. Drink 3.",
+      },
     ),
     trap(
       1,
@@ -214,13 +213,17 @@ export const catacombs: FloorCards = {
       "You conduct them into a wall. Give 3.",
     ),
     // More of the Catacombs (2026-10-25).
-    monster(
+    strike(
       1,
+      "Monster",
       "zombie-roommate",
       "Zombie Roommate",
-      "Your old roommate, undead, still owes you rent and still has your hoodie. Roll d20.",
-      "He moves back in. Drink 4.",
-      "You change the locks. Give 4.",
+      "Your old roommate, undead, still owes you rent and still has your hoodie.",
+      {
+        even: "He returns the hoodie, worse. Drink 3.",
+        advantage: "You throw him out. Give 4.",
+        disadvantage: "He moves back in. Drink 4.",
+      },
     ),
     monster(
       1,
@@ -230,23 +233,16 @@ export const catacombs: FloorCards = {
       "He drops the bar on you. Drink 4.",
       "You out-lift a corpse. Give 4.",
     ),
-    monster(
+    strike(
       1,
+      "Monster",
       "skeleton-mariachi",
       "Skeleton Mariachi",
-      "Three skeletons with guitars. They won't stop until someone dances. Roll d6.",
-      "",
-      "",
+      "Three skeletons with guitars. They won't stop until someone dances.",
       {
-        roll: moves(
-          ["You dance, badly. Drink 4.", "They serenade your ex. Drink 4."],
-          [
-            "You request a slow one. Give 3.",
-            "You pay them to leave. Give 4.",
-            "They play your song. Give 4.",
-            "You join the band. Everyone else drinks 1.",
-          ],
-        ),
+        even: "Someone dances. The worst dancer drinks 3.",
+        advantage: "You charm their strings into a slow one. Give 4.",
+        disadvantage: "You dance, badly. Drink 4.",
       },
     ),
     trial(
@@ -255,13 +251,17 @@ export const catacombs: FloorCards = {
       "Your Own Eulogy",
       "Give your own eulogy in 10 seconds. The table says if it moved them. Not moved: drink 4.",
     ),
-    trap(
+    strike(
       1,
+      "Trap",
       "grabbing-hand",
       "The Grabbing Hand",
-      "A coffin lid slides open as you pass, and a hand grabs your ankle. Roll d20.",
-      "It pulls. Drink 3.",
-      "You stamp on it and it lets go. Give 3.",
+      "A coffin lid slides open as you pass, and a hand grabs your ankle.",
+      {
+        even: "It squeezes. Drink 2.",
+        advantage: "You stamp on it and it lets go. Give 3.",
+        disadvantage: "It pulls. Drink 3.",
+      },
     ),
     ambush(
       1,

@@ -18,9 +18,14 @@ import { cards, packs } from "../src/content/catalog";
 import {
   advance,
   awaitingChoice,
+  cardMatchup,
   createSession,
   currentCard,
   isBossCard,
+  awaitingSpoils,
+  partyBoons,
+  replaces,
+  strikeOutcome,
 } from "../src/game/engine";
 import { nextMove, seeded } from "./table-play";
 import { parseSession } from "../src/app/persistence";
@@ -112,6 +117,18 @@ const situations: [string, GameConfig, Find][] = [
     league,
     (s) => s.roll?.edge === "disadvantage" && s.roll.returned,
   ],
+  // Strikes (2026-10-25): a fight with no roll, face up, each way the
+  // matchup can go.
+  ...(["advantage", "disadvantage", "even"] as const).map(
+    (edge): [string, GameConfig, Find] => [
+      `league-strike-${edge}`,
+      league,
+      (s) =>
+        s.phase === "revealed" &&
+        !!currentCard(s).strike &&
+        (cardMatchup(s.quest, currentCard(s))?.edge ?? "even") === edge,
+    ],
+  ),
   // A Tera Orb spent on the battle face up, before its roll or verdict.
   ["league-terastallized", league, (s) => !!party(s).tera],
   [
@@ -144,6 +161,40 @@ const situations: [string, GameConfig, Find][] = [
     crawl,
     (s) =>
       s.phase === "revealed" && currentCard(s).id.startsWith("dungeon.stairs-"),
+  ],
+  // Pub Crawl strikes (2026-10-25): a room with no roll, face up, settled
+  // by the class's knack each way.
+  ...(["won", "lost"] as const).map((outcome): [string, GameConfig, Find] => [
+    `crawl-strike-${outcome}`,
+    crawl,
+    (s) =>
+      s.phase === "revealed" &&
+      !!currentCard(s).strike &&
+      strikeOutcome(s.quest, currentCard(s)) === outcome,
+  ]),
+  // Equipment (2026-10-25): gear worn in two slots, and spoils waiting that
+  // would replace a piece.
+  [
+    "crawl-gear-worn",
+    crawl,
+    (s) =>
+      s.phase === "hidden" &&
+      new Set(partyBoons(s.quest).flatMap((b) => b.boon.slot ?? [])).size >= 2,
+  ],
+  // A class's starting gear, worn (2026-10-25).
+  [
+    "crawl-starting-gear",
+    crawl,
+    (s) =>
+      s.phase === "hidden" &&
+      (party(s).boons ?? []).some((k) => k.endsWith("#k")),
+  ],
+  [
+    "crawl-spoils-would-replace",
+    crawl,
+    (s) =>
+      awaitingSpoils(s) &&
+      currentCard(s).spoils!.some((b) => replaces(s.quest, b).length > 0),
   ],
   // A knack (2026-10-25): a room rolled with the edge for the class.
   ["crawl-knack-roll", crawl, (s) => !!s.roll?.edge && !s.roll.returned],

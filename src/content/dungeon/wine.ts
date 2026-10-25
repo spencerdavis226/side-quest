@@ -17,6 +17,7 @@ import {
   trinket,
   BOSS_NEED,
   type FloorCards,
+  strike,
 } from "./shared";
 
 // Floor 1, the other way down: the Wine Cellar. Racks to the ceiling, a
@@ -55,13 +56,17 @@ export const wine: FloorCards = {
         ),
       },
     ),
-    monster(
+    strike(
       3,
+      "Monster",
       "zombie-sommelier",
       "Zombie Sommelier",
-      "Brains? No. He wants to describe the finish. It takes eleven minutes. Roll d20.",
-      "Notes of oak. Drink 3 and describe the finish of yours.",
-      "You spit in his bucket. Give 3.",
+      "Brains? No. He wants to describe the finish. It takes eleven minutes.",
+      {
+        even: "Notes of oak. Drink 2.",
+        advantage: "You talk over him until he leaves. Give 3.",
+        disadvantage: "Notes of oak. Drink 3 and describe the finish of yours.",
+      },
     ),
     monster(
       3,
@@ -95,22 +100,29 @@ export const wine: FloorCards = {
         },
       },
     ),
-    monster(
+    strike(
       3,
+      "Monster",
       "barrel-mimic",
       "Barrel Mimic",
-      "Barrel 14 has teeth. Barrel 15 looks nervous. Roll d20.",
-      "Barrel 14 wins. Drink 4.",
-      "You tap it. It whimpers. Give 3 to the most nervous-looking person.",
+      "Barrel 14 has teeth. Barrel 15 looks nervous.",
+      {
+        even: "Barrel 15 faints. Drink 2.",
+        advantage: "You punch it shut. Give 3 to the most nervous player.",
+        disadvantage: "Barrel 14 wins. Drink 3.",
+      },
     ),
-    monster(
+    strike(
       3,
+      "Monster",
       "corkscrew-crab",
       "Corkscrew Crab",
-      "A crab with corkscrews for claws, opening anything. Including you. Roll d20.",
-      "Uncorked. Drink 3 and walk sideways to your seat.",
-      "You flip it on its back. Give 3.",
-      { crit: "You open a bottle with it. Give 6." },
+      "A crab with corkscrews for claws, opening anything. Including you.",
+      {
+        even: "It opens a bottle. Drink 2.",
+        advantage: "You flip it on its back. Give 3.",
+        disadvantage: "Uncorked. Drink 3 and walk sideways to your seat.",
+      },
     ),
     monster(
       3,
@@ -169,13 +181,17 @@ export const wine: FloorCards = {
       "Down on your ass, in red. Drink 2 standing up.",
       "Not a drop on you. Give 2.",
     ),
-    trap(
+    strike(
       3,
+      "Trap",
       "sulfite-cloud",
       "Sulfite Cloud",
-      "A cracked cask puffs out a cloud of sulfites. Instant headache. Roll d20.",
-      "Migraine. Drink 2 and rub your temples.",
-      "You duck under it. Give 2.",
+      "A cracked cask puffs out a cloud of sulfites. Instant headache.",
+      {
+        even: "Headache. Drink 2.",
+        advantage: "You blow it away with a word. Give 2.",
+        disadvantage: "Migraine. Drink 3 and rub your temples.",
+      },
     ),
     trap(
       3,
@@ -202,21 +218,29 @@ export const wine: FloorCards = {
       "You've read it. They scatter. Give 2.",
     ),
     // More of the Wine Cellar (2026-10-25).
-    monster(
+    strike(
       3,
+      "Monster",
       "cork-goblin",
       "Cork Goblin",
-      "A goblin with a corkscrew for a hand and nothing to open. Then he sees you. Roll d20.",
-      "He opens you. Drink 3.",
-      "You hand him a screw-top. He weeps. Give 3.",
+      "A goblin with a corkscrew for a hand and nothing to open. Then he sees you.",
+      {
+        even: "He opens a twist-off. Drink 2.",
+        advantage: "You hand him a screw-top. He weeps. Give 3.",
+        disadvantage: "He opens you. Drink 3.",
+      },
     ),
-    monster(
+    strike(
       3,
+      "Monster",
       "rose-elemental",
       "Rosé Elemental",
-      "A pink spirit that says 'rosé all day' and means it as a threat. Roll d20.",
-      "All day it is. Drink 3.",
-      "You call it blush wine and it dies. Give 3.",
+      "A pink spirit that says 'rosé all day' and means it as a threat.",
+      {
+        even: "Rosé for an hour. Drink 2.",
+        advantage: "You banish it with one word: blush. Give 3.",
+        disadvantage: "All day it is. Drink 3.",
+      },
     ),
     monster(
       3,
