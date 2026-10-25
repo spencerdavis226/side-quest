@@ -94,32 +94,41 @@ export const moreWilds: CardDefinition[][] = [
         "You roll it gently into the bushes. Give 2.",
       ),
     ),
-    wild(
+    strike(
       2,
       "route-sandshrew",
       "Sandshrew",
-      "Wild Sandshrew curls into a ball and rolls at your drink. Roll d20.",
-      vs(
-        "Strike. Drink 2, then stand it back up.",
-        "You bowl it straight back. Give 3.",
-      ),
+      "Wild Sandshrew curls into a ball and rolls at your drink.",
+      {
+        even: "Splash. Drink 2.",
+        advantage: "You catch it like a bowling pin. Give 3.",
+        disadvantage: "It spills the lot. Drink 4.",
+      },
     ),
-    wild(
+    strike(
       2,
       "route-bellsprout",
       "Bellsprout",
-      "Wild Bellsprout sways like it's had six. Sway with it, then roll d20.",
-      vs("Wrap. It's clingy. Drink 2.", "It wilts in the sun. Give 3."),
+      "Wild Bellsprout sways like it's had six. Sway with it.",
+      {
+        even: "Wobble. Drink 2.",
+        advantage: "It faints into your lap. Give 3.",
+        disadvantage: "Vine Whip. Drink 4.",
+      },
     ),
   ],
   // Route 4
   [
-    wild(
+    strike(
       3,
       "route-wingull",
       "Wingull",
-      "Wild Wingull snatches a chip out of your hand. Roll d20.",
-      vs("It comes back for another. Drink 3.", "You snatch it back. Give 3."),
+      "Wild Wingull snatches a chip out of your hand.",
+      {
+        even: "Rude. Drink 2.",
+        advantage: "You snatch it back. Give 3.",
+        disadvantage: "It brings friends. Drink 5.",
+      },
     ),
     wild(
       3,
@@ -144,12 +153,16 @@ export const moreWilds: CardDefinition[][] = [
   ],
   // Route 5
   [
-    wild(
+    strike(
       4,
       "route-tangela",
       "Tangela",
-      "Wild Tangela is a ball of blue spaghetti, and it's hungry. Roll d20.",
-      vs("Bind. Drink 3, tangled.", "You twirl it off with a fork. Give 3."),
+      "Wild Tangela is a ball of blue spaghetti, and it's hungry.",
+      {
+        even: "It tangles you up. Drink 2.",
+        advantage: "You eat it first. Give 3.",
+        disadvantage: "Vine tangle. Drink 5.",
+      },
     ),
     trainer(
       4,
@@ -161,12 +174,16 @@ export const moreWilds: CardDefinition[][] = [
         "You peel them off like fridge magnets. Give 3.",
       ),
     ),
-    wild(
+    strike(
       4,
       "route-spritzee",
       "Spritzee",
-      "Wild Spritzee smells like a department store. Roll d20.",
-      vs("Perfume, right in the eyes. Drink 3.", "Smells like a win. Give 3."),
+      "Wild Spritzee smells like a department store.",
+      {
+        even: "Sneeze. Drink 2.",
+        advantage: "Free perfume sample. Give 3.",
+        disadvantage: "Overwhelming scent. Drink 5.",
+      },
     ),
   ],
   // Route 6
@@ -181,25 +198,27 @@ export const moreWilds: CardDefinition[][] = [
         "You water it. It panics and runs. Give 3.",
       ),
     ),
-    wild(
+    strike(
       5,
       "route-rotom",
       "Rotom",
-      "A Rotom got into the phone. Don't drop it. Roll d20.",
-      vs(
-        "It texts your ex. Drink 4.",
-        "It goes back in the microwave. Give 3.",
-      ),
+      "A Rotom got into the phone. Don't drop it.",
+      {
+        even: "It orders pizza. Drink 2.",
+        advantage: "You post it online. Give 3.",
+        disadvantage: "It texts your ex. Drink 6.",
+      },
     ),
-    wild(
+    strike(
       5,
       "route-breloom",
       "Breloom",
-      "Wild Breloom throws a mushroom haymaker. Duck, then roll d20.",
-      vs(
-        "Mach Punch, before you blink. Drink 3.",
-        "It slips on its own spores. Give 3.",
-      ),
+      "Wild Breloom throws a mushroom haymaker. Duck.",
+      {
+        even: "It grazes you. Drink 2.",
+        advantage: "It clocks a tree instead. Give 3.",
+        disadvantage: "Mach Punch. Drink 6.",
+      },
     ),
   ],
   // Route 7
@@ -224,12 +243,16 @@ export const moreWilds: CardDefinition[][] = [
         "It teleports away, blushing. Give 3.",
       ),
     ),
-    wild(
+    strike(
       6,
       "route-wailord",
       "Wailord",
-      "A Wailord surfaces and blots out the sun. Everyone looks up. Roll d20.",
-      vs("Water Spout. Drink 4.", "It sinks back down, embarrassed. Give 3."),
+      "A Wailord surfaces and blots out the sun. Everyone looks up.",
+      {
+        even: "Splash. Everyone drinks 1.",
+        advantage: "It waves. Give 4.",
+        disadvantage: "Water Spout. Drink 6.",
+      },
     ),
   ],
   // Route 8
@@ -244,29 +267,53 @@ export const moreWilds: CardDefinition[][] = [
         "You catch one and keep it. Give 4.",
       ),
     ),
-    wild(
+    strike(
       7,
       "route-electivire",
       "Electivire",
-      "Wild Electivire plugs its tails into the wall. The lights dim. Roll d20.",
-      vs("Thunder Punch. Drink 4.", "You flip the breaker. Give 4."),
+      "Wild Electivire plugs its tails into the wall. The lights dim.",
+      {
+        even: "Brownout. Drink 3.",
+        advantage: "You unplug it. Give 4.",
+        disadvantage: "Thunder Punch. Drink 6.",
+      },
     ),
-    wild(
+    strike(
       7,
       "route-togekiss",
       "Togekiss",
-      "Wild Togekiss blesses the table, then wants a battle. Roll d20.",
-      vs(
-        "Air Slash, and it flinches you. Drink 4.",
-        "It blesses you instead. Give 4.",
-      ),
+      "Wild Togekiss blesses the table, then wants a battle.",
+      {
+        even: "Blessed. Everyone drinks 1.",
+        advantage: "It joins the blessing. Give 4.",
+        disadvantage: "Air Slash. Drink 6.",
+      },
     ),
   ],
 ];
 
-/** An evolution chance on Route 5, which had none, so the bigger route
- * pools still evolve about as often as before. */
+/** An evolution chance on Route 5, which had none, and a second one on
+ * Routes 2, 4 and 6, so the bigger route pools (the strikes and table
+ * moments of 2026-10-25) still evolve about as often as before. */
 export const moreEvolutions: Partial<Record<number, CardDefinition>> = {
+  1: evolution(
+    1,
+    "route-link-cable",
+    "Link Cable",
+    "A stranger offers to trade your starter over a link cable. It's not a scam. Probably.",
+  ),
+  3: evolution(
+    3,
+    "route-sun-stone",
+    "Sun Stone",
+    "A Sun Stone glows in a flower patch. Your starter leans toward it.",
+  ),
+  5: evolution(
+    5,
+    "route-friendship-glow",
+    "Friendship Glow",
+    "Your starter hasn't left your side all journey. It starts to glow.",
+  ),
   4: evolution(
     4,
     "route-day-care",

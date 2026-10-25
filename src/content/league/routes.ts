@@ -18,6 +18,7 @@ import {
   vs,
   wild,
 } from "./journey";
+import { moments } from "./moments";
 import { moreEvolutions, moreWilds, teraRaid } from "./wilds";
 
 // The League's routes: eight, one before each gym, four cards each from the
@@ -221,16 +222,16 @@ const route2: CardDefinition[] = [
       ],
     ),
   ),
-  wild(
+  strike(
     1,
     "route-ekans",
     "Ekans",
-    "Wild Ekans wraps around your leg and hisses something filthy. Roll d20.",
-    vs(
-      "Wrap. Drink 2, and drink with crossed arms until your next turn.",
-      "You tie it in a knot. Give 2.",
-    ),
-    { curse: "bleed" },
+    "Wild Ekans wraps around your leg and hisses something filthy.",
+    {
+      even: "It squeezes. Drink 2 and hiss back.",
+      advantage: "You tie it in a bow. Give 3.",
+      disadvantage: "Poison Sting. Drink 4, eyes watering.",
+    },
   ),
   wild(
     1,
@@ -243,25 +244,27 @@ const route2: CardDefinition[] = [
       "A pair! It evolves mid-fight into something nobody predicted. Give {total}.",
     ),
   ),
-  wild(
+  strike(
     1,
     "route-starly",
     "Starly",
-    "A whole flock of Starly. Everyone flaps their arms. The drawer rolls d20.",
-    vs(
-      "Swarmed. Drink 2; the worst flapper drinks with you.",
-      "They scatter. The last one still flapping drinks 2.",
-    ),
+    "A whole flock of Starly. Everyone flaps their arms.",
+    {
+      even: "Bird chaos. The slowest flapper drinks 2.",
+      advantage: "You scatter them. Give 3.",
+      disadvantage: "They steal your snack and your dignity. Drink 4.",
+    },
   ),
-  wild(
+  strike(
     1,
     "route-lillipup",
     "Lillipup",
-    "Wild Lillipup wants belly rubs. Rub the nearest belly at the table, then roll d20.",
-    vs(
-      "It humps your leg. Drink 2 and apologize to the leg.",
-      "Good dog. You and the belly you rubbed give 2 each.",
-    ),
+    "Wild Lillipup wants belly rubs. Rub the nearest belly at the table.",
+    {
+      even: "Good boy. The rubbed player gives 2.",
+      advantage: "It fetches your drink. Give 3.",
+      disadvantage: "It bites the hand that feeds. Drink 4.",
+    },
   ),
   wild(
     1,
@@ -273,15 +276,17 @@ const route2: CardDefinition[] = [
       "Sausage served. Whoever has the longest name drinks 2.",
     ),
   ),
-  trainer(
+  strike(
     1,
     "route-hiker",
     "Hiker Dave",
-    "Hiker Dave hasn't showered since Mt. Moon. Hug your left neighbor. Roll d20.",
-    vs(
-      "Geodude to the face. Drink 3 and hug them again.",
-      "Dave heads back up the mountain. Your left neighbor drinks 2 for the smell.",
-    ),
+    "Hiker Dave hasn't showered since Mt. Moon. Hug your left neighbor.",
+    {
+      even: "He shares his trail mix. Drink 2.",
+      advantage: "He's too tired to fight. Give 3.",
+      disadvantage: "His Geodude rolls you flat. Drink 4.",
+    },
+    { kind: "Trainer" },
   ),
   challenge(
     1,
@@ -378,18 +383,15 @@ const route2Aces: CardDefinition[] = [
 
 // --- Route 3 -----------------------------------------------------------------
 const route3: CardDefinition[] = [
-  wild(
+  strike(
     2,
     "route-psyduck",
     "Psyduck",
-    "Wild Psyduck clutches its head, staring at nothing. Clutch yours, then roll d20.",
-    vs("Confusion. Drink 3.", "It waddles off, still confused. Give 2."),
+    "Wild Psyduck clutches its head, staring at nothing. Clutch yours too.",
     {
-      curse: "hex",
-      jinx: {
-        name: "Question Time",
-        rule: "The jinxed player speaks only in questions. Slip: drink 1.",
-      },
+      even: "Headache for everyone. You drink 2.",
+      advantage: "You cure its headache. Give 3.",
+      disadvantage: "Confusion! Drink 4 and spin once.",
     },
   ),
   wild(
@@ -402,30 +404,27 @@ const route3: CardDefinition[] = [
       "You flex harder. Give 2.",
     ),
   ),
-  wild(
+  strike(
     2,
     "route-shinx",
     "Shinx",
-    "Wild Shinx sparks when it sees you. Every hair on your body stands up. Roll d6.",
-    moves(
-      ["Spark. Drink 3.", "Shock. You and both neighbors drink 1."],
-      [
-        "You pet the spark out of it. Give 2.",
-        "It zaps your left neighbor instead. They drink 2.",
-        "Charge. It's still charging. Give 2.",
-        "It falls asleep in your lap. Give 3.",
-      ],
-    ),
+    "Wild Shinx sparks when it sees you. Every hair on your body stands up.",
+    {
+      even: "Static cling. Drink 2.",
+      advantage: "You wrangle the sparks. Give 3.",
+      disadvantage: "Sparks everywhere. Drink 4, hair upright.",
+    },
   ),
-  wild(
+  strike(
     2,
     "route-roggenrola",
     "Roggenrola",
-    "Wild Roggenrola is a rock with an ear. It heard what you said about it. Roll d20.",
-    vs(
-      "It tells everyone. Drink 2, and tell the table one thing you've said behind someone's back.",
-      "You skip it across a pond. Give 2.",
-    ),
+    "Wild Roggenrola is a rock with an ear. It heard what you said about it.",
+    {
+      even: "It sulks. Say something nice, then drink 2.",
+      advantage: "You skip it across a lake. Give 3.",
+      disadvantage: "It takes it personally. Drink 4.",
+    },
   ),
   wild(
     2,
@@ -566,26 +565,27 @@ const route3Aces: CardDefinition[] = [
 
 // --- Route 4 -----------------------------------------------------------------
 const route4: CardDefinition[] = [
-  wild(
+  strike(
     3,
     "route-ponyta",
     "Ponyta",
-    "Wild Ponyta. A horse on fire. Gallop around your chair once, then roll d20.",
-    vs(
-      "Trampled. Gallop in place, then drink 3.",
-      "You ride it into the sunset. Give 3.",
-    ),
+    "Wild Ponyta. A horse on fire. Gallop around your chair once.",
+    {
+      even: "Singed. Drink 2.",
+      advantage: "You ride it. Give 3.",
+      disadvantage: "Flame Wheel. Drink 5.",
+    },
   ),
-  wild(
+  strike(
     3,
     "route-sableye",
     "Sableye",
-    "Wild Sableye eyes your teeth like they're gems. Grin wide, then roll d20.",
-    vs(
-      "It steals your soul. Drink 3 and sit in silence for 10 seconds.",
-      "It goes for a bigger grin. The widest smile at the table drinks 3.",
-    ),
-    { curse: "hex" },
+    "Wild Sableye eyes your teeth like they're gems. Grin wide.",
+    {
+      even: "It licks its lips. Drink 2.",
+      advantage: "Fake gems! It cries. Give 3.",
+      disadvantage: "It takes a sip of your drink. Drink 5.",
+    },
   ),
   wild(
     3,
@@ -599,15 +599,16 @@ const route4: CardDefinition[] = [
     ),
     { curse: "bleed" },
   ),
-  wild(
+  strike(
     3,
     "route-sandile",
     "Sandile",
-    "Wild Sandile is wearing sunglasses and doesn't care about you. Roll d20.",
-    vs(
-      "Sand in every crack. Drink 3 and squirm.",
-      "You steal its sunglasses. Give 3, looking cool.",
-    ),
+    "Wild Sandile is wearing sunglasses and doesn't care about you.",
+    {
+      even: "Awkward. Drink 2 to break the silence.",
+      advantage: "You steal the sunglasses. Give 3.",
+      disadvantage: "It cares now. Drink 5.",
+    },
   ),
   wild(
     3,
@@ -627,15 +628,16 @@ const route4: CardDefinition[] = [
       ],
     ),
   ),
-  wild(
+  strike(
     3,
     "route-mudbray",
     "Mudbray",
-    "Wild Mudbray is a donkey covered in mud and it wants to share. Roll d20.",
-    vs(
-      "Mud everywhere. Drink 3, and your right neighbor wipes your face.",
-      "You hose it off. The table points at the dirtiest mind here; they drink 3.",
-    ),
+    "Wild Mudbray is a donkey covered in mud and it wants to share.",
+    {
+      even: "It shares. Drink 2.",
+      advantage: "You win the mud wrestle. Give 3.",
+      disadvantage: "Mud Slap. Drink 5.",
+    },
   ),
   trainer(
     3,
@@ -752,34 +754,27 @@ const route4Aces: CardDefinition[] = [
 
 // --- Route 5 -----------------------------------------------------------------
 const route5: CardDefinition[] = [
-  wild(
+  strike(
     4,
     "route-haunter",
     "Haunter",
-    "Wild Haunter licks you. It's cold and it lingers. Lick your lips and roll d20.",
-    vs("Lick. Drink 3.", "It vanishes, giggling. Give 3."),
+    "Wild Haunter licks you. It's cold and it lingers. Lick your lips.",
     {
-      curse: "hex",
-      jinx: {
-        name: "Mean Look",
-        rule: "Anyone who meets the jinxed player's eyes drinks 1.",
-      },
+      even: "Shiver. Drink 2.",
+      advantage: "You lick it back. Give 3.",
+      disadvantage: "Lick, then Hypnosis. Drink 5.",
     },
   ),
-  wild(
+  strike(
     4,
     "route-scyther",
     "Scyther",
-    "Wild Scyther in the Safari Zone. It has knives for arms. Hold very still and roll d6.",
-    moves(
-      ["Fury Cutter, three cuts. Drink 4.", "Slash. Drink 3 with no hands."],
-      [
-        "Swords Dance, but it trips. Give 2.",
-        "You slip past its blades. Give 3.",
-        "It cuts your left neighbor's hair instead. They drink 3.",
-        "It bows and leaves. Give 4.",
-      ],
-    ),
+    "Wild Scyther in the Safari Zone. It has knives for arms. Hold very still.",
+    {
+      even: "Still enough. Drink 2 slowly.",
+      advantage: "It spares you. Give 4.",
+      disadvantage: "Slash. Drink 5.",
+    },
   ),
   wild(
     4,
@@ -802,15 +797,16 @@ const route5: CardDefinition[] = [
       "A pair! It rings like a gong. Everyone else drinks 2.",
     ),
   ),
-  wild(
+  strike(
     4,
     "route-mimikyu",
     "Mimikyu",
-    "Wild Mimikyu is wearing a Pikachu costume and does not want you to look under it. Roll d20.",
-    vs(
-      "You looked. Drink 4, and don't tell anyone what you saw.",
-      "You leave its secret alone. Tell the table one of yours, then give 3.",
-    ),
+    "Wild Mimikyu is wearing a Pikachu costume and does not want you to look under it.",
+    {
+      even: "You look away. Drink 2.",
+      advantage: "You peek. It cries. Give 3.",
+      disadvantage: "You peek. It haunts you. Drink 5.",
+    },
   ),
   wild(
     4,
@@ -955,15 +951,16 @@ const route6: CardDefinition[] = [
       "A pair! It's a red one. Give {total}.",
     ),
   ),
-  wild(
+  strike(
     5,
     "route-lucario",
     "Lucario",
-    "Wild Lucario reads your aura. It knows what you did. Roll d20.",
-    vs(
-      "Aura Sphere. Drink 4 and confess what you did.",
-      "Your aura wins. Pick a player: they confess something or drink 3.",
-    ),
+    "Wild Lucario reads your aura. It knows what you did.",
+    {
+      even: "It says nothing. Drink 2.",
+      advantage: "You return the favor. Give 3.",
+      disadvantage: "It says it out loud. Drink 6.",
+    },
   ),
   wild(
     5,
@@ -975,12 +972,16 @@ const route6: CardDefinition[] = [
       "Caught it. The accused drinks 3 and admits nothing.",
     ),
   ),
-  wild(
+  strike(
     5,
     "route-goodra",
     "Goodra",
-    "Wild Goodra wants a hug. It is entirely slime. Roll d20.",
-    vs("Hugged. Drink 3 and hug your right neighbor.", "You slip out. Give 3."),
+    "Wild Goodra wants a hug. It is entirely slime.",
+    {
+      even: "Squelch. Drink 2.",
+      advantage: "Hug returned. Give 4.",
+      disadvantage: "It never lets go. Drink 6.",
+    },
   ),
   wild(
     5,
@@ -997,16 +998,16 @@ const route6: CardDefinition[] = [
       ],
     ),
   ),
-  wild(
+  strike(
     5,
     "route-salandit",
     "Salandit",
-    "Wild Salandit's gas is toxic and smells like your ex. Roll d20.",
-    vs(
-      "Toxic. Hold your nose and drink 3.",
-      "You hold your breath and walk. Give 3.",
-    ),
-    { curse: "bleed" },
+    "Wild Salandit's gas is toxic and smells like your ex.",
+    {
+      even: "Hold your breath. Drink 2.",
+      advantage: "You waft it away. Give 3.",
+      disadvantage: "Toxic cloud. Drink 6.",
+    },
   ),
   trainer(
     5,
@@ -1124,15 +1125,16 @@ const route6Aces: CardDefinition[] = [
 
 // --- Route 7 -----------------------------------------------------------------
 const route7: CardDefinition[] = [
-  wild(
+  strike(
     6,
     "route-snorlax-awake",
     "Angry Snorlax",
-    "A Snorlax woke up on the wrong side of the road. Roll d20.",
-    vs(
-      "Body Slam. Drink 5, then lie on the floor for 10 seconds.",
-      "It goes back to sleep. Give 3, in a whisper.",
-    ),
+    "A Snorlax woke up on the wrong side of the road.",
+    {
+      even: "It yawns. Drink 3.",
+      advantage: "It goes back to sleep. Give 4.",
+      disadvantage: "Body Slam. Drink 6.",
+    },
   ),
   wild(
     6,
@@ -1149,16 +1151,16 @@ const route7: CardDefinition[] = [
       ],
     ),
   ),
-  wild(
+  strike(
     6,
     "route-hydreigon",
     "Hydreigon",
-    "Wild Hydreigon. Three heads, all hungry, none of them friendly. Roll d20.",
-    vs(
-      "Bitten three times. Drink {total}.",
-      "The heads fight each other. Pick three players; they drink 1 each.",
-      { fumble: "All three heads bite at once. Finish your drink." },
-    ),
+    "Wild Hydreigon. Three heads, all hungry, none of them friendly.",
+    {
+      even: "One head bites. Drink 3.",
+      advantage: "You feed one head. Give 4.",
+      disadvantage: "All three bite. Drink 6.",
+    },
   ),
   wild(
     6,
@@ -1181,16 +1183,16 @@ const route7: CardDefinition[] = [
       "You catch a baby. Hand it to someone: they drink 3 and coo.",
     ),
   ),
-  wild(
+  strike(
     6,
     "route-kingambit",
     "Kingambit",
-    "Wild Kingambit demands you kneel. Kneel, then roll d20.",
-    vs(
-      "Sliced. Drink 4 on your knees.",
-      "You rise. Everyone else kneels; the last one down drinks 3.",
-    ),
-    { curse: "bleed" },
+    "Wild Kingambit demands you kneel. Kneel.",
+    {
+      even: "Your knees knock. Drink 3.",
+      advantage: "You make it kneel. Give 4.",
+      disadvantage: "It stays unimpressed. Drink 6.",
+    },
   ),
   trainer(
     6,
@@ -1333,16 +1335,16 @@ const route8: CardDefinition[] = [
       "A pair! It did not see that coming. Give {total}.",
     ),
   ),
-  wild(
+  strike(
     7,
     "route-volcarona",
     "Volcarona",
-    "Wild Volcarona is a moth made of sun. Do a Quiver Dance and roll d20.",
-    vs(
-      "Fiery Dance. Drink 4 and keep dancing for 10 seconds.",
-      "You out-dance it. Pick a player: they dance for 10 seconds or drink 4.",
-    ),
-    { curse: "bleed" },
+    "Wild Volcarona is a moth made of sun. Do a Quiver Dance.",
+    {
+      even: "Dazzling. Drink 3.",
+      advantage: "Your dance wins its heart. Give 4.",
+      disadvantage: "Fire Blast. Drink 6.",
+    },
   ),
   wild(
     7,
@@ -1362,15 +1364,16 @@ const route8: CardDefinition[] = [
       ],
     ),
   ),
-  wild(
+  strike(
     7,
     "route-baxcalibur",
     "Baxcalibur",
-    "Wild Baxcalibur has a sword for a spine and it is very cold. Roll d20.",
-    vs(
-      "Glaive Rush. Drink 5, and drink only with your off hand until your next turn.",
-      "It shatters. Give 4.",
-    ),
+    "Wild Baxcalibur has a sword for a spine and it is very cold.",
+    {
+      even: "Brr. Drink 3.",
+      advantage: "You warm it up. Give 4.",
+      disadvantage: "Glaive Rush. Drink 6.",
+    },
   ),
   wild(
     7,
@@ -1687,49 +1690,49 @@ export const routes: {
   {
     label: "Route 1",
     intro: "Your journey begins",
-    cards: [...route1, ...moreWilds[0]],
+    cards: [...route1, ...moreWilds[0], ...moments[0]],
     aces: route1Aces,
   },
   {
     label: "Route 2",
     intro: "Onward to the next town",
-    cards: [...route2, ...moreWilds[1]],
+    cards: [...route2, ...moreWilds[1], ...moments[1], moreEvolutions[1]!],
     aces: route2Aces,
   },
   {
     label: "Route 3",
     intro: "The road gets longer",
-    cards: [...route3, ...moreWilds[2]],
+    cards: [...route3, ...moreWilds[2], ...moments[2]],
     aces: route3Aces,
   },
   {
     label: "Route 4",
     intro: "Halfway to the League",
-    cards: [...route4, ...moreWilds[3]],
+    cards: [...route4, ...moreWilds[3], ...moments[3], moreEvolutions[3]!],
     aces: route4Aces,
   },
   {
     label: "Route 5",
     intro: "The wild gets wilder",
-    cards: [...route5, ...moreWilds[4], moreEvolutions[4]!],
+    cards: [...route5, ...moreWilds[4], ...moments[4], moreEvolutions[4]!],
     aces: route5Aces,
   },
   {
     label: "Route 6",
     intro: "Deeper into the region",
-    cards: [...route6, ...moreWilds[5]],
+    cards: [...route6, ...moreWilds[5], ...moments[5], moreEvolutions[5]!],
     aces: route6Aces,
   },
   {
     label: "Route 7",
     intro: "The badges get heavier",
-    cards: [...route7, ...moreWilds[6], teraRaid],
+    cards: [...route7, ...moreWilds[6], ...moments[6], teraRaid],
     aces: route7Aces,
   },
   {
     label: "Route 8",
     intro: "One badge to go",
-    cards: [...route8, ...moreWilds[7]],
+    cards: [...route8, ...moreWilds[7], ...moments[7]],
     aces: route8Aces,
   },
 ];

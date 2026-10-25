@@ -16,9 +16,11 @@ const stages = questStages(pokemonPack.quest!);
 const name = (t: PokemonType | undefined) => (t ? pokemonTypes[t].name : "—");
 const cell = (s: string) => s.replaceAll("|", "\\|");
 const how = (c: CardDefinition) =>
-  c.dice
-    ? `${c.dice.count === 1 ? "" : c.dice.count}d${c.dice.sides}`
-    : "plaques";
+  c.strike
+    ? "strike"
+    : c.dice
+      ? `${c.dice.count === 1 ? "" : c.dice.count}d${c.dice.sides}`
+      : "plaques";
 // A hideout is one of nine routes through the run.
 const hideout = (label: string) =>
   /Hideout|HQ|Castle|Lab|House|Tower|Base/.test(label);
@@ -46,7 +48,7 @@ function typedPerRun() {
   for (const st of stages)
     for (const id of st.cardIds) {
       const c = byId.get(id)!;
-      if (c.battle && c.type)
+      if ((c.battle || c.strike) && c.type)
         n += (st.pick / st.cardIds.length) * (hideout(st.label) ? 1 / 9 : 1);
     }
   return n;
@@ -71,7 +73,7 @@ for (const t of starterTypes) {
       (st.pick / st.cardIds.length) * (hideout(st.label) ? 1 / 9 : 1);
     for (const id of st.cardIds) {
       const c = byId.get(id)!;
-      if (!c.battle || !c.type) continue;
+      if (!(c.battle || c.strike) || !c.type) continue;
       const edge = matchup(t, c.type).edge;
       if (edge === "advantage") good += weight;
       if (edge === "disadvantage") bad += weight;
@@ -88,7 +90,7 @@ for (const st of stages) {
   // A route's Ace Trainers wait behind its crossroads.
   const fights = [...st.cardIds, ...(st.elite ?? [])]
     .map((id) => byId.get(id)!)
-    .filter((c) => c.battle && !seen.has(c.id));
+    .filter((c) => (c.battle || c.strike) && !seen.has(c.id));
   if (!fights.length) continue;
   lines.push(
     `### ${st.label}`,

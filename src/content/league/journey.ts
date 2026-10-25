@@ -197,12 +197,29 @@ export const strike = (
   title: string,
   rules: string,
   lines: Strike,
-  more: Extra = {},
+  { kind = "Wild", ...more }: Extra & { kind?: string } = {},
 ): CardDefinition => ({
-  ...spot(leg, "Wild", "monster", id, title, rules),
+  ...spot(leg, kind, "monster", id, title, rules),
   strike: lines,
   damage: WILD_HURT[leg],
   ...stakes(more),
+});
+
+/** A table moment (2026-10-25): no fight and nothing to win or lose, only
+ * something to do. A `reward` (a heal or an item) is what the table gets for
+ * doing it. */
+export const moment = (
+  leg: Leg,
+  id: string,
+  title: string,
+  kind: string,
+  category: CardDefinition["category"],
+  rules: string,
+  reward?: { heal?: number; loot?: Loot },
+): CardDefinition => ({
+  ...spot(leg, kind, "shrine", id, title, rules, undefined, category),
+  ribbonTone: "violet",
+  ...(reward ? { reward } : {}),
 });
 
 /** A trainer battle: a wild fight with a person attached. */
