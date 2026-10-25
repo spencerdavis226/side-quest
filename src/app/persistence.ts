@@ -1,5 +1,5 @@
 import { packs } from "../content/manifest.generated";
-import { validateCatalog } from "../content/validate";
+import { badStageRule, validateCatalog } from "../content/validate";
 import { validateRoll } from "../game/dice";
 import {
   currentCard,
@@ -8,6 +8,8 @@ import {
   formEffect,
   hitsNeeded,
   omenForm,
+  partyPower,
+  previousCard,
   satchelSize,
   validConfig,
 } from "../game/engine";
@@ -141,6 +143,7 @@ function validateQuest(s: SessionState) {
       picks.length !== stage.pick ||
       (elite !== undefined &&
         (!q.party || !Array.isArray(elite) || !elite.length)) ||
+      (stage.rule !== undefined && (!q.party || badStageRule(stage.rule))) ||
       picks.some(
         (id, i) =>
           !stage.cards.some((c) => c.id === id) &&
@@ -232,6 +235,21 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
     // A Tera Orb holds only for the battle face up.
     (p.tera !== undefined &&
       (s.phase !== "revealed" || p.tera !== currentCard(s).id)) ||
+    // A signature power's uses, and the card it is armed on (2026-10-25).
+    (p.powers !== undefined &&
+      (!whole(p.powers, 1) ||
+        p.powers > (partyPower(s.quest)?.uses ?? 1) ||
+        !partyPower(s.quest))) ||
+    (p.armed !== undefined &&
+      (s.phase !== "revealed" ||
+        p.armed !== currentCard(s).id ||
+        !["spare", "edge", "double"].includes(
+          partyPower(s.quest)?.kind ?? "",
+        ))) ||
+    // The beat of the phased boss put aside last.
+    (p.beat !== undefined &&
+      (!whole(p.beat, 1) ||
+        p.beat > (findCard(s, s.previousId)?.phases?.length ?? 0))) ||
     (p.passed !== undefined &&
       (!whole(p.passed, 0) || p.passed > s.discarded)) ||
     // The starter's form: a later form it has, once the omen is set.
@@ -328,7 +346,7 @@ export function parseSession(raw: string): SessionState {
   )
     throw Error("Invalid count");
   const current = currentCard(s);
-  const previous = findCard(s, s.previousId);
+  const previous = previousCard(s);
   if (q?.party && q.party.hits >= (hitsNeeded(q, current) || 1))
     throw Error("Invalid party");
   validateRoll(s.roll, current.dice);

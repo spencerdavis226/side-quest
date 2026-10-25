@@ -2,6 +2,19 @@
 
 Updated 2026-10-25. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## In progress 2026-10-25: whole-game fun and variety overhaul (branch `claude/game-overhaul`; owner: "do the comprehensive big change ... done right. Proceed with best recommendations")
+
+Why (measured on 400 seeded runs a mode, before any change): Pub Crawl deals about 49% dice rolls (91% of them a single d20), 3% table moments, and about 44% of its roll outcomes are a bare "Drink N"/"Give N". Every Pub Crawl boss is a d20 dealt again until its hits land (about 5.6 boss d20s a run), most of them "flavor, roll d20, lose Drink 4, win Give 5". About 80% of class and starter power fields are passive numbers (hearts, +1/+2 to rolls) the table never sees; 16 of 20 omens are numbers. The League is better (17% strikes, 12% moments, gyms with activities) but its Legendaries, Champions, rival and hideout bosses are the same roll per hit. No playtest has been recorded (`docs/PLAYTEST.md`).
+
+Plan of record (one branch, one PR; each part keeps saves loading and both balance suites in band):
+
+1. **Boss phases** (`CardDefinition.phases`, engine). Each hit on a boss is a different beat: the card's own rules and dice open it, and each later hit reads the next phase (its own rules, with dice or Won/Lost plaques). The last swing always plays the last phase. A won plaque beat on a boss with spoils opens the spoils sheet. Previous Card shows the beat played (`party.beat`). Pub Crawl: floor bosses, the hidden room's keepers, closing time and Last Call; half the openers become table activities (the League gyms' style). League: Legendaries (a catch), Champions (lead, switch, ace), the rival and the hideout bosses.
+2. **Signature powers** (`CardDefinition.power`, `Evolution.power`, engine). Every class and starter gets one active power the table chooses when to use, once until the next boss (or gym) falls: reroll a lost roll, spare a loss its hearts, take the edge, double a win, win a fight outright for a price, heal, or flee. Forms can upgrade it. The Quaff, a generic once-a-floor reroll, retires from new Pub Crawl runs (saves keep theirs). Passives are trimmed so the power is the identity.
+3. **Floor and route rules** (`QuestStage.rule`): each Pub Crawl floor and League route has one rule (a spoken table rule and a mechanical twist), on its banner and as a strip chip, for that floor and its boss.
+4. **Consolidation**: Pub Crawl drops the numeric curses (Bleeding, Hexed) for spoken jinxes; the League keeps its statuses (Poisoned, Confused). Numeric omens become table-rule omens with one twist.
+5. **Content**: table moments on every Pub Crawl floor, more non-d20 rooms, and rewritten bare outcomes.
+6. **Retune, fixtures, docs, checks.**
+
 ## Shipped 2026-10-25: League variety, Pub Crawl strikes and equipment (#47, squash of #42 to #47, `576552a`)
 
 The owner said "Merge and deploy" and to keep Pub Crawl's win rate where it landed (22.8%). Deployed: run #203 passed every job (build, balance, Chromium and all three WebKit shards, the update test) and published to Pages at 23:29 UTC on 2026-10-25. The six stacked PRs went to `main` as one squash commit through #47 (#42 to #46 closed as included). The sections below record each part. **Next (owner):** read the new copy (`docs/CARD_REVIEW.md`: 63 League strikes, 40 table moments, 36 rewritten route outcomes, 54 Pub Crawl strikes, 15 starting-gear pieces) and ask for any rewording; run a device pass on an iPhone (the strike line on a card, the spoils sheet with a "Replaces" card, the party dialog's gear) and record it in `docs/DEVICE_CHECKLIST.md`. Open follow-ups: show a Pub Crawl strike's knack on a lost strike (its ribbon), gym and gauntlet variety in the League (duels, a catch-style Legendary, jinx gym rules), Pub Crawl table moments and a roll-outcome rewrite.

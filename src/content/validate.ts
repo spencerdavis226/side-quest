@@ -1,12 +1,20 @@
 import { validateDice } from "../game/dice";
 import { validateTimer } from "../game/timer";
-import type { CardDefinition, PackDefinition, QuestStage } from "../game/types";
+import type {
+  CardDefinition,
+  OmenEffect,
+  PackDefinition,
+  Power,
+  QuestStage,
+  StageRule,
+} from "../game/types";
 import {
   CURSES,
   ENCOUNTERS,
   KNACKS,
   LOOT,
   POKEMON_TYPES,
+  POWER_KINDS,
   RIBBON_TONES,
   SLOTS,
   type Slot,
@@ -15,6 +23,78 @@ import {
 // Structural validation for cards and packs. Kept apart from `catalog.ts` so
 // saved-session parsing can use it without pulling card content into the
 // initial chunk.
+const step = (n: unknown, lo: number, hi: number) =>
+  n === undefined ||
+  (Number.isSafeInteger(n) && (n as number) >= lo && (n as number) <= hi);
+/** Whether an omen effect (an omen's, a form's, a boon's, a stage rule's)
+ * is malformed. */
+export function badEffect(o: OmenEffect): boolean {
+  return (
+    !o ||
+    typeof o !== "object" ||
+    !step(o.hearts, -6, 6) ||
+    !step(o.satchel, 1, 5) ||
+    !step(o.heal, -2, 3) ||
+    !step(o.bossHits, -1, 2) ||
+    (o.loot !== undefined &&
+      (!Array.isArray(o.loot) ||
+        o.loot.length > (o.satchel ?? 3) ||
+        o.loot.some((item) => !LOOT.includes(item)))) ||
+    (o.hurt !== undefined &&
+      (!o.hurt ||
+        typeof o.hurt !== "object" ||
+        Object.entries(o.hurt).some(
+          ([kind, n]) => !ENCOUNTERS.includes(kind as never) || !step(n, -2, 3),
+        ))) ||
+    (o.roll !== undefined &&
+      (!o.roll ||
+        typeof o.roll !== "object" ||
+        Object.entries(o.roll).some(
+          ([kind, n]) =>
+            (kind !== "all" && !ENCOUNTERS.includes(kind as never)) ||
+            !step(n, -3, 3),
+        ))) ||
+    !step(o.crit, 17, 20) ||
+    !step(o.fumble, 1, 3) ||
+    (o.reroll20 !== undefined && o.reroll20 !== true) ||
+    (o.restock !== undefined && !LOOT.includes(o.restock))
+  );
+}
+/** Whether a signature power is malformed (2026-10-25). */
+export function badPower(p: Power): boolean {
+  return (
+    !p ||
+    typeof p.name !== "string" ||
+    !p.name.trim() ||
+    p.name.length > 16 ||
+    typeof p.rules !== "string" ||
+    !p.rules.trim() ||
+    p.rules.length > 28 ||
+    !POWER_KINDS.includes(p.kind) ||
+    !step(p.uses, 1, 3) ||
+    !step(p.cost, 1, 3) ||
+    !step(p.amount, 1, 4) ||
+    !step(p.drinks, 1, 6) ||
+    (p.kind === "heal") !== (p.amount !== undefined) ||
+    (p.cost !== undefined && p.kind !== "win")
+  );
+}
+/** Whether a floor's or route's rule is malformed (2026-10-25). It never
+ * moves hearts, items or the satchel, which would change between stages. */
+export function badStageRule(r: StageRule): boolean {
+  return (
+    !r ||
+    typeof r.name !== "string" ||
+    !r.name.trim() ||
+    r.name.length > 22 ||
+    typeof r.rule !== "string" ||
+    !r.rule.trim() ||
+    r.rule.length > 110 ||
+    (r.effect !== undefined &&
+      (badEffect(r.effect) ||
+        ["hearts", "loot", "satchel", "restock"].some((k) => k in r.effect!)))
+  );
+}
 export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
   const fail = (message: string): never => {
     throw new Error(message);
@@ -257,7 +337,6 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         c.spoils.length < 2 ||
         c.spoils.length > 3 ||
         !c.battle ||
-        !c.dice ||
         c.boon !== undefined ||
         c.omen !== undefined ||
         !c.spoils.every(goodBoon))
@@ -297,6 +376,52 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         c.jinx.rule.length > 110)
     )
       fail(`Invalid jinx: ${c.id}`);
+    // A boss's later beats (2026-10-25): each its own rules, with battle
+    // dice or none (plaques), at most one fewer than its hits.
+    if (
+      c.phases !== undefined &&
+      (!Array.isArray(c.phases) ||
+        !c.phases.length ||
+        !c.battle ||
+        !c.hits ||
+        c.phases.length > c.hits - 1 ||
+        c.press ||
+        c.dice?.choice ||
+        c.phases.some((ph) => {
+          if (
+            !ph ||
+            typeof ph.rules !== "string" ||
+            !ph.rules.trim() ||
+            ph.rules.length > 110
+          )
+            return true;
+          if (ph.dice === undefined) return false;
+          try {
+            validateDice(ph.dice);
+          } catch {
+            return true;
+          }
+          const results = [
+            ...(ph.dice.outcomes ?? []).map((o) => !!o.win),
+            ...(ph.dice.doubles ? [!!ph.dice.doublesWin] : []),
+          ];
+          return (
+            !!ph.dice.choice ||
+            !results.includes(true) ||
+            !results.includes(false)
+          );
+        }))
+    )
+      fail(`Invalid phases: ${c.id}`);
+    // A run's omen's signature power, and its forms'.
+    for (const power of [
+      ...(c.power !== undefined ? [c.power] : []),
+      ...(Array.isArray(c.evolves)
+        ? c.evolves.flatMap((e) => (e?.power !== undefined ? [e.power] : []))
+        : []),
+    ])
+      if (c.omen === undefined || badPower(power))
+        fail(`Invalid power: ${c.id}`);
     const omens = [
       ...(c.omen !== undefined ? [c.omen] : []),
       ...(Array.isArray(c.evolves) ? c.evolves.map((e) => e.omen) : []),
@@ -306,39 +431,10 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
       ...(c.boon ? [c.boon.effect] : []),
       ...(Array.isArray(c.spoils) ? c.spoils.map((b) => b?.effect) : []),
     ]) {
-      const step = (n: unknown, lo: number, hi: number) =>
-        n === undefined ||
-        (Number.isSafeInteger(n) && (n as number) >= lo && (n as number) <= hi);
       if (
         !o ||
         (omens.includes(o) && (c.battle || c.dice || c.offers || c.reward)) ||
-        !step(o.hearts, -6, 6) ||
-        !step(o.satchel, 1, 5) ||
-        !step(o.heal, -2, 3) ||
-        !step(o.bossHits, -1, 2) ||
-        (o.loot !== undefined &&
-          (!Array.isArray(o.loot) ||
-            o.loot.length > (o.satchel ?? 3) ||
-            o.loot.some((item) => !LOOT.includes(item)))) ||
-        (o.hurt !== undefined &&
-          (!o.hurt ||
-            typeof o.hurt !== "object" ||
-            Object.entries(o.hurt).some(
-              ([kind, n]) =>
-                !ENCOUNTERS.includes(kind as never) || !step(n, -2, 3),
-            ))) ||
-        (o.roll !== undefined &&
-          (!o.roll ||
-            typeof o.roll !== "object" ||
-            Object.entries(o.roll).some(
-              ([kind, n]) =>
-                (kind !== "all" && !ENCOUNTERS.includes(kind as never)) ||
-                !step(n, -3, 3),
-            ))) ||
-        !step(o.crit, 17, 20) ||
-        !step(o.fumble, 1, 3) ||
-        (o.reroll20 !== undefined && o.reroll20 !== true) ||
-        (o.restock !== undefined && !LOOT.includes(o.restock))
+        badEffect(o)
       )
         fail(`Invalid omen: ${c.id}`);
     }
@@ -455,7 +551,8 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
             !Array.isArray(stage.cardIds) ||
             stage.pick > stage.cardIds.length ||
             (stage.elite !== undefined &&
-              (!crawl || !Array.isArray(stage.elite) || !stage.elite.length)),
+              (!crawl || !Array.isArray(stage.elite) || !stage.elite.length)) ||
+            (stage.rule !== undefined && (!crawl || badStageRule(stage.rule))),
         ) ||
         new Set(finaleIds).size !== finaleIds.length ||
         finaleIds.some(

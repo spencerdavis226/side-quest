@@ -10,6 +10,7 @@ import type {
   PackDefinition,
   PackQuest,
   PartyState,
+  Power,
   QuestStage,
   QuestState,
   SessionState,
@@ -145,11 +146,12 @@ export function createSession(
         return structuredClone(card);
       });
     const stages = questRoute(rules, random).map(
-      ({ label, pick, cardIds, elite }) => ({
+      ({ label, pick, cardIds, elite, rule }) => ({
         label,
         pick,
         cards: snapshot(cardIds),
         ...(elite?.length ? { elite: snapshot(elite) } : {}),
+        ...(rule ? { rule: structuredClone(rule) } : {}),
       }),
     );
     const { label, goal, length } = rules;
@@ -462,8 +464,40 @@ export function omenEffect(
 ): OmenEffect | undefined {
   const form = formEffect(quest);
   const boons = partyBoons(quest).map((b) => b.boon.effect);
+  // The floor's or route's rule holds while the run is on it (2026-10-25).
+  const rule = stageRule(quest)?.effect;
+  if (rule) boons.push(rule);
   if (!boons.length) return form;
   return stackEffects(form ?? {}, boons);
+}
+/** The rule of the stage the run is on (a floor and its boss, a route and
+ * its gym), once the run is under way. */
+export function stageRule(quest: QuestState | undefined) {
+  if (!quest?.party || !quest.due) return undefined;
+  return quest.stages[finaleStage(quest).stage]?.rule;
+}
+/** The beat of a boss fight a card is on (`phases`): the hits landed walk
+ * through the phases in order, and the felling swing plays the last. 0 for
+ * a card without phases, or outside a crawl. */
+export function bossBeat(quest: QuestState | undefined, card: CardDefinition) {
+  const beats = 1 + (card.phases?.length ?? 0);
+  const party = quest?.party;
+  if (beats === 1 || !party) return 0;
+  const need = hitsNeeded(quest, card);
+  if (party.hits >= need - 1) return beats - 1;
+  return Math.min(party.hits, beats - 2);
+}
+/** A card as it reads on beat `beat`: a later phase's rules and dice (none
+ * means Won/Lost plaques) in place of the card's own. */
+export function atBeat(card: CardDefinition, beat: number): CardDefinition {
+  const phase = beat > 0 ? card.phases?.[beat - 1] : undefined;
+  if (!phase) return card;
+  const { dice: _dice, ...rest } = card;
+  return {
+    ...rest,
+    rules: phase.rules,
+    ...(phase.dice ? { dice: phase.dice } : {}),
+  };
 }
 /** Tonight's omen as it stands: its card, the current form's name and
  * rules, and the forms still to come. */
@@ -605,10 +639,21 @@ export function cardEdge(
   quest: QuestState | undefined,
   card: CardDefinition,
 ): Edge | null {
+  if (armedPower(quest, card) === "edge") return "advantage";
   return (
     cardMatchup(quest, card)?.edge ??
     (knackEdge(quest, card) ? "advantage" : null)
   );
+}
+/** The kind of power armed on this card, if any (`spare`, `edge`,
+ * `double`). */
+export function armedPower(
+  quest: QuestState | undefined,
+  card: CardDefinition,
+) {
+  const party = quest?.party;
+  if (!party?.armed || party.armed !== card.id) return null;
+  return partyPower(quest)?.kind ?? null;
 }
 /** A plaque-settled fight has no roll to bend: a lost one costs one HP less
  * with the edge, one more against it. */
@@ -630,6 +675,7 @@ export function strikeOutcome(
   card: CardDefinition,
 ): "won" | "lost" | null {
   if (!card.strike) return null;
+  if (armedPower(quest, card) === "edge") return "won";
   if (card.knack)
     return quest?.party ? (knackEdge(quest, card) ? "won" : "lost") : null;
   const edge = cardMatchup(quest, card)?.edge;
@@ -666,9 +712,16 @@ export function hitsNeeded(
 }
 /** Finale cards are dealt between deck cards and take no deck position. */
 export function currentCard(s: SessionState) {
-  return s.quest?.due
-    ? finaleCard(s.quest, s.quest.finale[s.quest.step])!
-    : s.cards.find((c) => c.id === s.order[s.position])!;
+  if (!s.quest?.due) return s.cards.find((c) => c.id === s.order[s.position])!;
+  const card = finaleCard(s.quest, s.quest.finale[s.quest.step])!;
+  // A boss with phases reads the beat its hits have reached.
+  return card.phases ? atBeat(card, bossBeat(s.quest, card)) : card;
+}
+/** The card put aside last, as it read then: a boss's beat (`party.beat`). */
+export function previousCard(s: SessionState) {
+  const card = findCard(s, s.previousId);
+  const beat = s.quest?.party?.beat;
+  return card?.phases && beat ? atBeat(card, beat) : card;
 }
 /** A deck card or a finale card, for history such as the previous card. */
 export function findCard(s: SessionState, id: string | null) {
@@ -685,9 +738,22 @@ export function awaitingSpoils(s: SessionState): boolean {
   const card = currentCard(s);
   if (!card.spoils?.length || !card.dice || !s.roll?.returned) return false;
   if (!rollWins(card.dice, s.roll.values, s.roll)) return false;
+  return fells(s, natural(card, s.roll));
+}
+/** Whether a win on the card in play fells it: any win on a fight without
+ * hits, or the swing that lands its last hit (a natural 20 or a doubled
+ * win lands two). */
+function fells(s: SessionState, nat: 20 | 1 | null): boolean {
+  const card = currentCard(s);
   const need = hitsNeeded(s.quest, card);
-  const swing = natural(card, s.roll) === 20 ? 2 : 1;
-  return !need || party.hits + swing >= need;
+  const swing = nat === 20 || armedPower(s.quest, card) === "double" ? 2 : 1;
+  return !need || s.quest!.party!.hits + swing >= need;
+}
+/** A plaque fight face up whose win would bring its spoils (a boss's
+ * felling beat, 2026-10-25): Won asks which trinket first. */
+export function spoilsOnWin(s: SessionState): boolean {
+  if (!s.quest?.party || !awaitingVerdict(s)) return false;
+  return !!currentCard(s).spoils?.length && fells(s, null);
 }
 /** Each pull on a push-your-luck card rolls this much lower. */
 export const PRESS_STEP = 2;
@@ -845,8 +911,20 @@ export function settleBattle(
   s: SessionState,
   won: boolean,
   random: Random = Math.random,
+  /** A felling win's trinket (`spoilsOnWin`); none keeps the gear worn. */
+  spoil?: number,
 ): SessionState {
-  return awaitingVerdict(s) ? discard(s, random, won ? "won" : "lost") : s;
+  if (!awaitingVerdict(s)) return s;
+  const pick =
+    won &&
+    spoil !== undefined &&
+    spoilsOnWin(s) &&
+    Number.isSafeInteger(spoil) &&
+    spoil >= 0 &&
+    spoil < currentCard(s).spoils!.length
+      ? spoil
+      : undefined;
+  return discard(s, random, won ? "won" : "lost", pick);
 }
 type Outcome = "won" | "lost" | "fled";
 /** A crawl's standing rule (owner, 2026-10-17): a single d20 that lands on
@@ -1012,6 +1090,139 @@ export function quaff(s: SessionState): SessionState {
     quest: { ...s.quest!, party: { ...party, quaffed: true } },
   };
 }
+/** The run's signature power as it stands (2026-10-25): its current
+ * form's, else the last form before it that had one, else the card's own.
+ * A forked adventurer's second level falls back down its own path. */
+export function partyPower(quest: QuestState | undefined): Power | undefined {
+  const id = quest?.party?.omen;
+  const card = id ? finaleCard(quest, id) : undefined;
+  if (!card) return undefined;
+  const form = quest!.party!.form ?? 0;
+  const forms = card.evolves ?? [];
+  const line = !form
+    ? []
+    : card.fork
+      ? form > 2
+        ? [form - 2, form]
+        : [form]
+      : card.branches
+        ? [form]
+        : Array.from({ length: form }, (_, i) => i + 1);
+  for (const f of line.reverse()) {
+    const power = forms[f - 1]?.power;
+    if (power) return power;
+  }
+  return card.power;
+}
+/** Uses of the power left until the next boss falls. */
+export function powersLeft(quest: QuestState | undefined): number {
+  const power = partyPower(quest);
+  if (!power) return 0;
+  return Math.max(0, (power.uses ?? 1) - (quest!.party!.powers ?? 0));
+}
+/** Whether the party's power can be used on the card face up now. */
+export function canUsePower(s: SessionState): boolean {
+  const party = s.quest?.party;
+  const power = partyPower(s.quest);
+  if (!party || !power || !s.quest!.due || s.phase !== "revealed") return false;
+  if (!powersLeft(s.quest)) return false;
+  const card = currentCard(s);
+  const fight = !!card.battle || !!card.strike;
+  // Before the fight is decided: no roll yet, no choice open, no push on.
+  const before =
+    fight && !s.roll && !card.dice?.choice && !party.press && !card.press;
+  const armed = party.armed === card.id;
+  switch (power.kind) {
+    case "reroll":
+      return lostRoll(s, card);
+    case "spare":
+      // Before the loss is taken: a fight undecided, or a lost roll on it.
+      return (
+        !armed &&
+        !!card.damage &&
+        fight &&
+        (card.strike
+          ? strikeOutcome(s.quest, card) === "lost"
+          : !s.roll || lostRoll(s, card))
+      );
+    case "edge":
+      return (
+        !armed &&
+        before &&
+        (card.strike
+          ? strikeOutcome(s.quest, card) !== "won"
+          : cardEdge(s.quest, card) !== "advantage")
+      );
+    case "double":
+      return !armed && before && !card.strike;
+    case "win":
+      return before && !card.strike && party.hearts > (power.cost ?? 0);
+    case "heal":
+      return party.hearts < party.max;
+    case "flee":
+      return (
+        !!card.battle &&
+        !card.hits &&
+        !s.roll &&
+        !card.dice?.choice &&
+        !party.press
+      );
+  }
+}
+/** A `win` power that would fell a boss with spoils: the table picks a
+ * trinket as it uses it. */
+export function powerSpoils(s: SessionState): boolean {
+  return (
+    canUsePower(s) &&
+    partyPower(s.quest)!.kind === "win" &&
+    !!currentCard(s).spoils?.length &&
+    fells(s, null)
+  );
+}
+/** Use the party's power on the card face up. */
+export function usePower(
+  s: SessionState,
+  random: Random = Math.random,
+  /** A `win` that fells a boss with spoils: the trinket taken. */
+  spoil?: number,
+): SessionState {
+  if (!canUsePower(s)) return s;
+  const power = partyPower(s.quest)!;
+  const party = {
+    ...s.quest!.party!,
+    powers: (s.quest!.party!.powers ?? 0) + 1,
+  };
+  const used = { ...s, quest: { ...s.quest!, party } };
+  const card = currentCard(s);
+  switch (power.kind) {
+    case "reroll":
+      return { ...used, roll: null };
+    case "spare":
+    case "edge":
+    case "double":
+      party.armed = card.id;
+      return used;
+    case "win":
+      party.hearts -= power.cost ?? 0;
+      return discard(
+        { ...used, roll: null },
+        random,
+        "won",
+        spoil !== undefined &&
+          Number.isSafeInteger(spoil) &&
+          spoil >= 0 &&
+          spoil < (card.spoils?.length ?? 0) &&
+          fells(s, null)
+          ? spoil
+          : undefined,
+      );
+    case "heal":
+      party.hearts = Math.min(party.max, party.hearts + (power.amount ?? 1));
+      return used;
+    case "flee":
+      return discard(used, random, "fled");
+  }
+}
 /** A boon joins the party: its hearts move the maximum and the hearts left
  * (never below one), its items go into the satchel, and a smaller satchel
  * drops its newest. */
@@ -1092,8 +1303,11 @@ function settleParty(
 ): PartyState {
   const omen = omenEffect(quest);
   const size = satchelSize(quest);
+  const armed = armedPower(quest, card);
+  // A doubled win brings what a natural 20 does.
+  if (armed === "double" && outcome === "won") nat = 20;
   let next = party;
-  if (outcome === "lost" && card.damage)
+  if (outcome === "lost" && card.damage && armed !== "spare")
     next = hurt(
       next,
       (card.damage +
@@ -1149,10 +1363,14 @@ function settleParty(
     next = { ...next };
     delete next.press;
   }
-  // A Tera Orb lasts the one fight.
+  // A Tera Orb, and an armed power, last the one fight.
   if (next.tera !== undefined) {
     next = { ...next };
     delete next.tera;
+  }
+  if (next.armed !== undefined) {
+    next = { ...next };
+    delete next.armed;
   }
   // A boss's or an ambush's boon comes when it falls (`discard`).
   if (!card.hits && (outcome === null || outcome === "won"))
@@ -1185,7 +1403,16 @@ function discard(
   if (s.quest?.due && party) {
     const q = s.quest;
     const nat = natural(card, s.roll);
+    const doubled = armedPower(q, card) === "double" && outcome === "won";
     let next = settleParty(party, card, outcome, q, nat, spoil);
+    // Previous Card shows the beat of a phased boss as it was played.
+    const raw = finaleCard(q, card.id);
+    const beat = raw?.phases ? bossBeat(q, raw) : 0;
+    if (beat) next = { ...next, beat };
+    else if (next.beat !== undefined) {
+      next = { ...next };
+      delete next.beat;
+    }
     // A Revive in the satchel saves the run once: back at half the maximum.
     const revive = next.curse === "hex" ? -1 : next.loot.indexOf("revive");
     if (next.hearts === 0 && revive >= 0)
@@ -1210,7 +1437,7 @@ function discard(
     if (need && outcome !== "fled") {
       const hits = Math.min(
         need,
-        next.hits + (outcome === "won" ? (nat === 20 ? 2 : 1) : 0),
+        next.hits + (outcome === "won" ? (nat === 20 || doubled ? 2 : 1) : 0),
       );
       if (hits < need)
         return {
@@ -1236,6 +1463,7 @@ function discard(
         next = { ...next, curse: null };
         delete next.jinx;
         delete next.quaffed;
+        delete next.powers;
       }
       next = gainBoon(next, card, q, spoil);
       // A badge restocks the starter's item, room permitting; in a crawl
