@@ -85,6 +85,16 @@ material, not game content:
   Silver pours 1 for every two players, Mankey's handshake is taught to the
   table, and Rare Candy says phone, not device.
 
+## 2026-10-25 Template cards
+
+At the owner's request, the House sheet's template cards get real titles and
+full instructions. The 13 bare "Categories" rows (021, 022, 025, 033, 035, 041,
+052, 066, 086, 087, 095, 103, 105) now read "Name X, one each, clockwise. First
+repeat or blank drinks 3." (the generated Categories card's rule). The four
+"Call Out" rows (083, 084, 085, 092) and three "Da Rulez" rows (097, 099, 101)
+keep their text and get titles. FMK (029) says what to do with the three bands.
+The raw sheet is unchanged.
+
 ## 2026-10-25 Never Have I Ever
 
 At the owner's request, the ten House "Never Have I Ever" rows (026, 050, 067

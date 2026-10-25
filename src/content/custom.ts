@@ -120,8 +120,18 @@ const sheetRows: CardDefinition[] = [
     "1 guy drinks. All girls drink",
   ),
   houseCard("sheet-020", "Weinerschnitzel", "group", "All dudes drink"),
-  houseCard("sheet-021", "Categories", "category", "Disney Movies"),
-  houseCard("sheet-022", "Categories", "category", "Taco Bell menu items"),
+  houseCard(
+    "sheet-021",
+    "Disney Marathon",
+    "category",
+    "Name Disney movies, one each, clockwise. First repeat or blank drinks 3.",
+  ),
+  houseCard(
+    "sheet-022",
+    "Fourth Meal",
+    "category",
+    "Name Taco Bell menu items, one each, clockwise. First repeat or blank drinks 3.",
+  ),
   houseCard(
     "sheet-023",
     "Headache Simulator",
@@ -135,7 +145,12 @@ const sheetRows: CardDefinition[] = [
     "rule",
     "You are the drink wench until your next turn",
   ),
-  houseCard("sheet-025", "Categories", "category", "Things you lick"),
+  houseCard(
+    "sheet-025",
+    "Lick It",
+    "category",
+    "Name things you lick, one each, clockwise. First repeat or blank drinks 3.",
+  ),
   houseCard(
     "sheet-026",
     "Tequila Water",
@@ -155,7 +170,12 @@ const sheetRows: CardDefinition[] = [
     "Give d6 drinks",
     roll(1, 6, "Give {total}."),
   ),
-  houseCard("sheet-029", "FMK", "challenge", "Blink-182, Green Day, Weezer"),
+  houseCard(
+    "sheet-029",
+    "Pop Punk FMK",
+    "challenge",
+    "Fuck, marry, kill: Blink-182, Green Day, Weezer. Defend your picks to the table.",
+  ),
   houseCard(
     "sheet-030",
     "Potty Mouth",
@@ -169,7 +189,12 @@ const sheetRows: CardDefinition[] = [
     "rule",
     "You have to use T-Rex arms until your next turn",
   ),
-  houseCard("sheet-033", "Categories", "category", "Trilogy movies"),
+  houseCard(
+    "sheet-033",
+    "Threequel",
+    "category",
+    "Name trilogy movies, one each, clockwise. First repeat or blank drinks 3.",
+  ),
   houseCard(
     "sheet-034",
     "Technophoria",
@@ -177,7 +202,12 @@ const sheetRows: CardDefinition[] = [
     "Anyone who has touched a phone drinks 1d6",
     roll(1, 6, "Anyone who's touched a phone drinks {total}."),
   ),
-  houseCard("sheet-035", "Categories", "category", "Countries"),
+  houseCard(
+    "sheet-035",
+    "World Tour",
+    "category",
+    "Name countries, one each, clockwise. First repeat or blank drinks 3.",
+  ),
   houseCard(
     "sheet-036",
     "Same",
@@ -210,7 +240,12 @@ const sheetRows: CardDefinition[] = [
     "rule",
     "Speak only your first name until your next turn",
   ),
-  houseCard("sheet-041", "Categories", "category", "Hockey players"),
+  houseCard(
+    "sheet-041",
+    "Hat Trick",
+    "category",
+    "Name hockey players, one each, clockwise. First repeat or blank drinks 3.",
+  ),
   houseCard(
     "sheet-042",
     "Pet that dog",
@@ -273,7 +308,12 @@ const sheetRows: CardDefinition[] = [
     "sip",
     "Drink if you've lost money in the casino",
   ),
-  houseCard("sheet-052", "Categories", "category", "Name those Pokémon"),
+  houseCard(
+    "sheet-052",
+    "Gotta Name 'Em",
+    "category",
+    "Name Pokémon, one each, clockwise. First repeat or blank drinks 3.",
+  ),
   houseCard(
     "sheet-053",
     "Abra like a Slut",
@@ -346,7 +386,12 @@ const sheetRows: CardDefinition[] = [
     "sip",
     "Take 1 drink for every year you've been in a relationship",
   ),
-  houseCard("sheet-066", "Categories", "category", "Reality TV series"),
+  houseCard(
+    "sheet-066",
+    "Reality Check",
+    "category",
+    "Name reality TV series, one each, clockwise. First repeat or blank drinks 3.",
+  ),
   houseCard(
     "sheet-067",
     "Bier Garden",
@@ -441,24 +486,34 @@ const sheetRows: CardDefinition[] = [
   ),
   houseCard(
     "sheet-083",
-    "Call Out",
+    "Overpacker",
     "group",
     "Who would overpack for a 1 night stay? They drink",
   ),
   houseCard(
     "sheet-084",
-    "Call Out",
+    "Left on Read",
     "group",
     "Who reads the group chat but never replies? They drink",
   ),
   houseCard(
     "sheet-085",
-    "Call Out",
+    "Notes App Hoarder",
     "group",
     "Who uses their notes app the most? They drink",
   ),
-  houseCard("sheet-086", "Categories", "category", "Animated movies"),
-  houseCard("sheet-087", "Categories", "category", "Sales at Freddies"),
+  houseCard(
+    "sheet-086",
+    "Saturday Morning",
+    "category",
+    "Name animated movies, one each, clockwise. First repeat or blank drinks 3.",
+  ),
+  houseCard(
+    "sheet-087",
+    "Freddies Run",
+    "category",
+    "Name things on sale at Freddies, one each, clockwise. First repeat or blank drinks 3.",
+  ),
   houseCard(
     "sheet-088",
     "Tin Hat Society",
@@ -485,7 +540,7 @@ const sheetRows: CardDefinition[] = [
   ),
   houseCard(
     "sheet-092",
-    "Call Out",
+    "Shot Starter",
     "group",
     "Who is most likely to suggest shots? They drink (a shot if they're not scared)",
   ),
@@ -502,7 +557,12 @@ const sheetRows: CardDefinition[] = [
     "Give 1d6 drinks and take a different 1d6 drinks",
     roll(2, 6, "Give {first} and drink {second}."),
   ),
-  houseCard("sheet-095", "Categories", "category", "Things in a kitchen"),
+  houseCard(
+    "sheet-095",
+    "Kitchen Raid",
+    "category",
+    "Name things in a kitchen, one each, clockwise. First repeat or blank drinks 3.",
+  ),
   houseCard(
     "sheet-096",
     "Knickers",
@@ -511,7 +571,7 @@ const sheetRows: CardDefinition[] = [
   ),
   houseCard(
     "sheet-097",
-    "Da Rulez",
+    "Hands Off",
     "rule",
     "Until your next turn, you can't use your hands to drink",
   ),
@@ -523,7 +583,7 @@ const sheetRows: CardDefinition[] = [
   ),
   houseCard(
     "sheet-099",
-    "Da Rulez",
+    "Magic Word",
     "rule",
     'Until your next turn, the next person to say "beer" drinks',
   ),
@@ -535,12 +595,17 @@ const sheetRows: CardDefinition[] = [
   ),
   houseCard(
     "sheet-101",
-    "Da Rulez",
+    "Banana Peel",
     "rule",
     "Until your next turn, you have to peel your drink like a banana",
   ),
   houseCard("sheet-102", "Vowels", "sip", "Drink for every vowel in your name"),
-  houseCard("sheet-103", "Categories", "category", "US Capitals"),
+  houseCard(
+    "sheet-103",
+    "Capital Idea",
+    "category",
+    "Name US state capitals, one each, clockwise. First repeat or blank drinks 3.",
+  ),
   houseCard(
     "sheet-104",
     "Opinions",
@@ -549,9 +614,9 @@ const sheetRows: CardDefinition[] = [
   ),
   houseCard(
     "sheet-105",
-    "Categories",
+    "Know Your Rights",
     "category",
-    "Things you should never say to a police officer",
+    "Name things you'd never say to a cop, one each clockwise. First repeat or blank drinks 3.",
   ),
 ];
 
