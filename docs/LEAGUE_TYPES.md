@@ -208,8 +208,8 @@ Typed fights met per run, weighted by how often each is dealt (about 33 in all),
 | Card | Ribbon | Type | Roll | Rules |
 | --- | --- | --- | --- | --- |
 | Rocket Grunt | Team Rocket · Grunt | Poison | 2d6 | A Rocket Grunt guards the basement under the Game Corner. He has a Zubat. Of course. Roll 2d6. |
-| Slowpoke Tail Seller | Team Rocket · Grunt | Poison | d20 | A Grunt is selling Slowpoke Tails. They're still twitching. Roll d20. |
-| Spinner Tiles | Team Rocket · Grunt | Poison | d20 | Spinner tiles! A Grunt laughs while you spin in your chair. Then roll d20. |
+| Slowpoke Tail Seller | Team Rocket · Grunt | Poison | strike | A Grunt is selling Slowpoke Tails. They're still twitching. |
+| Spinner Tiles | Team Rocket · Grunt | Poison | strike | Spinner tiles! A Grunt laughs while you spin in your chair. |
 
 ### Rocket Hideout boss
 
@@ -221,8 +221,8 @@ Typed fights met per run, weighted by how often each is dealt (about 33 in all),
 
 | Card | Ribbon | Type | Roll | Rules |
 | --- | --- | --- | --- | --- |
-| Magma Grunt | Team Magma · Grunt | Ground | d20 | A Magma Grunt in a red hood wants more land. Stand up and claim your chair. Roll d20. |
-| Sweaty Grunt | Team Magma · Grunt | Fire | d20 | A Grunt inside a volcano in a full hoodie. He is so sweaty. Roll d20. |
+| Magma Grunt | Team Magma · Grunt | Ground | strike | A Magma Grunt in a red hood wants more land. Stand up and claim your chair. |
+| Sweaty Grunt | Team Magma · Grunt | Fire | strike | A Grunt inside a volcano in a full hoodie. He is so sweaty. |
 | Tabitha | Team Magma · Admin | Fire | 2d6 | Admin Tabitha laughs like a cartoon villain. Laugh back like one, then roll 2d6. |
 
 ### Magma Hideout boss
@@ -235,8 +235,8 @@ Typed fights met per run, weighted by how often each is dealt (about 33 in all),
 
 | Card | Ribbon | Type | Roll | Rules |
 | --- | --- | --- | --- | --- |
-| Aqua Grunt | Team Aqua · Grunt | Water | d20 | An Aqua Grunt in a bandana wants more sea. Spit your drink back in the glass. Roll d20. |
-| Submarine Thief | Team Aqua · Grunt | Water | d6 | A Grunt is stealing a submarine. He asks you to look away. Roll d6. |
+| Aqua Grunt | Team Aqua · Grunt | Water | strike | An Aqua Grunt in a bandana wants more sea. Spit your drink back in the glass. |
+| Submarine Thief | Team Aqua · Grunt | Water | strike | A Grunt is stealing a submarine. He asks you to look away. |
 | Shelly | Team Aqua · Admin | Water | d20 | Admin Shelly yawns at you, big. Everyone else: don't yawn back. Roll d20. |
 
 ### Aqua Hideout boss
@@ -249,9 +249,9 @@ Typed fights met per run, weighted by how often each is dealt (about 33 in all),
 
 | Card | Ribbon | Type | Roll | Rules |
 | --- | --- | --- | --- | --- |
-| Galactic Grunt | Team Galactic · Grunt | Poison | 2d6 | A Galactic Grunt with a bowl cut that's also a uniform. Roll 2d6. |
+| Galactic Grunt | Team Galactic · Grunt | Poison | strike | A Galactic Grunt with a bowl cut that's also a uniform. |
 | Mars | Team Galactic · Commander | Normal | d20 | Commander Mars wants your Pokémon for science. Roll d20. |
-| Charon | Team Galactic · Scientist | Electric | d6 | Charon the scientist cackles and points a ray gun at you. Roll d6. |
+| Charon | Team Galactic · Scientist | Electric | strike | Charon the scientist cackles and points a ray gun at you. |
 
 ### Galactic HQ boss
 
@@ -263,8 +263,8 @@ Typed fights met per run, weighted by how often each is dealt (about 33 in all),
 
 | Card | Ribbon | Type | Roll | Rules |
 | --- | --- | --- | --- | --- |
-| Plasma Grunt | Team Plasma · Grunt | Dark | d20 | A Plasma Grunt dressed as a knight tells you to free your Pokémon. Roll d20. |
-| Sage | Team Plasma · Sage | Dark | d20 | One of the Seven Sages lectures you about Pokémon liberation. Roll d20. |
+| Plasma Grunt | Team Plasma · Grunt | Dark | strike | A Plasma Grunt dressed as a knight tells you to free your Pokémon. |
+| Sage | Team Plasma · Sage | Dark | strike | One of the Seven Sages lectures you about Pokémon liberation. |
 | N | Team Plasma · King | Electric | 2d6 | N rambles about truth and ideals. Your left neighbor does N for 5 seconds; you roll 2d6. |
 
 ### Plasma Castle boss
@@ -277,8 +277,8 @@ Typed fights met per run, weighted by how often each is dealt (about 33 in all),
 
 | Card | Ribbon | Type | Roll | Rules |
 | --- | --- | --- | --- | --- |
-| Flare Grunt | Team Flare · Grunt | Fire | d20 | A Flare Grunt in a red suit says your outfit is ugly. Defend your outfit and roll d20. |
-| Flare Scientist | Team Flare · Scientist | Fire | d6 | A Flare scientist in orange goggles shows you a doomsday weapon. Roll d6. |
+| Flare Grunt | Team Flare · Grunt | Fire | strike | A Flare Grunt in a red suit says your outfit is ugly. Defend your outfit. |
+| Flare Scientist | Team Flare · Scientist | Fire | strike | A Flare scientist in orange goggles shows you a doomsday weapon. |
 | Flare Admin | Team Flare · Admin | Fire | d20 | A Flare admin charges five million to join. Roll d20. |
 
 ### Flare Lab boss
@@ -291,8 +291,8 @@ Typed fights met per run, weighted by how often each is dealt (about 33 in all),
 
 | Card | Ribbon | Type | Roll | Rules |
 | --- | --- | --- | --- | --- |
-| Skull Grunt | Team Skull · Grunt | Poison | d20 | A Skull Grunt does the Skull pose and says YO. Everyone does the pose. Roll d20. |
-| Rapping Grunt | Team Skull · Grunt | Poison | d20 | A Skull Grunt raps at you badly. Rap back four lines, then roll d20. |
+| Skull Grunt | Team Skull · Grunt | Poison | strike | A Skull Grunt does the Skull pose and says YO. Everyone does the pose. |
+| Rapping Grunt | Team Skull · Grunt | Poison | strike | A Skull Grunt raps at you badly. Rap back four lines. |
 | Plumeria | Team Skull · Admin | Poison | d6 | Big sis Plumeria wants to know why you hurt her boys. Roll d6. |
 
 ### Shady House boss
@@ -306,8 +306,8 @@ Typed fights met per run, weighted by how often each is dealt (about 33 in all),
 | Card | Ribbon | Type | Roll | Rules |
 | --- | --- | --- | --- | --- |
 | Oleana | Macro Cosmos · Secretary | Poison | d20 | Oleana, Chairman Rose's secretary, has a meeting with you. Roll d20. |
-| Macro Intern | Macro Cosmos · Intern | Steel | d6 | An intern asks you to fill out a feedback survey before battling. Roll d6. |
-| Tower Security | Macro Cosmos · Security | Steel | d20 | Tower Security wants your badge. Not that badge, your ID badge. Roll d20. |
+| Macro Intern | Macro Cosmos · Intern | Steel | strike | An intern asks you to fill out a feedback survey before battling. |
+| Tower Security | Macro Cosmos · Security | Steel | strike | Tower Security wants your badge. Not that badge, your ID badge. |
 
 ### Rose Tower boss
 
@@ -319,9 +319,9 @@ Typed fights met per run, weighted by how often each is dealt (about 33 in all),
 
 | Card | Ribbon | Type | Roll | Rules |
 | --- | --- | --- | --- | --- |
-| Star Grunt | Team Star · Grunt | Dark | d20 | A Team Star grunt does the Star Shuffle. Do it with her, then roll d20. |
+| Star Grunt | Team Star · Grunt | Dark | strike | A Team Star grunt does the Star Shuffle. Do it with her. |
 | Starmobile | Team Star · Squad Boss | Steel | 2d6 | A boss revs a Starmobile made of Revavroom. Rev with your mouth, then roll 2d6. |
-| Star Squad | Team Star · Grunt | Dark | d20 | Thirty grunts. Thirty seconds. Everyone points at you. Roll d20. |
+| Star Squad | Team Star · Grunt | Dark | strike | Thirty grunts. Thirty seconds. Everyone points at you. |
 
 ### Star Base boss
 
@@ -469,9 +469,9 @@ Typed fights met per run, weighted by how often each is dealt (about 33 in all),
 
 | Card | Ribbon | Type | Roll | Rules |
 | --- | --- | --- | --- | --- |
-| Golurk | Victory Road · Wild | Ground | d6 | A Golurk guards Victory Road: a robot made of clay and grudges. Roll d6. |
-| Steelix | Victory Road · Wild | Steel | d20 | A Steelix is the floor of the cave. You've been walking on it. Roll d20. |
-| Machamp | Victory Road · Wild | Fighting | 2d6 | Wild Machamp. Four arms, no shirt, very personal. Roll 2d6. |
+| Golurk | Victory Road · Wild | Ground | strike | A Golurk guards Victory Road: a robot made of clay and grudges. |
+| Steelix | Victory Road · Wild | Steel | strike | A Steelix is the floor of the cave. You've been walking on it. |
+| Machamp | Victory Road · Wild | Fighting | strike | Wild Machamp. Four arms, no shirt, very personal. |
 | Boulder Puzzle | Victory Road · Hazard | — | d20 | Victory Road's boulder puzzle. You pushed one wrong and now you're stuck. Roll d20. |
 | Veteran Ada | Victory Road · Trainer | — | plaques | Veteran Ada wants to see your badges. Name all eight from this run. Miss one: drink 4. |
 | Ace Trainer Ilse | Victory Road · Ace Trainer | — | d6 | Ace Trainer Ilse has six Pokémon and no mercy. Roll d6 for how many you beat. |

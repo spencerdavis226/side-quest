@@ -26,7 +26,7 @@ export const LEGENDARY_NEED = 8;
 export const LEGENDARY_HITS = 2;
 export const LEGENDARY_HURT = 2;
 /** An Elite Four member (or Galar's Champion Cup finalist). */
-export const ELITE_NEED = 8;
+export const ELITE_NEED = 9;
 export const ELITE_HITS = 1;
 export const ELITE_HURT = 2;
 /** A Champion: the whole table fights, three swings to bring one down. */

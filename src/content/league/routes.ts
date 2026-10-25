@@ -1508,44 +1508,38 @@ const route8Aces: CardDefinition[] = [
 
 // --- Victory Road and the rival -------------------------------------------------
 const victoryRoad: CardDefinition[] = [
-  wild(
+  strike(
     8,
     "route-golurk",
     "Golurk",
-    "A Golurk guards Victory Road: a robot made of clay and grudges. Roll d6.",
-    moves(
-      [
-        "Hammer Arm. Drink 5.",
-        "Heavy Slam. Drink 4.",
-        "It holds a grudge. Drink 3; your left neighbor says what for.",
-      ],
-      [
-        "It crumbles. Give 4.",
-        "It lets you pass. Give 4.",
-        "It carries you up the road. Give 5.",
-      ],
-    ),
+    "A Golurk guards Victory Road: a robot made of clay and grudges.",
+    {
+      even: "It lets you pass. Drink 3.",
+      advantage: "You crack its clay. Give 4.",
+      disadvantage: "Shadow Punch. Drink 6.",
+    },
   ),
-  wild(
+  strike(
     8,
     "route-onix-victory",
     "Steelix",
-    "A Steelix is the floor of the cave. You've been walking on it. Roll d20.",
-    vs(
-      "It wakes up. Drink 5, and whisper until your next turn.",
-      "You tiptoe off it. Give 4.",
-    ),
+    "A Steelix is the floor of the cave. You've been walking on it.",
+    {
+      even: "It rumbles. Drink 3.",
+      advantage: "You climb it like a stair. Give 4.",
+      disadvantage: "Iron Tail. Drink 6.",
+    },
   ),
-  wild(
+  strike(
     8,
     "route-machamp",
     "Machamp",
-    "Wild Machamp. Four arms, no shirt, very personal. Roll 2d6.",
-    pair(
-      "Four punches at once. Drink 5.",
-      "You hug it into submission. Give 4.",
-      "A pair! It high-fives the table with all four arms. Everyone else drinks 2.",
-    ),
+    "Wild Machamp. Four arms, no shirt, very personal.",
+    {
+      even: "Four high fives. Drink 3.",
+      advantage: "You flex back. Give 4.",
+      disadvantage: "Dynamic Punch. Drink 6.",
+    },
   ),
   hazard(
     8,

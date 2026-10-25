@@ -441,6 +441,20 @@ export const grunt = (
   ribbon: `${team} · ${rank}`,
 });
 
+/** A hideout's grunt (or an admin) as a strike: no roll, the type matchup
+ * picks the line. A `curse` lands when the matchup loses. */
+export const gruntStrike = (
+  team: string,
+  id: string,
+  title: string,
+  rules: string,
+  lines: Strike,
+  { rank = "Grunt", ...more }: Extra & { rank?: string } = {},
+): CardDefinition => ({
+  ...strike(HIDEOUT_LEG, id, title, rules, lines, more),
+  ribbon: `${team} · ${rank}`,
+});
+
 /** A hideout's boss: dealt again until beaten twice. Its curse lands on a
  * missed swing and lifts when it falls. */
 export const villain = (

@@ -1,5 +1,5 @@
 import type { CardDefinition } from "../../game/types";
-import { grunt, moves, pair, villain, vs } from "./journey";
+import { grunt, gruntStrike, moves, pair, villain, vs } from "./journey";
 
 // After the fourth badge the run detours through one villain team's hideout,
 // picked when the game starts: two of its three grunts, then its boss, who
@@ -30,26 +30,28 @@ export const hideouts = [
           "A pair! Jackpot on the slots upstairs. Give {total}.",
         ),
       ),
-      grunt(
+      gruntStrike(
         "Team Rocket",
         "rocket-grunt-slowpoke",
         "Slowpoke Tail Seller",
-        "A Grunt is selling Slowpoke Tails. They're still twitching. Roll d20.",
-        vs(
-          "You bought one. Drink 3, slowly.",
-          "You free the Slowpoke. Give 3, very slowly.",
-        ),
+        "A Grunt is selling Slowpoke Tails. They're still twitching.",
+        {
+          even: "You buy one out of fear. Drink 2, slowly.",
+          advantage: "You free the Slowpoke. Give 4, very slowly.",
+          disadvantage: "He sells you two. Drink 5, slowly.",
+        },
         { curse: "bleed" },
       ),
-      grunt(
+      gruntStrike(
         "Team Rocket",
         "rocket-grunt-spinner",
         "Spinner Tiles",
-        "Spinner tiles! A Grunt laughs while you spin in your chair. Then roll d20.",
-        vs(
-          "Dizzy and beaten. Drink 3, then stand and walk a straight line.",
-          "You spin into him. Give 3.",
-        ),
+        "Spinner tiles! A Grunt laughs while you spin in your chair.",
+        {
+          even: "Dizzy. Drink 2.",
+          advantage: "You spin into him. Give 3.",
+          disadvantage: "Dizzy and beaten. Drink 5, then walk a straight line.",
+        },
       ),
     ],
     villain(
@@ -73,22 +75,27 @@ export const hideouts = [
     "Magma Hideout",
     "Team Magma's volcano",
     [
-      grunt(
+      gruntStrike(
         "Team Magma",
         "magma-grunt-hood",
         "Magma Grunt",
-        "A Magma Grunt in a red hood wants more land. Stand up and claim your chair. Roll d20.",
-        vs("He claims your chair. Drink 3 standing.", "Your land now. Give 3."),
+        "A Magma Grunt in a red hood wants more land. Stand up and claim your chair.",
+        {
+          even: "You hold the chair. Drink 2.",
+          advantage: "He gets the floor. Give 3.",
+          disadvantage: "He takes the chair. Drink 5 standing.",
+        },
       ),
-      grunt(
+      gruntStrike(
         "Team Magma",
         "magma-grunt-sweat",
         "Sweaty Grunt",
-        "A Grunt inside a volcano in a full hoodie. He is so sweaty. Roll d20.",
-        vs(
-          "He hugs you. Drink 3 and fan yourself.",
-          "He passes out from heat. Everyone in a hoodie or jacket drinks 2.",
-        ),
+        "A Grunt inside a volcano in a full hoodie. He is so sweaty.",
+        {
+          even: "He hugs you. Drink 2.",
+          advantage: "He faints from the heat. Give 3.",
+          disadvantage: "Eruption. Drink 5.",
+        },
       ),
       grunt(
         "Team Magma",
@@ -120,33 +127,27 @@ export const hideouts = [
     "Aqua Hideout",
     "Team Aqua's sea cave",
     [
-      grunt(
+      gruntStrike(
         "Team Aqua",
         "aqua-grunt-bandana",
         "Aqua Grunt",
-        "An Aqua Grunt in a bandana wants more sea. Spit your drink back in the glass. Roll d20.",
-        vs(
-          "More sea for him. Drink 3, and add a splash of water to your drink.",
-          "You stay dry. Whoever's drink is fullest drinks 2.",
-        ),
+        "An Aqua Grunt in a bandana wants more sea. Spit your drink back in the glass.",
+        {
+          even: "Soggy. Drink 2.",
+          advantage: "He floods himself. Give 3.",
+          disadvantage: "Tidal wave. Drink 5.",
+        },
       ),
-      grunt(
+      gruntStrike(
         "Team Aqua",
         "aqua-grunt-submarine",
         "Submarine Thief",
-        "A Grunt is stealing a submarine. He asks you to look away. Roll d6.",
-        moves(
-          [
-            "You looked away. Drink 3.",
-            "You helped him park it. Drink 3 and salute.",
-          ],
-          [
-            "You sink his plan. Give 3.",
-            "You steal the sub. Give 3.",
-            "A Wailord rams it. Give 3.",
-            "He surfaces in the wrong ocean. Give 4.",
-          ],
-        ),
+        "A Grunt is stealing a submarine. He asks you to look away.",
+        {
+          even: "You look away. Drink 2.",
+          advantage: "You report him. Give 3.",
+          disadvantage: "He steals your drink too. Drink 5.",
+        },
       ),
       grunt(
         "Team Aqua",
@@ -176,16 +177,16 @@ export const hideouts = [
     "Galactic HQ",
     "Team Galactic's headquarters",
     [
-      grunt(
+      gruntStrike(
         "Team Galactic",
         "galactic-grunt-bowl",
         "Galactic Grunt",
-        "A Galactic Grunt with a bowl cut that's also a uniform. Roll 2d6.",
-        pair(
-          "Bowl cut to the face. Drink 3.",
-          "You laugh at the haircut. Whoever had the worst haircut as a kid drinks 3.",
-          "A pair! You give him a trim. Give {total}.",
-        ),
+        "A Galactic Grunt with a bowl cut that's also a uniform.",
+        {
+          even: "You can't stop staring. Drink 2.",
+          advantage: "You cut the bowl. Give 3.",
+          disadvantage: "Poison Jab. Drink 5.",
+        },
       ),
       grunt(
         "Team Galactic",
@@ -201,23 +202,16 @@ export const hideouts = [
           },
         },
       ),
-      grunt(
+      gruntStrike(
         "Team Galactic",
         "galactic-scientist-charon",
         "Charon",
-        "Charon the scientist cackles and points a ray gun at you. Roll d6.",
-        moves(
-          [
-            "Zapped. Drink 3.",
-            "Shrink ray. Drink 2, and talk tiny until your next turn.",
-          ],
-          [
-            "The gun was a hairdryer. Give 3.",
-            "It zaps his own foot. Give 3.",
-            "You take the gun. Give 3.",
-            "It zaps your left neighbor. They drink 3.",
-          ],
-        ),
+        "Charon the scientist cackles and points a ray gun at you.",
+        {
+          even: "Zap. Drink 2.",
+          advantage: "You swap its batteries. Give 3.",
+          disadvantage: "Full blast. Drink 5.",
+        },
         { rank: "Scientist", curse: "hex" },
       ),
     ],
@@ -238,25 +232,27 @@ export const hideouts = [
     "Plasma Castle",
     "Team Plasma's castle",
     [
-      grunt(
+      gruntStrike(
         "Team Plasma",
         "plasma-grunt-knight",
         "Plasma Grunt",
-        "A Plasma Grunt dressed as a knight tells you to free your Pokémon. Roll d20.",
-        vs(
-          "Freed and beaten. Drink 3, and your left neighbor sips your drink.",
-          "You keep them. Give 3.",
-        ),
+        "A Plasma Grunt dressed as a knight tells you to free your Pokémon.",
+        {
+          even: "You nod politely. Drink 2.",
+          advantage: "You free his Pokémon instead. Give 3.",
+          disadvantage: "He lectures you. Drink 5.",
+        },
       ),
-      grunt(
+      gruntStrike(
         "Team Plasma",
         "plasma-sage",
         "Sage",
-        "One of the Seven Sages lectures you about Pokémon liberation. Roll d20.",
-        vs(
-          "Lectured. Drink 3, then lecture the table for 5 seconds.",
-          "You walk out. Give 3.",
-        ),
+        "One of the Seven Sages lectures you about Pokémon liberation.",
+        {
+          even: "You sit through it. Drink 2.",
+          advantage: "You win the debate. Give 3.",
+          disadvantage: "Three more lectures. Drink 5.",
+        },
         { rank: "Sage" },
       ),
       grunt(
@@ -289,33 +285,27 @@ export const hideouts = [
     "Flare Lab",
     "Team Flare's lab",
     [
-      grunt(
+      gruntStrike(
         "Team Flare",
         "flare-grunt-suit",
         "Flare Grunt",
-        "A Flare Grunt in a red suit says your outfit is ugly. Defend your outfit and roll d20.",
-        vs(
-          "It's ugly. Drink 3, and the table rates your outfit out of 10.",
-          "Fashion wins. The table points at the worst-dressed player; they drink 3.",
-        ),
+        "A Flare Grunt in a red suit says your outfit is ugly. Defend your outfit.",
+        {
+          even: "You pout. Drink 2.",
+          advantage: "His suit is worse. Give 3.",
+          disadvantage: "He's right. Drink 5.",
+        },
       ),
-      grunt(
+      gruntStrike(
         "Team Flare",
         "flare-scientist",
         "Flare Scientist",
-        "A Flare scientist in orange goggles shows you a doomsday weapon. Roll d6.",
-        moves(
-          [
-            "It works. Drink 3.",
-            "It's a laser pointer, aimed at your eye. Drink 3.",
-          ],
-          [
-            "It's a toaster. Give 3.",
-            "It's a hair straightener. Give 3.",
-            "It explodes in his hand. Give 3.",
-            "It's a disco ball. Everyone dances; the stiffest drinks 3.",
-          ],
-        ),
+        "A Flare scientist in orange goggles shows you a doomsday weapon.",
+        {
+          even: "It's a hair dryer. Drink 2.",
+          advantage: "You press the red button. Give 3.",
+          disadvantage: "It works. Drink 5.",
+        },
         { rank: "Scientist", curse: "bleed" },
       ),
       grunt(
@@ -347,22 +337,27 @@ export const hideouts = [
     "Shady House",
     "Team Skull's Shady House",
     [
-      grunt(
+      gruntStrike(
         "Team Skull",
         "skull-grunt-yo",
         "Skull Grunt",
-        "A Skull Grunt does the Skull pose and says YO. Everyone does the pose. Roll d20.",
-        vs(
-          "YO. Do the Skull pose, then drink 3.",
-          "No YO. The table picks the worst pose; that player drinks 2.",
-        ),
+        "A Skull Grunt does the Skull pose and says YO. Everyone does the pose.",
+        {
+          even: "Yo. The worst pose drinks 2.",
+          advantage: "You out-pose him. Give 3.",
+          disadvantage: "YO. Drink 5.",
+        },
       ),
-      grunt(
+      gruntStrike(
         "Team Skull",
         "skull-grunt-rap",
         "Rapping Grunt",
-        "A Skull Grunt raps at you badly. Rap back four lines, then roll d20.",
-        vs("His bars were better. Drink 3.", "No bars. Give 3, in rhyme."),
+        "A Skull Grunt raps at you badly. Rap back four lines.",
+        {
+          even: "A draw. Drink 2.",
+          advantage: "He's wrecked. Give 3.",
+          disadvantage: "He destroys you. Drink 5.",
+        },
       ),
       grunt(
         "Team Skull",
@@ -411,34 +406,28 @@ export const hideouts = [
         ),
         { rank: "Secretary" },
       ),
-      grunt(
+      gruntStrike(
         "Macro Cosmos",
         "cosmos-intern",
         "Macro Intern",
-        "An intern asks you to fill out a feedback survey before battling. Roll d6.",
-        moves(
-          [
-            "Twenty questions. Drink 3.",
-            "Mandatory feedback. Drink 2 and name one thing the table could do better.",
-          ],
-          [
-            "You lie on the survey. Give 3.",
-            "You give it five stars. Give 3.",
-            "You fill it out for him. Give 3.",
-            "He quits. Give 4.",
-          ],
-        ),
+        "An intern asks you to fill out a feedback survey before battling.",
+        {
+          even: "Five stars. Drink 2.",
+          advantage: "You rate him one star. Give 3.",
+          disadvantage: "Mandatory follow-up. Drink 5.",
+        },
         { rank: "Intern" },
       ),
-      grunt(
+      gruntStrike(
         "Macro Cosmos",
         "cosmos-security",
         "Tower Security",
-        "Tower Security wants your badge. Not that badge, your ID badge. Roll d20.",
-        vs(
-          "You don't have one. Drink 3 and say your full name.",
-          "You walk right past. Give 3.",
-        ),
+        "Tower Security wants your badge. Not that badge, your ID badge.",
+        {
+          even: "You show your phone. Drink 2.",
+          advantage: "You walk through. Give 3.",
+          disadvantage: "You're escorted out. Drink 5.",
+        },
         { rank: "Security", curse: "hex" },
       ),
     ],
@@ -460,15 +449,16 @@ export const hideouts = [
     "Star Base",
     "Team Star's base",
     [
-      grunt(
+      gruntStrike(
         "Team Star",
         "star-grunt-dance",
         "Star Grunt",
-        "A Team Star grunt does the Star Shuffle. Do it with her, then roll d20.",
-        vs(
-          "Starstruck. Shuffle while you drink 3.",
-          "You shuffle past. Give 3.",
-        ),
+        "A Team Star grunt does the Star Shuffle. Do it with her.",
+        {
+          even: "Good shuffle. Drink 2.",
+          advantage: "You out-shuffle her. Give 3.",
+          disadvantage: "She spins you. Drink 5.",
+        },
       ),
       grunt(
         "Team Star",
@@ -482,19 +472,16 @@ export const hideouts = [
         ),
         { rank: "Squad Boss" },
       ),
-      grunt(
+      gruntStrike(
         "Team Star",
         "star-squad",
         "Star Squad",
-        "Thirty grunts. Thirty seconds. Everyone points at you. Roll d20.",
-        vs(
-          "Overrun. Drink {total}.",
-          "Thirty down. Everyone who pointed drinks 1.",
-          {
-            fumble:
-              "Thirty grunts sit on you. Finish your drink while everyone points.",
-          },
-        ),
+        "Thirty grunts. Thirty seconds. Everyone points at you.",
+        {
+          even: "You hold your ground. Drink 2.",
+          advantage: "You point back. Give 3.",
+          disadvantage: "Everyone pounces. Drink 5.",
+        },
         { curse: "bleed" },
       ),
     ],

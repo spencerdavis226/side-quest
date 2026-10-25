@@ -39,9 +39,9 @@ const PIDGEY = "pokemon.route-pidgey"; // Flying, on Route 1
 describe("strikes", () => {
   it("are valid cards with three lines, in the League only", () => {
     const strikes = cards.filter((c) => c.strike);
-    expect(strikes.length).toBeGreaterThanOrEqual(10);
+    expect(strikes.length).toBeGreaterThanOrEqual(60);
     for (const c of strikes)
-      expect(c.id.startsWith("pokemon.route-")).toBe(true);
+      expect(c.id.startsWith("pokemon."), c.id).toBe(true);
     expect(() => validateCatalog(cards, packs)).not.toThrow();
     const bad = { ...strikes[0], strike: { ...strikes[0].strike!, even: " " } };
     expect(() => validateCatalog([bad], packs)).toThrow(/Invalid strike/);
