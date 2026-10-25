@@ -548,8 +548,11 @@ export function hitsNeeded(
   card: CardDefinition,
 ): number {
   if (!card.hits) return 0;
-  return (
-    card.hits + (isBossCard(card) ? (omenEffect(quest)?.bossHits ?? 0) : 0)
+  // A boss always takes at least one hit: a starter that takes a hit off
+  // every boss (Marowak) speeds up the big ones, never skips a gym.
+  return Math.max(
+    1,
+    card.hits + (isBossCard(card) ? (omenEffect(quest)?.bossHits ?? 0) : 0),
   );
 }
 /** Finale cards are dealt between deck cards and take no deck position. */

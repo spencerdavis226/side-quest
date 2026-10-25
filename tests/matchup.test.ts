@@ -4,6 +4,7 @@ import {
   cardMatchup,
   createSession,
   currentCard,
+  hitsNeeded,
   settleBattle,
   spendLoot,
   type Random,
@@ -57,7 +58,70 @@ const rank = (card: CardDefinition, values: number[], roll: DiceRoll) =>
   (rollWins(card.dice!, values, roll) ? 1000 : 0) +
   readTotal(card.dice!, values, roll);
 
+// The games' type chart (Gen 6 onward), transcribed from Pokémon Showdown's
+// data (@pkmn/dex 0.10.11, Dex.forGen(9)) on 2026-10-25, after an owner
+// report questioned Grass against Electric. Rows attack, columns defend, in
+// this order: 2 super effective, h not very effective, 0 no effect.
+const ORDER = [
+  "normal",
+  "fire",
+  "water",
+  "grass",
+  "electric",
+  "ice",
+  "fighting",
+  "poison",
+  "ground",
+  "flying",
+  "psychic",
+  "bug",
+  "rock",
+  "ghost",
+  "dragon",
+  "dark",
+  "steel",
+  "fairy",
+] as const;
+const CANON: Record<(typeof ORDER)[number], string> = {
+  normal: "............h0..h.",
+  fire: ".hh2.2.....2h.h.2.",
+  water: ".2hh....2...2.h...",
+  grass: ".h2h...h2h.h2.h.h.",
+  electric: "..2hh...02....h...",
+  ice: ".hh2.h..22....2.h.",
+  fighting: "2....2.h.hhh20.22h",
+  poison: "...2...hh...hh..02",
+  ground: ".2.h2..2.0.h2...2.",
+  flying: "...2h.2....2h...h.",
+  psychic: "......22..h....0h.",
+  bug: ".h.2..hh.h2..h.2hh",
+  rock: ".2...2h.h2.2....h.",
+  ghost: "0.........2..2.h..",
+  dragon: "..............2.h0",
+  dark: "......h...2..2.h.h",
+  steel: ".hh.h2......2...h2",
+  fairy: ".h....2h......22h.",
+};
+
 describe("type chart", () => {
+  it("matches the games' chart in every one of its 324 cells", () => {
+    const multiplier = { ".": 1, "2": 2, h: 0.5, "0": 0 } as const;
+    for (const attack of ORDER)
+      ORDER.forEach((defend, i) =>
+        expect(effectiveness(attack, defend), `${attack} on ${defend}`).toBe(
+          multiplier[CANON[attack][i] as keyof typeof multiplier],
+        ),
+      );
+  });
+
+  it("gives no edge for a resistance alone: Grass against Electric is even", () => {
+    expect(effectiveness("grass", "electric")).toBe(1);
+    expect(effectiveness("electric", "grass")).toBe(0.5);
+    expect(matchup("grass", "electric").edge).toBeNull();
+    // Fire against Dragon too: Dragon resists Fire, but hits it normally.
+    expect(matchup("fire", "dragon").edge).toBeNull();
+  });
+
   it("reads the games' chart", () => {
     expect(effectiveness("fire", "grass")).toBe(2);
     expect(effectiveness("fire", "water")).toBe(0.5);
@@ -67,7 +131,7 @@ describe("type chart", () => {
     expect(effectiveness("steel", "fairy")).toBe(2);
   });
 
-  it("gives the edge to whoever hits the other harder", () => {
+  it("gives the edge to whichever side is super effective (owner: simpler rules)", () => {
     expect(matchup("fire", "grass").edge).toBe("advantage");
     expect(matchup("fire", "water").edge).toBe("disadvantage");
     expect(matchup("water", "water").edge).toBeNull();
@@ -77,6 +141,9 @@ describe("type chart", () => {
     expect(matchup("normal", "fighting").edge).toBe("disadvantage");
     // Neither can touch the other.
     expect(matchup("normal", "ghost").edge).toBeNull();
+    // Both super effective on each other: even.
+    expect(matchup("dragon", "dragon").edge).toBeNull();
+    expect(matchup("ghost", "ghost").edge).toBeNull();
   });
 
   it("sends out the Striaton brother who beats the starter", () => {
@@ -86,7 +153,11 @@ describe("type chart", () => {
     });
     expect(matchup("water", "trio").theirs).toBe("grass");
     expect(matchup("grass", "trio").theirs).toBe("fire");
-    expect(matchup("electric", "trio").theirs).toBe("grass");
+    // Nobody in the trio beats Electric; Cilan takes it least badly.
+    expect(matchup("electric", "trio")).toMatchObject({
+      theirs: "grass",
+      edge: null,
+    });
     // Nobody beats Normal: the first brother steps up, evenly matched.
     expect(matchup("normal", "trio")).toMatchObject({
       theirs: "fire",
@@ -97,8 +168,8 @@ describe("type chart", () => {
   it("lists what a type is strong and weak against", () => {
     const fire = typeEdges("fire");
     // Fairy too: Fire shrugs off its moves.
-    expect(fire.strong).toEqual(["grass", "ice", "bug", "steel", "fairy"]);
-    expect(fire.weak).toEqual(["water", "ground", "rock", "dragon"]);
+    expect(fire.strong).toEqual(["grass", "ice", "bug", "steel"]);
+    expect(fire.weak).toEqual(["water", "ground", "rock"]);
     expect(typeEdges("normal").strong).toEqual([]);
   });
 });
@@ -235,5 +306,47 @@ describe("type edge in a League run", () => {
     expect(s.quest!.party!.tera).toBe(plaques.id);
     const after = settleBattle(s, false);
     expect(after.quest!.party!.tera).toBeUndefined();
+  });
+
+  it("Marowak's Bonemerang speeds up big bosses but never skips a gym", () => {
+    const s = facing("cubone", grass.id);
+    s.quest!.party!.form = 1; // Marowak: bosses take 1 fewer hit
+    expect(hitsNeeded(s.quest, grass)).toBe(1); // a gym: still one hit
+    const champion = cards.find((c) =>
+      c.id.startsWith("pokemon.league-champion-"),
+    )!;
+    expect(hitsNeeded(s.quest, champion)).toBe(champion.hits! - 1);
+    // A lost gym battle is dealt again, not put aside as beaten.
+    const gym = facing("cubone", plaques.id);
+    gym.quest!.party!.form = 1;
+    const lost = settleBattle(gym, false);
+    expect(lost.quest!.step).toBe(gym.quest!.step);
+  });
+
+  it("rolls 2d6 with an edge as four dice, keeping the highest or lowest two", () => {
+    // A 2d6 gym, against a starter its type beats and one that beats it.
+    const pair = gyms.find((c) => c.dice?.count === 2 && c.dice.sides === 6)!;
+    const starters = cards.filter((c) => c.id.startsWith("pokemon.starter-"));
+    const edged = (edge: string) =>
+      starters.find(
+        (st) =>
+          cardMatchup(facing(st.id.slice(16), pair.id).quest, pair)?.edge ===
+          edge,
+      )!;
+    for (const edge of ["advantage", "disadvantage"] as const) {
+      const who = edged(edge).id.replace("pokemon.starter-", "");
+      for (let seed = 1; seed <= 40; seed++) {
+        const roll = rollDice(facing(who, pair.id), seeded(seed)).roll!;
+        expect(roll.edge).toBe(edge);
+        expect(roll.values).toHaveLength(2);
+        expect(roll.dropped).toHaveLength(2);
+        // The two highest faces with the edge, the two lowest against it.
+        const sorted = [...roll.values, ...roll.dropped!].sort((a, b) => a - b);
+        expect([...roll.values].sort((a, b) => a - b)).toEqual(
+          edge === "advantage" ? sorted.slice(2) : sorted.slice(0, 2),
+        );
+        validateRoll(roll, pair.dice);
+      }
+    }
   });
 });

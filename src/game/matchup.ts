@@ -2,10 +2,12 @@ import type { Edge, PokemonType } from "./types";
 
 // Pokémon League type matchups (owner, 2026-10-25). The games' chart (since
 // Gen 6): each attacking type's super-effective targets, the targets that
-// resist it, and the ones it can't touch. A matchup reads both ways, like a
-// real battle: whoever hits the other harder has the edge, so Fire against
-// Water is a disadvantage even though Fire only resists nothing of Water's.
-// An immunity is "not very effective", never an automatic loss.
+// resist it, and the ones it can't touch. The rule is the one every player
+// knows (owner: "simpler rules for sure"): the starter has the edge when its
+// type is super effective against the foe's, the foe has it when theirs is
+// super effective against the starter's, and anything else is even.
+// Resistances and immunities alone give no edge (Grass against Electric is
+// even), and when both sides hit super effectively it is even too.
 
 type Attacking = Exclude<PokemonType, "trio">;
 const chart: Record<
@@ -106,9 +108,9 @@ export function resolveType(theirs: PokemonType, mine: Attacking): Attacking {
   return brothers.reduce((a, b) => (worst(b) > worst(a) ? b : a));
 }
 
-/** A Tera Orb's type against `theirs`: the one with the widest edge over
- * it (the hardest hitter that takes least back), first in chart order on a
- * tie. Every type has one: Fighting beats Normal, Dark beats Ghost. */
+/** A Tera Orb's type against `theirs`: a type super effective against it
+ * that takes least back, first in chart order on a tie. Every type has one:
+ * Fighting beats Normal, Dark beats Ghost. */
 export function teraType(theirs: Attacking): Attacking {
   const all = Object.keys(chart) as Attacking[];
   const edge = (t: Attacking) =>
@@ -131,12 +133,13 @@ export function matchup(mine: PokemonType, theirs: PokemonType): Matchup {
   // A starter is never the trio; read it as normal if one ever were.
   const me: Attacking = mine === "trio" ? "normal" : mine;
   const foe = resolveType(theirs, me);
-  const dealt = effectiveness(me, foe);
-  const taken = effectiveness(foe, me);
+  const strong = effectiveness(me, foe) === 2;
+  const weak = effectiveness(foe, me) === 2;
   return {
     mine: me,
     theirs: foe,
-    edge: dealt > taken ? "advantage" : dealt < taken ? "disadvantage" : null,
+    edge:
+      strong && !weak ? "advantage" : weak && !strong ? "disadvantage" : null,
   };
 }
 
