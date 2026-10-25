@@ -2,9 +2,9 @@
 
 Updated 2026-10-25. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Pub Crawl depth plan (2026-10-25; owner approved the ideas, plan not yet started)
+## Pub Crawl depth plan (2026-10-25; owner approved the ideas; phase 0 done, phase 1 next)
 
-Goal (owner): bring Pub Crawl up to the League's fun and depth, distinct from it, without making it complex; add many cards; UI must read for drunk players at a distance (phone or mirrored TV). Nothing below is built. Findings from reading the code (not run: `node_modules` was absent, so no build or test was run):
+Goal (owner): bring Pub Crawl up to the League's fun and depth, distinct from it, without making it complex; add many cards; UI must read for drunk players at a distance (phone or mirrored TV). Phase 0 (the spike) is done and recorded below; phases 1 to 5 are not built. The owner asked for this plan to be kept here, up to date, as work proceeds. Findings from reading the code:
 
 - **Push your luck already exists** (`press`, `gamble()` in `dungeon/shared.ts`, `PressPlaques`): 9 gambles, one per floor, prizes are `Loot[]` only. Greed work is an expansion, not a new system.
 - **Class is readable by cards**: `party.omen` holds the adventurer's card ID (`class-barbarian`), and `omenForm()` resolves its form. Class-reactive rooms need no new save field.
@@ -24,7 +24,7 @@ Goal (owner): bring Pub Crawl up to the League's fun and depth, distinct from it
 
 ### Phases (one PR each, in order; each keeps `npm run test:balance` in band: crawl win rate 18% to 40%, every class and omen 10% to 50%, the Plus-One 1% to 10%)
 
-**0. Spike, no content (small).** Confirm in a throwaway branch: (a) the forked-level engine below; (b) the class-knack edge reusing the League's roll-twice machinery (`DiceRoll.edge`, `dropped`, `EdgeMark`); (c) which end-screen stats are derivable from existing saved state. Report before building.
+**0. Spike (done 2026-10-25).** See "Phase 0 results" below.
 
 **1. Content with no engine change.**
 - Greed: 27 new gambles (3 more on each of the 9 floors, 4 per floor and 36 in all), including mimic chests, a cursed-tab bet and a "double or nothing" bartender. Same `press` mechanic, same plaques.
@@ -41,9 +41,18 @@ Goal (owner): bring Pub Crawl up to the League's fun and depth, distinct from it
 
 **Optional wave 2 (needs approval):** a fourth floor at each depth (3 new floors, about 100 cards), taking dungeons from 27 to 64 combinations.
 
+### Phase 0 results (2026-10-25)
+
+Baseline before the spike: `npm test` 282 passed, `tsc -b` clean, lint clean, `npm run test:balance` 8 passed (the run prints no rates; the last recorded ones are in the potion section). The spike code is on local branch `spike/crawl-fork` (commit `e941291`, throwaway, not pushed): `npm test` 286 passed (4 new), tsc, lint and Prettier clean. Rebuild it properly in phases 2 and 3; do not merge the branch.
+
+- **(a) Forked levels: works, about 40 lines.** `CardDefinition.fork` marks `evolves` as the flat list `[A1, B1, A2, B2]`. `omenForm()` returns the two first-level names as `branches` at form 0, then `next` is that path's second level; `evolve()` takes the pick at form 0 and `form + 1` after, so `party.form` is 1 or 2 and then 3 or 4 and `formEffect`, `parseSession` (`form <= evolves.length`) and the save round trip need no change. `validate.ts` requires exactly 4 forms and forbids `branches` with it. The existing plaque code in `Play.tsx` already turns `branches` and `next` into one plaque per path, so a landing shows two path plaques plus Rest (three, within the rule). Level-up banner (`EvolutionBanner` in `StageBanner.tsx`) still needs a fork case for its "from" name, and `Evolution` needs an authored short `tagline` for the plaque. A Rare-Candy-style `candy` item cannot be used on a first level (it has branches), the same as Eevee; a Dog-Eared Tome is an offer, so it works.
+- **Authoring lesson:** a level's effect replaces the previous one, it does not add. Each form must restate its hearts (the spike's Archer lost a heart by omitting it). Phase 2 needs a test that no form silently drops its path's hearts or satchel.
+- **(b) Class knacks: works, about 30 lines.** `CardDefinition.knack` on a room and `knacks` (two) on a class; `knackEdge()` and `cardEdge()` in `engine.ts`; `rollDice` and `verdictShift` read `cardEdge`, so the existing roll-twice path, `DiceRoll.edge`/`dropped`, `validateRoll` and the 3D overlay carry over unchanged. A class lacking the knack rolls once, so nothing is ever a disadvantage. Still to build in phase 3: the strip chip (today only built from `cardMatchup`, in `Crawl.tsx`), a knack icon set, a short dialog, `KNACKS` validation in `validate.ts`, and the seeded-run test for moments per run.
+- **(c) End-screen data: enough for a good tab.** Derivable now from `questRecord()`: floors with rooms faced and boss, boons and trinkets (`partyBoons`), class and path (`omenForm().line`), hearts and max, the Cup and Quaff, curse and jinx, items left. `quest.lost` is not confirmed to count crawl losses, so no fights-lost stat in v1. Drinks poured are not tracked and will not be.
+
 ### Risks
 
-- Forks, knacks and extra gambles each add power; the crawl sits at about 28% wins, so expect one retune per phase (`dungeon/shared.ts`).
+- Forks, knacks and extra gambles each add power; the crawl sits at 32.5% wins (this file's potion section; GAME_DESIGN.md still says about 28%), only 7.5 points under the 40% ceiling, so every power addition needs an offset (price, a harder room, or a weaker sibling) and expect one retune per phase (`dungeon/shared.ts`).
 - The fork touches `evolve()`, which the League also uses; League balance and the evolution tests must stay unchanged.
 - Card-count assertions (`tests/workshop.test.ts`), the manifest (`npm run content:manifest`), imprint entries and the card length rules apply to every new card.
 - Nothing is pushed or merged without the owner's go-ahead; each phase is a separate branch and PR.
