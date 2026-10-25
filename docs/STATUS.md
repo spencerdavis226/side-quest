@@ -2,6 +2,10 @@
 
 Updated 2026-10-25. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Next after the League rework: the same pass on Pub Crawl (owner, 2026-10-25: "it's all kinda same-y as well")
+
+Not started; do it after the League stack (#42 to #45) is read and merged. Measured before any change (shares of a run's weighted draws, crude): about 62% single rolls, 13% Won/Lost plaque fights, 7% push-your-luck gambles, 6% merchants, 4% forks, 8% rests and rewards; of 782 rolled outcomes, about 79% are one flavor line plus a bare "Drink N" or "Give N". The League's tools carry over: a roll-free fight settled by a matchup (here the adventurer's knack, `dungeon/knacks.ts`, in place of a type), table moments with no stakes (the Quarter-Zips' schemes, bar games, a toast that heals), duels, and outcomes that make someone do something. Plan: audit the 40-room floor pools, then a strike-like card keyed to knacks, table moments per floor, a roll-outcome rewrite, a retune (`tests/dungeon.balance.test.ts` bands: win 18% to 40%, classes 10% to 50%, joke classes 1% to 10%), save fixtures for any new card rule, and the same owner read of every new line.
+
 ## League variety rework (2026-10-25; owner approved the plan; phase 1 done locally, not committed or pushed)
 
 Goal (owner): the League's cards and gameplay were same-y. About 63% of a run's cards are one d20/d6/2d6 roll with flavor and another 16% are Won/Lost plaque fights; 78% of dice outcomes are a bare "Drink N" or "Give N". Not everything needs to be a challenge: "you lost a battle, drink 2" is fine, and type advantages still apply. Owner answers to the open questions: take the recommendations (an even matchup costs a drink and no HP; scope is the League only, the 120 deck-mode cards stay; the mix below; this note is the plan of record).
