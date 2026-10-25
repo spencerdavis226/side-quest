@@ -92,7 +92,12 @@ export const classicCards: CardDefinition[] = [
     "Clockwise, build an erotic story one word at a time. First to stall or laugh drinks 2.",
   ),
   // --- Temporary rules -----------------------------------------------------
-  card("buffalo", "Buffalo", "rule", "It's gotta go."),
+  card(
+    "buffalo",
+    "Buffalo",
+    "rule",
+    "Buffalo! Finish your drink. It's gotta go.",
+  ),
   card(
     "little-green-man",
     "Little Green Man",

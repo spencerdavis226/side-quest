@@ -44,7 +44,8 @@ export function EdgeMark({
   );
 }
 
-/** The strip's matchup dialog: who meets whom, and what the edge does. */
+/** The strip's matchup dialog: who meets whom, whose moves are super
+ * effective, and what the edge does. */
 export function MatchupPanel({
   matchup,
   card,
@@ -72,17 +73,16 @@ export function MatchupPanel({
         {side(matchup.theirs, brother ?? card.title)}
       </div>
       <p className="matchup-verdict">
-        {matchup.tera
-          ? "Terastallized!"
-          : good
-            ? "Super effective!"
-            : "Not very effective…"}
+        {matchup.tera ? "Terastallized! " : ""}
+        {good
+          ? `Your ${pokemonTypes[matchup.mine].name} moves are super effective!`
+          : `${brother ?? card.title}'s ${pokemonTypes[matchup.theirs].name} moves are super effective against you!`}
       </p>
       <p className="matchup-effect">
         {card.dice
-          ? good
-            ? "Roll twice and keep the better."
-            : "Roll twice and keep the worse."
+          ? card.dice.count === 1
+            ? `Roll two dice and keep the ${good ? "better" : "worse"}.`
+            : `Roll ${card.dice.count * 2} dice and keep the ${good ? "highest" : "lowest"} ${card.dice.count}.`
           : good
             ? "A loss costs 1 HP less."
             : "A loss costs 1 HP more."}

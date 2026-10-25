@@ -29,8 +29,8 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Tequila Water | `house.sheet-026` | sip | Never have I ever been to Mexico. Drink if you have, 3 if you drank the water and blamed tequila |  |
 | ☐ | Michael Mouse | `house.sheet-027` | sip | How many distinct Disney parks have you been to? Drink that many |  |
 | ☐ | Batrick | `house.sheet-031` | sip | Take a (rabies) shot |  |
-| ☐ | Same | `house.sheet-036` | sip | You called Same, give d6 | 1d6 — Give {total}. |
-| ☐ | Same | `house.sheet-037` | sip | You didn't call Same, take d6 | 1d6 — Drink {total}. |
+| ☐ | Called It | `house.sheet-036` | sip | Ride the Bus: you called Same and it was Same. Right! Roll d6 and give that many. | 1d6 — Give {total}. |
+| ☐ | Same Card, Wrong | `house.sheet-037` | sip | Ride the Bus: you called higher or lower, but it was Same. Wrong! Roll d6 and drink that many. | 1d6 — Drink {total}. |
 | ☐ | The Rock | `house.sheet-038` | sip | Finish your drink, you don't get to pass it along |  |
 | ☐ | Drink, bitch | `house.sheet-045` | sip | If you drank on the last card, drink again, bitch |  |
 | ☐ | Mile High | `house.sheet-050` | sip | Never have I ever flown First Class. Drink if you have, 3 if you've joined the mile-high club |  |
@@ -48,8 +48,8 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Lost in Thailand | `house.sheet-072` | sip | Never have I ever been to Thailand. Drink if you have, 3 if you can't say what happened there |  |
 | ☐ | Vending Roulette | `house.sheet-073` | sip | Never have I ever been to Japan. Drink if you have, 3 if a vending machine sold you something weird |  |
 | ☐ | Code Brown | `house.sheet-074` | sip | Never have I ever shit my pants. Drink if you have, 2 if you've shit yourself at the cabin. |  |
-| ☐ | Split the G | `house.sheet-078` | sip | Congrats ya nailed it, give 1d6 drinks | 1d6 — Give {total}. |
-| ☐ | Split the G | `house.sheet-079` | sip | You fucking blew it, drink 1d6 drinks | 1d6 — Drink {total}. |
+| ☐ | Clean Split | `house.sheet-078` | sip | Split the G: drink a Guinness to the middle of the G. Nailed it! Roll d6 and give that many. | 1d6 — Give {total}. |
+| ☐ | Missed the G | `house.sheet-079` | sip | Split the G: drink a Guinness to the middle of the G. Missed it! Roll d6 and drink that many. | 1d6 — Drink {total}. |
 | ☐ | Blessing & a Curse | `house.sheet-094` | sip | Give 1d6 drinks and take a different 1d6 drinks | 2d6 — Give {first} and drink {second}. |
 | ☐ | Vowels | `house.sheet-102` | sip | Drink for every vowel in your name |  |
 | ☐ | Fuck You In Particular | `cabin.fuck-you` | sip | The game has a personal problem with you. Roll d6 and take it. | 1d6 — 1-1: It hates you a lot. Drink 9. 2-2: Drink 8. 3-3: Drink 7. 4-4: Drink 6. 5-5: Drink 5. 6-6: It only mildly hates you. Drink 4. |
@@ -201,7 +201,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Nicetitties | `house.sheet-077` | challenge | Say something genuinely nice about the person to your right |  |
 | ☐ | Work it | `house.sheet-080` | challenge | Do a runway walk. The table scores it; under 7, drink 3 |  |
 | ☐ | ABCs | `house.sheet-081` | challenge | Say the alphabet backwards, every mistake is a drink |  |
-| ☐ | Tin Hat Society | `house.sheet-088` | challenge | One conspiracy theory you really believe |  |
+| ☐ | Tin Hat Society | `house.sheet-088` | challenge | Share one conspiracy theory you really believe. The table votes if it's believable. If not, drink 2. |  |
 | ☐ | Happy Holidays | `house.sheet-089` | challenge | You have 10 seconds to come up with a fake holiday. Drink 2 if you blow it |  |
 | ☐ | Stare down | `house.sheet-090` | challenge | Challenge someone to a staring contest. Loser drinks |  |
 | ☐ | Spelling Contest | `house.sheet-093` | challenge | The person to your left gives you a word to spell. U wrong U drink. U right, they drink |  |
@@ -248,7 +248,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Who the Fuck Are You? | `core.no-names` | rule | Until your next turn, nobody uses names. Slip: drink 2. |  |
 | ☐ | Church Mode | `core.potty-mouth` | rule | Until your next turn, everyone whispers like they're in church. Slip: drink 2. |  |
 | ☐ | Cursed Number | `core.cursed-number` | rule | Roll d6. Nobody may say that number until your next turn. Slip: drink 2. | 1d6 — {total} is banned until your next turn. Say it: drink 2. |
-| ☐ | Buffalo | `core.buffalo` | rule | It's gotta go. |  |
+| ☐ | Buffalo | `core.buffalo` | rule | Buffalo! Finish your drink. It's gotta go. |  |
 | ☐ | Little Green Man | `core.little-green-man` | rule | Until your next turn, everyone removes the tiny man before drinking. Slip: drink 2. |  |
 | ☐ | Question Master | `core.question-master` | rule | Until your next turn, anyone who answers your question drinks 2. |  |
 | ☐ | Eight Is Mate | `core.kings-eight` | rule | Pick a mate until your next turn. When one of you drinks, both drink, holding hands. |  |
@@ -821,7 +821,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Fuecoco | `pokemon.starter-fuecoco` | rule | Fuecoco chose you because you had snacks. Starts with 2 Potions. |  |
 | ☐ | Spheal | `pokemon.starter-spheal` | rule | Spheal chose you. Spheal with it. Max HP 19. +1 to route battle d20s. |  |
 | ☐ | Riolu | `pokemon.starter-riolu` | rule | Riolu chose you. It can read your aura. Max HP 16. Natural 20 on a 19 or 20. |  |
-| ☐ | Cubone | `pokemon.starter-cubone` | rule | Cubone chose you. Don't ask about the skull. Max HP 16. Starts with an X Attack. |  |
+| ☐ | Cubone | `pokemon.starter-cubone` | rule | Cubone chose you. Don't ask about the skull. Max HP 15. Starts with an X Attack. |  |
 | ☐ | Rookidee | `pokemon.starter-rookidee` | rule | Rookidee pecked your phone. Max HP 19. +1 to route battle d20s. Starts with a Baton Pass. |  |
 | ☐ | Caterpie | `pokemon.starter-caterpie` | rule | Caterpie chose you. It wants to be a butterfly. Max HP 15. Starts with a Rare Candy. |  |
 | ☐ | Larvitar | `pokemon.starter-larvitar` | rule | Larvitar chose you. It ate a mountain on the way. Max HP 20. |  |
@@ -832,7 +832,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Bidoof | `pokemon.starter-bidoof` | rule | Nobody chooses Bidoof. Max HP 16. Every 20 is rerolled. The bag holds 2. |  |
 | ☐ | Magikarp | `pokemon.starter-magikarp` | rule | Magikarp chose you. It used Splash. Nothing happened. Max HP 15. −1 to every battle d20. |  |
 | ☐ | Togepi | `pokemon.starter-togepi` | rule | Togepi chose you. It does nothing, but it's very happy to be here. |  |
-| ☐ | Sunkern | `pokemon.starter-sunkern` | rule | Sunkern chose you. It is a seed with a face. Max HP 19. |  |
+| ☐ | Sunkern | `pokemon.starter-sunkern` | rule | Sunkern chose you. It is a seed with a face. Max HP 20. |  |
 | ☐ | Drowzee | `pokemon.starter-drowzee` | rule | Drowzee chose you, yawning. Now you're yawning. Every heal heals 2 more. Bosses take 1 more hit. |  |
 | ☐ | Zubat | `pokemon.starter-zubat` | rule | Zubat chose you. It flew into a wall doing it. Max HP 20. Natural 1 on a 1 or 2. |  |
 
@@ -842,256 +842,256 @@ the Review column is intentionally blank so you can mark it up.
 
 | Review | Title | ID | Cat | Rules | Dice, secret or timer |
 | --- | --- | --- | --- | --- | --- |
-| ☐ | Most Likely To | `likely.001` | group | Text their ex tonight. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.002` | group | Fall asleep first tonight. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.003` | group | Lose their phone before the night ends. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.004` | group | Start a fight with a bouncer. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.005` | group | Order a round nobody asked for. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.006` | group | Cry at the bar for no reason. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.007` | group | Wake up somewhere they don't recognize. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.008` | group | Drunk-buy something expensive online. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.009` | group | Get kicked out of a bar. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.010` | group | Lose a shoe on a night out. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.011` | group | Make best friends in the bathroom line. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.012` | group | Say "one more" and mean six. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.013` | group | Pee somewhere they absolutely shouldn't. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.014` | group | Show up to brunch still drunk. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.015` | group | Shotgun a beer at a wedding. Point on three: most votes takes a shot. |  |
-| ☐ | Most Likely To | `likely.016` | group | Give a toast nobody asked for. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.017` | group | Puke and rally. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.018` | group | Grab the karaoke mic uninvited. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.019` | group | Leave their card at the bar. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.020` | group | Drunk-text the group chat a paragraph. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.021` | group | Fall down the stairs and call it a bit. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.022` | group | Hit the drive-through at 3 a.m. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.023` | group | Start drinking before noon on vacation. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.024` | group | Forget a conversation they started. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.025` | group | Tip 50% because they love the bartender. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.026` | group | Go swimming fully clothed. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.027` | group | Try to fight a goose. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.028` | group | Swear they're "not even that drunk". Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.029` | group | Still be awake at 4 a.m. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.030` | group | Need to be carried home. Point on three: most votes finishes their drink. |  |
-| ☐ | Most Likely To | `likely.031` | group | Finish someone else's drink and deny it. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.032` | group | Order the most expensive shot on the menu. Point on three: most votes takes a shot. |  |
-| ☐ | Most Likely To | `likely.033` | group | Dance on a table. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.034` | group | Get cut off by a bartender. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.035` | group | Become best friends with the DJ. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.036` | group | Call their mom drunk. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.037` | group | Sneak alcohol into a movie theater. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.038` | group | Mix three liquors in one cup. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.039` | group | Show up to a party empty-handed. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.040` | group | Start a drunk heart-to-heart. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.041` | group | Kiss a stranger at midnight. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.042` | group | Start a conga line. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.043` | group | End up at an afterparty with strangers. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.044` | group | Nap at a party and wake up for round two. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.045` | group | Order pizza to the bar. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.046` | group | Get a tattoo on a dare. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.047` | group | Throw up in an Uber. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.048` | group | Order a fishbowl and drink it alone. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.049` | group | Be the last one to leave every party. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.050` | group | Lose their friends and find new ones. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.051` | group | Lock themselves out of the house. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.053` | group | Text the person they were talking about. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.054` | group | Reply-all to the whole company. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.056` | group | Miss a flight. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.057` | group | Go to the wrong airport. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.060` | group | Lose rock-paper-scissors to a child. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.061` | group | Call a teacher "mom". Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.068` | group | Like a three-year-old photo by accident. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.069` | group | Join a pyramid scheme. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.070` | group | Get a parking ticket in their own driveway. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.072` | group | Talk shit about someone standing right behind them. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.075` | group | Lose their wallet twice on one trip. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.077` | group | Set the kitchen on fire. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.078` | group | Fall for an obvious prank. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.080` | group | Put the wrong fuel in a car. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.081` | group | Butt-dial their boss. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.082` | group | Laugh at a funeral. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.084` | group | Say "you too" when the waiter says enjoy. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.085` | group | Fake-laugh at a joke they didn't get. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.086` | group | Get caught talking to themselves. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.087` | group | Sing the wrong lyrics with full confidence. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.090` | group | Get their head stuck in something. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.091` | group | Send a text meant for someone else. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.092` | group | Get caught stalking someone's Instagram. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.094` | group | Get locked in a bathroom. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.095` | group | Show up on the wrong day. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.098` | group | Go live on social media by accident. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.100` | group | Call 911 by accident. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.101` | group | Eat an entire pizza alone. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.104` | group | Believe in aliens with their whole chest. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.106` | group | Have a deep conversation with a dog. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.107` | group | Order delivery twice in one night. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.108` | group | Laugh at nothing for five straight minutes. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.109` | group | Start a conspiracy podcast. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.111` | group | Pitch a genius business idea at 2 a.m. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.112` | group | Get paranoid about a cop who isn't there. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.114` | group | Buy crystals and mean it. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.117` | group | Reply "lol" to a serious text. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.119` | group | Explain the universe to a bartender. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.121` | group | Get distracted by a bird mid-argument. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.122` | group | Start every sentence with "bro, what if…". Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.124` | group | Fall asleep during a movie they picked. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.125` | group | Eat something off the floor. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.126` | group | Own a bong with a name. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.127` | group | Raid someone else's fridge uninvited. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.128` | group | Get chased by a raccoon on the way home. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.130` | group | Eat fries off a stranger's plate. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.131` | group | Marry someone they met on vacation. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.132` | group | Get back with their ex. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.133` | group | Fall in love on a dating app in a week. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.134` | group | Date two people at once. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.135` | group | Get caught sneaking out of someone's place. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.136` | group | Have a secret OnlyFans. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.137` | group | Send a risky photo to the wrong person. Point on three: most votes takes a shot. |  |
-| ☐ | Most Likely To | `likely.138` | group | Hook up with a coworker. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.139` | group | Slide into a celebrity's DMs. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.140` | group | Get married in Vegas. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.141` | group | Have a crush on someone in this room. Point on three: most votes takes a shot. |  |
-| ☐ | Most Likely To | `likely.142` | group | Ghost someone after a great date. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.143` | group | Have the weirdest search history. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.144` | group | Keep a dating app open just to look. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.145` | group | Write a love letter to a celebrity. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.146` | group | Propose in public. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.148` | group | Plan the wedding before the second date. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.149` | group | Get walked in on. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.150` | group | Flirt their way out of a ticket. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.151` | group | Have a secret second phone. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.152` | group | Date someone twice their age. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.153` | group | Match with a friend's ex. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.154` | group | Have a celebrity hall pass ready. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.155` | group | Be the first one here to get married. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.156` | group | Be the last one here to get married. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.157` | group | Get divorced before the thank-you cards go out. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.158` | group | Make out in a public bathroom. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.159` | group | Have had a crush on a cartoon character. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.160` | group | Tattoo a partner's name on themselves. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.161` | group | Send a "you up?" text this weekend. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.162` | group | Hook up at a wedding. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.163` | group | Date someone just for their dog. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.164` | group | Get caught skinny-dipping. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.165` | group | Fall for the bartender. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.166` | group | Kiss someone in this room tonight. Point on three: most votes takes a shot. |  |
-| ☐ | Most Likely To | `likely.167` | group | Still have their ex's hoodie. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.168` | group | Fake a phone call to escape a date. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.169` | group | Get a lap dance at a bachelor party. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.170` | group | Have a type nobody understands. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.172` | group | Go to jail. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.173` | group | Win the lottery and lose it all. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.175` | group | Move to another country on a whim. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.176` | group | End up on reality TV. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.177` | group | Start a cult. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.179` | group | Get canceled online. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.180` | group | Go viral for the wrong reason. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.182` | group | Get abducted by aliens. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.184` | group | Die first in a horror movie. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.187` | group | End up on the news. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.188` | group | Quit their job dramatically. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.194` | group | Get arrested at a protest. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.195` | group | Own a boat they can't afford. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.196` | group | Move back in with their parents. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.197` | group | Become an influencer. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.198` | group | Win a hot dog eating contest. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.199` | group | End up in witness protection. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.200` | group | Buy a timeshare. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.201` | group | Get a DUI on a lawn mower. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.202` | group | Open a bar. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.204` | group | Become a landlord everyone hates. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.206` | group | Live in a van by choice. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.207` | group | Show up on a true crime show. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.208` | group | Fake their own death. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.209` | group | Bet their rent on one hand of blackjack. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.210` | group | Get a face tattoo at 50. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.211` | group | Be late to their own wedding. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.213` | group | Start drama and act surprised. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.214` | group | Know everyone's secrets. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.215` | group | Leak a secret by accident. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.219` | group | Eat the last slice without asking. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.220` | group | Hog the aux. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.223` | group | Get lost on a group hike. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.224` | group | Complain all trip and have the best time. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.226` | group | Send a five-minute voice memo. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.227` | group | Start a fight in the group chat. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.228` | group | Change the plan at the last second. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.229` | group | Become the main character on vacation. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.231` | group | Fall asleep in the car every time. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.232` | group | Pick the worst restaurant. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.234` | group | Steal a souvenir from a hotel. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.235` | group | Leave the party without saying goodbye. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.236` | group | Win every argument by yelling. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.237` | group | Talk their way into a VIP section. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.238` | group | Lie on their resume. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.239` | group | Cheat at board games. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.240` | group | Take a game way too seriously. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.241` | group | Flip the board when they lose. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.242` | group | Lick the dice for luck. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.246` | group | Be the reason we can't go back somewhere. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.247` | group | Yell at a waiter, then tip 40%. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.249` | group | Survive on gas station food for a week. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.250` | group | Be talking about this game tomorrow. Point on three: most votes finishes their drink. |  |
-| ☐ | Most Likely To | `likely.251` | group | Have sex in a car this year. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.252` | group | Fake an orgasm tonight. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.253` | group | Have a sex tape somewhere. Point on three: most votes takes a shot. |  |
-| ☐ | Most Likely To | `likely.254` | group | Shit their pants as an adult. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.255` | group | Pee in a pool on purpose. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.256` | group | Sleep with an ex's sibling. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.257` | group | Have a fetish they'd never admit. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.258` | group | Blame an STD on a toilet seat. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.259` | group | Own a sex swing. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.260` | group | Fart during sex. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.261` | group | Cry after sex. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.262` | group | Send a nude to the family group chat. Point on three: most votes takes a shot. |  |
-| ☐ | Most Likely To | `likely.263` | group | Get caught masturbating. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.264` | group | Keep a burner account to spy on exes. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.265` | group | Make out with someone to make an ex jealous. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.266` | group | Hook up in a hot tub. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.267` | group | Sleep with someone whose name they never learned. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.268` | group | Tip a stripper in loose change. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.269` | group | Call someone the wrong name in bed. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.270` | group | Puke on someone mid-hookup. Point on three: most votes finishes their drink. |  |
-| ☐ | Most Likely To | `likely.271` | group | Scream during a Brazilian wax. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.272` | group | Lie about their body count. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.273` | group | Hook up with a married person. Point on three: most votes takes a shot. |  |
-| ☐ | Most Likely To | `likely.274` | group | Date someone for their money. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.275` | group | Pay for someone's OnlyFans. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.276` | group | Pee in a sink at a party. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.277` | group | Eat ass on a first date. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.278` | group | Get caught sexting at the dinner table. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.279` | group | Hook up with someone at a funeral. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.280` | group | Clog a hookup's toilet. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.281` | group | Shit with the door open. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.282` | group | Sniff their own fingers. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.283` | group | Wear the same underwear three days straight. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.284` | group | Eat a booger in public. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.285` | group | Have a crusty sock under their bed. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.286` | group | Fart and blame the dog. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.287` | group | Pop a boner at the worst possible moment. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.288` | group | Have loud tent sex on a group trip. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.289` | group | Flash a cop. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.290` | group | Get crabs. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.291` | group | Have had a threesome. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.292` | group | Do the walk of shame on someone's Ring camera. Point on three: most votes takes a shot. |  |
-| ☐ | Most Likely To | `likely.293` | group | Sleep with their boss. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.294` | group | Jerk off at work. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.295` | group | Fall asleep on the toilet at a party. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.296` | group | Throw up in their mouth and swallow it. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.297` | group | Lick a stranger on a dare. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.298` | group | Get a hickey after 30. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.299` | group | Do a keg stand in a dress. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.300` | group | Streak through somewhere public. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.301` | group | Make out with a stranger in front of their date. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.302` | group | Use their roommate's toothbrush. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.303` | group | Have the most embarrassing virginity story. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.304` | group | Talk dirty and make it weird. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.305` | group | Google their symptoms after a hookup. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.306` | group | Shit in the woods this weekend. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.307` | group | Get a nipple piercing on a whim. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.308` | group | Moan in their sleep. Point on three: most votes drinks 2. |  |
-| ☐ | Most Likely To | `likely.309` | group | Have sex in a pool and lie about it. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.310` | group | Walk in on their parents. Point on three: most votes drinks 3. |  |
-| ☐ | Most Likely To | `likely.311` | group | Fall asleep mid-hookup. Point on three: most votes drinks 2. |  |
+| ☐ | Hello, It's Me Again | `likely.001` | group | Most likely to text their ex tonight? Point on three. Most votes drinks 2. |  |
+| ☐ | Out Cold by Ten | `likely.002` | group | Most likely to fall asleep first tonight? Point on three. Most votes drinks 2. |  |
+| ☐ | Find My Phone, Please | `likely.003` | group | Most likely to lose their phone before the night ends? Point on three. Most votes drinks 2. |  |
+| ☐ | Bouncer Beef | `likely.004` | group | Most likely to start a fight with a bouncer? Point on three. Most votes drinks 3. |  |
+| ☐ | Unsolicited Round | `likely.005` | group | Most likely to order a round nobody asked for? Point on three. Most votes drinks 2. |  |
+| ☐ | Bar Stool Waterworks | `likely.006` | group | Most likely to cry at the bar for no reason? Point on three. Most votes drinks 2. |  |
+| ☐ | Where Am I Now? | `likely.007` | group | Most likely to wake up somewhere they don't recognize? Point on three. Most votes drinks 3. |  |
+| ☐ | Cart Full of Regret | `likely.008` | group | Most likely to drunk-buy something expensive online? Point on three. Most votes drinks 2. |  |
+| ☐ | Escorted Out | `likely.009` | group | Most likely to get kicked out of a bar? Point on three. Most votes drinks 3. |  |
+| ☐ | Sole Survivor | `likely.010` | group | Most likely to lose a shoe on a night out? Point on three. Most votes drinks 2. |  |
+| ☐ | Bathroom Line Besties | `likely.011` | group | Most likely to make best friends in the bathroom line? Point on three. Most votes drinks 2. |  |
+| ☐ | One More, Times Six | `likely.012` | group | Most likely to say "one more" and mean six? Point on three. Most votes drinks 2. |  |
+| ☐ | Any Bush Will Do | `likely.013` | group | Most likely to pee somewhere they absolutely shouldn't? Point on three. Most votes drinks 2. |  |
+| ☐ | Brunch, Still Buzzed | `likely.014` | group | Most likely to show up to brunch still drunk? Point on three. Most votes drinks 2. |  |
+| ☐ | Reception Shotgun | `likely.015` | group | Most likely to shotgun a beer at a wedding? Point on three. Most votes takes a shot. |  |
+| ☐ | Tap, Tap, Speech | `likely.016` | group | Most likely to give a toast nobody asked for? Point on three. Most votes drinks 2. |  |
+| ☐ | Reset Button | `likely.017` | group | Most likely to puke and rally? Point on three. Most votes drinks 3. |  |
+| ☐ | Mic Snatcher | `likely.018` | group | Most likely to grab the karaoke mic uninvited? Point on three. Most votes drinks 2. |  |
+| ☐ | Open Tab Orphan | `likely.019` | group | Most likely to leave their card at the bar? Point on three. Most votes drinks 2. |  |
+| ☐ | Wall of Text | `likely.020` | group | Most likely to drunk-text the group chat a paragraph? Point on three. Most votes drinks 2. |  |
+| ☐ | It Was a Bit | `likely.021` | group | Most likely to fall down the stairs and call it a bit? Point on three. Most votes drinks 2. |  |
+| ☐ | Drive-Thru Disciple | `likely.022` | group | Most likely to hit the drive-through at 3 a.m.? Point on three. Most votes drinks 2. |  |
+| ☐ | Vacation Rules | `likely.023` | group | Most likely to start drinking before noon on vacation? Point on three. Most votes drinks 2. |  |
+| ☐ | Who Said That? | `likely.024` | group | Most likely to forget a conversation they started? Point on three. Most votes drinks 2. |  |
+| ☐ | Bartender's Favorite | `likely.025` | group | Most likely to tip 50% because they love the bartender? Point on three. Most votes drinks 2. |  |
+| ☐ | Fully Dressed Dip | `likely.026` | group | Most likely to go swimming fully clothed? Point on three. Most votes drinks 2. |  |
+| ☐ | Goose Beef | `likely.027` | group | Most likely to try to fight a goose? Point on three. Most votes drinks 2. |  |
+| ☐ | Perfectly Fine, Thanks | `likely.028` | group | Most likely to swear they're "not even that drunk"? Point on three. Most votes drinks 2. |  |
+| ☐ | Four A.M. Club | `likely.029` | group | Most likely to still be awake at 4 a.m.? Point on three. Most votes drinks 2. |  |
+| ☐ | Fireman's Carry | `likely.030` | group | Most likely to need to be carried home? Point on three. Most votes finishes their drink. |  |
+| ☐ | Sip Thief | `likely.031` | group | Most likely to finish someone else's drink and deny it? Point on three. Most votes drinks 2. |  |
+| ☐ | Top Shelf Shot | `likely.032` | group | Most likely to order the most expensive shot on the menu? Point on three. Most votes takes a shot. |  |
+| ☐ | Tabletop Dancer | `likely.033` | group | Most likely to dance on a table? Point on three. Most votes drinks 2. |  |
+| ☐ | Water, Please | `likely.034` | group | Most likely to get cut off by a bartender? Point on three. Most votes drinks 3. |  |
+| ☐ | DJ's New Bestie | `likely.035` | group | Most likely to become best friends with the DJ? Point on three. Most votes drinks 2. |  |
+| ☐ | Hi Mom, It's Late | `likely.036` | group | Most likely to call their mom drunk? Point on three. Most votes drinks 2. |  |
+| ☐ | Concession Smuggler | `likely.037` | group | Most likely to sneak alcohol into a movie theater? Point on three. Most votes drinks 2. |  |
+| ☐ | Mad Scientist Cup | `likely.038` | group | Most likely to mix three liquors in one cup? Point on three. Most votes drinks 2. |  |
+| ☐ | Empty-Handed Guest | `likely.039` | group | Most likely to show up to a party empty-handed? Point on three. Most votes drinks 2. |  |
+| ☐ | Heart-to-Heart Hour | `likely.040` | group | Most likely to start a drunk heart-to-heart? Point on three. Most votes drinks 2. |  |
+| ☐ | Midnight Smooch | `likely.041` | group | Most likely to kiss a stranger at midnight? Point on three. Most votes drinks 2. |  |
+| ☐ | Conga Captain | `likely.042` | group | Most likely to start a conga line? Point on three. Most votes drinks 2. |  |
+| ☐ | Afterparty Orphan | `likely.043` | group | Most likely to end up at an afterparty with strangers? Point on three. Most votes drinks 2. |  |
+| ☐ | Power Nap, Round Two | `likely.044` | group | Most likely to nap at a party and wake up for round two? Point on three. Most votes drinks 2. |  |
+| ☐ | Pizza at the Bar | `likely.045` | group | Most likely to order pizza to the bar? Point on three. Most votes drinks 2. |  |
+| ☐ | Inked on a Dare | `likely.046` | group | Most likely to get a tattoo on a dare? Point on three. Most votes drinks 3. |  |
+| ☐ | Five-Star Mess | `likely.047` | group | Most likely to throw up in an Uber? Point on three. Most votes drinks 3. |  |
+| ☐ | Fishbowl Solo | `likely.048` | group | Most likely to order a fishbowl and drink it alone? Point on three. Most votes drinks 2. |  |
+| ☐ | Closing Crew | `likely.049` | group | Most likely to be the last one to leave every party? Point on three. Most votes drinks 2. |  |
+| ☐ | Friend Swap | `likely.050` | group | Most likely to lose their friends and find new ones? Point on three. Most votes drinks 2. |  |
+| ☐ | Locked Out Again | `likely.051` | group | Most likely to lock themselves out of the house? Point on three. Most votes drinks 2. |  |
+| ☐ | Talking About You | `likely.053` | group | Most likely to text the person they were talking about? Point on three. Most votes drinks 3. |  |
+| ☐ | Reply-All Disaster | `likely.054` | group | Most likely to reply-all to the whole company? Point on three. Most votes drinks 2. |  |
+| ☐ | Gate Closed | `likely.056` | group | Most likely to miss a flight? Point on three. Most votes drinks 2. |  |
+| ☐ | Wrong Airport Energy | `likely.057` | group | Most likely to go to the wrong airport? Point on three. Most votes drinks 2. |  |
+| ☐ | Beaten by a Kid | `likely.060` | group | Most likely to lose rock-paper-scissors to a child? Point on three. Most votes drinks 2. |  |
+| ☐ | Teacher Called Mom | `likely.061` | group | Most likely to call a teacher "mom"? Point on three. Most votes drinks 2. |  |
+| ☐ | Archaeology Like | `likely.068` | group | Most likely to like a three-year-old photo by accident? Point on three. Most votes drinks 2. |  |
+| ☐ | Be Your Own Boss | `likely.069` | group | Most likely to join a pyramid scheme? Point on three. Most votes drinks 2. |  |
+| ☐ | Driveway Ticket | `likely.070` | group | Most likely to get a parking ticket in their own driveway? Point on three. Most votes drinks 2. |  |
+| ☐ | Right Behind You | `likely.072` | group | Most likely to talk shit about someone right behind them? Point on three. Most votes drinks 3. |  |
+| ☐ | Wallet Wanderer | `likely.075` | group | Most likely to lose their wallet twice on one trip? Point on three. Most votes drinks 2. |  |
+| ☐ | Smoke Alarm Chef | `likely.077` | group | Most likely to set the kitchen on fire? Point on three. Most votes drinks 2. |  |
+| ☐ | Gullible's Travels | `likely.078` | group | Most likely to fall for an obvious prank? Point on three. Most votes drinks 2. |  |
+| ☐ | Wrong Pump | `likely.080` | group | Most likely to put the wrong fuel in a car? Point on three. Most votes drinks 2. |  |
+| ☐ | Pocket Dial Disaster | `likely.081` | group | Most likely to butt-dial their boss? Point on three. Most votes drinks 2. |  |
+| ☐ | Giggles at the Wake | `likely.082` | group | Most likely to laugh at a funeral? Point on three. Most votes drinks 3. |  |
+| ☐ | You Too, Sir | `likely.084` | group | Most likely to say "you too" when the waiter says enjoy? Point on three. Most votes drinks 2. |  |
+| ☐ | Ha. Ha. Ha? | `likely.085` | group | Most likely to fake-laugh at a joke they didn't get? Point on three. Most votes drinks 2. |  |
+| ☐ | Talks to Self | `likely.086` | group | Most likely to get caught talking to themselves? Point on three. Most votes drinks 2. |  |
+| ☐ | Wrong Words, Proudly | `likely.087` | group | Most likely to sing the wrong lyrics with full confidence? Point on three. Most votes drinks 2. |  |
+| ☐ | Head First, Stuck | `likely.090` | group | Most likely to get their head stuck in something? Point on three. Most votes drinks 2. |  |
+| ☐ | Wrong Recipient | `likely.091` | group | Most likely to send a text meant for someone else? Point on three. Most votes drinks 2. |  |
+| ☐ | Deep Scroll Detective | `likely.092` | group | Most likely to get caught stalking someone's Instagram? Point on three. Most votes drinks 2. |  |
+| ☐ | Bathroom Prisoner | `likely.094` | group | Most likely to get locked in a bathroom? Point on three. Most votes drinks 2. |  |
+| ☐ | A Day Early | `likely.095` | group | Most likely to show up on the wrong day? Point on three. Most votes drinks 2. |  |
+| ☐ | Accidentally Live | `likely.098` | group | Most likely to go live on social media by accident? Point on three. Most votes drinks 2. |  |
+| ☐ | Oops, Emergency | `likely.100` | group | Most likely to call 911 by accident? Point on three. Most votes drinks 2. |  |
+| ☐ | Whole Pie Energy | `likely.101` | group | Most likely to eat an entire pizza alone? Point on three. Most votes drinks 2. |  |
+| ☐ | Aliens Are Real | `likely.104` | group | Most likely to believe in aliens with their whole chest? Point on three. Most votes drinks 2. |  |
+| ☐ | Dog Whisperer | `likely.106` | group | Most likely to have a deep conversation with a dog? Point on three. Most votes drinks 2. |  |
+| ☐ | Second Dinner Order | `likely.107` | group | Most likely to order delivery twice in one night? Point on three. Most votes drinks 2. |  |
+| ☐ | Giggle Loop | `likely.108` | group | Most likely to laugh at nothing for five straight minutes? Point on three. Most votes drinks 2. |  |
+| ☐ | Wake Up, Sheeple | `likely.109` | group | Most likely to start a conspiracy podcast? Point on three. Most votes drinks 2. |  |
+| ☐ | 2 A.M. Pitch | `likely.111` | group | Most likely to pitch a genius business idea at 2 a.m.? Point on three. Most votes drinks 2. |  |
+| ☐ | Phantom Cop | `likely.112` | group | Most likely to get paranoid about a cop who isn't there? Point on three. Most votes drinks 2. |  |
+| ☐ | Good Vibes Only | `likely.114` | group | Most likely to buy crystals and mean it? Point on three. Most votes drinks 2. |  |
+| ☐ | Reply: lol | `likely.117` | group | Most likely to reply "lol" to a serious text? Point on three. Most votes drinks 2. |  |
+| ☐ | Universe Explained | `likely.119` | group | Most likely to explain the universe to a bartender? Point on three. Most votes drinks 2. |  |
+| ☐ | Bird Break | `likely.121` | group | Most likely to get distracted by a bird mid-argument? Point on three. Most votes drinks 2. |  |
+| ☐ | Bro, What If | `likely.122` | group | Most likely to start every sentence with "bro, what if…"? Point on three. Most votes drinks 2. |  |
+| ☐ | Movie Night Casualty | `likely.124` | group | Most likely to fall asleep during a movie they picked? Point on three. Most votes drinks 2. |  |
+| ☐ | Five-Second Rule | `likely.125` | group | Most likely to eat something off the floor? Point on three. Most votes drinks 2. |  |
+| ☐ | Bong Named Gerald | `likely.126` | group | Most likely to own a bong with a name? Point on three. Most votes drinks 2. |  |
+| ☐ | Fridge Raider | `likely.127` | group | Most likely to raid someone else's fridge uninvited? Point on three. Most votes drinks 2. |  |
+| ☐ | Raccoon Rival | `likely.128` | group | Most likely to get chased by a raccoon on the way home? Point on three. Most votes drinks 2. |  |
+| ☐ | Fry Bandit | `likely.130` | group | Most likely to eat fries off a stranger's plate? Point on three. Most votes drinks 2. |  |
+| ☐ | Vacation Vows | `likely.131` | group | Most likely to marry someone they met on vacation? Point on three. Most votes drinks 3. |  |
+| ☐ | Back Together, Again | `likely.132` | group | Most likely to get back with their ex? Point on three. Most votes drinks 3. |  |
+| ☐ | Swipe Right, Fast | `likely.133` | group | Most likely to fall in love on a dating app in a week? Point on three. Most votes drinks 2. |  |
+| ☐ | Double Booked | `likely.134` | group | Most likely to date two people at once? Point on three. Most votes drinks 3. |  |
+| ☐ | Sneak Out Special | `likely.135` | group | Most likely to get caught sneaking out of someone's place? Point on three. Most votes drinks 2. |  |
+| ☐ | Secret Side Hustle | `likely.136` | group | Most likely to have a secret OnlyFans? Point on three. Most votes drinks 3. |  |
+| ☐ | Wrong Send | `likely.137` | group | Most likely to send a risky photo to the wrong person? Point on three. Most votes takes a shot. |  |
+| ☐ | Office Romance | `likely.138` | group | Most likely to hook up with a coworker? Point on three. Most votes drinks 3. |  |
+| ☐ | DM Dreamer | `likely.139` | group | Most likely to slide into a celebrity's DMs? Point on three. Most votes drinks 2. |  |
+| ☐ | What Happens in Vegas | `likely.140` | group | Most likely to get married in Vegas? Point on three. Most votes drinks 2. |  |
+| ☐ | Secret Crush | `likely.141` | group | Most likely to have a crush on someone in this room? Point on three. Most votes takes a shot. |  |
+| ☐ | Ghost Mode | `likely.142` | group | Most likely to ghost someone after a great date? Point on three. Most votes drinks 2. |  |
+| ☐ | Incognito Tab | `likely.143` | group | Most likely to have the weirdest search history? Point on three. Most votes drinks 3. |  |
+| ☐ | Window Shopper | `likely.144` | group | Most likely to keep a dating app open just to look? Point on three. Most votes drinks 2. |  |
+| ☐ | Fan Mail, Romantic | `likely.145` | group | Most likely to write a love letter to a celebrity? Point on three. Most votes drinks 2. |  |
+| ☐ | Public Proposal | `likely.146` | group | Most likely to propose in public? Point on three. Most votes drinks 2. |  |
+| ☐ | Save the Date, Already | `likely.148` | group | Most likely to plan the wedding before the second date? Point on three. Most votes drinks 2. |  |
+| ☐ | Knock First | `likely.149` | group | Most likely to get walked in on? Point on three. Most votes drinks 3. |  |
+| ☐ | Charm Offensive | `likely.150` | group | Most likely to flirt their way out of a ticket? Point on three. Most votes drinks 2. |  |
+| ☐ | Burner Energy | `likely.151` | group | Most likely to have a secret second phone? Point on three. Most votes drinks 2. |  |
+| ☐ | Age Is Just a Number | `likely.152` | group | Most likely to date someone twice their age? Point on three. Most votes drinks 2. |  |
+| ☐ | Swipe Gone Wrong | `likely.153` | group | Most likely to match with a friend's ex? Point on three. Most votes drinks 3. |  |
+| ☐ | Hall Pass Holder | `likely.154` | group | Most likely to have a celebrity hall pass ready? Point on three. Most votes drinks 2. |  |
+| ☐ | First Down the Aisle | `likely.155` | group | Most likely to be the first one here to get married? Point on three. Most votes drinks 2. |  |
+| ☐ | Eternal Bachelor | `likely.156` | group | Most likely to be the last one here to get married? Point on three. Most votes drinks 2. |  |
+| ☐ | Shortest Marriage | `likely.157` | group | Most likely to get divorced before the thank-you cards go out? Point on three. Most votes drinks 2. |  |
+| ☐ | Stall Romance | `likely.158` | group | Most likely to make out in a public bathroom? Point on three. Most votes drinks 2. |  |
+| ☐ | Animated Affection | `likely.159` | group | Most likely to have had a crush on a cartoon character? Point on three. Most votes drinks 2. |  |
+| ☐ | Name on the Arm | `likely.160` | group | Most likely to tattoo a partner's name on themselves? Point on three. Most votes drinks 3. |  |
+| ☐ | You Up? | `likely.161` | group | Most likely to send a "you up?" text this weekend? Point on three. Most votes drinks 2. |  |
+| ☐ | Wedding Crasher | `likely.162` | group | Most likely to hook up at a wedding? Point on three. Most votes drinks 2. |  |
+| ☐ | In It for the Dog | `likely.163` | group | Most likely to date someone just for their dog? Point on three. Most votes drinks 2. |  |
+| ☐ | Moonlit Mishap | `likely.164` | group | Most likely to get caught skinny-dipping? Point on three. Most votes drinks 3. |  |
+| ☐ | Bartender Crush | `likely.165` | group | Most likely to fall for the bartender? Point on three. Most votes drinks 2. |  |
+| ☐ | Kiss and Tell | `likely.166` | group | Most likely to kiss someone in this room tonight? Point on three. Most votes takes a shot. |  |
+| ☐ | Hoodie Hostage | `likely.167` | group | Most likely to still have their ex's hoodie? Point on three. Most votes drinks 2. |  |
+| ☐ | Fake Emergency Call | `likely.168` | group | Most likely to fake a phone call to escape a date? Point on three. Most votes drinks 2. |  |
+| ☐ | Bachelor Party Special | `likely.169` | group | Most likely to get a lap dance at a bachelor party? Point on three. Most votes drinks 2. |  |
+| ☐ | Baffling Taste | `likely.170` | group | Most likely to have a type nobody understands? Point on three. Most votes drinks 2. |  |
+| ☐ | Do Not Pass Go | `likely.172` | group | Most likely to go to jail? Point on three. Most votes drinks 3. |  |
+| ☐ | Easy Come, Easy Go | `likely.173` | group | Most likely to win the lottery and lose it all? Point on three. Most votes drinks 2. |  |
+| ☐ | One-Way Ticket | `likely.175` | group | Most likely to move to another country on a whim? Point on three. Most votes drinks 2. |  |
+| ☐ | Confessional Cam | `likely.176` | group | Most likely to end up on reality TV? Point on three. Most votes drinks 2. |  |
+| ☐ | Charismatic Leader | `likely.177` | group | Most likely to start a cult? Point on three. Most votes drinks 2. |  |
+| ☐ | Canceled Overnight | `likely.179` | group | Most likely to get canceled online? Point on three. Most votes drinks 2. |  |
+| ☐ | Viral for Shame | `likely.180` | group | Most likely to go viral for the wrong reason? Point on three. Most votes drinks 2. |  |
+| ☐ | Beam Me Up | `likely.182` | group | Most likely to get abducted by aliens? Point on three. Most votes drinks 2. |  |
+| ☐ | First to Go | `likely.184` | group | Most likely to die first in a horror movie? Point on three. Most votes drinks 2. |  |
+| ☐ | Breaking News | `likely.187` | group | Most likely to end up on the news? Point on three. Most votes drinks 2. |  |
+| ☐ | Mic Drop Resignation | `likely.188` | group | Most likely to quit their job dramatically? Point on three. Most votes drinks 3. |  |
+| ☐ | Picket Line Pinch | `likely.194` | group | Most likely to get arrested at a protest? Point on three. Most votes drinks 2. |  |
+| ☐ | Boat Payments | `likely.195` | group | Most likely to own a boat they can't afford? Point on three. Most votes drinks 2. |  |
+| ☐ | Boomerang Kid | `likely.196` | group | Most likely to move back in with their parents? Point on three. Most votes drinks 2. |  |
+| ☐ | Link in Bio | `likely.197` | group | Most likely to become an influencer? Point on three. Most votes drinks 2. |  |
+| ☐ | Dog Days Champion | `likely.198` | group | Most likely to win a hot dog eating contest? Point on three. Most votes drinks 2. |  |
+| ☐ | New Name, New Life | `likely.199` | group | Most likely to end up in witness protection? Point on three. Most votes drinks 2. |  |
+| ☐ | Timeshare Sucker | `likely.200` | group | Most likely to buy a timeshare? Point on three. Most votes drinks 2. |  |
+| ☐ | Riding Mower Rally | `likely.201` | group | Most likely to get a DUI on a lawn mower? Point on three. Most votes drinks 2. |  |
+| ☐ | Bar Owner Dreams | `likely.202` | group | Most likely to open a bar? Point on three. Most votes drinks 2. |  |
+| ☐ | Slumlord Supreme | `likely.204` | group | Most likely to become a landlord everyone hates? Point on three. Most votes drinks 2. |  |
+| ☐ | Van Life | `likely.206` | group | Most likely to live in a van by choice? Point on three. Most votes drinks 2. |  |
+| ☐ | Dateline Material | `likely.207` | group | Most likely to show up on a true crime show? Point on three. Most votes drinks 2. |  |
+| ☐ | Staged Exit | `likely.208` | group | Most likely to fake their own death? Point on three. Most votes drinks 3. |  |
+| ☐ | Rent on Twenty-One | `likely.209` | group | Most likely to bet their rent on one hand of blackjack? Point on three. Most votes drinks 2. |  |
+| ☐ | Midlife Face Ink | `likely.210` | group | Most likely to get a face tattoo at 50? Point on three. Most votes drinks 2. |  |
+| ☐ | Fashionably Late | `likely.211` | group | Most likely to be late to their own wedding? Point on three. Most votes drinks 2. |  |
+| ☐ | Who, Me? | `likely.213` | group | Most likely to start drama and act surprised? Point on three. Most votes drinks 2. |  |
+| ☐ | Keeper of Secrets | `likely.214` | group | Most likely to know everyone's secrets? Point on three. Most votes drinks 2. |  |
+| ☐ | Loose Lips | `likely.215` | group | Most likely to leak a secret by accident? Point on three. Most votes drinks 3. |  |
+| ☐ | Last Slice Thief | `likely.219` | group | Most likely to eat the last slice without asking? Point on three. Most votes drinks 2. |  |
+| ☐ | Aux Cord Dictator | `likely.220` | group | Most likely to hog the aux? Point on three. Most votes drinks 2. |  |
+| ☐ | Off the Trail | `likely.223` | group | Most likely to get lost on a group hike? Point on three. Most votes drinks 2. |  |
+| ☐ | Grumbling Good Time | `likely.224` | group | Most likely to complain all trip and have the best time? Point on three. Most votes drinks 2. |  |
+| ☐ | Voice Memo Epic | `likely.226` | group | Most likely to send a five-minute voice memo? Point on three. Most votes drinks 2. |  |
+| ☐ | Group Chat Warrior | `likely.227` | group | Most likely to start a fight in the group chat? Point on three. Most votes drinks 2. |  |
+| ☐ | Plans Are Fluid | `likely.228` | group | Most likely to change the plan at the last second? Point on three. Most votes drinks 2. |  |
+| ☐ | Main Character Energy | `likely.229` | group | Most likely to become the main character on vacation? Point on three. Most votes drinks 2. |  |
+| ☐ | Sleeping Passenger | `likely.231` | group | Most likely to fall asleep in the car every time? Point on three. Most votes drinks 2. |  |
+| ☐ | Restaurant Roulette | `likely.232` | group | Most likely to pick the worst restaurant? Point on three. Most votes drinks 2. |  |
+| ☐ | Hotel Robe Bandit | `likely.234` | group | Most likely to steal a souvenir from a hotel? Point on three. Most votes drinks 2. |  |
+| ☐ | Irish Exit | `likely.235` | group | Most likely to leave the party without saying goodbye? Point on three. Most votes drinks 2. |  |
+| ☐ | Loudest Wins | `likely.236` | group | Most likely to win every argument by yelling? Point on three. Most votes drinks 2. |  |
+| ☐ | Velvet Rope Charmer | `likely.237` | group | Most likely to talk their way into a VIP section? Point on three. Most votes drinks 2. |  |
+| ☐ | Embellished Resume | `likely.238` | group | Most likely to lie on their resume? Point on three. Most votes drinks 2. |  |
+| ☐ | Board Game Bandit | `likely.239` | group | Most likely to cheat at board games? Point on three. Most votes drinks 2. |  |
+| ☐ | Game Face On | `likely.240` | group | Most likely to take a game way too seriously? Point on three. Most votes drinks 2. |  |
+| ☐ | Table Flip | `likely.241` | group | Most likely to flip the board when they lose? Point on three. Most votes drinks 2. |  |
+| ☐ | Lucky Lick | `likely.242` | group | Most likely to lick the dice for luck? Point on three. Most votes drinks 3. |  |
+| ☐ | Banned for Life | `likely.246` | group | Most likely to be the reason we can't go back somewhere? Point on three. Most votes drinks 3. |  |
+| ☐ | Hangry, Then Sorry | `likely.247` | group | Most likely to yell at a waiter, then tip 40%? Point on three. Most votes drinks 2. |  |
+| ☐ | Gas Station Gourmet | `likely.249` | group | Most likely to survive on gas station food for a week? Point on three. Most votes drinks 2. |  |
+| ☐ | Tomorrow's Legend | `likely.250` | group | Most likely to be talking about this game tomorrow? Point on three. Most votes finishes their drink. |  |
+| ☐ | Back Seat Driver | `likely.251` | group | Most likely to have sex in a car this year? Point on three. Most votes drinks 3. |  |
+| ☐ | Oscar-Worthy | `likely.252` | group | Most likely to fake an orgasm tonight? Point on three. Most votes drinks 2. |  |
+| ☐ | Leaked Footage | `likely.253` | group | Most likely to have a sex tape somewhere? Point on three. Most votes takes a shot. |  |
+| ☐ | Adult Accident | `likely.254` | group | Most likely to shit their pants as an adult? Point on three. Most votes drinks 3. |  |
+| ☐ | Deep End Secret | `likely.255` | group | Most likely to pee in a pool on purpose? Point on three. Most votes drinks 2. |  |
+| ☐ | Family Plan | `likely.256` | group | Most likely to sleep with an ex's sibling? Point on three. Most votes drinks 3. |  |
+| ☐ | Locked Drawer | `likely.257` | group | Most likely to have a fetish they'd never admit? Point on three. Most votes drinks 3. |  |
+| ☐ | Toilet Seat Alibi | `likely.258` | group | Most likely to blame an STD on a toilet seat? Point on three. Most votes drinks 3. |  |
+| ☐ | Ceiling Hardware | `likely.259` | group | Most likely to own a sex swing? Point on three. Most votes drinks 2. |  |
+| ☐ | Whoopsie Wind | `likely.260` | group | Most likely to fart during sex? Point on three. Most votes drinks 2. |  |
+| ☐ | Post-Game Tears | `likely.261` | group | Most likely to cry after sex? Point on three. Most votes drinks 2. |  |
+| ☐ | Family Chat Flash | `likely.262` | group | Most likely to send a nude to the family group chat? Point on three. Most votes takes a shot. |  |
+| ☐ | Caught Red-Handed | `likely.263` | group | Most likely to get caught masturbating? Point on three. Most votes drinks 3. |  |
+| ☐ | Burner Account Spy | `likely.264` | group | Most likely to keep a burner account to spy on exes? Point on three. Most votes drinks 2. |  |
+| ☐ | Jealousy Campaign | `likely.265` | group | Most likely to make out with someone to make an ex jealous? Point on three. Most votes drinks 2. |  |
+| ☐ | Hot Tub Time Machine | `likely.266` | group | Most likely to hook up in a hot tub? Point on three. Most votes drinks 3. |  |
+| ☐ | Name Unknown | `likely.267` | group | Most likely to sleep with someone and never learn their name? Point on three. Most votes drinks 3. |  |
+| ☐ | Loose Change Tipper | `likely.268` | group | Most likely to tip a stripper in loose change? Point on three. Most votes drinks 3. |  |
+| ☐ | Name Mix-Up | `likely.269` | group | Most likely to call someone the wrong name in bed? Point on three. Most votes drinks 3. |  |
+| ☐ | Mood Killer | `likely.270` | group | Most likely to puke on someone mid-hookup? Point on three. Most votes finishes their drink. |  |
+| ☐ | Wax On, Scream Out | `likely.271` | group | Most likely to scream during a Brazilian wax? Point on three. Most votes drinks 2. |  |
+| ☐ | Number Fudger | `likely.272` | group | Most likely to lie about their body count? Point on three. Most votes drinks 2. |  |
+| ☐ | Ring on Finger | `likely.273` | group | Most likely to hook up with a married person? Point on three. Most votes takes a shot. |  |
+| ☐ | Gold Digger | `likely.274` | group | Most likely to date someone for their money? Point on three. Most votes drinks 2. |  |
+| ☐ | Subscribed | `likely.275` | group | Most likely to pay for someone's OnlyFans? Point on three. Most votes drinks 3. |  |
+| ☐ | Sink Sinner | `likely.276` | group | Most likely to pee in a sink at a party? Point on three. Most votes drinks 2. |  |
+| ☐ | Dessert Before Dinner | `likely.277` | group | Most likely to eat ass on a first date? Point on three. Most votes drinks 3. |  |
+| ☐ | Table Texting | `likely.278` | group | Most likely to get caught sexting at the dinner table? Point on three. Most votes drinks 2. |  |
+| ☐ | Funeral Fling | `likely.279` | group | Most likely to hook up with someone at a funeral? Point on three. Most votes drinks 3. |  |
+| ☐ | Plumber's Nightmare | `likely.280` | group | Most likely to clog a hookup's toilet? Point on three. Most votes drinks 3. |  |
+| ☐ | Open-Door Policy | `likely.281` | group | Most likely to shit with the door open? Point on three. Most votes drinks 2. |  |
+| ☐ | Sniff Test | `likely.282` | group | Most likely to sniff their own fingers? Point on three. Most votes drinks 2. |  |
+| ☐ | Day Three Briefs | `likely.283` | group | Most likely to wear the same underwear three days straight? Point on three. Most votes drinks 2. |  |
+| ☐ | Public Picker | `likely.284` | group | Most likely to eat a booger in public? Point on three. Most votes drinks 2. |  |
+| ☐ | Biohazard Sock | `likely.285` | group | Most likely to have a crusty sock under their bed? Point on three. Most votes drinks 2. |  |
+| ☐ | Blame the Dog | `likely.286` | group | Most likely to fart and blame the dog? Point on three. Most votes drinks 2. |  |
+| ☐ | Poor Timing | `likely.287` | group | Most likely to pop a boner at the worst possible moment? Point on three. Most votes drinks 2. |  |
+| ☐ | Thin Tent Walls | `likely.288` | group | Most likely to have loud tent sex on a group trip? Point on three. Most votes drinks 3. |  |
+| ☐ | Officer, Hello | `likely.289` | group | Most likely to flash a cop? Point on three. Most votes drinks 3. |  |
+| ☐ | Itchy Situation | `likely.290` | group | Most likely to get crabs? Point on three. Most votes drinks 2. |  |
+| ☐ | Party of Three | `likely.291` | group | Most likely to have had a threesome? Point on three. Most votes drinks 3. |  |
+| ☐ | Walk of Shame Cam | `likely.292` | group | Most likely to do the walk of shame on a Ring camera? Point on three. Most votes takes a shot. |  |
+| ☐ | Corner Office Fling | `likely.293` | group | Most likely to sleep with their boss? Point on three. Most votes drinks 3. |  |
+| ☐ | Private Office Hours | `likely.294` | group | Most likely to jerk off at work? Point on three. Most votes drinks 2. |  |
+| ☐ | Porcelain Nap | `likely.295` | group | Most likely to fall asleep on the toilet at a party? Point on three. Most votes drinks 3. |  |
+| ☐ | Swallowed Pride | `likely.296` | group | Most likely to throw up in their mouth and swallow it? Point on three. Most votes drinks 2. |  |
+| ☐ | Lick Dare | `likely.297` | group | Most likely to lick a stranger on a dare? Point on three. Most votes drinks 2. |  |
+| ☐ | Teenage Flashback | `likely.298` | group | Most likely to get a hickey after 30? Point on three. Most votes drinks 2. |  |
+| ☐ | Formal Keg Stand | `likely.299` | group | Most likely to do a keg stand in a dress? Point on three. Most votes drinks 2. |  |
+| ☐ | Full Monty Sprint | `likely.300` | group | Most likely to streak through somewhere public? Point on three. Most votes drinks 3. |  |
+| ☐ | Date Night Betrayal | `likely.301` | group | Most likely to make out with a stranger in front of their date? Point on three. Most votes drinks 3. |  |
+| ☐ | Shared Brush | `likely.302` | group | Most likely to use their roommate's toothbrush? Point on three. Most votes drinks 2. |  |
+| ☐ | First-Time Tale | `likely.303` | group | Most likely to have the most embarrassing virginity story? Point on three. Most votes drinks 2. |  |
+| ☐ | Awkward Pillow Talk | `likely.304` | group | Most likely to talk dirty and make it weird? Point on three. Most votes drinks 2. |  |
+| ☐ | Dr. Google Visit | `likely.305` | group | Most likely to google their symptoms after a hookup? Point on three. Most votes drinks 2. |  |
+| ☐ | Nature Calls | `likely.306` | group | Most likely to shit in the woods this weekend? Point on three. Most votes drinks 2. |  |
+| ☐ | Impulse Piercing | `likely.307` | group | Most likely to get a nipple piercing on a whim? Point on three. Most votes drinks 2. |  |
+| ☐ | Noisy Sleeper | `likely.308` | group | Most likely to moan in their sleep? Point on three. Most votes drinks 2. |  |
+| ☐ | Pool Party Lie | `likely.309` | group | Most likely to have sex in a pool and lie about it? Point on three. Most votes drinks 3. |  |
+| ☐ | Scarred for Life | `likely.310` | group | Most likely to walk in on their parents? Point on three. Most votes drinks 3. |  |
+| ☐ | Snooze Button | `likely.311` | group | Most likely to fall asleep mid-hookup? Point on three. Most votes drinks 2. |  |
 
 ## Secrets & fuses (`secrets`)
 

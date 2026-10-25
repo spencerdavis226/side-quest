@@ -436,7 +436,7 @@ const league: CrawlTheme = {
       {
         icon: "omen",
         title: "Types",
-        line: "Your starter has a type. Super effective: roll twice and keep the better. Not very effective: keep the worse. No dice: a loss costs 1 HP less or more.",
+        line: "Your starter has a type. Super effective on them: roll double the dice and keep the highest. Super effective on you: keep the lowest. No dice: a loss costs 1 HP less or more.",
       },
       {
         icon: "boss",

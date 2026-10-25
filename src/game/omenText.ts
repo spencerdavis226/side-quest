@@ -126,7 +126,9 @@ const bagSentence = (words: OmenWords, size = 3) =>
   `${words.bag} holds ${size}`;
 const bossSentence = (hits = 0) =>
   hits
-    ? `Bosses take ${Math.abs(hits)} ${hits < 0 ? "fewer hits" : `more hit${hits > 1 ? "s" : ""}`}`
+    ? hits < 0
+      ? `Bosses take ${-hits} fewer hit${hits < -1 ? "s" : ""}, never under 1`
+      : `Bosses take ${hits} more hit${hits > 1 ? "s" : ""}`
     : "Bosses take their usual hits";
 
 /** What an omen does, in sentences: "Max HP 15. Every heal heals 1 more.

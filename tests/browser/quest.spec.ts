@@ -206,10 +206,10 @@ test("@release a starter evolves on a route, and the banner says what changed", 
   // badges have their own dialog.
   await expect(dialog.locator(".type-chips .type-chip")).toHaveText(["Fire"]);
   await expect(dialog.locator(".type-edges")).toContainText(
-    "Strong againstGrassIceBugSteelFairy",
+    "Strong againstGrassIceBugSteel",
   );
   await expect(dialog.locator(".type-edges")).toContainText(
-    "Weak againstWaterGroundRockDragon",
+    "Weak againstWaterGroundRock",
   );
   await expect(dialog.locator(".crawl-badges")).toHaveCount(0);
   await page.screenshot({ path: info.outputPath("team-dialog.png") });
@@ -388,13 +388,15 @@ test("@release a type matchup shows before the roll, and the roll keeps the wors
   await expect(page.locator(".game-card .type-matchup")).toHaveCount(0);
   const chip = page.locator(".tag-edge");
   await expect(chip).toHaveClass(/edge-disadvantage/);
-  await expect(chip).toHaveAccessibleName("Not very effective: disadvantage");
+  await expect(chip).toHaveAccessibleName("Type disadvantage");
   await page.screenshot({ path: info.outputPath("matchup-320.png") });
   await chip.click();
   const dialog = page.getByRole("dialog", { name: "Type matchup" });
   await expect(dialog).toContainText("Charmander");
-  await expect(dialog).toContainText("Not very effective…");
-  await expect(dialog).toContainText("Roll twice and keep the worse.");
+  await expect(dialog).toContainText(
+    `${water.title}'s Water moves are super effective against you!`,
+  );
+  await expect(dialog).toContainText("Roll two dice and keep the worse.");
   await page.screenshot({ path: info.outputPath("matchup-dialog-320.png") });
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).toHaveCount(0);
@@ -415,6 +417,45 @@ test("@release a type matchup shows before the roll, and the roll keeps the wors
     page.locator(".dice-result-dropped .dice-result-face"),
   ).toHaveText(roll.dropped.map(String));
   await page.screenshot({ path: info.outputPath("matchup-rolled-320.png") });
+});
+
+test("a 2d6 battle against the type rolls four dice and keeps the lowest two", async ({
+  page,
+}, info) => {
+  await page.setViewportSize({ width: 375, height: 667 });
+  // Lt. Surge (Electric, 2d6) against Squirtle (Water).
+  await seed(
+    page,
+    reveal(leagueAt("pokemon.gym-lt-surge", {}, 0, "pokemon.starter-squirtle")),
+  );
+  await expect(page.locator(".tag-edge")).toHaveClass(/edge-disadvantage/);
+  await page.locator(".tag-edge").click();
+  await expect(page.getByRole("dialog")).toContainText(
+    "Roll 4 dice and keep the lowest 2.",
+  );
+  await page.keyboard.press("Escape");
+  await page.locator(".game-card").click();
+  await expect(page.locator(".roll-stage")).toHaveAttribute(
+    "data-renderer",
+    /^settled:\d,\d,\d,\d$/,
+    { timeout: 15000 },
+  );
+  await page.screenshot({ path: info.outputPath("four-dice-landed.png") });
+  await expect(page.locator(".roll-layer")).toHaveCount(0);
+  const roll = (await saved(page)).roll;
+  const sorted = [...roll.values, ...roll.dropped].sort(
+    (a: number, b: number) => a - b,
+  );
+  expect([...roll.values].sort((a: number, b: number) => a - b)).toEqual(
+    sorted.slice(0, 2),
+  );
+  await expect(page.locator(".dice-result-faces .dice-result-face")).toHaveText(
+    roll.values.map(String),
+  );
+  await expect(
+    page.locator(".dice-result-dropped .dice-result-face"),
+  ).toHaveText(roll.dropped.map(String));
+  await page.screenshot({ path: info.outputPath("four-dice-card.png") });
 });
 
 test("a Tera Orb turns a bad matchup around for one battle", async ({
@@ -442,9 +483,10 @@ test("a Tera Orb turns a bad matchup around for one battle", async ({
   await page.locator(".tag-edge").click();
   const dialog = page.getByRole("dialog", { name: "Type matchup" });
   await expect(dialog).toContainText("Terastallized!");
+  await expect(dialog).toContainText("Your Grass moves are super effective!");
   await expect(dialog).toContainText("Charmander (Tera)");
   await expect(dialog).toContainText("Grass");
-  await expect(dialog).toContainText("Roll twice and keep the better.");
+  await expect(dialog).toContainText("Roll two dice and keep the better.");
   await page.screenshot({ path: info.outputPath("tera-dialog-320.png") });
 });
 

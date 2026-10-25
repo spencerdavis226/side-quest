@@ -254,7 +254,7 @@ export async function createDiceStage(selector: string, palette?: DicePalette) {
       const step = (now: number) => {
         if (disposed) return;
         const t = Math.min(1, (now - start) / 240);
-        for (const m of faded) m.opacity = 1 - 0.7 * t;
+        for (const m of faded) m.opacity = 1 - 0.8 * t;
         box.renderer.render(box.scene, box.camera);
         if (t < 1) requestAnimationFrame(step);
       };

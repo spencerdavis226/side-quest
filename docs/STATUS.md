@@ -81,16 +81,30 @@ Baseline before the spike: `npm test` 282 passed, `tsc -b` clean, lint clean, `n
 - Card-count assertions (`tests/workshop.test.ts`), the manifest (`npm run content:manifest`), imprint entries and the card length rules apply to every new card.
 - Nothing is pushed or merged without the owner's go-ahead; each phase is a separate branch and PR.
 
+## Cards that leaned on their titles (2026-10-25; owner; PR #40)
+
+A sweep of all 1,624 cards for bodies that only make sense with the title found six (the Most Likely To fix is PR #39). Buffalo now says "Buffalo! Finish your drink. It's gotta go." (owner: Buffalo means finish your drink). Sheet rows 036 and 037 are the Ride the Bus "Same" joke ("Called It", "Same Card, Wrong"), rows 078 and 079 the Guinness challenge ("Clean Split", "Missed the G"); the d6 rolls are unchanged. Recorded in `reference/README.md`. `core.buffalo` stays in the `rule` category (the deck composition test pins its counts) and in the duration exceptions in `tests/card-logic.test.ts`. House Tin Hat Society (`house.sheet-088`) now reads "Share one conspiracy theory you really believe. The table votes if it's believable. If not, drink 2." (owner approved the suggestion).
+
+- **Verification:** `npm test` 286 passed; lint, typecheck and `BASE_PATH=/side-quest/ npm run build` passed. Browser specs not run; title fit unmeasured.
+
+## Most Likely To titles (2026-10-25; owner; PR #39, merged)
+
+The owner: the standing rule is that the whole instruction lives in the card body, and "Most Likely To" in the title left bodies like "Become an influencer." unreadable without it. All 250 vote cards now have their own flavor title (unique, 22 characters or fewer) and a body that holds the full instruction: "Most likely to become an influencer? Point on three. Most votes drinks 2." The build caps a rule at 100 characters, so the lead is "Most likely to ...?" and three long prompts lost a few words (the Ring camera walk of shame, talking shit about someone right behind them). Card IDs and payouts are unchanged (`src/content/likely.ts`: each prompt is `[title, prompt, payout?]`). `tests/workshop.test.ts` now checks the body pattern and that titles are unique; `docs/CARD_REVIEW.md` and `card-review.csv` regenerated.
+
+- **Verification:** `npm test` 282 passed; lint, typecheck, `validate-content` and Prettier clean. Title fit in the teal band not measured in a browser (longest titles are 22 characters, like existing ones).
+- **Not changed:** other packs whose title is only a mode name but whose body is complete (Paranoia, Secret Mission, Fact or Cap, Forehead, No Saying It, Act It Out, Three in Five, Hot Potato, Secret Rule). The title-dependent House and Core cards are fixed below.
+
 ## League types (2026-10-25; owner; branch `claude/league-types`, PR #35)
 
 The owner asked for Pokémon types: one type per starter for the run, a type on every League card where it makes sense, advantage against types the starter beats and disadvantage against types that beat it, shown ahead of the roll. They approved every recommendation in the plan (both-ways matchups, ±1 HP on plaque fights, d6 sets rolled twice, a starter's first type for the run, rivals by their ace), then asked for at least one starter of every type, a new item if it adds no bloat, balance through more opponent cards rather than perks ("fun and flavor are drastically more important than balance"), and a cleaner UI: "a logo or something", not banners and text.
 
-- **Engine** (`src/game/matchup.ts`, `engine.ts`, `dice.ts`): the games' chart (Gen 6+), read both ways: whoever hits the other harder has the edge; an immunity is "not very effective", never an automatic loss. The Striaton trio (`type: "trio"`) plays as the brother who beats the starter. `cardMatchup(quest, card)` needs a League battle with a type and a typed starter (`partyType`, which follows Eevee's branch). A dice fight with an edge rolls the whole set twice: advantage keeps the better attempt (a win over a loss, else the higher read total), disadvantage the worse; starter bonuses, naturals and Bidoof's flinch apply per attempt. The roll saves `edge` and `dropped` (optional; `values` stay the kept faces). A plaque fight's loss costs 1 HP less with the edge, 1 more against it (`verdictShift`, also on the card's seal).
+- **Engine** (`src/game/matchup.ts`, `engine.ts`, `dice.ts`): the games' chart (Gen 6+, all 324 cells checked against Pokémon Showdown's data and held by a test). Since the owner's follow-up ("simpler rules for sure") the edge is the rule every player knows: the starter's type super effective against the foe's is an advantage, the foe's super effective against the starter's a disadvantage, anything else even (a resistance or immunity alone gives nothing; both super effective is even). The Striaton trio (`type: "trio"`) plays as the brother who beats the starter. `cardMatchup(quest, card)` needs a League battle with a type and a typed starter (`partyType`, which follows Eevee's branch). A dice fight with an edge rolls the whole set twice: advantage keeps the better attempt (a win over a loss, else the higher read total), disadvantage the worse; starter bonuses, naturals and Bidoof's flinch apply per attempt. The roll saves `edge` and `dropped` (optional; `values` stay the kept faces). A plaque fight's loss costs 1 HP less with the edge, 1 more against it (`verdictShift`, also on the card's seal).
 - **Tera Orb** (`tera`, the one new item): before a typed battle's roll or verdict, when the starter lacks the edge, the starter Terastallizes into the type with the widest edge over the foe (`teraType`), for that fight only (`party.tera` = the card's ID, cleared when the card is put aside; a boss dealt again needs another). Plaque "Terastallize" beside Escape. Zorua starts with one (Zoroark restocks one at every gym), Eevee starts with one (Normal never has the edge), Saffron and Indigo Marts sell one for 6 drinks, and Route 7's Tera Raid Den is a find for one. Pub Crawl never deals it (its theme calls it a Prism Shard).
-- **UI** (owner: no banners): the card shows only its type medallion in the ribbon (`TypeMark`, read as "Water type"). The edge is a chip on the strip under the header: two green chevrons up or two red chevrons down (`EdgeMark`), nothing when neutral; tapping it opens "Type matchup" (both medallions, "Super effective!", "Not very effective…" or "Terastallized!", and one line on what it does). The 3D overlay throws both attempts and fades the dropped dice; the card shows the kept faces and the dropped attempt small and struck through. The team dialog keeps "Strong against" and "Weak against" chips; How to play has a Types row.
+- **UI** (owner: no banners): the card shows only its type medallion in the ribbon (`TypeMark`, read as "Water type"). The edge is a chip on the strip under the header: two green chevrons up or two red chevrons down (`EdgeMark`), nothing when neutral; tapping it opens "Type matchup": both medallions, then one line ("Your Grass moves are super effective!" or "Misty's Water moves are super effective against you!", "Terastallized!" before it with an orb) and what it does. Owner report: Sunkern against Pichu had read "Super effective!" though Grass hits Electric normally; that edge came from the old both-ways rule and no longer exists. The 3D overlay throws both attempts and fades the dropped dice; the card shows the kept faces and the dropped attempt small and struck through. The team dialog keeps "Strong against" and "Weak against" chips; How to play has a Types row.
 - **Starters** (`league/starters.ts`): 35, at least one of every type. Togepi (Fairy), Drowzee (Psychic) and Zubat (Poison) took over Wooper's, Slowpoke's and Psyduck's powers (three of ten Water); Chespin and Fennekin complete Kalos; then one per missing type, each with its own arc: Spheal (Ice: rolls with it), Riolu (Fighting: wider natural 20s, Lucario's Aura Sphere), Cubone (Ground: Marowak's Bonemerang takes a hit off every boss), Rookidee (Flying: Corviknight Taxi carries drinks with Baton Passes), Caterpie (Bug: a Rare Candy, a Metapod that only Hardens, a lucky Butterfree), Larvitar (Rock: a tank, then Tyranitar), Gastly (Ghost: a Revive, then Gengar), Gible (Dragon: lean, then Garchomp), Zorua (Dark: Illusion, the Tera Orb), Aron (Steel: Iron Defense). Now 6 Fire, 6 Grass, 7 Water, 2 Normal and one of each other type. Old IDs `starter-wooper`, `-slowpoke`, `-psyduck` are retired, never reused.
 - **Opponents** (`league/types.ts`, `league/wilds.ts`): every League fight typed by ID from what the card says (a card naming a Pokémon gets its type; a trainer class known for one type gets it; a dual type plays as the one it's best known by). Measured per run, the League was short of Grass, Ground and Electric (Grass starters met 13.9 bad matchups to 7.6 good). Instead of perks, 24 new route fights, three a route, of the missing types: Oddish, Diglett, Pichu; Seedot, Geodude, Snubbull; Voltorb, Sandshrew, Bellsprout; Wingull, Ralts, Phanpy; Tangela, Engineer Bernie, Spritzee; Sudowoodo, Rotom, Breloom; Ruin Maniac Liz, Gardevoir, Wailord; Rhyperior, Electivire, Togekiss. Grass now meets about 11 good to 14 bad, Fire and Electric about even, Water a little ahead (`docs/LEAGUE_TYPES.md`, generated by `npm run league:types`, has the table). Route 5 gained a Day Care evolution card so the bigger pools still evolve as often. The starter buffs from the first round were reverted to each starter's original power, with small flavor-fitting nudges only where a starter fell under 10%.
 - **Balance** (`tests/league.balance.test.ts`): now 120 seeded runs per starter (4,200 in all, the same cost as before; a 35th of 4,000 random runs was too few to read a starter), and the simulated table uses a Tera Orb on a bad matchup or before a typed boss. Routes 5–8 wild fights ease by one (`WILD_NEED`), the d6 fights' faces unchanged. Final, after merging `main` (#34: potions drink 4 to heal 2, Quaff 4): League won 21.8% (band 18–40%), a won run 66.7 draws; evolution 78% / 49%; starters 12% (Sunkern, Drowzee) to 44% (Mudkip), Cubone 43%, Gastly 40%, Bidoof 1% (worst, as designed). Before that merge: 19.6%.
+- **Follow-up (PR #38)**: the simpler rule above (52 of 324 type pairs that had an edge from resistances alone are now even); the dialog reduced to one line; a bug where Marowak's "bosses take 1 fewer hit" made a 1-hit gym need none, so a lost gym was put aside as beaten (`hitsNeeded` now never goes under 1, with a test that fails on the old code). Cubone, Sunkern and Mudkip nudged to stay in band. Owner report: a 2d6 edge threw four dice with no telling which two were a pair, so a multi-dice edge is now one pool: roll double the dice and keep the highest (lowest against you); the others fade once they land. Keeping the worst-reading pair was tried first and made Lt. Surge (doubles lose) unwinnable against a Water starter, looping a Mudkip run; by face value every League fight stays winnable (worst: Drake at 3.6% against you). League 22.6% won, starters 12% (Sunkern, Rowlet 13%) to 40% (Mudkip), Bidoof 3%.
 - **Saves**: schema v2 unchanged. Games saved before types hold untyped snapshots and play neutral to their end (the badge case still shows gym types through `badgeType`'s ID fallback). Fixtures: `2026-10-25-league-starter-chosen`, `-league-roll-with-advantage`, `-league-roll-with-disadvantage`, `-league-terastallized`. `validate.ts` checks `type`; `validateParty` checks `tera` (only on the battle face up).
 - **Tests**: `tests/matchup.test.ts` (chart, edges, the trio, the Tera Orb, rolls kept and dropped, ±1 HP, saved-roll checks, untyped old runs), `tests/pokemon-types.test.ts` (every gym and form typed, every type has a starter, the untyped list, validation). Browser (`quest.spec.ts`): the chevron chip and its dialog at 320 px with a live two-dice roll; the Tera Orb plaque and dialog; Jasmine's plaque fight costs 1 HP less; the team dialog's type lists; the every-League-card fit sweep (about 400 cards, its timeout raised to 10 minutes).
 - **Verification**: `npm test` 282 passed; `npm run test:balance` 8 passed (League 21.8%; Pub Crawl 32.5%, moved by `main`'s potion change, not this branch); lint, typecheck and Prettier clean on touched files; `BASE_PATH=/side-quest/ npm run build` passed (budgets: 120.1 KiB initial, no card text in it). Chromium (local): `@release` 44 passed; `quest.spec.ts` 17 passed, including the every-League-card fit sweep (5.4 min alone). WebKit not run locally: the container cannot download it (Playwright CDN blocked); CI runs the release suite in WebKit. Screenshots judged at 320 px in Chromium only.
@@ -115,6 +129,7 @@ The owner asked for Pokémon types: one type per starter for the run, a type on 
 - **Docs:** League bosses are all battles (`AUTHORING.md`); 23 starters and 362 League-only cards (`AGENTS.md`, `GAME_DESIGN.md`, `src/content/CLAUDE.md`).
 - **Not changed:** Whitney's Rollout (rising pours are the joke) and the `{total}` losses that grow toward the win (a documented graded loss).
 - **Verification:** `npm test` 251 passed; `npm run test:balance` 8 passed; lint, typecheck and `validate-content` passed; Prettier clean on touched TypeScript. Fit judged by character count, not measured in a browser; browser specs not run.
+
 ## League badge case and type marks (2026-10-24; owner; branch `claude/badge-health-screen-split-bv2vxx`)
 
 - **Bug:** the strip's badges chip opened the same dialog as the HP stud ("The team"). The HP stud now opens `party` (new `DialogName`); the chip opens `badges`, its own dialog titled "Badges" (`GameDialogs.tsx`, `main.tsx`). Pub Crawl has no badges; a stray `badges` there still reads as the party.
@@ -189,6 +204,7 @@ Not doing (owner left it to my call): dropping a crawl's unused deck cards from 
 - **Owner (iPhone screenshot, The Barrel Room's spoils):** "weird text placement". Two-across plaques (spoils, offers, the Quaff) laid the mark and name in two `auto` grid columns with the line under them spanning both; a line wider than mark plus name widened those columns, so the mark drifted left and the name wrapped ("Bung / Mallet").
 - **Fix (`src/presentation/crawl.css`):** columns `minmax(0, 1fr) auto auto minmax(0, 1fr)`, mark in 2 and name in 3 (Cash out's name spans both middle columns), so spare width goes to the outer columns; the line under them is `text-wrap: balance` (no lone "less.").
 - **Verification:** before/after screenshots of The Barrel Room's spoils at 393x640 (Chromium); landing, push-your-luck, merchant and Quaff plaques checked in their spec screenshots. `npm test` 229 passed; lint clean; full Playwright (Chromium and WebKit, minus sweeps) 130 passed. Not checked on a device.
+
 ## Card copy length pass: 100-character rule limit (2026-10-18; pushed to `main`, PR #22)
 
 - **Owner:** "do the professional, no cut-corners moves" after PR #21 (shrink-to-fit). The fit handles screen size; this keeps text large by keeping copy short.
@@ -211,7 +227,7 @@ Not doing (owner left it to my call): dropping a crawl's unused deck cards from 
 ## Top-edge blur: strip reaches past the status bar, bar blends into the wood (2026-10-17; pushed to `main`, PR #19)
 
 - **Owner (iOS 27, iPhone 15 Pro), after PR #18:** the header top and "YOUR STARTER" are still blurred, identical to before. The header sits at inset + 20px in both screenshots, so the app still draws under the status bar on iOS 27 (top inset 59pt) and the strip was already 59pt tall; PR #18's 14px minimum changed nothing there.
-- **Hypothesis:** WebKit samples 4px inside the *unobscured* edge, the bottom of the status bar (63pt), where the strip did not reach; the projects whose fixes worked pad a sticky header under the clock, so their box spans that point.
+- **Hypothesis:** WebKit samples 4px inside the _unobscured_ edge, the bottom of the status bar (63pt), where the strip did not reach; the projects whose fixes worked pad a sticky header under the clock, so their box spans that point.
 - **Fix:** `.status-edge` is `calc(var(--top-safe) + 14px)` tall (inside the 20px above the header; nothing on setup or play sits there), background colour `#211810` (the wood's, as iOS may paint it in the status bar). `layout.spec.ts` hit-tests at inset + 4.
 - **Owner, after re-adding the app (fresh install, PR #18 live):** the header is sharp; the blur is fixed. But the opaque status bar is flat #271c11 (theme-color), lighter than the wood under it (~#18110c), and looks bad. The meta `theme-color` and the strip's colour are now #18110c, the wood at the edge; the manifest keeps #271c11 (its theme, background and the html root must agree, `pages.spec.ts`). Whether iOS picks up a changed theme-color without a re-add is not known.
 - **Bar blend (owner chose option 3 of: flat matched bar / wood under a blurred clock with the header 22pt lower / matched bar plus fade):** below the status bar the wood starts in #18110c and fades in over 56px (`--edge-fade`, painted on the installed app's `body:before` and on `.status-edge` so the two agree). Header and card size unchanged. Checked in Chromium emulation (no seam, inset 0 and 47px); not yet on a device.
@@ -346,6 +362,7 @@ Not doing (owner left it to my call): dropping a crawl's unused deck cards from 
 ## Behind the Bookcase, and the Pokémon sheet table-rule pass (2026-10-17; pushed to `main`)
 
 **Hidden rooms** (`src/content/dungeon/bookcase.ts`): the League's villain hideouts done as a bar.
+
 - Between the first landing and the second floor the run finds one of five rooms: the Speakeasy, the VIP Room, the Back Office, Poker Night or the Basement.
 - Each deals two of its three guards (d20, d6 moves, 2d6 or a trial), then a keeper beaten twice.
 - The keeper offers spoils and, on a missed swing, lays a themed jinx that lasts only that fight: Prohibition (nobody says "drink"), Talk to My Agent, Per My Last Email, Poker Face, First Rule.
@@ -354,12 +371,14 @@ Not doing (owner left it to my call): dropping a crawl's unused deck cards from 
 - A run is now 36 cards; a won run takes about 46 draws.
 
 **Balance:**
+
 - Won 29.8%.
 - Hidden rooms 28–33%.
 - Adventurers 24–43%; the Plus-One is 6% over 600 forced runs.
 - Routes 24–34%.
 
 **Pokémon sheet** (owner: "nothing is gospel"). Eleven supplied rules that needed props, were chores or referred to things that don't exist became one-time actions:
+
 - Egg, Lickitung, Psyduck, Ditto, Murkrow, Mawile, Relicanth, Farfetch'd, Vulpix.
 - Team Magma and Aqua: there are no teams, so whoever wears red or blue joins you.
 - Recorded in `reference/README.md`. The voice reference now holds the supplied sheets to the same test.
@@ -380,6 +399,7 @@ Not doing (owner left it to my call): dropping a crawl's unused deck cards from 
 **Owner direction.** Jinxes and table-behaviour rules are welcome "within reason": no props (Squirtle's sunglasses were cut because a bar may have none), and no work without a payoff or a laugh (the Pikachu naming rule). This also applies to the League.
 
 **The standard** is in `docs/CARD_VOICE_REFERENCE.md` ("Table rules: the owner's test"):
+
 - No props.
 - It pays off: a laugh or a gotcha.
 - No chores.
@@ -389,11 +409,13 @@ Not doing (owner left it to my call): dropping a crawl's unused deck cards from 
 `tests/card-logic.test.ts` now fails a crawl card asking for something before every sip or drink, every time you stand, or all night. It also fails a jinx without a 1-drink slip.
 
 **Dungeon.** Eight weak jinxes were replaced with gotchas:
+
 - Thumb Master, Spooked (no eye contact), Question Master, No First Names, Bat Signal (point at the ceiling), No Pointing, Muted (mime only), Pinky Out.
 - The Line Cook's all-night "yell behind" became the Behind! jinx.
 - The fruit-fly coaster line no longer needs a coaster.
 
 **League.**
+
 - 18 chores became one-time actions ("Oink, then drink 2", "Hold your nose and drink 3", "Drink 4 on your knees").
 - Groudon's "no water" and Maxie's "nobody refills" are gone.
 - Erika's eyes-shut-until-your-turn is now shut for the drink only. Tulip no longer needs face paint.
@@ -403,6 +425,7 @@ Not doing (owner left it to my call): dropping a crawl's unused deck cards from 
 - The 120 supplied Pokémon sheet cards are unchanged.
 
 **Verification:**
+
 - `npm test`: 223 passed. Lint, typecheck and build passed.
 - Chromium `crawl.spec.ts` and `quest.spec.ts`: 31 passed, no retries.
 - CI on the previous push (`0aaa924`, run 93) was green, including the WebKit release shards, and deployed.
@@ -412,6 +435,7 @@ Not doing (owner left it to my call): dropping a crawl's unused deck cards from 
 **Owner request.** Pokémon League is "really nice" and Dungeon night is falling behind: bring Pub Crawl up to League tier in fun and immersion, with more cards. Borrow from other games as well as inventing. The owner approved every idea in the proposal ("implement everything you think is great").
 
 **Run structure (dungeon.ts):**
+
 - Your adventurer (1 of 12).
 - Tonight's omen (1 of 12).
 - The Queue: the Quarter-Zips cut in (1 of 5).
@@ -426,6 +450,7 @@ Not doing (owner left it to my call): dropping a crawl's unused deck cards from 
 The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 
 **New systems (engine; all fields optional, schema v2 unchanged, old saves load):**
+
 - **Adventurers** (`dungeon/classes.ts`) are the League's starter engine.
   - Each class has one felt perk and levels up twice. Level-up text is written from the numbers in relative words (`dungeonOmenWords.relative`).
   - The Drunken Monk starts bad and gets strong. The Plus-One is the worst by design, and levelling it up makes it worse.
@@ -441,6 +466,7 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 - `restock` now also fires on any boss in a crawl without badges (Pub Crawl), so the Wizard, Templar and Brewmaster can use it.
 
 **Content: 269 Dungeon night cards, up from 166.**
+
 - Deck: 166, up from 118. Each floor has 20 fights; floors 1 and 2 have 3 elites and 5 bosses; Last Call has 8 bosses.
 - Pub Crawl only: 103, up from 48. That is 61 finds (a second fork and merchant per floor, Tome and Second Wind for sale), 12 omens, 12 adventurers, 8 landings and 10 Quarter-Zips cards.
 - Variety pass on the old plain "Drink 3 / Give 3" fights:
@@ -451,11 +477,13 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 - Omen copy now speaks in changes, because omens stack: Cargo Shorts and Butterfingers say "one more/fewer satchel slot". Happy Hour and Thin Walls now say "every heal", which is what the engine always did.
 
 **Tuning (`dungeon/shared.ts`):**
+
 - Party hearts 12 → 11.
 - Targets raised by 1: NEED 7/9/11, SAVE 9/11/13, BOSS 9/11/12, ELITE 10/12/14.
 - Third-floor rooms cost 3 hearts; closing time costs 3.
 
 `tests/dungeon.test.ts` (4,000 seeded runs; a sensible table quaffs when it has no die, and levels up unless at 6 hearts or fewer):
+
 - Won 32.8%. A won run is 42.4 draws and keeps 4 boons. The Cup takes 9.5 splashes a run.
 - Adventurers 27% (Rogue) to 42% (Paladin, Barbarian). Plus-One 7% over 600 forced runs.
 - Omens 23% (Lock-In) to 42% (Regulars). Routes 28% to 38%.
@@ -463,6 +491,7 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 - Wipes come at the second boss (15%), closing time (19%) and Last Call (17%).
 
 **UI:**
+
 - Meter: jinx stud (bottom left) and Cup stud (top left, tips on each splash).
 - Medallion: helm for the adventurer, fire for a landing, shadows for the queue.
 - Card seals: trinket (green) and jinx.
@@ -473,6 +502,7 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 - The League's words and plaques are unchanged.
 
 **Verification:**
+
 - `npm test`: 221 passed.
 - The four aggregate harness tests (League and Dungeon) now have 30 s timeouts. Under a full parallel run the League aggregate hit the 5 s default; it passes alone.
 - Lint, typecheck, `npm run build` and budgets passed: runtime 3,752 KiB; largest lazy chunk 145.5 KiB gzip; dungeon chunk 23 KiB gzip.
@@ -483,6 +513,7 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 - WebKit and a physical device: not checked.
 
 **Risks:**
+
 - Balance is measured by a scripted table, not people. The Quaff and level-up policies are guesses at real behaviour.
 - At 320 px the meter carries four studs. They fit (tested), but it is busy.
 - The Cup averages about 10 splashes; a "splash" is left to the table.
@@ -496,6 +527,7 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 **Owner request.** Starters and evolutions should be felt heavily. Add a Bidoof starter that is the worst, with an evolution that is worse, plus a few more bad or neutral starters. Theme the dice to the starter, and to the omen in Pub Crawl. The owner picked roll bonuses (B) and natural-range tweaks (E) from the proposal, plus the listed perks without any table-behaviour rules (no sunglasses, no blowing on drinks, no Pika naming).
 
 **Engine (all fields optional; schema v2 unchanged).**
+
 - `OmenEffect` gains:
   - `roll`: a bonus by kind, or `all`, added to single-d20 battle rolls.
   - `crit` (the lowest face that counts as a natural 20) and `fumble` (the highest that counts as a natural 1).
@@ -507,6 +539,7 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 - The card shows "17 +2 = 19", and "A 20 was rerolled." for Bidoof.
 
 **Roster: 23 starters.**
+
 - The 17 gained felt perks:
   - Charmander: +2 to route battle rolls.
   - Pikachu: +1 to every roll, and a natural 20 on 19 or 20.
@@ -524,16 +557,19 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 - Roll bonuses are strong: −1 on every roll made Bidoof unwinnable (under 1%), so it is −1 on boss rolls only.
 
 **Dice palettes.**
+
 - `DicePalette { primary, secondary }` sits on omen cards and starter forms: 62 starter forms and 12 Pub Crawl omens, each a distinct pair.
 - `presentation/dice/palette.ts` derives the whole skin (enamel stops, metal, trim, ring, ink, shadow, specular). Numerals are cream on darker enamel and dark on light enamel, and the enamel steps darker or lighter until the numerals reach 4.5:1 (`tests/dice-palette.test.ts`).
 - Without a palette the dice are exactly the house brass and teal. The stage builds its skin from `omenForm(...).palette` when a roll starts.
 - Checked by eye on painted face textures for 11 palettes; not checked on the live WebGL stage or a device.
 
 **Harness.**
+
 - League: won 24.4%. Starters 15% (Charmander, Oshawott, Wooper) to 42% (Mudkip); Squirtle 32%, Magikarp 23%.
 - Bidoof, measured on its own over 600 forced runs, is 4% (the test holds it 1% to 8% and below every other starter).
 
 **Tests.**
+
 - `npm test` 208 passed (with the long timeout). Lint, typecheck and build passed (runtime 3696 KiB).
 - Browser, Chromium: `quest.spec.ts` and `crawl.spec.ts` passed, including both 375×667 fit sweeps. A retry flake in the crawl smoke-bomb test happened because the random next room was an ambush; it is unrelated to this change.
 - `tests/workshop/dice-texture.spec.ts` fails in this container ("numeral 7 horizontal centre (was 69.5)"). It fails identically on `8c90cbc`, before any dice change, so it is the container's font, not this change. It was not run in CI (workshop runs only on manual full validation).
@@ -546,6 +582,7 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 **Finding.** Evolution always worked in the engine, but the screen only said "What? Bulbasaur is evolving! Ivysaur". Ivysaur gave just +2 max HP, and its text said "Full HP back", which was wrong (max and current HP each rose by 2). Several forms changed one small thing, and the wording mixed "two less HP" with powers written relative to the base.
 
 **Now.**
+
 - `src/game/omenText.ts` writes every power from the numbers. The starter card is a flavor sentence plus its power ("Max HP 15. Every heal heals 1 more."), and each form's rules are its power.
 - The evolution banner adds what changed ("Max HP 15 → 17. Gets a Potion.") and holds 5.2 s.
 - The evolve plaque names the next form ("Ivysaur · drink 3").
@@ -565,6 +602,7 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 **Before.** 212 of the 356 League cards were a single d20, and 141 of those resolved only to "Drink N." / "Give N." Hideout grunts, rivals, most Legendaries and every Champion shared one template.
 
 **Natural 20 and 1 (both crawls).**
+
 - Engine (`natural` in `src/game/engine.ts`, crawl only): on a single d20, a won 20 doubles the card's heal and item and lands two boss swings; a lost 1 doubles the hearts lost (before shield and bleed). No schema change.
 - Text (`src/content/naturals.ts`, `withNaturals`): every League and Dungeon d20 has its own 20 and 1 outcome, with "Natural 20!" or "Natural 1!" and the drinks doubled. Applied in `league/shared.ts` (`boss`), `league/journey.ts` (`spot`, `rival`, `villain`) and at `dungeonCards`. Dungeon cards keep the text in the plain modes too. The 120 plain Pokémon sheet cards are unchanged.
 - The party dialog legend gains two lines (`crawlTheme.naturals`, `.stake-natural`).
@@ -572,12 +610,14 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 - Owner follow-up: "same for all cards with d20". Only 7 other d20 cards exist. Fuck Around and Nat One already had their own 1 and 20, so they gained the "Natural" lead. Missingno (a plain Pokémon card) gained a natural 1 ("everyone drinks 6"); it has no good roll for a 20 to double. Four cards where the roll is the amount stay as written: God's Drunkest Soldier (odd/even; a doubled 20 would be "Give 40"), Body Count, House row 8 ("drink 1d20") and Maddy Booty. Owner to confirm.
 
 **Variety pass.**
+
 - Fight helpers take a `Roll` (`vs` d20, `moves` six named moves on a d6, `pair` 2d6 with a winning pair), all derived from the leg's need so the constants still tune everything. A retune that moves a d6 split throws at load.
 - Rewrote all 128 route, Ace, rival, grunt and hideout-boss fights: about 40 are d6 move lists, 20 are 2d6, the rest d20 with specific outcomes (a target at the table, a status until the drawer's next turn, a dare or drink, graded `{total}` losses, pairs of players).
 - Rewrote the flat results of 60 gym, Elite Four, Champion and Legendary cards in place, keeping each card's win ranges. Lugia gained a fumble.
 - Balance: Piplup fell to 9% (the floor is 10%), so it starts with a Protect ("Six more HP and a Protect"; it was "Five more HP").
 
 **Harness after.**
+
 - League: won 22.0% (was 23.1%). A won run takes 67.1 draws. Starters 12% (Piplup) to 41% (Mudkip). Hideouts 17% to 25%. Evolution 74% / 37%.
 - Pub Crawl: won 25.1%. Omens 17% to 32%.
 
@@ -594,6 +634,7 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 **Owner request.** The dungeon crawl "is drastically more exciting" than Pokémon League. They asked for more leaders, Elite Four, Champions and Legendaries from many generations, plus simple new mechanics, and for the League to deal Pokémon cards only.
 
 **Owner decisions:**
+
 - Rebuild the League as a journey on the crawl engine.
 - Gyms are random, not in canonical order.
 - All nine regions.
@@ -603,6 +644,7 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 - The budget is changed (below).
 
 **Now.** The League is a crawl that plays its pack alone, with Team HP 17.
+
 - **Starter.** The run opens on 1 of 17 starters. Each is an omen with a trade-off.
 - **Routes and gyms.** Then come eight routes, each 4 cards drawn from 15. Each route is closed by a gym. Gym k is 1 of 9 leaders: every region's kth gym, so the order is random but difficulty still ramps up.
 - **Hideout.** After the fourth gym the run goes through one of 9 villain hideouts: 2 grunts, then a boss beaten twice.
@@ -622,6 +664,7 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 - **Cards.** 356 League-only cards; the catalog is 1,333. The 120 plain Pokémon cards are unchanged and play only in Short, Long and Infinite.
 
 **Engine.** All new fields are optional, so schema v2 is unchanged.
+
 - `CardDefinition.evolves` and `branches`, `Offer.evolve`, `PartyState.form`, and `takeOffer`'s `branch`.
 - `omenEffect` reads the current form, and `omenForm` describes it.
 - `questRecord` gains `form` and `badges`.
@@ -629,16 +672,19 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 - Old meter-mode League saves still load and play to their end; that engine path stays.
 
 **UI.**
+
 - `crawlTheme.ts` gives each pack its words and marks: Team HP as Poké Balls, the Bag, Potion, Protect, X Attack, Escape Rope, Poisoned, Confused, Whited out, Hall of Fame. Icons are vendored in `public/art/league/`, with an egg for the starter.
 - `EvolutionBanner`, the evolution line and badge row in the team dialog, and an evolve plaque that says what it does.
 - The setup screen counts gyms ("17 HP · 8 gyms").
 
 **Budget (owner, 2026-10-16).** `check-budget.ts` now caps each lazy chunk at 200 KiB gzip instead of their sum: a game fetches only the packs it plays. The sum is still reported, and so is the largest chunk.
+
 - Totals now: 212.7 KiB lazy in all; the largest chunk is the dice library at 144 KiB.
 - The Pokémon chunk is 30.4 KiB.
 - Runtime is 3666 KiB of 4 MiB.
 
 **Balance.**
+
 - Tuning constants live in `league/journey.ts` (routes, hideouts, rival) and `league/shared.ts` (gyms, gauntlet).
 - Some old gauntlet cards could not be won as multi-hit bosses (Mewtwo, Lugia and Deoxys at 5%, Lance 10%, the Eon duo 17%, Blue 20%), so their winning bands were widened. The jokes stay.
 - **Harness.** `tests/league.test.ts` plays 4,000 runs:
@@ -650,6 +696,7 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 - **Length.** About half the bosses have no dice: the harness settles their Won/Lost plaques at 55%. So the run length bottoms out near 68 draws with four route cards per gym. The owner asked for "60 or so", and the harness holds 60 to 70.
 
 **Tests.**
+
 - `npm test`: 196 passed.
 - Lint and typecheck: clean.
 - Build: passed.
@@ -658,6 +705,7 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 - `@release` suite in Chromium and WebKit: 34 passed each (the Eevee test after its banner fix). `npm run test:workshop`: 26 passed.
 
 **Not done or not verified:**
+
 - A physical device (new `docs/DEVICE_CHECKLIST.md` item).
 - The full E2E suite and workshop sweeps.
 - Route cards do not join the plain deck.
@@ -671,6 +719,7 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 **Before.** Room order was already random (7 of 17 per floor), but the run's shape was fixed: the same three floors, only six bosses (each met every other run), and the same rules every time.
 
 **Now.**
+
 - **Tonight's omen.** Every run opens on 1 of 12 omen cards. Each has a typed effect that holds for the run (`party.omen`):
   - starting hearts
   - starting items
@@ -680,6 +729,7 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
   - extra boss hits
 
   Two of the omens are table rules only.
+
 - **Floor variants.** At each depth the run is one of two floors: Cellar or Wine Cellar, Catacombs or Sewers, Drowned Taproom or Kitchen. That makes 8 dungeons. Each floor has 21 rooms and 3 bosses, and Last Call has 4.
 - **New rooms.**
   - **Ambushes** (`hits: 2`): beaten twice.
@@ -691,6 +741,7 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 - **Tuning.** Catacombs bosses now need 10 and Last Call 11 (was 9 and 10). The extra finds had lifted the win rate to 34%.
 
 **UI.**
+
 - **Medallion:** shows the omen's crystal ball and ambush pips.
 - **Card plaques:** merchant and fork plaques show their icon, heart-price seal and label. They fit three across at 320px, and an unaffordable one is greyed but solid.
 - **Party dialog:**
@@ -702,6 +753,7 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 - **Icons:** 4 new, from the vendored game-icons set (`scripts/crawl-icons.ts`).
 
 **UI pass (same day, owner: "non-cohesive and clunky"; "the green cellar icon … looks terrible and also clips").**
+
 - **Hearts meter:** now a brass medallion matching the room medallion and the menu. It is the same size as the menu button, so the top row is symmetric. The hearts left sit inside a large heart, like a Hearthstone health gem; the full count (e.g. 12) is in the party dialog. Satchel and curse studs sit on the rim.
   - The floor name moved out of the meter: it is on every card's ribbon and in the party dialog.
   - The meter no longer crowds the medallion at 320px.
@@ -718,6 +770,7 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 - **Flaky tests:** two browser tests failed intermittently under the full parallel run ("reduced motion and keyboard play", "badge case opens"). Each passed 5 of 5 alone, both with and without these changes.
 
 **Engine.** Everything is optional, so schema v2 is unchanged and older saves load. A test covers loading a pre-omen crawl save.
+
 - `QuestSlot`, `questRoute` and `questStages`
 - `QuestStage.elite`
 - `Offer`, `awaitingOffer`, `canTakeOffer` and `takeOffer`
@@ -732,6 +785,7 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 **Test harness fix.** The seeded random generator in `tests/dungeon.test.ts` took tiny first draws from small seeds, so it could never pick the second floor in a slot. It now scrambles the seed first. It plays 4,000 runs.
 
 **Verified.**
+
 - `npm test`: 179 passed.
 - **Harness:** won 27.7%. By omen, 17% (Lock-In) to 36% (The Regulars); by dungeon, 22% to 30%. Every group is held between 10% and 50%.
 - **Build and budgets passed:**
@@ -740,12 +794,14 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
   - initial JS 100.0 KiB.
 
   **Watch the lazy cap:** only 8.4 KiB of headroom is left.
+
 - **Playwright:** `crawl`, `game`, `layout` and `quest` specs in Chromium and WebKit: 110 passed, 2 intentional skips. The crawl spec has new tests for the omen opening, merchant, fork and elite, ambush, and the omen in the party dialog. Every one of the 166 cards fits its face at 375×667.
 - `npm run test:workshop`: 26 passed. The workshop preview now finds a crawl card's route and deals elites where a loud door would. The stress set includes merchants and forks.
 - **Screenshots reviewed** at 320 and 375: omen, merchant, fork, elite, ambush and party dialog.
 - **Not verified:** a physical device (new `docs/DEVICE_CHECKLIST.md` item), and the full E2E suite (only the four specs above were run).
 
 **Next.** Physical-device check (`docs/DEVICE_CHECKLIST.md`), then play-testing the omen and floor balance at a real table.
+
 ## Tooling: lint, test typechecking, faster CI (2026-10-15, branch `optimize`)
 
 **Owner request.** "Let's do it all" after a review of speed and practices.
@@ -764,6 +820,7 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 **Owner request.** Build the dungeon crawl "elegantly and professionally... really high quality and great feeling, going the extra mile". Names: pack "Dungeon night", mode "Pub Crawl". Decisions: 12 hearts; healing is hard (a fresh, full drink for one heart); a wipe ends with everyone finishing their drink. Standing rules apply: no names or teams, the phone stays on the table, and players only tap.
 
 **The game.**
+
 - A new pack, `dungeon` (`src/content/dungeon.ts`): 48 monsters, trials, traps and bosses that also play as ordinary cards in Short, Long and Infinite. Plus 9 finds (treasure, shrines, relics) that only appear in Pub Crawl.
 - Pub Crawl plays the pack alone: three floors (the Cellar, the Catacombs, the Drowned Taproom), each with 7 random rooms and a boss. The bosses take 1, 2 and 3 hits and are dealt again until they fall.
 - The table shares 12 hearts. A lost fight costs the drawer a drink and the party hearts. At zero hearts the party wipes.
@@ -771,6 +828,7 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 - **Difficulty is measured, not guessed.** `tests/dungeon.test.ts` plays 2,000 seeded runs through the real engine, with a table that plays sensibly. About **25%** of runs survive. Wipes: about 6% in the Catacombs, 16% at its boss, 27% in the Taproom and 26% at Last Call. The first content pass survived only 8.6% of runs, so rooms, traps and bosses each came down a step (constants at the top of `dungeon.ts`).
 
 **Engine.**
+
 - A quest may carry `party: { hearts }`. That makes it a crawl: `goal` 0, the stages are the whole run, and stage cards may also be deck cards.
 - New card fields: `damage`, `hits`, `reward`, `curse`.
 - Party state is kept in `quest.party`. It is optional, so schema v2 is unchanged and older saves load as before.
@@ -782,6 +840,7 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 - `parseSession` validates the party, and counts `rounds` (boss hits that didn't fell it) as draws.
 
 **Interface.**
+
 - **Top bar:** a hearts meter (floor name, curse marker, satchel count stud) and a room medallion that turns into the boss's hit pips.
 - **Cards:** wax seals in each card's foot for the stakes. Flee and Reroll plaques appear next to Won/Lost or a card's choice.
 - **Meter dialog** (the party): hearts, curse, satchel with a Drink button, and floors.
@@ -793,6 +852,7 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 **Also in this change.** Dropped the "hardcore" name: battles are simply the core League rule (owner, 2026-10-15). Fixed `docs/GAME_DESIGN.md`, which still said leaders earn badges "win or lose".
 
 **Verified.**
+
 - `npm test`: 171 passed, including 16 Pub Crawl tests and the 2,000-run difficulty check.
 - Build and budgets: 3524 KiB runtime of 4 MiB.
 - New `tests/browser/crawl.spec.ts`, Chromium:
@@ -808,12 +868,14 @@ The finale deals 33 cards. A won run takes about 42 draws; it was about 26.
 **Owner request.** (Asked for as "hardcore mode"; the owner then said it is simply the core League rule, with no separate name.) "Hardcore mode for sure. You should be able to fail the final leader always and have to keep fighting random champions until you pass. Just make that default. Drop the other league ideas."
 
 **Rules now (every League game; no option).**
+
 - Gym leaders and Champions are `battle` cards. A badge counts only when the leader is beaten. A lost leader goes back into the rest of the deck, at least one card away, and the remaining leaders are re-paced, so a run still deals about one leader every five draws until the eighth badge.
 - Dice leaders win on their marked outcomes (`win: true`, `doublesWin: true`). Leaders without dice land with **Won** and **Lost** plaques, and the card ignores taps until one is picked. A lost dice battle greys its ribbon and badge once the result is on the card.
 - A lost Champion is replaced by another Champion, dealt next, until one falls; only that win ends the game. The Hall of Fame names the Champion beaten. The Legendary and Elite Four are not battles and play as before.
 - Each lost battle is a draw that takes no deck position or finale step, counted in the optional `quest.lost`. Saves stay schema v2; saves without it load unchanged. A League game saved before this update keeps its old card snapshot, so it finishes under the old rules.
 
 **Card changes (`src/content/pokemon-league.ts`).** Every leader now has a way to win, and the table can judge it the moment it is played:
+
 - Rewritten: Misty, Erika, Koga, Blaine, Falkner, Bugsy, Morty, Pryce, Brawly, Wattson, Norman and Winona. Before, they had no way to win, a rule that lasted until your next turn, or a roll-or-do-it choice.
 - Pryce and Brawly are now feats, not choice cards.
 - Win outcomes were marked on the other dice leaders and on all three Champions.
@@ -823,6 +885,7 @@ Champion win chances per fight: Blue 20%, Lance 10%, Steven 28%. That works out 
 **Changed files.** `src/game/{types,engine,dice}.ts`, `src/app/persistence.ts`, `src/content/{validate,pokemon-league}.ts`, `src/presentation/{controller.ts,card-front.css}`, `src/screens/Play.tsx`, `src/components/Cards.tsx`, `src/main.tsx`, `src/workshop/Preview.tsx`, tests `tests/{quest,dice}.test.ts`, `tests/browser/quest.spec.ts`, regenerated `docs/CARD_REVIEW.md` and `docs/card-review.csv`, plus these docs: AGENTS.md, AUTHORING.md, and the CLAUDE.md files in content, game and screens.
 
 **Verified.**
+
 - `npm test`: 155 passed, including 6 new battle tests.
 - Build and budgets passed: 3469 KiB runtime.
 - `quest.spec.ts` in Chromium and emulated WebKit: 22 passed, including the new Won/Lost, lost leader and lost Champion tests.
@@ -834,6 +897,7 @@ Champion win chances per fight: Blue 20%, Lance 10%, Steven 28%. That works out 
 **Owner brief.** Very flavourful cards; a game that is actually difficult and can be lost; inspired by Heroes of Barcadia, but its own thing, not more of the same. The standing rules still apply: no teams, no names, the phone stays on the table, and you only tap.
 
 **Research.** Heroes of Barcadia uses your drink as your health:
+
 - Monsters are fought with a d20 against a level. Losing means drinking the monster's damage, and winning earns loot and power-ups.
 - Traps need a 10+ to disarm. Dying resets you and costs you your loot.
 - After three power-ups you can face the Grand Drink Guardian, whose 15+ roll ignores every bonus.
@@ -845,10 +909,10 @@ We keep the d20-against-a-level fight and the loot, and add what Barcadia lacks:
 
 - **Party HP (new meter).** The table shares 12 hearts, shown in the top row where the badges are now. A lost fight, a failed trap or a bad event costs hearts, and the drawer also drinks. At 0 the **party wipes**: everyone finishes their drink, and the game ends on a defeat screen showing the floor and room reached. There is no revive.
 - **Rooms** come from a separate pool on each floor, so difficulty climbs:
-  - *Monsters* (about 40%): d20 battles. Floor 1 wins on 7+ and costs 1 heart on a loss; floor 2 wins on 9+ (2 hearts); floor 3 wins on 11+ (2 hearts). Win outcomes hand out drinks.
-  - *Traps:* a d20 save at 10, 12 or 14 by floor, costing 1 heart.
-  - *Feats:* Won/Lost plaques. Examples: the riddling tap, holding a full pint at arm's length, a staring contest with the creature in the mirror.
-  - *Loot*, *shrines* (+2 hearts, and the table toasts) and *choice rooms*, using the existing choice plaques: open the chest or walk away, take the left or right door.
+  - _Monsters_ (about 40%): d20 battles. Floor 1 wins on 7+ and costs 1 heart on a loss; floor 2 wins on 9+ (2 hearts); floor 3 wins on 11+ (2 hearts). Win outcomes hand out drinks.
+  - _Traps:_ a d20 save at 10, 12 or 14 by floor, costing 1 heart.
+  - _Feats:_ Won/Lost plaques. Examples: the riddling tap, holding a full pint at arm's length, a staring contest with the creature in the mirror.
+  - _Loot_, _shrines_ (+2 hearts, and the table toasts) and _choice rooms_, using the existing choice plaques: open the chest or walk away, take the left or right door.
 - **Loot** sits in a small tray of at most 3 items. Each is tapped once to use, and none needs the phone to move:
   - Healing Draught: the drawer downs a fresh, full drink and the party heals 1 heart (owner, 2026-10-15: healing should be hard).
   - Coaster Shield: the next heart loss is ignored.
@@ -860,18 +924,20 @@ We keep the d20-against-a-level fight and the loot, and add what Barcadia lacks:
 - **Difficulty (Monte Carlo, 30,000 runs, with loot used when hearts reach 3).** With the one-heart Healing Draught, the party wins about **29%** of runs and wipes on floor 2 about 12% of the time and on floor 3 about 59%. At the old targets (8+/10+/12+ monsters, 9+/11+/13+ bosses) the costly draught dropped the win rate to 18%, so the targets came down one step. Hearts, the target rolls and boss damage are the tuning knobs.
 
 **Flavour (first drafts, house voice; drawer acts; no names or teams).**
-- *Keg Golem* (floor 1 boss): "It's 800 pounds of lager and it's tapped. Shotgun your drink, then roll d20." A 9+ is a hit: "You pull its plug. Give 5." A miss: "It sits on you. Drink 4. −2 hearts."
-- *Gelatinous Shot:* "A cube of jello shots, and something's floating in it. Roll d20." An 8+: "You eat your way out. Give 3." A miss: "You're inside it now. Drink 3. −1 heart."
-- *Hangover Hydra* (floor 2 boss): "Every head you cut off grows back with a headache. Roll d20." A hit: "One head down. Everyone else drinks 2." A miss: "It breathes regret. Drink 5. −2 hearts."
-- *Tab Goblin:* "It's been putting drinks on your tab since 2019. Roll d20." A win: "You stiff it. Give 4." A loss: "It collects. Drink 3. −1 heart. Lose your newest loot."
-- *Bouncer Troll:* "You're not on the list. Prove you're sober: walk heel to toe across the room and back." Lost: drink 4, −1 heart.
-- *Karaoke Banshee:* "It screams the first line of a song; sing the next one." Lost: drink 3, −1 heart.
-- *The Mirror:* "Staring contest with your reflection in your drink." Blink and you drink 3, −1 heart.
-- *Mimic Cooler:* choice between "Open it" (a d20: 11+ gives a Healing Draught, anything less "It bites. Drink 4. −2 hearts.") and "Walk away".
-- *Wishing Drain:* a shrine. "Toss in a coin, or a fry. The party heals 2. Everyone toasts the drain."
-- *The Last Call Lich* (final boss): "Lights come up. The music stops. It's last call forever unless you kill it. Roll d20." A 13+ is a hit; a miss: "Closing time. Everyone drinks 4. −3 hearts."
+
+- _Keg Golem_ (floor 1 boss): "It's 800 pounds of lager and it's tapped. Shotgun your drink, then roll d20." A 9+ is a hit: "You pull its plug. Give 5." A miss: "It sits on you. Drink 4. −2 hearts."
+- _Gelatinous Shot:_ "A cube of jello shots, and something's floating in it. Roll d20." An 8+: "You eat your way out. Give 3." A miss: "You're inside it now. Drink 3. −1 heart."
+- _Hangover Hydra_ (floor 2 boss): "Every head you cut off grows back with a headache. Roll d20." A hit: "One head down. Everyone else drinks 2." A miss: "It breathes regret. Drink 5. −2 hearts."
+- _Tab Goblin:_ "It's been putting drinks on your tab since 2019. Roll d20." A win: "You stiff it. Give 4." A loss: "It collects. Drink 3. −1 heart. Lose your newest loot."
+- _Bouncer Troll:_ "You're not on the list. Prove you're sober: walk heel to toe across the room and back." Lost: drink 4, −1 heart.
+- _Karaoke Banshee:_ "It screams the first line of a song; sing the next one." Lost: drink 3, −1 heart.
+- _The Mirror:_ "Staring contest with your reflection in your drink." Blink and you drink 3, −1 heart.
+- _Mimic Cooler:_ choice between "Open it" (a d20: 11+ gives a Healing Draught, anything less "It bites. Drink 4. −2 hearts.") and "Walk away".
+- _Wishing Drain:_ a shrine. "Toss in a coin, or a fry. The party heals 2. Everyone toasts the drain."
+- _The Last Call Lich_ (final boss): "Lights come up. The music stops. It's last call forever unless you kill it. Roll d20." A 13+ is a hit; a miss: "Closing time. Everyone drinks 4. −3 hearts."
 
 **Build order.**
+
 1. **Engine.** Add party `hp`/`maxHp`, `floor`, `curse` and `loot` to `QuestState` (all optional, still schema v2), plus a card `damage` (hearts lost on a loss) and a boss `hits`. Floors become per-floor room pools followed by a boss stage, built on the existing battle and re-deal logic. Add a defeat ending (`phase: "complete"` with a `wiped` flag). Persistence validation, and seeded tests that keep the simulated win rate between 20% and 45%.
 2. **Content.** About 60 rooms (24 monsters, 10 traps, 8 feats, 8 loot, 4 shrines, 6 choices and events) and 6 bosses, all original and in the card voice.
 3. **UI.** A hearts meter, the loot tray (tap to use), a curse marker, floor banners using the existing `StageBanner`, and the defeat and victory screens.
@@ -885,6 +951,7 @@ We keep the d20-against-a-level fight and the loot, and add what Barcadia lacks:
 **Owner request.** "Really review the cards and get more creative and crude-funny. A lot of them are just straight up dice roll conditionals and math." No lore supplied ("just do your best"), "as crude as you'd like", King's Cup classics may be rewritten, all decks in scope. This overrides the House/Pokémon "source wording only" rule for this pass; the changes are listed in `reference/README.md`.
 
 **What changed.**
+
 - **Core (105 → 96, dice 36 → 16).** Cut the roll-and-pour cards and duplicates (Dice Debt, Lucky Sip, Open Hand, Pay Your Tab, Close Call, Loot Drop, Seven Is Heaven, Social Sip, Fuckin' Math, Pathetic, Snake Eyes, Lucky Bastard, Critical Failure, Coin Flip, Fate, Blessing, Lucky Sevens, Boxcars, Nat Twenty, Skyscraper, Overdrive, Big Spender, Loose Change, Committee, Group Roll, Round for the Table, Heavy Hand, plus bland fillers). Kept dice where the roll is the joke (Big Dick Energy, Prostate Exam, Walk of Shame, Gas Station Sushi, Body Count, Lap Dance Roulette, Hot Seat, Dice Tax, Same Shit). Added table-moment cards (Hostage Video, Dramatic Reading, Search History, Meg Ryan, Who Farted, Phone Check, Ex Files, Wipe Check, crude categories and rules). Test-referenced IDs kept (`house-special`, `bar-tab`, `cheers-idiots`, `dice-tax`, `same-shit`, `fuck-around`, `chosen-one`, `categories`, `rulemaster`, `buffalo`); retired IDs are not reused.
 - **Dice rules text.** Pokémon, League and Cabin dice cards now state a premise; outcomes carry the numbers with a punchline. No dice mechanics, IDs or League structure changed.
 - **House.** Thirteen flat rows got a crude kicker after their original sentence; in-joke rows untouched.
@@ -921,6 +988,7 @@ We keep the d20-against-a-level fight and the loot, and add what Barcadia lacks:
 **Reports (owner, Safari on a Mac).** A card title rendered tiny beside large rules; in a Pokémon League game the next card's frame visibly turned over after a card was put aside; on the Hall of Fame both actions looked like buttons.
 
 **Causes and fixes.**
+
 - Title: the fit in `Cards.tsx` measured the heading's on-screen rect. A re-fit that runs during the flip (a resize or font load) sees a box stretched by the 3D turn, settles small, and nothing re-fits once the card lies flat. The height is now divided by the title band's own on-screen stretch, which recovers the flat height at any angle. Reproduced live: a 1px resize 200 to 360 ms into the flip left the title at 18px in WebKit, and at 35.7px in some Chromium runs, instead of 44.6px.
 - League flip: finale cards are dealt without moving the deck, so `cycle`/`position` repeat and `Play.tsx` reused the face-up rotator, which turned back over. The rotator is now keyed by `session.discarded`.
 - Hall of Fame: "Change deck" never had a background; the painting's stone steps sat behind it. `.painted-hall::before` now fades the hall into the table above the buttons.
@@ -994,6 +1062,7 @@ Dedicated production review at `http://127.0.0.1:4432/side-quest/`: Chromium and
 **Integration / changed files.** `src/presentation/league-art.ts` maps stable gym card IDs to badge files, independent of content imports and saves. `Cards.tsx` puts the appropriate badge on the gym ribbon. `QuestMeter.tsx` shows the latest earned badge when known, otherwise the League trophy; `PackMarks.tsx` provides the separate mode mark, also used in `Setup.tsx`. `QuestRecord.tsx` overlays earned pins on the eight case recesses, keeps unearned identities hidden, and retains real badge/leader text below. `GameDialogs.tsx`, `Completion.tsx` and `main.tsx` explicitly limit the painted case/scene to the Pokémon mode. `StageBanner.tsx` keeps its existing timing, reduced-motion fade and pass-through taps, with live words over painted cloth. `theme.css` and `card-front.css` style these additions. The Side Quest emblem appears beside the setup wordmark and on ordinary completion. `package.json` adds the rebuild command. No engine, content, storage key, session schema, saved outcome, reference source, Home Screen icon or approved card surface changed.
 
 **Verification completed.**
+
 - `npm test`: **126/126** passed.
 - `BASE_PATH=/side-quest/ npm run build`: content validation, typecheck and budgets passed. **2992 KiB runtime**, **89.0 KiB initial + 173.4 KiB lazy gzip JS**; 76 precache entries. Card text stays out of the initial chunk and the workshop is excluded. Vite still reports the existing large dice chunk warning. About 80 KiB of runtime headroom remains; budgets were not changed.
 - `CI=1 BASE_PATH=/side-quest/ TEST_PORT=4412 npm run test:e2e -- --workers=2`: **179 passed, 3 intentional WebKit offline skips**, no retries. This run preceded only the Hall backdrop's final top-inset correction.
@@ -1003,6 +1072,7 @@ Dedicated production review at `http://127.0.0.1:4432/side-quest/`: Chromium and
 **Earlier failures (retained for provenance).** Release/workshop runs overlapped a dedicated WebKit launch while host load rose above 80 (later over 350 even after the runs stopped). The cause of that host load is not established. The port-4414 release run was stopped: **2 passed, 4 failed, 36 did not run** (Chromium moving-dice test, both choice-card sizes, legacy finite-game test; timeouts including page creation/navigation/bounding-box calls). Workshop was stopped: **22 passed, 2 failed, 2 did not run** (WebKit Landscape and Split view stress previews timed out; the current retry was interrupted). Dedicated WebKit launch timed out after 180 s. A subsequent release attempt on port 4420 timed out starting its preview server before any test ran; a run against verified port 4413 was then interrupted and has no completion result. Those attempts are not counted as passes. Successful serial verification below covers the failed cases. Physical iOS, installed Home Screen behavior and table-distance art readability remain unverified.
 
 **Final serial verification (2026-10-06).**
+
 - Fresh `npm test`: **126/126 passed**; ordinary `/side-quest/` build passed after the update test, with the same **2992 KiB runtime / 89.0 + 173.4 KiB gzip JS** and 76 precache entries. The ordinary build is restored in `dist`.
 - Fresh preview started on **4422**, responding with the restored build. `BASE_PATH=/side-quest/ TEST_PORT=4422 npm run test:release -- --workers=1 --retries=0 --max-failures=1`: **42/42 passed**, Chromium + WebKit, no retries.
 - `CI=1 BASE_PATH=/ TEST_PORT=5175 npm run test:workshop -- --project=webkit --workers=1 --retries=0`: **13/13 passed**, including the previously failed Landscape/Split view stress checks. Chromium's 13 workshop checks passed in the earlier run; workshop source is unchanged since then. This is combined coverage, not a claimed single 26-test run.
@@ -1025,6 +1095,7 @@ Fresh Chromium production review at **390×844** confirmed [the live app](https:
 **Request.** Owner chose the secret and timer card ideas from the backlog (D): "steal" from existing party games and generate 150 cards. Decisions (2026-10-06): build secret text, hidden fuse and visible countdown now, pass-around secret roles (Spyfall/Imposter with a player count) later; one pack; visual only, no sound; generic voice, no invented lore. Follow-up the same day: no card may send the phone round the table ("I don't want a broken phone"); hot potato with a passed beer is fine as long as the timer does more than that. Fuses went from 45 to 12 (beer only) and the clock from 30 to 63. This lifts the "no timers" line from `GAME_DESIGN.md` for this pack only.
 
 **Change.**
+
 - Types: `CardDefinition.secret` (≤ 120 characters) and `CardDefinition.timer` (`fuse` with hidden `min`..`max` seconds, 5–90, or `countdown` with `seconds`, 3–120, plus an `end` ≤ 120 characters). Never with `dice`. `src/game/timer.ts` samples the fuse length (injected `Random`) and validates; `validate.ts` checks both, so saved snapshots are validated on load. Session schema unchanged (v2); timer and hold state is display only and never saved, so a reload leaves a timed card unlit.
 - UI: `src/components/CardActions.tsx`. A Hold to read plaque shows the secret only while held (hidden on release, blur and app switch; keyboard/VoiceOver activation toggles). Light the fuse / Start the clock plaques; a timed card ignores taps (nudges the plaques) until time is up, then a 1.6 s full-screen BOOM or TIME flash (`pointer-events: none`, no shake under reduced motion) and `end` replaces the rules. Short secrets (≤ 24 characters) print large for Forehead. Plaques reuse the choice-card slot and chrome.
 - Content: `src/content/secrets.ts`, pack `secrets` ("Secrets & fuses", bomb logo from the vendored Lorc `sparky-bomb`, already credited). 75 secrets (30 Paranoia, 20 Secret Mission, 16 Fact or Cap with settled answers, 6 truth-or-lie stories, 3 Secret Rules), 63 on the clock (16 Forehead, 16 No Saying It, 10 Act It Out, 10 Three in Five, 11 timed challenges), 12 fuses (6 Hot Potato categories, 6 variants), each with the phone left on the table and a beer passed instead (the fuse plaque reads "phone stays put"). Mechanics borrowed from Paranoia, Killer, Heads Up, Taboo, charades, 5 Second Rule and hot potato; every prompt is original.
@@ -1047,6 +1118,7 @@ Fresh Chromium production review at **390×844** confirmed [the live app](https:
 **Request.** Owner renamed the app from Drink at Ron to Side Quest and wants it comprehensive: app, repo, URL and storage.
 
 **Change.**
+
 - App: manifest `name`/`short_name` "Side Quest", description "The main quest can wait." (`vite.config.ts`); `<title>` and `apple-mobile-web-app-title` (`index.html`); setup wordmark "Side / Quest"; non-quest completion screen gains a "Side quest complete" kicker above "To good company."; Core card New Blood says "First time Side Quest players"; dice colorset label; package name `side-quest`.
 - URL: the workflow derives `BASE_PATH` from the repository name (`/${{ github.event.repository.name }}/`), so the build matches wherever Pages serves it, before or after the rename. Docs and local commands use `/side-quest/`.
 - Storage: keys are now `side-quest.session.v1` / `side-quest.settings.v1` / `side-quest.card-review.v1`. `migrateStorageKeys` (persistence, called first in `main.tsx`) moves the old `drink-at-ron.*` session and settings once (new key wins; old key removed only after a successful copy); the workshop review reads its old key as a fallback. Covered by `tests/storage-keys.test.ts` and a browser test that resumes a game saved under the old key; the legacy-settings browser test now seeds the old key too.
@@ -1059,6 +1131,7 @@ Fresh Chromium production review at **390×844** confirmed [the live app](https:
 **Official transition (2026-10-05).** Owner explicitly authorized deployment and the Mac folder/repository transition. Renamed GitHub repository to `spencerdavis226/side-quest`, set origin to `https://github.com/spencerdavis226/side-quest.git`, marked PR #6 ready and merged its verified head `06c22ed4fd3481b18e56e58c524ac635f23282de` as `a942e47f5042f4168e7f8d920f7049913b58ee8b`. Pages run `37406116534` passed and deployed. Local checkout is back on `main`. Mac folder is now `/Users/spencer/Documents/Dev/Side-Quest`; `/Users/spencer/Documents/Dev/Drink-at-Ron` is a compatibility symlink to it so existing chats and saved project paths keep working. Codex's saved sidebar project still has the old label/path: the computer-use tool refused access to the Codex app, and no project-edit tool is available. Update that entry manually before retiring the compatibility link. Existing work was preserved; the temporary handoff stash was restored. Only `docs/STATUS.md` changed during this takeover, with no app behavior edits; the final documentation commit records this transition.
 
 **Local verification (Node 26.9.0, macOS).** `npm ci` completed. Browser plugin absent; used the existing Playwright suites. Production build and tests used `/side-quest/`:
+
 - `npm test`: 126/126 passed.
 - `BASE_PATH=/side-quest/ npm run build`: passed content validation, typecheck and budgets; 2672 KiB runtime, 88.2 KiB initial + 173.4 KiB lazy gzip JS. Manifest name/title is Side Quest; scope, start URL and ID are `/side-quest/`.
 - `CI=1 BASE_PATH=/side-quest/ TEST_PORT=4398 npm run test:e2e -- --workers=2`: 179 passed, 3 intentional WebKit offline skips, no retries.
@@ -1072,6 +1145,7 @@ Fresh Chromium production review at **390×844** confirmed [the live app](https:
 **Risks / not verified.** Physical iPhone/iPad and Home Screen reinstall. Emulated WebKit is not physical iOS evidence. Hosting move and emblem art are not started. GitHub Pages still requires this repository to remain public under the current hosting arrangement.
 
 **Next.**
+
 1. Reinstall the Home Screen app from the new live URL and record physical-device checks in `docs/DEVICE_CHECKLIST.md`; old installed-app saves do not transfer. Manually update Codex's saved project label/folder to Side Quest and `/Users/spencer/Documents/Dev/Side-Quest`; retain the old-path symlink while existing chats depend on it.
 2. Separate hosting PR after owner confirms host and domain (likely Cloudflare Pages or Workers static assets): build at `/`, add revalidation headers for `sw.js` and `index.html` and immutable headers for hashed `/assets/*`, retain CI checks, remove the Pages deploy job, and update README/AGENTS/GITHUB_PAGES/STATUS. A new domain is a new origin: github.io saves do not carry over, and Home Screen devices need reinstalling.
 3. Optional painted Side Quest emblem: RPG "!" quest marker over the tankard; no flat vector overlay substitute.
@@ -1081,6 +1155,7 @@ Fresh Chromium production review at **390×844** confirmed [the live app](https:
 **Request.** Start the immersion roadmap (below) with the items that need no art and no rule change.
 
 **Change.**
+
 - Tiered ribbons: `CardDefinition.ribbonTone` (optional `"pearl" | "violet" | "crimson"`, validated, needs a `ribbon`; gold when absent). Legendaries are pearl, the Elite Four violet, Champions crimson; gym leaders keep the approved gold. The title takes the ribbon's colour (`.study-face.tone-*`). Games saved before this keep gold ribbons (cards are snapshotted).
 - Stage banners: `QuestStage.intro` (optional, ≤ 28 characters, display only, never saved): "A Legendary appears", "The Elite Four await", "The Champion awaits". `StageBanner.tsx` sweeps a cloth banner in the stage's tone across the table while the stage's first card is dealt face down (2.6 s, fade only under reduced motion, `pointer-events: none`, `role="status"`). It reappears if the app reloads on that face-down card.
 - Badge case: the meter is now a button (disabled while cards move) that opens a dialog titled with the meter label ("Badges"): 8 medal slots with badge and leader names, then each stage with the cards beaten. Picks not yet dealt are never shown.
@@ -1187,12 +1262,14 @@ Fresh Chromium production review at **390×844** confirmed [the live app](https:
 The owner's goal: packs that change how the game plays, not just add cards. Today a pack cannot, because every card must finish on its own and the app keeps no state between cards. The platform features below would let a pack bring a mechanic.
 
 **Platform features (enablers)**
+
 - **A. Shared table progress + finale.** One table-wide meter on screen (badges, rooms cleared, a filling cup) and a forced final card at the end of Short/Long. No player names. Optional session field, so no migration.
 - **B. Optional player roster.** Names at setup, skippable. Unlocks whose-turn display, recorded votes, per-player stats, end-of-game awards, classes/roles. Needs a session schema version with migration (v2 + v1 migration must stay working).
 - **C. Active rules tray.** Lasting rules stay visible with who drew them and when they expire. Clean with B; with only a player count, expiry by draw count.
 - **D. New card types.** Secret cards (hold to peek before passing), timer cards (hidden fuse while the phone is passed), push-your-luck dice (roll again or stop; breaks the one-roll-per-card rule).
 
 **Pack ideas**
+
 - **Most Likely To awards (needs B).** Record each vote; end of game crowns the most-voted per theme (the Drunk Stoned or Stupid payoff). The shipped pack is the standalone version.
 - **Pokémon badge quest (needs A).** The table is one trainer; gym cards award badges (x/8); 8 badges unlock the Elite Four, then the Champion as the final card; a Pokémon Center card is a water break. Mostly tagging existing cards.
 - **Dungeon crawl / D&D (needs A, later B).** Shared party HP; failed d20 checks cost HP; 0 HP wipes the party (everyone finishes their drink); clearing rooms raises party level (easier rolls); a boss is always the final card; one-use loot (Shield ignores a drink, Potion hands your drink off). With B: classes (Barbarian drinks and gives double, Bard sings to skip, Rogue steals, Cleric gives water). Core already has Nat One/Nat Twenty/Critical Failure/Dungeon Master/Mimic Chest, so plain D&D cards alone would duplicate Core.
@@ -1217,8 +1294,9 @@ The owner's goal: packs that change how the game plays, not just add cards. Toda
 **Request.** Owner asked for a new pack built from as much of the CABIIN 2.0 sheet (`reference/cabiin-2/`, 96 spaces plus the legend) as fits the Drink at Ron rules, with the CABIIN-born Core cards moved into it, and lore-dependent spaces dropped if they don't stand alone.
 
 **Change.** New `src/content/cabin.ts`: pack `cabin`, "Cabin weekend", 77 `cabin.*` cards (22 sip, 11 group, 34 challenge, 18 rule; 19 dice, 2 of them `choice` cards: `cabin.mint-chev`, `cabin.fourth-meal`) plus 8 House rows shared by ID, untouched (`house.sheet-012/016/024/028/040/042/053/054`), 85 in the pack. Logo `public/art/packs/cabin.svg` (game-icons `delapouite/forest-camp`, background removed). Registered last in `catalog.ts`; category motifs in `imprint.ts`.
-- **Moved from Core** (old `core.*` IDs retired, recreated as `cabin.*`): Smooth Brain, I Don't Know Shit, That's Two Beers, Samesies, Almost Lost My Cool, What an Idiot, For Safety, It's Gotta Go, Get Good, Fuck You In Particular, Thanos Snap. Three were restored toward the CABIIN wording: Fuck You In Particular is "Roll d6. Drink 10 minus your roll" (was "Pick someone. They drink 6"), Thanos Snap makes the *unpicked* half drink, That's Two Beers is "Give out 24 drinks" (Core's 4d6 version is gone; House `sheet-003` still has 4d6). Core is now 105 cards; saved games keep their snapshot, and retired `core.*` IDs keep the Core mark via the prefix rule in `presentation/packs.ts`.
-- **Translation rules used.** Teams became the drawing player or a home-state call-out (Florida, Michigan, Wisconsin, Ohio, Ski Team). Board movement and skipped turns became pours; multi-round effects last until the drawer's next turn. d6/3 and d6−3 are written out per roll. Guess I'll Die uses 2d6 doubles because the engine's `doubles` means *all* dice match (3d6 "any two match" would need an engine change).
+
+- **Moved from Core** (old `core.*` IDs retired, recreated as `cabin.*`): Smooth Brain, I Don't Know Shit, That's Two Beers, Samesies, Almost Lost My Cool, What an Idiot, For Safety, It's Gotta Go, Get Good, Fuck You In Particular, Thanos Snap. Three were restored toward the CABIIN wording: Fuck You In Particular is "Roll d6. Drink 10 minus your roll" (was "Pick someone. They drink 6"), Thanos Snap makes the _unpicked_ half drink, That's Two Beers is "Give out 24 drinks" (Core's 4d6 version is gone; House `sheet-003` still has 4d6). Core is now 105 cards; saved games keep their snapshot, and retired `core.*` IDs keep the Core mark via the prefix rule in `presentation/packs.ts`.
+- **Translation rules used.** Teams became the drawing player or a home-state call-out (Florida, Michigan, Wisconsin, Ohio, Ski Team). Board movement and skipped turns became pours; multi-round effects last until the drawer's next turn. d6/3 and d6−3 are written out per roll. Guess I'll Die uses 2d6 doubles because the engine's `doubles` means _all_ dice match (3d6 "any two match" would need an engine change).
 - **Left out.** Legend (#45) and Group Effort (board scaffolding); Pipe Bomb, That's My Boyd, Gengar (guess-the-roll); I'm Gonna Cum, Another One, Do Better, Mike Bet (depend on another card); SS Allure, Too Soon O'Conner, Hot Dog Water (need backstory); Abra (covered by the shared House row and the Pokémon pack).
 - **Tests and specs.** `tests/workshop.test.ts` Core counts (105; 16/22/9/43/15; 36 dice), total 434, and a new Cabin composition test; `tests/dice.test.ts` choice-card list; `dice.spec.ts` four-dice test now sources `house.sheet-003`; `secondary.spec.ts` and `game.spec.ts` expect 5 packs, 434 cards with all selected, 207 for Core + House. Counts updated in AGENTS.md, CLAUDE.md, README, GAME_DESIGN, AUTHORING, PLAYTEST, DEVICE_CHECKLIST, `src/content/CLAUDE.md`. `npm run cards:review` regenerated.
 
@@ -1300,17 +1378,17 @@ The owner's goal: packs that change how the game plays, not just add cards. Toda
 
 **Mechanism (measured, iPhone 16 Pro / 17 Pro simulators, 402×874, top inset 62).** With `viewport-fit=cover` + `black-translucent`, the installed web view is the full 874pt, but WebKit sizes the layout to 812 (`100%`, `svh`, `clientHeight`), i.e. screen minus the top inset. Only `100lvh`/`100vh` report 874. While the document is 812 tall it sits in one of two places, and both show a 62pt flat band of page background: at the top of the screen with the band at the bottom (iOS 18.5 always; iOS 27 on some launches: the "chin"), or one inset down at `scrollY = -62` with the band behind the status bar and the top inset applied twice (iOS 27 on other launches; iOS draws its scroll-edge blur over the band, which is the "frost"). Once the document is 874 tall and at `scrollY = 0`, the page paints the whole screen and there is no frost. A finger drag can otherwise pull the page back to `-62`, where it rests.
 
-| Variation (installed app unless noted) | Measured | Verdict |
-| --- | --- | --- |
-| Shipped build, iOS 27.0 | `html` 812, wood ends at 812, flat 62pt strip below; other launches: `scrollY -62`, flat band on top, content 62pt low | Reproduces the device screenshot |
-| Shipped metas on a probe page, iOS 18.5 | inner 812, `dvh`/`svh`/`100%` 812, `lvh`/`vh` 874; a 1400pt fixed ruler is clipped at 812; strip takes the `body` background colour | Same bug predates iOS 26 |
-| Fixed layer `height: 100lvh`, `screen.height`, `bottom: -200px` (document still 812) | Element box reaches 874+, paint still stops at 812 on 18.5 | No effect alone |
-| `html { height/min-height: 100lvh }` | 18.5: inner becomes 874, ruler reaches the bottom. 27.0: wood reaches the bottom | Removes the bottom strip |
-| Same, plus `scrollTo(0, 0)` on 27.0 | `scrollY 0`, `.app 0..874`, no frost, status bar over wood | Full screen |
-| Same, then drag the page down | Scrolls to `-62` and stays | Needs a lock |
-| `html, body { overflow: hidden }` + the above | Drag produces no scroll events; stays at 0 | Lock works |
-| Web manifest present vs absent (cloned web clips) | Identical geometry | Not a factor |
-| Safari tab, iOS 27.0 iPhone and iPad | inner 714 / 1124, `lvh` 754 / 1153; layout unchanged by this work | Tab path untouched |
+| Variation (installed app unless noted)                                               | Measured                                                                                                                            | Verdict                          |
+| ------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| Shipped build, iOS 27.0                                                              | `html` 812, wood ends at 812, flat 62pt strip below; other launches: `scrollY -62`, flat band on top, content 62pt low              | Reproduces the device screenshot |
+| Shipped metas on a probe page, iOS 18.5                                              | inner 812, `dvh`/`svh`/`100%` 812, `lvh`/`vh` 874; a 1400pt fixed ruler is clipped at 812; strip takes the `body` background colour | Same bug predates iOS 26         |
+| Fixed layer `height: 100lvh`, `screen.height`, `bottom: -200px` (document still 812) | Element box reaches 874+, paint still stops at 812 on 18.5                                                                          | No effect alone                  |
+| `html { height/min-height: 100lvh }`                                                 | 18.5: inner becomes 874, ruler reaches the bottom. 27.0: wood reaches the bottom                                                    | Removes the bottom strip         |
+| Same, plus `scrollTo(0, 0)` on 27.0                                                  | `scrollY 0`, `.app 0..874`, no frost, status bar over wood                                                                          | Full screen                      |
+| Same, then drag the page down                                                        | Scrolls to `-62` and stays                                                                                                          | Needs a lock                     |
+| `html, body { overflow: hidden }` + the above                                        | Drag produces no scroll events; stays at 0                                                                                          | Lock works                       |
+| Web manifest present vs absent (cloned web clips)                                    | Identical geometry                                                                                                                  | Not a factor                     |
+| Safari tab, iOS 27.0 iPhone and iPad                                                 | inner 714 / 1124, `lvh` 754 / 1153; layout unchanged by this work                                                                   | Tab path untouched               |
 
 Not tested: `apple-mobile-web-app-status-bar-style` `default`/`black`, `viewport-fit` absent, manifest `display: fullscreen`/`minimal-ui`, `apple-touch-startup-image`. They were unnecessary once the shipped configuration filled the screen; `default` reportedly trades the bug for an opaque status bar ([jargon-gym PR 181](https://github.com/behnamazimi/jargon-gym/pull/181), 2026-10-04).
 
@@ -1348,16 +1426,16 @@ Read-only review of `main` plus the uncommitted chin-mitigation diff; no source 
 
 **Plan.** One task at a time, each ending with updated status and device-checklist items. Nothing here is authorized for commit, push or deploy.
 
-| # | Task | Done when |
-| --- | --- | --- |
-| 1 | Get authorization to commit the chin mitigation and deploy; recheck on the installed iPhone and record it in `docs/DEVICE_CHECKLIST.md`. | Result recorded, pass or fail. |
-| 2 | Wake Lock hook in `src/app` or `src/presentation`: acquire while a game is active, re-acquire on `visibilitychange`, release on complete/setup, silent no-op when unsupported. | Playwright test with a stubbed `navigator.wakeLock`; device check that the screen stays on for 5+ minutes in the installed app. |
-| 3 | Install dialog and persistence: warn to install before playing, call `navigator.storage.persist()` when available. | Copy updated; unit/browser test for denied or missing API. |
-| 4 | Decide iPad landscape (Spencer's call). If yes, gate only phone-sized landscape and verify card fit at 1180×820, 1366×1024 and Split View. | Orientation specs updated; device check on an iPad. |
-| 5 | Measure ambient animation cost with Safari Web Inspector on a real device; if material, pause ambience during dice, dialogs and after idle. | Before/after numbers in this file. |
-| 6 | Check for a launch flash on device; if present add startup images for current iPhone/iPad sizes under `public/`, inside the 3 MiB runtime budget. | Cold launch checked on device. |
-| 7 | Setup: show pack card counts, and clamp or label Short/Long when the selected packs have fewer cards than the limit. | Unit test on the clamp; Setup layout still passes `@release`. |
-| 8 | Hygiene (ask first): fix the `AGENTS.md` branch line, move STATUS history to an archive file, delete the scratch script, add `typecheck`/lint scripts, merge or differentiate the two number-ban cards. | Docs and CI still pass. |
+| #   | Task                                                                                                                                                                                                    | Done when                                                                                                                       |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Get authorization to commit the chin mitigation and deploy; recheck on the installed iPhone and record it in `docs/DEVICE_CHECKLIST.md`.                                                                | Result recorded, pass or fail.                                                                                                  |
+| 2   | Wake Lock hook in `src/app` or `src/presentation`: acquire while a game is active, re-acquire on `visibilitychange`, release on complete/setup, silent no-op when unsupported.                          | Playwright test with a stubbed `navigator.wakeLock`; device check that the screen stays on for 5+ minutes in the installed app. |
+| 3   | Install dialog and persistence: warn to install before playing, call `navigator.storage.persist()` when available.                                                                                      | Copy updated; unit/browser test for denied or missing API.                                                                      |
+| 4   | Decide iPad landscape (Spencer's call). If yes, gate only phone-sized landscape and verify card fit at 1180×820, 1366×1024 and Split View.                                                              | Orientation specs updated; device check on an iPad.                                                                             |
+| 5   | Measure ambient animation cost with Safari Web Inspector on a real device; if material, pause ambience during dice, dialogs and after idle.                                                             | Before/after numbers in this file.                                                                                              |
+| 6   | Check for a launch flash on device; if present add startup images for current iPhone/iPad sizes under `public/`, inside the 3 MiB runtime budget.                                                       | Cold launch checked on device.                                                                                                  |
+| 7   | Setup: show pack card counts, and clamp or label Short/Long when the selected packs have fewer cards than the limit.                                                                                    | Unit test on the clamp; Setup layout still passes `@release`.                                                                   |
+| 8   | Hygiene (ask first): fix the `AGENTS.md` branch line, move STATUS history to an archive file, delete the scratch script, add `typecheck`/lint scripts, merge or differentiate the two number-ban cards. | Docs and CI still pass.                                                                                                         |
 
 **Progress (2026-10-03, committed and pushed).** Tasks 2, 3, 4 and 7 are implemented; 1, 5, 6 and 8 are open. Per Spencer's "whatever a professional game dev would do": wake lock via `src/app/wakeLock.ts` (`useWakeLock(active)` in `main.tsx`); `requestPersistence()` on start and an Install dialog line saying to install before playing; `PortraitGate` now blocks only landscape with a short side under 600px, so iPad landscape plays (the old "iPad landscape is blocked" test was replaced by a 1180×820 card-fit check); Setup shows the selected packs' card count and a repeat hint when the count is below the 30/60 limit (no clamp; the game itself is unchanged). Verified: `npm test` 98 passed, `tsc` clean, Pages-path build and budgets passed (2737 KiB runtime; 94.2 KiB initial + 147.8 KiB lazy gzip), new wake-lock spec plus orientation/secondary/game specs 49 passed / 2 skipped / 1 flaky (a WebKit menu-focus assertion in game.spec.ts passed on retry; unrelated code), release smoke 22/22, update flow passed. Not verified: real wake lock on iPhone/iPad (needs iOS 16.4+, Home Screen fix 18.4+), iPad landscape at 1366×1024 and Split View, Setup hint layout on a 320px phone.
 

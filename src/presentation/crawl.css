@@ -1102,7 +1102,7 @@
 }
 .matchup-verdict {
   margin: 8px 0 0;
-  font: 700 1.25rem / 1.1 var(--font-tavern);
+  font: 700 1.15rem / 1.2 var(--font-tavern);
 }
 .matchup-panel.edge-advantage .matchup-verdict {
   color: #7fe3a0;
