@@ -14,6 +14,7 @@ import type { CardDefinition } from "../src/game/types";
 // game horizon. Keep this list short and justified, and never add a card here
 // to dodge the duration rule.
 const DURATION_EXCEPTIONS = new Set([
+  "core.buffalo", // a one-off "finish your drink", kept in the rule category
   "house.sheet-015", // Mr Freeze: ends when the drawer stops touching them
 ]);
 
