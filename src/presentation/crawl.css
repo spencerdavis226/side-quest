@@ -1349,6 +1349,115 @@
   font-style: normal;
 }
 
+/* Pub Crawl's end screen (2026-10-25): the trophy wall, a row of gold
+   medallions for the bosses felled (empty sockets for the rest), and the
+   tab, the run on one receipt. Both read from across the table. */
+.trophy-wall,
+.run-tab {
+  display: grid;
+  gap: 8px;
+  padding: 10px 12px 12px;
+  border: 1px solid #e5c27c;
+  border-radius: 12px;
+  background: rgb(0 0 0 / 0.28);
+}
+.trophy-wall h2,
+.run-tab h2 {
+  margin: 0;
+  color: #d9b877;
+  font: 600 14px/1.2 var(--font-tavern);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.trophy-wall h2 small {
+  float: right;
+  color: #fff0cf;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+}
+/* Five across where a name fits whole (62px each); on the narrowest
+   phones the row wraps, centred, rather than breaking a name mid-word. */
+.trophy-wall ol {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.trophy-wall li {
+  display: grid;
+  flex: 0 1 calc((100% - 6px * (var(--trophies, 5) - 1)) / var(--trophies, 5));
+  min-width: 62px;
+  justify-items: center;
+  align-content: start;
+  gap: 4px;
+  text-align: center;
+}
+.trophy-medal {
+  display: grid;
+  place-items: center;
+  width: min(54px, 100%);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  color: #ac9472;
+  font: 700 1.3rem/1 var(--font-tavern);
+}
+.trophy-wall .won .trophy-medal {
+  border: 2px solid #f0d090;
+  background: radial-gradient(circle at 35% 30%, #f3d58c, #a8742f 70%);
+  box-shadow: 0 3px 8px #000a;
+}
+.trophy-wall .empty .trophy-medal {
+  border: 2px dashed rgb(217 184 119 / 0.45);
+  background: rgb(0 0 0 / 0.25);
+}
+.trophy-medal .crawl-icon {
+  width: 62%;
+  height: 62%;
+  color: #3a2208;
+}
+.trophy-name {
+  color: #fff0cf;
+  font-size: 0.8rem;
+  line-height: 1.15;
+}
+.trophy-wall .empty .trophy-name {
+  color: #ac9472;
+}
+.run-tab dl {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+}
+.run-tab dl > div {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+/* A receipt's dotted leader between the line and its amount. */
+.run-tab dt {
+  flex: none;
+  color: #d9b877;
+  font-size: 0.95rem;
+}
+.run-tab dl > div::after {
+  content: "";
+  order: 1;
+  flex: 1 1 12px;
+  min-width: 12px;
+  border-bottom: 2px dotted rgb(217 184 119 / 0.4);
+}
+.run-tab dd {
+  order: 2;
+  margin: 0;
+  max-width: 70%;
+  color: #fff0cf;
+  font-size: 1rem;
+  text-align: right;
+}
+
 /* --- Setup: the crawl in brief ------------------------------------------- */
 
 .crawl-brief {

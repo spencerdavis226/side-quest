@@ -101,6 +101,10 @@ export interface CrawlTheme {
      * starter", "Your adventurer". */
     adventurer: string;
     /** On an evolve plaque: who grows, and what it is once it can't. */
+    /** Pub Crawl's end screen (2026-10-25): the felled bosses' wall and
+     * the run's tab. */
+    trophies?: string;
+    tab?: string;
     grows: { who: string; verb: string; done: string };
     /** Pub Crawl only (2026-10-17): the boons kept for the run, a jinx, the
      * Quaff and the Cup. A theme without them never shows them. */
@@ -213,6 +217,8 @@ const dungeon: CrawlTheme = {
     setupHearts: "hearts",
     setupFloors: "floors",
     evolving: (from) => `${from} levels up!`,
+    trophies: "Trophy wall",
+    tab: "The tab",
     adventurer: "Your adventurer",
     grows: {
       who: "your adventurer",

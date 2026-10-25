@@ -200,6 +200,19 @@ describe("Pub Crawl", () => {
     expect(at(STEP.boss1).spoils).toHaveLength(2);
     expect(at(STEP.boss2).spoils).toHaveLength(2);
     expect(at(STEP.lastCall).spoils).toBeUndefined();
+    // The end screen's trophy wall (2026-10-25): the two floor bosses, the
+    // keeper, closing time and Last Call; never the queue or the stairs.
+    expect(
+      questRecord(s)!
+        .stages.filter((st) => st.trophy)
+        .map((st) => st.label),
+    ).toEqual([
+      "Cellar boss",
+      "Speakeasy boss",
+      "Catacombs boss",
+      "Closing Time",
+      "Last Call",
+    ]);
     roundTrip(s);
     expect(make(OTHER).quest!.stages.map((st) => st.label)).toEqual([
       "Your adventurer",

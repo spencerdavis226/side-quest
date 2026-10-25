@@ -2,9 +2,9 @@
 
 Updated 2026-10-25. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Pub Crawl depth plan (2026-10-25; owner approved the ideas; phases 0 to 3 done, phase 4 next; draft PR #41)
+## Pub Crawl depth plan (2026-10-25; owner approved the ideas; phases 0 to 4 done, phase 5 next; draft PR #41)
 
-Goal (owner): bring Pub Crawl up to the League's fun and depth, distinct from it, without making it complex; add many cards; UI must read for drunk players at a distance (phone or mirrored TV). Phases 0 (the spike), 1 (content), 2 (forked levels and joke classes) and 3 (knacks) are done and recorded below, all on branch `claude/pub-crawl-depth` (draft PR #41; the owner said on 2026-10-25 to keep moving without asking, which covered pushing this feature branch, never `main`). Phases 4 and 5 are not built. The owner asked for this plan to be kept here, up to date, as work proceeds. Findings from reading the code:
+Goal (owner): bring Pub Crawl up to the League's fun and depth, distinct from it, without making it complex; add many cards; UI must read for drunk players at a distance (phone or mirrored TV). Phases 0 (the spike), 1 (content), 2 (forked levels and joke classes), 3 (knacks) and 4 (the trophy wall and the tab) are done and recorded below, all on branch `claude/pub-crawl-depth` (draft PR #41; the owner said on 2026-10-25 to keep moving without asking, which covered pushing this feature branch, never `main`). Phase 5 (polish and gates) is not built. The owner asked for this plan to be kept here, up to date, as work proceeds. Findings from reading the code:
 
 - **Push your luck already exists** (`press`, `gamble()` in `dungeon/shared.ts`, `PressPlaques`): 9 gambles, one per floor, prizes are `Loot[]` only. Greed work is an expansion, not a new system.
 - **Class is readable by cards**: `party.omen` holds the adventurer's card ID (`class-barbarian`), and `omenForm()` resolves its form. Class-reactive rooms need no new save field.
@@ -40,6 +40,14 @@ Goal (owner): bring Pub Crawl up to the League's fun and depth, distinct from it
 **5. Polish and gates.** `npm test`, `npm run test:balance`, lint, typecheck, `BASE_PATH=/side-quest/ npm run build` (budgets), `cards:review`, the workshop card-count assertions, Playwright `crawl.spec.ts`, `quest.spec.ts` fit sweeps at 320 px, and the new legibility assertions. Add the distance and TV checks to `DEVICE_CHECKLIST.md` for the owner.
 
 **Optional wave 2 (needs approval):** a fourth floor at each depth (3 new floors, about 100 cards), taking dungeons from 27 to 64 combinations.
+
+### Phase 4 results (2026-10-25; the end screen)
+
+- **Display only, no save change.** `questRecord()` marks a stage `trophy` when it deals one card dealt again until it falls (`hits`): the two floor bosses, the hidden room's keeper, closing time and Last Call (never the queue or the stairs, whose one fight's outcome the save does not keep).
+- **Trophy wall** (`TrophyWall` in `Crawl.tsx`): "Trophy wall · N of 5"; a gold medallion with the boss mark (two figures for the Quarter-Zips) and the felled card's name, or a dashed empty socket with "?" so nothing ahead is spoiled. Five across where each name fits whole (62 px), wrapping centred on the narrowest phones (3 + 2 at 320 px) instead of breaking a word ("Proprieto/r" in the first draft).
+- **The tab** (`RunTab`): a receipt with dotted leaders: the adventurer's path as taken ("Barbarian → Brute → Juggernaut"), tonight's omen, rooms faced, trinkets by name, hearts left. On the end screens it replaces the adventurer and trinket panels (the full rules stay in play). The Cup panel and the floor list stay below. The League's end screen is unchanged (`words.trophies` and `words.tab` exist only in Dungeon night's theme).
+- **Tests:** `tests/dungeon.test.ts` (the five trophy stages); browser: "the end screen hangs the trophies and the tab at 320px / 390px" (5 of 5, the path, omen and trinket, no name broken, nothing off screen, no trinket panel) and "a wiped run's wall shows the bosses felled and empty sockets" (2 of 5).
+- **Verification:** `npm test` 299 passed; lint and `tsc -b` clean; build passed (runtime 3,657 KiB). Chromium: `crawl.spec.ts` 32 passed at two workers (7.5 min); `@release` 44 passed; the League's Hall of Fame, white-out and badge tests 3 passed. Screens judged from 320 px and 390 px Chromium screenshots. WebKit not run. No device check.
 
 ### Phase 3 results (2026-10-25; knacks)
 

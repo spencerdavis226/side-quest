@@ -851,6 +851,9 @@ export function CrawlRecord({
       });
   }
   const jinx = record.jinx?.jinx;
+  // Pub Crawl's end screens (2026-10-25): the trophy wall and the tab stand
+  // in for the adventurer's and trinkets' panels.
+  const ending = !session && !!words.trophies && !!words.tab;
   return (
     <div className="crawl-record">
       {show("party") && (
@@ -901,14 +904,27 @@ export function CrawlRecord({
             />
           ) : null;
         })()}
-      {show("party") && record.form && (
+      {ending && (
+        <TrophyWall record={record} theme={theme} label={words.trophies!} />
+      )}
+      {ending && (
+        <RunTab
+          record={record}
+          theme={theme}
+          label={words.tab!}
+          rooms={floors
+            .filter((f) => !f.piece)
+            .reduce((n, f) => n + f.rooms, 0)}
+        />
+      )}
+      {show("party") && !ending && record.form && (
         <FormPanel
           form={record.form}
           theme={theme}
           knacks={record.form.card.knacks}
         />
       )}
-      {show("party") && record.boons.length > 0 && (
+      {show("party") && !ending && record.boons.length > 0 && (
         <ul className="crawl-boons" aria-label={words.trinkets}>
           {record.boons.map(({ card, boon, key }) => (
             <li
@@ -1074,6 +1090,110 @@ export function CrawlRecord({
         </ol>
       )}
     </div>
+  );
+}
+
+/** Pub Crawl's trophy wall (2026-10-25): one medallion for each fight
+ * dealt until it fell, in run order. A fallen one is gold and named; one
+ * not yet beaten is an empty socket, so nothing ahead is spoiled. */
+function TrophyWall({
+  record,
+  theme,
+  label,
+}: {
+  record: RunRecord;
+  theme: CrawlTheme;
+  label: string;
+}) {
+  const trophies = record.stages.filter((st) => st.trophy);
+  const won = trophies.filter((st) => st.cards.length).length;
+  return (
+    <section
+      className="trophy-wall"
+      aria-label={`${label}: ${won} of ${trophies.length}`}
+      style={{ "--trophies": trophies.length } as CSSProperties}
+    >
+      <h2>
+        {label}{" "}
+        <small>
+          {won} of {trophies.length}
+        </small>
+      </h2>
+      <ol>
+        {trophies.map((st) => {
+          const fell = st.cards[0];
+          return (
+            <li key={st.label} className={fell ? "won" : "empty"}>
+              <span className="trophy-medal" aria-hidden="true">
+                {fell ? (
+                  <CrawlIcon name={st.boss ? "boss" : "ambush"} theme={theme} />
+                ) : (
+                  "?"
+                )}
+              </span>
+              <span className="trophy-name">{fell ? fell.title : "?"}</span>
+            </li>
+          );
+        })}
+      </ol>
+    </section>
+  );
+}
+
+/** Pub Crawl's tab (2026-10-25): the run on one receipt, for the table's
+ * screenshot. Everything comes from the save; nothing new is kept. */
+function RunTab({
+  record,
+  theme,
+  label,
+  rooms,
+}: {
+  record: RunRecord;
+  theme: CrawlTheme;
+  label: string;
+  rooms: number;
+}) {
+  const party = record.party!;
+  const form = record.form;
+  // The adventurer's line as it was taken: a forked class's path only.
+  const taken: string[] = [];
+  if (form) {
+    const { card } = form;
+    const levels = card.evolves ?? [];
+    const now = party.form ?? 0;
+    taken.push(card.title);
+    if (card.fork) {
+      const path = (now - 1) % 2;
+      if (now >= 1) taken.push(levels[path].title);
+      if (now >= 3) taken.push(levels[path + 2].title);
+    } else taken.push(...levels.slice(0, now).map((e) => e.title));
+  }
+  const omen = record.boons.find((b) => b.card.encounter === "omen");
+  const trinkets = record.boons.filter((b) => b.card.encounter !== "omen");
+  const rows: [string, string][] = [
+    ...(taken.length
+      ? [["Adventurer", taken.join(" → ")] as [string, string]]
+      : []),
+    ...(omen ? [["Tonight's omen", omen.boon.name] as [string, string]] : []),
+    ["Rooms", String(rooms)],
+    [
+      "Trinkets",
+      trinkets.length ? trinkets.map((t) => t.boon.name).join(", ") : "None",
+    ],
+    [theme.words.Hearts, `${party.hearts} of ${party.max}`],
+  ];
+  return (
+    <section className="run-tab" aria-label={label}>
+      <h2>{label}</h2>
+      <dl>
+        {rows.map(([name, value]) => (
+          <div key={name}>
+            <dt>{name}</dt>
+            <dd>{value}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
   );
 }
 

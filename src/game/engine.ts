@@ -313,7 +313,18 @@ export function questRecord(s: SessionState) {
     const boss = stage.cards.some(isBossCard);
     const omen = stage.cards.every((c) => c.encounter === "omen");
     const kind = stageKind(stage);
-    return { label: stage.label, size: stage.pick, cards, boss, omen, kind };
+    // A fight dealt again until it falls (a boss, closing time's rival):
+    // a trophy on Pub Crawl's end screen (2026-10-25).
+    const trophy = stage.pick === 1 && stage.cards.some((c) => !!c.hits);
+    return {
+      label: stage.label,
+      size: stage.pick,
+      cards,
+      boss,
+      omen,
+      kind,
+      trophy,
+    };
   });
   return {
     label: q.label,

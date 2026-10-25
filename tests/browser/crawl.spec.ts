@@ -788,6 +788,97 @@ test("felling the Last Call boss wins the crawl", async ({ page }, info) => {
   await page.screenshot({ path: info.outputPath("won.png") });
 });
 
+// The end screen (2026-10-25): the trophy wall (one medallion a boss and
+// closing time, gold when felled, a socket otherwise) and the tab (the
+// adventurer's path, tonight's omen, rooms, trinkets, hearts), both
+// screenshot-ready on a phone.
+for (const width of [320, 390])
+  test(`the end screen hangs the trophies and the tab at ${width}px`, async ({
+    page,
+  }, info) => {
+    await page.setViewportSize({ width, height: 844 });
+    // A Barbarian down the Brute's path (form 4, the Juggernaut), with
+    // Happy Hour and a trinket kept, fells Last Call.
+    let s = crawlAt(
+      "dungeon.last-call-lich",
+      STEP.lastCall,
+      { hits: 2, rounds: 2, cup: 7, form: 4 },
+      { adventurer: "barbarian" },
+    );
+    const q = s.quest!;
+    const finale = [...q.finale];
+    const swap = (id: string, step: number) => {
+      const at = finale.indexOf(id);
+      if (at >= 0) finale[at] = finale[step];
+      finale[step] = id;
+    };
+    swap("dungeon.omen-happy-hour", STEP.omen);
+    swap("dungeon.keg-golem", STEP.boss1);
+    s = {
+      ...s,
+      quest: {
+        ...q,
+        finale,
+        party: {
+          ...q.party!,
+          boons: ["dungeon.omen-happy-hour", "dungeon.keg-golem#0"],
+        },
+      },
+    };
+    s = rolled({ ...reveal(s), discarded: STEP.lastCall + 2 }, 18);
+    await seed(page, s);
+    await page.locator(".game-card").click();
+    const wall = page.locator(".trophy-wall");
+    await expect(wall).toHaveAccessibleName("Trophy wall: 5 of 5");
+    await expect(wall.locator("li.won")).toHaveCount(5);
+    await expect(wall.locator("li").first()).toContainText("Keg Golem");
+    await expect(wall.locator("li").last()).toContainText("The Last Call Lich");
+    const tab = page.locator(".run-tab");
+    await expect(tab).toContainText("Barbarian → Brute → Juggernaut");
+    await expect(tab).toContainText("Happy Hour");
+    await expect(tab).toContainText("Golem's Spigot");
+    // No trophy's name breaks inside a word.
+    const broken = await wall
+      .locator(".trophy-name")
+      .evaluateAll((els) =>
+        els.some((el) => el.scrollWidth > el.clientWidth + 1),
+      );
+    expect(broken).toBe(false);
+    // Nothing on either runs off the side of the phone.
+    for (const el of [wall, tab]) {
+      const box = (await el.boundingBox())!;
+      expect(box.x).toBeGreaterThanOrEqual(0);
+      expect(box.x + box.width).toBeLessThanOrEqual(width);
+    }
+    // The tab stands in for the adventurer's and trinkets' panels.
+    await expect(page.locator(".crawl-end .crawl-boons")).toHaveCount(0);
+    await page.screenshot({ path: info.outputPath(`end-${width}.png`) });
+  });
+
+test("a wiped run's wall shows the bosses felled and empty sockets", async ({
+  page,
+}) => {
+  await seed(
+    page,
+    rolled(
+      reveal(
+        crawlAt("dungeon.bachelor-ghosts", STEP.floor2 + 2, { hearts: 1 }),
+      ),
+      1,
+    ),
+  );
+  await page.locator(".game-card").click();
+  await expect(page.locator(".crawl-end.wiped h1")).toBeVisible();
+  const wall = page.locator(".trophy-wall");
+  // The Cellar's boss and the hidden room's keeper fell; three wait.
+  await expect(wall).toHaveAccessibleName("Trophy wall: 2 of 5");
+  await expect(wall.locator("li.empty .trophy-name")).toHaveText([
+    "?",
+    "?",
+    "?",
+  ]);
+});
+
 for (const width of [320, 390])
   test(`the header's row and its strip fit a ${width}px phone with everything showing`, async ({
     page,
