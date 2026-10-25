@@ -206,10 +206,10 @@ test("@release a starter evolves on a route, and the banner says what changed", 
   // badges have their own dialog.
   await expect(dialog.locator(".type-chips .type-chip")).toHaveText(["Fire"]);
   await expect(dialog.locator(".type-edges")).toContainText(
-    "Strong againstGrassIceBugSteelFairy",
+    "Strong againstGrassIceBugSteel",
   );
   await expect(dialog.locator(".type-edges")).toContainText(
-    "Weak againstWaterGroundRockDragon",
+    "Weak againstWaterGroundRock",
   );
   await expect(dialog.locator(".crawl-badges")).toHaveCount(0);
   await page.screenshot({ path: info.outputPath("team-dialog.png") });
@@ -393,11 +393,8 @@ test("@release a type matchup shows before the roll, and the roll keeps the wors
   await chip.click();
   const dialog = page.getByRole("dialog", { name: "Type matchup" });
   await expect(dialog).toContainText("Charmander");
-  await expect(dialog).toContainText("Disadvantage");
-  // Both directions, in the games' words.
-  await expect(dialog).toContainText("Your Fire moves: not very effective");
   await expect(dialog).toContainText(
-    `${water.title}'s Water moves: super effective`,
+    `${water.title}'s Water moves are super effective against you!`,
   );
   await expect(dialog).toContainText("Roll twice and keep the worse.");
   await page.screenshot({ path: info.outputPath("matchup-dialog-320.png") });
@@ -447,7 +444,7 @@ test("a Tera Orb turns a bad matchup around for one battle", async ({
   await page.locator(".tag-edge").click();
   const dialog = page.getByRole("dialog", { name: "Type matchup" });
   await expect(dialog).toContainText("Terastallized!");
-  await expect(dialog).toContainText("Your Grass moves: super effective");
+  await expect(dialog).toContainText("Your Grass moves are super effective!");
   await expect(dialog).toContainText("Charmander (Tera)");
   await expect(dialog).toContainText("Grass");
   await expect(dialog).toContainText("Roll twice and keep the better.");

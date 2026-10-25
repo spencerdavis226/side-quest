@@ -168,7 +168,7 @@ export const starters: CardDefinition[] = [
         title: "Marshtomp",
         omen: { hearts: -4, hurt: { boss: -1 }, loot: ["shield"] },
       },
-      { title: "Swampert", omen: { hurt: { boss: -1 }, roll: { boss: 1 } } },
+      { title: "Swampert", omen: { hearts: -2, hurt: { boss: -1 } } },
     ],
   ),
   // Huge HP, too proud to finish bosses quickly until it grows up.
@@ -360,8 +360,8 @@ export const starters: CardDefinition[] = [
     "cubone",
     "Cubone",
     "Cubone chose you. Don't ask about the skull.",
-    { hearts: -1, loot: ["die"] },
-    [{ title: "Marowak", omen: { hearts: 1, bossHits: -1 } }],
+    { hearts: -2, loot: ["die"] },
+    [{ title: "Marowak", omen: { bossHits: -1 } }],
   ),
   // Corviknight Taxi: carries your drinks to someone else.
   starter(
@@ -508,8 +508,8 @@ export const starters: CardDefinition[] = [
     "sunkern",
     "Sunkern",
     "Sunkern chose you. It is a seed with a face.",
-    { hearts: 2 },
-    [{ title: "Sunflora", omen: { hearts: 3 } }],
+    { hearts: 3 },
+    [{ title: "Sunflora", omen: { hearts: 4 } }],
   ),
   // Sleepy: slow to finish anything, but it naps it off.
   starter(

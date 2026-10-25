@@ -4,6 +4,7 @@ import {
   cardMatchup,
   createSession,
   currentCard,
+  hitsNeeded,
   settleBattle,
   spendLoot,
   type Random,
@@ -113,10 +114,12 @@ describe("type chart", () => {
       );
   });
 
-  it("gives Grass the edge on Electric because it resists, not because it hits harder", () => {
+  it("gives no edge for a resistance alone: Grass against Electric is even", () => {
     expect(effectiveness("grass", "electric")).toBe(1);
     expect(effectiveness("electric", "grass")).toBe(0.5);
-    expect(matchup("grass", "electric").edge).toBe("advantage");
+    expect(matchup("grass", "electric").edge).toBeNull();
+    // Fire against Dragon too: Dragon resists Fire, but hits it normally.
+    expect(matchup("fire", "dragon").edge).toBeNull();
   });
 
   it("reads the games' chart", () => {
@@ -128,7 +131,7 @@ describe("type chart", () => {
     expect(effectiveness("steel", "fairy")).toBe(2);
   });
 
-  it("gives the edge to whoever hits the other harder", () => {
+  it("gives the edge to whichever side is super effective (owner: simpler rules)", () => {
     expect(matchup("fire", "grass").edge).toBe("advantage");
     expect(matchup("fire", "water").edge).toBe("disadvantage");
     expect(matchup("water", "water").edge).toBeNull();
@@ -138,6 +141,9 @@ describe("type chart", () => {
     expect(matchup("normal", "fighting").edge).toBe("disadvantage");
     // Neither can touch the other.
     expect(matchup("normal", "ghost").edge).toBeNull();
+    // Both super effective on each other: even.
+    expect(matchup("dragon", "dragon").edge).toBeNull();
+    expect(matchup("ghost", "ghost").edge).toBeNull();
   });
 
   it("sends out the Striaton brother who beats the starter", () => {
@@ -147,7 +153,11 @@ describe("type chart", () => {
     });
     expect(matchup("water", "trio").theirs).toBe("grass");
     expect(matchup("grass", "trio").theirs).toBe("fire");
-    expect(matchup("electric", "trio").theirs).toBe("grass");
+    // Nobody in the trio beats Electric; Cilan takes it least badly.
+    expect(matchup("electric", "trio")).toMatchObject({
+      theirs: "grass",
+      edge: null,
+    });
     // Nobody beats Normal: the first brother steps up, evenly matched.
     expect(matchup("normal", "trio")).toMatchObject({
       theirs: "fire",
@@ -158,8 +168,8 @@ describe("type chart", () => {
   it("lists what a type is strong and weak against", () => {
     const fire = typeEdges("fire");
     // Fairy too: Fire shrugs off its moves.
-    expect(fire.strong).toEqual(["grass", "ice", "bug", "steel", "fairy"]);
-    expect(fire.weak).toEqual(["water", "ground", "rock", "dragon"]);
+    expect(fire.strong).toEqual(["grass", "ice", "bug", "steel"]);
+    expect(fire.weak).toEqual(["water", "ground", "rock"]);
     expect(typeEdges("normal").strong).toEqual([]);
   });
 });
@@ -296,5 +306,20 @@ describe("type edge in a League run", () => {
     expect(s.quest!.party!.tera).toBe(plaques.id);
     const after = settleBattle(s, false);
     expect(after.quest!.party!.tera).toBeUndefined();
+  });
+
+  it("Marowak's Bonemerang speeds up big bosses but never skips a gym", () => {
+    const s = facing("cubone", grass.id);
+    s.quest!.party!.form = 1; // Marowak: bosses take 1 fewer hit
+    expect(hitsNeeded(s.quest, grass)).toBe(1); // a gym: still one hit
+    const champion = cards.find((c) =>
+      c.id.startsWith("pokemon.league-champion-"),
+    )!;
+    expect(hitsNeeded(s.quest, champion)).toBe(champion.hits! - 1);
+    // A lost gym battle is dealt again, not put aside as beaten.
+    const gym = facing("cubone", plaques.id);
+    gym.quest!.party!.form = 1;
+    const lost = settleBattle(gym, false);
+    expect(lost.quest!.step).toBe(gym.quest!.step);
   });
 });

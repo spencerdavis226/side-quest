@@ -26,28 +26,28 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | California Sober | `house.sheet-004` | sip | Get pitted and smoke something, then drink 1d6 water. Else, take a shot. | 1d6 — Drink {total} water. |
 | ☐ | The Game Giveth | `house.sheet-006` | sip | Give 3 drinks. If "The Game Taketh" was already played, multiply by 1d6. |  |
 | ☐ | The Game Taketh | `house.sheet-007` | sip | Take 3 drinks. If "The Game Giveth" was already played, multiply by 1d6. |  |
-| ☐ | Never Have I Ever | `house.sheet-026` | sip | Drink if you've been to Mexico. Drink 3 if you drank the water and blamed the tequila |  |
+| ☐ | Tequila Water | `house.sheet-026` | sip | Never have I ever been to Mexico. Drink if you have, 3 if you drank the water and blamed tequila |  |
 | ☐ | Michael Mouse | `house.sheet-027` | sip | How many distinct Disney parks have you been to? Drink that many |  |
 | ☐ | Batrick | `house.sheet-031` | sip | Take a (rabies) shot |  |
 | ☐ | Same | `house.sheet-036` | sip | You called Same, give d6 | 1d6 — Give {total}. |
 | ☐ | Same | `house.sheet-037` | sip | You didn't call Same, take d6 | 1d6 — Drink {total}. |
 | ☐ | The Rock | `house.sheet-038` | sip | Finish your drink, you don't get to pass it along |  |
 | ☐ | Drink, bitch | `house.sheet-045` | sip | If you drank on the last card, drink again, bitch |  |
-| ☐ | Never Have I Ever | `house.sheet-050` | sip | Drink if you've flown First Class. Drink 3 if you've joined the mile-high club |  |
+| ☐ | Mile High | `house.sheet-050` | sip | Never have I ever flown First Class. Drink if you have, 3 if you've joined the mile-high club |  |
 | ☐ | The Cino | `house.sheet-051` | sip | Drink if you've lost money in the casino |  |
 | ☐ | Could ya just | `house.sheet-055` | sip | Drink 1 |  |
 | ☐ | Bu-bu-buff… | `house.sheet-059` | sip | Drink 1d6 for almost getting buffaloed | 1d6 — Drink {total}. |
 | ☐ | Straight to jail | `house.sheet-063` | sip | Finish your drink |  |
 | ☐ | Singles | `house.sheet-064` | sip | Drink if you're single. Drink 2 more if it's "by choice" |  |
 | ☐ | Couples | `house.sheet-065` | sip | Take 1 drink for every year you've been in a relationship |  |
-| ☐ | Never Have I Ever | `house.sheet-067` | sip | Drink if you've been to Germany. Drink 3 if you pissed in public there |  |
-| ☐ | Never Have I Ever | `house.sheet-068` | sip | Drink if you've been to Ireland. Finish your drink if you came back sober |  |
-| ☐ | Never Have I Ever | `house.sheet-069` | sip | Drink if you've been to Italy. Drink 3 if you hooked up with a waiter |  |
-| ☐ | Never Have I Ever | `house.sheet-070` | sip | Drink if you've been to Paris. Drink 3 if you got pickpocketed or dumped there |  |
-| ☐ | Never Have I Ever | `house.sheet-071` | sip | Drink if you've been to Canada. Drink 3 if it was just to drink legally at 19 |  |
-| ☐ | Never Have I Ever | `house.sheet-072` | sip | Drink if you've been to Thailand. Drink 3 if you can't tell us what happened there |  |
-| ☐ | Never Have I Ever | `house.sheet-073` | sip | Drink if you've been to Japan. Drink 3 if a vending machine sold you something weird |  |
-| ☐ | Never Have I Ever | `house.sheet-074` | sip | Drink if you've literally shit your pants. Drink 2 if you've shit yourself at the cabin. |  |
+| ☐ | Bier Garden | `house.sheet-067` | sip | Never have I ever been to Germany. Drink if you have, 3 if you pissed in public there |  |
+| ☐ | Luck of the Irish | `house.sheet-068` | sip | Never have I ever been to Ireland. Drink if you have, finish your drink if you came back sober |  |
+| ☐ | Table for Two | `house.sheet-069` | sip | Never have I ever been to Italy. Drink if you have, 3 if you hooked up with a waiter |  |
+| ☐ | City of Light Fingers | `house.sheet-070` | sip | Never have I ever been to Paris. Drink if you have, 3 if you got pickpocketed or dumped there |  |
+| ☐ | Legal at 19 | `house.sheet-071` | sip | Never have I ever been to Canada. Drink if you have, 3 if it was to drink legally at 19 |  |
+| ☐ | Lost in Thailand | `house.sheet-072` | sip | Never have I ever been to Thailand. Drink if you have, 3 if you can't say what happened there |  |
+| ☐ | Vending Roulette | `house.sheet-073` | sip | Never have I ever been to Japan. Drink if you have, 3 if a vending machine sold you something weird |  |
+| ☐ | Code Brown | `house.sheet-074` | sip | Never have I ever shit my pants. Drink if you have, 2 if you've shit yourself at the cabin. |  |
 | ☐ | Split the G | `house.sheet-078` | sip | Congrats ya nailed it, give 1d6 drinks | 1d6 — Give {total}. |
 | ☐ | Split the G | `house.sheet-079` | sip | You fucking blew it, drink 1d6 drinks | 1d6 — Drink {total}. |
 | ☐ | Blessing & a Curse | `house.sheet-094` | sip | Give 1d6 drinks and take a different 1d6 drinks | 2d6 — Give {first} and drink {second}. |
@@ -106,10 +106,10 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Damn, you're old | `house.sheet-061` | group | Oldest takes a drink and tells us what sex was like before phones |  |
 | ☐ | Big Baby | `house.sheet-076` | group | Drink if you're the youngest, then explain one slang word to the oldest |  |
 | ☐ | GOALLLL | `house.sheet-082` | group | Everyone drinks while the person on your left says GOAAAAALLLLL |  |
-| ☐ | Call Out | `house.sheet-083` | group | Who would overpack for a 1 night stay? They drink |  |
-| ☐ | Call Out | `house.sheet-084` | group | Who reads the group chat but never replies? They drink |  |
-| ☐ | Call Out | `house.sheet-085` | group | Who uses their notes app the most? They drink |  |
-| ☐ | Call Out | `house.sheet-092` | group | Who is most likely to suggest shots? They drink (a shot if they're not scared) |  |
+| ☐ | Overpacker | `house.sheet-083` | group | Who would overpack for a 1 night stay? They drink |  |
+| ☐ | Left on Read | `house.sheet-084` | group | Who reads the group chat but never replies? They drink |  |
+| ☐ | Notes App Hoarder | `house.sheet-085` | group | Who uses their notes app the most? They drink |  |
+| ☐ | Shot Starter | `house.sheet-092` | group | Who is most likely to suggest shots? They drink (a shot if they're not scared) |  |
 | ☐ | Thanos Snap | `cabin.thanos-snap` | group | Pick half the table. Everyone you didn't pick drinks 2. |  |
 | ☐ | Corporate Meeting | `cabin.corporate-meeting` | group | This could have been an email. Anyone working tomorrow drinks 3. |  |
 | ☐ | Café d'Époque | `cabin.cafe-depoque` | group | Everyone here is a total skank. Now you are too. Hit on someone; you both drink 2. |  |
@@ -123,7 +123,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Ski Team | `cabin.ski-team` | group | Skier? Skiers drink 2. Snowboarder? Snowboarders drink 2. Neither? Drink 4 and grow up. |  |
 | ☐ | Categories | `core.categories` | category | Pick a category. Clockwise, name one each. First repeat or blank drinks 3. |  |
 | ☐ | Rhyme Time | `core.rhyme-time` | category | Pick a word. Clockwise, rhyme it. First bad rhyme or blank drinks 3. |  |
-| ☐ | Never Have I Ever | `core.never-have-i` | category | Say one. Make it dirty. Anyone who has drinks 2. |  |
+| ☐ | Dirty Confession | `core.never-have-i` | category | Never have I ever... Finish the sentence. Make it dirty. Anyone who has drinks 2. |  |
 | ☐ | Dirty Story | `core.story-time` | category | Clockwise, build an erotic story one word at a time. First to stall or laugh drinks 2. |  |
 | ☐ | Bad Baby Names | `core.bad-baby-names` | category | Clockwise, name terrible baby names. First repeat or blank drinks 3. |  |
 | ☐ | Ex-Cuses | `core.ex-cuses` | category | Clockwise, name reasons you dumped someone. First repeat or blank drinks 3. |  |
@@ -132,19 +132,19 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Kama Sutra | `core.kama-sutra` | category | Clockwise, name sex positions; made-up ones count. First repeat or blank drinks 3. |  |
 | ☐ | Pillow Talk | `core.pillow-talk` | category | Clockwise, name things you should never say during sex. First repeat or blank drinks 3. |  |
 | ☐ | Story Time | `house.sheet-018` | category | Say a word. The next person repeats and adds on. Loser drinks 4. |  |
-| ☐ | Categories | `house.sheet-021` | category | Disney Movies |  |
-| ☐ | Categories | `house.sheet-022` | category | Taco Bell menu items |  |
-| ☐ | Categories | `house.sheet-025` | category | Things you lick |  |
-| ☐ | Categories | `house.sheet-033` | category | Trilogy movies |  |
-| ☐ | Categories | `house.sheet-035` | category | Countries |  |
-| ☐ | Categories | `house.sheet-041` | category | Hockey players |  |
-| ☐ | Categories | `house.sheet-052` | category | Name those Pokémon |  |
-| ☐ | Categories | `house.sheet-066` | category | Reality TV series |  |
-| ☐ | Categories | `house.sheet-086` | category | Animated movies |  |
-| ☐ | Categories | `house.sheet-087` | category | Sales at Freddies |  |
-| ☐ | Categories | `house.sheet-095` | category | Things in a kitchen |  |
-| ☐ | Categories | `house.sheet-103` | category | US Capitals |  |
-| ☐ | Categories | `house.sheet-105` | category | Things you should never say to a police officer |  |
+| ☐ | Disney Marathon | `house.sheet-021` | category | Name Disney movies, one each, clockwise. First repeat or blank drinks 3. |  |
+| ☐ | Fourth Meal | `house.sheet-022` | category | Name Taco Bell menu items, one each, clockwise. First repeat or blank drinks 3. |  |
+| ☐ | Lick It | `house.sheet-025` | category | Name things you lick, one each, clockwise. First repeat or blank drinks 3. |  |
+| ☐ | Threequel | `house.sheet-033` | category | Name trilogy movies, one each, clockwise. First repeat or blank drinks 3. |  |
+| ☐ | World Tour | `house.sheet-035` | category | Name countries, one each, clockwise. First repeat or blank drinks 3. |  |
+| ☐ | Hat Trick | `house.sheet-041` | category | Name hockey players, one each, clockwise. First repeat or blank drinks 3. |  |
+| ☐ | Gotta Name 'Em | `house.sheet-052` | category | Name Pokémon, one each, clockwise. First repeat or blank drinks 3. |  |
+| ☐ | Reality Check | `house.sheet-066` | category | Name reality TV series, one each, clockwise. First repeat or blank drinks 3. |  |
+| ☐ | Saturday Morning | `house.sheet-086` | category | Name animated movies, one each, clockwise. First repeat or blank drinks 3. |  |
+| ☐ | Freddies Run | `house.sheet-087` | category | Name things on sale at Freddies, one each, clockwise. First repeat or blank drinks 3. |  |
+| ☐ | Kitchen Raid | `house.sheet-095` | category | Name things in a kitchen, one each, clockwise. First repeat or blank drinks 3. |  |
+| ☐ | Capital Idea | `house.sheet-103` | category | Name US state capitals, one each, clockwise. First repeat or blank drinks 3. |  |
+| ☐ | Know Your Rights | `house.sheet-105` | category | Name things you'd never say to a cop, one each clockwise. First repeat or blank drinks 3. |  |
 | ☐ | Dice Tax | `core.dice-tax` | challenge | The IRS is auditing your drink. Roll d6. | 1d6 — 1-2: Clean books. Drink 1. 3-4: Creative accounting. Drink 2. 5-6: Fraud. Drink 4 and open your banking app for the table. |
 | ☐ | Give a Shit | `core.give-a-shit` | challenge | Roll d6. Give that many to whoever you'd least want to see naked. | 1d6 — Give {total} to whoever you'd least want to see naked. |
 | ☐ | Big Dick Energy | `core.high-roller` | challenge | Roll d6. That's your size. | 1d6 — 1-2: Two inches. Drink 4 and sit quietly. 3-4: Average. Drink 2. Nobody's impressed. 5-6: Hung. Give 5 and adjust yourself. |
@@ -189,7 +189,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Medusa | `house.sheet-014` | challenge | The first person you make eye contact with must get stoned. |  |
 | ☐ | Send Help | `house.sheet-017` | challenge | Convince someone to drink 1. Else, take a shot. |  |
 | ☐ | Headache Simulator | `house.sheet-023` | challenge | Wear Becca's glasses until your next turn. Else drink 2d6 | 2d6 — Drink {total}. |
-| ☐ | FMK | `house.sheet-029` | challenge | Blink-182, Green Day, Weezer |  |
+| ☐ | Pop Punk FMK | `house.sheet-029` | challenge | Fuck, marry, kill: Blink-182, Green Day, Weezer. Defend your picks to the table. |  |
 | ☐ | Fiend | `house.sheet-046` | challenge | Pop in a fresh Zyn, Velo, nic pouch |  |
 | ☐ | Battery Life | `house.sheet-047` | challenge | Closest guess to your phone's battery gives 2 drinks |  |
 | ☐ | Rock, Paper, Scissors | `house.sheet-048` | challenge | Challenge a player, loser drinks 1d6 | 1d6 — Loser drinks {total}. |
@@ -265,9 +265,9 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Rawr XD | `house.sheet-032` | rule | You have to use T-Rex arms until your next turn |  |
 | ☐ | This Sucks | `house.sheet-039` | rule | Buffalo switches hands for the rest of the game |  |
 | ☐ | Goof Dog | `house.sheet-091` | rule | Keep your eyes as open as possible until your next turn |  |
-| ☐ | Da Rulez | `house.sheet-097` | rule | Until your next turn, you can't use your hands to drink |  |
-| ☐ | Da Rulez | `house.sheet-099` | rule | Until your next turn, the next person to say "beer" drinks |  |
-| ☐ | Da Rulez | `house.sheet-101` | rule | Until your next turn, you have to peel your drink like a banana |  |
+| ☐ | Hands Off | `house.sheet-097` | rule | Until your next turn, you can't use your hands to drink |  |
+| ☐ | Magic Word | `house.sheet-099` | rule | Until your next turn, the next person to say "beer" drinks |  |
+| ☐ | Banana Peel | `house.sheet-101` | rule | Until your next turn, you have to peel your drink like a banana |  |
 | ☐ | Bitch Babe | `cabin.bitch-babe` | rule | Give 2. Until your next turn, call your left neighbor babe and everyone else bitch. |  |
 | ☐ | Freddie's Run | `cabin.freddies-run` | rule | Until your next turn, fetch anything anyone asks for. Refuse: drink 3. |  |
 | ☐ | I'm the Captain Now | `cabin.im-the-captain-now` | rule | Reverse the turn order for the rest of the game, then take another card now. |  |
@@ -821,7 +821,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Fuecoco | `pokemon.starter-fuecoco` | rule | Fuecoco chose you because you had snacks. Starts with 2 Potions. |  |
 | ☐ | Spheal | `pokemon.starter-spheal` | rule | Spheal chose you. Spheal with it. Max HP 19. +1 to route battle d20s. |  |
 | ☐ | Riolu | `pokemon.starter-riolu` | rule | Riolu chose you. It can read your aura. Max HP 16. Natural 20 on a 19 or 20. |  |
-| ☐ | Cubone | `pokemon.starter-cubone` | rule | Cubone chose you. Don't ask about the skull. Max HP 16. Starts with an X Attack. |  |
+| ☐ | Cubone | `pokemon.starter-cubone` | rule | Cubone chose you. Don't ask about the skull. Max HP 15. Starts with an X Attack. |  |
 | ☐ | Rookidee | `pokemon.starter-rookidee` | rule | Rookidee pecked your phone. Max HP 19. +1 to route battle d20s. Starts with a Baton Pass. |  |
 | ☐ | Caterpie | `pokemon.starter-caterpie` | rule | Caterpie chose you. It wants to be a butterfly. Max HP 15. Starts with a Rare Candy. |  |
 | ☐ | Larvitar | `pokemon.starter-larvitar` | rule | Larvitar chose you. It ate a mountain on the way. Max HP 20. |  |
@@ -832,7 +832,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Bidoof | `pokemon.starter-bidoof` | rule | Nobody chooses Bidoof. Max HP 16. Every 20 is rerolled. The bag holds 2. |  |
 | ☐ | Magikarp | `pokemon.starter-magikarp` | rule | Magikarp chose you. It used Splash. Nothing happened. Max HP 15. −1 to every battle d20. |  |
 | ☐ | Togepi | `pokemon.starter-togepi` | rule | Togepi chose you. It does nothing, but it's very happy to be here. |  |
-| ☐ | Sunkern | `pokemon.starter-sunkern` | rule | Sunkern chose you. It is a seed with a face. Max HP 19. |  |
+| ☐ | Sunkern | `pokemon.starter-sunkern` | rule | Sunkern chose you. It is a seed with a face. Max HP 20. |  |
 | ☐ | Drowzee | `pokemon.starter-drowzee` | rule | Drowzee chose you, yawning. Now you're yawning. Every heal heals 2 more. Bosses take 1 more hit. |  |
 | ☐ | Zubat | `pokemon.starter-zubat` | rule | Zubat chose you. It flew into a wall doing it. Max HP 20. Natural 1 on a 1 or 2. |  |
 

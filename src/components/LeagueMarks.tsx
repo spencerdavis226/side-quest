@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import type { CardDefinition, Edge, SessionState } from "../game/types";
 import { currentCard, questRecord } from "../game/engine";
-import { effectiveness, typeEdges, type Matchup } from "../game/matchup";
+import { typeEdges, type Matchup } from "../game/matchup";
 import { asset } from "../presentation/theme";
 import {
   badgeType,
@@ -44,18 +44,8 @@ export function EdgeMark({
   );
 }
 
-/** A move's effect in the games' words. */
-const hitWords = (multiplier: number) =>
-  multiplier >= 2
-    ? "super effective"
-    : multiplier === 1
-      ? "normal damage"
-      : multiplier > 0
-        ? "not very effective"
-        : "no effect";
-
-/** The strip's matchup dialog: who meets whom, how hard each side hits,
- * and what the edge does. */
+/** The strip's matchup dialog: who meets whom, whose moves are super
+ * effective, and what the edge does. */
 export function MatchupPanel({
   matchup,
   card,
@@ -83,21 +73,11 @@ export function MatchupPanel({
         {side(matchup.theirs, brother ?? card.title)}
       </div>
       <p className="matchup-verdict">
-        {matchup.tera ? "Terastallized!" : good ? "Advantage" : "Disadvantage"}
+        {matchup.tera ? "Terastallized! " : ""}
+        {good
+          ? `Your ${pokemonTypes[matchup.mine].name} moves are super effective!`
+          : `${brother ?? card.title}'s ${pokemonTypes[matchup.theirs].name} moves are super effective against you!`}
       </p>
-      {/* Both directions in the games' words, so an edge that comes from
-          taking less (Grass against Electric) never reads as "super
-          effective" (owner report, 2026-10-25). */}
-      <ul className="matchup-hits">
-        <li>
-          Your {pokemonTypes[matchup.mine].name} moves:{" "}
-          <b>{hitWords(effectiveness(matchup.mine, matchup.theirs))}</b>
-        </li>
-        <li>
-          {brother ?? card.title}'s {pokemonTypes[matchup.theirs].name} moves:{" "}
-          <b>{hitWords(effectiveness(matchup.theirs, matchup.mine))}</b>
-        </li>
-      </ul>
       <p className="matchup-effect">
         {card.dice
           ? good
