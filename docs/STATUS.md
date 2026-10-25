@@ -2,6 +2,13 @@
 
 Updated 2026-10-25. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Most Likely To titles (2026-10-25; owner; not committed)
+
+The owner: the standing rule is that the whole instruction lives in the card body, and "Most Likely To" in the title left bodies like "Become an influencer." unreadable without it. All 250 vote cards now have their own flavor title (unique, 22 characters or fewer) and a body that holds the full instruction: "Most likely to become an influencer? Point on three. Most votes drinks 2." The build caps a rule at 100 characters, so the lead is "Most likely to ...?" and three long prompts lost a few words (the Ring camera walk of shame, talking shit about someone right behind them). Card IDs and payouts are unchanged (`src/content/likely.ts`: each prompt is `[title, prompt, payout?]`). `tests/workshop.test.ts` now checks the body pattern and that titles are unique; `docs/CARD_REVIEW.md` and `card-review.csv` regenerated.
+
+- **Verification:** `npm test` 282 passed; lint, typecheck, `validate-content` and Prettier clean. Title fit in the teal band not measured in a browser (longest titles are 22 characters, like existing ones).
+- **Not changed:** other packs whose title is only a mode name but whose body is complete (Paranoia, Secret Mission, Fact or Cap, Forehead, No Saying It, Act It Out, Three in Five, Hot Potato, Secret Rule). The House sheet's "Same" (036, 037) and "Split the G" (078, 079) bodies still lean on the title ("You called Same, give d6"); left as supplied pending the owner.
+
 ## League types (2026-10-25; owner; branch `claude/league-types`, PR #35)
 
 The owner asked for Pokémon types: one type per starter for the run, a type on every League card where it makes sense, advantage against types the starter beats and disadvantage against types that beat it, shown ahead of the roll. They approved every recommendation in the plan (both-ways matchups, ±1 HP on plaque fights, d6 sets rolled twice, a starter's first type for the run, rivals by their ace), then asked for at least one starter of every type, a new item if it adds no bloat, balance through more opponent cards rather than perks ("fun and flavor are drastically more important than balance"), and a cleaner UI: "a logo or something", not banners and text.
