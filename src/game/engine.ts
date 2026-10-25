@@ -360,7 +360,12 @@ export function wantedBoss(quest: QuestState): CardDefinition | undefined {
  * adventurer), tonight's omen, a landing, a boss, a lone set piece (the
  * queue, closing time, the League's rival), or a floor of rooms. */
 export type StageKind =
-  "adventurer" | "omen" | "rest" | "boss" | "set-piece" | "floor";
+  | "adventurer"
+  | "omen"
+  | "rest"
+  | "boss"
+  | "set-piece"
+  | "floor";
 export function stageKind(stage: QuestState["stages"][number]): StageKind {
   const { cards, pick } = stage;
   if (cards.every((c) => c.encounter === "omen"))
@@ -744,6 +749,9 @@ const lostRoll = (s: SessionState, card: CardDefinition) =>
   !!card.dice &&
   !!s.roll?.returned &&
   !rollWins(card.dice, s.roll.values, s.roll);
+/** What a draught (Potion) heals, and what it costs the drawer. */
+export const DRAUGHT_HEAL = 2;
+export const DRAUGHT_DRINKS = 4;
 /** Whether the party can use the satchel's item `item` now. */
 export function canUseLoot(s: SessionState, item: Loot): boolean {
   const party = s.quest?.party;
@@ -806,7 +814,11 @@ export function spendLoot(
   const used = { ...s, quest: { ...s.quest!, party: { ...party, loot } } };
   switch (item) {
     case "draught":
-      used.quest.party.hearts += 1;
+      // Drink 4, heal 2 (owner, 2026-10-25), never past the maximum.
+      used.quest.party.hearts = Math.min(
+        party.max,
+        party.hearts + DRAUGHT_HEAL,
+      );
       return used;
     case "die":
       return { ...used, roll: null };

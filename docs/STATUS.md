@@ -17,6 +17,12 @@ The owner asked for Pokémon types: one type per starter for the run, a type on 
 - **Verification**: `npm test` 282 passed; `npm run test:balance` 8 passed (League 19.6%, Pub Crawl 26.9% unchanged); lint, typecheck and Prettier clean on touched files; `BASE_PATH=/side-quest/ npm run build` passed (budgets: 120.1 KiB initial, no card text in it). Chromium (local): `@release` 44 passed; `quest.spec.ts` 17 passed, including the every-League-card fit sweep (5.4 min alone). WebKit not run locally: the container cannot download it (Playwright CDN blocked); CI runs the release suite in WebKit. Screenshots judged at 320 px in Chromium only.
 - **Not done / risks**: no device check (`DEVICE_CHECKLIST.md`). Balance is measured only by the simulated table, and several starters sit at 11–13%, near the 10% floor, so a later League change may need a nudge. WebKit not run locally.
 
+## Potions and the Quaff (2026-10-25; owner; not pushed)
+
+- **Potion / Healing Draught:** drink 4, heal 2 (was a fresh, full drink for 1), capped at max (`DRAUGHT_HEAL`, `DRAUGHT_DRINKS` in `src/game/engine.ts`; item text in `crawlTheme.ts`). Same item in both crawls.
+- **Quaff:** 4 drinks (was 6; `QUAFF_DRINKS` in `src/content/dungeon/shared.ts`).
+- **Verification:** `npm test` 261 passed (draught test now heals 2 and checks the cap); `npm run test:balance` 8 passed; lint and typecheck passed. Browser specs not run.
+
 ## Home Screen icon (2026-10-24; owner request; not pushed)
 
 - The bezel is gone: the painted tankard (`assets/source/tankard.png`, the same art as before) now sits on a flat teal gradient (the frame's teal) with a light sheen and a soft shadow. `scripts/icons.ts` (`npm run generate:icons`) writes the four PNGs in `public/`. Opaque square, no rounding (iOS masks it); the tankard fills 74% of the side, 60% in `icon-maskable.png` so Android's circle crop keeps it whole. (A flat silhouette version was drafted first; the owner chose the painted tankard.)

@@ -267,7 +267,7 @@ test("@release the Quaff rerolls a lost fight for drinks, once until a boss fall
       2,
     ),
   );
-  const quaff = page.getByRole("button", { name: /^Quaff: drink 6/ });
+  const quaff = page.getByRole("button", { name: /^Quaff: drink 4/ });
   await expect(quaff).toBeVisible();
   await expect(
     page.locator(".card-choice.items .card-choice-option"),
@@ -572,7 +572,7 @@ test("the party dialog lays out the run: adventurer, boons, jinx and the Cup", a
   const satchel = page.getByRole("dialog", { name: "Satchel" });
   await expect(satchel.locator(".satchel-slot")).toHaveCount(4);
   await satchel.getByRole("button", { name: "Drink" }).click();
-  await expect(meter(page)).toHaveAccessibleName(/^Hearts: 6 of /);
+  await expect(meter(page)).toHaveAccessibleName(/^Hearts: 7 of /);
   await expect(satchel.getByRole("button", { name: "Drink" })).toHaveCount(0);
   // How to play lives in the pause menu, not in these dialogs.
   await expect(
@@ -584,7 +584,7 @@ test("the party dialog lays out the run: adventurer, boons, jinx and the Cup", a
   const guide = page.getByRole("dialog", { name: "How to play" });
   await expect(guide.locator(".guide-rows li")).toHaveCount(8);
   await expect(guide.locator(".guide-rows")).toContainText(
-    "Lost a d20? Drink 6 to roll it again.",
+    "Lost a d20? Drink 4 to roll it again.",
   );
   await expect(guide.locator(".crawl-legend dd")).toHaveCount(8);
   await expect(guide.locator(".crawl-legend")).toContainText(

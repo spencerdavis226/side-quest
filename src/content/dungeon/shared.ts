@@ -75,7 +75,7 @@ export const LANDING_HEAL = 3;
 export const LEVEL_DRINK = 3;
 /** The party's shared hearts before the adventurer, and the Quaff's price. */
 export const PARTY_HEARTS = 11;
-export const QUAFF_DRINKS = 6;
+export const QUAFF_DRINKS = 4;
 
 /** A d20 table: below `need` loses, `need` and up wins. A `crit` replaces
  * the win on a natural 20, a `fumble` the loss on a natural 1. */

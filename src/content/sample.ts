@@ -169,9 +169,9 @@ export const sampleCards: CardDefinition[] = [
   ),
   card(
     "never-have-i",
-    "Never Have I Ever",
+    "Dirty Confession",
     "category",
-    "Say one. Make it dirty. Anyone who has drinks 2.",
+    "Never have I ever... Finish the sentence. Make it dirty. Anyone who has drinks 2.",
   ),
   card(
     "rulemaster",

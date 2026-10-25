@@ -1,4 +1,5 @@
 import type { Curse, Loot, QuestStage } from "../game/types";
+import { DRAUGHT_DRINKS, DRAUGHT_HEAL } from "../game/engine";
 import {
   dungeonOmenWords,
   leagueOmenWords,
@@ -144,7 +145,7 @@ const dungeon: CrawlTheme = {
   loot: {
     draught: {
       name: "Healing Draught",
-      does: "Down a fresh, full drink: +1 heart",
+      does: `Drink ${DRAUGHT_DRINKS}: +${DRAUGHT_HEAL} hearts`,
     },
     shield: { name: "Coaster Shield", does: "Blocks the next heart loss" },
     die: { name: "Loaded Die", does: "Roll a lost fight again" },
@@ -309,7 +310,10 @@ const dungeon: CrawlTheme = {
 // pack's quest gains `party`).
 const league: CrawlTheme = {
   loot: {
-    draught: { name: "Potion", does: "Down a fresh, full drink: +1 HP" },
+    draught: {
+      name: "Potion",
+      does: `Drink ${DRAUGHT_DRINKS}: +${DRAUGHT_HEAL} HP`,
+    },
     shield: { name: "Protect", does: "Blocks the next HP loss" },
     die: { name: "X Attack", does: "Roll a lost battle again" },
     smoke: {
