@@ -1102,6 +1102,19 @@
 .matchup-panel.edge-disadvantage .matchup-verdict {
   color: #ff8a7e;
 }
+.matchup-hits {
+  display: grid;
+  gap: 2px;
+  margin: 2px 0 4px;
+  padding: 0;
+  list-style: none;
+  color: #c9b893;
+  font-size: 0.9rem;
+}
+.matchup-hits b {
+  color: #fff0cf;
+  font-weight: 700;
+}
 .matchup-effect {
   margin: 0;
   color: #e9d7b0;

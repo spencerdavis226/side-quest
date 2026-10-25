@@ -60,7 +60,7 @@ lines.push(
   "",
   `Typed fights met per run, weighted by how often each is dealt (about ${Math.round(typedPerRun())} in all), by the starter's type.`,
   "",
-  "| Starter type | Starters | Super effective | Not very effective |",
+  "| Starter type | Starters | Advantage | Disadvantage |",
   "| --- | --- | --- | --- |",
 );
 for (const t of starterTypes) {

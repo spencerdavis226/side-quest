@@ -317,7 +317,7 @@ export function CrawlStrip({
       {matchup?.edge &&
         chip(
           `tag-edge edge-${matchup.edge}`,
-          `${matchup.tera ? "Terastallized" : matchup.edge === "advantage" ? "Super effective" : "Not very effective"}: ${matchup.edge}`,
+          `${matchup.tera ? "Terastallized: advantage" : matchup.edge === "advantage" ? "Type advantage" : "Type disadvantage"}`,
           "matchup",
           <EdgeMark edge={matchup.edge} />,
         )}

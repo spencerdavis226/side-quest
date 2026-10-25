@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import type { CardDefinition, Edge, SessionState } from "../game/types";
 import { currentCard, questRecord } from "../game/engine";
-import { typeEdges, type Matchup } from "../game/matchup";
+import { effectiveness, typeEdges, type Matchup } from "../game/matchup";
 import { asset } from "../presentation/theme";
 import {
   badgeType,
@@ -44,7 +44,18 @@ export function EdgeMark({
   );
 }
 
-/** The strip's matchup dialog: who meets whom, and what the edge does. */
+/** A move's effect in the games' words. */
+const hitWords = (multiplier: number) =>
+  multiplier >= 2
+    ? "super effective"
+    : multiplier === 1
+      ? "normal damage"
+      : multiplier > 0
+        ? "not very effective"
+        : "no effect";
+
+/** The strip's matchup dialog: who meets whom, how hard each side hits,
+ * and what the edge does. */
 export function MatchupPanel({
   matchup,
   card,
@@ -72,12 +83,21 @@ export function MatchupPanel({
         {side(matchup.theirs, brother ?? card.title)}
       </div>
       <p className="matchup-verdict">
-        {matchup.tera
-          ? "Terastallized!"
-          : good
-            ? "Super effective!"
-            : "Not very effective…"}
+        {matchup.tera ? "Terastallized!" : good ? "Advantage" : "Disadvantage"}
       </p>
+      {/* Both directions in the games' words, so an edge that comes from
+          taking less (Grass against Electric) never reads as "super
+          effective" (owner report, 2026-10-25). */}
+      <ul className="matchup-hits">
+        <li>
+          Your {pokemonTypes[matchup.mine].name} moves:{" "}
+          <b>{hitWords(effectiveness(matchup.mine, matchup.theirs))}</b>
+        </li>
+        <li>
+          {brother ?? card.title}'s {pokemonTypes[matchup.theirs].name} moves:{" "}
+          <b>{hitWords(effectiveness(matchup.theirs, matchup.mine))}</b>
+        </li>
+      </ul>
       <p className="matchup-effect">
         {card.dice
           ? good

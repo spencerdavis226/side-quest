@@ -57,7 +57,68 @@ const rank = (card: CardDefinition, values: number[], roll: DiceRoll) =>
   (rollWins(card.dice!, values, roll) ? 1000 : 0) +
   readTotal(card.dice!, values, roll);
 
+// The games' type chart (Gen 6 onward), transcribed from Pokémon Showdown's
+// data (@pkmn/dex 0.10.11, Dex.forGen(9)) on 2026-10-25, after an owner
+// report questioned Grass against Electric. Rows attack, columns defend, in
+// this order: 2 super effective, h not very effective, 0 no effect.
+const ORDER = [
+  "normal",
+  "fire",
+  "water",
+  "grass",
+  "electric",
+  "ice",
+  "fighting",
+  "poison",
+  "ground",
+  "flying",
+  "psychic",
+  "bug",
+  "rock",
+  "ghost",
+  "dragon",
+  "dark",
+  "steel",
+  "fairy",
+] as const;
+const CANON: Record<(typeof ORDER)[number], string> = {
+  normal: "............h0..h.",
+  fire: ".hh2.2.....2h.h.2.",
+  water: ".2hh....2...2.h...",
+  grass: ".h2h...h2h.h2.h.h.",
+  electric: "..2hh...02....h...",
+  ice: ".hh2.h..22....2.h.",
+  fighting: "2....2.h.hhh20.22h",
+  poison: "...2...hh...hh..02",
+  ground: ".2.h2..2.0.h2...2.",
+  flying: "...2h.2....2h...h.",
+  psychic: "......22..h....0h.",
+  bug: ".h.2..hh.h2..h.2hh",
+  rock: ".2...2h.h2.2....h.",
+  ghost: "0.........2..2.h..",
+  dragon: "..............2.h0",
+  dark: "......h...2..2.h.h",
+  steel: ".hh.h2......2...h2",
+  fairy: ".h....2h......22h.",
+};
+
 describe("type chart", () => {
+  it("matches the games' chart in every one of its 324 cells", () => {
+    const multiplier = { ".": 1, "2": 2, h: 0.5, "0": 0 } as const;
+    for (const attack of ORDER)
+      ORDER.forEach((defend, i) =>
+        expect(effectiveness(attack, defend), `${attack} on ${defend}`).toBe(
+          multiplier[CANON[attack][i] as keyof typeof multiplier],
+        ),
+      );
+  });
+
+  it("gives Grass the edge on Electric because it resists, not because it hits harder", () => {
+    expect(effectiveness("grass", "electric")).toBe(1);
+    expect(effectiveness("electric", "grass")).toBe(0.5);
+    expect(matchup("grass", "electric").edge).toBe("advantage");
+  });
+
   it("reads the games' chart", () => {
     expect(effectiveness("fire", "grass")).toBe(2);
     expect(effectiveness("fire", "water")).toBe(0.5);
