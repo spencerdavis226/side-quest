@@ -20,6 +20,7 @@ import {
   canQuaff,
   canTakeOffer,
   currentCard,
+  cardMatchup,
   hitsNeeded,
   omenForm,
 } from "../game/engine";
@@ -322,6 +323,7 @@ export function Play({
                     party={session.quest?.party}
                     hits={hitsNeeded(session.quest, card)}
                     crawl={crawl}
+                    matchup={cardMatchup(session.quest, card)}
                   />
                 )}
               </span>

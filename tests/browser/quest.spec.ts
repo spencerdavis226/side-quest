@@ -191,7 +191,7 @@ test("@release a starter evolves on a route, and the banner says what changed", 
   await plaques(page).nth(0).click();
   const banner = page.locator(".evolution-banner");
   await expect(banner).toHaveText(
-    /What\? Charmander is evolving!\s*Charmeleon\s*Max HP 17 → 18\. Bosses now hurt as written\./,
+    /What\? Charmander is evolving!\s*Charmeleon\s*Max HP 17 → 18\.$/,
   );
   await page.screenshot({ path: info.outputPath("evolution-banner.png") });
   expect((await saved(page)).quest.party).toMatchObject({ form: 1 });
@@ -200,10 +200,17 @@ test("@release a starter evolves on a route, and the banner says what changed", 
   // Only the starter it is now, and its power.
   await expect(dialog.locator(".crawl-omen strong")).toHaveText("Charmeleon");
   await expect(dialog.locator(".crawl-omen .omen-rules")).toHaveText(
-    "Max HP 18. +2 to route battle d20s.",
+    "Max HP 19. +2 to route battle d20s.",
   );
-  // It wears its type, and the badges have their own dialog.
-  await expect(dialog.locator(".type-chip")).toHaveText(["Fire"]);
+  // It wears its type, with what it beats and what beats it, and the
+  // badges have their own dialog.
+  await expect(dialog.locator(".type-chips .type-chip")).toHaveText(["Fire"]);
+  await expect(dialog.locator(".type-edges")).toContainText(
+    "Strong againstGrassIceBugSteelFairy",
+  );
+  await expect(dialog.locator(".type-edges")).toContainText(
+    "Weak againstWaterGroundRockDragon",
+  );
   await expect(dialog.locator(".crawl-badges")).toHaveCount(0);
   await page.screenshot({ path: info.outputPath("team-dialog.png") });
   // How to play, from the pause menu, speaks the League's words: no Quaff,
@@ -212,7 +219,7 @@ test("@release a starter evolves on a route, and the banner says what changed", 
   await page.getByRole("button", { name: "Open game menu" }).click();
   await page.getByRole("button", { name: "How to play" }).click();
   const guide = page.getByRole("dialog", { name: "How to play" });
-  await expect(guide.locator(".guide-rows li")).toHaveCount(6);
+  await expect(guide.locator(".guide-rows li")).toHaveCount(7);
   await expect(guide.locator(".guide-rows")).toContainText("Team HP");
   await expect(guide.locator(".guide-rows")).not.toContainText("Quaff");
   await guide.screenshot({ path: info.outputPath("league-guide.png") });
@@ -360,6 +367,66 @@ test("@release a gym leader is a boss battle, and beating it earns a badge", asy
   expect(box!.x + box!.width).toBeLessThanOrEqual(320);
   await expect(dialog).toContainText("One for each gym beaten.");
   await page.screenshot({ path: info.outputPath("badges-320.png") });
+});
+
+test("@release a type matchup shows before the roll, and the roll keeps the worse", async ({
+  page,
+}, info) => {
+  await page.setViewportSize({ width: 320, height: 568 });
+  // A Water gym on a d20 against Charmander: not very effective.
+  const water = cards.find(
+    (c) =>
+      c.quest === "pokemon" &&
+      c.type === "water" &&
+      c.dice?.count === 1 &&
+      c.dice.sides === 20,
+  )!;
+  await seed(page, reveal(leagueAt(water.id)));
+  const ribbon = page.locator(".game-card .card-ribbon");
+  await expect(ribbon.getByRole("img", { name: "Water type" })).toHaveCount(1);
+  const line = page.locator(".game-card .type-matchup");
+  await expect(line).toHaveClass(/matchup-disadvantage/);
+  await expect(line).toHaveText(/Not very effective…\s*Roll with disadvantage/);
+  await expect(line).toHaveAccessibleName(
+    "Not very effective: your Fire type against Water. Roll with disadvantage.",
+  );
+  const box = await line.boundingBox();
+  expect(box!.x).toBeGreaterThanOrEqual(0);
+  expect(box!.x + box!.width).toBeLessThanOrEqual(320);
+  await page.screenshot({ path: info.outputPath("matchup-320.png") });
+  // Both attempts are thrown; the card keeps one and strikes the other.
+  await page.locator(".game-card").click();
+  await expect(page.locator(".roll-stage")).toHaveAttribute(
+    "data-renderer",
+    /^settled:\d+,\d+$/,
+    { timeout: 15000 },
+  );
+  await expect(page.locator(".roll-layer")).toHaveCount(0);
+  const roll = (await saved(page)).roll;
+  expect(roll.edge).toBe("disadvantage");
+  await expect(page.locator(".dice-result-edge")).toHaveText("Disadvantage");
+  await expect(page.locator(".dice-result-faces .dice-result-face")).toHaveText(
+    roll.values.map(String),
+  );
+  await expect(
+    page.locator(".dice-result-dropped .dice-result-face"),
+  ).toHaveText(roll.dropped.map(String));
+  await page.screenshot({ path: info.outputPath("matchup-rolled-320.png") });
+});
+
+test("a plaque-settled gym against a weaker type costs 1 HP less", async ({
+  page,
+}) => {
+  // Jasmine (Steel) against Charmander (Fire).
+  await seed(page, reveal(leagueAt("pokemon.gym-jasmine", { hearts: 10 })));
+  const line = page.locator(".game-card .type-matchup");
+  await expect(line).toHaveText(/Super effective!\s*A loss costs 1 HP less/);
+  // The seal shows the HP the loss will cost: 2, less 1.
+  await expect(page.locator(".game-card .stake-loss")).toHaveAccessibleName(
+    "Losing costs 1 HP",
+  );
+  await page.getByRole("button", { name: "Lost", exact: true }).click();
+  expect((await saved(page)).quest.party.hearts).toBe(9);
 });
 
 test("Veteran Ada shuts the badge case until her card is put aside", async ({

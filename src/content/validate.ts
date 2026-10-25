@@ -1,7 +1,13 @@
 import { validateDice } from "../game/dice";
 import { validateTimer } from "../game/timer";
 import type { CardDefinition, PackDefinition, QuestStage } from "../game/types";
-import { CURSES, ENCOUNTERS, LOOT, RIBBON_TONES } from "../game/types";
+import {
+  CURSES,
+  ENCOUNTERS,
+  LOOT,
+  POKEMON_TYPES,
+  RIBBON_TONES,
+} from "../game/types";
 
 // Structural validation for cards and packs. Kept apart from `catalog.ts` so
 // saved-session parsing can use it without pulling card content into the
@@ -136,6 +142,19 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         ))
     )
       fail(`Invalid evolves: ${c.id}`);
+    // A League type (2026-10-25): one of the eighteen (or the Striaton
+    // trio), on a fight or a starter, and on a starter's form.
+    if (
+      (c.type !== undefined &&
+        (!POKEMON_TYPES.includes(c.type) || (!c.battle && !c.omen))) ||
+      (Array.isArray(c.evolves) &&
+        c.evolves.some(
+          (e) =>
+            e?.type !== undefined &&
+            (!POKEMON_TYPES.includes(e.type) || e.type === "trio"),
+        ))
+    )
+      fail(`Invalid type: ${c.id}`);
     // Dice colours: two hex colours, on an omen or a starter's form.
     const hexColor = (v: unknown) =>
       typeof v === "string" && /^#[0-9a-f]{6}$/i.test(v);

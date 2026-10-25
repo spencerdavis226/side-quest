@@ -1,6 +1,6 @@
 # Card review sheet
 
-Generated 2026-10-24 by `npm run cards:review`. Do not edit by hand — edit the
+Generated 2026-10-25 by `npm run cards:review`. Do not edit by hand — edit the
 source modules under `src/content` and regenerate. Each row is one card;
 the Review column is intentionally blank so you can mark it up.
 
@@ -311,7 +311,7 @@ the Review column is intentionally blank so you can mark it up.
 
 ## Pokémon night (`pokemon`)
 
-482 cards · 49 sip · 49 group · 5 category · 342 challenge · 37 rule · 248 dice
+484 cards · 49 sip · 49 group · 5 category · 342 challenge · 39 rule · 248 dice
 
 | Review | Title | ID | Cat | Rules | Dice, secret or timer |
 | --- | --- | --- | --- | --- | --- |
@@ -774,29 +774,31 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Trick House | `pokemon.trick-house` | rule | The Trick House! Make a tricky new rule for the rest of the game. Violations: drink 1. |  |
 | ☐ | Pokémon Tower | `pokemon.pokemon-tower` | rule | Out of respect for the dead: no talking until your next turn. Slip and drink 1. |  |
 | ☐ | Barboach | `pokemon.barboach` | rule | Barboach's Mud-Slap! Pick a player. Rest of the game: they can finish a full drink to slap you once. |  |
-| ☐ | Bulbasaur | `pokemon.starter-bulbasaur` | rule | Bulbasaur chose you. Everyone sniff the bulb. Max HP 15. Every heal heals 2 more. |  |
-| ☐ | Charmander | `pokemon.starter-charmander` | rule | Charmander chose you. Keep its tail lit. +2 to route battle d20s. Bosses hurt 1 more. |  |
+| ☐ | Bulbasaur | `pokemon.starter-bulbasaur` | rule | Bulbasaur chose you. Everyone sniff the bulb. +1 to boss d20s. Every heal heals 2 more. |  |
+| ☐ | Charmander | `pokemon.starter-charmander` | rule | Charmander chose you. Keep its tail lit. Max HP 18. +2 to route battle d20s. |  |
 | ☐ | Squirtle | `pokemon.starter-squirtle` | rule | Squirtle chose you, in sunglasses. The bag holds 2. Starts with a Protect. |  |
 | ☐ | Pikachu | `pokemon.starter-pikachu` | rule | Pikachu won't evolve. Ever. Max HP 18. +1 to every battle d20. Natural 20 on a 19 or 20. |  |
 | ☐ | Eevee | `pokemon.starter-eevee` | rule | Eevee chose you. The table picks what it evolves into. Max HP 15. The bag holds 4. |  |
 | ☐ | Cyndaquil | `pokemon.starter-cyndaquil` | rule | Cyndaquil chose you, half asleep. Max HP 16. Starts with an X Attack. |  |
 | ☐ | Totodile | `pokemon.starter-totodile` | rule | Totodile chose you by biting you. Max HP 20. Route battles hurt 1 more. |  |
-| ☐ | Treecko | `pokemon.starter-treecko` | rule | Treecko chose you, unbothered. Ace Trainers and rivals hurt 1 more. Starts with an Escape Rope. |  |
+| ☐ | Treecko | `pokemon.starter-treecko` | rule | Treecko chose you, unbothered. Max HP 20. +1 to route battle d20s. Starts with an Escape Rope. |  |
 | ☐ | Torchic | `pokemon.starter-torchic` | rule | Torchic chose you. Everyone flap and peep. Max HP 15. +2 to Ace Trainer and rival d20s. |  |
 | ☐ | Mudkip | `pokemon.starter-mudkip` | rule | So I herd u liek Mudkipz. Max HP 11. Bosses hurt 1 less. |  |
 | ☐ | Piplup | `pokemon.starter-piplup` | rule | Piplup chose you, proudly. Max HP 23. Bosses take 1 more hit. Starts with a Protect. |  |
-| ☐ | Turtwig | `pokemon.starter-turtwig` | rule | Turtwig chose you, slowly. Max HP 21. The bag holds 2. |  |
-| ☐ | Oshawott | `pokemon.starter-oshawott` | rule | Oshawott chose you, scalchop out. Max HP 14. Starts with a Protect and an X Attack. |  |
+| ☐ | Turtwig | `pokemon.starter-turtwig` | rule | Turtwig chose you, slowly. Max HP 22. +1 to boss d20s. The bag holds 2. |  |
+| ☐ | Oshawott | `pokemon.starter-oshawott` | rule | Oshawott chose you, scalchop out. Max HP 15. Starts with a Protect and an X Attack. |  |
+| ☐ | Chespin | `pokemon.starter-chespin` | rule | Chespin chose you, spikes out. Max HP 19. Ace Trainers and rivals hurt 1 less. |  |
+| ☐ | Fennekin | `pokemon.starter-fennekin` | rule | Fennekin chose you, chewing a twig. +1 to boss d20s. |  |
 | ☐ | Froakie | `pokemon.starter-froakie` | rule | Froakie chose you, covered in bubbles. Max HP 15. Starts with a Rare Candy. |  |
-| ☐ | Rowlet | `pokemon.starter-rowlet` | rule | Rowlet chose you and fell asleep on your head. Max HP 16. Hazards and finds hurt 1 less. |  |
+| ☐ | Rowlet | `pokemon.starter-rowlet` | rule | Rowlet chose you, fast asleep. Max HP 19. +2 to route battle d20s. Hazards and finds hurt 1 less. |  |
 | ☐ | Scorbunny | `pokemon.starter-scorbunny` | rule | Scorbunny chose you. Boing. Route battles and trainer challenges hurt 1 less. The bag holds 2. |  |
-| ☐ | Fuecoco | `pokemon.starter-fuecoco` | rule | Fuecoco chose you because you had snacks. Starts with 2 Potions. |  |
-| ☐ | Bidoof | `pokemon.starter-bidoof` | rule | Nobody chooses Bidoof. Max HP 15. −1 to boss d20s. Every 20 is rerolled. The bag holds 2. |  |
+| ☐ | Fuecoco | `pokemon.starter-fuecoco` | rule | Fuecoco chose you because you had snacks. Max HP 18. Starts with 2 Potions. |  |
+| ☐ | Bidoof | `pokemon.starter-bidoof` | rule | Nobody chooses Bidoof. Max HP 16. −1 to boss d20s. Every 20 is rerolled. The bag holds 2. |  |
 | ☐ | Magikarp | `pokemon.starter-magikarp` | rule | Magikarp chose you. It used Splash. Nothing happened. Max HP 15. −1 to every battle d20. |  |
-| ☐ | Wooper | `pokemon.starter-wooper` | rule | Wooper chose you. It does nothing, but it's very happy to be here. |  |
-| ☐ | Sunkern | `pokemon.starter-sunkern` | rule | Sunkern chose you. It is a seed with a face. Max HP 15. |  |
-| ☐ | Slowpoke | `pokemon.starter-slowpoke` | rule | Slowpoke chose you. Eventually. Every heal heals 2 more. Bosses take 1 more hit. |  |
-| ☐ | Psyduck | `pokemon.starter-psyduck` | rule | Psyduck chose you. It has a headache. So do you. Max HP 20. Natural 1 on a 1 or 2. |  |
+| ☐ | Togepi | `pokemon.starter-togepi` | rule | Togepi chose you. It does nothing, but it's very happy to be here. |  |
+| ☐ | Sunkern | `pokemon.starter-sunkern` | rule | Sunkern chose you. It is a seed with a face. Max HP 21. |  |
+| ☐ | Drowzee | `pokemon.starter-drowzee` | rule | Drowzee chose you, yawning. Now you're yawning. Every heal heals 2 more. Bosses take 1 more hit. |  |
+| ☐ | Zubat | `pokemon.starter-zubat` | rule | Zubat chose you. It flew into a wall doing it. Max HP 20. Natural 1 on a 1 or 2. |  |
 
 ## Most Likely To (`likely`)
 

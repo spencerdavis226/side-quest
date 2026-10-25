@@ -1,12 +1,16 @@
 import type { CardDefinition } from "../../game/types";
 import { starter } from "./journey";
 
-// The run's first card: one starter of twenty-three. Since 2026-10-17
+// The run's first card: one starter of twenty-five. Since 2026-10-17
 // (owner: starters "should be felt pretty heavily") most carry a perk you
 // feel on the dice: a bonus on battle rolls, a wider natural 20, an item
 // back at every gym. Six are bad on purpose: Bidoof is the worst by a long
 // way (and its evolution is worse), Magikarp is awful until Gyarados, and
-// Wooper, Sunkern, Slowpoke and Psyduck are shrugs. Every later form,
+// Togepi, Sunkern, Drowzee and Zubat are shrugs. Each has one type for the
+// run (`league/types.ts`). On 2026-10-25 (owner: a balanced set of types)
+// Togepi, Drowzee and Zubat took over the powers of Wooper, Slowpoke and
+// Psyduck, three of ten Water starters, and Chespin and Fennekin completed
+// Kalos: 6 Fire, 6 Grass, 7 Water, and one each of six other types. Every later form,
 // reached through the routes' evolution cards or a Rare Candy, is a change
 // the evolution banner can name (Bibarel's is a downgrade). Eevee branches;
 // Pikachu never evolves. The powers are written from the numbers (`starter`
@@ -14,28 +18,34 @@ import { starter } from "./journey";
 // every starter's own win rate in `tests/league.balance.test.ts`.
 
 export const starters: CardDefinition[] = [
-  // Healing: every heal heals a lot more.
+  // Healing: every heal heals a lot more, and it stands up to bosses.
   starter(
     "bulbasaur",
     "Bulbasaur",
     "Bulbasaur chose you. Everyone sniff the bulb.",
-    { hearts: -2, heal: 2 },
+    { heal: 2, roll: { boss: 1 } },
     [
-      { title: "Ivysaur", omen: { heal: 2, loot: ["draught"] } },
-      { title: "Venusaur", omen: { hearts: 2, heal: 3 } },
+      {
+        title: "Ivysaur",
+        omen: { hearts: 1, heal: 2, roll: { boss: 1 }, loot: ["draught"] },
+      },
+      {
+        title: "Venusaur",
+        omen: { hearts: 4, heal: 3, roll: { all: 1, boss: 1 } },
+      },
     ],
   ),
-  // Blaze: hits route battles hard, weak to bosses until it grows.
+  // Blaze: hits route battles hard, and bosses once it is Charizard.
   starter(
     "charmander",
     "Charmander",
     "Charmander chose you. Keep its tail lit.",
-    { roll: { monster: 2 }, hurt: { boss: 1 } },
+    { hearts: 1, roll: { monster: 2 } },
     [
-      { title: "Charmeleon", omen: { hearts: 1, roll: { monster: 2 } } },
+      { title: "Charmeleon", omen: { hearts: 2, roll: { monster: 2 } } },
       {
         title: "Charizard",
-        omen: { hearts: 2, roll: { monster: 2, boss: 1 } },
+        omen: { hearts: 3, roll: { monster: 2, boss: 1 } },
       },
     ],
   ),
@@ -110,17 +120,26 @@ export const starters: CardDefinition[] = [
       { title: "Feraligatr", omen: { hearts: 6, roll: { boss: 1 } } },
     ],
   ),
-  // Escape Ropes, and finally one back at every gym.
+  // Escape Ropes, a sharper eye on routes, and finally one back at every gym.
   starter(
     "treecko",
     "Treecko",
     "Treecko chose you, unbothered.",
-    { loot: ["smoke"], hurt: { ambush: 1, elite: 1 } },
+    { hearts: 3, loot: ["smoke"], roll: { monster: 1 } },
     [
-      { title: "Grovyle", omen: { hearts: 1, loot: ["smoke"] } },
+      {
+        title: "Grovyle",
+        omen: { hearts: 4, loot: ["smoke"], roll: { monster: 2 } },
+      },
       {
         title: "Sceptile",
-        omen: { hearts: 2, satchel: 4, loot: ["smoke"], restock: "smoke" },
+        omen: {
+          hearts: 5,
+          satchel: 4,
+          loot: ["smoke"],
+          restock: "smoke",
+          roll: { all: 1, monster: 1 },
+        },
       },
     ],
   ),
@@ -152,7 +171,7 @@ export const starters: CardDefinition[] = [
         title: "Marshtomp",
         omen: { hearts: -4, hurt: { boss: -1 }, loot: ["shield"] },
       },
-      { title: "Swampert", omen: { hurt: { boss: -1 }, roll: { boss: 1 } } },
+      { title: "Swampert", omen: { hearts: -2, hurt: { boss: -1 } } },
     ],
   ),
   // Huge HP, too proud to finish bosses quickly until it grows up.
@@ -166,15 +185,18 @@ export const starters: CardDefinition[] = [
       { title: "Empoleon", omen: { hearts: 6, hurt: { boss: -1 } } },
     ],
   ),
-  // Big HP, small bag.
+  // Big HP, small bag, and sturdy against bosses.
   starter(
     "turtwig",
     "Turtwig",
     "Turtwig chose you, slowly.",
-    { hearts: 4, satchel: 2 },
+    { hearts: 5, satchel: 2, roll: { boss: 1 } },
     [
-      { title: "Grotle", omen: { hearts: 5, satchel: 3 } },
-      { title: "Torterra", omen: { hearts: 6, satchel: 4 } },
+      { title: "Grotle", omen: { hearts: 6, satchel: 3, roll: { boss: 1 } } },
+      {
+        title: "Torterra",
+        omen: { hearts: 6, satchel: 4, roll: { all: 1, boss: 1 } },
+      },
     ],
   ),
   // A bit of everything on a thin HP pool, and a sharp blade at the end.
@@ -182,10 +204,46 @@ export const starters: CardDefinition[] = [
     "oshawott",
     "Oshawott",
     "Oshawott chose you, scalchop out.",
-    { hearts: -3, loot: ["shield", "die"] },
+    { hearts: -2, loot: ["shield", "die"] },
     [
       { title: "Dewott", omen: { hearts: -1, loot: ["shield"] } },
       { title: "Samurott", omen: { hearts: 1, loot: ["die"], crit: 19 } },
+    ],
+  ),
+  // Spiky Shield: Ace Trainers and the rival hit softer, on a sturdy team.
+  starter(
+    "chespin",
+    "Chespin",
+    "Chespin chose you, spikes out.",
+    { hearts: 2, hurt: { ambush: -1, elite: -1 } },
+    [
+      {
+        title: "Quilladin",
+        omen: { hearts: 3, hurt: { ambush: -1, elite: -1 }, loot: ["shield"] },
+      },
+      {
+        title: "Chesnaught",
+        omen: {
+          hearts: 4,
+          hurt: { ambush: -1, elite: -1 },
+          loot: ["shield"],
+          restock: "shield",
+        },
+      },
+    ],
+  ),
+  // Mystical Fire: sharper against bosses as it grows, on a thin HP pool.
+  starter(
+    "fennekin",
+    "Fennekin",
+    "Fennekin chose you, chewing a twig.",
+    { roll: { boss: 1 } },
+    [
+      {
+        title: "Braixen",
+        omen: { hearts: 1, roll: { boss: 1 }, loot: ["die"] },
+      },
+      { title: "Delphox", omen: { hearts: 2, roll: { boss: 2 } } },
     ],
   ),
   // Grows up fast: a Rare Candy to start, and a ninja at the end.
@@ -205,23 +263,28 @@ export const starters: CardDefinition[] = [
       },
     ],
   ),
-  // Hazards and finds barely touch it, then it snipes them.
+  // A sniper: route battles, then hazards and finds barely touch it.
   starter(
     "rowlet",
     "Rowlet",
-    "Rowlet chose you and fell asleep on your head.",
-    { hearts: -1, hurt: { trap: -1, relic: -1 } },
+    "Rowlet chose you, fast asleep.",
+    { hearts: 2, hurt: { trap: -1, relic: -1 }, roll: { monster: 2 } },
     [
       {
         title: "Dartrix",
-        omen: { hurt: { trap: -1, relic: -1 }, loot: ["draught"] },
+        omen: {
+          hearts: 3,
+          hurt: { trap: -1, relic: -1 },
+          roll: { monster: 2 },
+          loot: ["draught"],
+        },
       },
       {
         title: "Decidueye",
         omen: {
-          hearts: 2,
+          hearts: 4,
           hurt: { trap: -1, relic: -1 },
-          roll: { trap: 2, relic: 2 },
+          roll: { all: 1, trap: 2, relic: 2, monster: 2 },
         },
       },
     ],
@@ -259,12 +322,12 @@ export const starters: CardDefinition[] = [
     "fuecoco",
     "Fuecoco",
     "Fuecoco chose you because you had snacks.",
-    { loot: ["draught", "draught"] },
+    { hearts: 1, loot: ["draught", "draught"] },
     [
-      { title: "Crocalor", omen: { hearts: 1, loot: ["revive"] } },
+      { title: "Crocalor", omen: { hearts: 2, loot: ["revive"] } },
       {
         title: "Skeledirge",
-        omen: { hearts: 3, heal: 1, loot: ["draught", "draught"] },
+        omen: { hearts: 4, heal: 1, loot: ["draught", "draught"] },
       },
     ],
   ),
@@ -276,11 +339,11 @@ export const starters: CardDefinition[] = [
     "bidoof",
     "Bidoof",
     "Nobody chooses Bidoof.",
-    { hearts: -2, satchel: 2, roll: { boss: -1 }, reroll20: true },
+    { hearts: -1, satchel: 2, roll: { boss: -1 }, reroll20: true },
     [
       {
         title: "Bibarel",
-        omen: { hearts: -3, satchel: 2, roll: { boss: -1 }, reroll20: true },
+        omen: { hearts: -2, satchel: 2, roll: { boss: -1 }, reroll20: true },
       },
     ],
   ),
@@ -299,35 +362,35 @@ export const starters: CardDefinition[] = [
   ),
   // Does nothing, happily.
   starter(
-    "wooper",
-    "Wooper",
-    "Wooper chose you. It does nothing, but it's very happy to be here.",
+    "togepi",
+    "Togepi",
+    "Togepi chose you. It does nothing, but it's very happy to be here.",
     {},
-    [{ title: "Quagsire", omen: { loot: ["draught"] } }],
+    [{ title: "Togetic", omen: { loot: ["draught"] } }],
   ),
-  // The worst stats in the series, and it shows.
+  // The worst stats in the series: a few spare HP and not much else.
   starter(
     "sunkern",
     "Sunkern",
     "Sunkern chose you. It is a seed with a face.",
-    { hearts: -2 },
-    [{ title: "Sunflora", omen: { hearts: -1 } }],
+    { hearts: 4 },
+    [{ title: "Sunflora", omen: { hearts: 5, roll: { all: 1 } } }],
   ),
-  // Slow to finish anything, but it naps it off.
+  // Sleepy: slow to finish anything, but it naps it off.
   starter(
-    "slowpoke",
-    "Slowpoke",
-    "Slowpoke chose you. Eventually.",
+    "drowzee",
+    "Drowzee",
+    "Drowzee chose you, yawning. Now you're yawning.",
     { bossHits: 1, heal: 2 },
-    [{ title: "Slowbro", omen: { hearts: 1, heal: 2 } }],
+    [{ title: "Hypno", omen: { hearts: 1, heal: 2 } }],
   ),
-  // A permanent headache: more natural 1s.
+  // Blind as a bat: more natural 1s.
   starter(
-    "psyduck",
-    "Psyduck",
-    "Psyduck chose you. It has a headache. So do you.",
+    "zubat",
+    "Zubat",
+    "Zubat chose you. It flew into a wall doing it.",
     { hearts: 3, fumble: 2 },
-    [{ title: "Golduck", omen: { hearts: 3, roll: { all: 1 } } }],
+    [{ title: "Golbat", omen: { hearts: 3, roll: { all: 1 } } }],
   ),
 ];
 
@@ -373,6 +436,12 @@ const PALETTES: Record<string, [primary: string, secondary: string]> = {
   Oshawott: ["#3a8cc4", "#f2e8cf"],
   Dewott: ["#337cb0", "#e8d9b0"],
   Samurott: ["#2a5680", "#d9c7a0"],
+  Chespin: ["#5f8f3e", "#c9a46a"],
+  Quilladin: ["#4f7f36", "#b98f58"],
+  Chesnaught: ["#3f6a30", "#e2d6b4"],
+  Fennekin: ["#d9932e", "#c8452e"],
+  Braixen: ["#c98a2e", "#8a5a2e"],
+  Delphox: ["#b83f2a", "#e9c46a"],
   Froakie: ["#2f88c4", "#f2f0f6"],
   Frogadier: ["#2e78b8", "#f4f2f7"],
   Greninja: ["#284c86", "#e9718e"],
@@ -389,14 +458,14 @@ const PALETTES: Record<string, [primary: string, secondary: string]> = {
   Bibarel: ["#6a5240", "#b3a07e"],
   Magikarp: ["#c8442e", "#f3c86a"],
   Gyarados: ["#2a64a8", "#f2e0a0"],
-  Wooper: ["#5aa8d6", "#f08ab0"],
-  Quagsire: ["#3a82b4", "#9ad0e8"],
+  Togepi: ["#7a8fb8", "#d84a4a"],
+  Togetic: ["#6f86b4", "#e9e2d0"],
   Sunkern: ["#e9c24a", "#6faf4a"],
   Sunflora: ["#f2c230", "#4f9a3a"],
-  Slowpoke: ["#e488a6", "#f2e3c6"],
-  Slowbro: ["#d87394", "#8e8e96"],
-  Psyduck: ["#efc23a", "#e8e0d0"],
-  Golduck: ["#3a76b6", "#e94a4a"],
+  Drowzee: ["#c9962e", "#6a4a2e"],
+  Hypno: ["#d6a92e", "#efe9dc"],
+  Zubat: ["#3f6aa8", "#8e5aa8"],
+  Golbat: ["#3a5a9a", "#c2508a"],
 };
 const palette = (title: string) => {
   const [primary, secondary] = PALETTES[title];

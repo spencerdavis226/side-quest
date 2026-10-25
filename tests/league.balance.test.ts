@@ -197,10 +197,10 @@ it("no starter and no hideout makes the League a walkover or hopeless", () => {
     `starters: ${starters.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}\n` +
       `hideouts: ${hideouts.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}`,
   );
-  expect(starters).toHaveLength(23);
+  expect(starters).toHaveLength(25);
   expect(hideouts).toHaveLength(9);
   // Bidoof is the worst starter by design (owner, 2026-10-17), measured on
-  // its own below: a 23rd of the runs is too few to read it here.
+  // its own below: a 25th of the runs is too few to read it here.
   for (const [name, r] of [...starters, ...hideouts]) {
     if (name === "bidoof") continue;
     expect(r, name).toBeGreaterThan(0.1);

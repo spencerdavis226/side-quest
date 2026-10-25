@@ -6,6 +6,9 @@ import { diceResultText } from "../presentation/dice/result-text";
 import { readTotal, rollWins } from "../game/dice";
 import { CardPackMarks } from "./PackMarks";
 import { badgeArt } from "../presentation/league-art";
+import type { Matchup } from "../game/matchup";
+import { TypeMark } from "./LeagueMarks";
+import { pokemonTypes, trioBrother } from "../presentation/pokemon-types";
 type Overflow = "none" | "top" | "bottom" | "both";
 /** The smallest a rule's text shrinks to fit the card: 26px becomes 20px. */
 const RULES_FIT_MIN = 0.77;
@@ -18,6 +21,7 @@ export function CardFace({
   party,
   hits = 0,
   crawl,
+  matchup = null,
 }: {
   card: CardDefinition;
   packIds?: readonly string[];
@@ -30,6 +34,8 @@ export function CardFace({
   hits?: number;
   /** The crawl's words and marks, with `party`. */
   crawl?: CrawlTheme;
+  /** A League fight's type matchup against the starter (`cardMatchup`). */
+  matchup?: Matchup | null;
 }) {
   const gesture = useRef<{
     pointerId: number;
@@ -59,7 +65,10 @@ export function CardFace({
   };
   // Keep the original rule until the dice have been dismissed.
   const resolved = !!roll?.returned;
-  const badge = badgeArt(card.id);
+  // A typed card wears its type in the ribbon (the trio as the brother it
+  // sends out, once the starter is known); others keep their badge art.
+  const type = matchup?.theirs ?? card.type;
+  const badge = type ? null : badgeArt(card.id);
   // A lost battle's badge greys out once the result is on the card.
   const lost =
     resolved &&
@@ -212,9 +221,17 @@ export function CardFace({
         {card.ribbon && (
           <p className="card-ribbon">
             {badge && <img className="ribbon-badge" src={badge} alt="" />}
+            {type && (
+              <TypeMark
+                type={type}
+                className="ribbon-type"
+                label={`${pokemonTypes[type].name} type`}
+              />
+            )}
             <span>{card.ribbon}</span>
           </p>
         )}
+        {matchup?.edge && <MatchupLine card={card} matchup={matchup} />}
         <div
           ref={rulesRef}
           className={`study-rules ${resolved || shown === "end" ? "rules-resolved" : ""}`}
@@ -233,14 +250,24 @@ export function CardFace({
             <div className="dice-result">
               <div
                 className="dice-result-equation"
-                aria-label={`Rolled ${roll!.values.join(" plus ")}${
+                aria-label={`${roll!.edge ? `Rolled with ${roll!.edge}: kept ` : "Rolled "}${roll!.values.join(" plus ")}${
                   roll!.values.length > 1 ? `, total ${roll!.total}` : ""
                 }${
                   roll!.bonus
                     ? `, ${roll!.bonus < 0 ? "minus" : "plus"} ${Math.abs(roll!.bonus)}, reads ${readTotal(card.dice!, roll!.values, roll!)}`
                     : ""
-                }`}
+                }${roll!.dropped ? `; dropped ${roll!.dropped.join(" plus ")}` : ""}`}
               >
+                {/* A type edge rolled twice: the kept faces lead, the
+                    dropped attempt follows, struck through. */}
+                {roll!.edge && (
+                  <span
+                    className={`dice-result-edge edge-${roll!.edge}`}
+                    aria-hidden="true"
+                  >
+                    {roll!.edge === "advantage" ? "Advantage" : "Disadvantage"}
+                  </span>
+                )}
                 <span className="dice-result-faces" aria-hidden="true">
                   {roll!.values.map((value, index) => (
                     <span className="dice-result-face" key={index}>
@@ -266,6 +293,15 @@ export function CardFace({
                   <span className="dice-result-total" aria-hidden="true">
                     <span>=</span>
                     <strong>{roll!.total}</strong>
+                  </span>
+                )}
+                {roll!.dropped && (
+                  <span className="dice-result-dropped" aria-hidden="true">
+                    {roll!.dropped.map((value, index) => (
+                      <span className="dice-result-face" key={index}>
+                        {value}
+                      </span>
+                    ))}
                   </span>
                 )}
               </div>
@@ -300,13 +336,62 @@ export function CardFace({
         </div>
         <div className="card-footer">
           {party && crawl && (
-            <CardStakes card={card} party={party} hits={hits} theme={crawl} />
+            <CardStakes
+              card={card}
+              party={party}
+              hits={hits}
+              theme={crawl}
+              shift={matchupShift(card, matchup)}
+            />
           )}
           {/* A crawl plays one pack: its seals take the foot instead. */}
           {!party && <CardPackMarks cardId={card.id} packIds={packIds} />}
         </div>
       </div>
     </div>
+  );
+}
+/** A plaque-settled fight's loss moves by one HP with a type edge (the
+ * engine's `verdictShift`). */
+const matchupShift = (card: CardDefinition, matchup: Matchup | null) =>
+  card.dice || !matchup?.edge ? 0 : matchup.edge === "advantage" ? -1 : 1;
+
+/** The type matchup, shown before the roll so the table can plan: the
+ * starter's mark, the foe's, and what the edge does. */
+function MatchupLine({
+  card,
+  matchup,
+}: {
+  card: CardDefinition;
+  matchup: Matchup;
+}) {
+  const good = matchup.edge === "advantage";
+  const effect = card.dice
+    ? good
+      ? "Roll with advantage"
+      : "Roll with disadvantage"
+    : good
+      ? "A loss costs 1 HP less"
+      : "A loss costs 1 HP more";
+  const brother =
+    card.type === "trio" ? trioBrother[matchup.theirs] : undefined;
+  const label = `${good ? "Super effective" : "Not very effective"}: your ${pokemonTypes[matchup.mine].name} type against ${brother ? `${brother}'s ` : ""}${pokemonTypes[matchup.theirs].name}. ${effect}.`;
+  return (
+    <p
+      className={`type-matchup matchup-${matchup.edge}`}
+      role="note"
+      aria-label={label}
+    >
+      <TypeMark type={matchup.mine} className="matchup-mark" />
+      <span className="matchup-words" aria-hidden="true">
+        <strong>{good ? "Super effective!" : "Not very effective…"}</strong>
+        <span>
+          {brother ? `${brother} steps up. ` : ""}
+          {effect}
+        </span>
+      </span>
+      <TypeMark type={matchup.theirs} className="matchup-mark" />
+    </p>
   );
 }
 export function CardFrame({

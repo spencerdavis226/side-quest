@@ -12,6 +12,7 @@ import type {
   SessionState,
 } from "./types";
 import { rollWins } from "./dice";
+import { matchup, type Matchup } from "./matchup";
 export type Random = () => number;
 export function shuffle(
   ids: string[],
@@ -473,6 +474,8 @@ export function omenForm(quest: QuestState | undefined) {
     branches: branching && canEvolve ? forms.map((e) => e.title) : null,
     /** How many later forms the card has. */
     forms: forms.length,
+    /** The League type of the form it is now (none before 2026-10-25). */
+    type: now?.type ?? card.type,
     /** The dice colours of the form it is now. */
     palette: now ? (now.palette ?? card.palette) : card.palette,
     /** The form an evolution brings next, while one evolves in a line. */
@@ -501,6 +504,34 @@ function evolve(party: PartyState, quest: QuestState, branch = 0): PartyState {
     hearts: Math.min(max, Math.max(1, party.hearts + delta)),
     loot: [...party.loot, ...(after.loot ?? [])].slice(0, size),
   };
+}
+/** The starter's type as it stands (an Eevee's form changes it). Games
+ * saved before types (2026-10-25) have none. */
+export function partyType(quest: QuestState | undefined) {
+  const id = quest?.party?.omen;
+  const card = id ? finaleCard(quest, id) : undefined;
+  const form = quest?.party?.form ?? 0;
+  return (form ? card?.evolves?.[form - 1]?.type : undefined) ?? card?.type;
+}
+/** A League fight's type matchup against the starter: only a battle with a
+ * type, once the starter has one. */
+export function cardMatchup(
+  quest: QuestState | undefined,
+  card: CardDefinition,
+): Matchup | null {
+  const mine = partyType(quest);
+  if (!quest?.party || !card.battle || !card.type || !mine) return null;
+  return matchup(mine, card.type);
+}
+/** A plaque-settled fight has no roll to bend: a lost one costs one HP less
+ * with the edge, one more against it. */
+export function verdictShift(
+  quest: QuestState | undefined,
+  card: CardDefinition,
+): number {
+  if (card.dice) return 0;
+  const edge = cardMatchup(quest, card)?.edge;
+  return edge === "advantage" ? -1 : edge === "disadvantage" ? 1 : 0;
 }
 /** How many items the satchel holds. */
 export const satchelSize = (quest: QuestState | undefined) =>
@@ -864,7 +895,8 @@ function settleParty(
     next = hurt(
       next,
       (card.damage +
-        (card.encounter ? (omen?.hurt?.[card.encounter] ?? 0) : 0)) *
+        (card.encounter ? (omen?.hurt?.[card.encounter] ?? 0) : 0) +
+        verdictShift(quest, card)) *
         (nat === 1 ? 2 : 1),
     );
   if (outcome === null || outcome === "won") {

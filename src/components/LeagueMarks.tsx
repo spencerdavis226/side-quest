@@ -1,9 +1,10 @@
 import type { CSSProperties } from "react";
 import type { CardDefinition, SessionState } from "../game/types";
 import { currentCard, questRecord } from "../game/engine";
+import { typeEdges } from "../game/matchup";
 import { asset } from "../presentation/theme";
 import {
-  gymType,
+  badgeType,
   pokemonTypes,
   typeStyle,
   type PokemonType,
@@ -16,20 +17,56 @@ import type { CrawlTheme } from "./crawlTheme";
 
 type RunRecord = NonNullable<ReturnType<typeof questRecord>>;
 
+/** What a starter's type beats and what beats it (2026-10-25): a fight
+ * against the first is rolled with advantage, the second with
+ * disadvantage. Normal is strong against nothing, so its row says so. */
+export function TypeEdges({ type }: { type: PokemonType }) {
+  const { strong, weak } = typeEdges(type);
+  const row = (label: string, types: PokemonType[]) => (
+    <div>
+      <dt>{label}</dt>
+      <dd>
+        {types.length
+          ? types.map((t) => (
+              <span
+                key={t}
+                className="type-chip"
+                style={typeStyle(t) as CSSProperties}
+              >
+                {pokemonTypes[t].name}
+              </span>
+            ))
+          : "Nothing"}
+      </dd>
+    </div>
+  );
+  return (
+    <dl className="type-edges">
+      {row("Strong against", strong)}
+      {row("Weak against", weak)}
+    </dl>
+  );
+}
+
 /** A type's medallion: its colours behind its single-colour mark. */
 export function TypeMark({
   type,
   className = "",
+  label,
 }: {
   type: PokemonType;
   className?: string;
+  /** Read aloud, when the mark is the only place its type is named. */
+  label?: string;
 }) {
   const src = `url("${asset(`art/league/types/${type}.svg`)}")`;
   return (
     <span
       className={`type-mark type-${type} ${className}`}
       style={typeStyle(type) as CSSProperties}
-      aria-hidden="true"
+      {...(label
+        ? { role: "img", "aria-label": label }
+        : { "aria-hidden": true })}
     >
       <span
         className="type-glyph"
@@ -89,7 +126,7 @@ export function BadgeCase({
               <span className="sr-only">Not yet earned</span>
             </li>
           );
-        const type = gymType(card.id) ?? "normal";
+        const type = badgeType(card);
         return (
           <li key={card.id} className="badge-socket full">
             <TypeMark type={type} />

@@ -1032,6 +1032,46 @@
   text-shadow: 0 1px 1px rgb(0 0 0 / 0.6);
 }
 
+/* What the starter's type beats and what beats it: two rows of chips under
+   its power, so the table can plan around the fights ahead. */
+.type-edges {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 6px;
+  margin: 8px 0 0;
+  padding-top: 8px;
+  border-top: 1px solid rgb(255 240 207 / 0.18);
+}
+.type-edges > div {
+  display: grid;
+  gap: 4px;
+}
+.type-edges dt {
+  color: #e9d7b0;
+  font: 700 0.72rem / 1.2 var(--font-tavern);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.type-edges dd {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+  color: #c9b893;
+  font-size: 0.85rem;
+}
+.type-edges .type-chip {
+  padding: 3px 8px 2px;
+  border: 1px solid rgb(255 240 207 / 0.35);
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--type-light), var(--type-deep));
+  color: #fffaf0;
+  font: 700 0.66rem / 1 var(--font-tavern);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 1px rgb(0 0 0 / 0.6);
+}
+
 .crawl-curse .crawl-icon {
   grid-row: span 2;
   width: 26px;

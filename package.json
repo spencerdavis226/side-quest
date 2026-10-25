@@ -18,6 +18,7 @@
     "fonts": "tsx scripts/fonts.ts",
     "cards:review": "tsx scripts/cards-review.ts",
     "fixtures:saves": "tsx scripts/save-fixtures.ts",
+    "league:types": "tsx scripts/league-types.ts",
     "content:manifest": "tsx scripts/pack-manifest.ts",
     "cabiin:reference": "tsx scripts/cabiin-reference.ts",
     "house:reference": "tsx scripts/house-reference.ts",

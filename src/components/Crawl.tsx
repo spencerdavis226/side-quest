@@ -7,6 +7,7 @@ import type {
   PartyState,
   QuestState,
   SessionState,
+  PokemonType,
 } from "../game/types";
 import {
   currentCard as currentCardOf,
@@ -29,12 +30,8 @@ import {
   type CrawlIconName,
   type CrawlTheme,
 } from "./crawlTheme";
-import { BadgeCase, TypeMark, badgesLocked } from "./LeagueMarks";
-import {
-  formType,
-  pokemonTypes,
-  typeStyle,
-} from "../presentation/pokemon-types";
+import { BadgeCase, TypeEdges, TypeMark, badgesLocked } from "./LeagueMarks";
+import { pokemonTypes, typeStyle } from "../presentation/pokemon-types";
 
 // Pub Crawl furniture: the party's hearts, the satchel, the floor's rooms and
 // the boss's wounds. Everything a crawl shows lives here; the engine decides.
@@ -385,13 +382,16 @@ export function CardStakes({
   party,
   hits = 0,
   theme,
+  shift = 0,
 }: {
   card: CardDefinition;
   party: PartyState;
   hits?: number;
   theme: CrawlTheme;
+  /** A League type edge on a plaque-settled fight: the loss moves by one. */
+  shift?: number;
 }) {
-  const damage = card.battle && card.damage;
+  const damage = card.battle && card.damage && card.damage + shift;
   const gain = card.reward?.loot ?? (card.reward?.heal ? "heal" : null);
   // Tonight's omen is a boon too, but its card says so in words; a boss or
   // an elite offers its spoils.
@@ -972,17 +972,18 @@ export function CrawlRecord({
 }
 
 /** The starter or adventurer it is now (owner, 2026-10-17), with its
- * power. A League starter wears its type: the medallion, a tint, and its
- * types named under it. */
+ * power. A League starter wears its type (2026-10-25: one for the run): the
+ * medallion, a tint, its type named under it, and the types it is strong
+ * and weak against, so the table can plan ahead. */
 function FormPanel({
   form,
   theme,
 }: {
-  form: { title: string; rules: string };
+  form: { title: string; rules: string; type?: PokemonType };
   theme: CrawlTheme;
 }) {
-  const types = theme.words.badges ? formType(form.title) : undefined;
-  if (!types)
+  const type = theme.words.badges ? form.type : undefined;
+  if (!type)
     return (
       <p className="crawl-omen">
         <CrawlIcon name="adventurer" theme={theme} />
@@ -990,27 +991,21 @@ function FormPanel({
         <span className="omen-rules">{form.rules}</span>
       </p>
     );
-  const [lead] = types;
   return (
-    <p
-      className={`crawl-omen typed-omen type-${lead}`}
-      style={typeStyle(lead) as CSSProperties}
+    <div
+      className={`crawl-omen typed-omen type-${type}`}
+      style={typeStyle(type) as CSSProperties}
     >
-      <TypeMark type={lead} />
+      <TypeMark type={type} />
       <strong>{form.title}</strong>
       <span className="omen-rules">{form.rules}</span>
       <small className="type-chips">
-        {types.map((t) => (
-          <span
-            key={t}
-            className="type-chip"
-            style={typeStyle(t) as CSSProperties}
-          >
-            {pokemonTypes[t].name}
-          </span>
-        ))}
+        <span className="type-chip" style={typeStyle(type) as CSSProperties}>
+          {pokemonTypes[type].name}
+        </span>
       </small>
-    </p>
+      <TypeEdges type={type} />
+    </div>
   );
 }
 

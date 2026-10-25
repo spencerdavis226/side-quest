@@ -101,6 +101,17 @@ const situations: [string, GameConfig, Find][] = [
     league,
     (s) => s.phase === "complete" && !party(s).wiped,
   ],
+  // Type matchups (2026-10-25): a fight rolled twice, both ways.
+  [
+    "league-roll-with-advantage",
+    league,
+    (s) => s.roll?.edge === "advantage" && !s.roll.returned,
+  ],
+  [
+    "league-roll-with-disadvantage",
+    league,
+    (s) => s.roll?.edge === "disadvantage" && s.roll.returned,
+  ],
   [
     "crawl-boons-and-jinx",
     crawl,

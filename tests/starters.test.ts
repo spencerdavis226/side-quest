@@ -70,7 +70,7 @@ describe("League starters", () => {
         );
       });
     }
-    expect(seen.size).toBe(23);
+    expect(seen.size).toBe(25);
   });
 
   it("writes powers in the League theme's own item names", () => {
@@ -115,7 +115,12 @@ describe("League starters", () => {
     expect(currentCard(s).id).toBe("pokemon.route-rattata");
     s = advance(returnToCard(rollDice(s, zero)), zero);
     expect(s.phase).not.toBe("complete");
-    expect(party(s)).toMatchObject({ hearts: 8, loot: [], wiped: false });
+    expect(party(s)).toMatchObject({
+      hearts: Math.ceil(party(s).max / 2),
+      loot: [],
+      wiped: false,
+    });
+    expect(party(s).hearts).toBe(9); // Bulbasaur's 17, halved
     // Confused (a sealed bag) keeps the Revive shut.
     let hexed = withStarter("bulbasaur", "pokemon.route-rattata");
     Object.assign(hexed.quest!.party!, {

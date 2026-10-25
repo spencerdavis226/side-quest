@@ -4,7 +4,13 @@ import type {
   DiceRoll,
   SessionState,
 } from "./types";
-import { currentCard, omenEffect, PRESS_STEP, type Random } from "./engine";
+import {
+  cardMatchup,
+  currentCard,
+  omenEffect,
+  PRESS_STEP,
+  type Random,
+} from "./engine";
 
 /** How a committed roll is read: a crawl d20's omen bonus, and whether it
  * counts as a natural. Absent on every other roll. */
@@ -161,35 +167,57 @@ export function rollDice(
       throw Error("Invalid dice randomness");
     return 1 + Math.floor(n * dice.sides);
   };
-  let values = Array.from({ length: dice.count }, sample);
   // A crawl's single d20 battle reads tonight's omen: its bonus, its
   // natural range, and a Bidoof's flinch at every 20.
   const effect =
     session.quest?.party && card.battle && dice.count === 1 && dice.sides === 20
       ? (omenEffect(session.quest) ?? {})
       : null;
-  let reading: RollReading | undefined;
-  let flinched = false;
-  if (effect) {
-    for (let i = 0; effect.reroll20 && values[0] === 20 && i < 50; i++) {
-      values = [sample()];
-      flinched = true;
+  // One full attempt: the faces, and how the omen reads them.
+  const attempt = () => {
+    let values = Array.from({ length: dice.count }, sample);
+    let reading: RollReading | undefined;
+    let flinched = false;
+    if (effect) {
+      for (let i = 0; effect.reroll20 && values[0] === 20 && i < 50; i++) {
+        values = [sample()];
+        flinched = true;
+      }
+      const face = values[0];
+      // Each pull on a push-your-luck card rolls lower.
+      const pulls = card.press ? (session.quest!.party!.press ?? 0) : 0;
+      const bonus =
+        (effect.roll?.all ?? 0) +
+        (card.encounter ? (effect.roll?.[card.encounter] ?? 0) : 0) -
+        PRESS_STEP * pulls;
+      const natural =
+        face >= (effect.crit ?? 20)
+          ? 20
+          : face <= (effect.fumble ?? 1)
+            ? 1
+            : null;
+      reading = { bonus, ...(natural ? { natural } : {}) };
     }
-    const face = values[0];
-    // Each pull on a push-your-luck card rolls lower.
-    const pulls = card.press ? (session.quest!.party!.press ?? 0) : 0;
-    const bonus =
-      (effect.roll?.all ?? 0) +
-      (card.encounter ? (effect.roll?.[card.encounter] ?? 0) : 0) -
-      PRESS_STEP * pulls;
-    const natural =
-      face >= (effect.crit ?? 20)
-        ? 20
-        : face <= (effect.fumble ?? 1)
-          ? 1
-          : null;
-    reading = { bonus, ...(natural ? { natural } : {}) };
+    return { values, reading, flinched };
+  };
+  // A League dice fight with a type edge is rolled twice: advantage keeps
+  // the better attempt (a win over a loss, else the higher total) and
+  // disadvantage the worse.
+  const edge = cardMatchup(session.quest, card)?.edge;
+  let kept = attempt();
+  let dropped: number[] | undefined;
+  if (edge) {
+    const other = attempt();
+    const rank = (a: typeof kept) =>
+      (rollWins(dice, a.values, a.reading) ? 1000 : 0) +
+      readTotal(dice, a.values, a.reading);
+    const better = rank(other) > rank(kept);
+    if (better === (edge === "advantage")) {
+      dropped = kept.values;
+      kept = other;
+    } else dropped = other.values;
   }
+  const { values, reading, flinched } = kept;
   const total = values.reduce((a, b) => a + b, 0);
   return {
     ...session,
@@ -200,6 +228,7 @@ export function rollDice(
       returned: false,
       ...reading,
       ...(flinched ? { flinched: true as const } : {}),
+      ...(edge ? { edge, dropped } : {}),
     },
   };
 }
@@ -231,7 +260,15 @@ export function validateRoll(
         !Number.isSafeInteger(roll.bonus) ||
         Math.abs(roll.bonus!) > 10 ||
         (roll.natural !== undefined && ![20, 1].includes(roll.natural)) ||
-        (roll.flinched !== undefined && roll.flinched !== true)))
+        (roll.flinched !== undefined && roll.flinched !== true))) ||
+    // A type edge keeps the other attempt's faces beside the kept ones.
+    ((roll.edge !== undefined || roll.dropped !== undefined) &&
+      (!["advantage", "disadvantage"].includes(roll.edge!) ||
+        !Array.isArray(roll.dropped) ||
+        roll.dropped.length !== dice.count ||
+        roll.dropped.some(
+          (v) => !Number.isInteger(v) || v < 1 || v > dice.sides,
+        )))
   )
     throw Error("Invalid saved dice result");
 }

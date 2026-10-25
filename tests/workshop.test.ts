@@ -91,7 +91,7 @@ test("each supplied sheet row lands in the Core deck (House or CABIIN IDs) or VI
   expect(vip.cardIds.slice(-4)).toEqual(
     [3, 4, 5, 6].map((row) => `vip.sheet-${String(row).padStart(3, "0")}`),
   );
-  expect(cards).toHaveLength(1586); // 96 core + 94 house + 16 vip + 120 Pokémon (+72 League-only gym leaders, 79 gauntlet cards, 23 starters, 152 route, Victory Road and rival cards, 36 hideout cards) + 85 cabin + 250 likely + 156 secrets + 407 Dungeon night (245 fights, elites and bosses; 100 Pub Crawl finds, gambles, merchants and forks; 12 omens, 12 adventurers, 8 landings, 10 rival-party cards and 20 hidden-room cards)
+  expect(cards).toHaveLength(1588); // 96 core + 94 house + 16 vip + 120 Pokémon (+72 League-only gym leaders, 79 gauntlet cards, 25 starters, 152 route, Victory Road and rival cards, 36 hideout cards) + 85 cabin + 250 likely + 156 secrets + 407 Dungeon night (245 fights, elites and bosses; 100 Pub Crawl finds, gambles, merchants and forks; 12 omens, 12 adventurers, 8 landings, 10 rival-party cards and 20 hidden-room cards)
 });
 
 test("League gyms come in eight tiers, one leader per region in each", () => {

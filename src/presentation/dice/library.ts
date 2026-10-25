@@ -231,6 +231,35 @@ export async function createDiceStage(selector: string, palette?: DicePalette) {
       );
       return actual as number[];
     },
+    /** Fade the dice from index `from` on (a type edge's dropped attempt,
+     * 2026-10-25) to a ghost of themselves over a quarter second, after
+     * they have landed. Display only: the faces stay as rolled. */
+    dim(from: number) {
+      const faded: any[] = [];
+      for (const die of box.diceList.slice(from)) {
+        const list = Array.isArray(die.material)
+          ? die.material
+          : [die.material];
+        const clones = list.map((m: any) => {
+          const c = m.clone();
+          c.transparent = true;
+          c.depthWrite = false;
+          return c;
+        });
+        die.material = Array.isArray(die.material) ? clones : clones[0];
+        faded.push(...clones);
+      }
+      if (!faded.length) return;
+      const start = performance.now();
+      const step = (now: number) => {
+        if (disposed) return;
+        const t = Math.min(1, (now - start) / 240);
+        for (const m of faded) m.opacity = 1 - 0.7 * t;
+        box.renderer.render(box.scene, box.camera);
+        if (t < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    },
     finish: playback.finish,
     dispose,
   };

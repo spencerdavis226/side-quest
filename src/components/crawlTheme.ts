@@ -419,6 +419,11 @@ const league: CrawlTheme = {
         line: "Roll the d20 and meet the number to win. No dice: the table judges, then taps Won or Lost.",
       },
       {
+        icon: "omen",
+        title: "Types",
+        line: "Your starter has a type. Super effective: roll twice and keep the better. Not very effective: keep the worse. No dice: a loss costs 1 HP less or more.",
+      },
+      {
         icon: "boss",
         title: "Gyms and badges",
         line: "A gym ends each route. Its pips are the wins it takes; each trainer gets one turn.",

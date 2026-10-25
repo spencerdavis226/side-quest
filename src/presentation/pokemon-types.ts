@@ -1,30 +1,13 @@
-// Pokémon League type marks (2026-10-24): each gym's badge and each
-// starter's panel in the team dialog wear their type's mark and colours.
-// Display-only lookups by stable card ID and form title, so old saves gain
-// them without a schema change; a card not listed falls back to the plain
-// badge or starter mark.
+// Pokémon League type marks (2026-10-24): each gym's badge, each typed card
+// and the starter's panel in the team dialog wear their type's mark and
+// colours. Since 2026-10-25 types are in the cards (`CardDefinition.type`,
+// set by `content/league/types.ts`) because they bend rolls; the gym table
+// below stays only so the badge case of a game saved before then still
+// shows its badges' types (`tests/pokemon-types.test.ts` holds the two
+// tables equal).
 
-export type PokemonType =
-  | "normal"
-  | "fire"
-  | "water"
-  | "grass"
-  | "electric"
-  | "ice"
-  | "fighting"
-  | "poison"
-  | "ground"
-  | "flying"
-  | "psychic"
-  | "bug"
-  | "rock"
-  | "ghost"
-  | "dragon"
-  | "dark"
-  | "steel"
-  | "fairy"
-  // The Striaton trio's badge: fire, water and grass at once.
-  | "trio";
+import type { CardDefinition, PokemonType } from "../game/types";
+export type { PokemonType };
 
 /** Each type's name and its medallion's light and deep tones. */
 export const pokemonTypes: Readonly<
@@ -51,7 +34,8 @@ export const pokemonTypes: Readonly<
   trio: { name: "Fire, Water and Grass", light: "#ffd27a", deep: "#2c7428" },
 };
 
-// Every gym leader and island trial by its specialty type.
+// Every gym leader and island trial by its specialty type: the badge
+// case's fallback for games saved before types were in the cards.
 const gymTypes: Readonly<Record<string, PokemonType>> = {
   // Kanto
   brock: "rock",
@@ -140,75 +124,16 @@ const gymTypes: Readonly<Record<string, PokemonType>> = {
 export const gymType = (cardId: string): PokemonType | undefined =>
   gymTypes[cardId.replace(/^pokemon\.gym-/, "")];
 
-// Every starter and every form it can take: its types, first one leading.
-const formTypes: Readonly<Record<string, PokemonType[]>> = {
-  Bulbasaur: ["grass", "poison"],
-  Ivysaur: ["grass", "poison"],
-  Venusaur: ["grass", "poison"],
-  Charmander: ["fire"],
-  Charmeleon: ["fire"],
-  Charizard: ["fire", "flying"],
-  Squirtle: ["water"],
-  Wartortle: ["water"],
-  Blastoise: ["water"],
-  Pikachu: ["electric"],
-  Eevee: ["normal"],
-  Vaporeon: ["water"],
-  Jolteon: ["electric"],
-  Flareon: ["fire"],
-  Cyndaquil: ["fire"],
-  Quilava: ["fire"],
-  Typhlosion: ["fire"],
-  Totodile: ["water"],
-  Croconaw: ["water"],
-  Feraligatr: ["water"],
-  Treecko: ["grass"],
-  Grovyle: ["grass"],
-  Sceptile: ["grass"],
-  Torchic: ["fire"],
-  Combusken: ["fire", "fighting"],
-  Blaziken: ["fire", "fighting"],
-  Mudkip: ["water"],
-  Marshtomp: ["water", "ground"],
-  Swampert: ["water", "ground"],
-  Piplup: ["water"],
-  Prinplup: ["water"],
-  Empoleon: ["water", "steel"],
-  Turtwig: ["grass"],
-  Grotle: ["grass"],
-  Torterra: ["grass", "ground"],
-  Oshawott: ["water"],
-  Dewott: ["water"],
-  Samurott: ["water"],
-  Froakie: ["water"],
-  Frogadier: ["water"],
-  Greninja: ["water", "dark"],
-  Rowlet: ["grass", "flying"],
-  Dartrix: ["grass", "flying"],
-  Decidueye: ["grass", "ghost"],
-  Scorbunny: ["fire"],
-  Raboot: ["fire"],
-  Cinderace: ["fire"],
-  Fuecoco: ["fire"],
-  Crocalor: ["fire"],
-  Skeledirge: ["fire", "ghost"],
-  Bidoof: ["normal"],
-  Bibarel: ["normal", "water"],
-  Magikarp: ["water"],
-  Gyarados: ["water", "flying"],
-  Wooper: ["water", "ground"],
-  Quagsire: ["water", "ground"],
-  Sunkern: ["grass"],
-  Sunflora: ["grass"],
-  Slowpoke: ["water", "psychic"],
-  Slowbro: ["water", "psychic"],
-  Psyduck: ["water"],
-  Golduck: ["water"],
-};
+/** A badge's type: its card's, or by its ID in a game saved before. */
+export const badgeType = (card: CardDefinition): PokemonType =>
+  card.type ?? gymType(card.id) ?? "normal";
 
-/** A starter form's types, by the form's title. */
-export const formType = (title: string): PokemonType[] | undefined =>
-  formTypes[title];
+/** The Striaton brother each of the trio's types sends out. */
+export const trioBrother: Partial<Record<PokemonType, string>> = {
+  fire: "Chili",
+  water: "Cress",
+  grass: "Cilan",
+};
 
 /** The medallion's custom properties for a type. */
 export const typeStyle = (type: PokemonType) => ({

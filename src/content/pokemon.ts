@@ -11,6 +11,7 @@ import { hideoutCards, hideouts } from "./league/hideouts";
 import { ids, TEAM_HP } from "./league/journey";
 import { rivals, routeCards, routes, victory } from "./league/routes";
 import { starters } from "./league/starters";
+import { applyTypes } from "./league/types";
 
 // Pokémon night: every playable moment from the three supplied board sheets
 // (Kanto, Johto, Hoenn), morphed from board spaces into shared-deck cards.
@@ -902,6 +903,7 @@ export const pokemonCards: CardDefinition[] = [
   ...routeCards,
   ...hideoutCards,
 ];
+applyTypes(pokemonCards);
 
 /** Team HP at the start of a run, before the starter. */
 
