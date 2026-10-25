@@ -2,11 +2,18 @@
 
 Updated 2026-10-25. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Cards that leaned on their titles (2026-10-25; owner; branch `claude/standalone-cards`)
+## Cards that leaned on their titles (2026-10-25; owner; PR #40)
 
 A sweep of all 1,624 cards for bodies that only make sense with the title found six (the Most Likely To fix is PR #39). Buffalo now says "Buffalo! Finish your drink. It's gotta go." (owner: Buffalo means finish your drink). Sheet rows 036 and 037 are the Ride the Bus "Same" joke ("Called It", "Same Card, Wrong"), rows 078 and 079 the Guinness challenge ("Clean Split", "Missed the G"); the d6 rolls are unchanged. Recorded in `reference/README.md`. `core.buffalo` stays in the `rule` category (the deck composition test pins its counts) and in the duration exceptions in `tests/card-logic.test.ts`. House Tin Hat Society (`house.sheet-088`) now reads "Share one conspiracy theory you really believe. The table votes if it's believable. If not, drink 2." (owner approved the suggestion).
 
 - **Verification:** `npm test` 286 passed; lint, typecheck and `BASE_PATH=/side-quest/ npm run build` passed. Browser specs not run; title fit unmeasured.
+
+## Most Likely To titles (2026-10-25; owner; PR #39, merged)
+
+The owner: the standing rule is that the whole instruction lives in the card body, and "Most Likely To" in the title left bodies like "Become an influencer." unreadable without it. All 250 vote cards now have their own flavor title (unique, 22 characters or fewer) and a body that holds the full instruction: "Most likely to become an influencer? Point on three. Most votes drinks 2." The build caps a rule at 100 characters, so the lead is "Most likely to ...?" and three long prompts lost a few words (the Ring camera walk of shame, talking shit about someone right behind them). Card IDs and payouts are unchanged (`src/content/likely.ts`: each prompt is `[title, prompt, payout?]`). `tests/workshop.test.ts` now checks the body pattern and that titles are unique; `docs/CARD_REVIEW.md` and `card-review.csv` regenerated.
+
+- **Verification:** `npm test` 282 passed; lint, typecheck, `validate-content` and Prettier clean. Title fit in the teal band not measured in a browser (longest titles are 22 characters, like existing ones).
+- **Not changed:** other packs whose title is only a mode name but whose body is complete (Paranoia, Secret Mission, Fact or Cap, Forehead, No Saying It, Act It Out, Three in Five, Hot Potato, Secret Rule). The title-dependent House and Core cards are fixed below.
 
 ## League types (2026-10-25; owner; branch `claude/league-types`, PR #35)
 

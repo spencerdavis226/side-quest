@@ -139,13 +139,16 @@ test("Most Likely To is 250 standalone vote cards", () => {
   const voteCards = cards.filter((c) => likely.cardIds.includes(c.id));
   expect(voteCards).toHaveLength(250);
   for (const card of voteCards) {
-    expect(card.title).toBe("Most Likely To");
+    // The body holds the whole instruction; the title is only flavor.
+    expect(card.title).not.toMatch(/most likely/i);
     expect(card.category).toBe("group");
     expect(card.dice).toBeUndefined();
     expect(card.rules).toMatch(
-      /Point on three: most votes (drinks [23]|finishes their drink|takes a shot)\.$/,
+      /^Most likely to .+\? Point on three\. Most votes (drinks [23]|finishes their drink|takes a shot)\.$/,
     );
   }
+  // Every title is its own: no two vote cards share one.
+  expect(new Set(voteCards.map((c) => c.title)).size).toBe(voteCards.length);
 });
 
 test("the Pokémon League is a crawl: 72 gym leaders in eight tiers, then the gauntlet", () => {
