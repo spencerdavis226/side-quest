@@ -256,7 +256,7 @@ describe("Pub Crawl", () => {
     // Three floors at each depth, and one of five hidden rooms: 135 routes.
     expect(floors.map((f) => f.size)).toEqual([3, 3, 3]);
     expect(rooms.size).toBe(5);
-    expect(adventurers.size).toBe(12);
+    expect(adventurers.size).toBe(18);
     expect(omens.size).toBe(20);
   });
 
@@ -526,9 +526,12 @@ describe("Pub Crawl", () => {
       loot: ["shield"],
       omen: "dungeon.class-paladin",
     });
+    // Its first level up picks one of two paths (2026-10-25).
     expect(omenForm(s.quest)).toMatchObject({
       title: "Paladin",
-      next: "Crusader",
+      next: null,
+      branches: ["Crusader", "Oathbreaker"],
+      taglines: ["Bosses hurt less", "Broke the oath, hits harder"],
       palette: { primary: "#2f5a8c" },
     });
     roundTrip(s);
@@ -553,34 +556,70 @@ describe("Pub Crawl", () => {
       "Level up · drink 3",
       "Rest",
     ]);
-    const up = takeOffer(s, 0);
+    // The first level up picks a path: the Berserker, or the Brute.
+    const up = takeOffer(s, 0, Math.random, 0);
     expect(party(up)).toMatchObject({ form: 1, max: H + 2, hearts: H + 2 });
     expect(omenForm(up.quest)).toMatchObject({
       title: "Berserker",
       next: "Warlord",
+      nextTagline: "Bosses fear the Warlord",
     });
     expect(up.quest!.step).toBe(STEP.hidden);
     roundTrip(up);
+    const brute = takeOffer(s, 0, Math.random, 1);
+    expect(party(brute)).toMatchObject({ form: 2, max: H + 4 });
+    expect(omenForm(brute.quest)).toMatchObject({
+      title: "Brute",
+      next: "Juggernaut",
+    });
+    // A pick that isn't a path is refused.
+    expect(takeOffer(s, 0, Math.random, 2)).toBe(s);
     s.quest!.party!.hearts = H - 4;
     expect(party(takeOffer(s, 1))).toMatchObject({ hearts: H - 1 });
-    // A fully levelled adventurer can only rest.
-    s.quest!.party!.form = 2;
-    expect(canTakeOffer(s, 0)).toBe(false);
-    expect(canTakeOffer(s, 1)).toBe(true);
-    // The Plus-One levels up into something worse.
-    const plus = takeOffer(at("plus-one"), 0);
+    // A fully levelled adventurer (either path's second level) can only
+    // rest.
+    for (const form of [3, 4]) {
+      s.quest!.party!.form = form;
+      expect(canTakeOffer(s, 0)).toBe(false);
+      expect(canTakeOffer(s, 1)).toBe(true);
+    }
+    // The Plus-One levels up into something worse, either way.
+    const plus = takeOffer(at("plus-one"), 0, Math.random, 0);
     expect(party(plus)).toMatchObject({ max: H - 4, form: 1 });
     expect(satchelSize(plus.quest)).toBe(2);
+    const ex = takeOffer(at("plus-one"), 0, Math.random, 1);
+    expect(omenForm(ex.quest)!.title).toBe("The Ex");
   });
 
   it("a Dog-Eared Tome levels the adventurer up on the spot", () => {
     const s = adventure("wizard");
     s.quest!.party!.loot = [...party(s).loot, "candy"];
     expect(canUseLoot(s, "candy")).toBe(true);
-    const read = spendLoot(s, "candy");
+    // A Tome picks the path too (2026-10-25): the Sorcerer, or the
+    // Illusionist.
+    const read = spendLoot(s, "candy", Math.random, 0);
     expect(party(read)).toMatchObject({ form: 1, max: H - 1 });
     expect(party(read).loot).toEqual(["die", "die", "die"]);
     roundTrip(read);
+    const smoke = spendLoot(s, "candy", Math.random, 1);
+    expect(omenForm(smoke.quest)!.title).toBe("Illusionist");
+    expect(spendLoot(s, "candy", Math.random, 2)).toBe(s);
+    // The second Tome follows the path.
+    smoke.quest!.party!.loot = [...party(smoke).loot.slice(0, 2), "candy"];
+    const grand = spendLoot(smoke, "candy");
+    expect(omenForm(grand.quest)!.title).toBe("Grand Illusionist");
+    expect(
+      canUseLoot(
+        {
+          ...grand,
+          quest: {
+            ...grand.quest!,
+            party: { ...party(grand), loot: ["candy"] },
+          },
+        },
+        "candy",
+      ),
+    ).toBe(false);
   });
 
   it("tonight's omen is a boon that stacks with the adventurer", () => {

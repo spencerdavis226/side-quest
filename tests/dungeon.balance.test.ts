@@ -29,7 +29,7 @@ import { returnToCard, rollDice, rollWins } from "../src/game/dice";
 import { parseSession } from "../src/app/persistence";
 import { cards, packs } from "../src/content/catalog";
 import type { GameConfig, Loot, SessionState } from "../src/game/types";
-import {} from "../src/content/dungeon/shared";
+import { JOKE_CLASSES } from "../src/content/dungeon/classes";
 
 // Pub Crawl's balance (`npm run test:balance`, run by CI beside `npm test`):
 // 4,000 seeded runs played by a sensible table. Kept out of `npm test` so
@@ -84,28 +84,30 @@ const deal = (s: SessionState, id: string): SessionState => {
 // time, a merchant's drink-priced ware whenever the satchel has room (a
 // price in hearts only above 8), the loud door above 6 hearts, a Tome read
 // at once, and at a landing a level up unless the hearts are low (6 or
-// fewer) or the adventurer is the Plus-One, who rests. Real cards, real
+// fewer) or the adventurer is a joke class (the Plus-One, the Intern, the
+// Mimic), who rests; a forked level up picks either path, at random. Real cards, real
 // engine, so a change to either shows up here.
 function playRun(seed: number, adventurer?: string) {
   const random = seeded(seed);
   let s = createSession(crawl, cards, packs, random);
   if (adventurer) s = deal(s, `dungeon.class-${adventurer}`);
   const use = (item: Loot) => {
-    if (canUseLoot(s, item)) s = spendLoot(s, item, random);
+    if (canUseLoot(s, item))
+      s = spendLoot(s, item, random, random() < 0.5 ? 0 : 1);
   };
-  const plusOne = () => party(s).omen === "dungeon.class-plus-one";
+  const joke = () => JOKE_CLASSES.includes(party(s).omen ?? "");
   for (let guard = 0; guard < 500 && s.phase !== "complete"; guard++) {
     s = advance(s, random);
     const card = currentCard(s);
     if (party(s).hearts <= 3) use("draught");
-    if (!plusOne()) use("candy");
+    if (!joke()) use("candy");
     if (awaitingOffer(s)) {
       const offers = card.offers!;
       const p = party(s);
       let pick: number;
       if (card.encounter === "fork") pick = p.hearts > 6 ? 1 : 0;
       else if (card.encounter === "rest")
-        pick = p.hearts > 6 && !plusOne() && canTakeOffer(s, 0) ? 0 : 1;
+        pick = p.hearts > 6 && !joke() && canTakeOffer(s, 0) ? 0 : 1;
       else
         pick = Math.max(
           0,
@@ -121,6 +123,7 @@ function playRun(seed: number, adventurer?: string) {
         s,
         canTakeOffer(s, pick) ? pick : offers.length - 1,
         random,
+        random() < 0.5 ? 0 : 1,
       );
       continue;
     }
@@ -234,12 +237,22 @@ it("a crawl is hard: the party wins about a quarter of its runs", () => {
 
 it("adventurers level up often, but not always all the way", () => {
   const levelling = runs.filter(
-    (s) => party(s).omen !== "dungeon.class-plus-one",
+    (s) => !JOKE_CLASSES.includes(party(s).omen ?? ""),
   );
   const once = levelling.filter((s) => (party(s).form ?? 0) >= 1).length;
   const full = levelling.filter((s) => !omenForm(s.quest)!.canEvolve).length;
+  // Each forked path's rate among the runs that took it (2026-10-25): a
+  // run that levels is a run that got far, so these read high.
+  const paths = new Map<string, SessionState[]>();
+  for (const s of levelling.filter((s) => (party(s).form ?? 0) >= 1)) {
+    const card = omenForm(s.quest)!.card;
+    const path = card.evolves![((party(s).form ?? 1) - 1) % 2].title;
+    const key = `${card.title}/${path}`;
+    paths.set(key, [...(paths.get(key) ?? []), s]);
+  }
   console.log(
-    `levels: ${pct(once / levelling.length)} level up at least once, ${pct(full / levelling.length)} reach level 3`,
+    `levels: ${pct(once / levelling.length)} level up at least once, ${pct(full / levelling.length)} reach level 3\n` +
+      `paths: ${[...paths].map(([k, g]) => `${k} ${pct(rate(g))} (${g.length})`).join(", ")}`,
   );
   expect(once / levelling.length).toBeGreaterThan(0.6);
   expect(full / levelling.length).toBeGreaterThan(0.2);
@@ -264,31 +277,39 @@ it("no adventurer, omen or dungeon makes a crawl a walkover or hopeless", () => 
       `hidden rooms: ${rooms.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}\n` +
       `floors: ${dungeons.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}`,
   );
-  expect(adventurers).toHaveLength(12);
+  expect(adventurers).toHaveLength(18);
   expect(omens).toHaveLength(20);
   expect(dungeons).toHaveLength(9);
   expect(rooms).toHaveLength(5);
-  // The Plus-One is the worst by design, measured on its own below.
+  // The joke classes are the worst by design, measured on their own below.
   for (const [name, r] of [...adventurers, ...omens, ...rooms, ...dungeons]) {
-    if (name === "plus-one") continue;
+    if (JOKE_CLASSES.includes(`dungeon.class-${name}`)) continue;
     expect(r, name).toBeGreaterThan(0.1);
     expect(r, name).toBeLessThan(0.5);
   }
 }, 30_000);
 
-it("the Plus-One is the worst adventurer, and still wins now and then", () => {
-  const plus = rate(
-    Array.from({ length: 600 }, (_, i) => ({
-      ...playRun(i + 1, "plus-one"),
-      cards: [],
-    })),
-  );
+it("the joke classes are the worst adventurers, and still win now and then", () => {
   const worst = Math.min(
     ...by((s) => s.quest!.finale[STEP.adventurer])
-      .filter(([n]) => !n.endsWith("plus-one"))
+      .filter(([n]) => !JOKE_CLASSES.includes(n))
       .map(([, r]) => r),
   );
-  console.log(`plus-one (600 runs) ${pct(plus)}; next worst ${pct(worst)}`);
-  expect(plus).toBeGreaterThan(0.01);
-  expect(plus).toBeLessThan(Math.min(0.1, worst));
-}, 30_000);
+  const jokes = JOKE_CLASSES.map((id) => {
+    const name = id.replace("dungeon.class-", "");
+    const r = rate(
+      Array.from({ length: 600 }, (_, i) => ({
+        ...playRun(i + 1, name),
+        cards: [],
+      })),
+    );
+    return [name, r] as const;
+  });
+  console.log(
+    `jokes (600 runs each): ${jokes.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}; next worst ${pct(worst)}`,
+  );
+  for (const [name, r] of jokes) {
+    expect(r, name).toBeGreaterThan(0.01);
+    expect(r, name).toBeLessThan(Math.min(0.1, worst));
+  }
+}, 60_000);

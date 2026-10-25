@@ -1900,7 +1900,13 @@ export const packs: PackDefinition[] = [
             "dungeon.class-necromancer",
             "dungeon.class-alchemist",
             "dungeon.class-warlock",
+            "dungeon.class-bouncer",
+            "dungeon.class-bartender",
+            "dungeon.class-mercenary",
+            "dungeon.class-druid",
             "dungeon.class-plus-one",
+            "dungeon.class-intern",
+            "dungeon.class-mimic",
           ],
         },
         {

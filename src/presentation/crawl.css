@@ -713,6 +713,14 @@
   font-size: max(13px, 0.78em);
   opacity: 0.85;
 }
+/* A forked adventurer's path (2026-10-25): what it does, at full strength,
+   over its price. */
+.offer-tagline {
+  opacity: 1;
+}
+.offer-tagline + .offer-price {
+  margin-top: 1px;
+}
 /* A price the party can't pay: solid (the frame must not show through), but
    greyed and flat. */
 .offer-plaque:disabled {

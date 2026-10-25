@@ -19,6 +19,7 @@ import {
   finaleStage,
   hitsNeeded,
   isBossCard,
+  omenForm,
   questRecord,
   stageKind,
   wantedBoss,
@@ -534,8 +535,9 @@ export function OfferPlaque({
   can: boolean;
   onTake: (index: number, branch?: number) => void;
   theme: CrawlTheme;
-  /** One of a branching starter's forms, on its own evolve plaque. */
-  branch?: { name: string; index: number };
+  /** One of a branching starter's forms, on its own evolve plaque, with a
+   * forked adventurer's tagline. */
+  branch?: { name: string; index: number; tagline?: string };
 }) {
   // A branch plaque names its form, with its price ("drink 3") under the
   // name: four across leave no room for the whole label ("Evolve · drink 3"),
@@ -574,7 +576,7 @@ export function OfferPlaque({
       className={`card-choice-option offer-plaque ${offer.elite ? "offer-loud" : icon ? "offer-buy" : "offer-pass"}`}
       style={{ animationDelay: `${index * 70}ms` }}
       disabled={!can}
-      aria-label={`${branch ? `${branch.name}${price ? ` · ${price}` : ""}` : offer.label}${offer.cost ? `, ${heartCount(theme, offer.cost)}` : ""}: ${brings}`}
+      aria-label={`${branch ? `${branch.name}${branch.tagline ? `, ${branch.tagline}` : ""}${price ? ` · ${price}` : ""}` : offer.label}${offer.cost ? `, ${heartCount(theme, offer.cost)}` : ""}: ${brings}`}
       onClick={() => onTake(index, branch?.index)}
     >
       <span className="offer-goods" aria-hidden="true">
@@ -591,6 +593,10 @@ export function OfferPlaque({
       </span>
       <span className="offer-label">
         <span className="offer-name">{branch ? branch.name : offer.label}</span>
+        {/* A path's tagline sits between its name and its price. */}
+        {branch?.tagline && (
+          <small className="offer-price offer-tagline">{branch.tagline}</small>
+        )}
         {under && <small className="offer-price">{under}</small>}
       </span>
     </button>
@@ -763,7 +769,7 @@ export function CrawlRecord({
   record: RunRecord;
   theme: CrawlTheme;
   session?: SessionState | null;
-  onUse?: (item: Loot) => void;
+  onUse?: (item: Loot, branch?: number) => void;
   /** In play, each dialog shows its own part: the party (hearts, the
    * adventurer or starter, boons), the satchel, the League's badges, or one
    * thing on the party (the Quaff, the Cup, a curse, a jinx). The end
@@ -772,6 +778,11 @@ export function CrawlRecord({
 }) {
   const show = (p: RecordPart) => !part || part === p;
   const party = record.party!;
+  // A forked adventurer still to pick a path (a Tome's two buttons).
+  const paths =
+    session && omenForm(session.quest)?.card.fork
+      ? omenForm(session.quest)?.branches
+      : null;
   const { words } = theme;
   const quest = session?.quest;
   // The boss waiting at the bottom of this floor, while the run is on.
@@ -952,11 +963,28 @@ export function CrawlRecord({
                   <strong>{theme.loot[item].name}</strong>
                   <small>{theme.loot[item].does}</small>
                 </span>
-                {usable && (
-                  <button className="satchel-use" onClick={() => onUse!(item)}>
-                    {item === "candy" ? theme.eat : theme.drink}
-                  </button>
-                )}
+                {/* A Tome on a forked adventurer picks its path: one button
+                    a path, named for it (2026-10-25). */}
+                {usable &&
+                  (item === "candy" && paths ? (
+                    paths.map((name: string, b: number) => (
+                      <button
+                        key={name}
+                        className="satchel-use"
+                        aria-label={`${theme.eat}: ${name}`}
+                        onClick={() => onUse!(item, b)}
+                      >
+                        {name}
+                      </button>
+                    ))
+                  ) : (
+                    <button
+                      className="satchel-use"
+                      onClick={() => onUse!(item)}
+                    >
+                      {item === "candy" ? theme.eat : theme.drink}
+                    </button>
+                  ))}
               </li>
             );
           })}

@@ -130,7 +130,9 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
       (c.omen === undefined ||
         !Array.isArray(c.evolves) ||
         c.evolves.length < 1 ||
-        c.evolves.length > (c.branches ? 3 : 2) ||
+        c.evolves.length > (c.branches ? 3 : 2) + (c.fork ? 2 : 0) ||
+        (c.fork !== undefined &&
+          (c.fork !== true || c.evolves.length !== 4 || c.branches)) ||
         c.evolves.some(
           (e) =>
             !e ||
@@ -138,6 +140,10 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
               (text) => typeof text !== "string" || !text.trim(),
             ) ||
             e.title.length > 24 ||
+            (e.tagline !== undefined &&
+              (typeof e.tagline !== "string" ||
+                !e.tagline.trim() ||
+                e.tagline.length > 28)) ||
             !e.omen,
         ))
     )

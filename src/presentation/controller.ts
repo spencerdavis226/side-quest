@@ -172,10 +172,10 @@ export class PresentationController {
   }
   /** Use a crawl item from the satchel. A smoke bomb puts the room aside;
    * a loaded die clears the lost roll so the card can be rolled again. */
-  spend(item: Loot) {
+  spend(item: Loot, branch?: number) {
     const { session, motion } = this.state;
     if (!session || motion) return;
-    const next = spendLoot(session, item, this.random);
+    const next = spendLoot(session, item, this.random, branch);
     if (next === session) return;
     this.persist(next);
     if (item === "smoke") {

@@ -49,8 +49,9 @@ export function GameDialogs({
   offlineReady: boolean;
   onHideInstallHelp: () => void;
   onEnd: () => void;
-  /** Use a crawl item from the satchel (the draught). */
-  onSpend?: (item: Loot) => void;
+  /** Use a crawl item from the satchel (the draught, or a Tome, with the
+   * path it picks for a forked adventurer). */
+  onSpend?: (item: Loot, branch?: number) => void;
 }) {
   // Keep the last dialog mounted while it animates out, so pause states do not
   // pop away instantly.

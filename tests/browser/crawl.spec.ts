@@ -208,7 +208,8 @@ for (const width of [320, 375])
         STEP.floor2 + 1,
         {
           loot: ["draught", "shield", "die", "smoke", "draught"],
-          form: 2,
+          // The Shadow (path A's second level since 2026-10-25).
+          form: 3,
           cup: 3,
           curse: curse ? "bleed" : null,
         },
@@ -469,12 +470,17 @@ test("@release a landing levels the adventurer up for drinks, or rests", async (
       ),
     ),
   );
+  // The first level up picks one of two paths, each with its tagline
+  // (2026-10-25), beside the rest.
   const plaques = page.locator(".card-choice.offers .card-choice-option");
-  await expect(plaques).toHaveCount(2);
+  await expect(plaques).toHaveCount(3);
   await expect(plaques.nth(0)).toHaveAccessibleName(
-    "Berserker · drink 3: your adventurer levels up into Berserker",
+    "Berserker, Hits bosses and elites · drink 3: your adventurer levels up into Berserker",
   );
-  await expect(plaques.nth(1)).toHaveAccessibleName("Rest: 3 hearts back");
+  await expect(plaques.nth(1)).toHaveAccessibleName(
+    "Brute, Big, dumb, hard to kill · drink 3: your adventurer levels up into Brute",
+  );
+  await expect(plaques.nth(2)).toHaveAccessibleName("Rest: 3 hearts back");
   await page.screenshot({ path: info.outputPath("landing.png") });
   await plaques.nth(0).click();
   await expect(page.locator(".evolution-banner")).toHaveText(
@@ -496,6 +502,86 @@ test("@release a landing levels the adventurer up for drinks, or rests", async (
   );
   await page.screenshot({ path: info.outputPath("level-up.png") });
   expect(s.quest.party).toMatchObject({ form: 1, max: H + 2 });
+});
+
+// Forked levels (2026-10-25): the paths read at a glance on a 320px phone,
+// the second level follows the path taken, and a Tome asks which path.
+test("a forked level up shows both paths, then follows the one taken", async ({
+  page,
+}, info) => {
+  await page.setViewportSize({ width: 320, height: 640 });
+  await seed(
+    page,
+    reveal(
+      crawlAt(
+        "dungeon.landing-stairwell",
+        STEP.landing1,
+        {},
+        { adventurer: "barbarian" },
+      ),
+    ),
+  );
+  const plaques = page.locator(".card-choice.offers .card-choice-option");
+  await expect(plaques).toHaveCount(3);
+  // Every plaque's name and line fit, and each is a full touch target.
+  for (let i = 0; i < 3; i++) {
+    const box = (await plaques.nth(i).boundingBox())!;
+    expect(box.height).toBeGreaterThanOrEqual(44);
+    expect(box.x).toBeGreaterThanOrEqual(0);
+    expect(box.x + box.width).toBeLessThanOrEqual(320);
+    const clipped = await plaques
+      .nth(i)
+      .locator(".offer-name, .offer-price")
+      .evaluateAll((els) =>
+        els.some((el) => el.scrollWidth > el.clientWidth + 1),
+      );
+    expect(clipped, `plaque ${i}`).toBe(false);
+  }
+  await page.screenshot({ path: info.outputPath("paths-320.png") });
+  await plaques.nth(1).click();
+  await expect(page.locator(".evolution-banner")).toContainText("Brute");
+  expect((await saved(page)).quest.party).toMatchObject({ form: 2 });
+  // The second landing offers only the Brute's next level.
+  const second = crawlAt(
+    "dungeon.landing-boiler-room",
+    STEP.landing2,
+    { form: 2 },
+    { adventurer: "barbarian" },
+  );
+  await seed(page, reveal(second));
+  await expect(plaques).toHaveCount(2);
+  await expect(plaques.nth(0)).toHaveAccessibleName(
+    "Juggernaut, Walks through walls · drink 3: your adventurer levels up into Juggernaut",
+  );
+  await plaques.nth(0).click();
+  await expect(page.locator(".evolution-banner")).toHaveText(
+    /Brute levels up!\s*Juggernaut/,
+  );
+  expect((await saved(page)).quest.party).toMatchObject({ form: 4 });
+});
+
+test("a Dog-Eared Tome asks which path a forked adventurer takes", async ({
+  page,
+}) => {
+  await seed(
+    page,
+    reveal(
+      crawlAt(
+        "dungeon.drunk-goblin",
+        STEP.floor1,
+        { loot: ["candy"] },
+        { adventurer: "wizard" },
+      ),
+    ),
+  );
+  await page.locator(".tag-satchel").click();
+  const dialog = page.getByRole("dialog");
+  const read = dialog.locator(".satchel-use");
+  await expect(read).toHaveCount(2);
+  await expect(read.nth(0)).toHaveText("Sorcerer");
+  await expect(read.nth(1)).toHaveText("Illusionist");
+  await read.nth(1).click();
+  await expect.poll(async () => (await saved(page)).quest.party.form).toBe(2);
 });
 
 test("the party dialog lays out the run: adventurer, boons, jinx and the Cup", async ({
@@ -811,7 +897,9 @@ test("tonight's omen is kept in the party dialog", async ({ page }, info) => {
 test("every Dungeon night card fits its face with its plaques at 393x640", async ({
   page,
 }) => {
-  test.setTimeout(400000);
+  // 530 cards since 2026-10-25 (5.7 minutes alone in Chromium), each
+  // reloaded.
+  test.setTimeout(900000);
   await page.setViewportSize({ width: 393, height: 640 });
   const ids = cards.filter((c) => c.id.startsWith("dungeon.")).map((c) => c.id);
   // Where each card is dealt: its stage's first step on the route that has
@@ -841,54 +929,6 @@ test("every Dungeon night card fits its face with its plaques at 393x640", async
   for (const id of ids) {
     // A smoke bomb in the satchel puts the Flee plaque on every room fight.
     const { step, route, room } = placeOf(id);
-    const s = reveal(crawlAt(id, step, { loot: ["smoke"] }, { route, room }));
-    await page.evaluate(
-      ({ key, session }) => localStorage.setItem(key, JSON.stringify(session)),
-      { key, session: s },
-    );
-    await page.reload();
-    const rules = page.locator(".game-card .study-rules");
-    await expect(rules).toBeVisible();
-    await page.evaluate(() => document.fonts.ready);
-    if ((await rules.getAttribute("data-overflow")) !== "none")
-      overflowing.push(id);
-  }
-  expect(overflowing).toEqual([]);
-});
-
-// Every card a Pub Crawl can deal, on its own floor, with a smoke bomb in
-// the satchel (its Flee plaque sits on every room fight): the rules fit the
-// face (2026-10-25, when the crawl grew by 117 cards; the League has the
-// same sweep in quest.spec.ts).
-test("every Pub Crawl card fits its face with its plaques at 393x640", async ({
-  page,
-}) => {
-  test.setTimeout(900000);
-  await page.setViewportSize({ width: 393, height: 640 });
-  // Where a card is dealt: the route and hidden room whose stages hold it,
-  // and the first step of its stage (an elite's second: a save holds one
-  // only after its floor's first room, where a fork can have swapped it in).
-  const placed = (id: string) => {
-    for (let route = 0; route < 3; route++)
-      for (let room = 0; room < 5; room++) {
-        const q = crawlAt("dungeon.class-rogue", 0, {}, { route, room }).quest!;
-        let step = 0;
-        for (const st of q.stages) {
-          if (st.cards.some((c) => c.id === id)) return { step, route, room };
-          if (st.elite?.some((c) => c.id === id))
-            return { step: step + 1, route, room };
-          step += st.pick;
-        }
-      }
-    return null;
-  };
-  // Every Dungeon night card is dealt somewhere in a crawl.
-  const ids = cards.filter((c) => c.id.startsWith("dungeon.")).map((c) => c.id);
-  expect(ids.filter((id) => !placed(id))).toEqual([]);
-  const overflowing: string[] = [];
-  await page.goto("./");
-  for (const id of ids) {
-    const { step, route, room } = placed(id)!;
     const s = reveal(crawlAt(id, step, { loot: ["smoke"] }, { route, room }));
     await page.evaluate(
       ({ key, session }) => localStorage.setItem(key, JSON.stringify(session)),

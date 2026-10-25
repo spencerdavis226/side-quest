@@ -1258,7 +1258,7 @@ the Review column is intentionally blank so you can mark it up.
 
 ## Dungeon night (`dungeon`)
 
-524 cards · 36 sip · 52 group · 0 category · 404 challenge · 32 rule · 351 dice
+530 cards · 36 sip · 52 group · 0 category · 404 challenge · 38 rule · 351 dice
 
 | Review | Title | ID | Cat | Rules | Dice, secret or timer |
 | --- | --- | --- | --- | --- | --- |
@@ -1757,7 +1757,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Flooded Stairs | `dungeon.omen-flooded-stairs` | rule | The stairs are underwater. Every trap costs one more heart. Take a smoke bomb down. |  |
 | ☐ | Happy Hour | `dungeon.omen-happy-hour` | rule | Two for one, all the way down. Every heal heals one more heart. Everyone drinks 1. |  |
 | ☐ | Running a Tab | `dungeon.omen-running-a-tab` | rule | You start two hearts short, but the bar put a shield and a draught on your tab. |  |
-| ☐ | The Lock-In | `dungeon.omen-lock-in` | rule | Locked in until sunrise. Every boss takes one more hit to fall. Have a loaded die for it. |  |
+| ☐ | The Lock-In | `dungeon.omen-lock-in` | rule | Locked in until sunrise. Every boss takes one more hit. Take a loaded die and a shield. |  |
 | ☐ | Cargo Shorts | `dungeon.omen-cargo-shorts` | rule | You wore cargo shorts: drink 3. One more satchel slot, and a draught in a pocket. |  |
 | ☐ | Butterfingers | `dungeon.omen-butterfingers` | rule | Everyone's already a bit gone. One satchel slot fewer, but you get two more hearts. |  |
 | ☐ | Blood Moon | `dungeon.omen-blood-moon` | rule | Blood moon. Monsters, elites and ambushes cost a heart more. Start with two more hearts. |  |
@@ -1785,7 +1785,13 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Necromancer | `dungeon.class-necromancer` | rule | Has died twice tonight already. −3 max hearts. Starts with a Second Wind. |  |
 | ☐ | Alchemist | `dungeon.class-alchemist` | rule | Has a flask for every flask. +1 max heart. +1 satchel slot. Starts with 2 Healing Draughts. |  |
 | ☐ | Warlock | `dungeon.class-warlock` | rule | Sold their soul for a better seat. −3 max hearts. +2 to every battle d20. |  |
+| ☐ | Bouncer | `dungeon.class-bouncer` | rule | Checked your ID twice. +2 max hearts. Ambushes hurt 1 less. |  |
+| ☐ | Bartender | `dungeon.class-bartender` | rule | Knows everyone's order. +1 max heart. +1 satchel slot. Starts with a Bar Tab and a Healing Draught. |  |
+| ☐ | Mercenary | `dungeon.class-mercenary` | rule | Will fight anything for a drink. +1 to monster d20s. +3 to elite d20s. |  |
+| ☐ | Druid | `dungeon.class-druid` | rule | Smells like moss. Talks to the plants. +1 max heart. +2 to trap d20s. |  |
 | ☐ | The Plus-One | `dungeon.class-plus-one` | rule | Nobody knows who invited them. −3 max hearts. −1 to boss d20s. Every 20 is rerolled. |  |
+| ☐ | The Intern | `dungeon.class-intern` | rule | Unpaid. Here for the experience. −2 max hearts. Natural 1 on a 1 or 2. −2 satchel slots. |  |
+| ☐ | The Mimic | `dungeon.class-mimic` | rule | A chest. Thinks it's one of you. −4 max hearts. −1 to every battle d20. +2 satchel slots. |  |
 
 ## Notes for review
 

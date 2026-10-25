@@ -486,13 +486,15 @@ export const omen = (
  * grows as it levels up (`evolves`, each level replacing the one before)
  * at a landing or with a Dog-Eared Tome. Every power is written from its
  * numbers, so the card says exactly what the engine does: `flavor` leads
- * the card, and each level's rules are its power alone. */
+ * the card, and each level's rules are its power alone. Four levels
+ * (2026-10-25) are two paths, `[A1, B1, A2, B2]`: the first level up picks
+ * one (`fork`), each with a `tagline` for its plaque. */
 export const adventurer = (
   id: string,
   title: string,
   flavor: string,
   effect: OmenEffect,
-  levels: { title: string; omen: OmenEffect }[],
+  levels: { title: string; omen: OmenEffect; tagline?: string }[],
 ): CardDefinition => ({
   ...card(
     `class-${id}`,
@@ -506,6 +508,7 @@ export const adventurer = (
   ribbonTone: "pearl",
   encounter: "omen",
   omen: effect,
+  ...(levels.length === 4 ? { fork: true as const } : {}),
   evolves: levels.map((e) => ({
     ...e,
     rules: describeOmen(e.omen, dungeonOmenWords, PARTY_HEARTS, false),

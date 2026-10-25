@@ -131,6 +131,20 @@ const situations: [string, GameConfig, Find][] = [
     crawl,
     (s) => !!party(s).curse && (party(s).cup ?? 0) >= 2,
   ],
+  // Forked levels (2026-10-25): a class on its second path, then at its
+  // second level; and the Quarter-Zips on the stairs.
+  [
+    "crawl-second-path",
+    crawl,
+    (s) => party(s).form === 2 && s.phase === "hidden",
+  ],
+  ["crawl-second-level", crawl, (s) => (party(s).form ?? 0) >= 3],
+  [
+    "crawl-rival-on-the-stairs",
+    crawl,
+    (s) =>
+      s.phase === "revealed" && currentCard(s).id.startsWith("dungeon.stairs-"),
+  ],
   ["crawl-wiped", crawl, (s) => party(s).wiped],
   ["crawl-survived", crawl, (s) => s.phase === "complete" && !party(s).wiped],
 ];

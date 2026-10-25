@@ -123,7 +123,8 @@ export function Play({
   const extras = items.length + (quaffable ? 1 : 0);
   const crawl = crawlTheme(session.quest?.packId);
   // A branching starter's evolution splits into one plaque per form; a line
-  // names the form it brings next ("Ivysaur · drink 3").
+  // names the form it brings next ("Ivysaur · drink 3"). A forked
+  // adventurer's paths carry their taglines (2026-10-25).
   const form = omenForm(session.quest);
   const branches = form?.branches;
   const next = form?.next;
@@ -134,12 +135,26 @@ export function Play({
     ): {
       offer: Offer;
       i: number;
-      branch?: { name: string; index: number };
+      branch?: { name: string; index: number; tagline?: string };
     }[] =>
       offer.evolve && branches
-        ? branches.map((name, index) => ({ offer, i, branch: { name, index } }))
+        ? branches.map((name, index) => ({
+            offer,
+            i,
+            branch: {
+              name,
+              index,
+              tagline: form?.taglines?.[index] || undefined,
+            },
+          }))
         : offer.evolve && next
-          ? [{ offer, i, branch: { name: next, index: 0 } }]
+          ? [
+              {
+                offer,
+                i,
+                branch: { name: next, index: 0, tagline: form?.nextTagline },
+              },
+            ]
           : [{ offer, i, branch: undefined }],
   );
   // Secret and timed cards: plaques once the card has landed face up; a timed

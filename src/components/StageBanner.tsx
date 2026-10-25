@@ -118,11 +118,12 @@ export function EvolutionBanner({ session }: { session: SessionState }) {
   useEffect(() => {
     if (form > seen.current) {
       const now = omenForm(quest);
-      // A branching starter (Eevee) evolves straight from its base form.
+      // A branching starter (Eevee) evolves straight from its base form; a
+      // forked adventurer's second level grows from its path's first.
       const from =
-        form === 1 || now?.card.branches
+        form === 1 || now?.card.branches || (now?.card.fork && form === 2)
           ? now?.card.title
-          : now?.card.evolves?.[form - 2]?.title;
+          : now?.card.evolves?.[form - (now?.card.fork ? 3 : 2)]?.title;
       // What the evolution did, from the numbers: "Max HP 15 → 17." The
       // form alone: boons a crawl keeps beside it didn't change.
       const words = crawlTheme(quest?.packId).omenWords;
