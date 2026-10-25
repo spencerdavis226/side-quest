@@ -2,9 +2,9 @@
 
 Updated 2026-10-25. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Pub Crawl depth plan (2026-10-25; owner approved the ideas; phase 0 done, phase 1 next)
+## Pub Crawl depth plan (2026-10-25; owner approved the ideas; phases 0 and 1 done, phase 2 next)
 
-Goal (owner): bring Pub Crawl up to the League's fun and depth, distinct from it, without making it complex; add many cards; UI must read for drunk players at a distance (phone or mirrored TV). Phase 0 (the spike) is done and recorded below; phases 1 to 5 are not built. The owner asked for this plan to be kept here, up to date, as work proceeds. Findings from reading the code:
+Goal (owner): bring Pub Crawl up to the League's fun and depth, distinct from it, without making it complex; add many cards; UI must read for drunk players at a distance (phone or mirrored TV). Phases 0 (the spike) and 1 (content) are done and recorded below; phases 2 to 5 are not built. The owner asked for this plan to be kept here, up to date, as work proceeds. Findings from reading the code:
 
 - **Push your luck already exists** (`press`, `gamble()` in `dungeon/shared.ts`, `PressPlaques`): 9 gambles, one per floor, prizes are `Loot[]` only. Greed work is an expansion, not a new system.
 - **Class is readable by cards**: `party.omen` holds the adventurer's card ID (`class-barbarian`), and `omenForm()` resolves its form. Class-reactive rooms need no new save field.
@@ -40,6 +40,20 @@ Goal (owner): bring Pub Crawl up to the League's fun and depth, distinct from it
 **5. Polish and gates.** `npm test`, `npm run test:balance`, lint, typecheck, `BASE_PATH=/side-quest/ npm run build` (budgets), `cards:review`, the workshop card-count assertions, Playwright `crawl.spec.ts`, `quest.spec.ts` fit sweeps at 320 px, and the new legibility assertions. Add the distance and TV checks to `DEVICE_CHECKLIST.md` for the owner.
 
 **Optional wave 2 (needs approval):** a fourth floor at each depth (3 new floors, about 100 cards), taking dungeons from 27 to 64 combinations.
+
+### Phase 1 results (2026-10-25; local branch `claude/crawl-content`, not pushed)
+
+117 new Pub Crawl cards (Dungeon night 407 to 524; catalog 1,624 to 1,741), no engine or save-shape change:
+
+- **Every floor** (all nine): 6 more fights (2 d20 monsters, a d6 or 2d6 monster, a trial, a trap, an ambush), 3 more gambles and 1 more elite with two trinkets. Fights 20 to 26, finds 11 to 14, elites 3 to 4 per floor; the fight-to-find ratio is unchanged (about 1.85).
+- **Greed:** gambles 9 to 36 (four per floor; `AUTHORING.md` said one per floor and now says four). One per floor is a mimic (keg, cask, fermenter, coffin, manhole, fridge, clam, oven, planter), whose third prize is a Revive; the others are games of chance whose third prize is a Tome, a Revive, a Bar Tab or a shield. Same `press` engine and plaques.
+- **Nemesis:** a new set-piece stage, **The Stairs**, after the lower landing (`stairs()` in `dungeon/shared.ts`, `STAIRS_NEED` 10, `STAIRS_HURT` 2; 5 cards in `lastcall.ts`, one fight for an item, one lays the One of the Boys jinx). The queue has 3 more cards (8) and closing time 3 more (8), one of them a rematch "for the queue" (no memory of the result; the joke works either way). A run is now 37 cards (was 36); every later step moved by one (`STEP` in the three crawl test files).
+- **Omens** 12 to 20 (Payday: gambles and relics +2; Designated Driver; Friday the 13th: both naturals widen; Trivia Night; Brad's Birthday: ambushes, so the Quarter-Zips, cost a heart more; Open Bar; Name Tags, a table rule; Lucky Penny). **Landings** 4 to 8 at each of the two.
+- **Balance** (`tests/dungeon.balance.test.ts`, 4,000 runs): won 32.5% to **27.2%** (the stairs fight's hearts carry into floor 3: floor-3 wipes 10% to 13%); a won run 46.9 to 47.8 draws; levels 79%/31% to 76%/26%; adventurers 25% (Rogue) to 42% (Paladin, was 50%, the band's edge), Plus-One 6%; omens 14% (The Lock-In, which fell to 12% and got a shield) to 36% (Cargo Shorts); floors 25% to 30%; hidden rooms 22% to 34%. That leaves about 13 points under the 40% ceiling for phases 2 and 3.
+- **Harness fix:** the balance file ran out of memory (2 GB heap) with the bigger card pools, because it kept 4,000 whole sessions, each with a clone of every deck card. It now keeps each finished run without `cards` (a crawl deals only stage cards, which every reader finds in `quest.stages`) and round-trips the first 50 whole. The numbers are unchanged by this (it runs after play).
+- **Tests:** counts and `STEP` updated in `tests/dungeon.test.ts`, `tests/dungeon.balance.test.ts`, `tests/browser/crawl.spec.ts` and `tests/workshop.test.ts`; the wipe screen's list is 8 entries (the stairs). New browser test: **every Pub Crawl card fits its face with its plaques at 393x640** (all 524, each on its own floor; an elite one room in, as a save allows only there), like the League's sweep. Two wordings caught by existing guards and fixed: "Seven" (the dice check reads "even") and "all night" (the chore check).
+- **Docs:** `AGENTS.md`, `CLAUDE.md`, `README.md`, `src/content/CLAUDE.md`, `docs/AUTHORING.md`, `docs/GAME_DESIGN.md` counts and descriptions; `docs/CARD_REVIEW.md` and `card-review.csv` regenerated.
+- **Verification:** `npm test` 282 passed; `npm run test:balance` 8 passed (both files together); lint and `tsc -b` clean; Prettier on touched files; `BASE_PATH=/side-quest/ npm run build` passed (dungeon chunk 41.1 KiB gzip of 200; runtime 3,624 KiB of 4 MiB). Chromium: `crawl.spec.ts` 27 passed (with the new sweep, 6.2 min alone); `@release` 44 passed. WebKit not run (not installed here). No device check. Card copy is mine and has not been read by the owner.
 
 ### Phase 0 results (2026-10-25)
 

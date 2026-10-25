@@ -61,9 +61,10 @@ const STEP = {
   floor2: 16,
   boss2: 24,
   landing2: 25,
-  floor3: 26,
-  closing: 34,
-  lastCall: 35,
+  stairs: 26,
+  floor3: 27,
+  closing: 35,
+  lastCall: 36,
 };
 const party = (s: SessionState) => s.quest!.party!;
 const roundTrip = (s: SessionState) =>
@@ -170,7 +171,16 @@ function playRun(seed: number, adventurer?: string) {
 const RUNS = 4000;
 // The tests below read thousands of runs; beside the other harness in a
 // full parallel `npm test` they can pass the 5 s default, so each has 30 s.
-const runs = Array.from({ length: RUNS }, (_, i) => playRun(i + 1));
+// A finished run is kept without its deck snapshot (`cards`, a clone of
+// every Dungeon night deck card): a crawl deals only its stages' cards, which
+// every reader below finds in `quest.stages`, and 4,000 full sessions pass
+// the default 2 GB heap. The first 50 are round-tripped whole first.
+const full: SessionState[] = [];
+const slim = (s: SessionState, i: number): SessionState => {
+  if (i < 50) full.push(s);
+  return { ...s, cards: [] };
+};
+const runs = Array.from({ length: RUNS }, (_, i) => slim(playRun(i + 1), i));
 const rate = (group: SessionState[]) =>
   group.filter((s) => questRecord(s)!.won).length / group.length;
 const pct = (n: number) => (n * 100).toFixed(0) + "%";
@@ -219,7 +229,7 @@ it("a crawl is hard: the party wins about a quarter of its runs", () => {
     0,
   );
   expect(early / RUNS).toBeLessThan(0.1);
-  for (const s of runs.slice(0, 50)) roundTrip(s);
+  for (const s of full) roundTrip(s);
 }, 30_000);
 
 it("adventurers level up often, but not always all the way", () => {
@@ -245,7 +255,7 @@ it("no adventurer, omen or dungeon makes a crawl a walkover or hopeless", () => 
   );
   const rooms = by((s) => s.quest!.stages[6].label);
   // Each floor on its own (27 whole routes are too thin to measure).
-  const dungeons = [3, 8, 11].flatMap((i) =>
+  const dungeons = [3, 8, 12].flatMap((i) =>
     by((s) => s.quest!.stages[i].label.replace("The ", "")),
   );
   console.log(
@@ -255,7 +265,7 @@ it("no adventurer, omen or dungeon makes a crawl a walkover or hopeless", () => 
       `floors: ${dungeons.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}`,
   );
   expect(adventurers).toHaveLength(12);
-  expect(omens).toHaveLength(12);
+  expect(omens).toHaveLength(20);
   expect(dungeons).toHaveLength(9);
   expect(rooms).toHaveLength(5);
   // The Plus-One is the worst by design, measured on its own below.
@@ -268,7 +278,10 @@ it("no adventurer, omen or dungeon makes a crawl a walkover or hopeless", () => 
 
 it("the Plus-One is the worst adventurer, and still wins now and then", () => {
   const plus = rate(
-    Array.from({ length: 600 }, (_, i) => playRun(i + 1, "plus-one")),
+    Array.from({ length: 600 }, (_, i) => ({
+      ...playRun(i + 1, "plus-one"),
+      cards: [],
+    })),
   );
   const worst = Math.min(
     ...by((s) => s.quest!.finale[STEP.adventurer])

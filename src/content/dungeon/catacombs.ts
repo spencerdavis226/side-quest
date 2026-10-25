@@ -213,6 +213,64 @@ export const catacombs: FloorCards = {
       "You join in. Drink 3.",
       "You conduct them into a wall. Give 3.",
     ),
+    // More of the Catacombs (2026-10-25).
+    monster(
+      1,
+      "zombie-roommate",
+      "Zombie Roommate",
+      "Your old roommate, undead, still owes you rent and still has your hoodie. Roll d20.",
+      "He moves back in. Drink 4.",
+      "You change the locks. Give 4.",
+    ),
+    monster(
+      1,
+      "gym-ghoul",
+      "Gym Ghoul",
+      "A ghoul who has skipped leg day for three hundred years. He needs a spotter. Roll d20.",
+      "He drops the bar on you. Drink 4.",
+      "You out-lift a corpse. Give 4.",
+    ),
+    monster(
+      1,
+      "skeleton-mariachi",
+      "Skeleton Mariachi",
+      "Three skeletons with guitars. They won't stop until someone dances. Roll d6.",
+      "",
+      "",
+      {
+        roll: moves(
+          ["You dance, badly. Drink 4.", "They serenade your ex. Drink 4."],
+          [
+            "You request a slow one. Give 3.",
+            "You pay them to leave. Give 4.",
+            "They play your song. Give 4.",
+            "You join the band. Everyone else drinks 1.",
+          ],
+        ),
+      },
+    ),
+    trial(
+      1,
+      "own-eulogy",
+      "Your Own Eulogy",
+      "Give your own eulogy in 10 seconds. The table says if it moved them. Not moved: drink 4.",
+    ),
+    trap(
+      1,
+      "grabbing-hand",
+      "The Grabbing Hand",
+      "A coffin lid slides open as you pass, and a hand grabs your ankle. Roll d20.",
+      "It pulls. Drink 3.",
+      "You stamp on it and it lets go. Give 3.",
+    ),
+    ambush(
+      1,
+      "ghost-tour",
+      "The Ghost Tour",
+      "A ghost tour thinks you're part of the show. They want photos. Roll d20.",
+      "You do the voice. Drink 3, then moan for them.",
+      "You charge them for the photos. Give 3.",
+    ),
   ],
   finds: [
     gamble(
@@ -319,6 +377,33 @@ export const catacombs: FloorCards = {
       "Two crypt doors. One says REST. The other says PARTY, in fresh blood.",
       ["The REST door", "The PARTY door"],
     ),
+    gamble(
+      1,
+      "ouija-board",
+      "The Ouija Board",
+      "The planchette is moving on its own. Win, then cash out or ask again, harder. Roll d20.",
+      "It spells your name. Drink 4.",
+      "It spells YES. Give 3.",
+      ["shield", "die", "candy"],
+    ),
+    gamble(
+      1,
+      "mimic-coffin",
+      "Mimic Coffin",
+      "A coffin that coughs up treasure until it bites. Cash out or knock again. Roll d20.",
+      "It bites. Drink 4.",
+      "It coughs something up. Give 3.",
+      ["draught", "shield", "revive"],
+    ),
+    gamble(
+      1,
+      "grave-lottery",
+      "Grave Lottery",
+      "Pick a grave and dig. Win, then cash out or dig again, harder. Roll d20.",
+      "It's occupied. Drink 4.",
+      "Gold teeth. Give 3.",
+      ["smoke", "draught", "round"],
+    ),
   ],
   elites: [
     elite(
@@ -355,6 +440,18 @@ export const catacombs: FloorCards = {
       [
         trinket("The Tiny Hat", { roll: { all: 1 } }),
         trinket("Dragon Bone", { hearts: 3, hurt: { trap: 1 } }),
+      ],
+    ),
+    elite(
+      1,
+      "banshee-bride",
+      "The Banshee Bride",
+      "She's been at the altar since 1888, and you look just like him. Roll d20.",
+      "She screams your name. Drink 5.",
+      "You object. She vanishes and drops her ring. Give 5.",
+      [
+        trinket("Widow's Ring", { roll: { boss: 2 }, hurt: { boss: 1 } }),
+        trinket("Bridal Veil", { hearts: 1, hurt: { ambush: -1 } }),
       ],
     ),
   ],

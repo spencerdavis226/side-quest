@@ -7,7 +7,12 @@ import { cellar } from "./dungeon/cellar";
 import { classes } from "./dungeon/classes";
 import { freezer } from "./dungeon/freezer";
 import { kitchen } from "./dungeon/kitchen";
-import { closingCards, lastCallBosses, queueCards } from "./dungeon/lastcall";
+import {
+  closingCards,
+  lastCallBosses,
+  queueCards,
+  stairsCards,
+} from "./dungeon/lastcall";
 import { lowerLandings, upperLandings } from "./dungeon/landings";
 import { omens } from "./dungeon/omens";
 import { rooftop } from "./dungeon/rooftop";
@@ -78,6 +83,7 @@ export const dungeonCards: CardDefinition[] = [
   ...upperLandings,
   ...lowerLandings,
   ...queueCards,
+  ...stairsCards,
   ...closingCards,
   ...hiddenRoomCards,
 ].map(withNaturals);
@@ -168,6 +174,8 @@ export const dungeonPack: PackDefinition = {
         ],
       },
       one("The Lower Landing", "One last breather", lowerLandings),
+      // The Quarter-Zips again, a floor ahead (2026-10-25).
+      one("The Stairs", "The Quarter-Zips are ahead", stairsCards),
       {
         oneOf: [
           [floor("The Drowned Taproom", "The taps never stopped", taproom)],

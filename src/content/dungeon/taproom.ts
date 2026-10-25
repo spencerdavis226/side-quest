@@ -203,6 +203,67 @@ export const taproom: FloorCards = {
       "They take yours. Drink 4.",
       "You find them prosecco. They cry. Give 4.",
     ),
+    // More of the Drowned Taproom (2026-10-25).
+    monster(
+      2,
+      "kelp-bouncer",
+      "The Kelp Bouncer",
+      "A bouncer made of kelp. Your name's not on the waterlogged list. Roll d20.",
+      "He wraps you up and throws you in. Drink 5.",
+      "You slip through his fronds. Give 5.",
+    ),
+    monster(
+      2,
+      "barnacle-bro",
+      "Barnacle Bro",
+      "A bro so covered in barnacles he's mostly reef. He wants to arm wrestle. Roll d20.",
+      "Reefed. Drink 5.",
+      "You scrape him off the bar. Give 5.",
+    ),
+    monster(
+      2,
+      "jellyfish-shots",
+      "Jellyfish Shots",
+      "A tray of glowing jellyfish shots drifts past. Grab one. Roll d6.",
+      "",
+      "",
+      {
+        roll: moves(
+          [
+            "Stung. Drink 5.",
+            "Stung twice. Drink 5.",
+            "That was a real jellyfish. Drink 5.",
+          ],
+          [
+            "Lime jello. Give 4.",
+            "Blue raspberry. Give 4.",
+            "You grab the whole tray. Everyone else drinks 2.",
+          ],
+        ),
+      },
+    ),
+    trial(
+      2,
+      "bail-out",
+      "Bail Out",
+      "Mime bailing water out of the booth for 20 seconds without laughing. Laugh: drink 5.",
+    ),
+    trap(
+      2,
+      "floating-stools",
+      "Floating Stools",
+      "The bar stools float now, and one is drifting at your knees. Roll d20.",
+      "It takes your legs out. Drink 4.",
+      "You ride it like a surfboard. Give 3.",
+    ),
+    ambush(
+      2,
+      "fishing-charter",
+      "The Fishing Charter",
+      "Six dads on a fishing charter, lost since Tuesday, still casting. Roll d20.",
+      "Hooked by the ear. Drink 4.",
+      "You point them at the deep end. Give 4.",
+    ),
   ],
   finds: [
     gamble(
@@ -298,6 +359,33 @@ export const taproom: FloorCards = {
       "The cellar stairs, or a trapdoor behind the bar with bubbles coming up through it.",
       ["The stairs", "The trapdoor"],
     ),
+    gamble(
+      2,
+      "deep-dive",
+      "The Deep Dive",
+      "Dive for the wreck's treasure. Win, then cash out or dive deeper, harder. Roll d20.",
+      "Out of air. Drink 5.",
+      "A gold coin. Give 4.",
+      ["die", "shield", "revive"],
+    ),
+    gamble(
+      2,
+      "mimic-clam",
+      "Mimic Clam",
+      "A giant clam that opens wider every time, until it bites. Cash out or reach in. Roll d20.",
+      "It snaps shut. Drink 5.",
+      "A pearl. Give 4.",
+      ["draught", "shield", "candy"],
+    ),
+    gamble(
+      2,
+      "drowned-pub-quiz",
+      "The Drowned Pub Quiz",
+      "The drowned regulars' quiz, double or nothing. Win, then cash out or play on. Roll d20.",
+      "Wrong. Drink 5.",
+      "Right. Give 4.",
+      ["smoke", "draught", "round"],
+    ),
   ],
   elites: [
     elite(
@@ -334,6 +422,18 @@ export const taproom: FloorCards = {
       [
         trinket("The Deep Pint", { heal: 1, hurt: { ambush: -1 } }),
         trinket("Deep One's Eye", { crit: 19 }),
+      ],
+    ),
+    elite(
+      2,
+      "lighthouse-keeper",
+      "The Lighthouse Keeper",
+      "He hasn't seen a soul in forty years, and he's not letting you leave. Roll d20.",
+      "He tells you about the forty years. Drink 6.",
+      "You fix his light, and he lets you go. Give 6.",
+      [
+        trinket("Lighthouse Lamp", { roll: { boss: 2 } }),
+        trinket("Life Jacket", { hearts: 2 }),
       ],
     ),
   ],

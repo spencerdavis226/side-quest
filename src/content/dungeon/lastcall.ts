@@ -6,6 +6,7 @@ import {
   moves,
   pair,
   queue,
+  stairs,
   vs,
   BOSS_NEED,
 } from "./shared";
@@ -80,6 +81,84 @@ export const queueCards: CardDefinition[] = [
     ),
     { loot: "draught" },
   ),
+  // Three more at the door (2026-10-25).
+  queue(
+    "cover-charge",
+    "The Cover Charge",
+    "Chad tells the bouncer you're paying for all the Quarter-Zips. Roll d20.",
+    vs(
+      "The bouncer believes him. Drink 3.",
+      "The bouncer charges Chad double. Give 3.",
+    ),
+    { loot: "draught" },
+  ),
+  queue(
+    "hand-stamp",
+    "The Hand Stamp",
+    "Thad licked his hand stamp onto Brad's hand, and they want to try it on you. Roll d20.",
+    vs("It works on you. Drink 3.", "You wash it off in a puddle. Give 3."),
+    { loot: "shield" },
+  ),
+  queue(
+    "rock-paper-brad",
+    "Rock, Paper, Brad",
+    "Rock, paper, scissors with your left neighbor (Brad), best of three. Lose: drink 3.",
+    null,
+    { loot: "smoke" },
+  ),
+];
+
+/** The stairs, between the second landing and the third floor
+ * (2026-10-25): the Quarter-Zips are a floor ahead and making sure you
+ * know it. One fight; the winner takes what they dropped. Pub Crawl only. */
+export const stairsCards: CardDefinition[] = [
+  stairs(
+    "service-elevator",
+    "Chad's Shortcut",
+    "Chad found a service elevator and is holding the door shut on you. Roll d20.",
+    vs("He wins. Take the stairs and drink 4.", "You squeeze in. Give 4."),
+    { loot: "die" },
+  ),
+  stairs(
+    "group-photo",
+    "Brad's Group Photo",
+    "Brad stops the whole staircase for a group photo, and you're in the way. Roll 2d6.",
+    pair(
+      "You're cropped out. Drink 4.",
+      "You photobomb it. Give 4.",
+      "A pair! It's your photo now. Everyone else drinks 2.",
+    ),
+    { loot: "shield" },
+  ),
+  stairs(
+    "pep-talk",
+    "Thad's Pep Talk",
+    "Thad pep-talks the boys. Give your table a better one in 10 seconds. Worse: drink 4.",
+    null,
+    { loot: "draught" },
+  ),
+  stairs(
+    "leaderboard",
+    "Brad's Leaderboard",
+    "Brad keeps a leaderboard of who's had the most tonight, and you're second. Roll d20.",
+    vs("He pulls ahead. Drink 4.", "You overtake him. Give 4.", {
+      crit: "You lap him twice. Everyone else drinks 3.",
+    }),
+    { loot: "smoke" },
+  ),
+  stairs(
+    "recruitment",
+    "The Recruitment",
+    "The Quarter-Zips want you in. Thad is holding out a quarter-zip. Roll d20 to say no.",
+    vs("You say yes. Drink 4.", "You say no and mean it. Give 4."),
+    {
+      loot: "round",
+      jinx: {
+        name: "One of the Boys",
+        rule: "The jinxed player ends every sentence with 'bro'. Slip: drink 1.",
+      },
+    },
+  ),
 ];
 
 /** Closing time, after the third floor: the Quarter-Zips are back for your
@@ -147,6 +226,31 @@ export const closingCards: CardDefinition[] = [
         "Everyone in the bar joins your dance. Everyone else drinks 2.",
       ],
     ),
+  ),
+  // Three more at closing time (2026-10-25).
+  closing(
+    "boys-tab",
+    "The Boys' Tab",
+    "Brad closes his tab and puts it on yours. Roll d20.",
+    vs("Signed. Drink 4.", "You sign it 'Brad'. Give 4."),
+  ),
+  closing(
+    "thads-uber",
+    "Thad's Uber",
+    "Thad ordered one ride for everyone, and it's a Prius. Roll 2d6 for a seat.",
+    pair(
+      "You're in the trunk. Drink 4.",
+      "Front seat. Give 4.",
+      "A pair! Thad's in the trunk. Everyone else drinks 2.",
+    ),
+  ),
+  closing(
+    "the-rematch",
+    "The Rematch",
+    "Chad wants a rematch for the queue. He's been stretching since the door. Roll d20.",
+    vs("He's been training. Drink 4.", "Same result as the door. Give 4.", {
+      crit: "Chad is so impressed he buys your table a round. Everyone else drinks 3.",
+    }),
   ),
 ];
 

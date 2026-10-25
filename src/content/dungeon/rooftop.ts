@@ -207,6 +207,67 @@ export const rooftop: FloorCards = {
       "Direct hit. Drink 4.",
       "You duck behind the bar. Give 4.",
     ),
+    // More of the Rooftop Bar (2026-10-25).
+    monster(
+      8,
+      "rogue-drone",
+      "The Rogue Drone",
+      "Somebody's drone is filming you, and now it's dive-bombing. Roll d20.",
+      "Hit in the head, on camera. Drink 5.",
+      "You swat it into the pool. Give 5.",
+    ),
+    monster(
+      8,
+      "hot-tub-wizard",
+      "The Hot Tub Wizard",
+      "An old man in the hot tub says he's a wizard and wants your drink. Roll d20.",
+      "He's a wizard. Drink 5.",
+      "He's just an old man. Give 5.",
+    ),
+    monster(
+      8,
+      "the-fireworks",
+      "The Fireworks",
+      "Someone's lighting fireworks off the roof, badly. Roll d6.",
+      "",
+      "",
+      {
+        roll: moves(
+          [
+            "One goes sideways at you. Drink 5.",
+            "You lose an eyebrow. Drink 5.",
+            "The neighbors call the cops. Drink 5.",
+          ],
+          [
+            "A good one. Give 4.",
+            "You get the perfect photo. Give 4.",
+            "A heart in the sky. Everyone else drinks 2.",
+          ],
+        ),
+      },
+    ),
+    trial(
+      8,
+      "toast-the-city",
+      "Toast the City",
+      "Give a toast to the city. The table raises their glasses, or doesn't. No glasses: drink 5.",
+    ),
+    trap(
+      8,
+      "the-awning",
+      "The Awning",
+      "The awning above you is full of rainwater, and sagging. Roll d20.",
+      "Drenched. Drink 4.",
+      "You poke it from a safe distance. Give 3.",
+    ),
+    ambush(
+      8,
+      "wedding-shoot",
+      "The Wedding Shoot",
+      "A wedding party wants the skyline, and you're in every shot. Roll d20.",
+      "You're in the album forever. Drink 4.",
+      "You show them a better spot. Give 4.",
+    ),
   ],
   finds: [
     gamble(
@@ -302,6 +363,33 @@ export const rooftop: FloorCards = {
       "Take the stairs across, or climb through the open window, where someone is shouting.",
       ["The stairs", "The window"],
     ),
+    gamble(
+      8,
+      "paper-planes",
+      "Paper Planes",
+      "Bet on the paper planes the regulars throw off the roof. Cash out or bet again. Roll d20.",
+      "Yours nosedives. Drink 5.",
+      "Yours glides. Give 4.",
+      ["die", "shield", "candy"],
+    ),
+    gamble(
+      8,
+      "mimic-planter",
+      "Mimic Planter",
+      "A planter that grows prizes until it bites. Cash out or dig again. Roll d20.",
+      "It bites. Drink 5.",
+      "Something sprouts. Give 4.",
+      ["draught", "shield", "revive"],
+    ),
+    gamble(
+      8,
+      "rooftop-dares",
+      "Rooftop Dares",
+      "The roof plays truth or dare, and the stakes go up. Cash out or go again. Roll d20.",
+      "Dared. Drink 5.",
+      "You dare them back. Give 4.",
+      ["smoke", "draught", "round"],
+    ),
   ],
   elites: [
     elite(
@@ -338,6 +426,18 @@ export const rooftop: FloorCards = {
       [
         trinket("Lightning Rod", { crit: 19 }),
         trinket("Storm Coat", { hurt: { trap: -1 }, heal: 1 }),
+      ],
+    ),
+    elite(
+      8,
+      "helicopter-pilot",
+      "The Helicopter Pilot",
+      "He landed on the roof and won't leave until somebody pays. Roll d20.",
+      "You're paying. Drink 6.",
+      "You talk him into a free ride. Give 6.",
+      [
+        trinket("Aviator Shades", { crit: 19 }),
+        trinket("Rope Ladder", { satchel: 4 }),
       ],
     ),
   ],

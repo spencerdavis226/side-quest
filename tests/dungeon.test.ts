@@ -90,9 +90,10 @@ const STEP = {
   floor2: 16,
   boss2: 24,
   landing2: 25,
-  floor3: 26,
-  closing: 34,
-  lastCall: 35,
+  stairs: 26,
+  floor3: 27,
+  closing: 35,
+  lastCall: 36,
 };
 // The run past the door, with no adventurer or omen: the Cellar's first
 // room.
@@ -162,11 +163,12 @@ describe("Pub Crawl", () => {
       ["The Catacombs", 8],
       ["Catacombs boss", 1],
       ["The Lower Landing", 1],
+      ["The Stairs", 1],
       ["The Drowned Taproom", 8],
       ["Closing Time", 1],
       ["Last Call", 1],
     ]);
-    expect(s.quest!.finale).toHaveLength(36);
+    expect(s.quest!.finale).toHaveLength(37);
     expect(currentCard(s).omen).toBeDefined();
     const at = (step: number) => findCard(s, s.quest!.finale[step])!;
     expect(at(STEP.hidden).ribbon).toBe("Speakeasy · Guard");
@@ -175,6 +177,12 @@ describe("Pub Crawl", () => {
     expect(at(STEP.omen).boon).toBeDefined();
     expect(at(STEP.queue)).toMatchObject({ encounter: "ambush", battle: true });
     expect(at(STEP.queue).hits).toBeUndefined();
+    // The Quarter-Zips again on the stairs, one fight (2026-10-25).
+    expect(at(STEP.stairs)).toMatchObject({
+      encounter: "ambush",
+      battle: true,
+    });
+    expect(at(STEP.stairs).hits).toBeUndefined();
     expect(
       [STEP.boss1, STEP.boss2, STEP.lastCall].map((step) => [
         at(step).encounter,
@@ -205,6 +213,7 @@ describe("Pub Crawl", () => {
       "The Sewers",
       "Sewers boss",
       "The Lower Landing",
+      "The Stairs",
       "The Kitchen",
       "Closing Time",
       "Last Call",
@@ -223,6 +232,7 @@ describe("Pub Crawl", () => {
       "The Walk-in Freezer",
       "Freezer boss",
       "The Lower Landing",
+      "The Stairs",
       "The Rooftop Bar",
       "Closing Time",
       "Last Call",
@@ -238,7 +248,7 @@ describe("Pub Crawl", () => {
     for (let seed = 1; seed <= 400; seed++) {
       const s = createSession(crawl, cards, packs, seeded(seed));
       const labels = s.quest!.stages.map((st) => st.label);
-      [labels[3], labels[8], labels[11]].forEach((l, i) => floors[i].add(l));
+      [labels[3], labels[8], labels[12]].forEach((l, i) => floors[i].add(l));
       rooms.add(labels[6]);
       adventurers.add(s.quest!.finale[STEP.adventurer]);
       omens.add(s.quest!.finale[STEP.omen]);
@@ -247,7 +257,7 @@ describe("Pub Crawl", () => {
     expect(floors.map((f) => f.size)).toEqual([3, 3, 3]);
     expect(rooms.size).toBe(5);
     expect(adventurers.size).toBe(12);
-    expect(omens.size).toBe(12);
+    expect(omens.size).toBe(20);
   });
 
   it("a lost room fight costs the party hearts, pours into the Cup, and the run moves on", () => {
@@ -898,7 +908,7 @@ describe("Pub Crawl", () => {
       seeded(3),
     );
     expect(s.quest).toBeUndefined();
-    expect(s.cards).toHaveLength(245);
+    expect(s.cards).toHaveLength(308);
     expect(s.cards.some((c) => c.reward && !c.battle)).toBe(false);
     expect(
       s.cards.some(
@@ -906,7 +916,8 @@ describe("Pub Crawl", () => {
           c.offers ||
           c.omen ||
           c.encounter === "omen" ||
-          c.id.includes("queue-"),
+          c.id.includes("queue-") ||
+          c.id.includes("stairs-"),
       ),
     ).toBe(false);
     // A trial is put aside with a tap, no verdict; a jinx card plays plain.

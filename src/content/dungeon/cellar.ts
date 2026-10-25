@@ -212,6 +212,64 @@ export const cellar: FloorCards = {
       "They do it their way. Drink 2.",
       "You heckle them offstage. Give 2.",
     ),
+    // More of the Cellar (2026-10-25).
+    monster(
+      0,
+      "fryer-oil-ooze",
+      "Fryer Oil Ooze",
+      "Twenty years of fryer oil got up and walked. It smells like Tuesday. Roll d20.",
+      "It hugs you. Drink 3, then wipe your hands on your jeans.",
+      "You salt it and it shrivels. Give 3.",
+    ),
+    monster(
+      0,
+      "barback-poltergeist",
+      "Barback Poltergeist",
+      "An invisible barback keeps stacking empty glasses on your head. Roll d20.",
+      "The tower falls. Drink 3.",
+      "You tip him a coin and he floats off. Give 3.",
+    ),
+    monster(
+      0,
+      "cobweb-bartender",
+      "Cobweb Bartender",
+      "A bartender made of cobwebs slides you something cloudy. Roll d6.",
+      "",
+      "",
+      {
+        roll: moves(
+          ["You drink it. Drink 3.", "He pours you a second. Drink 3."],
+          [
+            "You send it back. Give 2.",
+            "You tip him a moth. Give 3.",
+            "You order a round for the table. Everyone else drinks 1.",
+            "You pour him one for once. Give 3.",
+          ],
+        ),
+      },
+    ),
+    trial(
+      0,
+      "low-beam",
+      "The Low Beam",
+      "Your right neighbor holds out an arm as the beam. Limbo under it. Touch it: drink 3.",
+    ),
+    trap(
+      0,
+      "loose-floorboard",
+      "Loose Floorboard",
+      "One board in the cellar floor is not like the others. Roll d20.",
+      "It springs up and smacks you. Drink 2.",
+      "You step over it like a cat. Give 2.",
+    ),
+    ambush(
+      0,
+      "stag-party",
+      "The Stag Party",
+      "Eight men in matching shirts, one in a veil, all looking for a ninth. Roll d20.",
+      "Recruited. Drink 2, then give a best-man toast.",
+      "You send them to the Wine Cellar. Give 2.",
+    ),
   ],
   finds: [
     gamble(
@@ -307,6 +365,34 @@ export const cellar: FloorCards = {
       "Two doors: STAFF ONLY and REALLY STAFF ONLY. The second one growls.",
       ["Staff only", "Really staff only"],
     ),
+    // Push your luck, three more ways (2026-10-25).
+    gamble(
+      0,
+      "coin-pusher",
+      "The Coin Pusher",
+      "An arcade coin pusher, one coin from the edge. Win, then cash out or push again. Roll d20.",
+      "The coins don't budge. Drink 3.",
+      "A coin drops. Give 2.",
+      ["shield", "draught", "revive"],
+    ),
+    gamble(
+      0,
+      "mimic-keg",
+      "Mimic Keg",
+      "A keg with teeth that pays out until it bites. Cash out or tap again. Roll d20.",
+      "It bites. Drink 3.",
+      "It burps up a prize. Give 2.",
+      ["draught", "die", "candy"],
+    ),
+    gamble(
+      0,
+      "rat-dice",
+      "Rat Dice",
+      "Rats shoot dice behind the boiler. Win, then cash out or let it ride, harder. Roll d20.",
+      "Snake eyes. Drink 3.",
+      "Hot dice. Give 2.",
+      ["smoke", "round", "shield"],
+    ),
   ],
   elites: [
     elite(
@@ -346,6 +432,18 @@ export const cellar: FloorCards = {
           roll: { monster: 1 },
           loot: ["draught"],
         }),
+      ],
+    ),
+    elite(
+      0,
+      "the-exterminator",
+      "The Exterminator",
+      "He's here for the rats, and he's decided you count. Roll d20.",
+      "Sprayed. Drink 4, holding your breath.",
+      "You hide him in an empty keg. Give 4.",
+      [
+        trinket("Rat Poison", { roll: { monster: 1, elite: 1 } }),
+        trinket("Hazmat Suit", { hearts: 1 }),
       ],
     ),
   ],

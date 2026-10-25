@@ -61,6 +61,11 @@ export const QUEUE_NEED = 8;
 export const QUEUE_HURT = 1;
 export const CLOSING_NEED = 12;
 export const CLOSING_HURT = 3;
+/** The rival party on the stairs, between the second landing and the third
+ * floor (2026-10-25): one fight, between the door's odds and closing
+ * time's. */
+export const STAIRS_NEED = 10;
+export const STAIRS_HURT = 2;
 /** A push-your-luck room's first pull, depth by depth; each pull after is
  * 2 harder (`PRESS_STEP` in the engine). */
 export const GAMBLE_NEED = [7, 8, 9] as const;
@@ -546,6 +551,31 @@ export const queue = (
   encounter: "ambush",
   battle: true,
   damage: QUEUE_HURT,
+  ...stakes(more),
+});
+
+/** The rival party on the stairs (2026-10-25): one fight, or a trial the
+ * table calls (`null`), and the winner gets whatever they dropped. Pub
+ * Crawl only. */
+export const stairs = (
+  id: string,
+  title: string,
+  rules: string,
+  fight: Roll | null,
+  more: Stakes = {},
+): CardDefinition => ({
+  ...card(
+    `stairs-${id}`,
+    title,
+    "challenge",
+    rules,
+    fight ? fight(STAIRS_NEED) : undefined,
+  ),
+  ribbon: "The Stairs · Rival",
+  ribbonTone: "crimson",
+  encounter: "ambush",
+  battle: true,
+  damage: STAIRS_HURT,
   ...stakes(more),
 });
 

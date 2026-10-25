@@ -26,9 +26,10 @@ const STEP = {
   floor2: 16,
   boss2: 24,
   landing2: 25,
-  floor3: 26,
-  closing: 34,
-  lastCall: 35,
+  stairs: 26,
+  floor3: 27,
+  closing: 35,
+  lastCall: 36,
 };
 
 // A Pub Crawl seeded at `step` with `id` in play, the party as given. The
@@ -615,14 +616,15 @@ test("@release losing the last heart wipes the party, and the Cup goes to the la
   await expect(page.locator(".crawl-cup")).toContainText(
     "Whoever drew the last card drinks the Cup.",
   );
-  // The queue, three floors and the hidden room, closing time, Last Call.
+  // The queue, three floors and the hidden room, the stairs, closing time,
+  // Last Call.
   await expect(page.locator(".crawl-floors li").first()).toContainText(
     "The Queue",
   );
   await expect(page.locator(".crawl-floors li").nth(1)).toContainText(
     "The Cellar",
   );
-  await expect(page.locator(".crawl-floors li")).toHaveCount(7);
+  await expect(page.locator(".crawl-floors li")).toHaveCount(8);
   await page.screenshot({ path: info.outputPath("wiped.png") });
   await page.getByRole("button", { name: "Play again" }).click();
   await expect(meter(page)).toHaveAccessibleName(full);
@@ -799,9 +801,9 @@ test("tonight's omen is kept in the party dialog", async ({ page }, info) => {
   await expect(dialog.locator(".crawl-boons")).toContainText(
     "Bosses take 1 more hit.",
   );
-  // The Lock-In's Loaded Die is in the satchel, on the strip.
+  // The Lock-In's Loaded Die and shield are in the satchel, on the strip.
   await expect(page.locator(".tag-satchel")).toHaveAccessibleName(
-    "Satchel: Loaded Die",
+    "Satchel: Loaded Die, Coaster Shield",
   );
   await page.screenshot({ path: info.outputPath("omen-party.png") });
 });
@@ -839,6 +841,54 @@ test("every Dungeon night card fits its face with its plaques at 393x640", async
   for (const id of ids) {
     // A smoke bomb in the satchel puts the Flee plaque on every room fight.
     const { step, route, room } = placeOf(id);
+    const s = reveal(crawlAt(id, step, { loot: ["smoke"] }, { route, room }));
+    await page.evaluate(
+      ({ key, session }) => localStorage.setItem(key, JSON.stringify(session)),
+      { key, session: s },
+    );
+    await page.reload();
+    const rules = page.locator(".game-card .study-rules");
+    await expect(rules).toBeVisible();
+    await page.evaluate(() => document.fonts.ready);
+    if ((await rules.getAttribute("data-overflow")) !== "none")
+      overflowing.push(id);
+  }
+  expect(overflowing).toEqual([]);
+});
+
+// Every card a Pub Crawl can deal, on its own floor, with a smoke bomb in
+// the satchel (its Flee plaque sits on every room fight): the rules fit the
+// face (2026-10-25, when the crawl grew by 117 cards; the League has the
+// same sweep in quest.spec.ts).
+test("every Pub Crawl card fits its face with its plaques at 393x640", async ({
+  page,
+}) => {
+  test.setTimeout(900000);
+  await page.setViewportSize({ width: 393, height: 640 });
+  // Where a card is dealt: the route and hidden room whose stages hold it,
+  // and the first step of its stage (an elite's second: a save holds one
+  // only after its floor's first room, where a fork can have swapped it in).
+  const placed = (id: string) => {
+    for (let route = 0; route < 3; route++)
+      for (let room = 0; room < 5; room++) {
+        const q = crawlAt("dungeon.class-rogue", 0, {}, { route, room }).quest!;
+        let step = 0;
+        for (const st of q.stages) {
+          if (st.cards.some((c) => c.id === id)) return { step, route, room };
+          if (st.elite?.some((c) => c.id === id))
+            return { step: step + 1, route, room };
+          step += st.pick;
+        }
+      }
+    return null;
+  };
+  // Every Dungeon night card is dealt somewhere in a crawl.
+  const ids = cards.filter((c) => c.id.startsWith("dungeon.")).map((c) => c.id);
+  expect(ids.filter((id) => !placed(id))).toEqual([]);
+  const overflowing: string[] = [];
+  await page.goto("./");
+  for (const id of ids) {
+    const { step, route, room } = placed(id)!;
     const s = reveal(crawlAt(id, step, { loot: ["smoke"] }, { route, room }));
     await page.evaluate(
       ({ key, session }) => localStorage.setItem(key, JSON.stringify(session)),

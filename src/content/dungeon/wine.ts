@@ -1,4 +1,5 @@
 import {
+  pair,
   gamble,
   ambush,
   boss,
@@ -200,6 +201,60 @@ export const wine: FloorCards = {
       "They have notes. Drink 2.",
       "You've read it. They scatter. Give 2.",
     ),
+    // More of the Wine Cellar (2026-10-25).
+    monster(
+      3,
+      "cork-goblin",
+      "Cork Goblin",
+      "A goblin with a corkscrew for a hand and nothing to open. Then he sees you. Roll d20.",
+      "He opens you. Drink 3.",
+      "You hand him a screw-top. He weeps. Give 3.",
+    ),
+    monster(
+      3,
+      "rose-elemental",
+      "Rosé Elemental",
+      "A pink spirit that says 'rosé all day' and means it as a threat. Roll d20.",
+      "All day it is. Drink 3.",
+      "You call it blush wine and it dies. Give 3.",
+    ),
+    monster(
+      3,
+      "tannin-troll",
+      "Tannin Troll",
+      "It dries out every mouth in the room. Roll 2d6.",
+      "",
+      "",
+      {
+        roll: pair(
+          "Your tongue sticks to your teeth. Drink 3.",
+          "You out-spit it. Give 3.",
+          "A pair! It dries itself out. Everyone else drinks 2.",
+        ),
+      },
+    ),
+    trial(
+      3,
+      "palate-test",
+      "The Palate Test",
+      "Your left neighbor names three wines, one made up. Spot the fake. Wrong: drink 3.",
+    ),
+    trap(
+      3,
+      "sediment-pit",
+      "Sediment Pit",
+      "The bottom of the barrel is a pit, and the pit is all dregs. Roll d20.",
+      "You wade through. Drink 2, and chew.",
+      "You vault it. Give 2.",
+    ),
+    ambush(
+      3,
+      "gender-reveal",
+      "The Gender Reveal",
+      "A lost gender reveal party wants you to guess. They have a smoke cannon. Roll d20.",
+      "Wrong guess, and the cannon goes off. Drink 2.",
+      "You leave before the smoke. Give 2.",
+    ),
   ],
   finds: [
     gamble(
@@ -301,6 +356,33 @@ export const wine: FloorCards = {
       "A barrel big enough to crawl through, or the stairs. Something inside is giggling.",
       ["The stairs", "The barrel"],
     ),
+    gamble(
+      3,
+      "vintage-auction",
+      "The Auction",
+      "Bid on a dusty bottle. Win, then cash out or raise the bid, harder. Roll d20.",
+      "Outbid by a ghost. Drink 3.",
+      "Sold. Give 2.",
+      ["draught", "shield", "candy"],
+    ),
+    gamble(
+      3,
+      "mimic-cask",
+      "Mimic Cask",
+      "A cask that pays out until it bites. Win, then cash out or pour again. Roll d20.",
+      "It bites the hand on the tap. Drink 3.",
+      "A fine pour. Give 2.",
+      ["draught", "draught", "revive"],
+    ),
+    gamble(
+      3,
+      "spin-the-bottle",
+      "Spin the Bottle",
+      "An empty magnum spins on its own. Win, then cash out or spin again, harder. Roll d20.",
+      "It points at you. Drink 3.",
+      "It points at your left neighbor. Give 2.",
+      ["smoke", "die", "shield"],
+    ),
   ],
   elites: [
     elite(
@@ -337,6 +419,18 @@ export const wine: FloorCards = {
       [
         trinket("Cellar Master's Keys", { satchel: 4, loot: ["shield"] }),
         trinket("Master's Ledger", { crit: 19 }),
+      ],
+    ),
+    elite(
+      3,
+      "wine-influencer",
+      "The Wine Influencer",
+      "Two million followers and a ring light. She needs you in her story. Roll d20.",
+      "You're the background. Drink 4, and pose.",
+      "You photobomb her. Give 4.",
+      [
+        trinket("Ring Light", { crit: 19 }),
+        trinket("Brand Deal", { loot: ["draught", "draught"] }),
       ],
     ),
   ],
