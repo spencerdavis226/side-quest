@@ -159,7 +159,15 @@ export interface Boon {
   name: string;
   rules: string;
   effect: OmenEffect;
+  /** Pub Crawl equipment (2026-10-25): the slot a trinket takes. The party
+   * wears one piece per slot; a new one replaces the old. Absent on
+   * tonight's omen and on older saves' trinkets, which stack as before. */
+  slot?: Slot;
 }
+/** Pub Crawl's equipment slots (2026-10-25): weapons bend the dice, armor
+ * keeps hearts, a trinket does anything else. */
+export const SLOTS = ["weapon", "armor", "trinket"] as const;
+export type Slot = (typeof SLOTS)[number];
 /** A table rule with a name: "Goblin Tongue", "Speak of yourself in the
  * third person. Slip: drink 1." */
 export interface Jinx {

@@ -263,6 +263,7 @@ function App() {
               onOffer={(index, branch) => controller.offer(index, branch)}
               onQuaff={() => controller.quaff()}
               onSpoils={(index) => controller.spoils(index)}
+              onKeepGear={() => controller.keepGear()}
               onCashOut={() => controller.cashOut()}
               onPress={() => controller.press()}
               onRevealRoll={() => controller.revealRoll()}

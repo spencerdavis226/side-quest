@@ -1,4 +1,5 @@
 import type {
+  Boon,
   CardDefinition,
   DiceRoll,
   Edge,
@@ -733,6 +734,14 @@ export function takeSpoils(
     return s;
   return discard(s, random, undefined, index);
 }
+/** Keep the gear the party wears: a won fight's card goes aside and none
+ * of its spoils are taken (2026-10-25). */
+export function skipSpoils(
+  s: SessionState,
+  random: Random = Math.random,
+): SessionState {
+  return awaitingSpoils(s) ? discard(s, random) : s;
+}
 /** A revealed choice card whose option has not been picked yet. */
 export function awaitingChoice(s: SessionState) {
   return s.phase === "revealed" && !s.roll && !!currentCard(s).dice?.choice;
@@ -1011,15 +1020,41 @@ function gainBoon(
   const key = spoil === undefined ? card.id : `${card.id}#${spoil}`;
   if (!boon || party.boons?.some((k) => k.split("#")[0] === card.id))
     return party;
+  // Equipment (2026-10-25): the slot's old piece comes off first, and its
+  // hearts go with it (the party keeps at least one).
+  let base = party;
+  for (const old of boon.slot ? replaces({ ...quest, party }, boon) : []) {
+    const max = Math.max(1, base.max - (old.boon.effect.hearts ?? 0));
+    base = {
+      ...base,
+      max,
+      hearts: Math.min(max, base.hearts),
+      boons: (base.boons ?? []).filter((k) => k !== old.key),
+    };
+  }
   const { hearts = 0, loot = [] } = boon.effect;
-  const max = Math.max(1, party.max + hearts);
-  const next = { ...party, max, boons: [...(party.boons ?? []), key] };
+  const max = Math.max(1, base.max + hearts);
+  // A trinket that only brings items puts them in the satchel and is not
+  // worn.
+  const next = isLasting(boon)
+    ? { ...base, max, boons: [...(base.boons ?? []), key] }
+    : { ...base, max };
   const size = satchelSize({ ...quest, party: next });
   return {
     ...next,
-    hearts: Math.min(max, Math.max(1, party.hearts + hearts)),
-    loot: [...party.loot, ...loot].slice(0, size),
+    hearts: Math.min(max, Math.max(1, base.hearts + hearts)),
+    loot: [...base.loot, ...loot].slice(0, size),
   };
+}
+/** A boon with an effect that lasts: anything but items alone. */
+export const isLasting = (boon: Boon) =>
+  Object.keys(boon.effect).some((k) => k !== "loot");
+/** The pieces of equipment a boon would replace: whatever the party wears
+ * in its slot (one, or more in a save from before slots). */
+export function replaces(quest: QuestState | undefined, boon: Boon) {
+  return boon.slot
+    ? partyBoons(quest).filter((b) => b.boon.slot === boon.slot)
+    : [];
 }
 /** A heart loss: the shield takes it whole unless the satchel is hexed, and
  * bleeding costs one more. */

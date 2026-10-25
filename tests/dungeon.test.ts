@@ -28,6 +28,9 @@ import {
   stackEffects,
   takeOffer,
   takeSpoils,
+  skipSpoils,
+  replaces,
+  isLasting,
   wantedBoss,
   type Random,
 } from "../src/game/engine";
@@ -1080,5 +1083,115 @@ describe("Pub Crawl", () => {
     const forged = structuredClone(start());
     forged.quest!.party!.omen = "dungeon.gelatinous-shot";
     expect(() => parseSession(JSON.stringify(forged))).toThrow();
+  });
+
+  // Equipment (owner, 2026-10-25): one weapon, one armor, one trinket.
+  it("gives every lasting trinket a slot from what it does; item-only ones have none", () => {
+    const gear = cards.flatMap((c) =>
+      c.id.startsWith("dungeon.") ? (c.spoils ?? []) : [],
+    );
+    expect(gear.length).toBeGreaterThan(100);
+    const by = { weapon: 0, armor: 0, trinket: 0, none: 0 };
+    for (const b of gear) {
+      by[b.slot ?? "none"]++;
+      expect(!!b.slot, b.name).toBe(isLasting(b));
+      const keys = Object.keys(b.effect).filter((k) => k !== "loot");
+      if (b.slot === "weapon")
+        expect(
+          keys.every((k) => ["roll", "crit", "bossHits"].includes(k)),
+        ).toBe(true);
+      if (b.slot === "armor")
+        expect(keys.every((k) => ["hearts", "hurt"].includes(k))).toBe(true);
+    }
+    for (const slot of ["weapon", "armor", "trinket"] as const)
+      expect(by[slot], slot).toBeGreaterThan(30);
+  });
+
+  it("a new piece replaces the one in its slot, and the table can keep its gear", () => {
+    // Wearing Greasy Knuckles (a weapon), the Keg Mimic Queen offers Royal
+    // Jelly Shot (a weapon too) and Queen's Tap (a trinket).
+    // (Worn without its card dealt, so only the swap, whose gear is all
+    // dealt, round-trips as a save; `crawl-gear-*` fixtures cover the rest.)
+    let s = deal(fromStep(start(), STEP.floor1 + 1), "dungeon.keg-mimic-queen");
+    s.quest!.party!.boons = ["dungeon.grease-trap-horror#1"];
+    s = rollTo(advance(s), 19);
+    const [tap, jelly] = currentCard(s).spoils!;
+    expect(tap.slot).toBe("trinket");
+    expect(jelly.slot).toBe("weapon");
+    expect(replaces(s.quest, tap)).toHaveLength(0);
+    expect(replaces(s.quest, jelly).map((b) => b.boon.name)).toEqual([
+      "Greasy Knuckles",
+    ]);
+    // Taking the weapon swaps it in.
+    const swapped = takeSpoils(s, 1);
+    expect(party(swapped).boons).toEqual(["dungeon.keg-mimic-queen#1"]);
+    roundTrip(swapped);
+    // Taking the trinket wears both.
+    expect(party(takeSpoils(s, 0)).boons).toEqual([
+      "dungeon.grease-trap-horror#1",
+      "dungeon.keg-mimic-queen#0",
+    ]);
+    // Keeping the gear puts the card aside and changes nothing worn.
+    const kept = skipSpoils(s);
+    expect(party(kept).boons).toEqual(["dungeon.grease-trap-horror#1"]);
+    expect(kept.quest!.step).toBe(STEP.floor1 + 2);
+    expect(skipSpoils(kept)).toBe(kept);
+  });
+
+  it("swapping armor takes its hearts with it", () => {
+    // Wearing the Hairnet (+1 heart), the Grease Trap Horror offers the
+    // Grease-Proof Apron, armor that adds none.
+    let s = deal(
+      fromStep(start(), STEP.floor1 + 1),
+      "dungeon.grease-trap-horror",
+    );
+    const p = party(s);
+    s.quest!.party = {
+      ...p,
+      max: p.max + 1,
+      hearts: p.max + 1,
+      boons: ["dungeon.health-inspector#1"],
+    };
+    s = rollTo(advance(s), 19);
+    expect(currentCard(s).spoils![0].slot).toBe("armor");
+    const next = takeSpoils(s, 0);
+    expect(party(next)).toMatchObject({
+      max: p.max,
+      hearts: p.max,
+      boons: ["dungeon.grease-trap-horror#0"],
+    });
+    roundTrip(next);
+  });
+
+  it("an item-only trinket goes into the satchel and isn't worn", () => {
+    // Death's Intern offers Death's Lanyard: a Second Wind, nothing more.
+    let s = deal(fromStep(start(), STEP.floor2 + 1), "dungeon.deaths-intern");
+    s = rollTo(advance(s), 19);
+    const lanyard = currentCard(s).spoils![0];
+    expect(lanyard.slot).toBeUndefined();
+    const next = takeSpoils(s, 0);
+    expect(party(next).boons ?? []).toEqual([]);
+    expect(party(next).loot).toContain("revive");
+    roundTrip(next);
+  });
+
+  it("an older save's unslotted trinkets keep stacking", () => {
+    // A save from before slots holds its cards as they were then: strip the
+    // slots and two weapons are both kept.
+    let s = deal(fromStep(start(), STEP.floor1 + 1), "dungeon.keg-mimic-queen");
+    const unslot = (id: string) => {
+      for (const st of s.quest!.stages)
+        for (const c of [...st.cards, ...(st.elite ?? [])])
+          if (c.id === id)
+            c.spoils = c.spoils!.map(({ slot: _slot, ...b }) => b);
+    };
+    unslot("dungeon.keg-mimic-queen");
+    unslot("dungeon.grease-trap-horror");
+    s.quest!.party!.boons = ["dungeon.grease-trap-horror#1"];
+    s = rollTo(advance(s), 19);
+    expect(party(takeSpoils(s, 1)).boons).toEqual([
+      "dungeon.grease-trap-horror#1",
+      "dungeon.keg-mimic-queen#1",
+    ]);
   });
 });

@@ -8,6 +8,7 @@ import type {
   Loot,
   Offer,
   OmenEffect,
+  Slot,
   Strike,
 } from "../../game/types";
 import { cardFactory, choice, rollTable } from "../author";
@@ -370,7 +371,20 @@ export const trinket = (name: string, effect: OmenEffect) => ({
     "Comes with",
   ),
   effect,
+  ...slotFor(effect),
 });
+/** Its equipment slot, read from what it does (2026-10-25): a weapon bends
+ * the dice, armor keeps hearts, a trinket does anything else (or a mix).
+ * One that only brings items has no slot: its items go in the satchel. */
+function slotFor(effect: OmenEffect): { slot?: Slot } {
+  const keys = Object.keys(effect).filter((k) => k !== "loot");
+  if (!keys.length) return {};
+  if (keys.every((k) => ["roll", "crit", "bossHits"].includes(k)))
+    return { slot: "weapon" };
+  if (keys.every((k) => ["hearts", "hurt"].includes(k)))
+    return { slot: "armor" };
+  return { slot: "trinket" };
+}
 export type Trinket = ReturnType<typeof trinket>;
 /** What a boss or an elite offers when it falls: its signature trinket and
  * an alternative, and the table picks one. */

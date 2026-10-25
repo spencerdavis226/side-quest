@@ -8,6 +8,8 @@ import {
   LOOT,
   POKEMON_TYPES,
   RIBBON_TONES,
+  SLOTS,
+  type Slot,
 } from "../game/types";
 
 // Structural validation for cards and packs. Kept apart from `catalog.ts` so
@@ -228,7 +230,12 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
       fail(`Invalid boon: ${c.id}`);
     // Spoils: two or three boons offered by a dice fight when it is won.
     const goodBoon = (b: unknown) => {
-      const boon = b as { name?: unknown; rules?: unknown; effect?: unknown };
+      const boon = b as {
+        name?: unknown;
+        rules?: unknown;
+        effect?: unknown;
+        slot?: unknown;
+      };
       return (
         !!boon &&
         typeof boon.name === "string" &&
@@ -237,7 +244,11 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         typeof boon.rules === "string" &&
         !!boon.rules.trim() &&
         !!boon.effect &&
-        typeof boon.effect === "object"
+        typeof boon.effect === "object" &&
+        // Equipment's slot (2026-10-25), on a trinket with a lasting effect.
+        (boon.slot === undefined ||
+          (SLOTS.includes(boon.slot as Slot) &&
+            Object.keys(boon.effect).some((k) => k !== "loot")))
       );
     };
     if (

@@ -4,6 +4,7 @@ import {
   useEffect,
   useLayoutEffect,
   useRef,
+  useState,
   type ComponentProps,
   type ComponentType,
   type ReactNode,
@@ -40,7 +41,8 @@ import {
   OfferPlaque,
   PressPlaques,
   QuaffPlaque,
-  SpoilsPlaque,
+  SpoilsButton,
+  SpoilsSheet,
   usableItems,
 } from "../components/Crawl";
 import { crawlTheme } from "../components/crawlTheme";
@@ -77,6 +79,7 @@ export function Play({
   onOffer = () => {},
   onQuaff = () => {},
   onSpoils = () => {},
+  onKeepGear = () => {},
   onCashOut = () => {},
   onPress = () => {},
   onRevealRoll,
@@ -95,6 +98,7 @@ export function Play({
   onOffer?: (index: number, branch?: number) => void;
   onQuaff?: () => void;
   onSpoils?: (index: number) => void;
+  onKeepGear?: () => void;
   onCashOut?: () => void;
   onPress?: () => void;
   onRevealRoll: () => void;
@@ -116,8 +120,11 @@ export function Play({
   // a loaded die after a lost roll. They join the card's own plaques.
   const items =
     !motion && session.phase === "revealed" ? usableItems(session) : [];
-  // A won boss or elite: its spoils, one plaque each.
+  // A won boss or elite: its spoils, in a sheet that opens by itself and
+  // reopens from the card's one plaque once closed (2026-10-25).
   const spoils = !motion && awaitingSpoils(session) ? card.spoils! : null;
+  const [sheetClosed, setSheetClosed] = useState<number | null>(null);
+  const sheet = !!spoils && sheetClosed !== session.discarded;
   // A push-your-luck win: cash out or go again.
   const press = !motion && awaitingPress(session);
   // Pub Crawl's Quaff: drinks for another go at a lost roll.
@@ -408,20 +415,11 @@ export function Play({
           {spoils && (
             <div
               ref={choiceRef}
-              className={`card-choice offers spoils plaques-${spoils.length}`}
+              className="card-choice offers spoils plaques-1"
               role="group"
               aria-label="Take a trinket"
             >
-              {spoils.map((boon, i) => (
-                <SpoilsPlaque
-                  key={boon.name}
-                  name={boon.name}
-                  rules={boon.rules}
-                  index={i}
-                  onTake={onSpoils}
-                  theme={crawl}
-                />
-              ))}
+              <SpoilsButton onOpen={() => setSheetClosed(null)} theme={crawl} />
             </div>
           )}
           {press && (
@@ -521,6 +519,16 @@ export function Play({
             />
           </Suspense>
         )}
+      {spoils && sheet && (
+        <SpoilsSheet
+          session={session}
+          spoils={spoils}
+          theme={crawl}
+          onTake={onSpoils}
+          onKeep={onKeepGear}
+          onClose={() => setSheetClosed(session.discarded)}
+        />
+      )}
     </>
   );
 }

@@ -22,6 +22,9 @@ import {
   createSession,
   currentCard,
   isBossCard,
+  awaitingSpoils,
+  partyBoons,
+  replaces,
   strikeOutcome,
 } from "../src/game/engine";
 import { nextMove, seeded } from "./table-play";
@@ -169,6 +172,22 @@ const situations: [string, GameConfig, Find][] = [
       !!currentCard(s).strike &&
       strikeOutcome(s.quest, currentCard(s)) === outcome,
   ]),
+  // Equipment (2026-10-25): gear worn in two slots, and spoils waiting that
+  // would replace a piece.
+  [
+    "crawl-gear-worn",
+    crawl,
+    (s) =>
+      s.phase === "hidden" &&
+      new Set(partyBoons(s.quest).flatMap((b) => b.boon.slot ?? [])).size >= 2,
+  ],
+  [
+    "crawl-spoils-would-replace",
+    crawl,
+    (s) =>
+      awaitingSpoils(s) &&
+      currentCard(s).spoils!.some((b) => replaces(s.quest, b).length > 0),
+  ],
   // A knack (2026-10-25): a room rolled with the edge for the class.
   ["crawl-knack-roll", crawl, (s) => !!s.roll?.edge && !s.roll.returned],
   ["crawl-wiped", crawl, (s) => party(s).wiped],

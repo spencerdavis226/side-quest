@@ -380,18 +380,46 @@ test("a boss shows its wounds, its trinket, and comes back until it falls", asyn
     "Felling it offers a trinket: Hydra Tooth or Hydra Scale",
   );
   await page.screenshot({ path: info.outputPath("boss.png") });
-  // The last swing lands: the table picks a trinket, and it sweeps in.
-  await seed(page, rolled(s, 18));
-  const spoils = page.locator(".card-choice.spoils .card-choice-option");
-  await expect(spoils).toHaveCount(2);
-  await expect(spoils.nth(1)).toHaveAccessibleName(
-    "Take the Hydra Scale: +2 max hearts.",
+  // The last swing lands: the spoils sheet opens by itself (2026-10-25).
+  // The party wears Royal Jelly Shot, a weapon from the Cellar's Keg Mimic
+  // Queen, dealt on the first floor.
+  const finale = [...s.quest!.finale];
+  const queen = "dungeon.keg-mimic-queen";
+  const at = finale.indexOf(queen);
+  if (at >= 0) finale[at] = finale[STEP.floor1 + 1];
+  finale[STEP.floor1 + 1] = queen;
+  const won = rolled(
+    {
+      ...s,
+      quest: {
+        ...s.quest!,
+        finale,
+        party: { ...s.quest!.party!, boons: [`${queen}#1`] },
+      },
+    },
+    18,
   );
-  // A stray tap on the card does nothing; the plaques decide.
+  await seed(page, won);
+  const sheet = page.getByRole("dialog", { name: "Spoils" });
+  const rows = sheet.locator(".spoils-row");
+  await expect(rows).toHaveCount(2);
+  await expect(rows.nth(0)).toHaveAccessibleName(
+    "Take the Hydra Tooth, Weapon: +2 to boss d20s. Replaces Royal Jelly Shot.",
+  );
+  await expect(rows.nth(1)).toHaveAccessibleName(
+    "Take the Hydra Scale, Armor: +2 max hearts.",
+  );
+  await expect(sheet.locator(".spoils-keep")).toHaveText("Keep my gear");
+  await page.screenshot({ path: info.outputPath("spoils.png") });
+  // Closed, it waits on the card's one plaque; a stray tap does nothing.
+  await page.keyboard.press("Escape");
+  await expect(sheet).toHaveCount(0);
   await page.locator(".game-card").click({ force: true });
   expect((await saved(page)).quest.step).toBe(STEP.boss2);
-  await page.screenshot({ path: info.outputPath("spoils.png") });
-  await spoils.nth(0).click();
+  const plaque = page.locator(".card-choice.spoils .card-choice-option");
+  await expect(plaque).toHaveCount(1);
+  await plaque.click();
+  await rows.nth(0).click();
   await expect(page.locator(".news-banner")).toHaveText(
     /Trinket found\s*Hydra Tooth\s*\+2 to boss d20s\./,
   );
@@ -399,9 +427,16 @@ test("a boss shows its wounds, its trinket, and comes back until it falls", asyn
     "The Lower Landing",
   );
   await page.screenshot({ path: info.outputPath("trinket.png") });
+  // The Tooth replaced the Shot.
   expect((await saved(page)).quest.party.boons).toEqual([
     "dungeon.hangover-hydra#0",
   ]);
+  // The party dialog lists it under its slot.
+  await meter(page).click();
+  const party = page.getByRole("dialog", { name: "The party" });
+  await expect(party.locator(".boon-trinket strong")).toHaveText(
+    "WeaponHydra Tooth",
+  );
 });
 
 test("a lost fight can lay a jinx, shown on the meter and in a banner", async ({
