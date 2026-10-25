@@ -518,7 +518,7 @@ const sheetRows: CardDefinition[] = [
     "sheet-088",
     "Tin Hat Society",
     "challenge",
-    "One conspiracy theory you really believe",
+    "Share one conspiracy theory you really believe. The table votes if it's believable. If not, drink 2.",
   ),
   houseCard(
     "sheet-089",

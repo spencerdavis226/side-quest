@@ -201,7 +201,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Nicetitties | `house.sheet-077` | challenge | Say something genuinely nice about the person to your right |  |
 | ☐ | Work it | `house.sheet-080` | challenge | Do a runway walk. The table scores it; under 7, drink 3 |  |
 | ☐ | ABCs | `house.sheet-081` | challenge | Say the alphabet backwards, every mistake is a drink |  |
-| ☐ | Tin Hat Society | `house.sheet-088` | challenge | One conspiracy theory you really believe |  |
+| ☐ | Tin Hat Society | `house.sheet-088` | challenge | Share one conspiracy theory you really believe. The table votes if it's believable. If not, drink 2. |  |
 | ☐ | Happy Holidays | `house.sheet-089` | challenge | You have 10 seconds to come up with a fake holiday. Drink 2 if you blow it |  |
 | ☐ | Stare down | `house.sheet-090` | challenge | Challenge someone to a staring contest. Loser drinks |  |
 | ☐ | Spelling Contest | `house.sheet-093` | challenge | The person to your left gives you a word to spell. U wrong U drink. U right, they drink |  |

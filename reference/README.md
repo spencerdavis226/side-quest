@@ -164,3 +164,6 @@ Wrong", "Clean Split", "Missed the G") and say what happened: Same is the Ride
 the Bus joke where a higher-or-lower guess loses to a matching card; Split the
 G is drinking a Guinness down to the middle of the G on the glass. The dice
 (d6, give or drink) are unchanged. The raw sheet is unchanged.
+
+Tin Hat Society (088) now says what to do with the theory: the table votes
+if it's believable, and if not, the teller drinks 2.
