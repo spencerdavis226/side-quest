@@ -271,7 +271,9 @@ describe("Pub Crawl", () => {
     expect(rooms.size).toBe(5);
     expect(adventurers.size).toBe(18);
     expect(omens.size).toBe(20);
-  });
+    // 400 sessions, each cloning the deck: about 2 s here, past the 5 s
+    // default on a busy CI runner.
+  }, 30_000);
 
   it("a lost room fight costs the party hearts, pours into the Cup, and the run moves on", () => {
     let s = deal(start(), "dungeon.gelatinous-shot");
