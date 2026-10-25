@@ -89,7 +89,9 @@ material, not game content:
 
 At the owner's request, the ten House "Never Have I Ever" rows (026, 050, 067
 to 074) get their own titles and read as one sentence ("Never have I ever been
-to Mexico. Drink if you have. Drink 3 if ..."). The raw sheet is unchanged.
+to Mexico. Drink if you have, 3 if ..."). To fit the 100-character, 20-word
+rule limit, a few were trimmed ("literally" dropped from 074, "just" from 071,
+"the" from 026, "tell us" became "say" in 072). The raw sheet is unchanged.
 The generated main-deck card of the same name is now "Dirty Confession".
 
 ## 2026-10-18 review
