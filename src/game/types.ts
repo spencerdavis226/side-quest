@@ -201,7 +201,7 @@ export interface OmenEffect {
   restock?: Loot;
 }
 /** Pub Crawl items, carried in the party's satchel (at most three).
- * `draught`: down a fresh, full drink to heal a heart. `shield`: the next
+ * `draught`: drink 4 to heal two hearts (one when only one is missing). `shield`: the next
  * heart loss is blocked, on its own. `die`: roll a lost fight again.
  * `smoke`: escape a room fight before it starts (never a boss). `revive`
  * (2026-10-17): when the hearts run out, the party is back at half its

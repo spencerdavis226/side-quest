@@ -1781,7 +1781,7 @@ export const packs: PackDefinition[] = [
       goal: 0,
       length: 1,
       cardIds: [],
-      party: { hearts: 11, quaff: 6, cup: true },
+      party: { hearts: 11, quaff: 4, cup: true },
       finale: [
         {
           label: "Your adventurer",

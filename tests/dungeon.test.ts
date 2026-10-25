@@ -416,13 +416,22 @@ describe("Pub Crawl", () => {
     });
   });
 
-  it("items: a draught heals one, a loaded die rerolls a loss, a smoke bomb escapes a room but not a boss", () => {
+  it("items: a draught heals two, a loaded die rerolls a loss, a smoke bomb escapes a room but not a boss", () => {
     let s = deal(start(), "dungeon.gelatinous-shot");
     s.quest!.party!.loot = ["draught", "die", "smoke"];
     expect(canUseLoot(s, "draught")).toBe(false); // full hearts
     s.quest!.party!.hearts = H - 4;
     s = spendLoot(s, "draught");
-    expect(party(s)).toMatchObject({ hearts: H - 3, loot: ["die", "smoke"] });
+    expect(party(s)).toMatchObject({ hearts: H - 2, loot: ["die", "smoke"] });
+    // Never past the maximum.
+    const topUp = {
+      ...s,
+      quest: {
+        ...s.quest!,
+        party: { ...party(s), hearts: H - 1, loot: ["draught" as const] },
+      },
+    };
+    expect(party(spendLoot(topUp, "draught")).hearts).toBe(H);
     s = advance(s);
     expect(canUseLoot(s, "die")).toBe(false);
     s = rollTo(s, 2);
@@ -433,13 +442,13 @@ describe("Pub Crawl", () => {
     expect(party(s).loot).toEqual(["smoke"]);
     roundTrip(s);
     s = advance(rollTo(s, 18));
-    expect(party(s).hearts).toBe(H - 3);
+    expect(party(s).hearts).toBe(H - 2);
     // Smoke: past a room before it is rolled, never past a boss.
     s = advance(deal(s, "dungeon.keg-spider"));
     expect(canUseLoot(s, "smoke")).toBe(true);
     const fled = spendLoot(s, "smoke");
     expect(fled.quest!.step).toBe(s.quest!.step + 1);
-    expect(party(fled)).toMatchObject({ hearts: H - 3, loot: [], cup: 0 });
+    expect(party(fled)).toMatchObject({ hearts: H - 2, loot: [], cup: 0 });
     roundTrip(fled);
     const boss = advance(
       deal(fromStep(start(), STEP.boss1), "dungeon.keg-golem"),

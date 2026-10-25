@@ -32,7 +32,7 @@ Status: **prepared, no results recorded.** Kit prepared 2026-09-21 at commit `3e
 - Device / OS / Safari or installed Home Screen:
 - People / approximate length / floor reached / won or wiped:
 - Hearts left at each boss; items found and used; curses taken.
-- Was it hard but fair? Did the table understand that a lost fight costs both a drink and hearts without being told? Did anyone use the Healing Draught (a fresh, full drink for one heart)?
+- Was it hard but fair? Did the table understand that a lost fight costs both a drink and hearts without being told? Did anyone use the Healing Draught (drink 4 for two hearts)?
 - Which rooms got a laugh, which fell flat, and did any trial leave the table unsure whether to press Won or Lost?
 
 ## Dice and roll checks
