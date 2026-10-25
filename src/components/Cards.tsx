@@ -8,7 +8,7 @@ import { CardPackMarks } from "./PackMarks";
 import { badgeArt } from "../presentation/league-art";
 import type { Matchup } from "../game/matchup";
 import { TypeMark } from "./LeagueMarks";
-import { pokemonTypes, trioBrother } from "../presentation/pokemon-types";
+import { pokemonTypes } from "../presentation/pokemon-types";
 type Overflow = "none" | "top" | "bottom" | "both";
 /** The smallest a rule's text shrinks to fit the card: 26px becomes 20px. */
 const RULES_FIT_MIN = 0.77;
@@ -231,7 +231,6 @@ export function CardFace({
             <span>{card.ribbon}</span>
           </p>
         )}
-        {matchup?.edge && <MatchupLine card={card} matchup={matchup} />}
         <div
           ref={rulesRef}
           className={`study-rules ${resolved || shown === "end" ? "rules-resolved" : ""}`}
@@ -258,16 +257,6 @@ export function CardFace({
                     : ""
                 }${roll!.dropped ? `; dropped ${roll!.dropped.join(" plus ")}` : ""}`}
               >
-                {/* A type edge rolled twice: the kept faces lead, the
-                    dropped attempt follows, struck through. */}
-                {roll!.edge && (
-                  <span
-                    className={`dice-result-edge edge-${roll!.edge}`}
-                    aria-hidden="true"
-                  >
-                    {roll!.edge === "advantage" ? "Advantage" : "Disadvantage"}
-                  </span>
-                )}
                 <span className="dice-result-faces" aria-hidden="true">
                   {roll!.values.map((value, index) => (
                     <span className="dice-result-face" key={index}>
@@ -356,44 +345,6 @@ export function CardFace({
 const matchupShift = (card: CardDefinition, matchup: Matchup | null) =>
   card.dice || !matchup?.edge ? 0 : matchup.edge === "advantage" ? -1 : 1;
 
-/** The type matchup, shown before the roll so the table can plan: the
- * starter's mark, the foe's, and what the edge does. */
-function MatchupLine({
-  card,
-  matchup,
-}: {
-  card: CardDefinition;
-  matchup: Matchup;
-}) {
-  const good = matchup.edge === "advantage";
-  const effect = card.dice
-    ? good
-      ? "Roll with advantage"
-      : "Roll with disadvantage"
-    : good
-      ? "A loss costs 1 HP less"
-      : "A loss costs 1 HP more";
-  const brother =
-    card.type === "trio" ? trioBrother[matchup.theirs] : undefined;
-  const label = `${good ? "Super effective" : "Not very effective"}: your ${pokemonTypes[matchup.mine].name} type against ${brother ? `${brother}'s ` : ""}${pokemonTypes[matchup.theirs].name}. ${effect}.`;
-  return (
-    <p
-      className={`type-matchup matchup-${matchup.edge}`}
-      role="note"
-      aria-label={label}
-    >
-      <TypeMark type={matchup.mine} className="matchup-mark" />
-      <span className="matchup-words" aria-hidden="true">
-        <strong>{good ? "Super effective!" : "Not very effective…"}</strong>
-        <span>
-          {brother ? `${brother} steps up. ` : ""}
-          {effect}
-        </span>
-      </span>
-      <TypeMark type={matchup.theirs} className="matchup-mark" />
-    </p>
-  );
-}
 export function CardFrame({
   card,
   packIds,

@@ -1,13 +1,20 @@
 import { describe, expect, it } from "vitest";
 import {
+  canUseLoot,
   cardMatchup,
   createSession,
   currentCard,
   settleBattle,
+  spendLoot,
   type Random,
 } from "../src/game/engine";
 import { readTotal, rollDice, rollWins, validateRoll } from "../src/game/dice";
-import { effectiveness, matchup, typeEdges } from "../src/game/matchup";
+import {
+  effectiveness,
+  matchup,
+  teraType,
+  typeEdges,
+} from "../src/game/matchup";
 import { cards, packs } from "../src/content/catalog";
 import type {
   CardDefinition,
@@ -184,5 +191,49 @@ describe("type edge in a League run", () => {
       for (const c of stage.cards) delete c.type;
     expect(cardMatchup(old.quest, currentCard(old))).toBeNull();
     expect(rollDice(old, seeded(2)).roll!.edge).toBeUndefined();
+  });
+
+  it("a Tera Orb takes the type that beats the foe, for one fight", () => {
+    expect(teraType("water")).toBe("grass");
+    expect(teraType("normal")).toBe("fighting");
+    expect(teraType("dragon")).toBe("fairy");
+    expect(teraType("ghost")).toBe("dark");
+    // Charmander against a Water gym: not very effective, until the orb.
+    let s = facing("charmander", water.id);
+    s.quest!.party!.loot = ["tera"];
+    expect(canUseLoot(s, "tera")).toBe(true);
+    s = spendLoot(s, "tera");
+    expect(s.quest!.party!.loot).toEqual([]);
+    expect(cardMatchup(s.quest, water)).toMatchObject({
+      mine: "grass",
+      edge: "advantage",
+      tera: true,
+    });
+    expect(
+      canUseLoot(
+        {
+          ...s,
+          quest: { ...s.quest!, party: { ...s.quest!.party!, loot: ["tera"] } },
+        },
+        "tera",
+      ),
+    ).toBe(false);
+    const rolled = rollDice(s, seeded(4));
+    expect(rolled.roll!.edge).toBe("advantage");
+    // Not on a fight the starter already wins on type, nor after the roll.
+    const grassy = facing("charmander", grass.id);
+    grassy.quest!.party!.loot = ["tera"];
+    expect(canUseLoot(grassy, "tera")).toBe(false);
+    rolled.quest!.party!.loot = ["tera"];
+    expect(canUseLoot(rolled, "tera")).toBe(false);
+  });
+
+  it("a Tera Orb ends when the fight is put aside", () => {
+    let s = facing("charmander", plaques.id);
+    s.quest!.party!.loot = ["tera"];
+    s = spendLoot(s, "tera");
+    expect(s.quest!.party!.tera).toBe(plaques.id);
+    const after = settleBattle(s, false);
+    expect(after.quest!.party!.tera).toBeUndefined();
   });
 });

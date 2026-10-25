@@ -72,7 +72,7 @@ describe("Pokémon League journey", () => {
       const at = s.quest!.stages.findIndex((st) => st.label === "Gym 4");
       hideouts.add(s.quest!.stages[at + 1].label);
     }
-    expect(starters.size).toBe(25);
+    expect(starters.size).toBe(35);
     expect(hideouts.size).toBe(9);
   });
 });

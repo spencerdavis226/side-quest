@@ -17,9 +17,10 @@ import {
   vs,
   wild,
 } from "./journey";
+import { moreEvolutions, moreWilds, teraRaid } from "./wilds";
 
 // The League's routes: eight, one before each gym, four cards each from the
-// route's fifteen, plus two Ace Trainers behind its crossroads. Wild
+// route's fifteen (eighteen since the 2026-10-25 type expansion, `wilds.ts`), plus two Ace Trainers behind its crossroads. Wild
 // Pokémon get tougher route by route, from every generation. Five routes
 // carry a chance to evolve the starter; the others a risky find instead.
 // Never write Team HP or items into these rules: the card's seals show them.
@@ -1071,7 +1072,7 @@ const route6: CardDefinition[] = [
     "A Mart in Silph's lobby, guarded by a Rocket who also works the register.",
     [
       { label: "Drink 5", loot: "die" },
-      { label: "Pay in blood", cost: 1, loot: "shield" },
+      { label: "Drink 6", loot: "tera" },
       { label: "Just looking" },
     ],
   ),
@@ -1574,7 +1575,7 @@ const victoryRoad: CardDefinition[] = [
     "The Indigo Plateau Mart. Last chance, highest prices.",
     [
       { label: "Drink 5", loot: "shield" },
-      { label: "Pay in blood", cost: 2, loot: "die" },
+      { label: "Drink 6", loot: "tera" },
       { label: "Just looking" },
     ],
   ),
@@ -1688,49 +1689,49 @@ export const routes: {
   {
     label: "Route 1",
     intro: "Your journey begins",
-    cards: route1,
+    cards: [...route1, ...moreWilds[0]],
     aces: route1Aces,
   },
   {
     label: "Route 2",
     intro: "Onward to the next town",
-    cards: route2,
+    cards: [...route2, ...moreWilds[1]],
     aces: route2Aces,
   },
   {
     label: "Route 3",
     intro: "The road gets longer",
-    cards: route3,
+    cards: [...route3, ...moreWilds[2]],
     aces: route3Aces,
   },
   {
     label: "Route 4",
     intro: "Halfway to the League",
-    cards: route4,
+    cards: [...route4, ...moreWilds[3]],
     aces: route4Aces,
   },
   {
     label: "Route 5",
     intro: "The wild gets wilder",
-    cards: route5,
+    cards: [...route5, ...moreWilds[4], moreEvolutions[4]!],
     aces: route5Aces,
   },
   {
     label: "Route 6",
     intro: "Deeper into the region",
-    cards: route6,
+    cards: [...route6, ...moreWilds[5]],
     aces: route6Aces,
   },
   {
     label: "Route 7",
     intro: "The badges get heavier",
-    cards: route7,
+    cards: [...route7, ...moreWilds[6], teraRaid],
     aces: route7Aces,
   },
   {
     label: "Route 8",
     intro: "One badge to go",
-    cards: route8,
+    cards: [...route8, ...moreWilds[7]],
     aces: route8Aces,
   },
 ];

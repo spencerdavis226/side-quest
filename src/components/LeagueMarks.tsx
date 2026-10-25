@@ -1,11 +1,12 @@
 import type { CSSProperties } from "react";
-import type { CardDefinition, SessionState } from "../game/types";
+import type { CardDefinition, Edge, SessionState } from "../game/types";
 import { currentCard, questRecord } from "../game/engine";
-import { typeEdges } from "../game/matchup";
+import { typeEdges, type Matchup } from "../game/matchup";
 import { asset } from "../presentation/theme";
 import {
   badgeType,
   pokemonTypes,
+  trioBrother,
   typeStyle,
   type PokemonType,
 } from "../presentation/pokemon-types";
@@ -16,6 +17,79 @@ import type { CrawlTheme } from "./crawlTheme";
 // panel in the team dialog wears its own.
 
 type RunRecord = NonNullable<ReturnType<typeof questRecord>>;
+
+/** A type edge as a mark (owner, 2026-10-25: an icon, not a banner): two
+ * stacked chevrons, green and up for advantage, red and down against. */
+export function EdgeMark({
+  edge,
+  className = "",
+}: {
+  edge: Edge;
+  className?: string;
+}) {
+  return (
+    <svg
+      className={`edge-mark edge-${edge} ${className}`}
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path
+        d={
+          edge === "advantage"
+            ? "M5 12.5l7-6.5 7 6.5M5 19l7-6.5 7 6.5"
+            : "M5 5l7 6.5L19 5M5 11.5l7 6.5 7-6.5"
+        }
+      />
+    </svg>
+  );
+}
+
+/** The strip's matchup dialog: who meets whom, and what the edge does. */
+export function MatchupPanel({
+  matchup,
+  card,
+  starter,
+}: {
+  matchup: Matchup;
+  card: CardDefinition;
+  starter: string;
+}) {
+  const good = matchup.edge === "advantage";
+  const brother =
+    card.type === "trio" ? trioBrother[matchup.theirs] : undefined;
+  const side = (type: PokemonType, who: string) => (
+    <div className="matchup-side">
+      <TypeMark type={type} />
+      <strong>{who}</strong>
+      <small>{pokemonTypes[type].name}</small>
+    </div>
+  );
+  return (
+    <div className={`matchup-panel edge-${matchup.edge}`}>
+      <div className="matchup-sides">
+        {side(matchup.mine, matchup.tera ? `${starter} (Tera)` : starter)}
+        <EdgeMark edge={matchup.edge!} />
+        {side(matchup.theirs, brother ?? card.title)}
+      </div>
+      <p className="matchup-verdict">
+        {matchup.tera
+          ? "Terastallized!"
+          : good
+            ? "Super effective!"
+            : "Not very effective…"}
+      </p>
+      <p className="matchup-effect">
+        {card.dice
+          ? good
+            ? "Roll twice and keep the better."
+            : "Roll twice and keep the worse."
+          : good
+            ? "A loss costs 1 HP less."
+            : "A loss costs 1 HP more."}
+      </p>
+    </div>
+  );
+}
 
 /** What a starter's type beats and what beats it (2026-10-25): a fight
  * against the first is rolled with advantage, the second with

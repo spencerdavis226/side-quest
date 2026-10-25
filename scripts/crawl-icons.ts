@@ -34,6 +34,10 @@ const picks: Record<string, string> = {
   // A Bar Tab, and the League's Baton Pass.
   "crawl/round": "delapouite/beer-bottle",
   "league/baton-pass": "skoll/baton",
+  // The Tera Orb (2026-10-25): Pub Crawl never deals it, but every item
+  // needs a crawl mark.
+  "crawl/tera": "lorc/floating-crystal",
+  "league/tera-orb": "lorc/crystal-shine",
   // Pokémon League (src/components/crawlTheme.ts maps them to the crawl's
   // marks).
   "league/potion": "lorc/spray",

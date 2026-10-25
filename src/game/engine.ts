@@ -12,7 +12,7 @@ import type {
   SessionState,
 } from "./types";
 import { rollWins } from "./dice";
-import { matchup, type Matchup } from "./matchup";
+import { matchup, teraMatchup, type Matchup } from "./matchup";
 export type Random = () => number;
 export function shuffle(
   ids: string[],
@@ -521,6 +521,7 @@ export function cardMatchup(
 ): Matchup | null {
   const mine = partyType(quest);
   if (!quest?.party || !card.battle || !card.type || !mine) return null;
+  if (quest.party.tera === card.id) return teraMatchup(mine, card.type);
   return matchup(mine, card.type);
 }
 /** A plaque-settled fight has no roll to bend: a lost one costs one HP less
@@ -769,6 +770,19 @@ export function canUseLoot(s: SessionState, item: Loot): boolean {
         !card.dice?.choice &&
         !party.press
       );
+    case "tera": {
+      // Before a typed battle's roll (or its verdict), when the starter
+      // doesn't already have the edge.
+      const edge = cardMatchup(s.quest, card)?.edge;
+      return (
+        s.phase === "revealed" &&
+        !s.roll &&
+        !card.dice?.choice &&
+        !party.press &&
+        edge !== undefined &&
+        edge !== "advantage"
+      );
+    }
     case "shield":
     case "revive":
       return false; // Each works on its own, when it is needed.
@@ -798,6 +812,14 @@ export function spendLoot(
       return { ...used, roll: null };
     case "smoke":
       return discard(used, random, "fled");
+    case "tera":
+      return {
+        ...used,
+        quest: {
+          ...used.quest,
+          party: { ...used.quest.party!, tera: currentCard(s).id },
+        },
+      };
     case "candy":
       return {
         ...used,
@@ -944,6 +966,11 @@ function settleParty(
     }
     next = { ...next };
     delete next.press;
+  }
+  // A Tera Orb lasts the one fight.
+  if (next.tera !== undefined) {
+    next = { ...next };
+    delete next.tera;
   }
   // A boss's or an ambush's boon comes when it falls (`discard`).
   if (!card.hits && (outcome === null || outcome === "won"))

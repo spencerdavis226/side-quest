@@ -70,7 +70,7 @@ describe("League starters", () => {
         );
       });
     }
-    expect(seen.size).toBe(25);
+    expect(seen.size).toBe(35);
   });
 
   it("writes powers in the League theme's own item names", () => {
@@ -120,7 +120,7 @@ describe("League starters", () => {
       loot: [],
       wiped: false,
     });
-    expect(party(s).hearts).toBe(9); // Bulbasaur's 17, halved
+    expect(party(s).hearts).toBe(8); // Bulbasaur's 15, halved
     // Confused (a sealed bag) keeps the Revive shut.
     let hexed = withStarter("bulbasaur", "pokemon.route-rattata");
     Object.assign(hexed.quest!.party!, {

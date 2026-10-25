@@ -256,6 +256,9 @@ export const LOOT = [
   "candy",
   // A lost fight's drinks go to someone else (2026-10-17).
   "round",
+  // Pokémon League (2026-10-25): before a typed battle's roll, the starter
+  // Terastallizes into the type that beats the foe, for that fight.
+  "tera",
 ] as const;
 export type Loot = (typeof LOOT)[number];
 /** Pub Crawl curses, to the end of the floor. `bleed`: every heart loss
@@ -377,6 +380,10 @@ export interface PartyState {
   /** The draw (`SessionState.discarded`) whose lost drinks were passed on
    * with a `round`, so it is passed once. */
   passed?: number;
+  /** The card in play the starter has Terastallized against (a Tera Orb):
+   * the fight is rolled with advantage. Cleared when the card is put
+   * aside, so a boss dealt again needs another orb. */
+  tera?: string;
 }
 export interface PackDefinition {
   version: 1;

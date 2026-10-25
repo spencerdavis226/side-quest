@@ -51,16 +51,12 @@ describe("League type marks", () => {
   it("keeps the starters' types balanced (owner, 2026-10-25)", () => {
     const count: Partial<Record<PokemonType, number>> = {};
     for (const s of starters) count[s.type!] = (count[s.type!] ?? 0) + 1;
-    expect(count).toEqual({
-      fire: 6,
-      grass: 6,
-      water: 7,
-      electric: 1,
-      normal: 2,
-      fairy: 1,
-      psychic: 1,
-      poison: 1,
-    });
+    // Every type has a starter; the canon trios keep their numbers.
+    expect(Object.keys(count).sort()).toEqual(
+      POKEMON_TYPES.filter((t) => t !== "trio").sort(),
+    );
+    expect(count).toMatchObject({ fire: 6, grass: 6, water: 7, normal: 2 });
+    expect(starters).toHaveLength(35);
   });
 
   it("types only League cards, and only fights and starters", () => {
@@ -98,6 +94,7 @@ describe("League type marks", () => {
         "route-missingno",
         "route-waterfall",
         "route-mew-truck",
+        "route-tera-raid",
         "route-boulder-puzzle",
         // Trainers whose card names no Pokémon, of no one type.
         "route-picnicker",

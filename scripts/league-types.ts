@@ -40,6 +40,17 @@ for (const s of starters)
       .join(", ")} |`,
   );
 
+/** Typed fights a run deals, weighted by how often each is dealt. */
+function typedPerRun() {
+  let n = 0;
+  for (const st of stages)
+    for (const id of st.cardIds) {
+      const c = byId.get(id)!;
+      if (c.battle && c.type)
+        n += (st.pick / st.cardIds.length) * (hideout(st.label) ? 1 / 9 : 1);
+    }
+  return n;
+}
 // Each starter type's matchups in a run, weighted by how often each card is
 // dealt.
 const starterTypes = [...new Set(starters.map((s) => s.type!))];
@@ -47,7 +58,7 @@ lines.push(
   "",
   "## Matchups in a typical run",
   "",
-  "Typed fights met per run, weighted by how often each is dealt (about 38 in all), by the starter's type.",
+  `Typed fights met per run, weighted by how often each is dealt (about ${Math.round(typedPerRun())} in all), by the starter's type.`,
   "",
   "| Starter type | Starters | Super effective | Not very effective |",
   "| --- | --- | --- | --- |",

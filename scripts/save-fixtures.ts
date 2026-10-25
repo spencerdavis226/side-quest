@@ -112,6 +112,8 @@ const situations: [string, GameConfig, Find][] = [
     league,
     (s) => s.roll?.edge === "disadvantage" && s.roll.returned,
   ],
+  // A Tera Orb spent on the battle face up, before its roll or verdict.
+  ["league-terastallized", league, (s) => !!party(s).tera],
   [
     "crawl-boons-and-jinx",
     crawl,

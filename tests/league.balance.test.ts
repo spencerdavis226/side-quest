@@ -6,6 +6,7 @@ import {
   awaitingVerdict,
   canTakeOffer,
   canUseLoot,
+  cardMatchup,
   createSession,
   currentCard,
   finaleStage,
@@ -24,7 +25,7 @@ import { cards, packs } from "../src/content/catalog";
 import type { GameConfig, Loot, SessionState } from "../src/game/types";
 
 // The League's balance (`npm run test:balance`, run by CI beside `npm test`):
-// 4,000 seeded runs played by a sensible table. Kept out of `npm test` so
+// 4,200 seeded runs (120 per starter) played by a sensible table. Kept out of `npm test` so
 // the everyday check stays quick; run it after changing League cards or rules.
 // Pokémon League as a crawl (owner, 2026-10-16): a starter, eight routes
 // each closed by a gym, a villain hideout after the fourth badge, Victory
@@ -99,6 +100,12 @@ function playRun(seed: number, starter?: string) {
       );
       continue;
     }
+    // A Tera Orb on a bad matchup, or before a boss (2026-10-25).
+    if (
+      cardMatchup(s.quest, card)?.edge === "disadvantage" ||
+      (card.hits && card.type)
+    )
+      use("tera");
     if (card.battle && !card.hits && !card.dice?.choice) {
       use("smoke");
       if (s.phase !== "revealed" || currentCard(s) !== card) continue;
@@ -128,13 +135,27 @@ function playRun(seed: number, starter?: string) {
   return s;
 }
 
-const RUNS = 4000;
-// The tests below read thousands of runs; beside the other harness in a
-// full parallel `npm test` they can pass the 5 s default, so each has 30 s.
-const runs = Array.from({ length: RUNS }, (_, i) => playRun(i + 1));
+// 35 starters since 2026-10-25: each plays its own seeded runs (a 35th of
+// 4,000 random ones was too few to read one), and every test below reads
+// all of them together, as a table picking its starter at random would.
+const PER_STARTER = 120;
+const starterIds = (
+  packs.find((p) => p.id === "pokemon")!.quest!.finale[0] as {
+    cardIds: string[];
+  }
+).cardIds.map((id) => id.replace("pokemon.starter-", ""));
+const byStarter = starterIds.map(
+  (id) =>
+    [
+      id,
+      Array.from({ length: PER_STARTER }, (_, i) => playRun(i + 1, id)),
+    ] as const,
+);
+const runs = byStarter.flatMap(([, group]) => group);
 const rate = (group: SessionState[]) =>
   group.filter((s) => questRecord(s)!.won).length / group.length;
 const pct = (n: number) => (n * 100).toFixed(0) + "%";
+const starterRates = byStarter.map(([id, group]) => [id, rate(group)] as const);
 const by = (key: (s: SessionState) => string) => {
   const groups = new Map<string, SessionState[]>();
   for (const s of runs) groups.set(key(s), [...(groups.get(key(s)) ?? []), s]);
@@ -163,7 +184,7 @@ it("the League is hard: the team wins between 18% and 40% of its runs", () => {
   console.log(
     `extra draws on won runs: ${avg((s) => s.quest!.lost ?? 0)} lost to bosses, ${avg((s) => party(s).rounds)} boss swings landed, ${avg((s) => s.quest!.finale.length)} dealt\n` +
       `league: won ${(won * 100).toFixed(1)}%; a won run takes ${mean.toFixed(1)} draws (10th ${at(0.1)}, 90th ${at(0.9)})\n` +
-      `whited out at: ${[...wipes].map(([l, n]) => `${l} ${pct(n / RUNS)}`).join(", ")}`,
+      `whited out at: ${[...wipes].map(([l, n]) => `${l} ${pct(n / runs.length)}`).join(", ")}`,
   );
   expect(won).toBeGreaterThan(0.18);
   expect(won).toBeLessThan(0.4);
@@ -186,9 +207,7 @@ it("starters evolve often, but not always all the way", () => {
 }, 30_000);
 
 it("no starter and no hideout makes the League a walkover or hopeless", () => {
-  const starters = by((s) =>
-    s.quest!.finale[0].replace("pokemon.starter-", ""),
-  );
+  const starters = starterRates;
   const hideouts = by((s) => {
     const at = s.quest!.stages.findIndex((st) => st.label === "Gym 4");
     return s.quest!.stages[at + 1].label;
@@ -197,25 +216,23 @@ it("no starter and no hideout makes the League a walkover or hopeless", () => {
     `starters: ${starters.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}\n` +
       `hideouts: ${hideouts.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}`,
   );
-  expect(starters).toHaveLength(25);
+  expect(starters).toHaveLength(35);
   expect(hideouts).toHaveLength(9);
   // Bidoof is the worst starter by design (owner, 2026-10-17), measured on
-  // its own below: a 25th of the runs is too few to read it here.
+  // its own below.
   for (const [name, r] of [...starters, ...hideouts]) {
     if (name === "bidoof") continue;
     expect(r, name).toBeGreaterThan(0.1);
     expect(r, name).toBeLessThan(0.5);
   }
-}, 30_000);
+}, 120_000);
 
 it("Bidoof is the worst starter, and still wins now and then", () => {
   const bidoof = rate(
     Array.from({ length: 600 }, (_, i) => playRun(i + 1, "bidoof")),
   );
   const worst = Math.min(
-    ...by((s) => s.quest!.finale[0])
-      .filter(([n]) => !n.endsWith("bidoof"))
-      .map(([, r]) => r),
+    ...starterRates.filter(([n]) => n !== "bidoof").map(([, r]) => r),
   );
   console.log(`bidoof (600 runs) ${pct(bidoof)}; next worst ${pct(worst)}`);
   expect(bidoof).toBeGreaterThan(0.01);
