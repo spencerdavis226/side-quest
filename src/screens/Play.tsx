@@ -21,6 +21,7 @@ import {
   canTakeOffer,
   currentCard,
   cardMatchup,
+  verdictShift,
   hitsNeeded,
   omenForm,
 } from "../game/engine";
@@ -339,6 +340,7 @@ export function Play({
                     hits={hitsNeeded(session.quest, card)}
                     crawl={crawl}
                     matchup={cardMatchup(session.quest, card)}
+                    shift={verdictShift(session.quest, card)}
                   />
                 )}
               </span>

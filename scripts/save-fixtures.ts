@@ -145,6 +145,8 @@ const situations: [string, GameConfig, Find][] = [
     (s) =>
       s.phase === "revealed" && currentCard(s).id.startsWith("dungeon.stairs-"),
   ],
+  // A knack (2026-10-25): a room rolled with the edge for the class.
+  ["crawl-knack-roll", crawl, (s) => !!s.roll?.edge && !s.roll.returned],
   ["crawl-wiped", crawl, (s) => party(s).wiped],
   ["crawl-survived", crawl, (s) => s.phase === "complete" && !party(s).wiped],
 ];

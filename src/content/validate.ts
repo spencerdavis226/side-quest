@@ -4,6 +4,7 @@ import type { CardDefinition, PackDefinition, QuestStage } from "../game/types";
 import {
   CURSES,
   ENCOUNTERS,
+  KNACKS,
   LOOT,
   POKEMON_TYPES,
   RIBBON_TONES,
@@ -175,6 +176,17 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         fail(`Invalid palette: ${c.id}`);
     if (c.branches !== undefined && (c.branches !== true || !c.evolves))
       fail(`Invalid branches: ${c.id}`);
+    // Pub Crawl's knacks (2026-10-25): two on an adventurer, one on a fight.
+    if (
+      (c.knacks !== undefined &&
+        (!c.omen ||
+          !Array.isArray(c.knacks) ||
+          c.knacks.length > 2 ||
+          new Set(c.knacks).size !== c.knacks.length ||
+          c.knacks.some((k) => !KNACKS.includes(k)))) ||
+      (c.knack !== undefined && (!c.battle || !KNACKS.includes(c.knack)))
+    )
+      fail(`Invalid knack: ${c.id}`);
     // A boon: a name, its rules, and an effect like an omen's. It may sit on
     // a fight (a trinket a boss drops), never beside an omen.
     if (

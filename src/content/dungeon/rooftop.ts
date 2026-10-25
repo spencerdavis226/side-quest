@@ -248,9 +248,9 @@ export const rooftop: FloorCards = {
     ),
     trial(
       8,
-      "toast-the-city",
-      "Toast the City",
-      "Give a toast to the city. The table raises their glasses, or doesn't. No glasses: drink 5.",
+      "the-heckler",
+      "The Heckler",
+      "A guy on the next roof heckles you. Roast him back in 10 seconds. Weak roast: drink 5.",
     ),
     trap(
       8,

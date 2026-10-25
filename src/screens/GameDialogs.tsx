@@ -26,6 +26,8 @@ export type DialogName =
   | "jinx"
   // The League's type matchup chip (2026-10-25).
   | "matchup"
+  // Pub Crawl's knack chip (2026-10-25).
+  | "knack"
   | "guide"
   // The previous card opened from the header's stud.
   | "recap"
@@ -161,7 +163,8 @@ export function GameDialogs({
       displayed === "cup" ||
       displayed === "curse" ||
       displayed === "jinx" ||
-      displayed === "matchup") &&
+      displayed === "matchup" ||
+      displayed === "knack") &&
     record?.party
   ) {
     const crawl = crawlTheme(session?.quest?.packId);
@@ -180,6 +183,7 @@ export function GameDialogs({
       curse: words.curse[0].toUpperCase() + words.curse.slice(1),
       jinx: words.jinx?.name ?? "Jinx",
       matchup: "Type matchup",
+      knack: "Knack",
     }[part];
     return (
       <Modal title={title} onClose={() => setModal(null)} exiting={exiting}>

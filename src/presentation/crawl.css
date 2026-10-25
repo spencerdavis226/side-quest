@@ -1067,6 +1067,78 @@
   border-color: #9a3a30;
 }
 
+/* Pub Crawl's knack chip (2026-10-25): the green chevrons and the knack's
+   mark, side by side. */
+.tag-knack {
+  gap: 2px;
+}
+.tag-knack .crawl-icon {
+  width: 20px;
+  height: 20px;
+  color: #bff0cf;
+}
+/* The adventurer's two knacks under its power, in the party dialog. */
+.crawl-omen .knack-chips {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+  color: #c9b893;
+  font-size: 0.85rem;
+}
+.crawl-omen .knack-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px 3px 7px;
+  border: 1px solid rgb(127 227 160 / 0.45);
+  border-radius: 999px;
+  background: rgb(20 60 36 / 0.55);
+  color: #e6ffe9;
+  font: 700 0.75rem / 1 var(--font-tavern);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.crawl-omen .knack-chip .crawl-icon {
+  grid-row: auto;
+  width: 16px;
+  height: 16px;
+  color: #7fe3a0;
+}
+/* The knack dialog: the knack's mark large, what it does, where it helps. */
+.knack-panel {
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  text-align: center;
+}
+.knack-medal {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border: 2px solid #c9a227;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #3f9a63, #14402a);
+}
+.knack-medal .crawl-icon {
+  width: 38px;
+  height: 38px;
+  color: #f5ffe9;
+}
+.knack-panel strong {
+  color: #7fe3a0;
+  font: 700 1.15rem / 1.2 var(--font-tavern);
+}
+.knack-panel span {
+  color: #e9d7b0;
+}
+.knack-panel small {
+  color: #c9b893;
+  font-size: 0.85rem;
+}
+
 /* The matchup dialog: the starter and the foe, the chevrons between. */
 .matchup-panel {
   display: grid;

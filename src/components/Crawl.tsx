@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import type {
   CardDefinition,
+  Knack,
   Loot,
   Offer,
   PartyState,
@@ -19,6 +20,7 @@ import {
   finaleStage,
   hitsNeeded,
   isBossCard,
+  knackEdge,
   omenForm,
   questRecord,
   stageKind,
@@ -255,7 +257,15 @@ export function CrawlProgress({ quest }: { quest: QuestState }) {
 /** What the strip opens: the satchel, the League's badge case, or one thing
  * on the party, on its own. */
 export type StripDialog =
-  "satchel" | "badges" | "quaff" | "cup" | "curse" | "jinx" | "matchup";
+  | "satchel"
+  | "badges"
+  | "quaff"
+  | "cup"
+  | "curse"
+  | "jinx"
+  | "matchup"
+  // Pub Crawl's knack on the fight face up (2026-10-25).
+  | "knack";
 
 /** The strip under the top row in a crawl (2026-10-17): everything the party
  * carries, each a chip that reads at a glance and opens its own dialog. The
@@ -284,6 +294,12 @@ export function CrawlStrip({
   const matchup =
     session.phase === "revealed"
       ? cardMatchup(quest, currentCardOf(session))
+      : null;
+  // Pub Crawl's knack (2026-10-25): the same green arrows, with the knack's
+  // mark; never against the party, so never red.
+  const knack =
+    session.phase === "revealed" && !matchup?.edge
+      ? knackEdge(quest, currentCardOf(session))
       : null;
   const chip = (
     className: string,
@@ -321,6 +337,17 @@ export function CrawlStrip({
           `${matchup.tera ? "Terastallized: advantage" : matchup.edge === "advantage" ? "Type advantage" : "Type disadvantage"}`,
           "matchup",
           <EdgeMark edge={matchup.edge} />,
+        )}
+      {knack &&
+        theme.knacks &&
+        chip(
+          "tag-edge edge-advantage tag-knack",
+          `Knack: ${theme.knacks[knack].name}, advantage`,
+          "knack",
+          <>
+            <EdgeMark edge="advantage" />
+            <CrawlIcon name={`knack-${knack}`} theme={theme} />
+          </>,
         )}
       {chip(
         "tag-satchel",
@@ -859,8 +886,27 @@ export function CrawlRecord({
             <MatchupPanel matchup={m} card={card} starter={record.form.title} />
           ) : null;
         })()}
+      {part === "knack" &&
+        session &&
+        theme.knacks &&
+        (() => {
+          const card = currentCardOf(session);
+          const k = knackEdge(session.quest, card);
+          return k && record.form ? (
+            <KnackPanel
+              knack={k}
+              adventurer={record.form.title}
+              dice={!!card.dice}
+              theme={theme}
+            />
+          ) : null;
+        })()}
       {show("party") && record.form && (
-        <FormPanel form={record.form} theme={theme} />
+        <FormPanel
+          form={record.form}
+          theme={theme}
+          knacks={record.form.card.knacks}
+        />
       )}
       {show("party") && record.boons.length > 0 && (
         <ul className="crawl-boons" aria-label={words.trinkets}>
@@ -1038,9 +1084,12 @@ export function CrawlRecord({
 function FormPanel({
   form,
   theme,
+  knacks,
 }: {
   form: { title: string; rules: string; type?: PokemonType };
   theme: CrawlTheme;
+  /** A Pub Crawl adventurer's knacks (2026-10-25). */
+  knacks?: Knack[];
 }) {
   const type = theme.words.badges ? form.type : undefined;
   if (!type)
@@ -1049,6 +1098,18 @@ function FormPanel({
         <CrawlIcon name="adventurer" theme={theme} />
         <strong>{form.title}</strong>
         <span className="omen-rules">{form.rules}</span>
+        {theme.knacks && (
+          <small className="knack-chips">
+            {knacks?.length
+              ? knacks.map((k) => (
+                  <span key={k} className="knack-chip">
+                    <CrawlIcon name={`knack-${k}`} theme={theme} />
+                    {theme.knacks![k].name}
+                  </span>
+                ))
+              : "No knacks. Obviously."}
+          </small>
+        )}
       </p>
     );
   return (
@@ -1065,6 +1126,40 @@ function FormPanel({
         </span>
       </small>
       <TypeEdges type={type} />
+    </div>
+  );
+}
+
+/** The strip's knack dialog (2026-10-25): which knack, and what it does
+ * here. */
+function KnackPanel({
+  knack,
+  adventurer,
+  dice,
+  theme,
+}: {
+  knack: Knack;
+  adventurer: string;
+  dice: boolean;
+  theme: CrawlTheme;
+}) {
+  const { name, rooms } = theme.knacks![knack];
+  return (
+    <div className="knack-panel">
+      <span className="knack-medal" aria-hidden="true">
+        <CrawlIcon name={`knack-${knack}`} theme={theme} />
+      </span>
+      <strong>
+        {adventurer} has {name}
+      </strong>
+      <span>
+        {dice
+          ? "This fight is rolled with double the dice, keeping the best."
+          : "Losing this fight costs a heart less."}
+      </span>
+      <small>
+        {name} is for {rooms}.
+      </small>
     </div>
   );
 }

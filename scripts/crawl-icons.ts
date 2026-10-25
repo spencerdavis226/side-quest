@@ -38,6 +38,13 @@ const picks: Record<string, string> = {
   // needs a crawl mark.
   "crawl/tera": "lorc/floating-crystal",
   "league/tera-orb": "lorc/crystal-shine",
+  // Pub Crawl's five knacks (2026-10-25): a class's two, and the room that
+  // calls for one.
+  "crawl/knack-brawn": "delapouite/biceps",
+  "crawl/knack-sneak": "delapouite/robber-mask",
+  "crawl/knack-magic": "lorc/magic-swirl",
+  "crawl/knack-charm": "lorc/drama-masks",
+  "crawl/knack-faith": "lorc/holy-symbol",
   // Pokémon League (src/components/crawlTheme.ts maps them to the crawl's
   // marks).
   "league/potion": "lorc/spray",

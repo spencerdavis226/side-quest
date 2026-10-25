@@ -1,7 +1,9 @@
 import type {
   CardDefinition,
   DiceRoll,
+  Edge,
   GameConfig,
+  Knack,
   Loot,
   OmenEffect,
   PackDefinition,
@@ -567,6 +569,29 @@ export function cardMatchup(
   if (quest.party.tera === card.id) return teraMatchup(mine, card.type);
   return matchup(mine, card.type);
 }
+/** Pub Crawl (2026-10-25): a fight that calls for a knack the adventurer
+ * has is fought with the edge; one it lacks is fought as written. */
+export function knackEdge(
+  quest: QuestState | undefined,
+  card: CardDefinition,
+): Knack | null {
+  const id = quest?.party?.omen;
+  if (!card.battle || !card.knack || !id) return null;
+  return finaleCard(quest, id)?.knacks?.includes(card.knack)
+    ? card.knack
+    : null;
+}
+/** The edge a fight is fought with: a League type matchup, else a crawl
+ * knack (always the advantage). */
+export function cardEdge(
+  quest: QuestState | undefined,
+  card: CardDefinition,
+): Edge | null {
+  return (
+    cardMatchup(quest, card)?.edge ??
+    (knackEdge(quest, card) ? "advantage" : null)
+  );
+}
 /** A plaque-settled fight has no roll to bend: a lost one costs one HP less
  * with the edge, one more against it. */
 export function verdictShift(
@@ -574,7 +599,7 @@ export function verdictShift(
   card: CardDefinition,
 ): number {
   if (card.dice) return 0;
-  const edge = cardMatchup(quest, card)?.edge;
+  const edge = cardEdge(quest, card);
   return edge === "advantage" ? -1 : edge === "disadvantage" ? 1 : 0;
 }
 /** How many items the satchel holds. */

@@ -560,6 +560,54 @@ test("a forked level up shows both paths, then follows the one taken", async ({
   expect((await saved(page)).quest.party).toMatchObject({ form: 4 });
 });
 
+// Knacks (2026-10-25): a room that calls for the class's knack shows the
+// green chevrons with the knack's mark; the dialog says what it does, and
+// the party dialog lists the class's two.
+test("a knack's room shows its chip, and the dialog explains it", async ({
+  page,
+}, info) => {
+  await page.setViewportSize({ width: 320, height: 640 });
+  await seed(
+    page,
+    reveal(
+      crawlAt(
+        "dungeon.christmas-lights",
+        STEP.floor1,
+        {},
+        { adventurer: "rogue" },
+      ),
+    ),
+  );
+  const chip = page.locator(".tag-knack");
+  await expect(chip).toHaveAccessibleName("Knack: Sneak, advantage");
+  const box = (await chip.boundingBox())!;
+  expect(box.x + box.width).toBeLessThanOrEqual(320);
+  await page.screenshot({ path: info.outputPath("knack-chip.png") });
+  await chip.click();
+  const dialog = page.getByRole("dialog", { name: "Knack" });
+  await expect(dialog).toContainText("Rogue has Sneak");
+  await expect(dialog).toContainText("double the dice");
+  await page.screenshot({ path: info.outputPath("knack-dialog.png") });
+  await dialog.getByRole("button", { name: /close/i }).click();
+  await meter(page).click();
+  const party = page.getByRole("dialog", { name: "The party" });
+  await expect(party.locator(".knack-chip")).toHaveText(["Sneak", "Charm"]);
+  // The Barbarian has no Sneak: no chip.
+  await seed(
+    page,
+    reveal(
+      crawlAt(
+        "dungeon.christmas-lights",
+        STEP.floor1,
+        {},
+        { adventurer: "barbarian" },
+      ),
+    ),
+  );
+  await expect(page.locator(".hud-strip")).toBeVisible();
+  await expect(page.locator(".tag-knack")).toHaveCount(0);
+});
+
 test("a Dog-Eared Tome asks which path a forked adventurer takes", async ({
   page,
 }) => {
@@ -669,7 +717,11 @@ test("the party dialog lays out the run: adventurer, boons, jinx and the Cup", a
   await page.getByRole("button", { name: "Open game menu" }).click();
   await page.getByRole("button", { name: "How to play" }).click();
   const guide = page.getByRole("dialog", { name: "How to play" });
-  await expect(guide.locator(".guide-rows li")).toHaveCount(8);
+  // Since 2026-10-25 a row for knacks too.
+  await expect(guide.locator(".guide-rows li")).toHaveCount(9);
+  await expect(guide.locator(".guide-rows")).toContainText(
+    "A room that calls for one shows green arrows",
+  );
   await expect(guide.locator(".guide-rows")).toContainText(
     "Lost a d20? Drink 4 to roll it again.",
   );

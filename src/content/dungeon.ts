@@ -7,6 +7,7 @@ import { cellar } from "./dungeon/cellar";
 import { classes } from "./dungeon/classes";
 import { freezer } from "./dungeon/freezer";
 import { kitchen } from "./dungeon/kitchen";
+import { applyKnacks } from "./dungeon/knacks";
 import {
   closingCards,
   lastCallBosses,
@@ -87,6 +88,8 @@ export const dungeonCards: CardDefinition[] = [
   ...closingCards,
   ...hiddenRoomCards,
 ].map(withNaturals);
+// Knacks (2026-10-25): each class's two, and the rooms that call for one.
+applyKnacks(dungeonCards);
 
 const ids = (cards: CardDefinition[]) => cards.map((c) => c.id);
 

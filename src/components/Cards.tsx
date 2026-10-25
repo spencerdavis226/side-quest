@@ -22,6 +22,7 @@ export function CardFace({
   hits = 0,
   crawl,
   matchup = null,
+  shift,
 }: {
   card: CardDefinition;
   packIds?: readonly string[];
@@ -36,6 +37,9 @@ export function CardFace({
   crawl?: CrawlTheme;
   /** A League fight's type matchup against the starter (`cardMatchup`). */
   matchup?: Matchup | null;
+  /** How far a plaque fight's loss moves (the engine's `verdictShift`,
+   * which also counts a Pub Crawl knack); read from `matchup` without it. */
+  shift?: number;
 }) {
   const gesture = useRef<{
     pointerId: number;
@@ -330,7 +334,7 @@ export function CardFace({
               party={party}
               hits={hits}
               theme={crawl}
-              shift={matchupShift(card, matchup)}
+              shift={shift ?? matchupShift(card, matchup)}
             />
           )}
           {/* A crawl plays one pack: its seals take the foot instead. */}
