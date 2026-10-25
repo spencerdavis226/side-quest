@@ -6,7 +6,6 @@ import {
   merchant,
   monster,
   moves,
-  pair,
   relic,
   shrine,
   trap,
@@ -14,6 +13,7 @@ import {
   trial,
   trinket,
   type FloorCards,
+  strike,
 } from "./shared";
 
 // Floor 3: the Drowned Taproom. The taps never stopped running and the room
@@ -21,13 +21,17 @@ import {
 
 export const taproom: FloorCards = {
   fights: [
-    monster(
+    strike(
       2,
+      "Monster",
       "sommelier-kraken",
       "Sommelier Kraken",
-      "A kraken with a wine glass in every arm, and every glass is yours. Roll d20.",
-      "Squeezed. Drink 5.",
-      "Calamari. Give 5, split however you like.",
+      "A kraken with a wine glass in every arm, and every glass is yours.",
+      {
+        even: "It sips from yours. Drink 3.",
+        advantage: "Calamari. Give 5, split however you like.",
+        disadvantage: "Squeezed. Drink 5.",
+      },
     ),
     monster(
       2,
@@ -37,13 +41,17 @@ export const taproom: FloorCards = {
       "You swim to her. Finish half your drink.",
       "You stuff your ears with limes. Give 5.",
     ),
-    monster(
+    strike(
       2,
+      "Monster",
       "drowned-regular",
       "The Drowned Regular",
-      "He's been at the bottom of the bar since 1987 and you're on his stool. Roll d20.",
-      "He takes it back. Drink 5, and swap seats with your left neighbor.",
-      "You buy him one. He fades away. Give 5.",
+      "He's been at the bottom of the bar since 1987 and you're on his stool.",
+      {
+        even: "He shares the stool. Drink 3.",
+        advantage: "You buy him one. He fades away. Give 5.",
+        disadvantage: "He takes his stool back. Drink 5 and swap seats.",
+      },
     ),
     monster(
       2,
@@ -53,26 +61,16 @@ export const taproom: FloorCards = {
       "It washes over you. Drink 5, and wear the mustache.",
       "You blow the head off. Give 5.",
     ),
-    monster(
+    strike(
       2,
+      "Monster",
       "piranha-shots",
       "Piranha Shots",
-      "A school of piranhas lives in the shot glasses. Roll d6.",
-      "",
-      "",
+      "A school of piranhas lives in the shot glasses.",
       {
-        roll: moves(
-          [
-            "They bite back. Drink 5.",
-            "They bite your lip. Drink 5.",
-            "They swim up your nose. Drink 5.",
-          ],
-          [
-            "You drink them first. Give 4.",
-            "You net them with a coaster. Give 5.",
-            "You set them loose on the bar. Everyone else drinks 2.",
-          ],
-        ),
+        even: "One nibbles. Drink 3.",
+        advantage: "You net them with a coaster. Give 5.",
+        disadvantage: "They bite your lip. Drink 5.",
       },
     ),
     monster(
@@ -116,19 +114,16 @@ export const taproom: FloorCards = {
         },
       },
     ),
-    monster(
+    strike(
       2,
+      "Monster",
       "snorkel-shark",
       "Snorkel Shark",
-      "A shark in a snorkel mask, circling the pool table. Roll 2d6.",
-      "",
-      "",
+      "A shark in a snorkel mask, circling the pool table.",
       {
-        roll: pair(
-          "It takes a bite of your shoe. Drink 5.",
-          "You hit it with a pool cue. Give 5.",
-          "A pair! You sink the eight ball in its mouth. Everyone else drinks 3.",
-        ),
+        even: "It circles. Drink 3.",
+        advantage: "You hit it with a pool cue. Give 5.",
+        disadvantage: "It takes a bite of your shoe. Drink 5.",
       },
     ),
     trial(
@@ -179,13 +174,17 @@ export const taproom: FloorCards = {
       "Swallowed. Drink 4.",
       "You kick off the bar. Give 3.",
     ),
-    trap(
+    strike(
       2,
+      "Trap",
       "drain-vortex",
       "The Drain Vortex",
-      "Someone pulled the plug on the whole room. Roll d20.",
-      "Round and round. Spin twice, then drink 4.",
-      "You grab the jukebox and hold on. Give 3.",
+      "Someone pulled the plug on the whole room.",
+      {
+        even: "You spin once. Drink 3.",
+        advantage: "You reverse the swirl with a wave. Give 4.",
+        disadvantage: "Round and round. Spin twice, then drink 5.",
+      },
     ),
     ambush(
       2,
@@ -204,13 +203,17 @@ export const taproom: FloorCards = {
       "You find them prosecco. They cry. Give 4.",
     ),
     // More of the Drowned Taproom (2026-10-25).
-    monster(
+    strike(
       2,
+      "Monster",
       "kelp-bouncer",
       "The Kelp Bouncer",
-      "A bouncer made of kelp. Your name's not on the waterlogged list. Roll d20.",
-      "He wraps you up and throws you in. Drink 5.",
-      "You slip through his fronds. Give 5.",
+      "A bouncer made of kelp. Your name's not on the waterlogged list.",
+      {
+        even: "He lets you in, wet. Drink 3.",
+        advantage: "You talk your way past. Give 5.",
+        disadvantage: "He wraps you up and throws you in. Drink 5.",
+      },
     ),
     monster(
       2,

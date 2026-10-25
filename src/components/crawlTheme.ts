@@ -289,7 +289,7 @@ const dungeon: CrawlTheme = {
       {
         icon: "knack-brawn",
         title: "Knacks",
-        line: "Each adventurer has two. A room that calls for one shows green arrows: roll twice, keep the best.",
+        line: "Each adventurer has two. A room that calls for one shows green arrows: roll twice, keep the best. A room with no roll is won with its knack and lost without it.",
       },
       {
         icon: "satchel",

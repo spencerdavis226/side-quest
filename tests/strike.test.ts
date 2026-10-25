@@ -37,11 +37,14 @@ function facing(starter: string, room: string) {
 const PIDGEY = "pokemon.route-pidgey"; // Flying, on Route 1
 
 describe("strikes", () => {
-  it("are valid cards with three lines, in the League only", () => {
+  it("are valid cards with three lines, in the League and Pub Crawl", () => {
     const strikes = cards.filter((c) => c.strike);
     expect(strikes.length).toBeGreaterThanOrEqual(60);
-    for (const c of strikes)
-      expect(c.id.startsWith("pokemon."), c.id).toBe(true);
+    for (const c of strikes) {
+      expect(/^(pokemon|dungeon)\./.test(c.id), c.id).toBe(true);
+      // A Pub Crawl strike is settled by a knack, a League one by a type.
+      if (c.id.startsWith("dungeon.")) expect(c.knack, c.id).toBeDefined();
+    }
     expect(() => validateCatalog(cards, packs)).not.toThrow();
     const bad = { ...strikes[0], strike: { ...strikes[0].strike!, even: " " } };
     expect(() => validateCatalog([bad], packs)).toThrow(/Invalid strike/);

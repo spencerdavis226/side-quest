@@ -7,8 +7,6 @@ import {
   gamble,
   merchant,
   monster,
-  moves,
-  pair,
   relic,
   shrine,
   trap,
@@ -17,6 +15,7 @@ import {
   trinket,
   BOSS_NEED,
   type FloorCards,
+  strike,
 } from "./shared";
 
 // Floor 2, the third way down (2026-10-17): the Walk-in Freezer. Somebody
@@ -59,38 +58,28 @@ export const freezer: FloorCards = {
       "You tip him. He warms right up. Give 4.",
       { loot: "shield" },
     ),
-    monster(
+    strike(
       7,
+      "Monster",
       "brain-freeze",
       "Brain Freeze",
-      "It's not a monster. It's the pain behind your eyes, and it's winning. Roll 2d6.",
-      "",
-      "",
+      "It's not a monster. It's the pain behind your eyes, and it's winning.",
       {
-        roll: pair(
-          "Full freeze. Drink 4, holding your forehead.",
-          "You press your tongue to the roof of your mouth. Give 4.",
-          "A pair! You drink straight through it. Everyone else drinks 2.",
-        ),
+        even: "A twinge. Drink 3.",
+        advantage: "You think warm thoughts. Give 4.",
+        disadvantage: "Full freeze. Drink 4, holding your forehead.",
       },
     ),
-    monster(
+    strike(
       7,
+      "Monster",
       "the-snowman",
       "The Snowman",
-      "Carrot nose, coal eyes, and a grudge from every winter you built one. Roll d6.",
-      "",
-      "",
+      "Carrot nose, coal eyes, and a grudge from every winter you built one.",
       {
-        roll: moves(
-          ["A snowball to the face. Drink 4.", "He hugs you. Drink 4."],
-          [
-            "You take his carrot. Give 3.",
-            "You take his hat. Give 4.",
-            "You turn up the thermostat. Give 4.",
-            "You build him a wife. He leaves happy. Everyone else drinks 1.",
-          ],
-        ),
+        even: "A snowball misses. Drink 3.",
+        advantage: "You take his carrot. Give 4.",
+        disadvantage: "A snowball to the face. Drink 4.",
       },
     ),
     monster(
@@ -165,13 +154,17 @@ export const freezer: FloorCards = {
       "Flat on your back. Drink 3.",
       "You triple-axel it. Give 3.",
     ),
-    trap(
+    strike(
       7,
+      "Trap",
       "the-door-shuts",
       "The Door Shuts",
-      "Click. The handle's on the outside. Roll d20.",
-      "You're in here now. Drink 3.",
-      "You find the safety knob. Give 3.",
+      "Click. The handle's on the outside.",
+      {
+        even: "A chilly wait. Drink 2.",
+        advantage: "You find the safety knob. Give 3.",
+        disadvantage: "You're in here now. Drink 3.",
+      },
     ),
     trap(
       7,
@@ -181,13 +174,17 @@ export const freezer: FloorCards = {
       "One finds you. Drink 3.",
       "You step aside. It shatters. Give 3.",
     ),
-    trap(
+    strike(
       7,
+      "Trap",
       "tongue-on-the-pole",
       "Tongue on the Pole",
-      "A metal shelf, a dare, and you've already done it. Roll d20.",
-      "Stuck. Drink 3, and talk like it for one sentence.",
-      "You breathe it free. Give 3.",
+      "A metal shelf, a dare, and you've already done it.",
+      {
+        even: "Stuck a second. Drink 2.",
+        advantage: "You breathe it free. Give 3.",
+        disadvantage: "Stuck. Drink 3, and talk like it for one sentence.",
+      },
     ),
     ambush(
       7,
@@ -206,13 +203,17 @@ export const freezer: FloorCards = {
       "You ice your knee with them. Give 3.",
     ),
     // More of the Walk-in Freezer (2026-10-25).
-    monster(
+    strike(
       7,
+      "Monster",
       "popsicle-golem",
       "Popsicle Golem",
-      "A golem of a thousand stuck-together popsicles, in every flavor you hate. Roll d20.",
-      "Banana. Drink 4.",
-      "You lick it to death. Give 4.",
+      "A golem of a thousand stuck-together popsicles, in every flavor you hate.",
+      {
+        even: "Grape. Drink 3.",
+        advantage: "You sweet-talk it into melting. Give 4.",
+        disadvantage: "Banana. Drink 4.",
+      },
     ),
     monster(
       7,
@@ -222,23 +223,16 @@ export const freezer: FloorCards = {
       "He clubs yours. Drink 4.",
       "You show him a meme and he worships you. Give 4.",
     ),
-    monster(
+    strike(
       7,
+      "Monster",
       "ice-goblin",
       "Ice Goblin",
-      "A goblin juggling ice cubes, and aiming them down your back. Roll d6.",
-      "",
-      "",
+      "A goblin juggling ice cubes, and aiming them down your back.",
       {
-        roll: moves(
-          ["Down your shirt. Drink 4.", "Into your drink. Drink 4."],
-          [
-            "You duck. Give 3.",
-            "You catch one. Give 4.",
-            "You melt him with a hug. Give 4.",
-            "You juggle better. Everyone else drinks 1.",
-          ],
-        ),
+        even: "One misses. Drink 3.",
+        advantage: "You juggle better. Give 4.",
+        disadvantage: "Down your shirt. Drink 4.",
       },
     ),
     trial(

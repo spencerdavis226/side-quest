@@ -207,7 +207,8 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
           c.knacks.length > 2 ||
           new Set(c.knacks).size !== c.knacks.length ||
           c.knacks.some((k) => !KNACKS.includes(k)))) ||
-      (c.knack !== undefined && (!c.battle || !KNACKS.includes(c.knack)))
+      (c.knack !== undefined &&
+        (!(c.battle || c.strike) || !KNACKS.includes(c.knack)))
     )
       fail(`Invalid knack: ${c.id}`);
     // A boon: a name, its rules, and an effect like an omen's. It may sit on

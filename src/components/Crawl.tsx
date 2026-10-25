@@ -438,7 +438,8 @@ export function CardStakes({
   party: PartyState;
   hits?: number;
   theme: CrawlTheme;
-  /** A strike's matchup: it costs hearts only against the starter's type. */
+  /** A strike's matchup: it costs hearts only when it is lost (against the
+   * starter's type, or a Pub Crawl room whose knack the class lacks). */
   strike?: "advantage" | "disadvantage" | "even";
   /** A League type edge on a plaque-settled fight: the loss moves by one. */
   shift?: number;
@@ -905,6 +906,7 @@ export function CrawlRecord({
               knack={k}
               adventurer={record.form.title}
               dice={!!card.dice}
+              strike={!!card.strike}
               theme={theme}
             />
           ) : null;
@@ -1261,11 +1263,14 @@ function KnackPanel({
   knack,
   adventurer,
   dice,
+  strike,
   theme,
 }: {
   knack: Knack;
   adventurer: string;
   dice: boolean;
+  /** A strike (2026-10-25): the knack wins it outright. */
+  strike: boolean;
   theme: CrawlTheme;
 }) {
   const { name, rooms } = theme.knacks![knack];
@@ -1278,9 +1283,11 @@ function KnackPanel({
         {adventurer} has {name}
       </strong>
       <span>
-        {dice
-          ? "This fight is rolled with double the dice, keeping the best."
-          : "Losing this fight costs a heart less."}
+        {strike
+          ? "This fight is won outright, with no roll."
+          : dice
+            ? "This fight is rolled with double the dice, keeping the best."
+            : "Losing this fight costs a heart less."}
       </span>
       <small>
         {name} is for {rooms}.

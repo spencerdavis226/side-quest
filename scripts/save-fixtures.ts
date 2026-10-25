@@ -22,6 +22,7 @@ import {
   createSession,
   currentCard,
   isBossCard,
+  strikeOutcome,
 } from "../src/game/engine";
 import { nextMove, seeded } from "./table-play";
 import { parseSession } from "../src/app/persistence";
@@ -158,6 +159,16 @@ const situations: [string, GameConfig, Find][] = [
     (s) =>
       s.phase === "revealed" && currentCard(s).id.startsWith("dungeon.stairs-"),
   ],
+  // Pub Crawl strikes (2026-10-25): a room with no roll, face up, settled
+  // by the class's knack each way.
+  ...(["won", "lost"] as const).map((outcome): [string, GameConfig, Find] => [
+    `crawl-strike-${outcome}`,
+    crawl,
+    (s) =>
+      s.phase === "revealed" &&
+      !!currentCard(s).strike &&
+      strikeOutcome(s.quest, currentCard(s)) === outcome,
+  ]),
   // A knack (2026-10-25): a room rolled with the edge for the class.
   ["crawl-knack-roll", crawl, (s) => !!s.roll?.edge && !s.roll.returned],
   ["crawl-wiped", crawl, (s) => party(s).wiped],

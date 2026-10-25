@@ -31,6 +31,7 @@ export function CardFace({
   crawl,
   matchup = null,
   shift,
+  strike,
 }: {
   card: CardDefinition;
   packIds?: readonly string[];
@@ -48,9 +49,25 @@ export function CardFace({
   /** How far a plaque fight's loss moves (the engine's `verdictShift`,
    * which also counts a Pub Crawl knack); read from `matchup` without it. */
   shift?: number;
+  /** A strike's outcome (the engine's `strikeOutcome`); read from `matchup`
+   * without it. */
+  strike?: "won" | "lost" | null;
 }) {
   // A strike reads the line for its matchup (the engine's `strikeText`).
-  const strikeEdge = matchup?.edge ?? "even";
+  const outcome =
+    strike !== undefined
+      ? strike
+      : matchup?.edge === "advantage"
+        ? "won"
+        : matchup?.edge === "disadvantage"
+          ? "lost"
+          : null;
+  const strikeEdge =
+    outcome === "won"
+      ? "advantage"
+      : outcome === "lost"
+        ? "disadvantage"
+        : "even";
   const strikeLine = card.strike ? card.strike[strikeEdge] : null;
   const gesture = useRef<{
     pointerId: number;
@@ -372,16 +389,25 @@ export function CardFrame({
   packIds,
   roll,
   matchup,
+  strike,
 }: {
   card: CardDefinition;
   packIds?: readonly string[];
   roll?: DiceRoll | null;
-  /** A strike's matchup, so it reads the line it was put aside with. */
+  /** A strike's matchup and outcome, so it reads the line it was put aside
+   * with. */
   matchup?: Matchup | null;
+  strike?: "won" | "lost" | null;
 }) {
   return (
     <article className="previous-card">
-      <CardFace card={card} packIds={packIds} roll={roll} matchup={matchup} />
+      <CardFace
+        card={card}
+        packIds={packIds}
+        roll={roll}
+        matchup={matchup}
+        strike={strike}
+      />
     </article>
   );
 }

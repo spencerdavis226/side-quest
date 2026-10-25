@@ -6,10 +6,9 @@ import {
   fork,
   merchant,
   monster,
-  moves,
-  pair,
   relic,
   shrine,
+  strike,
   trap,
   treasure,
   trial,
@@ -61,31 +60,28 @@ export const cellar: FloorCards = {
       "He passes out on you. Loot his pockets. Give 2.",
       { loot: "smoke" },
     ),
-    monster(
+    strike(
       0,
+      "Monster",
       "skeleton-barback",
       "Skeleton Barback",
-      "He's been restocking limes since 1974. Ask for a fresh one and roll d20.",
-      "He throws one at your eye. Drink 3.",
-      "He finds one. It's perfect. Give 3, with a lime if there is one.",
+      "He's been restocking limes since 1974. Ask him nicely for a fresh one.",
+      {
+        even: "He hands you a dry one. Drink 2.",
+        advantage: "He finds a perfect one. Give 3, with a lime.",
+        disadvantage: "He throws one at your eye. Drink 3.",
+      },
     ),
-    monster(
+    strike(
       0,
+      "Monster",
       "possessed-mop",
       "Possessed Mop",
-      "The mop is moving on its own and it's coming for your shoes. Roll d6.",
-      "",
-      "",
+      "The mop is moving on its own and it's coming for your shoes.",
       {
-        roll: moves(
-          ["It mops your face. Drink 3.", "It mops your drink. Drink 3."],
-          [
-            "You trip it. Give 2.",
-            "You snap the handle. Give 3.",
-            "You wring it out over the sink. Give 3.",
-            "You ride it like a witch's broom. Everyone else drinks 1.",
-          ],
-        ),
+        even: "It mops your feet. Drink 2 and lift them.",
+        advantage: "You snap the handle. Give 3.",
+        disadvantage: "It mops your face. Drink 3.",
       },
     ),
     monster(
@@ -119,19 +115,16 @@ export const cellar: FloorCards = {
         },
       },
     ),
-    monster(
+    strike(
       0,
+      "Monster",
       "cask-bat",
       "Cask Bat",
-      "A bat lives in the empty cask and it hates the lights. Roll 2d6.",
-      "",
-      "",
+      "A bat lives in the empty cask and it hates the lights.",
       {
-        roll: pair(
-          "It gets tangled in your hair. Drink 3.",
-          "You shoo it into a bucket. Give 3.",
-          "A pair! You catch it barehanded. Everyone else drinks 2.",
-        ),
+        even: "It flaps past your ear. Drink 2.",
+        advantage: "You shoo it into a bucket. Give 3.",
+        disadvantage: "It gets tangled in your hair. Drink 3.",
       },
     ),
     trial(
@@ -182,13 +175,17 @@ export const cellar: FloorCards = {
       "Flattened. Drink 3.",
       "You dive clear. Give 2.",
     ),
-    trap(
+    strike(
       0,
+      "Trap",
       "falling-taps",
       "Loose Tap Handles",
-      "A rack of novelty tap handles is right above your head. It's swaying. Roll d20.",
-      "A plastic shark to the skull. Drink 2.",
-      "You catch the shark. Keep it. Give 2.",
+      "A rack of novelty tap handles is right above your head. It's swaying.",
+      {
+        even: "A foam one bonks you. Drink 2.",
+        advantage: "You dodge, then catch the shark. Give 2.",
+        disadvantage: "A plastic shark to the skull. Drink 3.",
+      },
       {
         jinx: {
           name: "Thumb Master",
@@ -213,13 +210,18 @@ export const cellar: FloorCards = {
       "You heckle them offstage. Give 2.",
     ),
     // More of the Cellar (2026-10-25).
-    monster(
+    strike(
       0,
+      "Monster",
       "fryer-oil-ooze",
       "Fryer Oil Ooze",
-      "Twenty years of fryer oil got up and walked. It smells like Tuesday. Roll d20.",
-      "It hugs you. Drink 3, then wipe your hands on your jeans.",
-      "You salt it and it shrivels. Give 3.",
+      "Twenty years of fryer oil got up and walked. It smells like Tuesday.",
+      {
+        even: "It slicks your shoes. Drink 2.",
+        advantage: "You salt it with a spell and it shrivels. Give 3.",
+        disadvantage:
+          "It hugs you. Drink 3, then wipe your hands on your jeans.",
+      },
     ),
     monster(
       0,
@@ -229,23 +231,16 @@ export const cellar: FloorCards = {
       "The tower falls. Drink 3.",
       "You tip him a coin and he floats off. Give 3.",
     ),
-    monster(
+    strike(
       0,
+      "Monster",
       "cobweb-bartender",
       "Cobweb Bartender",
-      "A bartender made of cobwebs slides you something cloudy. Roll d6.",
-      "",
-      "",
+      "A bartender made of cobwebs slides you something cloudy.",
       {
-        roll: moves(
-          ["You drink it. Drink 3.", "He pours you a second. Drink 3."],
-          [
-            "You send it back. Give 2.",
-            "You tip him a moth. Give 3.",
-            "You order a round for the table. Everyone else drinks 1.",
-            "You pour him one for once. Give 3.",
-          ],
-        ),
+        even: "You sip it anyway. Drink 2.",
+        advantage: "You bless the glass and the cobwebs fall away. Give 3.",
+        disadvantage: "It's mostly spider. Drink 3 and shiver.",
       },
     ),
     trial(

@@ -588,7 +588,7 @@ export function knackEdge(
   card: CardDefinition,
 ): Knack | null {
   const id = quest?.party?.omen;
-  if (!card.battle || !card.knack || !id) return null;
+  if (!(card.battle || card.strike) || !card.knack || !id) return null;
   return finaleCard(quest, id)?.knacks?.includes(card.knack)
     ? card.knack
     : null;
@@ -616,12 +616,16 @@ export function verdictShift(
   return edge === "advantage" ? -1 : edge === "disadvantage" ? 1 : 0;
 }
 /** What a strike comes to: the starter's edge wins it, a disadvantage loses
- * it, and an even matchup (or no type) is neither. */
+ * it, and an even matchup (or no type) is neither. In Pub Crawl a strike
+ * calls for a knack instead (2026-10-25): an adventurer with it wins, one
+ * without it loses. Outside a crawl a strike is neither. */
 export function strikeOutcome(
   quest: QuestState | undefined,
   card: CardDefinition,
 ): "won" | "lost" | null {
   if (!card.strike) return null;
+  if (card.knack)
+    return quest?.party ? (knackEdge(quest, card) ? "won" : "lost") : null;
   const edge = cardMatchup(quest, card)?.edge;
   return edge === "advantage" ? "won" : edge === "disadvantage" ? "lost" : null;
 }

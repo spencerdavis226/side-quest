@@ -8,6 +8,7 @@ import type {
   Loot,
   Offer,
   OmenEffect,
+  Strike,
 } from "../../game/types";
 import { cardFactory, choice, rollTable } from "../author";
 import { describeOmen, dungeonOmenWords } from "../../game/omenText";
@@ -214,6 +215,30 @@ export const monster = (
     ...stakes(more),
   };
 };
+
+/** Hearts a lost strike costs (2026-10-25). Every class without the
+ * strike's knack loses it, so it costs less than a rolled room. */
+export const STRIKE_HURT = [1, 1, 2] as const;
+
+/** A strike (owner, 2026-10-25: "simple is better"): a room with no roll.
+ * It calls for a knack (`strikeKnacks` in `knacks.ts`): an adventurer with
+ * it wins (the `advantage` line, and `loot`), one without it loses (the
+ * `disadvantage` line, hearts, a curse or a jinx). The plain modes read the
+ * `even` line and nothing is at stake. */
+export const strike = (
+  floor: Floor,
+  kind: "Monster" | "Trap",
+  id: string,
+  title: string,
+  rules: string,
+  lines: Strike,
+  more: Stakes = {},
+): CardDefinition => ({
+  ...room(floor, kind, id, title, rules),
+  strike: lines,
+  damage: STRIKE_HURT[tier(floor)],
+  ...stakes(more),
+});
 
 /** A trial: no dice; the table calls Won or Lost. The rules say what
  * losing costs. */

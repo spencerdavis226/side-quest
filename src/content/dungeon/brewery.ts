@@ -8,7 +8,6 @@ import {
   merchant,
   monster,
   moves,
-  pair,
   relic,
   shrine,
   trap,
@@ -17,6 +16,7 @@ import {
   trinket,
   BOSS_NEED,
   type FloorCards,
+  strike,
 } from "./shared";
 
 // Floor 1, the third way down (2026-10-17): the Brewery. Vats, hops, and
@@ -24,22 +24,29 @@ import {
 
 export const brewery: FloorCards = {
   fights: [
-    monster(
+    strike(
       6,
+      "Monster",
       "hop-goblin",
       "Hop Goblin",
-      "A goblin made entirely of hops. It smells like an IPA lecture. Roll d20.",
-      "It explains bitterness units to you. Drink 3.",
-      "You tell it you prefer lager. It wilts. Give 3.",
+      "A goblin made entirely of hops. It smells like an IPA lecture.",
+      {
+        even: "It lectures. Drink 2.",
+        advantage: "You tell it you prefer lager. It wilts. Give 3.",
+        disadvantage: "It explains bitterness units. Drink 3.",
+      },
     ),
-    monster(
+    strike(
       6,
+      "Monster",
       "yeast-beast",
       "The Yeast Beast",
-      "A blob of live yeast, bubbling and very, very friendly. Roll d20.",
-      "It ferments on you. Drink 3.",
-      "You starve it of sugar. Give 3.",
-      { crit: "You bake it into bread. Give 6." },
+      "A blob of live yeast, bubbling and very, very friendly.",
+      {
+        even: "It bubbles on you. Drink 2.",
+        advantage: "You starve it with a spell. Give 3.",
+        disadvantage: "It ferments on you. Drink 3.",
+      },
     ),
     monster(
       6,
@@ -85,19 +92,16 @@ export const brewery: FloorCards = {
         },
       },
     ),
-    monster(
+    strike(
       6,
+      "Monster",
       "foam-ferrets",
       "Foam Ferrets",
-      "A family of ferrets living in the foam, very fast. Roll 2d6.",
-      "",
-      "",
+      "A family of ferrets living in the foam, very fast.",
       {
-        roll: pair(
-          "They go up your sleeve. Drink 3.",
-          "You cork them in a growler. Give 3.",
-          "A pair! You train one. Everyone else drinks 2.",
-        ),
+        even: "One sniffs you. Drink 2.",
+        advantage: "You cork them in a growler. Give 3.",
+        disadvantage: "They go up your sleeve. Drink 3.",
       },
     ),
     monster(
@@ -127,13 +131,17 @@ export const brewery: FloorCards = {
       "You collect the caps. Give 3.",
       { curse: "bleed" },
     ),
-    monster(
+    strike(
       6,
+      "Monster",
       "gruit-druid",
       "The Gruit Druid",
-      "A druid brewing beer like it's 1300 and judging you for it. Roll d20.",
-      "A hangover from 1300 hits you. Drink 3.",
-      "You pour him a cold lager. He converts. Give 3.",
+      "A druid brewing beer like it's 1300 and judging you for it.",
+      {
+        even: "You taste it. Drink 2.",
+        advantage: "You pray with him; he converts to lager. Give 3.",
+        disadvantage: "A hangover from 1300 hits you. Drink 3.",
+      },
     ),
     trial(
       6,
@@ -175,13 +183,17 @@ export const brewery: FloorCards = {
       "Buried in barley. Drink 2.",
       "You surf it out. Give 2.",
     ),
-    trap(
+    strike(
       6,
+      "Trap",
       "co2-leak",
       "CO2 Leak",
-      "Something hisses, and everyone's voice drops an octave. Roll d20.",
-      "Barry White. Drink 2, then say something in your deepest voice.",
-      "You find the valve. Give 2.",
+      "Something hisses, and everyone's voice drops an octave.",
+      {
+        even: "Deep voices. Drink 2.",
+        advantage: "You find the valve. Give 2.",
+        disadvantage: "Barry White. Drink 3, then talk in your deepest voice.",
+      },
     ),
     trap(
       6,
@@ -208,13 +220,17 @@ export const brewery: FloorCards = {
       "You take a cut. Give 2.",
     ),
     // More of the Brewery (2026-10-25).
-    monster(
+    strike(
       6,
+      "Monster",
       "spent-grain-golem",
       "Spent Grain Golem",
-      "A golem of spent grain, still warm, looking for a bakery. Roll d20.",
-      "It crumbles all over you. Drink 3.",
-      "You feed it to the pigs out back. Give 3.",
+      "A golem of spent grain, still warm, looking for a bakery.",
+      {
+        even: "Crumbs. Drink 2.",
+        advantage: "You haul it to the pigs out back. Give 3.",
+        disadvantage: "It crumbles all over you. Drink 3.",
+      },
     ),
     monster(
       6,

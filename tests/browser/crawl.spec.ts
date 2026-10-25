@@ -608,6 +608,53 @@ test("a knack's room shows its chip, and the dialog explains it", async ({
   await expect(page.locator(".tag-knack")).toHaveCount(0);
 });
 
+// Strikes (2026-10-25): a room with no roll. The class's knack wins it
+// outright; without it the room is lost and costs its hearts.
+test("a strike is won with its knack and lost without it", async ({
+  page,
+}, info) => {
+  const barback = cards.find((c) => c.id === "dungeon.skeleton-barback")!;
+  // The Rogue has Charm.
+  await seed(
+    page,
+    reveal(
+      crawlAt(barback.id, STEP.floor1, { hearts: 8 }, { adventurer: "rogue" }),
+    ),
+  );
+  await expect(page.locator(".tag-knack")).toHaveAccessibleName(
+    "Knack: Charm, advantage",
+  );
+  await expect(page.locator(".game-card .strike-line")).toHaveText(
+    barback.strike!.advantage,
+  );
+  await expect(page.locator(".game-card .stake-loss")).toHaveCount(0);
+  await page.locator(".tag-knack").click();
+  await expect(page.getByRole("dialog", { name: "Knack" })).toContainText(
+    "won outright",
+  );
+  await page.keyboard.press("Escape");
+  await page.locator(".game-card").click();
+  await expect.poll(async () => (await saved(page)).quest.party.hearts).toBe(8);
+  // The Wizard doesn't: no chip, the losing line, and a heart at stake.
+  await seed(
+    page,
+    reveal(
+      crawlAt(barback.id, STEP.floor1, { hearts: 8 }, { adventurer: "wizard" }),
+    ),
+  );
+  await expect(page.locator(".hud-strip")).toBeVisible();
+  await expect(page.locator(".tag-knack")).toHaveCount(0);
+  await expect(page.locator(".game-card .strike-line")).toHaveText(
+    barback.strike!.disadvantage,
+  );
+  await expect(page.locator(".game-card .stake-loss")).toHaveAccessibleName(
+    "Costs 1 heart",
+  );
+  await page.screenshot({ path: info.outputPath("crawl-strike-lost.png") });
+  await page.locator(".game-card").click();
+  await expect.poll(async () => (await saved(page)).quest.party.hearts).toBe(7);
+});
+
 test("a Dog-Eared Tome asks which path a forked adventurer takes", async ({
   page,
 }) => {
