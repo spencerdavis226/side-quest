@@ -1,11 +1,11 @@
 # tests
 
-| Location                   | Runner                                                          | What it needs                                                               |
-| -------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `tests/*.test.ts`          | `npm test` (Vitest, about 8 s)                                  | nothing; engine, dice, content, presentation tokens, card-logic guards      |
-| `tests/*.balance.test.ts`  | `npm run test:balance` (about 2 min; CI runs it in its own job) | nothing; 4,000 seeded Pub Crawl and League runs each, holding the win rates |
-| `tests/browser/*.spec.ts`  | `npm run test:e2e` / `test:release`                             | a production build; serves `dist` with `vite preview`                       |
-| `tests/workshop/*.spec.ts` | `npm run test:workshop`                                         | the dev server (`:5175`); never `dist`                                      |
+| Location | Runner | What it needs |
+| --- | --- | --- |
+| `tests/*.test.ts` | `npm test` (Vitest, about 8 s) | nothing; engine, dice, content, presentation tokens, card-logic guards |
+| `tests/*.balance.test.ts` | `npm run test:balance` (about 2 min; CI runs it in its own job) | nothing; 4,000 seeded Pub Crawl and League runs each, holding the win rates |
+| `tests/browser/*.spec.ts` | `npm run test:e2e` / `test:release` | a production build; serves `dist` with `vite preview` |
+| `tests/workshop/*.spec.ts` | `npm run test:workshop` | the dev server (`:5175`); never `dist` |
 
 - Playwright projects emulate iPhone 13 in Chromium and WebKit. WebKit emulation is closer to Safari but is not an iPhone; physical results go in `docs/DEVICE_CHECKLIST.md`.
 - Tag fast, high-value cases `@release`; the CI gate runs only those (`npm run test:release`). Keep that set small, since publication time was a user complaint.
