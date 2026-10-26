@@ -91,7 +91,6 @@ test("the hash is stable for a given card id", () => {
   expect(fnv1a("core.house-special")).not.toBe(fnv1a("core.house-specia1"));
 });
 
-test("every current card has a curated assignment", () => {
-  for (const card of cards)
-    expect(imprintAssignments[card.id], card.id).toBeDefined();
-});
+ test("every current card has a curated assignment", () => {
+ for (const card of cards) expect(imprintAssignments[card.id], card.id).toBeDefined();
+ });
