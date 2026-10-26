@@ -7,6 +7,9 @@ import {
   settleBattle,
   skipRoll,
   quaff,
+  catchIt,
+  letGo,
+  sendIn,
   spendPower,
   spendLoot,
   awaitingOffer,
@@ -253,6 +256,29 @@ export class PresentationController {
       this.transition(next, null);
       this.effect("press");
     }
+  }
+  /** Pokémon League (2026-10-25): catch the wild Pokémon just beaten, or
+   * let it go; either puts the card aside. */
+  catch(keep: boolean) {
+    const { session, motion } = this.state;
+    if (!session || motion) return;
+    const next = keep
+      ? catchIt(session, this.random)
+      : letGo(session, this.random);
+    if (next === session) return;
+    this.persist(next);
+    this.transition(next, "discard", session);
+    this.effect("discard");
+  }
+  /** Send a teammate in for the battle face up. */
+  send(id: string) {
+    const { session, motion } = this.state;
+    if (!session || motion) return;
+    const next = sendIn(session, id);
+    if (next === session) return;
+    this.persist(next);
+    this.transition(next, null);
+    this.effect("press");
   }
   revealRoll() {
     const { session, motion } = this.state;

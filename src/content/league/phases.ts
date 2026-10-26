@@ -2,7 +2,7 @@ import type { CardDefinition, Phase } from "../../game/types";
 import { naturalDice } from "../naturals";
 import { moves, pair, vs, type Roll } from "./journey";
 import { HIDEOUT_BOSS_NEED, RIVAL_NEED } from "./journey";
-import { CHAMPION_NEED, LEGENDARY_NEED } from "./shared";
+import { CHAMPION_NEED, GYM_NEED, LEGENDARY_NEED } from "./shared";
 
 // Boss phases in the League (2026-10-25): a Legendary's second beat is the
 // catch, a Champion sends out its second Pokémon and then its ace, and the
@@ -18,6 +18,12 @@ const duel =
 const roll =
   (rules: string, fight: Roll): Beat =>
   (need) => ({ rules, dice: naturalDice(fight(need)) });
+
+/** A gym's ace rolls at its tier's odds, whatever its opener rolls. */
+const atTier =
+  (tier: number, beat: Beat): Beat =>
+  () =>
+    beat(GYM_NEED[tier]);
 
 const beats: Readonly<Record<string, Beat[]>> = {
   // Legendaries: the catch.
@@ -387,6 +393,315 @@ const beats: Readonly<Record<string, Beat[]>> = {
       "Plot twist: tell the table one thing about you nobody here knows. Refuse: drink 4.",
     ),
   ],
+  // Gyms 5 to 8 (2026-10-25): the leader opens, then sends out their ace.
+  "gym-koga": [
+    atTier(
+      4,
+      roll(
+        "Koga sends out Weezing, and the room fills with smoke. Roll d20.",
+        vs("Toxic. Drink 4.", "Weezing faints. Give 4."),
+      ),
+    ),
+  ],
+  "gym-chuck": [
+    atTier(
+      4,
+      roll(
+        "Chuck sends out Poliwrath, flexing. Roll d20.",
+        vs("Dynamic Punch. Drink 4.", "Poliwrath faints. Give 4."),
+      ),
+    ),
+  ],
+  "gym-norman": [
+    atTier(
+      4,
+      roll(
+        "Norman sends out Slaking. It's lying down. Roll d20.",
+        vs("Giga Impact. Drink 4.", "Slaking was asleep anyway. Give 4."),
+      ),
+    ),
+  ],
+  "gym-fantina": [
+    atTier(
+      4,
+      roll(
+        "Fantina sends out Mismagius, giggling. Roll d20.",
+        vs("Shadow Ball. Drink 4.", "Mismagius vanishes. Give 4."),
+      ),
+    ),
+  ],
+  "gym-clay": [
+    atTier(
+      4,
+      duel(
+        "Clay sends out Excadrill. Name five things buried in a mine in ten seconds. Fall short: drink 4.",
+      ),
+    ),
+  ],
+  "gym-clemont": [
+    atTier(
+      4,
+      duel(
+        "Clemont sends out Heliolisk. Explain a gadget in your pocket like a scientist. Laugh: drink 4.",
+      ),
+    ),
+  ],
+  "gym-mallow": [
+    atTier(
+      4,
+      roll(
+        "Mallow sends out Tsareena, kicking. Roll d20.",
+        vs("Trop Kick. Drink 4.", "Tsareena trips. Give 4."),
+      ),
+    ),
+  ],
+  "gym-opal": [
+    atTier(
+      4,
+      roll(
+        "Opal sends out Alcremie and asks your favorite color. Roll d20.",
+        vs("Wrong color. Drink 4.", "Pink. She approves. Give 4."),
+      ),
+    ),
+  ],
+  "gym-larry": [
+    atTier(
+      4,
+      duel(
+        "Larry sends out Staraptor. Mime a whole lunch break in ten seconds. Boring: drink 4.",
+      ),
+    ),
+  ],
+  "gym-sabrina": [
+    atTier(
+      5,
+      roll(
+        "Sabrina sends out Alakazam, and it already knows your roll. Roll d20.",
+        vs("It knew. Drink 4.", "It didn't see that coming. Give 4."),
+      ),
+    ),
+  ],
+  "gym-jasmine": [
+    atTier(
+      5,
+      roll(
+        "Jasmine sends out Steelix, shyly. Roll d20.",
+        vs("Iron Tail. Drink 4.", "Steelix rusts. Give 4."),
+      ),
+    ),
+  ],
+  "gym-winona": [
+    atTier(
+      5,
+      roll(
+        "Winona sends out Altaria, humming. Roll d20.",
+        vs("Sky Attack. Drink 4.", "Altaria floats off. Give 4."),
+      ),
+    ),
+  ],
+  "gym-byron": [
+    atTier(
+      5,
+      duel(
+        "Byron sends out Bastiodon. Out-flex your left neighbor; the table judges. Lose: drink 4.",
+      ),
+    ),
+  ],
+  "gym-skyla": [
+    atTier(
+      5,
+      duel(
+        "Skyla sends out Swanna. Flap like a swan while the table counts to ten. Stop: drink 4.",
+      ),
+    ),
+  ],
+  "gym-valerie": [
+    atTier(
+      5,
+      roll(
+        "Valerie sends out Sylveon, ribbons everywhere. Roll d20.",
+        vs("Moonblast. Drink 4.", "Sylveon gets tangled. Give 4."),
+      ),
+    ),
+  ],
+  "gym-olivia": [
+    atTier(
+      5,
+      duel(
+        "Olivia sends out Lycanroc. Howl a breakup song for five seconds. Laugh: drink 4.",
+      ),
+    ),
+  ],
+  "gym-gordie": [
+    atTier(
+      5,
+      duel(
+        "Gordie sends out Coalossal. Name five rocks in ten seconds. Fall short: drink 4.",
+      ),
+    ),
+  ],
+  "gym-ryme": [
+    atTier(
+      5,
+      roll(
+        "Ryme sends out Toxtricity, and the bass drops. Roll d20.",
+        vs("Overdrive. Drink 4.", "The mic cuts out. Give 4."),
+      ),
+    ),
+  ],
+  "gym-blaine": [
+    atTier(
+      6,
+      roll(
+        "Blaine sends out Arcanine, and it's hot in here. Roll d20.",
+        vs("Fire Blast. Drink 4.", "Arcanine wants pets. Give 4."),
+      ),
+    ),
+  ],
+  "gym-pryce": [
+    atTier(
+      6,
+      roll(
+        "Pryce sends out Mamoswine. Roll d20.",
+        vs("Avalanche. Drink 4.", "Mamoswine slips. Give 4."),
+      ),
+    ),
+  ],
+  "gym-tate-liza": [
+    atTier(
+      6,
+      duel(
+        "Lunatone and Solrock spin. You and your partner say one word on three. Mismatch: you both drink 3.",
+      ),
+    ),
+  ],
+  "gym-candice": [
+    atTier(
+      6,
+      roll(
+        "Candice sends out Froslass, and your drink frosts over. Roll d20.",
+        vs("Blizzard. Drink 4.", "Froslass melts. Give 4."),
+      ),
+    ),
+  ],
+  "gym-brycen": [
+    atTier(
+      6,
+      roll(
+        "Brycen sends out Beartic, in costume. Roll d20.",
+        vs("Icicle Crash. Drink 4.", "Cut! Beartic misses its mark. Give 4."),
+      ),
+    ),
+  ],
+  "gym-olympia": [
+    atTier(
+      6,
+      duel(
+        "Olympia sends out Meowstic. Predict who at the table yawns first. Wrong: drink 4.",
+      ),
+    ),
+  ],
+  "gym-nanu": [
+    atTier(
+      6,
+      roll(
+        "Nanu sends out Persian, yawning. Roll d20.",
+        vs("Night Slash. Drink 4.", "Persian wanders off. Give 4."),
+      ),
+    ),
+  ],
+  "gym-piers": [
+    atTier(
+      6,
+      roll(
+        "Piers sends out Obstagoon, tongue out. Roll d20.",
+        vs("Obstruct. Drink 4.", "Encore! Give 4."),
+      ),
+    ),
+  ],
+  "gym-tulip": [
+    atTier(
+      6,
+      duel(
+        "Tulip sends out Florges. Compliment the makeup your left neighbor mimed, sincerely. Laugh: drink 4.",
+      ),
+    ),
+  ],
+  "gym-giovanni": [
+    atTier(
+      7,
+      duel(
+        "Giovanni sends out Nidoking. Beg for mercy in one sentence; the table votes. No mercy: drink 5.",
+      ),
+    ),
+  ],
+  "gym-clair": [
+    atTier(
+      7,
+      duel(
+        "Clair sends out Kingdra. Tell her she's right again, in rhyme. Stumble: drink 5.",
+      ),
+    ),
+  ],
+  "gym-wallace": [
+    atTier(
+      7,
+      roll(
+        "Wallace sends out Milotic, shimmering. Roll d20.",
+        vs("Too beautiful. Drink 5.", "Milotic bows. Give 5."),
+      ),
+    ),
+  ],
+  "gym-volkner": [
+    atTier(
+      7,
+      duel(
+        "Volkner sends out Electivire. Bore the table with another fun fact. Nobody yawns: drink 5.",
+      ),
+    ),
+  ],
+  "gym-drayden": [
+    atTier(
+      7,
+      duel(
+        "Drayden sends out Haxorus. Keep your campaign promise now, or drink 5.",
+      ),
+    ),
+  ],
+  "gym-wulfric": [
+    atTier(
+      7,
+      roll(
+        "Wulfric sends out Avalugg, and it's an iceberg. Roll d20.",
+        vs("Avalanche. Drink 5.", "Avalugg cracks. Give 5."),
+      ),
+    ),
+  ],
+  "gym-hapu": [
+    atTier(
+      7,
+      duel(
+        "Hapu sends out Mudsdale. Gallop around the table and back. Refuse: drink 5.",
+      ),
+    ),
+  ],
+  "gym-raihan": [
+    atTier(
+      7,
+      duel(
+        "Raihan sends out Duraludon. Take a group selfie in ten seconds. Anyone missing from it: drink 5.",
+      ),
+    ),
+  ],
+  "gym-grusha": [
+    atTier(
+      7,
+      roll(
+        "Grusha sends out Altaria, cold as ever. Roll d20.",
+        vs("Ice Beam. Drink 5.", "Altaria sneezes. Give 5."),
+      ),
+    ),
+  ],
   // The rival on Victory Road.
   "rival-blue": [
     duel(
@@ -437,6 +752,8 @@ const needOf = (card: CardDefinition) => {
   if (id.startsWith("league-champion-")) return CHAMPION_NEED;
   if (id.startsWith("boss-")) return HIDEOUT_BOSS_NEED;
   if (id.startsWith("rival-")) return RIVAL_NEED;
+  // A gym's ace takes its tier's odds (`atTier`).
+  if (id.startsWith("gym-")) return 0;
   throw new Error(`No odds for phases: ${card.id}`);
 };
 

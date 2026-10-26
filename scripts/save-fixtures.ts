@@ -17,6 +17,7 @@ import { join } from "node:path";
 import { cards, packs } from "../src/content/catalog";
 import {
   advance,
+  awaitingCatch,
   awaitingChoice,
   cardMatchup,
   createSession,
@@ -254,6 +255,22 @@ const situations: [string, GameConfig, Find][] = [
     "league-move-spent",
     league,
     (s) => (party(s).powers ?? 0) >= 1 && s.phase === "revealed",
+  ],
+  // The League's team and gym aces (2026-10-25).
+  ["league-catch-waiting", league, (s) => awaitingCatch(s)],
+  [
+    "league-team-caught",
+    league,
+    (s) => (party(s).team?.length ?? 0) >= 2 && s.phase === "hidden",
+  ],
+  ["league-teammate-sent", league, (s) => !!party(s).sent],
+  [
+    "league-gym-ace",
+    league,
+    (s) =>
+      s.phase === "revealed" &&
+      party(s).hits > 0 &&
+      currentCard(s).id.startsWith("pokemon.gym-"),
   ],
   ["crawl-wiped", crawl, (s) => party(s).wiped],
   ["crawl-survived", crawl, (s) => s.phase === "complete" && !party(s).wiped],

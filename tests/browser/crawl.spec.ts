@@ -825,10 +825,12 @@ test("the party dialog lays out the run: adventurer, boons, jinx and the Cup", a
   await expect(guide.locator(".guide-rows")).toContainText(
     "A room that calls for one shows green arrows",
   );
+  // The Quaff left new runs (2026-10-25); the power took its row.
   await expect(guide.locator(".guide-rows")).toContainText(
-    "Lost a d20? Drink 4 to roll it again.",
+    "Your adventurer has one, a button on the card when it helps",
   );
-  await expect(guide.locator(".crawl-legend dd")).toHaveCount(8);
+  // No curse row since 2026-10-25: Pub Crawl lays jinxes instead.
+  await expect(guide.locator(".crawl-legend dd")).toHaveCount(7);
   await expect(guide.locator(".crawl-legend")).toContainText(
     "A natural 1 doubles a loss",
   );

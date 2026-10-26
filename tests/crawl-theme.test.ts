@@ -109,6 +109,7 @@ describe("how to play", () => {
       "Types",
       "Gyms and badges",
       "Evolution",
+      "Your team",
       "Signature moves",
       "Route rules",
       "Bag",

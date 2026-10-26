@@ -15,6 +15,7 @@ import { applyTypes } from "./league/types";
 import { applyStarterPowers } from "./league/powers";
 import { applyLeaguePhases } from "./league/phases";
 import { routeRules } from "./league/rules";
+import { applyTeam } from "./league/team";
 
 // Pokémon night: every playable moment from the three supplied board sheets
 // (Kanto, Johto, Hoenn), morphed from board spaces into shared-deck cards.
@@ -907,6 +908,8 @@ export const pokemonCards: CardDefinition[] = [
   ...hideoutCards,
 ];
 applyTypes(pokemonCards);
+// The team (2026-10-25): wild Pokémon and catch cards can be caught.
+applyTeam(pokemonCards);
 // Signature moves (2026-10-25): one a starter, and one a form.
 applyStarterPowers(pokemonCards);
 // Boss phases (2026-10-25): the catch, the Champion's switch and ace.

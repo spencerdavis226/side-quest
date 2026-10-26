@@ -13,6 +13,7 @@ import type { SessionState, CardDefinition, Loot, Offer } from "../game/types";
 import { diceResultText } from "../presentation/dice/result-text";
 import { diceNotation } from "../game/dice";
 import {
+  awaitingCatch,
   awaitingChoice,
   awaitingOffer,
   awaitingPress,
@@ -20,7 +21,9 @@ import {
   awaitingVerdict,
   canQuaff,
   canTakeOffer,
+  canSendIn,
   canUsePower,
+  partyTeam,
   powerSpoils,
   spoilsOnWin,
   currentCard,
@@ -42,8 +45,10 @@ import {
 import {
   LootPlaque,
   OfferPlaque,
+  CatchPlaques,
   PowerPlaque,
   PressPlaques,
+  SendInPlaque,
   QuaffPlaque,
   SpoilsButton,
   SpoilsSheet,
@@ -83,6 +88,9 @@ export function Play({
   onOffer = () => {},
   onQuaff = () => {},
   onPower = () => {},
+  onCatch = () => {},
+  onRelease = () => {},
+  onSend = () => {},
   onSpoils = () => {},
   onKeepGear = () => {},
   onCashOut = () => {},
@@ -103,6 +111,9 @@ export function Play({
   onOffer?: (index: number, branch?: number) => void;
   onQuaff?: () => void;
   onPower?: (spoil?: number) => void;
+  onCatch?: () => void;
+  onRelease?: () => void;
+  onSend?: (id: string) => void;
   onSpoils?: (index: number) => void;
   onKeepGear?: () => void;
   onCashOut?: () => void;
@@ -137,7 +148,14 @@ export function Play({
   const quaffable = !motion && canQuaff(session);
   // The class's or starter's signature power (2026-10-25).
   const powerable = !motion && canUsePower(session);
-  const extras = items.length + (quaffable ? 1 : 0) + (powerable ? 1 : 0);
+  // The League's team (2026-10-25): a beaten wild Pokémon to catch, and
+  // teammates who can be sent in for this battle.
+  const catching = !motion && awaitingCatch(session);
+  const senders = motion
+    ? []
+    : partyTeam(session.quest).filter((m) => canSendIn(session, m.id));
+  const extras =
+    items.length + (quaffable ? 1 : 0) + (powerable ? 1 : 0) + senders.length;
   // A win that fells a boss with spoils asks for the trinket first: Won on
   // a plaque beat, or a power that wins it outright.
   const [asking, setAsking] = useState<{
@@ -274,7 +292,7 @@ export function Play({
             : ""}
         </span>
         <div
-          className={`card-stage ${motion ?? ""} ${choice || verdict || offers || spoils || press || acting || extras ? "choosing" : ""}`}
+          className={`card-stage ${motion ?? ""} ${choice || verdict || offers || spoils || press || catching || acting || extras ? "choosing" : ""}`}
         >
           <div className="deck-under" aria-hidden="true" />
           <button
@@ -286,7 +304,15 @@ export function Play({
                 !!session.roll &&
                 !session.roll.returned &&
                 motion !== "roll";
-              if (choice || verdict || offers || spoils || press || blocked) {
+              if (
+                choice ||
+                verdict ||
+                offers ||
+                spoils ||
+                press ||
+                catching ||
+                blocked
+              ) {
                 // Point at the plaques instead of acting on a stray tap.
                 if (!matchMedia("(prefers-reduced-motion: reduce)").matches)
                   choiceRef.current?.animate(
@@ -305,6 +331,7 @@ export function Play({
               !!offers ||
               !!spoils ||
               press ||
+              catching ||
               blocked ||
               (!!motion && motion !== "roll") ||
               (!!card.dice &&
@@ -325,22 +352,24 @@ export function Play({
                         ? `${card.title}. ${diceResultText(card, session.roll!)} Take a trinket: ${spoils.map((b) => b.name).join(", or ")}.`
                         : press
                           ? `${card.title}. ${diceResultText(card, session.roll!)} Cash out or go again.`
-                          : blocked
-                            ? `${card.title}. ${card.rules} ${card.timer!.kind === "fuse" ? "Light the fuse" : "Start the clock"}, or skip it.`
-                            : actions.shown === "end"
-                              ? `${card.title}. ${card.timer!.end} Tap to put this card aside.`
-                              : card.dice && !session.roll?.returned
-                                ? session.roll
-                                  ? motion === "roll"
-                                    ? "Finish dice roll"
-                                    : "Revealing dice result"
-                                  : `Roll ${diceNotation(card.dice)}. ${card.rules}`
-                                : `${card.title}. ${session.roll?.returned ? `Rolled ${session.roll.total}. ${diceResultText(card, session.roll)}` : card.rules} ${cardPacks(
-                                    card.id,
-                                    session.config.packIds,
-                                  )
-                                    .map((pack) => pack.title)
-                                    .join(", ")}. Tap to put this card aside.`
+                          : catching
+                            ? `${card.title}. Beaten. Catch it, or let it go.`
+                            : blocked
+                              ? `${card.title}. ${card.rules} ${card.timer!.kind === "fuse" ? "Light the fuse" : "Start the clock"}, or skip it.`
+                              : actions.shown === "end"
+                                ? `${card.title}. ${card.timer!.end} Tap to put this card aside.`
+                                : card.dice && !session.roll?.returned
+                                  ? session.roll
+                                    ? motion === "roll"
+                                      ? "Finish dice roll"
+                                      : "Revealing dice result"
+                                    : `Roll ${diceNotation(card.dice)}. ${card.rules}`
+                                  : `${card.title}. ${session.roll?.returned ? `Rolled ${session.roll.total}. ${diceResultText(card, session.roll)}` : card.rules} ${cardPacks(
+                                      card.id,
+                                      session.config.packIds,
+                                    )
+                                      .map((pack) => pack.title)
+                                      .join(", ")}. Tap to put this card aside.`
             }
           >
             <span
@@ -385,7 +414,7 @@ export function Play({
           {verdict && (
             <div
               ref={choiceRef}
-              className={`card-choice verdict plaques-${2 + items.length + (powerable ? 1 : 0)}`}
+              className={`card-choice verdict plaques-${2 + items.length + (powerable ? 1 : 0) + senders.length}`}
               role="group"
               aria-label="Did you win?"
             >
@@ -420,6 +449,24 @@ export function Play({
                   theme={crawl}
                 />
               )}
+              {senders.map((m) => (
+                <SendInPlaque key={m.id} member={m} onSend={onSend} />
+              ))}
+            </div>
+          )}
+          {catching && (
+            <div
+              ref={choiceRef}
+              className="card-choice offers catch plaques-2"
+              role="group"
+              aria-label="Catch it"
+            >
+              <CatchPlaques
+                session={session}
+                onCatch={onCatch}
+                onRelease={onRelease}
+                theme={crawl}
+              />
             </div>
           )}
           {offers && (
@@ -472,6 +519,7 @@ export function Play({
             !acting &&
             !spoils &&
             !press &&
+            !catching &&
             extras > 0 && (
               <div
                 ref={choiceRef}
@@ -501,6 +549,9 @@ export function Play({
                     theme={crawl}
                   />
                 )}
+                {senders.map((m) => (
+                  <SendInPlaque key={m.id} member={m} onSend={onSend} />
+                ))}
               </div>
             )}
           {choice && (

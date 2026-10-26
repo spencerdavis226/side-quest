@@ -22,7 +22,7 @@ import {
   type Random,
 } from "../src/game/engine";
 import { returnToCard, rollDice, rollWins } from "../src/game/dice";
-import { botPower } from "./bot";
+import { botPower, botTeam } from "./bot";
 import { parseSession } from "../src/app/persistence";
 import { cards, packs } from "../src/content/catalog";
 import type { GameConfig, Loot, SessionState } from "../src/game/types";
@@ -113,8 +113,10 @@ function playRun(seed: number, starter?: string) {
       use("smoke");
       if (s.phase !== "revealed" || currentCard(s) !== card) continue;
     }
-    // The class's or starter's power (2026-10-25).
+    // The class's or starter's power, and the team (2026-10-25).
     if (s.phase === "revealed") {
+      s = botTeam(s, random);
+      if (s.phase !== "revealed" || currentCard(s).id !== card.id) continue;
       s = botPower(s, random, "before");
       if (s.phase !== "revealed" || currentCard(s).id !== card.id) continue;
     }
@@ -147,7 +149,10 @@ function playRun(seed: number, starter?: string) {
         if (!s.roll) s = returnToCard(rollDice(s, random));
       }
     }
-    s = advance(s, random);
+    // A beaten wild Pokémon: catch it or let it go, which puts it aside.
+    const before = s;
+    s = botTeam(s, random);
+    if (s === before) s = advance(s, random);
     if (party(s).hearts <= 4) use("draught");
   }
   return s;
@@ -204,12 +209,14 @@ it("the League is hard: the team wins between 18% and 40% of its runs", () => {
     );
     wipes.set(label, (wipes.get(label) ?? 0) + 1);
   }
-  const avg = (f: (s: SessionState) => number) =>
-    (winners.map(f).reduce((a, b) => a + b, 0) / winners.length).toFixed(1);
+  const avg = (f: (s: SessionState) => number, of = winners) =>
+    (of.map(f).reduce((a, b) => a + b, 0) / of.length).toFixed(1);
   console.log(
     `extra draws on won runs: ${avg((s) => s.quest!.lost ?? 0)} lost to bosses, ${avg((s) => party(s).rounds)} boss swings landed, ${avg((s) => s.quest!.finale.length)} dealt\n` +
       `league: won ${(won * 100).toFixed(1)}%; a won run takes ${mean.toFixed(1)} draws (10th ${at(0.1)}, 90th ${at(0.9)})\n` +
-      `whited out at: ${[...wipes].map(([l, n]) => `${l} ${pct(n / runs.length)}`).join(", ")}`,
+      `whited out at: ${[...wipes].map(([l, n]) => `${l} ${pct(n / runs.length)}`).join(", ")}\n` +
+      // The team (2026-10-25): how big it ends, on every run.
+      `team at the end: ${avg((s) => party(s).team?.length ?? 0, runs)} of 2`,
   );
   expect(won).toBeGreaterThan(0.18);
   expect(won).toBeLessThan(0.4);
@@ -265,5 +272,6 @@ it("Bidoof is the worst starter, and still wins now and then", () => {
   console.log(`bidoof (600 runs) ${pct(bidoof)}; next worst ${pct(worst)}`);
   expect(bidoof).toBeGreaterThan(0.01);
   expect(bidoof).toBeLessThan(Math.min(0.08, worst));
-  // 600 more runs: about 7 s on CI, past the 5 s default.
-}, 30_000);
+  // 600 more runs: about 7 s on CI, past the 5 s default, and longer since
+  // the team and the gym aces (2026-10-25).
+}, 120_000);

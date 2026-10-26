@@ -4,6 +4,7 @@
 // fixture on with it. Deterministic for a given seed.
 import {
   advance,
+  awaitingCatch,
   awaitingChoice,
   awaitingOffer,
   awaitingPress,
@@ -12,7 +13,12 @@ import {
   canQuaff,
   canTakeOffer,
   canUseLoot,
+  canSendIn,
   canUsePower,
+  catchIt,
+  letGo,
+  partyTeam,
+  sendIn,
   cashOut,
   currentCard,
   omenForm,
@@ -63,6 +69,12 @@ export function nextMove(s: SessionState, random: Random): SessionState {
       random,
       powerSpoils(s) ? Math.floor(random() * card.spoils!.length) : undefined,
     );
+  // The League's team (2026-10-25): send a teammate in now and then, and
+  // catch a beaten wild Pokémon more often than not.
+  else if (partyTeam(s.quest).some((m) => canSendIn(s, m.id)) && random() < 0.5)
+    next = sendIn(s, partyTeam(s.quest).find((m) => canSendIn(s, m.id))!.id);
+  else if (awaitingCatch(s))
+    next = random() < 0.7 ? catchIt(s, random) : letGo(s, random);
   else if (can("die")) next = spendLoot(s, "die", random);
   else if (can("round")) next = spendLoot(s, "round", random);
   else if (awaitingVerdict(s)) {

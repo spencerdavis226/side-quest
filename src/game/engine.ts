@@ -619,7 +619,101 @@ export function cardMatchup(
   if (!quest?.party || !(card.battle || card.strike) || !card.type || !mine)
     return null;
   if (quest.party.tera === card.id) return teraMatchup(mine, card.type);
+  // A teammate sent in fights with its own type (2026-10-25).
+  const sent = quest.party.sent ? finaleCard(quest, quest.party.sent) : null;
+  if (sent?.type)
+    return { ...matchup(sent.type, card.type), teammate: sent.title };
   return matchup(mine, card.type);
+}
+
+/** Pokémon League (2026-10-25): the team the table has caught. */
+export const TEAM_SIZE = 2;
+/** The team, as cards, oldest first. */
+export function partyTeam(quest: QuestState | undefined) {
+  return (quest?.party?.team ?? []).flatMap((id) => {
+    const card = quest ? finaleCard(quest, id) : undefined;
+    return card?.type ? [card] : [];
+  });
+}
+/** A wild Pokémon just beaten that the table can catch: a won roll on the
+ * card, or a strike the matchup wins, and not one already on the team. */
+export function awaitingCatch(s: SessionState): boolean {
+  const party = s.quest?.party;
+  if (!party || !s.quest?.due || s.phase !== "revealed") return false;
+  const card = currentCard(s);
+  if (!card.catchable || !card.type || party.team?.includes(card.id))
+    return false;
+  if (card.strike) return strikeOutcome(s.quest, card) === "won";
+  return (
+    !!card.dice &&
+    !!s.roll?.returned &&
+    rollWins(card.dice, s.roll.values, s.roll)
+  );
+}
+/** The teammate a catch would let go to make room, if the team is full. */
+export function catchReplaces(quest: QuestState | undefined) {
+  const team = quest?.party?.team ?? [];
+  return team.length >= TEAM_SIZE ? partyTeam(quest)[0] : undefined;
+}
+const joinTeam = (party: PartyState, id: string): PartyState => ({
+  ...party,
+  team: [...(party.team ?? []).filter((m) => m !== id), id].slice(-TEAM_SIZE),
+  ...(party.tired ? { tired: party.tired.filter((m) => m !== id) } : {}),
+});
+/** Catch the wild Pokémon just beaten (a drink, spoken), and put it aside;
+ * a full team lets its oldest go. */
+export function catchIt(
+  s: SessionState,
+  random: Random = Math.random,
+): SessionState {
+  if (!awaitingCatch(s)) return s;
+  const q = s.quest!;
+  const party = joinTeam(q.party!, currentCard(s).id);
+  const team = new Set(party.team);
+  const next = {
+    ...party,
+    ...(party.tired ? { tired: party.tired.filter((m) => team.has(m)) } : {}),
+  };
+  return discard({ ...s, quest: { ...q, party: next } }, random);
+}
+/** Let the beaten Pokémon go: the card is put aside. */
+export function letGo(
+  s: SessionState,
+  random: Random = Math.random,
+): SessionState {
+  return awaitingCatch(s) ? discard(s, random) : s;
+}
+/** Whether teammate `id` can be sent in for the battle face up: before it
+ * is decided, rested since the last gym, and super effective on the foe
+ * when the starter isn't. */
+export function canSendIn(s: SessionState, id: string): boolean {
+  const party = s.quest?.party;
+  if (!party || !s.quest?.due || s.phase !== "revealed") return false;
+  if (!party.team?.includes(id) || party.tired?.includes(id) || party.sent)
+    return false;
+  const card = currentCard(s);
+  const member = finaleCard(s.quest, id);
+  if (!(card.battle || card.strike) || !card.type || !member?.type)
+    return false;
+  if (s.roll || card.dice?.choice || party.press || party.tera === card.id)
+    return false;
+  const now = cardMatchup(s.quest, card)?.edge;
+  return (
+    now !== "advantage" && matchup(member.type, card.type).edge === "advantage"
+  );
+}
+/** Send teammate `id` in: the battle is fought with its type, and it rests
+ * until the next gym falls. */
+export function sendIn(s: SessionState, id: string): SessionState {
+  if (!canSendIn(s, id)) return s;
+  const party = s.quest!.party!;
+  return {
+    ...s,
+    quest: {
+      ...s.quest!,
+      party: { ...party, sent: id, tired: [...(party.tired ?? []), id] },
+    },
+  };
 }
 /** Pub Crawl (2026-10-25): a fight that calls for a knack the adventurer
  * has is fought with the edge; one it lacks is fought as written. */
@@ -833,6 +927,7 @@ export function advance(
   if (awaitingOffer(s)) return s;
   if (awaitingSpoils(s)) return s;
   if (awaitingPress(s)) return s;
+  if (awaitingCatch(s)) return s;
   return discard(s, random);
 }
 /** A revealed merchant or fork in a crawl: one of its offers puts it aside. */
@@ -885,6 +980,8 @@ export function takeOffer(
     );
   if (offer.loot && party.loot.length < satchelSize(now))
     party.loot = [...party.loot, offer.loot];
+  // A catch card's Pokémon joins the team (2026-10-25).
+  if (offer.catch) party = joinTeam(party, currentCard(s).id);
   let finale = q.finale;
   // The loud door: the next room on this floor becomes one of its elites.
   if (offer.elite) {
@@ -1375,6 +1472,10 @@ function settleParty(
     next = { ...next };
     delete next.armed;
   }
+  if (next.sent !== undefined) {
+    next = { ...next };
+    delete next.sent;
+  }
   // A boss's or an ambush's boon comes when it falls (`discard`).
   if (!card.hits && (outcome === null || outcome === "won"))
     next = gainBoon(next, card, quest, spoil);
@@ -1476,8 +1577,10 @@ function discard(
       );
       // The signature power comes back with the same boss: a gym in the
       // League, any boss in Pub Crawl (2026-10-25).
-      if (badges ? card.quest === q.packId : isBossCard(card))
+      if (badges ? card.quest === q.packId : isBossCard(card)) {
         delete next.powers;
+        delete next.tired;
+      }
       if (
         restock &&
         (badges ? card.quest === q.packId : isBossCard(card)) &&

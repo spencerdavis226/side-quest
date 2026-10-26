@@ -25,7 +25,9 @@ import {
   isLasting,
   knackEdge,
   omenForm,
+  catchReplaces,
   partyPower,
+  partyTeam,
   powersLeft,
   questRecord,
   replaces,
@@ -349,7 +351,7 @@ export function CrawlStrip({
       {matchup?.edge &&
         chip(
           `tag-edge edge-${matchup.edge}`,
-          `${matchup.tera ? "Terastallized: advantage" : matchup.edge === "advantage" ? "Type advantage" : "Type disadvantage"}`,
+          `${matchup.tera ? "Terastallized: advantage" : matchup.teammate ? `${matchup.teammate} sent in: advantage` : matchup.edge === "advantage" ? "Type advantage" : "Type disadvantage"}`,
           "matchup",
           <EdgeMark edge={matchup.edge} />,
         )}
@@ -778,6 +780,78 @@ const powerLine = (kind: Power["kind"]) =>
     flee: "escape",
   })[kind];
 
+/** Pokémon League (2026-10-25): a beaten wild Pokémon, caught for a drink
+ * or let go. A full team names the teammate a catch lets go. */
+export function CatchPlaques({
+  session,
+  onCatch,
+  onRelease,
+  theme,
+}: {
+  session: SessionState;
+  onCatch: () => void;
+  onRelease: () => void;
+  theme: CrawlTheme;
+}) {
+  const card = currentCardOf(session);
+  const old = catchReplaces(session.quest);
+  return (
+    <>
+      <button
+        className="card-choice-option offer-plaque offer-buy catch-plaque"
+        aria-label={`Catch ${card.title}: drink 1${old ? `, and ${old.title} goes` : ""}`}
+        onClick={onCatch}
+      >
+        <span className="offer-goods" aria-hidden="true">
+          <CrawlIcon name="heart" theme={theme} />
+        </span>
+        <span className="offer-label">
+          <span className="offer-name">Catch it</span>
+          <small className="offer-price">
+            drink 1{old ? ` · ${old.title} goes` : ""}
+          </small>
+        </span>
+      </button>
+      <button
+        className="card-choice-option offer-plaque offer-pass"
+        aria-label={`Let ${card.title} go`}
+        onClick={onRelease}
+      >
+        <span className="offer-goods" aria-hidden="true">
+          <CrawlIcon name="door" theme={theme} className="offer-plain" />
+        </span>
+        <span className="offer-label">
+          <span className="offer-name">Let it go</span>
+        </span>
+      </button>
+    </>
+  );
+}
+
+/** A teammate who can be sent in for the battle face up (2026-10-25): its
+ * type beats the foe's. */
+export function SendInPlaque({
+  member,
+  onSend,
+}: {
+  member: CardDefinition;
+  onSend: (id: string) => void;
+}) {
+  return (
+    <button
+      className="card-choice-option loot-plaque send-plaque"
+      aria-label={`Go, ${member.title}! It fights this battle with the type edge, once a gym.`}
+      onClick={() => onSend(member.id)}
+    >
+      {member.type && <TypeMark type={member.type} />}
+      <span className="offer-label">
+        <span className="offer-name">Go, {member.title}!</span>
+        <small className="offer-price">the edge</small>
+      </span>
+    </button>
+  );
+}
+
 /** A push-your-luck win: cash out with every prize banked, or go again,
  * harder. */
 export function PressPlaques({
@@ -985,6 +1059,7 @@ export function CrawlRecord({
   const quest = session?.quest;
   const power = partyPower(quest);
   const rule = stageRule(quest);
+  const team = partyTeam(quest);
   // The boss waiting at the bottom of this floor, while the run is on.
   const wanted =
     quest && !party.wiped && !record.won && words.wanted
@@ -1113,6 +1188,24 @@ export function CrawlRecord({
             . {powersLeft(quest) ? "Ready." : "Used."}
           </span>
         </p>
+      )}
+      {show("party") && !ending && team.length > 0 && (
+        <ul className="crawl-boons crawl-team" aria-label="Team">
+          {team.map((m) => (
+            <li
+              key={m.id}
+              className={quest?.party?.tired?.includes(m.id) ? "tired" : ""}
+            >
+              {m.type && <TypeMark type={m.type} />}
+              <strong>{m.title}</strong>
+              <span>
+                {quest?.party?.tired?.includes(m.id)
+                  ? "Fought this gym. Back when it falls."
+                  : `Ready: sent in when ${m.type ? pokemonTypes[m.type].name : "its"} beats the foe.`}
+              </span>
+            </li>
+          ))}
+        </ul>
       )}
       {part === "rule" && rule && (
         <p className="crawl-curse crawl-rule">

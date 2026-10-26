@@ -11,6 +11,7 @@ import {
   partyPower,
   previousCard,
   satchelSize,
+  TEAM_SIZE,
   validConfig,
 } from "../game/engine";
 import type { GameConfig, PartyState, SessionState } from "../game/types";
@@ -246,6 +247,26 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
         !["spare", "edge", "double"].includes(
           partyPower(s.quest)?.kind ?? "",
         ))) ||
+    // The League's team (2026-10-25): caught cards already dealt, each a
+    // typed Pokémon, at most two; the rested ones on it; the one sent in
+    // only on the battle face up.
+    (p.team !== undefined &&
+      (!Array.isArray(p.team) ||
+        p.team.length > TEAM_SIZE ||
+        new Set(p.team).size !== p.team.length ||
+        p.team.some(
+          (id) =>
+            typeof id !== "string" ||
+            !dealt.includes(id) ||
+            !finaleCard(s.quest!, id)?.type,
+        ))) ||
+    (p.tired !== undefined &&
+      (!Array.isArray(p.tired) ||
+        p.tired.some((id) => !p.team?.includes(id)))) ||
+    (p.sent !== undefined &&
+      (s.phase !== "revealed" ||
+        !p.team?.includes(p.sent) ||
+        !p.tired?.includes(p.sent))) ||
     // The beat of the phased boss put aside last.
     (p.beat !== undefined &&
       (!whole(p.beat, 1) ||

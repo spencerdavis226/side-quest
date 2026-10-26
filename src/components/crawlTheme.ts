@@ -518,6 +518,11 @@ const league: CrawlTheme = {
         line: "Evolve your starter for drinks, or press B for 1 HP. Each form is stronger.",
       },
       {
+        icon: "heart",
+        title: "Your team",
+        line: "Beat a wild Pokémon and you can catch it for a drink; the team holds two. Before a battle, send one in when its type beats the foe: it fights with the edge, once a gym.",
+      },
+      {
         icon: "power",
         title: "Signature moves",
         line: "Your starter has one, a button on the card when it helps: a reroll, a win, a heal. Evolving can teach a better one. It comes back when a gym falls.",

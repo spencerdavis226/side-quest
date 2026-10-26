@@ -258,7 +258,10 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
     if (
       (c.type !== undefined &&
         (!POKEMON_TYPES.includes(c.type) ||
-          (!c.battle && !c.omen && !c.strike))) ||
+          (!c.battle &&
+            !c.omen &&
+            !c.strike &&
+            !c.offers?.some((o) => o?.catch)))) ||
       (Array.isArray(c.evolves) &&
         c.evolves.some(
           (e) =>
@@ -267,6 +270,20 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         ))
     )
       fail(`Invalid type: ${c.id}`);
+    // The League's team (2026-10-25): a wild fight that can be caught, or a
+    // catch card's offer; either needs the Pokémon's type, never the trio.
+    if (
+      (c.catchable !== undefined &&
+        (c.catchable !== true ||
+          !(c.battle || c.strike) ||
+          c.hits ||
+          !c.type ||
+          c.type === "trio")) ||
+      (c.offers?.some((o) => o?.catch !== undefined && o.catch !== true) ??
+        false) ||
+      (c.offers?.some((o) => o?.catch) && (!c.type || c.type === "trio"))
+    )
+      fail(`Invalid catch: ${c.id}`);
     // Dice colours: two hex colours, on an omen or a starter's form.
     const hexColor = (v: unknown) =>
       typeof v === "string" && /^#[0-9a-f]{6}$/i.test(v);

@@ -37,8 +37,8 @@ const lines: Readonly<Record<string, PowerLine>> = {
   ],
   treecko: [
     ["Detect", "spare"],
-    ["Leaf Blade", "double"],
-    ["Leaf Storm", "win", { cost: 1 }],
+    ["Leaf Blade", "double", { uses: 2 }],
+    ["Leaf Storm", "win", { cost: 1, uses: 2 }],
   ],
   torchic: [
     ["Focus Energy", "edge"],
@@ -147,7 +147,7 @@ const lines: Readonly<Record<string, PowerLine>> = {
   bidoof: [["Defense Curl", "flee"], null],
   magikarp: [
     ["Splash", "flee"],
-    ["Hyper Beam", "win", { cost: 2 }],
+    ["Hyper Beam", "win", { cost: 1, uses: 2 }],
   ],
   // Togepi does nothing, happily: its Metronome never does much.
   togepi: [

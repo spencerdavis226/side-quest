@@ -162,6 +162,10 @@ export interface CardDefinition {
    * none). The felling swing always plays the last. At most `hits - 1`;
    * outside a crawl the card plays as written. */
   phases?: Phase[];
+  /** Pokémon League (2026-10-25): a wild Pokémon the table can catch once
+   * it is beaten (a won roll, or a strike won on the matchup). It joins
+   * the team (`party.team`). Never on a trainer. */
+  catchable?: true;
   /** A run's own omen (an adventurer, a starter) (2026-10-25): its
    * signature power, used when the table chooses, `uses` times until the
    * next boss falls. A later form's `power` replaces it. */
@@ -312,6 +316,8 @@ export interface Offer {
   /** The starter evolves into its next form; never taken once it is fully
    * evolved. */
   evolve?: true;
+  /** Pokémon League (2026-10-25): the card's Pokémon joins the team. */
+  catch?: true;
 }
 /** What an omen changes for the run. `hearts` moves the party's maximum and
  * current hearts; `loot` goes into the satchel; `satchel` is its size;
@@ -497,6 +503,14 @@ export interface PartyState {
   /** The beat of the boss just put aside (`phases`), when it has phases,
    * so Previous Card shows the beat that was played. */
   beat?: number;
+  /** Pokémon League (2026-10-25): the Pokémon caught for the team, by card
+   * ID, oldest first (at most `TEAM_SIZE`). */
+  team?: string[];
+  /** Teammates sent in since the last gym fell; each fights once a gym. */
+  tired?: string[];
+  /** The teammate sent in for the battle face up: it fights with its type.
+   * Cleared when the card is put aside, like a Tera Orb. */
+  sent?: string;
 }
 export interface PackDefinition {
   version: 1;

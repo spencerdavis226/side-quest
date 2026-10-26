@@ -478,7 +478,7 @@
 }
 /* A narrow phone: chips keep their marks and numbers; names are in the
    dialogs, and the plaque's label drops the count its pips already show. */
-@media (max-width: 360px) {
+@media (max-width: 380px) {
   .hud-strip {
     gap: 4px;
   }
@@ -770,7 +770,13 @@
    width, so a line under them wider than both no longer stretches them
    apart (owner, 2026-10-18: the mark drifted left and the name wrapped). */
 .card-choice:not(.plaques-3, .plaques-4)
-  :is(.offer-plaque, .spoils-plaque, .quaff-plaque, .power-plaque) {
+  :is(
+    .offer-plaque,
+    .spoils-plaque,
+    .quaff-plaque,
+    .power-plaque,
+    .send-plaque
+  ) {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto auto minmax(0, 1fr);
   justify-content: center;
@@ -790,7 +796,12 @@
   text-align: left;
 }
 .card-choice:not(.plaques-3, .plaques-4)
-  :is(.offer-goods, .quaff-plaque > .crawl-icon, .power-plaque > .crawl-icon) {
+  :is(
+    .offer-goods,
+    .quaff-plaque > .crawl-icon,
+    .power-plaque > .crawl-icon,
+    .send-plaque > .type-mark
+  ) {
   grid-row: 1;
   grid-column: 2;
 }
@@ -1968,4 +1979,28 @@
 }
 .crawl-boons .crawl-icon.icon-armor {
   color: #b9cdf0;
+}
+
+/* The League's team (2026-10-25): a catch is a Poké Ball plaque; a
+   teammate sent in carries its type's medallion; a tired one is dimmed in
+   the team dialog. */
+.loot-plaque.send-plaque {
+  color: #06182b;
+  background: linear-gradient(145deg, #f6e7a8, #c9a227);
+}
+.send-plaque .type-mark {
+  width: 1.2em;
+  height: 1.2em;
+}
+.crawl-team li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 10px;
+  align-items: center;
+}
+.crawl-team .type-mark {
+  grid-row: span 2;
+}
+.crawl-team li.tired {
+  opacity: 0.6;
 }
