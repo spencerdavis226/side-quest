@@ -1,8 +1,10 @@
 # Current state and implementation plan
 
-Updated 2026-10-25. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
+Updated 2026-10-26. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Whole-game fun and variety overhaul (2026-10-25/26; branch `claude/game-overhaul`, draft PR, not merged; owner: "do the comprehensive big change ... done right. Proceed with best recommendations")
+## Shipped 2026-10-26: whole-game fun and variety overhaul (#48, squash `70f54f9`, deployed by run #208; owner: "do the comprehensive big change ... done right. Proceed with best recommendations")
+
+Merged and deployed on the owner's "Merge and deploy". Run #208 went green on its second attempt: WebKit shard 2/3 hung in `playwright install-deps` before any test ran (the job has no timeout), so it was cancelled and re-run once; every other job passed on the first attempt. Not yet played on a physical device or at a table (`docs/DEVICE_CHECKLIST.md`, `docs/PLAYTEST.md`).
 
 **Why** (measured on 400 seeded runs a mode before any change): Pub Crawl dealt about 49% dice rolls (91% of them a single d20) and 3% table moments, and about 44% of its roll outcomes were a bare "Drink N"/"Give N". Every Pub Crawl boss was a d20 dealt again until its hits landed (about 5.6 boss d20s a run), most "flavor, roll d20, lose Drink 4, win Give 5". About 80% of class and starter power fields were passive numbers the table never sees; 16 of 20 omens were numbers. The League was better (17% strikes, 12% moments, gyms with activities) but its Legendaries, Champions, rival and hideout bosses were the same roll every hit. Pub Crawl had two systems for one job (numeric curses beside spoken jinxes) and a generic reroll (the Quaff) beside loaded dice. No playtest has ever been recorded (`docs/PLAYTEST.md`).
 
