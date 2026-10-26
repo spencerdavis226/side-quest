@@ -19,7 +19,7 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
       0,
       "cellar-mystery-bottle",
       "Mystery Bottle",
-      "A dusty bottle, no label. Everyone guesses what's in it. The drawer picks the best guess; they give 2.",
+      "A dusty bottle, no label. Everyone guesses what's in it; the drawer's favorite guess gives 2.",
     ),
     moment(
       0,

@@ -13,6 +13,7 @@ import { applyPhases } from "./dungeon/phases";
 import { floorRules } from "./dungeon/rules";
 import { applyJinxes } from "./dungeon/jinxes";
 import { floorMoments } from "./dungeon/moments";
+import { applyOutcomes } from "./dungeon/outcomes";
 import { applyKits } from "./dungeon/kits";
 import {
   closingCards,
@@ -88,18 +89,20 @@ const deck = [
 // (`naturals.ts`), in Pub Crawl and in the plain modes alike.
 // Boss phases (2026-10-25) go on before the naturals pass, so their d20s
 // double on a 20 and a 1 too.
-export const dungeonCards: CardDefinition[] = applyPhases([
-  ...deck,
-  ...Object.values(floors).flatMap((f) => f.finds),
-  ...omens,
-  ...classes,
-  ...upperLandings,
-  ...lowerLandings,
-  ...queueCards,
-  ...stairsCards,
-  ...closingCards,
-  ...hiddenRoomCards,
-]).map(withNaturals);
+export const dungeonCards: CardDefinition[] = applyPhases(
+  applyOutcomes([
+    ...deck,
+    ...Object.values(floors).flatMap((f) => f.finds),
+    ...omens,
+    ...classes,
+    ...upperLandings,
+    ...lowerLandings,
+    ...queueCards,
+    ...stairsCards,
+    ...closingCards,
+    ...hiddenRoomCards,
+  ]),
+).map(withNaturals);
 // Knacks (2026-10-25): each class's two, and the rooms that call for one.
 applyKnacks(dungeonCards);
 applyKits(dungeonCards);

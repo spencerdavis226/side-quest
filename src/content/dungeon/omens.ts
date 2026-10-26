@@ -10,9 +10,9 @@ export const omens: CardDefinition[] = [
   omen(
     "flooded-stairs",
     "Flooded Stairs",
-    "Everyone says 'glub' when a floor opens; last one drinks 1. Traps cost a heart more. Take a smoke bomb.",
+    "Last to say 'glub' when a floor opens drinks 1. Traps cost a heart more. Take a smoke bomb.",
     { hurt: { trap: 1 }, loot: ["smoke"] },
-    "Everyone says 'glub' when a floor opens; last one drinks 1.",
+    "Last to say 'glub' when a floor opens drinks 1.",
   ),
   omen(
     "happy-hour",
