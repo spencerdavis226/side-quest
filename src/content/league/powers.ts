@@ -143,10 +143,8 @@ const lines: Readonly<Record<string, PowerLine>> = {
     ["Heavy Slam", "win", { cost: 1 }],
   ],
   // The bad ones.
-  bidoof: [
-    ["Defense Curl", "flee"],
-    ["Surf", "heal", { amount: 1 }],
-  ],
+  // Bibarel keeps its Defense Curl: the HM it learns is never this one.
+  bidoof: [["Defense Curl", "flee"], null],
   magikarp: [
     ["Splash", "flee"],
     ["Hyper Beam", "win", { cost: 2 }],

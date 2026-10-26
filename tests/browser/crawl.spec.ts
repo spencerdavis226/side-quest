@@ -1189,3 +1189,48 @@ test("every Dungeon night card fits its face with its plaques at 393x640", async
   }
   expect(overflowing).toEqual([]);
 });
+
+// The 2026-10-25 overhaul at 320px: the class's power on the card, a boss's
+// second beat as a duel with Won and Lost, its spoils on the felling win,
+// and the floor's rule on the strip.
+test("@release a power wins a swing, the boss's next beat is a duel, and the floor's rule is on the strip", async ({
+  page,
+}, info) => {
+  await page.setViewportSize({ width: 320, height: 568 });
+  await seed(
+    page,
+    reveal(
+      crawlAt("dungeon.keg-golem", STEP.boss1, {}, { adventurer: "barbarian" }),
+    ),
+  );
+  const rage = page.getByRole("button", { name: /^Power, Rage:/ });
+  await expect(rage).toBeVisible();
+  const box = (await rage.boundingBox())!;
+  expect(box.height).toBeGreaterThanOrEqual(44);
+  expect(box.x + box.width).toBeLessThanOrEqual(320);
+  await page.screenshot({ path: info.outputPath("power-plaque.png") });
+  await rage.click();
+  let s = await saved(page);
+  expect(s.quest.party).toMatchObject({ hits: 1, powers: 1, hearts: H - 1 });
+  await expect(page.locator(".tag-power")).toHaveClass(/spent/);
+  // The Golem gets back up: a chug race, settled by the table.
+  await page.locator(".game-card").click();
+  await expect(page.locator(".game-card")).toHaveAccessibleName(
+    /Chug race.*Choose Won or Lost/,
+  );
+  await page.screenshot({ path: info.outputPath("duel-beat.png") });
+  await page.getByRole("button", { name: "Won", exact: true }).click();
+  const sheet = page.getByRole("dialog", { name: "Spoils" });
+  await expect(sheet).toBeVisible();
+  await sheet.locator(".spoils-row").first().click();
+  s = await saved(page);
+  expect(s.quest.party.boons).toContain("dungeon.keg-golem#0");
+  expect(s.quest.step).toBe(STEP.landing1);
+  // Back on the Cellar's floor, its rule rides on the strip.
+  await seed(page, crawlAt("dungeon.goblin-shaman", STEP.floor1));
+  await page.locator(".tag-rule").click();
+  const rule = page.getByRole("dialog", { name: "Floor rule" });
+  await expect(rule).toContainText("Rat Run");
+  await expect(rule).toContainText("+1 to monster d20s");
+  await page.screenshot({ path: info.outputPath("floor-rule.png") });
+});
