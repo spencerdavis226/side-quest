@@ -6,6 +6,7 @@ import { selectedPacks } from "../presentation/packs";
 import {
   cardMatchup,
   findCard,
+  previousCard,
   questRecord,
   strikeOutcome,
 } from "../game/engine";
@@ -33,6 +34,8 @@ export type DialogName =
   | "matchup"
   // Pub Crawl's knack chip (2026-10-25).
   | "knack"
+  | "power"
+  | "rule"
   | "guide"
   // The previous card opened from the header's stud.
   | "recap"
@@ -155,7 +158,7 @@ export function GameDialogs({
         <CardFrame
           roll={session.previousRoll}
           packIds={session.config.packIds}
-          card={findCard(session, session.previousId)!}
+          card={previousCard(session)!}
           matchup={cardMatchup(
             session.quest,
             findCard(session, session.previousId)!,
@@ -177,7 +180,9 @@ export function GameDialogs({
       displayed === "curse" ||
       displayed === "jinx" ||
       displayed === "matchup" ||
-      displayed === "knack") &&
+      displayed === "knack" ||
+      displayed === "power" ||
+      displayed === "rule") &&
     record?.party
   ) {
     const crawl = crawlTheme(session?.quest?.packId);
@@ -197,6 +202,8 @@ export function GameDialogs({
       jinx: words.jinx?.name ?? "Jinx",
       matchup: "Type matchup",
       knack: "Knack",
+      power: words.power.name,
+      rule: words.rule.name,
     }[part];
     return (
       <Modal title={title} onClose={() => setModal(null)} exiting={exiting}>

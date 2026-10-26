@@ -478,7 +478,7 @@ export const villain = (
 });
 
 /** Team HP at the start of a League run, before the starter. */
-export const TEAM_HP = 17;
+export const TEAM_HP = 15;
 
 /** A starter: the run's first card. Its effect holds for the run and grows
  * as it evolves (`evolves`, each form replacing the one before). With

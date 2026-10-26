@@ -59,12 +59,17 @@ describe("League type marks", () => {
     expect(starters).toHaveLength(35);
   });
 
-  it("types only League cards, and only fights and starters", () => {
+  it("types only League cards, and only fights, starters and catches", () => {
     for (const c of allCards.filter((c) => c.type)) {
       expect(leagueIds.has(c.id), c.id).toBe(true);
-      expect(!!c.battle || !!c.strike || c.encounter === "omen", c.id).toBe(
-        true,
-      );
+      // A catch card's Pokémon joins the team with its type (2026-10-25).
+      expect(
+        !!c.battle ||
+          !!c.strike ||
+          c.encounter === "omen" ||
+          !!c.offers?.some((o) => o.catch),
+        c.id,
+      ).toBe(true);
     }
     for (const id of Object.keys(leagueTypes))
       expect(

@@ -1,6 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import {
   advance,
+  awaitingCatch,
   awaitingChoice,
   awaitingOffer,
   awaitingVerdict,
@@ -10,6 +11,7 @@ import {
   settleBattle,
   skipRoll,
   takeOffer,
+  letGo,
 } from "../../src/game/engine";
 import { returnToCard, rollDice } from "../../src/game/dice";
 import type { PartyState, SessionState } from "../../src/game/types";
@@ -107,11 +109,13 @@ function playLeague(stop: (s: SessionState) => boolean) {
         s,
         evolve >= 0 && canTakeOffer(s, evolve) ? evolve : offers.length - 1,
       );
-    } else if (awaitingChoice(s)) s = skipRoll(s);
+    } else if (awaitingCatch(s)) s = letGo(s);
+    else if (awaitingChoice(s)) s = skipRoll(s);
     else if (awaitingVerdict(s)) s = settleBattle(s, true);
     else {
       if (currentCard(s).dice) s = returnToCard(rollDice(s));
-      s = advance(s);
+      // A beaten wild Pokémon waits to be caught (2026-10-25).
+      s = awaitingCatch(s) ? letGo(s) : advance(s);
     }
     const party = s.quest!.party!;
     if (!party.wiped) party.hearts = party.max;
@@ -127,14 +131,14 @@ test("@release Pokémon League opens on a starter, then the first route", async 
   await page.getByRole("button", { name: /^Pokémon League/ }).click();
   const brief = page.locator(".crawl-brief");
   await expect(brief).toContainText("Pokémon night");
-  await expect(brief).toContainText("17 HP · 8 gyms");
+  await expect(brief).toContainText("15 HP · 8 gyms");
   // The League plays its own pack alone: the pack picker steps aside.
   await expect(page.getByRole("button", { name: /^Choose packs/ })).toHaveCount(
     0,
   );
   await page.screenshot({ path: info.outputPath("setup-320.png") });
   await page.getByRole("button", { name: "Play", exact: true }).click();
-  await expect(meter(page)).toHaveAccessibleName(/^Team HP: 17 of 17/);
+  await expect(meter(page)).toHaveAccessibleName(/^Team HP: 15 of 15/);
   await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
     "Your starter",
   );
@@ -191,7 +195,7 @@ test("@release a starter evolves on a route, and the banner says what changed", 
   await plaques(page).nth(0).click();
   const banner = page.locator(".evolution-banner");
   await expect(banner).toHaveText(
-    /What\? Charmander is evolving!\s*Charmeleon\s*Max HP 17 → 18\.$/,
+    /What\? Charmander is evolving!\s*Charmeleon\s*Max HP 15 → 16\. New move: Flamethrower\.$/,
   );
   await page.screenshot({ path: info.outputPath("evolution-banner.png") });
   expect((await saved(page)).quest.party).toMatchObject({ form: 1 });
@@ -200,7 +204,7 @@ test("@release a starter evolves on a route, and the banner says what changed", 
   // Only the starter it is now, and its power.
   await expect(dialog.locator(".crawl-omen strong")).toHaveText("Charmeleon");
   await expect(dialog.locator(".crawl-omen .omen-rules")).toHaveText(
-    "Max HP 18. +2 to route battle d20s.",
+    "Max HP 16. +2 to route battle d20s.",
   );
   // It wears its type, with what it beats and what beats it, and the
   // badges have their own dialog.
@@ -219,7 +223,7 @@ test("@release a starter evolves on a route, and the banner says what changed", 
   await page.getByRole("button", { name: "Open game menu" }).click();
   await page.getByRole("button", { name: "How to play" }).click();
   const guide = page.getByRole("dialog", { name: "How to play" });
-  await expect(guide.locator(".guide-rows li")).toHaveCount(7);
+  await expect(guide.locator(".guide-rows li")).toHaveCount(10);
   await expect(guide.locator(".guide-rows")).toContainText("Team HP");
   await expect(guide.locator(".guide-rows")).not.toContainText("Quaff");
   await guide.screenshot({ path: info.outputPath("league-guide.png") });
@@ -329,10 +333,14 @@ test("@release a gym leader is a boss battle, and beating it earns a badge", asy
   page,
 }, info) => {
   await page.setViewportSize({ width: 320, height: 568 });
-  // Jasmine, Johto's sixth gym, has no dice: the table settles it.
-  await seed(page, reveal(leagueAt("pokemon.gym-jasmine")));
+  // Byron, Sinnoh's sixth gym, has taken a hit and sent out his ace
+  // (2026-10-25): Bastiodon is a duel, so the table settles it.
+  await seed(page, reveal(leagueAt("pokemon.gym-byron", { hits: 1 })));
   await expect(page.locator(".game-card .card-ribbon")).toHaveText(
-    "Gym Leader · Mineral Badge",
+    "Gym Leader · Mine Badge",
+  );
+  await expect(page.locator(".game-card")).toHaveAccessibleName(
+    /Bastiodon.*Choose Won or Lost/,
   );
   await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
     /^Boss battle/,
@@ -354,10 +362,10 @@ test("@release a gym leader is a boss battle, and beating it earns a badge", asy
   await expect(dialog.locator(".crawl-badges .full")).toHaveCount(6);
   // Each badge wears its gym's type, named with its leader.
   await expect(dialog.locator(".crawl-badges .full").last()).toContainText(
-    "Mineral",
+    "Mine",
   );
   await expect(dialog.locator(".crawl-badges .full").last()).toContainText(
-    "Jasmine",
+    "Byron",
   );
   await expect(
     dialog.locator(".crawl-badges .full").last().locator(".type-steel"),
@@ -547,7 +555,8 @@ test("a strike reads the line for its matchup and costs HP only against the star
     pidgey.strike!.advantage,
   );
   await expect(page.locator(".game-card .stake-loss")).toHaveCount(0);
-  await page.locator(".game-card").click();
+  // Beaten, Pidgey can join the team (2026-10-25); let it go.
+  await page.getByRole("button", { name: "Let Pidgey go" }).click();
   await expect.poll(async () => (await saved(page)).quest.party.hearts).toBe(9);
 });
 
@@ -716,4 +725,66 @@ test("every League card fits its face with its plaques at 393x640", async ({
       overflowing.push(id);
   }
   expect(overflowing).toEqual([]);
+});
+
+// The League's team (2026-10-25) at 320px: a beaten wild Pokémon is caught
+// for a drink, and a teammate whose type beats the foe is sent in.
+test("@release a beaten wild Pokémon joins the team, and a teammate is sent in for the edge", async ({
+  page,
+}, info) => {
+  await page.setViewportSize({ width: 320, height: 568 });
+  const PIDGEY = "pokemon.route-pidgey";
+  const ODDISH = "pokemon.route-oddish";
+  // Pikachu's Electric beats Pidgey's Flying: the strike is won.
+  await seed(page, reveal(leagueAt(PIDGEY, {}, 0, "pokemon.starter-pikachu")));
+  const catchIt = page.getByRole("button", { name: /^Catch Pidgey: drink 1/ });
+  await expect(catchIt).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Let Pidgey go" }),
+  ).toBeVisible();
+  await page.screenshot({ path: info.outputPath("catch.png") });
+  await catchIt.click();
+  expect((await saved(page)).quest.party.team).toEqual([PIDGEY]);
+  // Squirtle's Water is weak to Oddish's Grass; Pidgey's Flying beats it.
+  const s = leagueAt(ODDISH, {}, 0, "pokemon.starter-squirtle");
+  const q = s.quest!;
+  const finale = [...q.finale];
+  const swap = (at: number, id: string) => {
+    const was = finale.indexOf(id);
+    if (was >= 0) finale[was] = finale[at];
+    finale[at] = id;
+  };
+  swap(q.step, PIDGEY);
+  swap(q.step + 1, ODDISH);
+  await seed(
+    page,
+    reveal({
+      ...s,
+      discarded: q.step + 1,
+      previousId: PIDGEY,
+      quest: {
+        ...q,
+        finale,
+        step: q.step + 1,
+        party: { ...q.party!, team: [PIDGEY] },
+      },
+    }),
+  );
+  const go = page.getByRole("button", { name: /^Go, Pidgey!/ });
+  await expect(go).toBeVisible();
+  const box = (await go.boundingBox())!;
+  expect(box.height).toBeGreaterThanOrEqual(44);
+  expect(box.x + box.width).toBeLessThanOrEqual(320);
+  await page.screenshot({ path: info.outputPath("send-in.png") });
+  await go.click();
+  await expect(page.locator(".tag-edge")).toHaveAccessibleName(
+    "Pidgey sent in: advantage",
+  );
+  const after = await saved(page);
+  expect(after.quest.party).toMatchObject({ sent: PIDGEY, tired: [PIDGEY] });
+  // The team dialog lists Pidgey, resting until the next gym.
+  await meter(page).click();
+  const dialog = page.getByRole("dialog", { name: "The team" });
+  await expect(dialog.locator(".crawl-team li")).toContainText("Pidgey");
+  await page.screenshot({ path: info.outputPath("team-dialog.png") });
 });

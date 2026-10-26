@@ -31,7 +31,10 @@ export type CrawlIconName =
   | `knack-${Knack}`
   // Pub Crawl's equipment slots (2026-10-25); a trinket keeps its mark.
   | "weapon"
-  | "armor";
+  | "armor"
+  // A signature power, and a floor's or route's rule (2026-10-25).
+  | "power"
+  | "rule";
 
 /** One row of the how-to-play guide: a mark, a name, one line. */
 export interface GuideRow {
@@ -135,6 +138,11 @@ export interface CrawlTheme {
     };
     /** A floor's banner names the boss waiting at the bottom. */
     wanted?: string;
+    /** The class's or starter's signature power (2026-10-25): what it is
+     * called, and when it comes back. */
+    power: { name: string; lasts: string };
+    /** A floor's or route's rule (2026-10-25). */
+    rule: { name: string; lasts: string };
   };
   /** Cards that ask the table to name the badges from memory: while one is
    * face up, the badge case stays shut (owner, 2026-10-24). `why` ends the
@@ -143,8 +151,9 @@ export interface CrawlTheme {
   /** What the setup screen counts as the run's length (floors, gyms);
    * by default every stage of several rooms. */
   lengthOf?: (stages: QuestStage[]) => number;
-  /** The seals legend in the guide: −hearts, curse, hits, +item. */
-  legend: [string, string, string, string];
+  /** The seals legend in the guide: −hearts, curse, hits, +item. Pub
+   * Crawl deals no curses since 2026-10-25 (`null`). */
+  legend: [string, string | null, string, string];
   /** The legend's last two lines, the standing rule on a d20: what a
    * natural 20 doubles, then what a natural 1 doubles. */
   naturals: [string, string];
@@ -264,10 +273,13 @@ const dungeon: CrawlTheme = {
       },
     },
     wanted: "Wanted",
+    power: { name: "Power", lasts: "back when the floor's boss falls" },
+    rule: { name: "Floor rule", lasts: "until the floor's boss falls" },
   },
   legend: [
     "Hearts the party loses if the fight is lost",
-    "A curse on a loss, until the floor's boss falls",
+    // Curses became jinxes (2026-10-25); the jinx seal is below.
+    null,
     "Wins it takes: the next drawer swings again",
     "An item for the satchel, on a win",
   ],
@@ -315,6 +327,16 @@ const dungeon: CrawlTheme = {
         title: "Satchel and gear",
         line: "Items show up as buttons on a card when they help. Bosses and elites drop gear: one weapon, one armor, one trinket, and a new piece replaces the old. Tap the hearts to see both.",
       },
+      {
+        icon: "power",
+        title: "Powers",
+        line: "Your adventurer has one, a button on the card when it helps: a reroll, a win, a heal. It comes back when a boss falls.",
+      },
+      {
+        icon: "rule",
+        title: "Floor rules",
+        line: "Every floor has one, on its banner and the strip. It holds until the floor's boss falls.",
+      },
       ...(quaff
         ? [
             {
@@ -335,8 +357,8 @@ const dungeon: CrawlTheme = {
         : []),
       {
         icon: "jinx",
-        title: "Curses and jinxes",
-        line: "A lost fight can curse the party or jinx a player with a table rule. Both lift when the floor's boss falls.",
+        title: "Jinxes",
+        line: "A lost fight can jinx a player with a table rule. It lifts when the floor's boss falls.",
       },
     ],
   },
@@ -446,6 +468,8 @@ const league: CrawlTheme = {
       lifted: "The jinx lifts",
       lasts: "until the next boss falls",
     },
+    power: { name: "Move", lasts: "back when the next gym falls" },
+    rule: { name: "Route rule", lasts: "until the route's gym falls" },
   },
   lengthOf: (stages) => stages.filter((st) => /^Gym \d/.test(st.label)).length,
   badgeLock: {
@@ -492,6 +516,21 @@ const league: CrawlTheme = {
         icon: "adventurer",
         title: "Evolution",
         line: "Evolve your starter for drinks, or press B for 1 HP. Each form is stronger.",
+      },
+      {
+        icon: "heart",
+        title: "Your team",
+        line: "Beat a wild Pokémon and you can catch it for a drink; the team holds two. Before a battle, send one in when its type beats the foe: it fights with the edge, once a gym.",
+      },
+      {
+        icon: "power",
+        title: "Signature moves",
+        line: "Your starter has one, a button on the card when it helps: a reroll, a win, a heal. Evolving can teach a better one. It comes back when a gym falls.",
+      },
+      {
+        icon: "rule",
+        title: "Route rules",
+        line: "Every route has one, on its banner and the strip. It holds until the route's gym falls.",
       },
       {
         icon: "satchel",

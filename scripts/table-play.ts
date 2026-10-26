@@ -4,6 +4,7 @@
 // fixture on with it. Deterministic for a given seed.
 import {
   advance,
+  awaitingCatch,
   awaitingChoice,
   awaitingOffer,
   awaitingPress,
@@ -12,16 +13,25 @@ import {
   canQuaff,
   canTakeOffer,
   canUseLoot,
+  canSendIn,
+  canUsePower,
+  catchIt,
+  letGo,
+  partyTeam,
+  sendIn,
   cashOut,
   currentCard,
   omenForm,
+  powerSpoils,
   pressOn,
   quaff,
   settleBattle,
+  spoilsOnWin,
   skipRoll,
   spendLoot,
   takeOffer,
   takeSpoils,
+  spendPower,
   type Random,
 } from "../src/game/engine";
 import { returnToCard, rollDice } from "../src/game/dice";
@@ -51,10 +61,33 @@ export function nextMove(s: SessionState, random: Random): SessionState {
   else if (card.dice && !s.roll) next = rollDice(s, random);
   else if (card.dice && !s.roll!.returned) next = returnToCard(s);
   else if (canQuaff(s) && random() < 0.6) next = quaff(s);
+  // The class's or starter's power (2026-10-25), now and then; a win that
+  // fells a boss with spoils picks one.
+  else if (canUsePower(s) && random() < 0.35)
+    next = spendPower(
+      s,
+      random,
+      powerSpoils(s) ? Math.floor(random() * card.spoils!.length) : undefined,
+    );
+  // The League's team (2026-10-25): send a teammate in now and then, and
+  // catch a beaten wild Pokémon more often than not.
+  else if (partyTeam(s.quest).some((m) => canSendIn(s, m.id)) && random() < 0.5)
+    next = sendIn(s, partyTeam(s.quest).find((m) => canSendIn(s, m.id))!.id);
+  else if (awaitingCatch(s))
+    next = random() < 0.7 ? catchIt(s, random) : letGo(s, random);
   else if (can("die")) next = spendLoot(s, "die", random);
   else if (can("round")) next = spendLoot(s, "round", random);
-  else if (awaitingVerdict(s)) next = settleBattle(s, random() < 0.55, random);
-  else if (awaitingOffer(s)) {
+  else if (awaitingVerdict(s)) {
+    const won = random() < 0.55;
+    next = settleBattle(
+      s,
+      won,
+      random,
+      won && spoilsOnWin(s)
+        ? Math.floor(random() * card.spoils!.length)
+        : undefined,
+    );
+  } else if (awaitingOffer(s)) {
     const open = card.offers!.flatMap((_, i) =>
       canTakeOffer(s, i) ? [i] : [],
     );

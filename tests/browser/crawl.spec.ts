@@ -200,8 +200,9 @@ test("@release a monster shows its stakes; a smoke bomb flees it", async ({
   expect(s.quest.step).toBe(STEP.floor1 + 1);
 });
 
-// A levelled Rogue's five-slot satchel, the Quaff, the Cup and a jinx (or a
-// curse and a jinx) on the narrowest phones: every chip stays on screen.
+// A levelled Rogue's five-slot satchel, its power, the Cup, a jinx and the
+// floor's rule (or, in a save from before 2026-10-25, a curse too) on the
+// narrowest phones: every chip stays on screen.
 for (const width of [320, 375])
   for (const curse of [false, true])
     test(`a full strip fits at ${width}px${curse ? " with a curse" : ""}`, async ({
@@ -234,7 +235,9 @@ for (const width of [320, 375])
         },
       });
       const chips = page.locator(".hud-strip .hud-chip");
-      await expect(chips).toHaveCount(curse ? 5 : 4);
+      await expect(chips).toHaveCount(curse ? 6 : 5);
+      await expect(page.locator(".tag-power")).toHaveCount(1);
+      await expect(page.locator(".tag-rule")).toHaveCount(1);
       for (const box of await chips.evaluateAll((els) =>
         els.map((e) => e.getBoundingClientRect().toJSON()),
       )) {
@@ -264,13 +267,16 @@ test("a loaded die rerolls a lost fight", async ({ page }, info) => {
   expect(s.quest.party.loot).toEqual([]);
 });
 
-test("@release the Quaff rerolls a lost fight for drinks, once until a boss falls", async ({
+test("@release a save's Quaff rerolls a lost fight for drinks, once until a boss falls", async ({
   page,
 }, info) => {
+  // New runs have no Quaff since 2026-10-25; a run saved before keeps it.
   await seed(
     page,
     rolled(
-      reveal(crawlAt("dungeon.ex-wraith", STEP.floor2, { loot: ["die"] })),
+      reveal(
+        crawlAt("dungeon.ex-wraith", STEP.floor2, { loot: ["die"], quaff: 4 }),
+      ),
       2,
     ),
   );
@@ -762,18 +768,22 @@ test("the party dialog lays out the run: adventurer, boons, jinx and the Cup", a
       },
     },
   });
-  // The strip under the top row carries the party's things at a glance.
-  await expect(page.locator(".hud-strip .hud-chip")).toHaveCount(5);
+  // The strip under the top row carries the party's things at a glance:
+  // the satchel, the Rogue's power, the Cup, a curse (an old save's), the
+  // jinx and the floor's rule.
+  await expect(page.locator(".hud-strip .hud-chip")).toHaveCount(6);
   await expect(page.locator(".tag-cup")).toHaveAccessibleName(
     "The Cup: 4 splashes",
   );
-  await expect(page.locator(".tag-quaff")).toHaveClass(/ready/);
+  await expect(page.locator(".tag-power")).toHaveClass(/ready/);
   await page.screenshot({ path: info.outputPath("strip.png") });
   // The hearts open the party: hearts, adventurer, boons, and nothing else.
   await meter(page).click();
   const dialog = page.getByRole("dialog", { name: "The party" });
   await expect(dialog.locator(".crawl-omen").first()).toContainText("Rogue");
   await expect(dialog.locator(".crawl-boons li")).toHaveCount(1);
+  // The adventurer's power sits with it (2026-10-25).
+  await expect(dialog.locator(".crawl-power")).toContainText("Sneak Attack");
   await expect(
     dialog.locator(".satchel, .crawl-curse, .crawl-cup, .crawl-floors"),
   ).toHaveCount(0);
@@ -783,7 +793,7 @@ test("the party dialog lays out the run: adventurer, boons, jinx and the Cup", a
   for (const [chip, title, text] of [
     [".tag-jinx", "Jinx", "Goblin Tongue"],
     [".tag-curse", "Curse", "Bleeding"],
-    [".tag-quaff", "The Quaff", "Quaff: ready"],
+    [".tag-rule", "Floor rule", "Echoes"],
     [".tag-cup", "The Cup", "4 splashes"],
   ]) {
     await page.locator(chip).click();
@@ -811,14 +821,16 @@ test("the party dialog lays out the run: adventurer, boons, jinx and the Cup", a
   await page.getByRole("button", { name: "How to play" }).click();
   const guide = page.getByRole("dialog", { name: "How to play" });
   // Since 2026-10-25 a row for knacks too.
-  await expect(guide.locator(".guide-rows li")).toHaveCount(9);
+  await expect(guide.locator(".guide-rows li")).toHaveCount(10);
   await expect(guide.locator(".guide-rows")).toContainText(
     "A room that calls for one shows green arrows",
   );
+  // The Quaff left new runs (2026-10-25); the power took its row.
   await expect(guide.locator(".guide-rows")).toContainText(
-    "Lost a d20? Drink 4 to roll it again.",
+    "Your adventurer has one, a button on the card when it helps",
   );
-  await expect(guide.locator(".crawl-legend dd")).toHaveCount(8);
+  // No curse row since 2026-10-25: Pub Crawl lays jinxes instead.
+  await expect(guide.locator(".crawl-legend dd")).toHaveCount(7);
   await expect(guide.locator(".crawl-legend")).toContainText(
     "A natural 1 doubles a loss",
   );
@@ -1178,4 +1190,49 @@ test("every Dungeon night card fits its face with its plaques at 393x640", async
       overflowing.push(id);
   }
   expect(overflowing).toEqual([]);
+});
+
+// The 2026-10-25 overhaul at 320px: the class's power on the card, a boss's
+// second beat as a duel with Won and Lost, its spoils on the felling win,
+// and the floor's rule on the strip.
+test("@release a power wins a swing, the boss's next beat is a duel, and the floor's rule is on the strip", async ({
+  page,
+}, info) => {
+  await page.setViewportSize({ width: 320, height: 568 });
+  await seed(
+    page,
+    reveal(
+      crawlAt("dungeon.keg-golem", STEP.boss1, {}, { adventurer: "barbarian" }),
+    ),
+  );
+  const rage = page.getByRole("button", { name: /^Power, Rage:/ });
+  await expect(rage).toBeVisible();
+  const box = (await rage.boundingBox())!;
+  expect(box.height).toBeGreaterThanOrEqual(44);
+  expect(box.x + box.width).toBeLessThanOrEqual(320);
+  await page.screenshot({ path: info.outputPath("power-plaque.png") });
+  await rage.click();
+  let s = await saved(page);
+  expect(s.quest.party).toMatchObject({ hits: 1, powers: 1, hearts: H - 1 });
+  await expect(page.locator(".tag-power")).toHaveClass(/spent/);
+  // The Golem gets back up: a chug race, settled by the table.
+  await page.locator(".game-card").click();
+  await expect(page.locator(".game-card")).toHaveAccessibleName(
+    /Chug race.*Choose Won or Lost/,
+  );
+  await page.screenshot({ path: info.outputPath("duel-beat.png") });
+  await page.getByRole("button", { name: "Won", exact: true }).click();
+  const sheet = page.getByRole("dialog", { name: "Spoils" });
+  await expect(sheet).toBeVisible();
+  await sheet.locator(".spoils-row").first().click();
+  s = await saved(page);
+  expect(s.quest.party.boons).toContain("dungeon.keg-golem#0");
+  expect(s.quest.step).toBe(STEP.landing1);
+  // Back on the Cellar's floor, its rule rides on the strip.
+  await seed(page, crawlAt("dungeon.goblin-shaman", STEP.floor1));
+  await page.locator(".tag-rule").click();
+  const rule = page.getByRole("dialog", { name: "Floor rule" });
+  await expect(rule).toContainText("Rat Run");
+  await expect(rule).toContainText("+1 to monster d20s");
+  await page.screenshot({ path: info.outputPath("floor-rule.png") });
 });

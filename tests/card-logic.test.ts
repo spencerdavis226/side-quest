@@ -26,6 +26,12 @@ const textOf = (card: CardDefinition) =>
     card.dice?.instruction ?? "",
     card.dice?.doubles ?? "",
     ...(card.dice?.outcomes ?? []).map((outcome) => outcome.instruction),
+    // A boss's later beats (2026-10-25).
+    ...(card.phases ?? []).flatMap((p) => [
+      p.rules,
+      ...(p.dice?.outcomes ?? []).map((outcome) => outcome.instruction),
+      p.dice?.doubles ?? "",
+    ]),
   ].join(" ");
 
 describe("card logic sweep", () => {

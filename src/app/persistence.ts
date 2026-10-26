@@ -1,5 +1,5 @@
 import { packs } from "../content/manifest.generated";
-import { validateCatalog } from "../content/validate";
+import { badStageRule, validateCatalog } from "../content/validate";
 import { validateRoll } from "../game/dice";
 import {
   currentCard,
@@ -8,7 +8,10 @@ import {
   formEffect,
   hitsNeeded,
   omenForm,
+  partyPower,
+  previousCard,
   satchelSize,
+  TEAM_SIZE,
   validConfig,
 } from "../game/engine";
 import type { GameConfig, PartyState, SessionState } from "../game/types";
@@ -141,6 +144,7 @@ function validateQuest(s: SessionState) {
       picks.length !== stage.pick ||
       (elite !== undefined &&
         (!q.party || !Array.isArray(elite) || !elite.length)) ||
+      (stage.rule !== undefined && (!q.party || badStageRule(stage.rule))) ||
       picks.some(
         (id, i) =>
           !stage.cards.some((c) => c.id === id) &&
@@ -232,6 +236,41 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
     // A Tera Orb holds only for the battle face up.
     (p.tera !== undefined &&
       (s.phase !== "revealed" || p.tera !== currentCard(s).id)) ||
+    // A signature power's uses, and the card it is armed on (2026-10-25).
+    (p.powers !== undefined &&
+      (!whole(p.powers, 1) ||
+        p.powers > (partyPower(s.quest)?.uses ?? 1) ||
+        !partyPower(s.quest))) ||
+    (p.armed !== undefined &&
+      (s.phase !== "revealed" ||
+        p.armed !== currentCard(s).id ||
+        !["spare", "edge", "double"].includes(
+          partyPower(s.quest)?.kind ?? "",
+        ))) ||
+    // The League's team (2026-10-25): caught cards already dealt, each a
+    // typed Pokémon, at most two; the rested ones on it; the one sent in
+    // only on the battle face up.
+    (p.team !== undefined &&
+      (!Array.isArray(p.team) ||
+        p.team.length > TEAM_SIZE ||
+        new Set(p.team).size !== p.team.length ||
+        p.team.some(
+          (id) =>
+            typeof id !== "string" ||
+            !dealt.includes(id) ||
+            !finaleCard(s.quest!, id)?.type,
+        ))) ||
+    (p.tired !== undefined &&
+      (!Array.isArray(p.tired) ||
+        p.tired.some((id) => !p.team?.includes(id)))) ||
+    (p.sent !== undefined &&
+      (s.phase !== "revealed" ||
+        !p.team?.includes(p.sent) ||
+        !p.tired?.includes(p.sent))) ||
+    // The beat of the phased boss put aside last.
+    (p.beat !== undefined &&
+      (!whole(p.beat, 1) ||
+        p.beat > (findCard(s, s.previousId)?.phases?.length ?? 0))) ||
     (p.passed !== undefined &&
       (!whole(p.passed, 0) || p.passed > s.discarded)) ||
     // The starter's form: a later form it has, once the omen is set.
@@ -327,8 +366,11 @@ export function parseSession(raw: string): SessionState {
     (s.config.limit !== null && s.discarded >= s.config.limit)
   )
     throw Error("Invalid count");
-  const current = currentCard(s);
-  const previous = findCard(s, s.previousId);
+  const previous = previousCard(s);
+  // A finished game ends on the card just put aside: a phased boss's last
+  // beat, not the opener its reset hits would read.
+  const current =
+    s.phase === "complete" && previous ? previous : currentCard(s);
   if (q?.party && q.party.hits >= (hitsNeeded(q, current) || 1))
     throw Error("Invalid party");
   validateRoll(s.roll, current.dice);

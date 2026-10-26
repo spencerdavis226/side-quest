@@ -18,7 +18,7 @@ import { withNaturals } from "../naturals";
 /** The d20 a dice gym leader needs, tier by tier (gym 1 to gym 8). */
 export const GYM_NEED = [4, 5, 6, 7, 7, 8, 8, 9] as const;
 /** Swings a gym leader takes to fall, tier by tier. */
-export const GYM_HITS = [1, 1, 1, 1, 1, 1, 1, 1] as const;
+export const GYM_HITS = [1, 1, 1, 1, 2, 2, 2, 2] as const;
 /** Team HP a lost gym battle costs, tier by tier. */
 export const GYM_HURT = [1, 1, 1, 1, 2, 2, 2, 2] as const;
 /** A Legendary: its d20 target, swings to catch it, HP a miss costs. */

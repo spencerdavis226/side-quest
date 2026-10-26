@@ -126,6 +126,8 @@ export interface Matchup {
   edge: Edge | null;
   /** The starter Terastallized for this fight: `mine` is its Tera type. */
   tera?: true;
+  /** A teammate fights this one (2026-10-25): `mine` is its type. */
+  teammate?: string;
 }
 
 /** The starter's type against a foe's. */

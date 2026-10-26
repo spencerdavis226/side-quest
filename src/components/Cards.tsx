@@ -353,6 +353,19 @@ export function CardFace({
                 {boldNumbers(strikeLine)}
               </p>
             </div>
+          ) : card.power ? (
+            // A class's or starter's signature power (2026-10-25), under
+            // its rules like a strike's line.
+            <div className="card-strike card-power">
+              <p>{card.rules}</p>
+              <p className="resolved-instruction power-line">
+                <strong>{card.power.name}:</strong>{" "}
+                {card.power.drinks
+                  ? `drink ${card.power.drinks}, ${card.power.rules[0].toLowerCase()}${card.power.rules.slice(1)}`
+                  : card.power.rules}
+                {(card.power.uses ?? 1) > 1 ? ", twice" : ""}.
+              </p>
+            </div>
           ) : (
             <p>{card.rules}</p>
           )}

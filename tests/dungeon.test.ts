@@ -17,6 +17,7 @@ import {
   finaleStage,
   hitsNeeded,
   omenEffect,
+  stageRule,
   omenForm,
   quaff,
   questRecord,
@@ -71,12 +72,17 @@ const seeded = (seed: number): Random => {
 const ORIGINAL = [0.1, 0.1, 0.1, 0.1];
 const OTHER = [0.5, 0.9, 0.5, 0.5];
 const NEW = [0.9, 0.5, 0.9, 0.9];
-const make = (floors = ORIGINAL, seed = 1) => {
+// The floors' rules (2026-10-25) bend the odds (a floor can make a 2 a
+// natural 1), so these tests play without them unless they ask; the rules
+// have their own test below.
+const make = (floors = ORIGINAL, seed = 1, rules = false) => {
   const rest = seeded(seed);
   const queue = [...floors];
-  return createSession(crawl, cards, packs, () =>
+  const s = createSession(crawl, cards, packs, () =>
     queue.length ? queue.shift()! : rest(),
   );
+  if (!rules) for (const stage of s.quest!.stages) delete stage.rule;
+  return s;
 };
 // Where the run is, step by step: the adventurer, tonight's omen, the
 // queue, the first floor's eight rooms and its boss, a landing, the second
@@ -151,7 +157,6 @@ describe("Pub Crawl", () => {
       hits: 0,
       rounds: 0,
       wiped: false,
-      quaff: QUAFF_DRINKS,
       cup: 0,
     });
     expect(s.quest!.stages.map((st) => [st.label, st.pick])).toEqual([
@@ -192,7 +197,7 @@ describe("Pub Crawl", () => {
         at(step).hits,
       ]),
     ).toEqual([
-      ["boss", 1],
+      ["boss", 2],
       ["boss", 2],
       ["boss", 3],
     ]);
@@ -291,12 +296,31 @@ describe("Pub Crawl", () => {
     );
   });
 
-  it("a won fight earns its loot; a lost one its curse", () => {
+  it("a floor's rule holds from its first room until its boss falls", () => {
+    let s = fromStep(make(ORIGINAL, 1, true), STEP.floor1);
+    const rule = s.quest!.stages[STEP.floor1].rule!;
+    expect(rule.name).toBeTruthy();
+    expect(stageRule(s.quest)).toEqual(rule);
+    expect(omenEffect(s.quest)).toMatchObject(rule.effect!);
+    // The boss holds it too; the landing after it doesn't.
+    s = fromStep(s, STEP.boss1);
+    expect(stageRule(s.quest)).toEqual(rule);
+    s = fromStep(s, STEP.landing1);
+    expect(stageRule(s.quest)).toBeUndefined();
+    roundTrip(s);
+  });
+
+  it("a won fight earns its loot; a lost one its jinx", () => {
     let s = deal(start(), "dungeon.drunk-goblin");
     s = fight(s, 15);
     expect(party(s).loot).toEqual(["smoke"]);
     s = fight(deal(fromStep(start(), STEP.floor2), "dungeon.leech-swarm"), 2);
-    expect(party(s)).toMatchObject({ curse: "bleed", hearts: H - 2 });
+    // Curses became jinxes (2026-10-25).
+    expect(party(s)).toMatchObject({
+      curse: null,
+      jinx: "dungeon.leech-swarm",
+      hearts: H - 2,
+    });
     roundTrip(s);
   });
 
@@ -341,7 +365,12 @@ describe("Pub Crawl", () => {
   it("a boss is dealt again until it falls; then its curse and the jinx lift, the Quaff comes back, and it drops its trinket", () => {
     let s = fromStep(start(), STEP.boss2);
     s = deal(s, "dungeon.hangover-hydra");
-    Object.assign(s.quest!.party!, { curse: "hex", quaffed: true });
+    // A save from before the Quaff retired (2026-10-25) still holds one.
+    Object.assign(s.quest!.party!, {
+      curse: "hex",
+      quaff: QUAFF_DRINKS,
+      quaffed: true,
+    });
     s = fight(s, 2); // a miss
     expect(currentCard(s).id).toBe("dungeon.hangover-hydra");
     expect(party(s)).toMatchObject({
@@ -408,7 +437,12 @@ describe("Pub Crawl", () => {
 
   it("the last boss falling wins the crawl", () => {
     let s = deal(fromStep(start(), STEP.lastCall), "dungeon.last-call-lich");
-    for (let i = 0; i < 3; i++) s = fight(s, 15);
+    // Three beats (2026-10-25): its d20, a shouting duel, a last d20.
+    s = fight(s, 15);
+    expect(currentCard(advance(s)).dice).toBeUndefined();
+    s = settleBattle(advance(s), true);
+    expect(currentCard(advance(s)).rules).toMatch(/One bony hand/);
+    s = fight(s, 15);
     expect(s.phase).toBe("complete");
     expect(questRecord(s)!.won).toBe(true);
     roundTrip(s);
@@ -488,8 +522,15 @@ describe("Pub Crawl", () => {
     expect(canUseLoot(s, "smoke")).toBe(false);
   });
 
-  it("the Quaff rerolls a lost fight for drinks, once until the next boss falls", () => {
-    let s = advance(deal(start(), "dungeon.gelatinous-shot"));
+  it("a save's Quaff rerolls a lost fight for drinks, once until the next boss falls", () => {
+    // New runs have no Quaff since 2026-10-25 (the classes' powers took its
+    // place); a run saved before keeps it.
+    expect(party(start()).quaff).toBeUndefined();
+    const withQuaff = (s: SessionState) => {
+      s.quest!.party!.quaff = QUAFF_DRINKS;
+      return s;
+    };
+    let s = advance(deal(withQuaff(start()), "dungeon.gelatinous-shot"));
     expect(canQuaff(s)).toBe(false); // nothing rolled yet
     s = rollTo(s, 15);
     expect(canQuaff(s)).toBe(false); // a win needs no Quaff
@@ -508,7 +549,7 @@ describe("Pub Crawl", () => {
     s = advance(s);
     expect(party(s)).toMatchObject({ hearts: H - 1, quaffed: true });
     // A boss falling brings it back (the previous test); an ambush doesn't.
-    let a = deal(start(), "dungeon.lost-bridesmaids");
+    let a = deal(withQuaff(start()), "dungeon.lost-bridesmaids");
     a.quest!.party!.quaffed = true;
     a = fight(fight(a, 15), 15);
     expect(party(a).quaffed).toBe(true);
@@ -531,7 +572,8 @@ describe("Pub Crawl", () => {
     s = deal(s, "dungeon.rat-king");
     s = fight(s, 2);
     expect(party(s).jinx).toBe("dungeon.rat-king");
-    s = takeSpoils(fight(s, 15), 0);
+    // Its second beat is a duel (2026-10-25); the win picks a trinket.
+    s = settleBattle(advance(fight(s, 15)), true, Math.random, 0);
     expect(party(s).jinx).toBeUndefined();
     roundTrip(s);
   });
@@ -699,7 +741,9 @@ describe("Pub Crawl", () => {
       ),
       0,
     );
-    expect(party(up).max).toBe(H + 3);
+    // The Crusader drops the Paladin's extra heart (2026-10-25), and keeps
+    // the omen's two.
+    expect(party(up).max).toBe(H + 2);
     roundTrip(up);
   });
 
@@ -935,13 +979,12 @@ describe("Pub Crawl", () => {
     expect(questRecord(s)!.stages[3]).toMatchObject({ boss: false });
   });
 
-  it("replay starts a fresh crawl, with a fresh Quaff and an empty Cup", () => {
+  it("replay starts a fresh crawl, with an empty Cup", () => {
     let s = fight(deal(start(), "dungeon.tab-goblin"), 1);
     s = takeSpoils(
       fight(deal(fromStep(s, STEP.boss1), "dungeon.keg-golem"), 15),
       0,
     );
-    s.quest!.party!.quaffed = true;
     s = replaySession(s, seeded(9));
     expect(s.quest).toMatchObject({ due: true, step: 0, lost: 0 });
     expect(party(s)).toEqual({
@@ -952,7 +995,6 @@ describe("Pub Crawl", () => {
       hits: 0,
       rounds: 0,
       wiped: false,
-      quaff: QUAFF_DRINKS,
       cup: 0,
     });
     roundTrip(s);

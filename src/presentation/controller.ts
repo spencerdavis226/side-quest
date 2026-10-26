@@ -7,6 +7,10 @@ import {
   settleBattle,
   skipRoll,
   quaff,
+  catchIt,
+  letGo,
+  sendIn,
+  spendPower,
   spendLoot,
   awaitingOffer,
   awaitingPress,
@@ -152,10 +156,10 @@ export class PresentationController {
     this.effect("discard");
   }
   /** Settle a battle without dice: the table won it or lost it. */
-  settle(won: boolean) {
+  settle(won: boolean, spoil?: number) {
     const { session, motion } = this.state;
     if (!session || motion || !awaitingVerdict(session)) return;
-    const next = settleBattle(session, won, this.random);
+    const next = settleBattle(session, won, this.random, spoil);
     this.persist(next);
     this.transition(next, "discard", session);
     this.effect("discard");
@@ -232,6 +236,45 @@ export class PresentationController {
     const { session, motion } = this.state;
     if (!session || motion) return;
     const next = quaff(session);
+    if (next === session) return;
+    this.persist(next);
+    this.transition(next, null);
+    this.effect("press");
+  }
+  /** The class's or starter's signature power (2026-10-25), on the card in
+   * play: a win or an escape puts it aside; anything else stays. */
+  power(spoil?: number) {
+    const { session, motion } = this.state;
+    if (!session || motion) return;
+    const next = spendPower(session, this.random, spoil);
+    if (next === session) return;
+    this.persist(next);
+    if (next.discarded !== session.discarded) {
+      this.transition(next, "discard", session);
+      this.effect("discard");
+    } else {
+      this.transition(next, null);
+      this.effect("press");
+    }
+  }
+  /** Pokémon League (2026-10-25): catch the wild Pokémon just beaten, or
+   * let it go; either puts the card aside. */
+  catch(keep: boolean) {
+    const { session, motion } = this.state;
+    if (!session || motion) return;
+    const next = keep
+      ? catchIt(session, this.random)
+      : letGo(session, this.random);
+    if (next === session) return;
+    this.persist(next);
+    this.transition(next, "discard", session);
+    this.effect("discard");
+  }
+  /** Send a teammate in for the battle face up. */
+  send(id: string) {
+    const { session, motion } = this.state;
+    if (!session || motion) return;
+    const next = sendIn(session, id);
     if (next === session) return;
     this.persist(next);
     this.transition(next, null);

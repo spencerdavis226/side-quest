@@ -19,6 +19,7 @@ import {
   questRecord,
   satchelSize,
   settleBattle,
+  spoilsOnWin,
   skipRoll,
   spendLoot,
   takeOffer,
@@ -27,6 +28,7 @@ import {
   type Random,
 } from "../src/game/engine";
 import { returnToCard, rollDice, rollWins } from "../src/game/dice";
+import { botPower } from "./bot";
 import { parseSession } from "../src/app/persistence";
 import { cards, packs } from "../src/content/catalog";
 import type { GameConfig, Loot, SessionState } from "../src/game/types";
@@ -132,6 +134,11 @@ function playRun(seed: number, adventurer?: string) {
       use("smoke");
       if (s.phase !== "revealed" || currentCard(s) !== card) continue;
     }
+    // The class's or starter's power (2026-10-25).
+    if (s.phase === "revealed") {
+      s = botPower(s, random, "before");
+      if (s.phase !== "revealed" || currentCard(s).id !== card.id) continue;
+    }
     if (awaitingChoice(s)) {
       if (party(s).hearts > 4) s = rollDice(s, random);
       else {
@@ -140,13 +147,23 @@ function playRun(seed: number, adventurer?: string) {
       }
     }
     if (awaitingVerdict(s)) {
-      s = settleBattle(s, random() < 0.55, random);
+      // A felling win on a boss with spoils fills a free slot first.
+      const free = spoilsOnWin(s)
+        ? currentCard(s).spoils!.findIndex((b) => !replaces(s.quest, b).length)
+        : -1;
+      s = settleBattle(
+        s,
+        random() < 0.55,
+        random,
+        spoilsOnWin(s) ? (free >= 0 ? free : 0) : undefined,
+      );
       continue;
     }
     if (card.dice) {
       if (!s.roll) s = rollDice(s, random);
       s = returnToCard(s);
       if (card.battle && !rollWins(card.dice, s.roll!.values, s.roll!)) {
+        s = botPower(s, random, "lost");
         use("die");
         if (s.roll && canQuaff(s)) s = quaff(s);
         if (!s.roll) s = returnToCard(rollDice(s, random));

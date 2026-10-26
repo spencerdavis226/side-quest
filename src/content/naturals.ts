@@ -1,4 +1,8 @@
-import type { CardDefinition, DiceOutcome } from "../game/types";
+import type {
+  CardDefinition,
+  DiceDefinition,
+  DiceOutcome,
+} from "../game/types";
 
 // The crawls' standing rule (owner, 2026-10-17): on a single d20, a natural
 // 20 doubles the good a win does and a natural 1 doubles the harm a loss
@@ -15,27 +19,29 @@ const double = (n: string) => String(Number(n) * 2);
 /** A win's text, doubled: what the drawer gives, or what everyone else
  * drinks. The drawer's own drinks on a win stay as they are. */
 export function doubleGood(text: string): string {
-  return text
-    .replace(
-      /\b(give|gives|hand out|hands out|split|splits)( out)? (\d+)/gi,
-      (_, verb, out = "", n) => `${verb}${out} ${double(n)}`,
-    )
-    // On a win, "drinks" is always someone else, and so is "they drink" or
-    // "or drink" (a dare the drawer hands out).
-    .replace(
-      /\b(drinks|they drink|or drink)( for)? (\d+)/gi,
-      (_, verb, f = "", n) => `${verb}${f} ${double(n)}`,
-    )
-    .replace(/\b(steal) a sip\b/gi, "$1 two sips")
-    .replace(
-      /\b(give|gives|hand out) an? ((?:[a-z-]+ )*?)shot\b/gi,
-      (_, verb, kind) => `${verb} two ${kind}shots`,
-    )
-    .replace(
-      /\b(else|they) (finish(?:es)?) their drinks?\b/gi,
-      (all) => `${all}, then a fresh one`,
-    )
-    .replace(/\b(make) a rule\b/gi, (_, make) => `${make} two rules`);
+  return (
+    text
+      .replace(
+        /\b(give|gives|hand out|hands out|split|splits)( out)? (\d+)/gi,
+        (_, verb, out = "", n) => `${verb}${out} ${double(n)}`,
+      )
+      // On a win, "drinks" is always someone else, and so is "they drink" or
+      // "or drink" (a dare the drawer hands out).
+      .replace(
+        /\b(drinks|they drink|or drink)( for)? (\d+)/gi,
+        (_, verb, f = "", n) => `${verb}${f} ${double(n)}`,
+      )
+      .replace(/\b(steal) a sip\b/gi, "$1 two sips")
+      .replace(
+        /\b(give|gives|hand out) an? ((?:[a-z-]+ )*?)shot\b/gi,
+        (_, verb, kind) => `${verb} two ${kind}shots`,
+      )
+      .replace(
+        /\b(else|they) (finish(?:es)?) their drinks?\b/gi,
+        (all) => `${all}, then a fresh one`,
+      )
+      .replace(/\b(make) a rule\b/gi, (_, make) => `${make} two rules`)
+  );
 }
 
 /** A loss's text, doubled: every drink, shot and finish the losers take. */
@@ -70,11 +76,24 @@ const at = (face: number, text: string) =>
 /** The card with its natural 20 and natural 1 split off and doubled. Only a
  * single d20 table changes; every other card comes back as it was. */
 export function withNaturals(card: CardDefinition): CardDefinition {
-  const dice = card.dice;
-  if (dice?.count !== 1 || dice.sides !== 20 || !dice.outcomes) return card;
+  const dice = card.dice && naturalDice(card.dice);
+  // A boss's later beats roll under the same rule (2026-10-25).
+  const phases = card.phases?.map((ph) =>
+    ph.dice ? { ...ph, dice: naturalDice(ph.dice) } : ph,
+  );
+  return {
+    ...card,
+    ...(dice ? { dice } : {}),
+    ...(phases ? { phases } : {}),
+  };
+}
+/** A single d20 table with its natural 20 and natural 1 split off and
+ * doubled; any other dice come back as they were. */
+export function naturalDice(dice: DiceDefinition): DiceDefinition {
+  if (dice.count !== 1 || dice.sides !== 20 || !dice.outcomes) return dice;
   const outcomes: DiceOutcome[] = [];
   for (const o of dice.outcomes) {
-    if ((o.step ?? 1) !== 1) return card;
+    if ((o.step ?? 1) !== 1) return dice;
     const top = o.min <= 20 && o.max === 20;
     const bottom = o.min === 1;
     if (top && o.min === 20) {
@@ -106,5 +125,5 @@ export function withNaturals(card: CardDefinition): CardDefinition {
         win: true,
       });
   }
-  return { ...card, dice: { ...dice, outcomes } };
+  return { ...dice, outcomes };
 }

@@ -96,7 +96,11 @@ describe("League starters", () => {
     expect(canUseLoot(s, "candy")).toBe(true);
     s = spendLoot(s, "candy");
     expect(omenForm(s.quest)!.title).toBe("Frogadier");
-    expect(party(s)).toMatchObject({ form: 1, max: 16, loot: ["smoke"] });
+    expect(party(s)).toMatchObject({
+      form: 1,
+      max: TEAM_HP - 1,
+      loot: ["smoke"],
+    });
     expect(parseSession(JSON.stringify(s))).toEqual(s);
     // Eevee picks its form on an evolution card, never from a candy.
     const eevee = withStarter("eevee");
@@ -120,7 +124,8 @@ describe("League starters", () => {
       loot: [],
       wiped: false,
     });
-    expect(party(s).hearts).toBe(8); // Bulbasaur's 15, halved
+    // Bulbasaur's two short of the team's HP, halved, rounded up.
+    expect(party(s).hearts).toBe(Math.ceil((TEAM_HP - 2) / 2));
     // Confused (a sealed bag) keeps the Revive shut.
     let hexed = withStarter("bulbasaur", "pokemon.route-zigzagoon");
     Object.assign(hexed.quest!.party!, {

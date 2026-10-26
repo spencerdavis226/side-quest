@@ -28,7 +28,7 @@ const pack = packs.find((p) => p.id === "pokemon")!;
 describe("Pokémon League journey", () => {
   it("is a crawl of the Pokémon pack alone, opening on a starter", () => {
     const s = createSession(league, cards, packs, seeded(1));
-    expect(s.quest!.party).toMatchObject({ hearts: 17, max: 17 });
+    expect(s.quest!.party).toMatchObject({ hearts: 15, max: 15 });
     const labels = s.quest!.stages.map((st) => st.label);
     expect(labels[0]).toBe("Your starter");
     expect(labels.filter((l) => /^Route \d$/.test(l))).toHaveLength(8);

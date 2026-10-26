@@ -12,6 +12,10 @@ import { ids, TEAM_HP } from "./league/journey";
 import { rivals, routeCards, routes, victory } from "./league/routes";
 import { starters } from "./league/starters";
 import { applyTypes } from "./league/types";
+import { applyStarterPowers } from "./league/powers";
+import { applyLeaguePhases } from "./league/phases";
+import { routeRules } from "./league/rules";
+import { applyTeam } from "./league/team";
 
 // Pokémon night: every playable moment from the three supplied board sheets
 // (Kanto, Johto, Hoenn), morphed from board spaces into shared-deck cards.
@@ -904,6 +908,12 @@ export const pokemonCards: CardDefinition[] = [
   ...hideoutCards,
 ];
 applyTypes(pokemonCards);
+// The team (2026-10-25): wild Pokémon and catch cards can be caught.
+applyTeam(pokemonCards);
+// Signature moves (2026-10-25): one a starter, and one a form.
+applyStarterPowers(pokemonCards);
+// Boss phases (2026-10-25): the catch, the Champion's switch and ace.
+applyLeaguePhases(pokemonCards);
 
 /** Team HP at the start of a run, before the starter. */
 
@@ -915,12 +925,15 @@ const journey = routes.flatMap((route, k) => [
     pick: 4,
     cardIds: ids(route.cards),
     elite: ids(route.aces),
+    // The route's weather holds until its gym falls (2026-10-25).
+    rule: routeRules[k],
   },
   {
     label: `Gym ${k + 1}`,
     intro: `Gym ${k + 1}`,
     pick: 1,
     cardIds: ids(gymTiers[k]),
+    rule: routeRules[k],
   },
   ...(k === 3
     ? [

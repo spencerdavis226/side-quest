@@ -8,6 +8,12 @@ import { classes } from "./dungeon/classes";
 import { freezer } from "./dungeon/freezer";
 import { kitchen } from "./dungeon/kitchen";
 import { applyKnacks } from "./dungeon/knacks";
+import { applyClassPowers } from "./dungeon/powers";
+import { applyPhases } from "./dungeon/phases";
+import { floorRules } from "./dungeon/rules";
+import { applyJinxes } from "./dungeon/jinxes";
+import { floorMoments } from "./dungeon/moments";
+import { applyOutcomes } from "./dungeon/outcomes";
 import { applyKits } from "./dungeon/kits";
 import {
   closingCards,
@@ -19,7 +25,7 @@ import { lowerLandings, upperLandings } from "./dungeon/landings";
 import { omens } from "./dungeon/omens";
 import { rooftop } from "./dungeon/rooftop";
 import { sewers } from "./dungeon/sewers";
-import { PARTY_HEARTS, QUAFF_DRINKS, type FloorCards } from "./dungeon/shared";
+import { PARTY_HEARTS, type FloorCards } from "./dungeon/shared";
 import { taproom } from "./dungeon/taproom";
 import { wine } from "./dungeon/wine";
 
@@ -63,6 +69,10 @@ const floors: Record<string, FloorCards> = {
   rooftop,
 };
 
+// Four table moments a floor (2026-10-25) join its finds.
+for (const [key, f] of Object.entries(floors))
+  f.finds = [...f.finds, ...floorMoments[key]];
+
 /** Fights and bosses play as ordinary cards in the plain modes; finds,
  * merchants, forks, landings, the rival party, adventurers and omens only
  * in a crawl. */
@@ -77,21 +87,29 @@ const deck = [
 
 // Every d20 here carries the crawls' natural 20 and natural 1
 // (`naturals.ts`), in Pub Crawl and in the plain modes alike.
-export const dungeonCards: CardDefinition[] = [
-  ...deck,
-  ...Object.values(floors).flatMap((f) => f.finds),
-  ...omens,
-  ...classes,
-  ...upperLandings,
-  ...lowerLandings,
-  ...queueCards,
-  ...stairsCards,
-  ...closingCards,
-  ...hiddenRoomCards,
-].map(withNaturals);
+// Boss phases (2026-10-25) go on before the naturals pass, so their d20s
+// double on a 20 and a 1 too.
+export const dungeonCards: CardDefinition[] = applyPhases(
+  applyOutcomes([
+    ...deck,
+    ...Object.values(floors).flatMap((f) => f.finds),
+    ...omens,
+    ...classes,
+    ...upperLandings,
+    ...lowerLandings,
+    ...queueCards,
+    ...stairsCards,
+    ...closingCards,
+    ...hiddenRoomCards,
+  ]),
+).map(withNaturals);
 // Knacks (2026-10-25): each class's two, and the rooms that call for one.
 applyKnacks(dungeonCards);
 applyKits(dungeonCards);
+// Signature powers (2026-10-25): one a class, and one a level.
+applyClassPowers(dungeonCards);
+// Curses became jinxes (2026-10-25): one spoken system, not two.
+applyJinxes(dungeonCards);
 
 const ids = (cards: CardDefinition[]) => cards.map((c) => c.id);
 
@@ -103,7 +121,15 @@ const floor = (label: string, intro: string, f: FloorCards) => ({
   pick: 8,
   cardIds: ids([...f.fights, ...f.finds]),
   elite: ids(f.elites),
+  rule: floorRules[label],
 });
+/** A floor's boss: the floor's rule holds until it falls. */
+const bossOf = (
+  floorLabel: string,
+  label: string,
+  intro: string,
+  cards: CardDefinition[],
+) => ({ ...one(label, intro, cards), rule: floorRules[floorLabel] });
 const one = (label: string, intro: string, cards: CardDefinition[]) => ({
   label,
   intro,
@@ -127,7 +153,9 @@ export const dungeonPack: PackDefinition = {
     goal: 0,
     length: 1,
     cardIds: [],
-    party: { hearts: PARTY_HEARTS, quaff: QUAFF_DRINKS, cup: true },
+    // The Quaff retired 2026-10-25: its once-a-floor reroll became the
+    // classes' signature powers. Saves that hold one keep it.
+    party: { hearts: PARTY_HEARTS, cup: true },
     // The adventurer and tonight's omen, the queue, then one of three floors
     // at each depth (eight rooms, and a boss on the first two) with a
     // landing after each boss, then closing time and Last Call.
@@ -139,15 +167,30 @@ export const dungeonPack: PackDefinition = {
         oneOf: [
           [
             floor("The Cellar", "Down into the Cellar", cellar),
-            one("Cellar boss", "Something blocks the stairs", cellar.bosses),
+            bossOf(
+              "The Cellar",
+              "Cellar boss",
+              "Something blocks the stairs",
+              cellar.bosses,
+            ),
           ],
           [
             floor("The Wine Cellar", "Down into the Wine Cellar", wine),
-            one("Wine Cellar boss", "Something uncorks itself", wine.bosses),
+            bossOf(
+              "The Wine Cellar",
+              "Wine Cellar boss",
+              "Something uncorks itself",
+              wine.bosses,
+            ),
           ],
           [
             floor("The Brewery", "Down into the Brewery", brewery),
-            one("Brewery boss", "Something is fermenting", brewery.bosses),
+            bossOf(
+              "The Brewery",
+              "Brewery boss",
+              "Something is fermenting",
+              brewery.bosses,
+            ),
           ],
         ],
       },
@@ -166,15 +209,30 @@ export const dungeonPack: PackDefinition = {
         oneOf: [
           [
             floor("The Catacombs", "Down into the Catacombs", catacombs),
-            one("Catacombs boss", "The bones stand up", catacombs.bosses),
+            bossOf(
+              "The Catacombs",
+              "Catacombs boss",
+              "The bones stand up",
+              catacombs.bosses,
+            ),
           ],
           [
             floor("The Sewers", "Down into the Sewers", sewers),
-            one("Sewers boss", "Something big in the pipes", sewers.bosses),
+            bossOf(
+              "The Sewers",
+              "Sewers boss",
+              "Something big in the pipes",
+              sewers.bosses,
+            ),
           ],
           [
             floor("The Walk-in Freezer", "Into the Walk-in Freezer", freezer),
-            one("Freezer boss", "The light goes out", freezer.bosses),
+            bossOf(
+              "The Walk-in Freezer",
+              "Freezer boss",
+              "The light goes out",
+              freezer.bosses,
+            ),
           ],
         ],
       },

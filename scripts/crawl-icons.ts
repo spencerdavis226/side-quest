@@ -49,6 +49,10 @@ const picks: Record<string, string> = {
   "crawl/knack-magic": "lorc/magic-swirl",
   "crawl/knack-charm": "lorc/drama-masks",
   "crawl/knack-faith": "lorc/holy-symbol",
+  // A class's or starter's signature power, and a floor's or route's rule
+  // (2026-10-25).
+  "crawl/power": "lorc/power-lightning",
+  "crawl/rule": "lorc/scroll-unfurled",
   // Pokémon League (src/components/crawlTheme.ts maps them to the crawl's
   // marks).
   "league/potion": "lorc/spray",

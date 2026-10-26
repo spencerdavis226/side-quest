@@ -156,6 +156,63 @@ export interface CardDefinition {
    * floor's boss falls, laid when the card is put aside (a battle only when
    * lost). The app shows it and lifts it; nobody has to remember. */
   jinx?: Jinx;
+  /** A crawl boss's later beats (2026-10-25): the card's own rules and dice
+   * open the fight, and each hit landed moves it to the next phase, read in
+   * place of the card's rules and dice (Won/Lost plaques when a phase has
+   * none). The felling swing always plays the last. At most `hits - 1`;
+   * outside a crawl the card plays as written. */
+  phases?: Phase[];
+  /** Pokémon League (2026-10-25): a wild Pokémon the table can catch once
+   * it is beaten (a won roll, or a strike won on the matchup). It joins
+   * the team (`party.team`). Never on a trainer. */
+  catchable?: true;
+  /** A run's own omen (an adventurer, a starter) (2026-10-25): its
+   * signature power, used when the table chooses, `uses` times until the
+   * next boss falls. A later form's `power` replaces it. */
+  power?: Power;
+}
+/** One beat of a boss fight after its first (`CardDefinition.phases`). */
+export interface Phase {
+  rules: string;
+  dice?: DiceDefinition;
+}
+/** What a signature power does, on the card face up:
+ * `reroll`: roll a lost fight again. `spare`: this fight's loss costs no
+ * hearts. `edge`: fight this one with the edge (advantage, or a strike
+ * won). `double`: a win here counts twice (a natural 20's swing, heal and
+ * item). `win`: win this fight outright, for `cost` hearts. `heal`: get
+ * `amount` hearts back. `flee`: slip past a room fight before it starts. */
+export const POWER_KINDS = [
+  "reroll",
+  "spare",
+  "edge",
+  "double",
+  "win",
+  "heal",
+  "flee",
+] as const;
+export type PowerKind = (typeof POWER_KINDS)[number];
+export interface Power {
+  /** Its name on the plaque, e.g. "Rage" (at most 16 characters). */
+  name: string;
+  kind: PowerKind;
+  /** What it does, in a few words for the plaque (at most 28). */
+  rules: string;
+  /** Uses until the next boss falls; 1 when absent. */
+  uses?: number;
+  /** Hearts it costs (`win`). */
+  cost?: number;
+  /** Hearts it brings back (`heal`). */
+  amount?: number;
+  /** Drinks the drawer pays to use it, spoken (the app never pours). */
+  drinks?: number;
+}
+/** A floor's or a route's rule (2026-10-25): a spoken table rule, and an
+ * effect stacked with the party's while the run is on that stage. */
+export interface StageRule {
+  name: string;
+  rule: string;
+  effect?: OmenEffect;
 }
 /** A lasting effect and its name, as the party dialog shows it. `rules` is
  * written from `effect` (`describeOmen`). */
@@ -190,6 +247,8 @@ export interface Evolution {
   /** A forked adventurer's path, in a few words for its plaque (at most
    * 28 characters), read from across the table (2026-10-25). */
   tagline?: string;
+  /** The form's signature power, replacing the one before it. */
+  power?: Power;
 }
 /** A crawl omen's (or a starter form's) dice colours: `primary` is the
  * enamel, `secondary` the metal and trim (2026-10-17). Display only. */
@@ -257,6 +316,8 @@ export interface Offer {
   /** The starter evolves into its next form; never taken once it is fully
    * evolved. */
   evolve?: true;
+  /** Pokémon League (2026-10-25): the card's Pokémon joins the team. */
+  catch?: true;
 }
 /** What an omen changes for the run. `hearts` moves the party's maximum and
  * current hearts; `loot` goes into the satchel; `satchel` is its size;
@@ -329,6 +390,8 @@ export interface QuestStage {
   /** Pub Crawl: the floor's elites, dealt only through a fork's loud door
    * (never picked, never in `cardIds`). */
   elite?: string[];
+  /** The floor's or route's rule, while the run is on this stage. */
+  rule?: StageRule;
 }
 /** A run's place in the finale: one stage, or `oneOf` a set of routes (each
  * a list of stages, such as a floor and its boss), one picked per game. */
@@ -380,6 +443,8 @@ export interface QuestState {
     cards: CardDefinition[];
     /** A crawl floor's elites (`QuestStage.elite`); older saves omit it. */
     elite?: CardDefinition[];
+    /** The stage's rule (`QuestStage.rule`); older saves omit it. */
+    rule?: StageRule;
   }[];
   finale: string[];
   step: number;
@@ -428,6 +493,24 @@ export interface PartyState {
    * the fight is rolled with advantage. Cleared when the card is put
    * aside, so a boss dealt again needs another orb. */
   tera?: string;
+  /** Signature power uses spent since the last boss fell (a League gym)
+   * (2026-10-25);
+   * absent is 0. */
+  powers?: number;
+  /** The card in play a power is armed on (`spare`, `edge`, `double`);
+   * cleared when the card is put aside, like a Tera Orb. */
+  armed?: string;
+  /** The beat of the boss just put aside (`phases`), when it has phases,
+   * so Previous Card shows the beat that was played. */
+  beat?: number;
+  /** Pokémon League (2026-10-25): the Pokémon caught for the team, by card
+   * ID, oldest first (at most `TEAM_SIZE`). */
+  team?: string[];
+  /** Teammates sent in since the last gym fell; each fights once a gym. */
+  tired?: string[];
+  /** The teammate sent in for the battle face up: it fights with its type.
+   * Cleared when the card is put aside, like a Tera Orb. */
+  sent?: string;
 }
 export interface PackDefinition {
   version: 1;

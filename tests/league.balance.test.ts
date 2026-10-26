@@ -14,12 +14,15 @@ import {
   questRecord,
   satchelSize,
   settleBattle,
+  replaces,
+  spoilsOnWin,
   skipRoll,
   spendLoot,
   takeOffer,
   type Random,
 } from "../src/game/engine";
 import { returnToCard, rollDice, rollWins } from "../src/game/dice";
+import { botPower, botTeam } from "./bot";
 import { parseSession } from "../src/app/persistence";
 import { cards, packs } from "../src/content/catalog";
 import type { GameConfig, Loot, SessionState } from "../src/game/types";
@@ -110,6 +113,13 @@ function playRun(seed: number, starter?: string) {
       use("smoke");
       if (s.phase !== "revealed" || currentCard(s) !== card) continue;
     }
+    // The class's or starter's power, and the team (2026-10-25).
+    if (s.phase === "revealed") {
+      s = botTeam(s, random);
+      if (s.phase !== "revealed" || currentCard(s).id !== card.id) continue;
+      s = botPower(s, random, "before");
+      if (s.phase !== "revealed" || currentCard(s).id !== card.id) continue;
+    }
     if (awaitingChoice(s)) {
       if (party(s).hearts > 5) s = rollDice(s, random);
       else {
@@ -118,18 +128,31 @@ function playRun(seed: number, starter?: string) {
       }
     }
     if (awaitingVerdict(s)) {
-      s = settleBattle(s, random() < 0.55, random);
+      // A felling win on a boss with spoils fills a free slot first.
+      const free = spoilsOnWin(s)
+        ? currentCard(s).spoils!.findIndex((b) => !replaces(s.quest, b).length)
+        : -1;
+      s = settleBattle(
+        s,
+        random() < 0.55,
+        random,
+        spoilsOnWin(s) ? (free >= 0 ? free : 0) : undefined,
+      );
       continue;
     }
     if (card.dice) {
       if (!s.roll) s = rollDice(s, random);
       s = returnToCard(s);
       if (card.battle && !rollWins(card.dice, s.roll!.values, s.roll!)) {
+        s = botPower(s, random, "lost");
         use("die");
         if (!s.roll) s = returnToCard(rollDice(s, random));
       }
     }
-    s = advance(s, random);
+    // A beaten wild Pokémon: catch it or let it go, which puts it aside.
+    const before = s;
+    s = botTeam(s, random);
+    if (s === before) s = advance(s, random);
     if (party(s).hearts <= 4) use("draught");
   }
   return s;
@@ -144,11 +167,18 @@ const starterIds = (
     cardIds: string[];
   }
 ).cardIds.map((id) => id.replace("pokemon.starter-", ""));
+// A finished run is kept without its deck snapshot (`cards`, a clone of the
+// 120 Pokémon deck cards, which a League run never deals): since the boss
+// phases and moves (2026-10-25), 4,200 whole runs passed the default heap.
+// The first 50 are kept whole, for the save round trip below.
+let kept = 0;
+const slim = (s: SessionState): SessionState =>
+  kept++ < 50 ? s : { ...s, cards: [] };
 const byStarter = starterIds.map(
   (id) =>
     [
       id,
-      Array.from({ length: PER_STARTER }, (_, i) => playRun(i + 1, id)),
+      Array.from({ length: PER_STARTER }, (_, i) => slim(playRun(i + 1, id))),
     ] as const,
 );
 const runs = byStarter.flatMap(([, group]) => group);
@@ -179,12 +209,14 @@ it("the League is hard: the team wins between 18% and 40% of its runs", () => {
     );
     wipes.set(label, (wipes.get(label) ?? 0) + 1);
   }
-  const avg = (f: (s: SessionState) => number) =>
-    (winners.map(f).reduce((a, b) => a + b, 0) / winners.length).toFixed(1);
+  const avg = (f: (s: SessionState) => number, of = winners) =>
+    (of.map(f).reduce((a, b) => a + b, 0) / of.length).toFixed(1);
   console.log(
     `extra draws on won runs: ${avg((s) => s.quest!.lost ?? 0)} lost to bosses, ${avg((s) => party(s).rounds)} boss swings landed, ${avg((s) => s.quest!.finale.length)} dealt\n` +
       `league: won ${(won * 100).toFixed(1)}%; a won run takes ${mean.toFixed(1)} draws (10th ${at(0.1)}, 90th ${at(0.9)})\n` +
-      `whited out at: ${[...wipes].map(([l, n]) => `${l} ${pct(n / runs.length)}`).join(", ")}`,
+      `whited out at: ${[...wipes].map(([l, n]) => `${l} ${pct(n / runs.length)}`).join(", ")}\n` +
+      // The team (2026-10-25): how big it ends, on every run.
+      `team at the end: ${avg((s) => party(s).team?.length ?? 0, runs)} of 2`,
   );
   expect(won).toBeGreaterThan(0.18);
   expect(won).toBeLessThan(0.4);
@@ -229,7 +261,10 @@ it("no starter and no hideout makes the League a walkover or hopeless", () => {
 
 it("Bidoof is the worst starter, and still wins now and then", () => {
   const bidoof = rate(
-    Array.from({ length: 600 }, (_, i) => playRun(i + 1, "bidoof")),
+    Array.from({ length: 600 }, (_, i) => ({
+      ...playRun(i + 1, "bidoof"),
+      cards: [],
+    })),
   );
   const worst = Math.min(
     ...starterRates.filter(([n]) => n !== "bidoof").map(([, r]) => r),
@@ -237,5 +272,6 @@ it("Bidoof is the worst starter, and still wins now and then", () => {
   console.log(`bidoof (600 runs) ${pct(bidoof)}; next worst ${pct(worst)}`);
   expect(bidoof).toBeGreaterThan(0.01);
   expect(bidoof).toBeLessThan(Math.min(0.08, worst));
-  // 600 more runs: about 7 s on CI, past the 5 s default.
-}, 30_000);
+  // 600 more runs: about 7 s on CI, past the 5 s default, and longer since
+  // the team and the gym aces (2026-10-25).
+}, 120_000);

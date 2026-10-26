@@ -26,14 +26,17 @@ for (const c of cards) {
     throw Error(`Card title exceeds 22 characters: ${c.id}`);
   if (Math.max(...c.title.split(/\s+/u).map((word) => [...word].length)) > 15)
     throw Error(`Card title has a word over 15 characters: ${c.id}`);
-  const ruleChars = [...c.rules.trim()].length;
-  const ruleWords = c.rules.trim().split(/\s+/u).length;
-  if (ruleChars > 100 || ruleWords > 20)
-    throw Error(`Card rule exceeds 100 characters or 20 words: ${c.id}`);
-  if (ruleChars > 90 || ruleWords > 18)
-    console.warn(
-      `Review long card rule (${ruleChars} characters, ${ruleWords} words): ${c.id}`,
-    );
+  // A boss's later beats read in place of its rules (2026-10-25).
+  for (const rules of [c.rules, ...(c.phases ?? []).map((p) => p.rules)]) {
+    const ruleChars = [...rules.trim()].length;
+    const ruleWords = rules.trim().split(/\s+/u).length;
+    if (ruleChars > 100 || ruleWords > 20)
+      throw Error(`Card rule exceeds 100 characters or 20 words: ${c.id}`);
+    if (ruleChars > 90 || ruleWords > 18)
+      console.warn(
+        `Review long card rule (${ruleChars} characters, ${ruleWords} words): ${c.id}`,
+      );
+  }
   const spec = artworkRegistry[normalizeArtwork(c.artwork)];
   if (!spec) throw Error(`Unregistered artwork for ${c.id}: ${c.artwork}`);
   if (spec.publicPath && !existsSync(`public/${spec.publicPath}`))

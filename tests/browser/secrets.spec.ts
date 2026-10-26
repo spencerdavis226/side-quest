@@ -109,10 +109,13 @@ test("a countdown counts, keeps its secret, and a reload unlights it", async ({
 }, info) => {
   await page.clock.install();
   await seed(page, "secrets.forehead-01");
-  // Hold, Start and a quiet half-width Skip.
-  const widths = await page
-    .locator(".card-actions .card-choice-option")
-    .evaluateAll((els) => els.map((e) => e.getBoundingClientRect().width));
+  // Hold, Start and a quiet half-width Skip, once the card has landed
+  // (`evaluateAll` doesn't wait, and measured nothing before it had).
+  const plaques = page.locator(".card-actions .card-choice-option");
+  await expect(plaques).toHaveCount(3);
+  const widths = await plaques.evaluateAll((els) =>
+    els.map((e) => e.getBoundingClientRect().width),
+  );
   expect(widths).toHaveLength(3);
   expect(Math.abs(widths[2] - widths[0] / 2)).toBeLessThanOrEqual(1);
   await page

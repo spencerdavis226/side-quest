@@ -258,10 +258,14 @@ function App() {
               finishingRoll={finishingRoll}
               onTap={() => controller.tap()}
               onChoose={(option) => controller.choose(option)}
-              onSettle={(won) => controller.settle(won)}
+              onSettle={(won, spoil) => controller.settle(won, spoil)}
               onSpend={(item) => controller.spend(item)}
               onOffer={(index, branch) => controller.offer(index, branch)}
               onQuaff={() => controller.quaff()}
+              onPower={(spoil) => controller.power(spoil)}
+              onCatch={() => controller.catch(true)}
+              onRelease={() => controller.catch(false)}
+              onSend={(id) => controller.send(id)}
               onSpoils={(index) => controller.spoils(index)}
               onKeepGear={() => controller.keepGear()}
               onCashOut={() => controller.cashOut()}
