@@ -451,7 +451,7 @@ export const packs: PackDefinition[] = [
       goal: 0,
       length: 1,
       cardIds: [],
-      party: { hearts: 17 },
+      party: { hearts: 15 },
       finale: [
         {
           label: "Your starter",

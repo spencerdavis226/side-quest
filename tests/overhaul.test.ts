@@ -12,7 +12,7 @@ import {
   settleBattle,
   spoilsOnWin,
   stageRule,
-  usePower,
+  spendPower,
   type Random,
 } from "../src/game/engine";
 import { returnToCard, rollDice } from "../src/game/dice";
@@ -215,7 +215,7 @@ describe("signature powers", () => {
     expect(canUsePower(s)).toBe(false); // Nothing lost yet.
     s = roll(s, 0);
     expect(canUsePower(s)).toBe(true);
-    s = usePower(s, zero);
+    s = spendPower(s, zero);
     expect(s.roll).toBeNull();
     expect(powersLeft(s.quest)).toBe(0);
     round(s);
@@ -226,7 +226,7 @@ describe("signature powers", () => {
   it("spare a loss its hearts", () => {
     let s = start(hero(power({ kind: "spare" })), [room]);
     s = roll(s, 0);
-    s = usePower(s, zero);
+    s = spendPower(s, zero);
     expect(party(s).armed).toBe(room.id);
     round(s);
     const hearts = party(s).hearts;
@@ -237,7 +237,7 @@ describe("signature powers", () => {
 
   it("take the edge: the roll is made twice and the better kept", () => {
     let s = start(hero(power({ kind: "edge" })), [room]);
-    s = usePower(s, zero);
+    s = spendPower(s, zero);
     s = rollDice(s, zero);
     expect(s.roll!.edge).toBe("advantage");
     round(returnToCard(s));
@@ -245,7 +245,7 @@ describe("signature powers", () => {
 
   it("double a win: a boss takes two swings", () => {
     let s = start(hero(power({ kind: "double" })), [boss]);
-    s = usePower(s, zero);
+    s = spendPower(s, zero);
     s = advance(roll(s, 0.6), zero);
     expect(party(s).hits).toBe(2);
   });
@@ -254,7 +254,7 @@ describe("signature powers", () => {
     const oneHit = { ...boss, hits: 1, phases: undefined };
     let s = start(hero(power({ kind: "win", cost: 2 })), [oneHit]);
     const hearts = party(s).hearts;
-    s = usePower(s, zero, 0);
+    s = spendPower(s, zero, 0);
     expect(s.phase).toBe("complete");
     expect(party(s).hearts).toBe(hearts - 2 + 1); // The ring's heart.
     expect(party(s).boons).toContain("test.boss#0");
@@ -267,7 +267,7 @@ describe("signature powers", () => {
     expect(s.phase).toBe("complete");
     let f = start(hero(power({ kind: "flee" })), [room]);
     expect(canUsePower(f)).toBe(true);
-    f = usePower(f, zero);
+    f = spendPower(f, zero);
     expect(f.phase).toBe("complete");
     const b = start(hero(power({ kind: "flee" })), [boss]);
     expect(canUsePower(b)).toBe(false);
@@ -277,7 +277,7 @@ describe("signature powers", () => {
     const plain = { ...boss, spoils: undefined };
     let s = start(hero(power({ kind: "reroll" })), [plain, room]);
     s = roll(s, 0);
-    s = usePower(s, zero);
+    s = spendPower(s, zero);
     s = roll(s, 0.99); // A natural 20: two swings.
     s = advance(s, zero);
     s = roll(advance(s, zero), 0.99);

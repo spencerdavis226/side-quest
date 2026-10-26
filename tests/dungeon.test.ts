@@ -741,7 +741,9 @@ describe("Pub Crawl", () => {
       ),
       0,
     );
-    expect(party(up).max).toBe(H + 3);
+    // The Crusader drops the Paladin's extra heart (2026-10-25), and keeps
+    // the omen's two.
+    expect(party(up).max).toBe(H + 2);
     roundTrip(up);
   });
 

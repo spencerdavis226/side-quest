@@ -10,7 +10,7 @@ import { applyPowers, dungeonPowerWords, type PowerLine } from "../powers";
 const lines: Readonly<Record<string, PowerLine>> = {
   // Rage: win it now, and bleed for it.
   barbarian: [
-    ["Rage", "win", { cost: 2 }],
+    ["Rage", "win", { cost: 1 }],
     ["Frenzy", "win", { cost: 1 }],
     ["Thick Skull", "spare"],
     ["Warcry", "win", { cost: 1, uses: 2 }],
@@ -24,8 +24,8 @@ const lines: Readonly<Record<string, PowerLine>> = {
     ["Double Down", "double"],
   ],
   cleric: [
-    ["Lay on Hands", "heal", { amount: 2 }],
-    ["Prayer", "heal", { amount: 3 }],
+    ["Lay on Hands", "heal", { amount: 1 }],
+    ["Prayer", "heal", { amount: 2 }],
     ["Smite", "double"],
     ["Miracle", "heal", { amount: 3, uses: 2 }],
     ["Judgement", "win", { cost: 1 }],
@@ -74,10 +74,10 @@ const lines: Readonly<Record<string, PowerLine>> = {
     ["Pestilence", "double"],
   ],
   alchemist: [
-    ["Quick Mix", "heal", { amount: 1, uses: 2 }],
-    ["Elixir", "heal", { amount: 2, uses: 2 }],
+    ["Quick Mix", "heal", { amount: 1 }],
+    ["Elixir", "heal", { amount: 2 }],
     ["Firebomb", "win", { cost: 2 }],
-    ["Panacea", "heal", { amount: 3, uses: 2 }],
+    ["Panacea", "heal", { amount: 3 }],
     ["Big Boom", "win", { cost: 1 }],
   ],
   warlock: [
@@ -102,7 +102,7 @@ const lines: Readonly<Record<string, PowerLine>> = {
     ["Comped", "spare", { uses: 2 }],
   ],
   mercenary: [
-    ["Hired Blade", "win", { cost: 2 }],
+    ["Hired Blade", "win", { cost: 1 }],
     ["Dead or Alive", "double"],
     ["Take the Hit", "spare"],
     ["Legend", "win", { cost: 1 }],

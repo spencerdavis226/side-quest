@@ -5,7 +5,7 @@ import {
   partyPower,
   powerSpoils,
   replaces,
-  usePower,
+  spendPower,
   type Random,
 } from "../src/game/engine";
 import { rollWins } from "../src/game/dice";
@@ -38,25 +38,25 @@ export function botPower(
   };
   switch (power.kind) {
     case "reroll":
-      return moment === "lost" ? usePower(s, random) : s;
+      return moment === "lost" ? spendPower(s, random) : s;
     case "spare":
       // A lost roll or strike, or a plaque fight that could hurt.
       return moment === "lost" ||
         (moment === "before" && (card.strike || (!card.dice && big)))
-        ? usePower(s, random)
+        ? spendPower(s, random)
         : s;
     case "edge":
     case "double":
-      return moment === "before" && big ? usePower(s, random) : s;
+      return moment === "before" && big ? spendPower(s, random) : s;
     case "win":
       if (moment !== "before" || !big) return s;
       if (party.hearts <= (power.cost ?? 1) + (boss ? 1 : 3)) return s;
-      return usePower(s, random, powerSpoils(s) ? spoil() : undefined);
+      return spendPower(s, random, powerSpoils(s) ? spoil() : undefined);
     case "heal":
       return party.max - party.hearts >= (power.amount ?? 1)
-        ? usePower(s, random)
+        ? spendPower(s, random)
         : s;
     case "flee":
-      return moment === "before" && low && !lostRoll ? usePower(s, random) : s;
+      return moment === "before" && low && !lostRoll ? spendPower(s, random) : s;
   }
 }

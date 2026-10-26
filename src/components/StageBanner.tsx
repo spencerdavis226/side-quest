@@ -27,7 +27,8 @@ export function StageBanner({ session }: { session: SessionState }) {
           banner.mode,
           banner.intro,
           banner.wanted && `${banner.wantedWord}: ${banner.wanted}`,
-          banner.rule && `${banner.ruleWord}: ${banner.rule.name}. ${banner.rule.rule}`,
+          banner.rule &&
+            `${banner.ruleWord}: ${banner.rule.name}. ${banner.rule.rule}`,
         ]
           .filter(Boolean)
           .join(". ")
@@ -35,8 +36,7 @@ export function StageBanner({ session }: { session: SessionState }) {
     banner?.key ?? null,
   );
   if (!banner) return null;
-  const { tone, art, mode, intro, wanted, wantedWord, rule, ruleWord } =
-    banner;
+  const { tone, art, mode, intro, wanted, wantedWord, rule, ruleWord } = banner;
   return (
     <div
       // Keyed by stage so a new stage replays the sweep.
@@ -141,10 +141,19 @@ export function EvolutionBanner({ session }: { session: SessionState }) {
       const words = crawlTheme(quest?.packId).omenWords;
       const after = formEffect(quest) ?? {};
       const base = (quest?.party?.max ?? 0) - (after.hearts ?? 0);
-      const change =
+      const numbers =
         words && now?.before
           ? describeChange(now.before, after, words, base)
           : "";
+      // A form's own power is news too (2026-10-25).
+      const power = now?.card.evolves?.[form - 1]?.power;
+      const powerWord = crawlTheme(quest?.packId).words.power.name;
+      const change = [
+        numbers,
+        power && `New ${powerWord.toLowerCase()}: ${power.name}.`,
+      ]
+        .filter(Boolean)
+        .join(" ");
       if (now && from) setShown({ from, to: now.title, change });
     }
     seen.current = form;

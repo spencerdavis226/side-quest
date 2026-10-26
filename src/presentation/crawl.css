@@ -1685,7 +1685,8 @@
 .crawl-jinx .crawl-icon {
   color: #ff9fc0;
 }
-.crawl-cup {
+.crawl-cup,
+.crawl-power {
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 2px 10px;
@@ -1697,17 +1698,20 @@
   background: rgb(70 40 10 / 0.45);
   font-size: 1rem;
 }
-.crawl-cup .crawl-icon {
+.crawl-cup .crawl-icon,
+.crawl-power .crawl-icon {
   grid-row: span 2;
   width: 26px;
   height: 26px;
   color: #f0c56a;
 }
-.crawl-cup strong {
+.crawl-cup strong,
+.crawl-power strong {
   color: #fff0cf;
   font-family: var(--font-tavern);
 }
-.crawl-cup span {
+.crawl-cup span,
+.crawl-power span {
   color: #d9c7a4;
   font-size: 0.95rem;
 }

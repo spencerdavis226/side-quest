@@ -7,7 +7,7 @@ import {
   settleBattle,
   skipRoll,
   quaff,
-  usePower,
+  spendPower,
   spendLoot,
   awaitingOffer,
   awaitingPress,
@@ -243,7 +243,7 @@ export class PresentationController {
   power(spoil?: number) {
     const { session, motion } = this.state;
     if (!session || motion) return;
-    const next = usePower(session, this.random, spoil);
+    const next = spendPower(session, this.random, spoil);
     if (next === session) return;
     this.persist(next);
     if (next.discarded !== session.discarded) {

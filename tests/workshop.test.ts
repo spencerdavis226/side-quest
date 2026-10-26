@@ -159,7 +159,7 @@ test("the Pokémon League is a crawl: 72 gym leaders in eight tiers, then the ga
     mode: "Pokémon League",
     goal: 0,
     cardIds: [],
-    party: { hearts: 17 },
+    party: { hearts: 15 },
   });
   // The gauntlet: 1 of 30 Legendaries, 4 of 36 Elite Four, 1 of 13
   // Champions, each stage with its own ribbon finish.

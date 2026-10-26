@@ -200,8 +200,9 @@ test("@release a monster shows its stakes; a smoke bomb flees it", async ({
   expect(s.quest.step).toBe(STEP.floor1 + 1);
 });
 
-// A levelled Rogue's five-slot satchel, the Quaff, the Cup and a jinx (or a
-// curse and a jinx) on the narrowest phones: every chip stays on screen.
+// A levelled Rogue's five-slot satchel, its power, the Cup, a jinx and the
+// floor's rule (or, in a save from before 2026-10-25, a curse too) on the
+// narrowest phones: every chip stays on screen.
 for (const width of [320, 375])
   for (const curse of [false, true])
     test(`a full strip fits at ${width}px${curse ? " with a curse" : ""}`, async ({
@@ -234,7 +235,9 @@ for (const width of [320, 375])
         },
       });
       const chips = page.locator(".hud-strip .hud-chip");
-      await expect(chips).toHaveCount(curse ? 5 : 4);
+      await expect(chips).toHaveCount(curse ? 6 : 5);
+      await expect(page.locator(".tag-power")).toHaveCount(1);
+      await expect(page.locator(".tag-rule")).toHaveCount(1);
       for (const box of await chips.evaluateAll((els) =>
         els.map((e) => e.getBoundingClientRect().toJSON()),
       )) {
@@ -264,13 +267,16 @@ test("a loaded die rerolls a lost fight", async ({ page }, info) => {
   expect(s.quest.party.loot).toEqual([]);
 });
 
-test("@release the Quaff rerolls a lost fight for drinks, once until a boss falls", async ({
+test("@release a save's Quaff rerolls a lost fight for drinks, once until a boss falls", async ({
   page,
 }, info) => {
+  // New runs have no Quaff since 2026-10-25; a run saved before keeps it.
   await seed(
     page,
     rolled(
-      reveal(crawlAt("dungeon.ex-wraith", STEP.floor2, { loot: ["die"] })),
+      reveal(
+        crawlAt("dungeon.ex-wraith", STEP.floor2, { loot: ["die"], quaff: 4 }),
+      ),
       2,
     ),
   );
@@ -762,18 +768,22 @@ test("the party dialog lays out the run: adventurer, boons, jinx and the Cup", a
       },
     },
   });
-  // The strip under the top row carries the party's things at a glance.
-  await expect(page.locator(".hud-strip .hud-chip")).toHaveCount(5);
+  // The strip under the top row carries the party's things at a glance:
+  // the satchel, the Rogue's power, the Cup, a curse (an old save's), the
+  // jinx and the floor's rule.
+  await expect(page.locator(".hud-strip .hud-chip")).toHaveCount(6);
   await expect(page.locator(".tag-cup")).toHaveAccessibleName(
     "The Cup: 4 splashes",
   );
-  await expect(page.locator(".tag-quaff")).toHaveClass(/ready/);
+  await expect(page.locator(".tag-power")).toHaveClass(/ready/);
   await page.screenshot({ path: info.outputPath("strip.png") });
   // The hearts open the party: hearts, adventurer, boons, and nothing else.
   await meter(page).click();
   const dialog = page.getByRole("dialog", { name: "The party" });
   await expect(dialog.locator(".crawl-omen").first()).toContainText("Rogue");
   await expect(dialog.locator(".crawl-boons li")).toHaveCount(1);
+  // The adventurer's power sits with it (2026-10-25).
+  await expect(dialog.locator(".crawl-power")).toContainText("Sneak Attack");
   await expect(
     dialog.locator(".satchel, .crawl-curse, .crawl-cup, .crawl-floors"),
   ).toHaveCount(0);
@@ -783,7 +793,7 @@ test("the party dialog lays out the run: adventurer, boons, jinx and the Cup", a
   for (const [chip, title, text] of [
     [".tag-jinx", "Jinx", "Goblin Tongue"],
     [".tag-curse", "Curse", "Bleeding"],
-    [".tag-quaff", "The Quaff", "Quaff: ready"],
+    [".tag-rule", "Floor rule", "Echoes"],
     [".tag-cup", "The Cup", "4 splashes"],
   ]) {
     await page.locator(chip).click();
@@ -811,7 +821,7 @@ test("the party dialog lays out the run: adventurer, boons, jinx and the Cup", a
   await page.getByRole("button", { name: "How to play" }).click();
   const guide = page.getByRole("dialog", { name: "How to play" });
   // Since 2026-10-25 a row for knacks too.
-  await expect(guide.locator(".guide-rows li")).toHaveCount(9);
+  await expect(guide.locator(".guide-rows li")).toHaveCount(10);
   await expect(guide.locator(".guide-rows")).toContainText(
     "A room that calls for one shows green arrows",
   );

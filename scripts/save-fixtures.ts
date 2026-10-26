@@ -25,6 +25,7 @@ import {
   awaitingSpoils,
   partyBoons,
   replaces,
+  stageRule,
   strikeOutcome,
 } from "../src/game/engine";
 import { nextMove, seeded } from "./table-play";
@@ -136,18 +137,16 @@ const situations: [string, GameConfig, Find][] = [
     crawl,
     (s) => (party(s).boons?.length ?? 0) >= 2 && !!party(s).jinx,
   ],
-  ["crawl-quaffed", crawl, (s) => !!party(s).quaffed && !!s.roll],
+  // New runs have no Quaff and no curses since 2026-10-25 (powers and
+  // jinxes took their places); their 2026-10-18 and 2026-10-25 fixtures
+  // stay and keep loading.
   ["crawl-pressing-luck", crawl, (s) => (party(s).press ?? 0) >= 1],
   [
     "crawl-boss-mid-fight",
     crawl,
     (s) => party(s).hits > 0 && isBossCard(currentCard(s)),
   ],
-  [
-    "crawl-curse-and-cup",
-    crawl,
-    (s) => !!party(s).curse && (party(s).cup ?? 0) >= 2,
-  ],
+
   // Forked levels (2026-10-25): a class on its second path, then at its
   // second level; and the Quarter-Zips on the stairs.
   [
@@ -198,6 +197,64 @@ const situations: [string, GameConfig, Find][] = [
   ],
   // A knack (2026-10-25): a room rolled with the edge for the class.
   ["crawl-knack-roll", crawl, (s) => !!s.roll?.edge && !s.roll.returned],
+  // The 2026-10-25 overhaul: a power armed on the card face up and spent;
+  // a boss on a later beat, as a duel, and as the beat Previous Card
+  // shows; a floor's rule bending a roll; the League's catch, a Champion's
+  // ace, a route's rule and a starter's move.
+  [
+    "crawl-power-armed",
+    crawl,
+    (s) => !!party(s).armed && s.phase === "revealed",
+  ],
+  [
+    "crawl-power-spent",
+    crawl,
+    (s) => (party(s).powers ?? 0) >= 1 && s.phase === "hidden",
+  ],
+  [
+    "crawl-boss-duel-beat",
+    crawl,
+    (s) =>
+      s.phase === "revealed" &&
+      party(s).hits > 0 &&
+      !!currentCard(s).phases &&
+      !currentCard(s).dice,
+  ],
+  [
+    "crawl-boss-beat-behind",
+    crawl,
+    (s) => party(s).beat !== undefined && s.phase === "hidden",
+  ],
+  [
+    "crawl-floor-rule-roll",
+    crawl,
+    (s) => !!stageRule(s.quest) && !!s.roll && !s.roll.returned,
+  ],
+  [
+    "league-catch-beat",
+    league,
+    (s) =>
+      s.phase === "revealed" &&
+      party(s).hits > 0 &&
+      currentCard(s).id.startsWith("pokemon.legendary-"),
+  ],
+  [
+    "league-champion-ace",
+    league,
+    (s) =>
+      party(s).hits >= 2 &&
+      currentCard(s).id.startsWith("pokemon.league-champion-"),
+  ],
+  [
+    "league-route-rule",
+    league,
+    (s) => !!stageRule(s.quest) && s.phase === "hidden" && !!party(s).omen,
+  ],
+  [
+    "league-move-spent",
+    league,
+    (s) => (party(s).powers ?? 0) >= 1 && s.phase === "revealed",
+  ],
   ["crawl-wiped", crawl, (s) => party(s).wiped],
   ["crawl-survived", crawl, (s) => s.phase === "complete" && !party(s).wiped],
 ];

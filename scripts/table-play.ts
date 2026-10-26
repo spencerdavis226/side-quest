@@ -12,16 +12,20 @@ import {
   canQuaff,
   canTakeOffer,
   canUseLoot,
+  canUsePower,
   cashOut,
   currentCard,
   omenForm,
+  powerSpoils,
   pressOn,
   quaff,
   settleBattle,
+  spoilsOnWin,
   skipRoll,
   spendLoot,
   takeOffer,
   takeSpoils,
+  spendPower,
   type Random,
 } from "../src/game/engine";
 import { returnToCard, rollDice } from "../src/game/dice";
@@ -51,10 +55,27 @@ export function nextMove(s: SessionState, random: Random): SessionState {
   else if (card.dice && !s.roll) next = rollDice(s, random);
   else if (card.dice && !s.roll!.returned) next = returnToCard(s);
   else if (canQuaff(s) && random() < 0.6) next = quaff(s);
+  // The class's or starter's power (2026-10-25), now and then; a win that
+  // fells a boss with spoils picks one.
+  else if (canUsePower(s) && random() < 0.35)
+    next = spendPower(
+      s,
+      random,
+      powerSpoils(s) ? Math.floor(random() * card.spoils!.length) : undefined,
+    );
   else if (can("die")) next = spendLoot(s, "die", random);
   else if (can("round")) next = spendLoot(s, "round", random);
-  else if (awaitingVerdict(s)) next = settleBattle(s, random() < 0.55, random);
-  else if (awaitingOffer(s)) {
+  else if (awaitingVerdict(s)) {
+    const won = random() < 0.55;
+    next = settleBattle(
+      s,
+      won,
+      random,
+      won && spoilsOnWin(s)
+        ? Math.floor(random() * card.spoils!.length)
+        : undefined,
+    );
+  } else if (awaitingOffer(s)) {
     const open = card.offers!.flatMap((_, i) =>
       canTakeOffer(s, i) ? [i] : [],
     );

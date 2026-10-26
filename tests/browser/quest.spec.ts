@@ -127,7 +127,7 @@ test("@release Pokémon League opens on a starter, then the first route", async 
   await page.getByRole("button", { name: /^Pokémon League/ }).click();
   const brief = page.locator(".crawl-brief");
   await expect(brief).toContainText("Pokémon night");
-  await expect(brief).toContainText("17 HP · 8 gyms");
+  await expect(brief).toContainText("15 HP · 8 gyms");
   // The League plays its own pack alone: the pack picker steps aside.
   await expect(page.getByRole("button", { name: /^Choose packs/ })).toHaveCount(
     0,
@@ -191,7 +191,7 @@ test("@release a starter evolves on a route, and the banner says what changed", 
   await plaques(page).nth(0).click();
   const banner = page.locator(".evolution-banner");
   await expect(banner).toHaveText(
-    /What\? Charmander is evolving!\s*Charmeleon\s*Max HP 17 → 18\.$/,
+    /What\? Charmander is evolving!\s*Charmeleon\s*Max HP 15 → 16\. New move: Flamethrower\.$/,
   );
   await page.screenshot({ path: info.outputPath("evolution-banner.png") });
   expect((await saved(page)).quest.party).toMatchObject({ form: 1 });

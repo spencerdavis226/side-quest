@@ -8,9 +8,9 @@ import { applyPowers, leaguePowerWords, type PowerLine } from "../powers";
 
 const lines: Readonly<Record<string, PowerLine>> = {
   bulbasaur: [
+    ["Leech Seed", "heal", { amount: 1 }],
     ["Leech Seed", "heal", { amount: 2 }],
-    ["Leech Seed", "heal", { amount: 2, uses: 2 }],
-    ["Synthesis", "heal", { amount: 3, uses: 2 }],
+    ["Synthesis", "heal", { amount: 3 }],
   ],
   charmander: [
     ["Ember", "double"],
@@ -19,13 +19,13 @@ const lines: Readonly<Record<string, PowerLine>> = {
   ],
   squirtle: [
     ["Withdraw", "spare"],
-    ["Withdraw", "spare", { uses: 2 }],
+    null,
     ["Hydro Pump", "win", { cost: 1 }],
   ],
   pikachu: [["Volt Tackle", "win", { cost: 1 }]],
   eevee: [
     ["Quick Attack", "edge"],
-    ["Aqua Ring", "heal", { amount: 3, uses: 2 }],
+    ["Aqua Ring", "heal", { amount: 2 }],
     ["Pin Missile", "double", { uses: 2 }],
     ["Flare Blitz", "win", { cost: 1, uses: 2 }],
   ],
@@ -49,7 +49,11 @@ const lines: Readonly<Record<string, PowerLine>> = {
     ["Double Kick", "double"],
     ["Blaze Kick", "win", { cost: 1 }],
   ],
-  mudkip: [["Mud-Slap", "reroll"], null, ["Earthquake", "double"]],
+  mudkip: [
+    ["Mud Sport", "flee"],
+    ["Mud-Slap", "reroll"],
+    ["Earthquake", "double"],
+  ],
   piplup: [
     ["Bubble Beam", "double"],
     ["Metal Claw", "edge", { uses: 2 }],
@@ -91,13 +95,13 @@ const lines: Readonly<Record<string, PowerLine>> = {
     ["Pyro Ball", "win", { cost: 1 }],
   ],
   fuecoco: [
-    ["Slack Off", "heal", { amount: 2 }],
+    ["Slack Off", "heal", { amount: 1 }],
     ["Ember", "double"],
     ["Torch Song", "double", { uses: 2 }],
   ],
   spheal: [
     ["Rollout", "double"],
-    ["Rest", "heal", { amount: 3 }],
+    ["Rest", "heal", { amount: 2 }],
     ["Sheer Cold", "win", { cost: 2 }],
   ],
   riolu: [
@@ -110,13 +114,13 @@ const lines: Readonly<Record<string, PowerLine>> = {
   ],
   rookidee: [
     ["Peck", "edge"],
-    ["Roost", "heal", { amount: 2 }],
-    ["Iron Defense", "spare", { uses: 2 }],
+    ["Roost", "heal", { amount: 1 }],
+    ["Iron Defense", "spare"],
   ],
   caterpie: [
     ["String Shot", "flee"],
     ["Harden", "spare"],
-    ["Quiver Dance", "edge", { uses: 2 }],
+    ["Quiver Dance", "edge"],
   ],
   larvitar: [
     ["Bite", "edge"],
@@ -151,9 +155,10 @@ const lines: Readonly<Record<string, PowerLine>> = {
     ["Splash", "flee"],
     ["Hyper Beam", "win", { cost: 2 }],
   ],
+  // Togepi does nothing, happily: its Metronome never does much.
   togepi: [
+    ["Metronome", "flee"],
     ["Wish", "heal", { amount: 1 }],
-    ["Wish", "heal", { amount: 2 }],
   ],
   sunkern: [
     ["Absorb", "heal", { amount: 1 }],

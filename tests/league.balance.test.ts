@@ -162,11 +162,18 @@ const starterIds = (
     cardIds: string[];
   }
 ).cardIds.map((id) => id.replace("pokemon.starter-", ""));
+// A finished run is kept without its deck snapshot (`cards`, a clone of the
+// 120 Pokémon deck cards, which a League run never deals): since the boss
+// phases and moves (2026-10-25), 4,200 whole runs passed the default heap.
+// The first 50 are kept whole, for the save round trip below.
+let kept = 0;
+const slim = (s: SessionState): SessionState =>
+  kept++ < 50 ? s : { ...s, cards: [] };
 const byStarter = starterIds.map(
   (id) =>
     [
       id,
-      Array.from({ length: PER_STARTER }, (_, i) => playRun(i + 1, id)),
+      Array.from({ length: PER_STARTER }, (_, i) => slim(playRun(i + 1, id))),
     ] as const,
 );
 const runs = byStarter.flatMap(([, group]) => group);
@@ -247,7 +254,10 @@ it("no starter and no hideout makes the League a walkover or hopeless", () => {
 
 it("Bidoof is the worst starter, and still wins now and then", () => {
   const bidoof = rate(
-    Array.from({ length: 600 }, (_, i) => playRun(i + 1, "bidoof")),
+    Array.from({ length: 600 }, (_, i) => ({
+      ...playRun(i + 1, "bidoof"),
+      cards: [],
+    })),
   );
   const worst = Math.min(
     ...starterRates.filter(([n]) => n !== "bidoof").map(([, r]) => r),

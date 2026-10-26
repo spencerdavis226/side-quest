@@ -145,7 +145,7 @@ export function Play({
     by: "won" | "power";
   } | null>(null);
   const ask = asking?.at === session.discarded && !motion ? asking.by : null;
-  const usePowerPlaque = () =>
+  const onPowerPlaque = () =>
     powerSpoils(session)
       ? setAsking({ at: session.discarded, by: "power" })
       : onPower();
@@ -416,7 +416,7 @@ export function Play({
               {powerable && (
                 <PowerPlaque
                   session={session}
-                  onUse={usePowerPlaque}
+                  onUse={onPowerPlaque}
                   theme={crawl}
                 />
               )}
@@ -497,7 +497,7 @@ export function Play({
                 {powerable && (
                   <PowerPlaque
                     session={session}
-                    onUse={usePowerPlaque}
+                    onUse={onPowerPlaque}
                     theme={crawl}
                   />
                 )}

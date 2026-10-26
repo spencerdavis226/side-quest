@@ -342,7 +342,7 @@ export function CrawlStrip({
     // A curse and a jinx together leave no room for their names: they keep
     // their marks, and the effects dialog names them.
     <div
-      className={`hud-strip${[party.curse, jinx, rule].filter(Boolean).length > 1 ? " tight" : ""}`}
+      className={`hud-strip${party.curse && jinx ? " tight" : ""}`}
       role="group"
       aria-label={words.party}
     >
@@ -437,10 +437,8 @@ export function CrawlStrip({
           "tag-rule",
           `${words.rule.name}: ${rule.name}`,
           "rule",
-          <>
-            <CrawlIcon name="rule" theme={theme} />
-            <span className="chip-name">{rule.name}</span>
-          </>,
+          // Its mark only: the strip is crowded, and the dialog names it.
+          <CrawlIcon name="rule" theme={theme} />,
         )}
       {jinx &&
         words.jinx &&
@@ -1101,9 +1099,7 @@ export function CrawlRecord({
         />
       )}
       {(show("party") || part === "power") && !ending && power && (
-        <p
-          className={`crawl-cup crawl-power${powersLeft(quest) ? "" : " spent"}`}
-        >
+        <p className={`crawl-power${powersLeft(quest) ? "" : " spent"}`}>
           <CrawlIcon name="power" theme={theme} />
           <strong>
             {words.power.name}: {power.name}
@@ -1118,7 +1114,7 @@ export function CrawlRecord({
           </span>
         </p>
       )}
-      {(show("party") || part === "rule") && !ending && rule && (
+      {part === "rule" && rule && (
         <p className="crawl-curse crawl-rule">
           <CrawlIcon name="rule" theme={theme} />
           <strong>

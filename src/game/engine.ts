@@ -1180,7 +1180,7 @@ export function powerSpoils(s: SessionState): boolean {
   );
 }
 /** Use the party's power on the card face up. */
-export function usePower(
+export function spendPower(
   s: SessionState,
   random: Random = Math.random,
   /** A `win` that fells a boss with spoils: the trinket taken. */
@@ -1260,9 +1260,12 @@ function gainBoon(
   const max = Math.max(1, base.max + hearts);
   // A trinket that only brings items puts them in the satchel and is not
   // worn.
-  const next = isLasting(boon)
-    ? { ...base, max, boons: [...(base.boons ?? []), key] }
-    : { ...base, max };
+  // Tonight's omen is kept even when it is only a table rule, so the party
+  // dialog can show it.
+  const next =
+    isLasting(boon) || card.encounter === "omen"
+      ? { ...base, max, boons: [...(base.boons ?? []), key] }
+      : { ...base, max };
   const size = satchelSize({ ...quest, party: next });
   return {
     ...next,

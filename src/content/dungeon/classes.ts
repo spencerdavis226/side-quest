@@ -175,7 +175,7 @@ export const classes: CardDefinition[] = [
       {
         title: "Crusader",
         tagline: "Bosses hurt less",
-        omen: { hearts: 1, hurt: { boss: -1 }, loot: ["shield"] },
+        omen: { hurt: { boss: -1 }, loot: ["shield"] },
       },
       {
         title: "Oathbreaker",

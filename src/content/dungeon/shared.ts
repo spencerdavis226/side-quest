@@ -49,7 +49,7 @@ export const SAVE = [9, 11, 13] as const;
 /** Hearts a lost room fight costs. */
 export const HURT = [1, 2, 3] as const;
 /** A boss's target and the hearts a missed swing costs. */
-export const BOSS_NEED = [9, 11, 12] as const;
+export const BOSS_NEED = [9, 12, 13] as const;
 export const BOSS_HURT = [2, 2, 2] as const;
 /** Swings a floor boss takes: two on the first floors, three at Last Call
  * (2026-10-25: two beats at least, so every boss has a second act). */
