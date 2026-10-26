@@ -515,7 +515,7 @@ export const starters: CardDefinition[] = [
   starter(
     "drowzee",
     "Drowzee",
-    "Drowzee chose you, yawning. Now you're yawning.",
+    "Drowzee chose you, yawning.",
     { bossHits: 1, heal: 2 },
     [{ title: "Hypno", omen: { hearts: 1, heal: 2 } }],
   ),

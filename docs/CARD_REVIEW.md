@@ -876,7 +876,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Magikarp | `pokemon.starter-magikarp` | rule | Magikarp chose you. It used Splash. Nothing happened. Max HP 13. −1 to every battle d20. | Power: Splash (Escape a wild battle) · Gyarados's power: Hyper Beam (Win a battle for 1 HP) |
 | ☐ | Togepi | `pokemon.starter-togepi` | rule | Togepi chose you. It does nothing, but it's very happy to be here. | Power: Metronome (Escape a wild battle) · Togetic's power: Wish (Get 1 HP back) |
 | ☐ | Sunkern | `pokemon.starter-sunkern` | rule | Sunkern chose you. It is a seed with a face. Max HP 18. | Power: Absorb (Get 1 HP back) · Sunflora's power: Solar Beam (A win counts double) |
-| ☐ | Drowzee | `pokemon.starter-drowzee` | rule | Drowzee chose you, yawning. Now you're yawning. Every heal heals 2 more. Bosses take 1 more hit. | Power: Hypnosis (Escape a wild battle) · Hypno's power: Dream Eater (Get 2 HP back) |
+| ☐ | Drowzee | `pokemon.starter-drowzee` | rule | Drowzee chose you, yawning. Every heal heals 2 more. Bosses take 1 more hit. | Power: Hypnosis (Escape a wild battle) · Hypno's power: Dream Eater (Get 2 HP back) |
 | ☐ | Zubat | `pokemon.starter-zubat` | rule | Zubat chose you. It flew into a wall doing it. Max HP 18. Natural 1 on a 1 or 2. | Power: Leech Life (Get 1 HP back) · Golbat's power: Wing Attack (A win counts double) |
 
 ## Most Likely To (`likely`)

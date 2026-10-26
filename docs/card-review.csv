@@ -851,7 +851,7 @@ pack,id,title,category,rules,dice,review
 "pokemon","pokemon.starter-magikarp","Magikarp","rule","Magikarp chose you. It used Splash. Nothing happened. Max HP 13. −1 to every battle d20.","Power: Splash (Escape a wild battle) · Gyarados's power: Hyper Beam (Win a battle for 1 HP)",""
 "pokemon","pokemon.starter-togepi","Togepi","rule","Togepi chose you. It does nothing, but it's very happy to be here.","Power: Metronome (Escape a wild battle) · Togetic's power: Wish (Get 1 HP back)",""
 "pokemon","pokemon.starter-sunkern","Sunkern","rule","Sunkern chose you. It is a seed with a face. Max HP 18.","Power: Absorb (Get 1 HP back) · Sunflora's power: Solar Beam (A win counts double)",""
-"pokemon","pokemon.starter-drowzee","Drowzee","rule","Drowzee chose you, yawning. Now you're yawning. Every heal heals 2 more. Bosses take 1 more hit.","Power: Hypnosis (Escape a wild battle) · Hypno's power: Dream Eater (Get 2 HP back)",""
+"pokemon","pokemon.starter-drowzee","Drowzee","rule","Drowzee chose you, yawning. Every heal heals 2 more. Bosses take 1 more hit.","Power: Hypnosis (Escape a wild battle) · Hypno's power: Dream Eater (Get 2 HP back)",""
 "pokemon","pokemon.starter-zubat","Zubat","rule","Zubat chose you. It flew into a wall doing it. Max HP 18. Natural 1 on a 1 or 2.","Power: Leech Life (Get 1 HP back) · Golbat's power: Wing Attack (A win counts double)",""
 "likely","likely.001","Hello, It's Me Again","group","Most likely to text their ex tonight? Point on three. Most votes drinks 2.","",""
 "likely","likely.002","Out Cold by Ten","group","Most likely to fall asleep first tonight? Point on three. Most votes drinks 2.","",""
