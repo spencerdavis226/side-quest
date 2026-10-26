@@ -7,6 +7,7 @@ import {
   settleBattle,
   skipRoll,
   quaff,
+  usePower,
   spendLoot,
   awaitingOffer,
   awaitingPress,
@@ -152,10 +153,10 @@ export class PresentationController {
     this.effect("discard");
   }
   /** Settle a battle without dice: the table won it or lost it. */
-  settle(won: boolean) {
+  settle(won: boolean, spoil?: number) {
     const { session, motion } = this.state;
     if (!session || motion || !awaitingVerdict(session)) return;
-    const next = settleBattle(session, won, this.random);
+    const next = settleBattle(session, won, this.random, spoil);
     this.persist(next);
     this.transition(next, "discard", session);
     this.effect("discard");
@@ -236,6 +237,22 @@ export class PresentationController {
     this.persist(next);
     this.transition(next, null);
     this.effect("press");
+  }
+  /** The class's or starter's signature power (2026-10-25), on the card in
+   * play: a win or an escape puts it aside; anything else stays. */
+  power(spoil?: number) {
+    const { session, motion } = this.state;
+    if (!session || motion) return;
+    const next = usePower(session, this.random, spoil);
+    if (next === session) return;
+    this.persist(next);
+    if (next.discarded !== session.discarded) {
+      this.transition(next, "discard", session);
+      this.effect("discard");
+    } else {
+      this.transition(next, null);
+      this.effect("press");
+    }
   }
   revealRoll() {
     const { session, motion } = this.state;

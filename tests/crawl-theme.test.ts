@@ -83,7 +83,8 @@ describe("how to play", () => {
     const quest = packs.find((p) => p.id === "dungeon")!.quest!;
     const rows = crawlTheme("dungeon").guide.rows({
       hearts: quest.party!.hearts,
-      quaff: quest.party!.quaff,
+      // A save from before the Quaff retired still shows its row.
+      quaff: QUAFF_DRINKS,
       cup: !!quest.party!.cup,
     });
     const line = (title: string) => rows.find((r) => r.title === title)!.line;
@@ -108,6 +109,8 @@ describe("how to play", () => {
       "Types",
       "Gyms and badges",
       "Evolution",
+      "Signature moves",
+      "Route rules",
       "Bag",
       "Statuses and jinxes",
     ]);

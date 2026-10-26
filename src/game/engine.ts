@@ -1463,7 +1463,6 @@ function discard(
         next = { ...next, curse: null };
         delete next.jinx;
         delete next.quaffed;
-        delete next.powers;
       }
       next = gainBoon(next, card, q, spoil);
       // A badge restocks the starter's item, room permitting; in a crawl
@@ -1472,6 +1471,10 @@ function discard(
       const badges = q.stages.some((st) =>
         st.cards.some((c) => c.quest === q.packId),
       );
+      // The signature power comes back with the same boss: a gym in the
+      // League, any boss in Pub Crawl (2026-10-25).
+      if (badges ? card.quest === q.packId : isBossCard(card))
+        delete next.powers;
       if (
         restock &&
         (badges ? card.quest === q.packId : isBossCard(card)) &&

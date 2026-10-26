@@ -12,6 +12,8 @@ import { ids, TEAM_HP } from "./league/journey";
 import { rivals, routeCards, routes, victory } from "./league/routes";
 import { starters } from "./league/starters";
 import { applyTypes } from "./league/types";
+import { applyStarterPowers } from "./league/powers";
+import { applyLeaguePhases } from "./league/phases";
 
 // Pokémon night: every playable moment from the three supplied board sheets
 // (Kanto, Johto, Hoenn), morphed from board spaces into shared-deck cards.
@@ -904,6 +906,10 @@ export const pokemonCards: CardDefinition[] = [
   ...hideoutCards,
 ];
 applyTypes(pokemonCards);
+// Signature moves (2026-10-25): one a starter, and one a form.
+applyStarterPowers(pokemonCards);
+// Boss phases (2026-10-25): the catch, the Champion's switch and ace.
+applyLeaguePhases(pokemonCards);
 
 /** Team HP at the start of a run, before the starter. */
 

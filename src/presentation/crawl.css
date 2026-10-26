@@ -424,6 +424,20 @@
 .tag-quaff.spent {
   color: #8f7c5c;
 }
+.tag-power.ready {
+  border-color: #8fd8ff;
+  background: linear-gradient(180deg, #8fd8ff, #2f7fc8);
+  color: #06182b;
+}
+.tag-power.spent {
+  color: #6e8296;
+}
+/* A floor's or route's rule: parchment, like a notice on the wall. */
+.tag-rule {
+  border-color: #c9a86a;
+  background: linear-gradient(180deg, #5a4526, #2a1e0e);
+  color: #f6e2b4;
+}
 .tag-cup {
   border-color: #b8833f;
   color: #f6d9a3;
@@ -505,9 +519,24 @@
     font-size: 18px;
   }
 }
-/* The party dialog's effects: the Quaff, spent or ready. */
-.crawl-quaff.spent {
+/* The party dialog's effects: the Quaff and the power, spent or ready. */
+.crawl-quaff.spent,
+.crawl-power.spent {
   opacity: 0.7;
+}
+.crawl-power {
+  border-color: #4f9ad8;
+  background: rgb(12 40 70 / 0.5);
+}
+.crawl-power .crawl-icon {
+  color: #8fd8ff;
+}
+.crawl-rule {
+  border-color: #c9a86a;
+  background: rgb(70 50 20 / 0.5);
+}
+.crawl-rule .crawl-icon {
+  color: #f6e2b4;
 }
 /* The line under the League's badges: what they are for. */
 .crawl-note {
@@ -741,7 +770,7 @@
    width, so a line under them wider than both no longer stretches them
    apart (owner, 2026-10-18: the mark drifted left and the name wrapped). */
 .card-choice:not(.plaques-3, .plaques-4)
-  :is(.offer-plaque, .spoils-plaque, .quaff-plaque) {
+  :is(.offer-plaque, .spoils-plaque, .quaff-plaque, .power-plaque) {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto auto minmax(0, 1fr);
   justify-content: center;
@@ -761,7 +790,7 @@
   text-align: left;
 }
 .card-choice:not(.plaques-3, .plaques-4)
-  :is(.offer-goods, .quaff-plaque > .crawl-icon) {
+  :is(.offer-goods, .quaff-plaque > .crawl-icon, .power-plaque > .crawl-icon) {
   grid-row: 1;
   grid-column: 2;
 }
@@ -769,6 +798,7 @@
   :is(
     .offer-goods > .crawl-icon,
     .quaff-plaque > .crawl-icon,
+    .power-plaque > .crawl-icon,
     .loot-plaque > .crawl-icon
   ) {
   width: 1.05em;
@@ -1612,6 +1642,12 @@
 .loot-plaque.quaff-plaque {
   color: #2b1806;
   background: linear-gradient(145deg, #f0c56a, #b9782c);
+}
+/* A signature power (2026-10-25): electric blue, the one plaque that is
+   the party's own. */
+.loot-plaque.power-plaque {
+  color: #06182b;
+  background: linear-gradient(145deg, #8fd8ff, #2f7fc8);
 }
 
 /* The medallion: the adventurer's helm, a landing's fire, the rival's

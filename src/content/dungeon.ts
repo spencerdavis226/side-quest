@@ -8,6 +8,8 @@ import { classes } from "./dungeon/classes";
 import { freezer } from "./dungeon/freezer";
 import { kitchen } from "./dungeon/kitchen";
 import { applyKnacks } from "./dungeon/knacks";
+import { applyClassPowers } from "./dungeon/powers";
+import { applyPhases } from "./dungeon/phases";
 import { applyKits } from "./dungeon/kits";
 import {
   closingCards,
@@ -19,7 +21,7 @@ import { lowerLandings, upperLandings } from "./dungeon/landings";
 import { omens } from "./dungeon/omens";
 import { rooftop } from "./dungeon/rooftop";
 import { sewers } from "./dungeon/sewers";
-import { PARTY_HEARTS, QUAFF_DRINKS, type FloorCards } from "./dungeon/shared";
+import { PARTY_HEARTS, type FloorCards } from "./dungeon/shared";
 import { taproom } from "./dungeon/taproom";
 import { wine } from "./dungeon/wine";
 
@@ -77,7 +79,9 @@ const deck = [
 
 // Every d20 here carries the crawls' natural 20 and natural 1
 // (`naturals.ts`), in Pub Crawl and in the plain modes alike.
-export const dungeonCards: CardDefinition[] = [
+// Boss phases (2026-10-25) go on before the naturals pass, so their d20s
+// double on a 20 and a 1 too.
+export const dungeonCards: CardDefinition[] = applyPhases([
   ...deck,
   ...Object.values(floors).flatMap((f) => f.finds),
   ...omens,
@@ -88,10 +92,12 @@ export const dungeonCards: CardDefinition[] = [
   ...stairsCards,
   ...closingCards,
   ...hiddenRoomCards,
-].map(withNaturals);
+]).map(withNaturals);
 // Knacks (2026-10-25): each class's two, and the rooms that call for one.
 applyKnacks(dungeonCards);
 applyKits(dungeonCards);
+// Signature powers (2026-10-25): one a class, and one a level.
+applyClassPowers(dungeonCards);
 
 const ids = (cards: CardDefinition[]) => cards.map((c) => c.id);
 
@@ -127,7 +133,9 @@ export const dungeonPack: PackDefinition = {
     goal: 0,
     length: 1,
     cardIds: [],
-    party: { hearts: PARTY_HEARTS, quaff: QUAFF_DRINKS, cup: true },
+    // The Quaff retired 2026-10-25: its once-a-floor reroll became the
+    // classes' signature powers. Saves that hold one keep it.
+    party: { hearts: PARTY_HEARTS, cup: true },
     // The adventurer and tonight's omen, the queue, then one of three floors
     // at each depth (eight rooms, and a boss on the first two) with a
     // landing after each boss, then closing time and Last Call.

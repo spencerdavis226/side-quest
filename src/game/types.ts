@@ -487,7 +487,8 @@ export interface PartyState {
    * the fight is rolled with advantage. Cleared when the card is put
    * aside, so a boss dealt again needs another orb. */
   tera?: string;
-  /** Signature power uses spent since the last boss fell (2026-10-25);
+  /** Signature power uses spent since the last boss fell (a League gym)
+   * (2026-10-25);
    * absent is 0. */
   powers?: number;
   /** The card in play a power is armed on (`spare`, `edge`, `double`);

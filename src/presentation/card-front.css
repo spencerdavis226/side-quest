@@ -736,3 +736,10 @@
   filter: grayscale(1) brightness(0.8);
   transition: filter 400ms ease-out;
 }
+
+/* A class's or starter's signature power (2026-10-25): its rules, then the
+   power under a rule, like a strike's line. */
+.card-power .power-line {
+  padding-top: clamp(8px, 2.6cqw, max(12px, 2.2cqw));
+  border-top: 1.5px solid rgb(55 36 18 / 0.35);
+}

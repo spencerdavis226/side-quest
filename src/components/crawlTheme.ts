@@ -31,7 +31,10 @@ export type CrawlIconName =
   | `knack-${Knack}`
   // Pub Crawl's equipment slots (2026-10-25); a trinket keeps its mark.
   | "weapon"
-  | "armor";
+  | "armor"
+  // A signature power, and a floor's or route's rule (2026-10-25).
+  | "power"
+  | "rule";
 
 /** One row of the how-to-play guide: a mark, a name, one line. */
 export interface GuideRow {
@@ -135,6 +138,11 @@ export interface CrawlTheme {
     };
     /** A floor's banner names the boss waiting at the bottom. */
     wanted?: string;
+    /** The class's or starter's signature power (2026-10-25): what it is
+     * called, and when it comes back. */
+    power: { name: string; lasts: string };
+    /** A floor's or route's rule (2026-10-25). */
+    rule: { name: string; lasts: string };
   };
   /** Cards that ask the table to name the badges from memory: while one is
    * face up, the badge case stays shut (owner, 2026-10-24). `why` ends the
@@ -264,6 +272,8 @@ const dungeon: CrawlTheme = {
       },
     },
     wanted: "Wanted",
+    power: { name: "Power", lasts: "back when the floor's boss falls" },
+    rule: { name: "Floor rule", lasts: "until the floor's boss falls" },
   },
   legend: [
     "Hearts the party loses if the fight is lost",
@@ -314,6 +324,16 @@ const dungeon: CrawlTheme = {
         icon: "satchel",
         title: "Satchel and gear",
         line: "Items show up as buttons on a card when they help. Bosses and elites drop gear: one weapon, one armor, one trinket, and a new piece replaces the old. Tap the hearts to see both.",
+      },
+      {
+        icon: "power",
+        title: "Powers",
+        line: "Your adventurer has one, a button on the card when it helps: a reroll, a win, a heal. It comes back when a boss falls.",
+      },
+      {
+        icon: "rule",
+        title: "Floor rules",
+        line: "Every floor has one, on its banner and the strip. It holds until the floor's boss falls.",
       },
       ...(quaff
         ? [
@@ -446,6 +466,8 @@ const league: CrawlTheme = {
       lifted: "The jinx lifts",
       lasts: "until the next boss falls",
     },
+    power: { name: "Move", lasts: "back when the next gym falls" },
+    rule: { name: "Route rule", lasts: "until the route's gym falls" },
   },
   lengthOf: (stages) => stages.filter((st) => /^Gym \d/.test(st.label)).length,
   badgeLock: {
@@ -492,6 +514,16 @@ const league: CrawlTheme = {
         icon: "adventurer",
         title: "Evolution",
         line: "Evolve your starter for drinks, or press B for 1 HP. Each form is stronger.",
+      },
+      {
+        icon: "power",
+        title: "Signature moves",
+        line: "Your starter has one, a button on the card when it helps: a reroll, a win, a heal. Evolving can teach a better one. It comes back when a gym falls.",
+      },
+      {
+        icon: "rule",
+        title: "Route rules",
+        line: "Every route has one, on its banner and the strip. It holds until the route's gym falls.",
       },
       {
         icon: "satchel",

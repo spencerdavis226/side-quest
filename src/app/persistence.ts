@@ -345,8 +345,11 @@ export function parseSession(raw: string): SessionState {
     (s.config.limit !== null && s.discarded >= s.config.limit)
   )
     throw Error("Invalid count");
-  const current = currentCard(s);
   const previous = previousCard(s);
+  // A finished game ends on the card just put aside: a phased boss's last
+  // beat, not the opener its reset hits would read.
+  const current =
+    s.phase === "complete" && previous ? previous : currentCard(s);
   if (q?.party && q.party.hits >= (hitsNeeded(q, current) || 1))
     throw Error("Invalid party");
   validateRoll(s.roll, current.dice);

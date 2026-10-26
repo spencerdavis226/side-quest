@@ -51,6 +51,9 @@ export const HURT = [1, 2, 3] as const;
 /** A boss's target and the hearts a missed swing costs. */
 export const BOSS_NEED = [9, 11, 12] as const;
 export const BOSS_HURT = [2, 2, 2] as const;
+/** Swings a floor boss takes: two on the first floors, three at Last Call
+ * (2026-10-25: two beats at least, so every boss has a second act). */
+export const BOSS_HITS = [2, 2, 3] as const;
 /** An elite: harder than the floor, a heart dearer, and it always drops a
  * trinket. */
 export const ELITE_NEED = [10, 12, 14] as const;
@@ -407,7 +410,7 @@ export const boss = (
   ribbonTone: "crimson",
   encounter: "boss",
   battle: true,
-  hits: tier(floor) + 1,
+  hits: BOSS_HITS[tier(floor)],
   damage: BOSS_HURT[tier(floor)],
   ...(more.curse ? { curse: more.curse } : {}),
   ...(more.jinx ? { jinx: more.jinx } : {}),

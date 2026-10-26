@@ -20,6 +20,9 @@ import {
   awaitingVerdict,
   canQuaff,
   canTakeOffer,
+  canUsePower,
+  powerSpoils,
+  spoilsOnWin,
   currentCard,
   cardMatchup,
   verdictShift,
@@ -39,6 +42,7 @@ import {
 import {
   LootPlaque,
   OfferPlaque,
+  PowerPlaque,
   PressPlaques,
   QuaffPlaque,
   SpoilsButton,
@@ -78,6 +82,7 @@ export function Play({
   onSpend = () => {},
   onOffer = () => {},
   onQuaff = () => {},
+  onPower = () => {},
   onSpoils = () => {},
   onKeepGear = () => {},
   onCashOut = () => {},
@@ -93,10 +98,11 @@ export function Play({
   finishingRoll?: boolean;
   onTap: () => void;
   onChoose: (option: "skip" | "roll") => void;
-  onSettle: (won: boolean) => void;
+  onSettle: (won: boolean, spoil?: number) => void;
   onSpend?: (item: Loot) => void;
   onOffer?: (index: number, branch?: number) => void;
   onQuaff?: () => void;
+  onPower?: (spoil?: number) => void;
   onSpoils?: (index: number) => void;
   onKeepGear?: () => void;
   onCashOut?: () => void;
@@ -129,7 +135,20 @@ export function Play({
   const press = !motion && awaitingPress(session);
   // Pub Crawl's Quaff: drinks for another go at a lost roll.
   const quaffable = !motion && canQuaff(session);
-  const extras = items.length + (quaffable ? 1 : 0);
+  // The class's or starter's signature power (2026-10-25).
+  const powerable = !motion && canUsePower(session);
+  const extras = items.length + (quaffable ? 1 : 0) + (powerable ? 1 : 0);
+  // A win that fells a boss with spoils asks for the trinket first: Won on
+  // a plaque beat, or a power that wins it outright.
+  const [asking, setAsking] = useState<{
+    at: number;
+    by: "won" | "power";
+  } | null>(null);
+  const ask = asking?.at === session.discarded && !motion ? asking.by : null;
+  const usePowerPlaque = () =>
+    powerSpoils(session)
+      ? setAsking({ at: session.discarded, by: "power" })
+      : onPower();
   const crawl = crawlTheme(session.quest?.packId);
   // A branching starter's evolution splits into one plaque per form; a line
   // names the form it brings next ("Ivysaur · drink 3"). A forked
@@ -366,13 +385,17 @@ export function Play({
           {verdict && (
             <div
               ref={choiceRef}
-              className={`card-choice verdict plaques-${2 + items.length}`}
+              className={`card-choice verdict plaques-${2 + items.length + (powerable ? 1 : 0)}`}
               role="group"
               aria-label="Did you win?"
             >
               <button
                 className="card-choice-option won"
-                onClick={() => onSettle(true)}
+                onClick={() =>
+                  spoilsOnWin(session)
+                    ? setAsking({ at: session.discarded, by: "won" })
+                    : onSettle(true)
+                }
               >
                 Won
               </button>
@@ -390,6 +413,13 @@ export function Play({
                   theme={crawl}
                 />
               ))}
+              {powerable && (
+                <PowerPlaque
+                  session={session}
+                  onUse={usePowerPlaque}
+                  theme={crawl}
+                />
+              )}
             </div>
           )}
           {offers && (
@@ -464,6 +494,13 @@ export function Play({
                     theme={crawl}
                   />
                 )}
+                {powerable && (
+                  <PowerPlaque
+                    session={session}
+                    onUse={usePowerPlaque}
+                    theme={crawl}
+                  />
+                )}
               </div>
             )}
           {choice && (
@@ -519,6 +556,24 @@ export function Play({
             />
           </Suspense>
         )}
+      {ask && card.spoils && (
+        <SpoilsSheet
+          session={session}
+          spoils={card.spoils}
+          theme={crawl}
+          onTake={(i) => {
+            setAsking(null);
+            if (ask === "won") onSettle(true, i);
+            else onPower(i);
+          }}
+          onKeep={() => {
+            setAsking(null);
+            if (ask === "won") onSettle(true);
+            else onPower();
+          }}
+          onClose={() => setAsking(null)}
+        />
+      )}
       {spoils && sheet && (
         <SpoilsSheet
           session={session}
