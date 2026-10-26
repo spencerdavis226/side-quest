@@ -424,20 +424,6 @@
 .tag-quaff.spent {
   color: #8f7c5c;
 }
-.tag-power.ready {
-  border-color: #8fd8ff;
-  background: linear-gradient(180deg, #8fd8ff, #2f7fc8);
-  color: #06182b;
-}
-.tag-power.spent {
-  color: #6e8296;
-}
-/* A floor's or route's rule: parchment, like a notice on the wall. */
-.tag-rule {
-  border-color: #c9a86a;
-  background: linear-gradient(180deg, #5a4526, #2a1e0e);
-  color: #f6e2b4;
-}
 .tag-cup {
   border-color: #b8833f;
   color: #f6d9a3;

@@ -344,9 +344,13 @@ export function CardFace({
           ) : shown === "end" && card.timer ? (
             <p className="resolved-instruction timer-end">{card.timer.end}</p>
           ) : strikeLine ? (
-            // A strike: the setup, then the line its type matchup picked.
-            <div className="card-strike">
-              <p>{card.rules}</p>
+            // A strike: the line its type matchup picked. A League strike is
+            // that line alone (its `rules` is the even line); one that still
+            // has a separate setup (Pub Crawl's) prints it above the line.
+            <div
+              className={`card-strike${card.rules === card.strike!.even ? " single" : ""}`}
+            >
+              {card.rules !== card.strike!.even && <p>{card.rules}</p>}
               <p
                 className={`resolved-instruction strike-line strike-${strikeEdge}`}
               >

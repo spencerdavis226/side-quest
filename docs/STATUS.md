@@ -2,6 +2,14 @@
 
 Updated 2026-10-26. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## In progress 2026-10-26: Pokémon UI/UX declutter (branch `claude/pokemon-adventure-ui-ux-8ooph8`, not merged, not deployed)
+
+Owner: the League screen is too cluttered, strikes read as two sections (a dice-card setup with a pasted outcome), and "do it the hard way". Keep items (they add variety); cutting systems waits for a playtest.
+
+**Done:** (1) The strip under the header carries only what the table acts on: the type edge or knack (when a fight has one), the bag, the badges, and a curse, jinx, Cup or old Quaff when present. The signature power chip and the floor/route rule chip are gone: the power's plaque is on the card whenever it can be used, and both are listed in the party dialog (the hearts stud). Shared with Pub Crawl. A baseline strip is 3 chips (5 before). (2) League strikes are one line: `strike()` and `gruntStrike()` take no `rules`; each of the three lines (`even`, `advantage`, `disadvantage`, up to 100 characters) is the whole card, `rules` holds the `even` line, and the face prints only the matchup's line (`.card-strike.single`). All 63 League strikes (29 routes, 16 wilds, 18 hideout grunts) were rewritten by hand, keeping each line's Drink/Give number. Pub Crawl's 54 strikes still print a setup above the line (the face tells them apart by `rules !== strike.even`); rewriting them is the same job. Old saves load: their snapshots keep the old setup and print it above the line, as before.
+
+**Not done:** the matchup chip still shows on cards with no type, the card face's other two-part layouts (dice cards that carry a power line), Pub Crawl strikes, and a physical-device look. The 63 new lines are the agent's copy and unread by the owner.
+
 ## Shipped 2026-10-26: whole-game fun and variety overhaul (#48, squash `70f54f9`, deployed by run #208; owner: "do the comprehensive big change ... done right. Proceed with best recommendations")
 
 Merged and deployed on the owner's "Merge and deploy". Run #208 went green on its second attempt: WebKit shard 2/3 hung in `playwright install-deps` before any test ran (the job has no timeout), so it was cancelled and re-run once; every other job passed on the first attempt. Not yet played on a physical device or at a table (`docs/DEVICE_CHECKLIST.md`, `docs/PLAYTEST.md`).

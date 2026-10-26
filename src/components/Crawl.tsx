@@ -281,11 +281,13 @@ export type StripDialog =
   | "power"
   | "rule";
 
-/** The strip under the top row in a crawl (2026-10-17): everything the party
- * carries, each a chip that reads at a glance and opens its own dialog. The
- * satchel's slots show their items; the League's badges fill a row; the
- * Quaff lights while it can be drunk; the Cup counts its splashes; a curse
- * or a jinx names itself. */
+/** The strip under the top row in a crawl (2026-10-17): what the table acts
+ * on, each a chip that opens its own dialog. The satchel's slots show their
+ * items; the League's badges fill a row; the Quaff lights while it can be
+ * drunk; the Cup counts its splashes; a curse or a jinx names itself.
+ * Reference only (2026-10-26, owner: too cluttered): the signature power
+ * (its plaque is on the card whenever it can be used) and the floor's or
+ * route's rule (its banner names it) live in the party dialog. */
 export function CrawlStrip({
   session,
   disabled,
@@ -302,9 +304,6 @@ export function CrawlStrip({
   const { words } = theme;
   const jinx = party.jinx ? finaleCard(quest, party.jinx)?.jinx : undefined;
   const quaffReady = party.quaff !== undefined && !party.quaffed;
-  const power = partyPower(quest);
-  const left = powersLeft(quest);
-  const rule = stageRule(quest);
   const locked = badgesLocked(session, theme);
   // The League's type edge on the battle face up (2026-10-25): a mark
   // only; the dialog says what it does.
@@ -366,16 +365,6 @@ export function CrawlStrip({
             <CrawlIcon name={`knack-${knack}`} theme={theme} />
           </>,
         )}
-      {power &&
-        chip(
-          `tag-power${left ? " ready" : " spent"}`,
-          `${words.power.name}: ${power.name}, ${left ? `ready${left > 1 ? `, ${left} left` : ""}` : words.power.lasts}`,
-          "power",
-          <>
-            <CrawlIcon name="power" theme={theme} />
-            {left > 1 && <b>{left}</b>}
-          </>,
-        )}
       {chip(
         "tag-satchel",
         `${words.Satchel}: ${party.loot.length ? party.loot.map((l) => theme.loot[l].name).join(", ") : "empty"}`,
@@ -433,14 +422,6 @@ export function CrawlStrip({
             <CrawlIcon name={party.curse} theme={theme} />
             <span className="chip-name">{theme.curses[party.curse].name}</span>
           </>,
-        )}
-      {rule &&
-        chip(
-          "tag-rule",
-          `${words.rule.name}: ${rule.name}`,
-          "rule",
-          // Its mark only: the strip is crowded, and the dialog names it.
-          <CrawlIcon name="rule" theme={theme} />,
         )}
       {jinx &&
         words.jinx &&
@@ -1207,7 +1188,7 @@ export function CrawlRecord({
           ))}
         </ul>
       )}
-      {part === "rule" && rule && (
+      {(show("party") || part === "rule") && !ending && rule && (
         <p className="crawl-curse crawl-rule">
           <CrawlIcon name="rule" theme={theme} />
           <strong>

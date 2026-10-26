@@ -235,9 +235,9 @@ for (const width of [320, 375])
         },
       });
       const chips = page.locator(".hud-strip .hud-chip");
-      await expect(chips).toHaveCount(curse ? 6 : 5);
-      await expect(page.locator(".tag-power")).toHaveCount(1);
-      await expect(page.locator(".tag-rule")).toHaveCount(1);
+      await expect(chips).toHaveCount(curse ? 4 : 3);
+      // The power and the floor's rule live in the party dialog (2026-10-26).
+      await expect(page.locator(".tag-power, .tag-rule")).toHaveCount(0);
       for (const box of await chips.evaluateAll((els) =>
         els.map((e) => e.getBoundingClientRect().toJSON()),
       )) {
@@ -769,13 +769,12 @@ test("the party dialog lays out the run: adventurer, boons, jinx and the Cup", a
     },
   });
   // The strip under the top row carries the party's things at a glance:
-  // the satchel, the Rogue's power, the Cup, a curse (an old save's), the
-  // jinx and the floor's rule.
-  await expect(page.locator(".hud-strip .hud-chip")).toHaveCount(6);
+  // the satchel, the Cup, a curse (an old save's) and the jinx. The power
+  // and the floor's rule moved to the party dialog (2026-10-26).
+  await expect(page.locator(".hud-strip .hud-chip")).toHaveCount(4);
   await expect(page.locator(".tag-cup")).toHaveAccessibleName(
     "The Cup: 4 splashes",
   );
-  await expect(page.locator(".tag-power")).toHaveClass(/ready/);
   await page.screenshot({ path: info.outputPath("strip.png") });
   // The hearts open the party: hearts, adventurer, boons, and nothing else.
   await meter(page).click();
@@ -784,8 +783,11 @@ test("the party dialog lays out the run: adventurer, boons, jinx and the Cup", a
   await expect(dialog.locator(".crawl-boons li")).toHaveCount(1);
   // The adventurer's power sits with it (2026-10-25).
   await expect(dialog.locator(".crawl-power")).toContainText("Sneak Attack");
+  await expect(dialog.locator(".crawl-power")).toContainText("Ready");
+  // So does the floor's rule.
+  await expect(dialog.locator(".crawl-rule")).toContainText("Echoes");
   await expect(
-    dialog.locator(".satchel, .crawl-curse, .crawl-cup, .crawl-floors"),
+    dialog.locator(".satchel, .crawl-cup, .crawl-floors"),
   ).toHaveCount(0);
   await page.screenshot({ path: info.outputPath("party.png") });
   await page.keyboard.press("Escape");
@@ -793,7 +795,6 @@ test("the party dialog lays out the run: adventurer, boons, jinx and the Cup", a
   for (const [chip, title, text] of [
     [".tag-jinx", "Jinx", "Goblin Tongue"],
     [".tag-curse", "Curse", "Bleeding"],
-    [".tag-rule", "Floor rule", "Echoes"],
     [".tag-cup", "The Cup", "4 splashes"],
   ]) {
     await page.locator(chip).click();
@@ -1027,9 +1028,10 @@ for (const width of [320, 390])
     const centre = (b: { y: number; height: number }) => b.y + b.height / 2;
     expect(Math.abs(centre(left!) - centre(middle!))).toBeLessThan(2);
     expect(Math.abs(centre(menu!) - centre(middle!))).toBeLessThan(2);
-    // The strip: five chips under the row, inside the screen, above the card.
+    // The strip: three chips under the row (the power and the floor's rule
+    // moved to the party dialog), inside the screen, above the card.
     const chips = page.locator(".hud-strip .hud-chip");
-    await expect(chips).toHaveCount(5);
+    await expect(chips).toHaveCount(3);
     for (const chip of await chips.all()) {
       const b = (await chip.boundingBox())!;
       expect(b.x).toBeGreaterThanOrEqual(0);
@@ -1214,7 +1216,11 @@ test("@release a power wins a swing, the boss's next beat is a duel, and the flo
   await rage.click();
   let s = await saved(page);
   expect(s.quest.party).toMatchObject({ hits: 1, powers: 1, hearts: H - 1 });
-  await expect(page.locator(".tag-power")).toHaveClass(/spent/);
+  await meter(page).click();
+  await expect(
+    page.getByRole("dialog", { name: "The party" }).locator(".crawl-power"),
+  ).toHaveClass(/spent/);
+  await page.keyboard.press("Escape");
   // The Golem gets back up: a chug race, settled by the table.
   await page.locator(".game-card").click();
   await expect(page.locator(".game-card")).toHaveAccessibleName(
@@ -1228,10 +1234,10 @@ test("@release a power wins a swing, the boss's next beat is a duel, and the flo
   s = await saved(page);
   expect(s.quest.party.boons).toContain("dungeon.keg-golem#0");
   expect(s.quest.step).toBe(STEP.landing1);
-  // Back on the Cellar's floor, its rule rides on the strip.
+  // Back on the Cellar's floor, its rule is in the party dialog.
   await seed(page, crawlAt("dungeon.goblin-shaman", STEP.floor1));
-  await page.locator(".tag-rule").click();
-  const rule = page.getByRole("dialog", { name: "Floor rule" });
+  await meter(page).click();
+  const rule = page.getByRole("dialog", { name: "The party" });
   await expect(rule).toContainText("Rat Run");
   await expect(rule).toContainText("+1 to monster d20s");
   await page.screenshot({ path: info.outputPath("floor-rule.png") });

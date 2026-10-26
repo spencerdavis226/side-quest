@@ -9,22 +9,25 @@
 Example (not enabled in the catalog):
 
 ```ts
-import type { CardDefinition, PackDefinition } from '../game/types';
-export const exampleCards: CardDefinition[] = [{
-  version: 1,
-  id: 'fireside.story',
-  title: 'Fireside story',
-  rules: 'Going clockwise, each person adds one sentence to a story. End after one round.',
-  category: 'challenge',
-  artwork: 'art/tankard.webp',
-}];
+import type { CardDefinition, PackDefinition } from "../game/types";
+export const exampleCards: CardDefinition[] = [
+  {
+    version: 1,
+    id: "fireside.story",
+    title: "Fireside story",
+    rules:
+      "Going clockwise, each person adds one sentence to a story. End after one round.",
+    category: "challenge",
+    artwork: "art/tankard.webp",
+  },
+];
 export const examplePack: PackDefinition = {
   version: 1,
-  id: 'fireside',
-  logo: 'art/packs/fireside.svg', // One single-colour silhouette; the app tints it.
-  title: 'By the fireside',
-  description: 'Stories and gentle mischief for a cozy table.',
-  cardIds: exampleCards.map(card => card.id),
+  id: "fireside",
+  logo: "art/packs/fireside.svg", // One single-colour silhouette; the app tints it.
+  title: "By the fireside",
+  description: "Stories and gentle mischief for a cozy table.",
+  cardIds: exampleCards.map((card) => card.id),
 };
 ```
 
@@ -101,8 +104,10 @@ A quest with `party: { hearts }` is a crawl. Its `goal` is 0 and its stages are 
 - **Equipment** (2026-10-25): a boss's or elite's `trinket(name, effect)` gets its slot from its effect (`slotFor` in `dungeon/shared.ts`): only `roll`, `crit` or `bossHits` makes a weapon, only `hearts` or `hurt` makes armor, anything else a trinket; items alone make no slot (they go in the satchel). Give a boss's two spoils different slots where you can, so the choice is a real one, and keep each slot's pieces varied across floors.
 
 ## Pokémon League (a journey crawl)
+
 Since 2026-10-16 the League is a crawl like Pub Crawl, and everything in the section above applies. Its cards live in `src/content/league/` and `pokemon-league.ts`:
-- **Starters** (`starters.ts`) are omens that may carry `evolves`: one or two later forms, each `{ title, omen }`, whose effect *replaces* the one before (write each form's effect in full, hearts relative to the run's base). Since 2026-10-17 the power text is written from the numbers (`describeOmen` in `src/game/omenText.ts`, through `starter` in `journey.ts`): write only a short flavor sentence (the card adds "Max HP 15. Every heal heals 1 more. Starts with a Potion."), and the team dialog shows the current form's name and power. The evolution banner says what changed (`describeChange`: "Max HP 15 → 17. Gets a Potion."), and the evolve plaque names the next form. Give each starter one signature, make every evolution a visible upgrade, and keep `tests/starters.test.ts` passing: no two starters share a power line, and no evolution changes nothing.
+
+- **Starters** (`starters.ts`) are omens that may carry `evolves`: one or two later forms, each `{ title, omen }`, whose effect _replaces_ the one before (write each form's effect in full, hearts relative to the run's base). Since 2026-10-17 the power text is written from the numbers (`describeOmen` in `src/game/omenText.ts`, through `starter` in `journey.ts`): write only a short flavor sentence (the card adds "Max HP 15. Every heal heals 1 more. Starts with a Potion."), and the team dialog shows the current form's name and power. The evolution banner says what changed (`describeChange`: "Max HP 15 → 17. Gets a Potion."), and the evolve plaque names the next form. Give each starter one signature, make every evolution a visible upgrade, and keep `tests/starters.test.ts` passing: no two starters share a power line, and no evolution changes nothing.
 - **Felt perks** (2026-10-17): an omen's `roll` adds to single-d20 battle rolls (`all` or by kind), `crit`/`fumble` widen the natural range, `reroll20` throws away every 20, and `restock` returns an item at every gym. Roll bonuses are strong (one point moves a run's win rate by several points); measure every change in `tests/league.balance.test.ts`. Bidoof is the worst starter by design and has its own forced-run test.
 - **Dice palettes**: every starter form and every Pub Crawl adventurer level carries `palette: { primary, secondary }` (the `PALETTES` maps in `starters.ts` and `dungeon/classes.ts`): the body colour as enamel and the accent as metal. Since 2026-10-17 tonight's omen is a boon and no longer colours the dice. `tests/dice-palette.test.ts` holds the numerals at 4.5:1 and every pair distinct.
 - **League items.** Besides Potion (drink 4, +2 HP, like the Healing Draught), Protect, X Attack and Escape Rope, two items come only from starters (2026-10-17): a **Revive** (`revive`) saves one white-out, back to half max HP, on its own (a Confused, sealed bag keeps it shut); a **Rare Candy** (`candy`) is used from the bag to evolve the starter now (never Eevee, which picks its form on an evolution card). Since 2026-10-17 Dungeon night deals them too, as Second Wind and the Dog-Eared Tome (a level up now), from adventurers, merchants and trinkets.
@@ -113,7 +118,7 @@ Since 2026-10-16 the League is a crawl like Pub Crawl, and everything in the sec
 - **How a fight rolls** (2026-10-17 variety pass): every fight helper takes a `Roll`, a function of the card's need, so the tuning constants retune all of them. `vs(lose, win, { crit, fumble })` is a d20. `moves(lose[], win[])` is six named moves on a d6, worst first; `lose` must hold exactly `sixLoses(need)` faces (the d20 odds rounded to sixths), and a retune that moves the split throws at load, so the faces get rewritten rather than silently flipping. `pair(lose, win, doubles?)` is 2d6 at the total nearest the odds (`pairNeed`); its doubles always win, so open them with "A pair!" (the word "doubles" is banned from results). Mix them: a route should not read as a column of "Drink 3 / Give 3". Good outcomes name a target (the worst flapper, whoever drove here, the player you poked), hand out a short status that lasts until the drawer's next turn, a dare with a drink as the alternative, a graded `{total}` loss, or a pair of players.
 - **Gyms**: `gymTiers[k]` is every region's (k+1)th gym; a new region adds one leader to each tier. Every League boss is a `battle` with `encounter: "boss"` and `hits`/`damage` from `league/shared.ts`; leaders keep `quest: "pokemon"`, which counts them as badges. A boss's dice should win near the tier's odds: a 2-hit Legendary at 5% (as Mewtwo once was) makes a run unwinnable.
 - **Types** (2026-10-25): every League fight against a Pokémon, or a trainer whose card names their Pokémon or whose class has one type, gets that type in `league/types.ts` (by card ID; a dual type plays as the one it is best known by, which is its first unless the card plays up the other). A new starter needs its forms in `formTypes`. Hazards, finds and trainers with no Pokémon stay untyped; `tests/pokemon-types.test.ts` lists every untyped League fight, so a new fight must be typed there or added to the list with its reason. Never write a type's effect into a card's rules: the matchup line on the card says it. Run `npm run league:types` to regenerate `docs/LEAGUE_TYPES.md`; its matchup table shows each starter type's good and bad matchups per run, and a type running short is fixed with new fights of the types that even it out (as `league/wilds.ts` did), not with starter bonuses. Never put the matchup in a card's words or on its face: the strip's chevron chip shows it.
-- **Strikes** (2026-10-25, `strike()` in `journey.ts`; `CardDefinition.strike`): a fight with no roll and no plaque, for fights that do not need to be a challenge. The card's rules set the scene; the type matchup picks one of three lines (`even`, `advantage`, `disadvantage`, each 60 characters or fewer) and the card is put aside with one tap. The starter's edge counts as a win (the reward comes, nothing is lost), a disadvantage as a loss (`damage` hearts, a curse), and an even matchup or an untyped card costs only what its line says. Write the lines so they differ in what happens, not only in the number: `even` may give, drink or make someone act. A strike is typed in `league/types.ts` like any fight. Never write hearts, items or the type's effect into the lines. Previous Card reads the line for the starter's type as it is then (a Tera Orb spent on the card is already cleared). Strikes need no engine state, so saves hold nothing new; fixtures `league-strike-*` freeze each matchup.
+- **Strikes** (2026-10-25, `strike()` in `journey.ts`; `CardDefinition.strike`): a fight with no roll and no plaque, for fights that do not need to be a challenge. Since 2026-10-26 a League strike is one line on the card, not a setup plus an outcome: the type matchup picks one of three lines (`even`, `advantage`, `disadvantage`, each 100 characters or fewer) and each is the whole card, so it names the foe, what it does and what the table does or drinks (`strike()` takes no separate rules; `rules` holds the `even` line, and the face prints only the matchup's line). Do not paste a shared setup in front of three outcomes. The card is put aside with one tap. The starter's edge counts as a win (the reward comes, nothing is lost), a disadvantage as a loss (`damage` hearts, a curse), and an even matchup or an untyped card costs only what its line says. Write the lines so they differ in what happens, not only in the number: `even` may give, drink or make someone act. A strike is typed in `league/types.ts` like any fight. Never write hearts, items or the type's effect into the lines. Previous Card reads the line for the starter's type as it is then (a Tera Orb spent on the card is already cleared). Strikes need no engine state, so saves hold nothing new; fixtures `league-strike-*` freeze each matchup.
 - Tune with the constants, never card by card, and keep `tests/league.balance.test.ts` passing; it prints each starter's and hideout's win rate.
 
 ## Secrets and timers
