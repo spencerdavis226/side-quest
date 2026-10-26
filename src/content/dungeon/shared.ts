@@ -362,6 +362,23 @@ export const shrine = (
   reward: { heal: 2 },
 });
 
+/** A table moment (2026-10-25): no fight and no roll, only something for
+ * the table to do between fights; a few heal the party for doing it.
+ * Pub Crawl only. */
+export const moment = (
+  floor: Floor,
+  id: string,
+  title: string,
+  rules: string,
+  heal?: number,
+): CardDefinition => ({
+  ...card(id, title, "group", rules),
+  ribbon: `${FLOORS[floor]} · Moment`,
+  ribbonTone: "violet",
+  encounter: "shrine",
+  ...(heal ? { reward: { heal } } : {}),
+});
+
 /** A trinket a boss or an elite drops: a lasting boon, its power written
  * from its numbers. */
 export const trinket = (name: string, effect: OmenEffect) => ({
@@ -511,6 +528,9 @@ export const omen = (
   title: string,
   rules: string,
   effect: OmenEffect = {},
+  /** The table rule an omen with numbers also lays (2026-10-25), shown
+   * beside them in the party dialog. */
+  spoken?: string,
 ): CardDefinition => ({
   ...card(`omen-${id}`, title, "rule", rules),
   ribbon: "Tonight's omen",
@@ -519,7 +539,10 @@ export const omen = (
   // A table rule's power is its rule.
   boon: {
     name: title,
-    rules: describeOmen(effect, dungeonOmenWords, PARTY_HEARTS) || rules,
+    rules:
+      [spoken, describeOmen(effect, dungeonOmenWords, PARTY_HEARTS)]
+        .filter(Boolean)
+        .join(" ") || rules,
     effect,
   },
 });

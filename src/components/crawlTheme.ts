@@ -151,8 +151,9 @@ export interface CrawlTheme {
   /** What the setup screen counts as the run's length (floors, gyms);
    * by default every stage of several rooms. */
   lengthOf?: (stages: QuestStage[]) => number;
-  /** The seals legend in the guide: −hearts, curse, hits, +item. */
-  legend: [string, string, string, string];
+  /** The seals legend in the guide: −hearts, curse, hits, +item. Pub
+   * Crawl deals no curses since 2026-10-25 (`null`). */
+  legend: [string, string | null, string, string];
   /** The legend's last two lines, the standing rule on a d20: what a
    * natural 20 doubles, then what a natural 1 doubles. */
   naturals: [string, string];
@@ -277,7 +278,8 @@ const dungeon: CrawlTheme = {
   },
   legend: [
     "Hearts the party loses if the fight is lost",
-    "A curse on a loss, until the floor's boss falls",
+    // Curses became jinxes (2026-10-25); the jinx seal is below.
+    null,
     "Wins it takes: the next drawer swings again",
     "An item for the satchel, on a win",
   ],
@@ -355,8 +357,8 @@ const dungeon: CrawlTheme = {
         : []),
       {
         icon: "jinx",
-        title: "Curses and jinxes",
-        line: "A lost fight can curse the party or jinx a player with a table rule. Both lift when the floor's boss falls.",
+        title: "Jinxes",
+        line: "A lost fight can jinx a player with a table rule. It lifts when the floor's boss falls.",
       },
     ],
   },

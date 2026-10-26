@@ -17,6 +17,7 @@ import {
   finaleStage,
   hitsNeeded,
   omenEffect,
+  stageRule,
   omenForm,
   quaff,
   questRecord,
@@ -71,12 +72,17 @@ const seeded = (seed: number): Random => {
 const ORIGINAL = [0.1, 0.1, 0.1, 0.1];
 const OTHER = [0.5, 0.9, 0.5, 0.5];
 const NEW = [0.9, 0.5, 0.9, 0.9];
-const make = (floors = ORIGINAL, seed = 1) => {
+// The floors' rules (2026-10-25) bend the odds (a floor can make a 2 a
+// natural 1), so these tests play without them unless they ask; the rules
+// have their own test below.
+const make = (floors = ORIGINAL, seed = 1, rules = false) => {
   const rest = seeded(seed);
   const queue = [...floors];
-  return createSession(crawl, cards, packs, () =>
+  const s = createSession(crawl, cards, packs, () =>
     queue.length ? queue.shift()! : rest(),
   );
+  if (!rules) for (const stage of s.quest!.stages) delete stage.rule;
+  return s;
 };
 // Where the run is, step by step: the adventurer, tonight's omen, the
 // queue, the first floor's eight rooms and its boss, a landing, the second
@@ -290,12 +296,31 @@ describe("Pub Crawl", () => {
     );
   });
 
-  it("a won fight earns its loot; a lost one its curse", () => {
+  it("a floor's rule holds from its first room until its boss falls", () => {
+    let s = fromStep(make(ORIGINAL, 1, true), STEP.floor1);
+    const rule = s.quest!.stages[STEP.floor1].rule!;
+    expect(rule.name).toBeTruthy();
+    expect(stageRule(s.quest)).toEqual(rule);
+    expect(omenEffect(s.quest)).toMatchObject(rule.effect!);
+    // The boss holds it too; the landing after it doesn't.
+    s = fromStep(s, STEP.boss1);
+    expect(stageRule(s.quest)).toEqual(rule);
+    s = fromStep(s, STEP.landing1);
+    expect(stageRule(s.quest)).toBeUndefined();
+    roundTrip(s);
+  });
+
+  it("a won fight earns its loot; a lost one its jinx", () => {
     let s = deal(start(), "dungeon.drunk-goblin");
     s = fight(s, 15);
     expect(party(s).loot).toEqual(["smoke"]);
     s = fight(deal(fromStep(start(), STEP.floor2), "dungeon.leech-swarm"), 2);
-    expect(party(s)).toMatchObject({ curse: "bleed", hearts: H - 2 });
+    // Curses became jinxes (2026-10-25).
+    expect(party(s)).toMatchObject({
+      curse: null,
+      jinx: "dungeon.leech-swarm",
+      hearts: H - 2,
+    });
     roundTrip(s);
   });
 

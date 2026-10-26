@@ -27,6 +27,7 @@ export function StageBanner({ session }: { session: SessionState }) {
           banner.mode,
           banner.intro,
           banner.wanted && `${banner.wantedWord}: ${banner.wanted}`,
+          banner.rule && `${banner.ruleWord}: ${banner.rule.name}. ${banner.rule.rule}`,
         ]
           .filter(Boolean)
           .join(". ")
@@ -34,7 +35,8 @@ export function StageBanner({ session }: { session: SessionState }) {
     banner?.key ?? null,
   );
   if (!banner) return null;
-  const { tone, art, mode, intro, wanted, wantedWord } = banner;
+  const { tone, art, mode, intro, wanted, wantedWord, rule, ruleWord } =
+    banner;
   return (
     <div
       // Keyed by stage so a new stage replays the sweep.
@@ -49,6 +51,12 @@ export function StageBanner({ session }: { session: SessionState }) {
         {wanted && (
           <span className="banner-wanted">
             {wantedWord}: {wanted}
+          </span>
+        )}
+        {/* The floor's or route's rule (2026-10-25). */}
+        {rule && (
+          <span className="banner-wanted banner-rule">
+            {ruleWord}: {rule.name}
           </span>
         )}
       </div>
@@ -76,6 +84,8 @@ function stageBanner(session: SessionState) {
   const wantedWord = crawlTheme(quest.packId).words.wanted;
   const wanted =
     wantedWord && stage.size > 1 ? wantedBoss(quest)?.title : undefined;
+  const rule = stage.size > 1 ? quest.stages[stage.stage].rule : undefined;
+  const ruleWord = crawlTheme(quest.packId).words.rule.name;
   return {
     key: `${stage.stage}:${session.discarded}`,
     stage: stage.stage,
@@ -85,6 +95,8 @@ function stageBanner(session: SessionState) {
     art,
     wanted,
     wantedWord,
+    rule,
+    ruleWord,
   };
 }
 

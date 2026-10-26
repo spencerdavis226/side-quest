@@ -34,6 +34,7 @@ import {
   wantedBoss,
 } from "../game/engine";
 import { asset } from "../presentation/theme";
+import { describeOmen } from "../game/omenText";
 import {
   crawlIconPath,
   crawlTheme,
@@ -1124,7 +1125,11 @@ export function CrawlRecord({
             {words.rule.name}: {rule.name}
           </strong>
           <span>
-            {rule.rule} Lasts {words.rule.lasts}.
+            {rule.rule}
+            {rule.effect && theme.omenWords
+              ? ` ${describeOmen(rule.effect, theme.omenWords, 0)}`
+              : ""}{" "}
+            Lasts {words.rule.lasts}.
           </span>
         </p>
       )}
@@ -1514,12 +1519,14 @@ export function SealLegend({ theme }: { theme: CrawlTheme }) {
         </dt>
         <dd>{theme.legend[0]}</dd>
       </div>
-      <div>
-        <dt className="stake stake-curse curse-bleed">
-          <CrawlIcon name="bleed" theme={theme} />
-        </dt>
-        <dd>{theme.legend[1]}</dd>
-      </div>
+      {theme.legend[1] && (
+        <div>
+          <dt className="stake stake-curse curse-bleed">
+            <CrawlIcon name="bleed" theme={theme} />
+          </dt>
+          <dd>{theme.legend[1]}</dd>
+        </div>
+      )}
       <div>
         <dt className="stake stake-hits">
           <CrawlIcon name="boss" theme={theme} />

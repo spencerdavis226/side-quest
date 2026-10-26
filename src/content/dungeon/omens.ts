@@ -10,27 +10,31 @@ export const omens: CardDefinition[] = [
   omen(
     "flooded-stairs",
     "Flooded Stairs",
-    "The stairs are underwater. Every trap costs one more heart. Take a smoke bomb down.",
+    "Everyone says 'glub' when a floor opens; last one drinks 1. Traps cost a heart more. Take a smoke bomb.",
     { hurt: { trap: 1 }, loot: ["smoke"] },
+    "Everyone says 'glub' when a floor opens; last one drinks 1.",
   ),
   omen(
     "happy-hour",
     "Happy Hour",
-    "Two for one, all the way down. Every heal heals one more heart. Everyone drinks 1.",
+    "Two for one: whoever drinks picks someone to drink with them. Every heal heals a heart more.",
     { heal: 1 },
+    "Whoever drinks picks someone to drink with them.",
   ),
   omen(
     "running-a-tab",
     "Running a Tab",
-    "You start two hearts short, but the bar put a shield and a draught on your tab.",
+    "Say 'on my tab' when handed a drink, or drink 1. Two hearts short, with a shield and a draught.",
     { hearts: -2, loot: ["shield", "draught"] },
+    "Say 'on my tab' when handed a drink, or drink 1.",
   ),
   omen(
     "lock-in",
     "The Lock-In",
-    "Locked in until sunrise. Every boss takes one more hit. Take a loaded die and a shield.",
+    "Ask before leaving your seat, or drink 2. Bosses take a hit more. Take a die and a shield.",
     // A shield since 2026-10-25: the stairs fight left it near the floor.
     { bossHits: 1, loot: ["die", "shield"] },
+    "Ask before leaving your seat, or drink 2.",
   ),
   omen(
     "cargo-shorts",
@@ -41,14 +45,16 @@ export const omens: CardDefinition[] = [
   omen(
     "butterfingers",
     "Butterfingers",
-    "Everyone's already a bit gone. One satchel slot fewer, but you get two more hearts.",
+    "Anyone who drops anything drinks 2. One satchel slot fewer, but two more hearts.",
     { satchel: 2, hearts: 2 },
+    "Anyone who drops anything drinks 2.",
   ),
   omen(
     "blood-moon",
     "Blood Moon",
-    "Blood moon. Monsters, elites and ambushes cost a heart more. Start with two more hearts.",
+    "Howl at every monster; last to howl drinks 1. Fights cost a heart more, but two more hearts.",
     { hurt: { monster: 1, elite: 1, ambush: 1 }, hearts: 2 },
+    "Howl at every monster; last to howl drinks 1.",
   ),
   omen(
     "lefty-night",
@@ -63,14 +69,16 @@ export const omens: CardDefinition[] = [
   omen(
     "the-regulars",
     "The Regulars",
-    "The bartender knows you, and your tab. Everyone drinks 2. Start with two more hearts.",
+    "Everyone shouts the drawer's name when they draw, like a regular. Forget: drink 1. Two more hearts.",
     { hearts: 2 },
+    "Everyone shouts the drawer's name when they draw. Forget: drink 1.",
   ),
   omen(
     "thin-walls",
     "Thin Walls",
-    "Everyone can hear you. Every trial costs a heart more, but every heal heals one more.",
+    "Whisper the whole crawl; too loud, drink 1. Trials cost a heart more, but heals heal one more.",
     { hurt: { trial: 1 }, heal: 1 },
+    "Whisper the whole crawl; too loud, drink 1.",
   ),
   omen(
     "cold-open",
@@ -100,8 +108,9 @@ export const omens: CardDefinition[] = [
   omen(
     "trivia-night",
     "Trivia Night",
-    "Trivia upstairs, so everyone's sharp. Trials cost a heart less, traps a heart more.",
+    "Before each boss the drawer answers a trivia question, or drinks 2. Trials cost less, traps more.",
     { hurt: { trial: -1, trap: 1 } },
+    "Before each boss, the drawer answers a trivia question from the table, or drinks 2.",
   ),
   omen(
     "brads-birthday",

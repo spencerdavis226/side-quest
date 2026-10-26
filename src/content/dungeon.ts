@@ -10,6 +10,9 @@ import { kitchen } from "./dungeon/kitchen";
 import { applyKnacks } from "./dungeon/knacks";
 import { applyClassPowers } from "./dungeon/powers";
 import { applyPhases } from "./dungeon/phases";
+import { floorRules } from "./dungeon/rules";
+import { applyJinxes } from "./dungeon/jinxes";
+import { floorMoments } from "./dungeon/moments";
 import { applyKits } from "./dungeon/kits";
 import {
   closingCards,
@@ -65,6 +68,10 @@ const floors: Record<string, FloorCards> = {
   rooftop,
 };
 
+// Four table moments a floor (2026-10-25) join its finds.
+for (const [key, f] of Object.entries(floors))
+  f.finds = [...f.finds, ...floorMoments[key]];
+
 /** Fights and bosses play as ordinary cards in the plain modes; finds,
  * merchants, forks, landings, the rival party, adventurers and omens only
  * in a crawl. */
@@ -98,6 +105,8 @@ applyKnacks(dungeonCards);
 applyKits(dungeonCards);
 // Signature powers (2026-10-25): one a class, and one a level.
 applyClassPowers(dungeonCards);
+// Curses became jinxes (2026-10-25): one spoken system, not two.
+applyJinxes(dungeonCards);
 
 const ids = (cards: CardDefinition[]) => cards.map((c) => c.id);
 
@@ -109,7 +118,15 @@ const floor = (label: string, intro: string, f: FloorCards) => ({
   pick: 8,
   cardIds: ids([...f.fights, ...f.finds]),
   elite: ids(f.elites),
+  rule: floorRules[label],
 });
+/** A floor's boss: the floor's rule holds until it falls. */
+const bossOf = (
+  floorLabel: string,
+  label: string,
+  intro: string,
+  cards: CardDefinition[],
+) => ({ ...one(label, intro, cards), rule: floorRules[floorLabel] });
 const one = (label: string, intro: string, cards: CardDefinition[]) => ({
   label,
   intro,
@@ -147,15 +164,30 @@ export const dungeonPack: PackDefinition = {
         oneOf: [
           [
             floor("The Cellar", "Down into the Cellar", cellar),
-            one("Cellar boss", "Something blocks the stairs", cellar.bosses),
+            bossOf(
+              "The Cellar",
+              "Cellar boss",
+              "Something blocks the stairs",
+              cellar.bosses,
+            ),
           ],
           [
             floor("The Wine Cellar", "Down into the Wine Cellar", wine),
-            one("Wine Cellar boss", "Something uncorks itself", wine.bosses),
+            bossOf(
+              "The Wine Cellar",
+              "Wine Cellar boss",
+              "Something uncorks itself",
+              wine.bosses,
+            ),
           ],
           [
             floor("The Brewery", "Down into the Brewery", brewery),
-            one("Brewery boss", "Something is fermenting", brewery.bosses),
+            bossOf(
+              "The Brewery",
+              "Brewery boss",
+              "Something is fermenting",
+              brewery.bosses,
+            ),
           ],
         ],
       },
@@ -174,15 +206,30 @@ export const dungeonPack: PackDefinition = {
         oneOf: [
           [
             floor("The Catacombs", "Down into the Catacombs", catacombs),
-            one("Catacombs boss", "The bones stand up", catacombs.bosses),
+            bossOf(
+              "The Catacombs",
+              "Catacombs boss",
+              "The bones stand up",
+              catacombs.bosses,
+            ),
           ],
           [
             floor("The Sewers", "Down into the Sewers", sewers),
-            one("Sewers boss", "Something big in the pipes", sewers.bosses),
+            bossOf(
+              "The Sewers",
+              "Sewers boss",
+              "Something big in the pipes",
+              sewers.bosses,
+            ),
           ],
           [
             floor("The Walk-in Freezer", "Into the Walk-in Freezer", freezer),
-            one("Freezer boss", "The light goes out", freezer.bosses),
+            bossOf(
+              "The Walk-in Freezer",
+              "Freezer boss",
+              "The light goes out",
+              freezer.bosses,
+            ),
           ],
         ],
       },
