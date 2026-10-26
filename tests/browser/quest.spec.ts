@@ -223,7 +223,7 @@ test("@release a starter evolves on a route, and the banner says what changed", 
   await page.getByRole("button", { name: "Open game menu" }).click();
   await page.getByRole("button", { name: "How to play" }).click();
   const guide = page.getByRole("dialog", { name: "How to play" });
-  await expect(guide.locator(".guide-rows li")).toHaveCount(10);
+  await expect(guide.locator(".guide-rows li")).toHaveCount(9);
   await expect(guide.locator(".guide-rows")).toContainText("Team HP");
   await expect(guide.locator(".guide-rows")).not.toContainText("Quaff");
   await guide.screenshot({ path: info.outputPath("league-guide.png") });

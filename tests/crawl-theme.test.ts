@@ -111,7 +111,6 @@ describe("how to play", () => {
       "Evolution",
       "Your team",
       "Signature moves",
-      "Route rules",
       "Bag",
       "Statuses and jinxes",
     ]);

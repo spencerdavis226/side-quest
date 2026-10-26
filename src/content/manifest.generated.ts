@@ -525,11 +525,6 @@ export const packs: PackDefinition[] = [
             "pokemon.route-oaks-lecture",
           ],
           elite: ["pokemon.route-ace-rookie", "pokemon.route-ace-lass"],
-          rule: {
-            name: "Clear Skies",
-            rule: "When a card names a flying Pokémon, everyone points up. Last to point drinks 1.",
-            effect: { heal: 1 },
-          },
         },
         {
           label: "Gym 1",
@@ -546,11 +541,6 @@ export const packs: PackDefinition[] = [
             "pokemon.gym-milo",
             "pokemon.gym-katy",
           ],
-          rule: {
-            name: "Clear Skies",
-            rule: "When a card names a flying Pokémon, everyone points up. Last to point drinks 1.",
-            effect: { heal: 1 },
-          },
         },
         {
           label: "Route 2",
@@ -583,11 +573,6 @@ export const packs: PackDefinition[] = [
             "pokemon.route-link-cable",
           ],
           elite: ["pokemon.route-ace-super-nerd", "pokemon.route-ace-twins"],
-          rule: {
-            name: "Tall Grass",
-            rule: "When a wild Pokémon appears, the drawer does its cry. The table boos a bad one: drink 1.",
-            effect: { roll: { monster: 1 } },
-          },
         },
         {
           label: "Gym 2",
@@ -604,11 +589,6 @@ export const packs: PackDefinition[] = [
             "pokemon.gym-nessa",
             "pokemon.gym-brassius",
           ],
-          rule: {
-            name: "Tall Grass",
-            rule: "When a wild Pokémon appears, the drawer does its cry. The table boos a bad one: drink 1.",
-            effect: { roll: { monster: 1 } },
-          },
         },
         {
           label: "Route 3",
@@ -643,11 +623,6 @@ export const packs: PackDefinition[] = [
             "pokemon.route-ace-rocket-recruiter",
             "pokemon.route-ace-cooltrainer",
           ],
-          rule: {
-            name: "Rain",
-            rule: "Lost a battle? Do a short rain dance. Refuse: drink 1.",
-            effect: { crit: 19 },
-          },
         },
         {
           label: "Gym 3",
@@ -664,11 +639,6 @@ export const packs: PackDefinition[] = [
             "pokemon.gym-kabu",
             "pokemon.gym-iono",
           ],
-          rule: {
-            name: "Rain",
-            rule: "Lost a battle? Do a short rain dance. Refuse: drink 1.",
-            effect: { crit: 19 },
-          },
         },
         {
           label: "Route 4",
@@ -701,11 +671,6 @@ export const packs: PackDefinition[] = [
             "pokemon.route-sun-stone",
           ],
           elite: ["pokemon.route-ace-rocket-boss", "pokemon.route-ace-gambler"],
-          rule: {
-            name: "Nightfall",
-            rule: "Whisper until the gym falls. Too loud: drink 1.",
-            effect: { fumble: 2, roll: { boss: 1 } },
-          },
         },
         {
           label: "Gym 4",
@@ -722,11 +687,6 @@ export const packs: PackDefinition[] = [
             "pokemon.gym-bea",
             "pokemon.gym-kofu",
           ],
-          rule: {
-            name: "Nightfall",
-            rule: "Whisper until the gym falls. Too loud: drink 1.",
-            effect: { fumble: 2, roll: { boss: 1 } },
-          },
         },
         {
           oneOf: [
@@ -919,11 +879,6 @@ export const packs: PackDefinition[] = [
             "pokemon.route-ace-biker-boss",
             "pokemon.route-ace-dragon-tamer",
           ],
-          rule: {
-            name: "Sandstorm",
-            rule: "Squint until the gym falls. Caught with your eyes wide open: drink 1.",
-            effect: { roll: { all: -1 }, heal: 1 },
-          },
         },
         {
           label: "Gym 5",
@@ -940,11 +895,6 @@ export const packs: PackDefinition[] = [
             "pokemon.gym-opal",
             "pokemon.gym-larry",
           ],
-          rule: {
-            name: "Sandstorm",
-            rule: "Squint until the gym falls. Caught with your eyes wide open: drink 1.",
-            effect: { roll: { all: -1 }, heal: 1 },
-          },
         },
         {
           label: "Route 6",
@@ -977,11 +927,6 @@ export const packs: PackDefinition[] = [
             "pokemon.route-friendship-glow",
           ],
           elite: ["pokemon.route-ace-karate-king", "pokemon.route-ace-veteran"],
-          rule: {
-            name: "Hail",
-            rule: "Shiver before every roll. Forget: drink 1.",
-            effect: { hurt: { trap: 1 }, roll: { monster: 1 } },
-          },
         },
         {
           label: "Gym 6",
@@ -998,11 +943,6 @@ export const packs: PackDefinition[] = [
             "pokemon.gym-gordie",
             "pokemon.gym-ryme",
           ],
-          rule: {
-            name: "Hail",
-            rule: "Shiver before every roll. Forget: drink 1.",
-            effect: { hurt: { trap: 1 }, roll: { monster: 1 } },
-          },
         },
         {
           label: "Route 7",
@@ -1035,11 +975,6 @@ export const packs: PackDefinition[] = [
             "pokemon.route-tera-raid",
           ],
           elite: ["pokemon.route-ace-scientist", "pokemon.route-ace-burglar"],
-          rule: {
-            name: "Fog",
-            rule: "Call everyone 'Trainer' instead of their name. Slip: drink 1.",
-            effect: { roll: { elite: 2, monster: -1 } },
-          },
         },
         {
           label: "Gym 7",
@@ -1056,11 +991,6 @@ export const packs: PackDefinition[] = [
             "pokemon.gym-piers",
             "pokemon.gym-tulip",
           ],
-          rule: {
-            name: "Fog",
-            rule: "Call everyone 'Trainer' instead of their name. Slip: drink 1.",
-            effect: { roll: { elite: 2, monster: -1 } },
-          },
         },
         {
           label: "Route 8",
@@ -1095,11 +1025,6 @@ export const packs: PackDefinition[] = [
             "pokemon.route-ace-champion-wannabe",
             "pokemon.route-ace-elite-reject",
           ],
-          rule: {
-            name: "Harsh Sunlight",
-            rule: "Fan yourself before every roll. Forget: drink 1.",
-            effect: { roll: { boss: 1 }, hurt: { monster: 1 } },
-          },
         },
         {
           label: "Gym 8",
@@ -1116,11 +1041,6 @@ export const packs: PackDefinition[] = [
             "pokemon.gym-raihan",
             "pokemon.gym-grusha",
           ],
-          rule: {
-            name: "Harsh Sunlight",
-            rule: "Fan yourself before every roll. Forget: drink 1.",
-            effect: { roll: { boss: 1 }, hurt: { monster: 1 } },
-          },
         },
         {
           label: "Victory Road",

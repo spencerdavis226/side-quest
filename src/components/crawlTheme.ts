@@ -528,11 +528,6 @@ const league: CrawlTheme = {
         line: "Your starter has one, a button on the card when it helps: a reroll, a win, a heal. Evolving can teach a better one. It comes back when a gym falls.",
       },
       {
-        icon: "rule",
-        title: "Route rules",
-        line: "Every route has one, on its banner and the strip. It holds until the route's gym falls.",
-      },
-      {
         icon: "satchel",
         title: "Bag",
         line: "Items show up as buttons on a card when they help. Tap the HP to see the bag.",

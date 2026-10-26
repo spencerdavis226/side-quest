@@ -406,12 +406,6 @@
   gap: 6px;
   color: #dccbff;
 }
-.slot-empty {
-  width: 13px;
-  height: 13px;
-  border: 1.5px dashed rgb(220 203 255 / 0.4);
-  border-radius: 50%;
-}
 .tag-badges {
   color: #f1d58c;
 }
@@ -478,10 +472,6 @@
   .tag-satchel .crawl-icon {
     width: 16px;
     height: 16px;
-  }
-  .tag-satchel .slot-empty {
-    width: 11px;
-    height: 11px;
   }
   .chip-name,
   .label-count {

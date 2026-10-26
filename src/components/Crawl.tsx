@@ -244,13 +244,7 @@ export function CrawlProgress({ quest }: { quest: QuestState }) {
   }
   return plaque(
     "rooms",
-    <>
-      {place.name}
-      <span className="label-count">
-        {" "}
-        · {place.room}/{place.rooms}
-      </span>
-    </>,
+    <>{place.name}</>,
     `${words.Room} ${place.room} of ${place.rooms}, ${place.name}`,
     <span className="room-pips">
       {Array.from({ length: place.rooms }, (_, i) => (
@@ -352,7 +346,18 @@ export function CrawlStrip({
           `tag-edge edge-${matchup.edge}`,
           `${matchup.tera ? "Terastallized: advantage" : matchup.teammate ? `${matchup.teammate} sent in: advantage` : matchup.edge === "advantage" ? "Type advantage" : "Type disadvantage"}`,
           "matchup",
-          <EdgeMark edge={matchup.edge} />,
+          <>
+            <EdgeMark edge={matchup.edge} />
+            <span className="chip-name">
+              {matchup.tera
+                ? "Tera"
+                : matchup.teammate
+                  ? "Sent in"
+                  : matchup.edge === "advantage"
+                    ? "Advantage"
+                    : "Disadvantage"}
+            </span>
+          </>,
         )}
       {knack &&
         theme.knacks &&
@@ -363,19 +368,19 @@ export function CrawlStrip({
           <>
             <EdgeMark edge="advantage" />
             <CrawlIcon name={`knack-${knack}`} theme={theme} />
+            <span className="chip-name">{theme.knacks[knack].name}</span>
           </>,
         )}
       {chip(
         "tag-satchel",
         `${words.Satchel}: ${party.loot.length ? party.loot.map((l) => theme.loot[l].name).join(", ") : "empty"}`,
         "satchel",
-        Array.from({ length: record.satchel }, (_, i) =>
-          party.loot[i] ? (
-            <CrawlIcon key={i} name={party.loot[i]} theme={theme} />
-          ) : (
-            <i key={i} className="slot-empty" />
-          ),
-        ),
+        <>
+          <CrawlIcon name="satchel" theme={theme} />
+          {party.loot.map((item, i) => (
+            <CrawlIcon key={i} name={item} theme={theme} />
+          ))}
+        </>,
       )}
       {words.badges &&
         record.badges.of > 0 &&
@@ -743,23 +748,23 @@ export function PowerPlaque({
         <span className="offer-name">{power.name}</span>
         <small className="offer-price">
           {power.drinks ? `drink ${power.drinks} · ` : ""}
-          {powerLine(power.kind)}
+          {powerLine(power)}
         </small>
       </span>
     </button>
   );
 }
-/** A power's kind in two words, for its plaque. */
-const powerLine = (kind: Power["kind"]) =>
+/** A power's kind in one or two plain words, for its plaque. */
+const powerLine = (power: Power) =>
   ({
-    reroll: "reroll",
-    spare: "no loss",
-    edge: "the edge",
-    double: "double win",
-    win: "win it",
-    heal: "heal",
-    flee: "escape",
-  })[kind];
+    reroll: "Reroll",
+    spare: "Free loss",
+    edge: "Advantage",
+    double: "Double win",
+    win: "Win it",
+    heal: `Heal ${power.amount ?? 1}`,
+    flee: "Escape",
+  })[power.kind];
 
 /** Pokémon League (2026-10-25): a beaten wild Pokémon, caught for a drink
  * or let go. A full team names the teammate a catch lets go. */

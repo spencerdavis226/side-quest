@@ -247,11 +247,6 @@ const situations: [string, GameConfig, Find][] = [
       currentCard(s).id.startsWith("pokemon.league-champion-"),
   ],
   [
-    "league-route-rule",
-    league,
-    (s) => !!stageRule(s.quest) && s.phase === "hidden" && !!party(s).omen,
-  ],
-  [
     "league-move-spent",
     league,
     (s) => (party(s).powers ?? 0) >= 1 && s.phase === "revealed",
