@@ -57,6 +57,8 @@ export function botPower(
         ? spendPower(s, random)
         : s;
     case "flee":
-      return moment === "before" && low && !lostRoll ? spendPower(s, random) : s;
+      return moment === "before" && low && !lostRoll
+        ? spendPower(s, random)
+        : s;
   }
 }

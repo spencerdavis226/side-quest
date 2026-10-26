@@ -17,11 +17,7 @@ const lines: Readonly<Record<string, PowerLine>> = {
     ["Flamethrower", "double", { uses: 2 }],
     ["Blast Burn", "win", { cost: 1, uses: 2 }],
   ],
-  squirtle: [
-    ["Withdraw", "spare"],
-    null,
-    ["Hydro Pump", "win", { cost: 1 }],
-  ],
+  squirtle: [["Withdraw", "spare"], null, ["Hydro Pump", "win", { cost: 1 }]],
   pikachu: [["Volt Tackle", "win", { cost: 1 }]],
   eevee: [
     ["Quick Attack", "edge"],
