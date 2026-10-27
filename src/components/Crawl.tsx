@@ -307,6 +307,8 @@ export function CrawlStrip({
   const jinx = party.jinx ? finaleCard(quest, party.jinx)?.jinx : undefined;
   const quaffReady = party.quaff !== undefined && !party.quaffed;
   const locked = badgesLocked(session, theme);
+  const caught = partyTeam(quest);
+  const bagEmpty = !party.loot.length && !caught.length;
   // The League's type edge on the battle face up (2026-10-25): a mark
   // only; the dialog says what it does.
   const matchup =
@@ -380,18 +382,21 @@ export function CrawlStrip({
           </>,
         )}
       {chip(
-        "tag-satchel",
-        `${words.Satchel}: ${[...party.loot.map((l) => theme.loot[l].name), ...partyTeam(quest).map((m) => m.title)].join(", ") || "empty"}`,
+        `tag-satchel${bagEmpty ? " empty" : ""}`,
+        `${words.Satchel}: ${[...party.loot.map((l) => theme.loot[l].name), ...caught.map((m) => m.title)].join(", ") || "empty"}`,
         "satchel",
-        <>
+        // The items show for themselves; an empty bag is one dim bag, so the
+        // chip keeps its place (2026-10-27, owner).
+        bagEmpty ? (
           <CrawlIcon name="satchel" theme={theme} />
-          {party.loot.map((item, i) => (
-            <CrawlIcon key={i} name={item} theme={theme} />
-          ))}
-          {partyTeam(quest).map(
-            (m) => m.type && <TypeMark key={m.id} type={m.type} />,
-          )}
-        </>,
+        ) : (
+          <>
+            {party.loot.map((item, i) => (
+              <CrawlIcon key={i} name={item} theme={theme} />
+            ))}
+            {caught.map((m) => m.type && <TypeMark key={m.id} type={m.type} />)}
+          </>
+        ),
       )}
       {words.badges &&
         record.badges.of > 0 &&
