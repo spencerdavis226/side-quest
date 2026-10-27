@@ -288,8 +288,7 @@ export function CardFace({
                 className="ball-throw"
                 aria-label={`Threw a ${ball.face}, needed ${ball.need}. ${ball.caught ? "Caught" : "It got away"}.`}
               >
-                <span className="ball-mark" aria-hidden="true" />
-                <span className="dice-result-face" aria-hidden="true">
+                <span className="ball-face" aria-hidden="true">
                   {ball.face}
                 </span>
                 <span className="ball-need" aria-hidden="true">

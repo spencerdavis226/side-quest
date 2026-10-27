@@ -283,18 +283,37 @@
   gap: clamp(6px, 2.4cqw, 12px);
   color: #31200f;
 }
-.ball-mark {
-  width: clamp(22px, 7cqw, 32px);
-  height: clamp(22px, 7cqw, 32px);
+.ball-face {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  width: clamp(38px, 12cqw, 52px);
+  height: clamp(38px, 12cqw, 52px);
   border: 2px solid #2b1a0b;
   border-radius: 50%;
   background: linear-gradient(
     to bottom,
-    #c2372c 0 46%,
-    #2b1a0b 46% 54%,
-    #f5e5bd 54%
+    #c2372c 0 45%,
+    #2b1a0b 45% 55%,
+    #f5e5bd 55%
   );
+  box-shadow:
+    0 2px 0 rgb(255 246 207 / 0.42),
+    inset 0 -3px rgb(43 26 11 / 0.18);
+  color: #2b1a0b;
+  font: 700 clamp(16px, 5.4cqw, 23px) / 1 var(--font-card-title);
   animation: ball-wobble 520ms ease-in-out 1 both;
+}
+/* The face sits on a cream disc, as the ball's button does. */
+.ball-face::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 15%;
+  border: 2px solid #2b1a0b;
+  border-radius: 50%;
+  background: #f5e5bd;
 }
 .ball-need {
   font: italic 600 clamp(13px, 3.8cqw, 17px) / 1 var(--font-tavern);
@@ -317,10 +336,7 @@
   );
   line-height: 1.12;
 }
-.ball-result .dice-result-face {
-  min-width: clamp(26px, 8.4cqw, 36px);
-  height: clamp(26px, 8.4cqw, 36px);
-}
+
 @keyframes ball-wobble {
   0%,
   100% {
