@@ -120,7 +120,7 @@ export const moreWilds: CardDefinition[][] = [
     strike(4, "route-tangela", "Tangela", {
       even: "Wild Tangela, a ball of blue spaghetti, is hungry. It tangles you up. Drink 2.",
       advantage:
-        "Wild Tangela, a ball of blue spaghetti, is hungry, so you eat it first. Give 3.",
+        "Wild Tangela, a ball of blue spaghetti, is hungry. You eat it first. Give 3.",
       disadvantage:
         "Wild Tangela, a ball of blue spaghetti, is hungry and ties you in knots. Drink 5.",
     }),
@@ -156,7 +156,7 @@ export const moreWilds: CardDefinition[][] = [
     ),
     strike(5, "route-rotom", "Rotom", {
       even: "A Rotom got into the phone. Don't drop it. It orders pizza. Drink 2.",
-      advantage: "A Rotom got into the phone, so you post it online. Give 3.",
+      advantage: "A Rotom got into the phone. You post it online. Give 3.",
       disadvantage: "A Rotom got into the phone and texts your ex. Drink 6.",
     }),
     strike(5, "route-breloom", "Breloom", {

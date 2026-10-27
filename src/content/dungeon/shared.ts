@@ -228,17 +228,18 @@ export const STRIKE_HURT = [1, 1, 2] as const;
  * It calls for a knack (`strikeKnacks` in `knacks.ts`): an adventurer with
  * it wins (the `advantage` line, and `loot`), one without it loses (the
  * `disadvantage` line, hearts, a curse or a jinx). The plain modes read the
- * `even` line and nothing is at stake. */
+ * `even` line and nothing is at stake. Since 2026-10-27 a strike is one line
+ * like the League's: each of the three is the whole card, the face prints
+ * the one that applies, and `rules` holds the `even` line. */
 export const strike = (
   floor: Floor,
   kind: "Monster" | "Trap",
   id: string,
   title: string,
-  rules: string,
   lines: Strike,
   more: Stakes = {},
 ): CardDefinition => ({
-  ...room(floor, kind, id, title, rules),
+  ...room(floor, kind, id, title, lines.even),
   strike: lines,
   damage: STRIKE_HURT[tier(floor)],
   ...stakes(more),

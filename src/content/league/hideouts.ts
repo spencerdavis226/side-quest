@@ -37,7 +37,7 @@ export const hideouts = [
         {
           even: "A Grunt sells twitching Slowpoke Tails. You buy one out of fear. Drink 2, slowly.",
           advantage:
-            "A Grunt sells twitching Slowpoke Tails, so you free the Slowpoke. Give 4, very slowly.",
+            "A Grunt sells twitching Slowpoke Tails until you free the Slowpoke. Give 4, very slowly.",
           disadvantage:
             "A Grunt sells twitching Slowpoke Tails and sells you two. Drink 5, slowly.",
         },
@@ -126,7 +126,7 @@ export const hideouts = [
       gruntStrike("Team Aqua", "aqua-grunt-submarine", "Submarine Thief", {
         even: "A Grunt is stealing a submarine and asks you to look away. You look away. Drink 2.",
         advantage:
-          "A Grunt is stealing a submarine, so you report him. Give 3.",
+          "A Grunt steals a submarine and asks you to look away. You report him. Give 3.",
         disadvantage:
           "A Grunt is stealing a submarine and steals your drink too. Drink 5.",
       }),
@@ -161,7 +161,7 @@ export const hideouts = [
       gruntStrike("Team Galactic", "galactic-grunt-bowl", "Galactic Grunt", {
         even: "A Galactic Grunt's bowl cut is also a uniform. You can't stop staring. Drink 2.",
         advantage:
-          "A Galactic Grunt's bowl cut is also a uniform, so you cut the bowl. Give 3.",
+          "A Galactic Grunt's bowl cut is also a uniform. You cut the bowl. Give 3.",
         disadvantage:
           "A Galactic Grunt's bowl cut is also a uniform, and Poison Jab lands. Drink 5.",
       }),
@@ -186,7 +186,7 @@ export const hideouts = [
         {
           even: "Charon the scientist cackles and points a ray gun at you. Zap. Drink 2.",
           advantage:
-            "Charon the scientist points a ray gun at you, so you swap its batteries. Give 3.",
+            "Charon the scientist points a ray gun at you. You swap its batteries. Give 3.",
           disadvantage:
             "Charon the scientist points a ray gun at you and fires full blast. Drink 5.",
         },
@@ -213,7 +213,7 @@ export const hideouts = [
       gruntStrike("Team Plasma", "plasma-grunt-knight", "Plasma Grunt", {
         even: "A Plasma Grunt dressed as a knight tells you to free your Pokémon. You nod politely. Drink 2.",
         advantage:
-          "A Plasma Grunt dressed as a knight tells you to free your Pokémon, so you free his. Give 3.",
+          "A Plasma Grunt dressed as a knight tells you to free your Pokémon. You free his. Give 3.",
         disadvantage:
           "A Plasma Grunt dressed as a knight lectures you about freeing your Pokémon. Drink 5.",
       }),
@@ -274,7 +274,7 @@ export const hideouts = [
         {
           even: "A Flare scientist in orange goggles shows you a doomsday weapon. It's a hair dryer. Drink 2.",
           advantage:
-            "A Flare scientist shows you a doomsday weapon, so you press the red button. Give 3.",
+            "A Flare scientist shows you a doomsday weapon. You press the red button. Give 3.",
           disadvantage:
             "A Flare scientist in orange goggles shows you a doomsday weapon. It works. Drink 5.",
         },

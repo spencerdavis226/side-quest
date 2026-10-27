@@ -60,30 +60,20 @@ export const cellar: FloorCards = {
       "He passes out on you. Loot his pockets. Give 2.",
       { loot: "smoke" },
     ),
-    strike(
-      0,
-      "Monster",
-      "skeleton-barback",
-      "Skeleton Barback",
-      "He's been restocking limes since 1974. Ask him nicely for a fresh one.",
-      {
-        even: "He hands you a dry one. Drink 2.",
-        advantage: "He finds a perfect one. Give 3, with a lime.",
-        disadvantage: "He throws one at your eye. Drink 3.",
-      },
-    ),
-    strike(
-      0,
-      "Monster",
-      "possessed-mop",
-      "Possessed Mop",
-      "The mop is moving on its own and it's coming for your shoes.",
-      {
-        even: "It mops your feet. Drink 2 and lift them.",
-        advantage: "You snap the handle. Give 3.",
-        disadvantage: "It mops your face. Drink 3.",
-      },
-    ),
+    strike(0, "Monster", "skeleton-barback", "Skeleton Barback", {
+      even: "Skeleton Barback restocks limes since 1974. He hands you a dry one. Drink 2.",
+      advantage:
+        "Skeleton Barback has restocked limes since 1974. Ask nicely: a perfect one. Give 3, with a lime.",
+      disadvantage:
+        "Skeleton Barback has restocked limes since 1974, and throws one at your eye. Drink 3.",
+    }),
+    strike(0, "Monster", "possessed-mop", "Possessed Mop", {
+      even: "A possessed mop comes for your shoes and mops your feet. Drink 2 and lift them.",
+      advantage:
+        "A possessed mop comes for your shoes. You snap the handle. Give 3.",
+      disadvantage:
+        "A possessed mop comes for your shoes and mops your face. Drink 3.",
+    }),
     monster(
       0,
       "keg-spider",
@@ -115,18 +105,13 @@ export const cellar: FloorCards = {
         },
       },
     ),
-    strike(
-      0,
-      "Monster",
-      "cask-bat",
-      "Cask Bat",
-      "A bat lives in the empty cask and it hates the lights.",
-      {
-        even: "It flaps past your ear. Drink 2.",
-        advantage: "You shoo it into a bucket. Give 3.",
-        disadvantage: "It gets tangled in your hair. Drink 3.",
-      },
-    ),
+    strike(0, "Monster", "cask-bat", "Cask Bat", {
+      even: "A bat in the empty cask hates the lights and flaps past your ear. Drink 2.",
+      advantage:
+        "A bat in the empty cask hates the lights. You shoo it into a bucket. Give 3.",
+      disadvantage:
+        "A bat in the empty cask hates the lights and gets tangled in your hair. Drink 3.",
+    }),
     trial(
       0,
       "clipboard-troll",
@@ -180,11 +165,12 @@ export const cellar: FloorCards = {
       "Trap",
       "falling-taps",
       "Loose Tap Handles",
-      "A rack of novelty tap handles is right above your head. It's swaying.",
       {
-        even: "A foam one bonks you. Drink 2.",
-        advantage: "You dodge, then catch the shark. Give 2.",
-        disadvantage: "A plastic shark to the skull. Drink 3.",
+        even: "A rack of novelty tap handles sways overhead and a foam one bonks you. Drink 2.",
+        advantage:
+          "A rack of tap handles sways overhead. You dodge, then catch the shark. Give 2.",
+        disadvantage:
+          "A rack of tap handles sways overhead and a plastic shark hits your skull. Drink 3.",
       },
       {
         jinx: {
@@ -210,19 +196,13 @@ export const cellar: FloorCards = {
       "You heckle them offstage. Give 2.",
     ),
     // More of the Cellar (2026-10-25).
-    strike(
-      0,
-      "Monster",
-      "fryer-oil-ooze",
-      "Fryer Oil Ooze",
-      "Twenty years of fryer oil got up and walked. It smells like Tuesday.",
-      {
-        even: "It slicks your shoes. Drink 2.",
-        advantage: "You salt it with a spell and it shrivels. Give 3.",
-        disadvantage:
-          "It hugs you. Drink 3, then wipe your hands on your jeans.",
-      },
-    ),
+    strike(0, "Monster", "fryer-oil-ooze", "Fryer Oil Ooze", {
+      even: "Twenty years of fryer oil got up and walked. It slicks your shoes. Drink 2.",
+      advantage:
+        "Fryer oil got up and walked. A spell and a pinch of salt, and it shrivels. Give 3.",
+      disadvantage:
+        "Fryer oil got up and walked, then hugs you. Drink 3 and wipe your hands on your jeans.",
+    }),
     monster(
       0,
       "barback-poltergeist",
@@ -231,18 +211,13 @@ export const cellar: FloorCards = {
       "The tower falls. Drink 3.",
       "You tip him a coin and he floats off. Give 3.",
     ),
-    strike(
-      0,
-      "Monster",
-      "cobweb-bartender",
-      "Cobweb Bartender",
-      "A bartender made of cobwebs slides you something cloudy.",
-      {
-        even: "You sip it anyway. Drink 2.",
-        advantage: "You bless the glass and the cobwebs fall away. Give 3.",
-        disadvantage: "It's mostly spider. Drink 3 and shiver.",
-      },
-    ),
+    strike(0, "Monster", "cobweb-bartender", "Cobweb Bartender", {
+      even: "A cobweb bartender slides you something cloudy. You sip it anyway. Drink 2.",
+      advantage:
+        "A cobweb bartender slides you something cloudy. You bless the glass and it clears. Give 3.",
+      disadvantage:
+        "A cobweb bartender slides you something cloudy. It's mostly spider. Drink 3 and shiver.",
+    }),
     trial(
       0,
       "low-beam",

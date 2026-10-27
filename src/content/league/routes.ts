@@ -75,7 +75,7 @@ const route1: CardDefinition[] = [
   strike(0, "route-lechonk", "Lechonk", {
     even: "Wild Lechonk snorts through your snacks. Everyone oinks; the quietest oinker drinks 2.",
     advantage:
-      "Wild Lechonk goes for your snacks, so you steal its snacks first. Give 3.",
+      "Wild Lechonk snorts at your snacks, but you steal its snacks first. Give 3.",
     disadvantage:
       "Wild Lechonk eats the whole bag while everyone oinks at it. Drink 4, oink.",
   }),
@@ -208,7 +208,7 @@ const route2: CardDefinition[] = [
   ),
   strike(1, "route-ekans", "Ekans", {
     even: "Wild Ekans wraps your leg and hisses something filthy. Hiss back and drink 2.",
-    advantage: "Wild Ekans wraps your leg, so you tie it in a bow. Give 3.",
+    advantage: "Wild Ekans wraps your leg. You tie it in a bow. Give 3.",
     disadvantage:
       "Wild Ekans wraps your leg and Poison Stings. Drink 4, eyes watering.",
   }),
@@ -380,7 +380,7 @@ const route3: CardDefinition[] = [
   strike(2, "route-roggenrola", "Roggenrola", {
     even: "Wild Roggenrola heard what you said about it. Say something nice, then drink 2.",
     advantage:
-      "Wild Roggenrola heard what you said, so you skip it across a lake. Give 3.",
+      "Wild Roggenrola heard what you said about it. You skip it across a lake. Give 3.",
     disadvantage:
       "Wild Roggenrola heard what you said and takes it personally. Drink 4.",
   }),
@@ -552,7 +552,7 @@ const route4: CardDefinition[] = [
   strike(3, "route-sandile", "Sandile", {
     even: "Wild Sandile wears sunglasses and doesn't care about you. Awkward. Drink 2 to break the silence.",
     advantage:
-      "Wild Sandile wears sunglasses and doesn't care, so you steal the sunglasses. Give 3.",
+      "Wild Sandile wears sunglasses and doesn't care. Then you steal the sunglasses. Give 3.",
     disadvantage:
       "Wild Sandile wears sunglasses and didn't care until now. Now it cares. Drink 5.",
   }),
@@ -702,7 +702,8 @@ const route4Aces: CardDefinition[] = [
 const route5: CardDefinition[] = [
   strike(4, "route-haunter", "Haunter", {
     even: "Wild Haunter licks you, cold and lingering. Lick your lips and shiver. Drink 2.",
-    advantage: "Wild Haunter licks you, so you lick it back. Give 3.",
+    advantage:
+      "Wild Haunter licks you, cold and lingering. You lick it back. Give 3.",
     disadvantage: "Wild Haunter licks you, then uses Hypnosis. Drink 5.",
   }),
   strike(4, "route-scyther", "Scyther", {
@@ -886,7 +887,7 @@ const route6: CardDefinition[] = [
   strike(5, "route-lucario", "Lucario", {
     even: "Wild Lucario reads your aura. It knows what you did and says nothing. Drink 2.",
     advantage:
-      "Wild Lucario reads your aura, so you read its aura back. Give 3.",
+      "Wild Lucario reads your aura, and you read its aura right back. Give 3.",
     disadvantage:
       "Wild Lucario reads your aura and says what you did out loud. Drink 6.",
   }),
@@ -1097,7 +1098,7 @@ const route7: CardDefinition[] = [
   strike(6, "route-kingambit", "Kingambit", {
     even: "Wild Kingambit demands you kneel. You kneel and your knees knock. Drink 3.",
     advantage:
-      "Wild Kingambit demands you kneel, so you make it kneel. Give 4.",
+      "Wild Kingambit demands you kneel. You make it kneel instead. Give 4.",
     disadvantage:
       "Wild Kingambit demands you kneel. Kneel. It stays unimpressed. Drink 6.",
   }),
@@ -1417,7 +1418,7 @@ const victoryRoad: CardDefinition[] = [
   strike(8, "route-onix-victory", "Steelix", {
     even: "A Steelix is the floor of the cave, and it rumbles. Drink 3.",
     advantage:
-      "A Steelix is the floor of the cave, so you climb it like a stair. Give 4.",
+      "A Steelix is the floor of the cave. You climb it like a stair. Give 4.",
     disadvantage:
       "A Steelix is the floor of the cave and Iron Tails you. Drink 6.",
   }),
