@@ -397,7 +397,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font: 600 16px / 1 var(--font-tavern);
+  font: 600 16px / 1.3 var(--font-tavern);
   letter-spacing: 0.02em;
 }
 /* The satchel: one slot per place in it, its items in violet like their
@@ -405,6 +405,10 @@
 .tag-satchel {
   gap: 6px;
   color: #dccbff;
+}
+/* An empty bag: one dim bag, kept in place. */
+.tag-satchel.empty {
+  opacity: 0.5;
 }
 /* A caught Pokémon in the bag: its type mark, as small as an item. */
 .tag-satchel .type-mark {
