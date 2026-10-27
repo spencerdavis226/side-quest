@@ -41,7 +41,7 @@ export function makePower(
   const rules = {
     reroll: `Roll a lost ${w.fight} again`,
     spare: `A loss costs ${w.none}`,
-    edge: `Take the edge in a ${w.fight}`,
+    edge: "Roll twice, keep the best",
     double: "A win counts double",
     win: `Win a ${w.fight} for ${w.hearts(more.cost ?? 1)}`,
     heal: `Get ${w.hearts(more.amount ?? 1)} back`,

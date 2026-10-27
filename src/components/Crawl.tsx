@@ -752,11 +752,13 @@ export function PowerPlaque({
 }) {
   const power = partyPower(session.quest);
   if (!power) return null;
+  const card = currentCardOf(session);
   const drinks = power.drinks ? `Drink ${power.drinks}: ` : "";
+  const does = power.kind === "edge" ? edgeOn(card).does : power.rules;
   return (
     <button
       className={`card-choice-option loot-plaque power-plaque power-${power.kind}`}
-      aria-label={`${theme.words.power.name}, ${power.name}: ${drinks}${power.rules}`}
+      aria-label={`${theme.words.power.name}, ${power.name}: ${drinks}${does}`}
       onClick={onUse}
     >
       <CrawlIcon name="power" theme={theme} />
@@ -764,18 +766,30 @@ export function PowerPlaque({
         <span className="offer-name">{power.name}</span>
         <small className="offer-price">
           {power.drinks ? `drink ${power.drinks} · ` : ""}
-          {powerLine(power)}
+          {powerLine(power, card)}
         </small>
       </span>
     </button>
   );
 }
+/** What an edge does on this card: a strike has no roll, so it wins; a dice
+ * fight rolls twice and keeps the best; a plaque fight softens a loss. */
+const edgeOn = (card: CardDefinition) =>
+  card.strike
+    ? { line: "Win it", does: "This strike is won outright." }
+    : card.dice
+      ? {
+          line: "Roll twice",
+          does: "Roll twice and keep the better roll this fight.",
+        }
+      : { line: "Softer loss", does: "A loss costs 1 less this fight." };
+
 /** A power's kind in one or two plain words, for its plaque. */
-const powerLine = (power: Power) =>
+const powerLine = (power: Power, card: CardDefinition) =>
   ({
     reroll: "Reroll",
     spare: "Free loss",
-    edge: "Advantage",
+    edge: edgeOn(card).line,
     double: "Double win",
     win: "Win it",
     heal: `Heal ${power.amount ?? 1}`,
@@ -930,7 +944,11 @@ export function buildExtras(
       key: "power",
       long: true,
       name: power.name,
-      does: `${power.drinks ? `Drink ${power.drinks}: ` : ""}${power.rules}`,
+      does: `${power.drinks ? `Drink ${power.drinks}: ` : ""}${
+        power.kind === "edge"
+          ? edgeOn(currentCardOf(session)).does
+          : power.rules
+      }`,
       mark: <CrawlIcon name="power" theme={theme} />,
       run: onPower,
       plaque: (
