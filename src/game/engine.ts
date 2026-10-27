@@ -626,9 +626,10 @@ export function cardMatchup(
   return matchup(mine, card.type);
 }
 
-/** Pokémon League (2026-10-25): the team the table has caught. */
+/** Pokémon League (2026-10-25): the Pokémon the table has caught, held in
+ * the bag (2026-10-26) until one is used on a battle it beats. */
 export const TEAM_SIZE = 2;
-/** The team, as cards, oldest first. */
+/** The caught Pokémon in the bag, as cards, oldest first. */
 export function partyTeam(quest: QuestState | undefined) {
   return (quest?.party?.team ?? []).flatMap((id) => {
     const card = quest ? finaleCard(quest, id) : undefined;
@@ -683,37 +684,76 @@ export function letGo(
 ): SessionState {
   return awaitingCatch(s) ? discard(s, random) : s;
 }
-/** Whether teammate `id` can be sent in for the battle face up: before it
- * is decided, rested since the last gym, and super effective on the foe
- * when the starter isn't. */
+/** Whether caught Pokémon `id` can be used on the battle face up
+ * (2026-10-26): before it is decided, with its type super effective on the
+ * foe's, even when the starter's already is (a battle is then won for
+ * certain). A strike the starter already wins has nothing to add. */
 export function canSendIn(s: SessionState, id: string): boolean {
   const party = s.quest?.party;
   if (!party || !s.quest?.due || s.phase !== "revealed") return false;
-  if (!party.team?.includes(id) || party.tired?.includes(id) || party.sent)
-    return false;
+  if (!party.team?.includes(id) || party.sent) return false;
   const card = currentCard(s);
   const member = finaleCard(s.quest, id);
   if (!(card.battle || card.strike) || !card.type || !member?.type)
     return false;
   if (s.roll || card.dice?.choice || party.press || party.tera === card.id)
     return false;
-  const now = cardMatchup(s.quest, card)?.edge;
-  return (
-    now !== "advantage" && matchup(member.type, card.type).edge === "advantage"
-  );
+  if (card.strike && strikeOutcome(s.quest, card) === "won") return false;
+  return matchup(member.type, card.type).edge === "advantage";
 }
-/** Send teammate `id` in: the battle is fought with its type, and it rests
- * until the next gym falls. */
-export function sendIn(s: SessionState, id: string): SessionState {
+/** Use caught Pokémon `id` on the battle face up: it is spent (it leaves
+ * the bag) and the battle is won outright; a boss takes a hit. */
+export function sendIn(
+  s: SessionState,
+  id: string,
+  random: Random = Math.random,
+): SessionState {
   if (!canSendIn(s, id)) return s;
-  const party = s.quest!.party!;
-  return {
+  const q = s.quest!;
+  const party = q.party!;
+  const card = currentCard(s);
+  const used = {
     ...s,
     quest: {
-      ...s.quest!,
-      party: { ...party, sent: id, tired: [...(party.tired ?? []), id] },
+      ...q,
+      party: {
+        ...party,
+        team: (party.team ?? []).filter((m) => m !== id),
+        sent: id,
+      },
     },
   };
+  // A strike reads the sent Pokémon's type (`cardMatchup`): won. Any other
+  // battle is won outright, like a power that wins.
+  return discard(used, random, card.strike ? undefined : "won");
+}
+/** What the table can throw out of the bag: an item, or a caught Pokémon. */
+export type BagDrop = { item: Loot } | { caught: string };
+/** Throw an item out of the bag, or let a caught Pokémon go (2026-10-27,
+ * owner: a manual discard, behind a second tap in the dialog). It works
+ * any time the run is on; the card in play is untouched. */
+export function dropFromBag(s: SessionState, drop: BagDrop): SessionState {
+  const q = s.quest;
+  const party = q?.party;
+  if (!q || !party || party.wiped || s.phase === "complete") return s;
+  if ("item" in drop) {
+    const at = party.loot.indexOf(drop.item);
+    if (at < 0) return s;
+    const loot = party.loot.filter((_, i) => i !== at);
+    return { ...s, quest: { ...q, party: { ...party, loot } } };
+  }
+  if (!party.team?.includes(drop.caught) || party.sent === drop.caught)
+    return s;
+  const team = party.team.filter((m) => m !== drop.caught);
+  const next: PartyState = { ...party, team };
+  if (!team.length) delete next.team;
+  // Saves from before 2026-10-26 may rest a Pokémon (`tired`): it can only
+  // name Pokémon still on the team.
+  if (next.tired) {
+    next.tired = next.tired.filter((m) => m !== drop.caught);
+    if (!next.tired.length) delete next.tired;
+  }
+  return { ...s, quest: { ...q, party: next } };
 }
 /** Pub Crawl (2026-10-25): a fight that calls for a knack the adventurer
  * has is fought with the edge; one it lacks is fought as written. */

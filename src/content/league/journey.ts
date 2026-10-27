@@ -190,16 +190,19 @@ export const wild = (
 /** A strike (2026-10-25): a wild Pokémon with no roll. The type matchup
  * picks one of three lines and what the card costs: the starter's edge wins
  * (`loot` comes, nothing is lost), a disadvantage loses (`WILD_HURT` hearts,
- * a `curse`), and an even matchup is only what its line says. */
+ * a `curse`), and an even matchup is only what its line says. Since
+ * 2026-10-26 a League strike is one line: each of the three is the whole
+ * card (the foe, what it does, what the table does), the face prints only
+ * the one its matchup picked, and `rules` holds the `even` line for
+ * everything else that reads a card's text. */
 export const strike = (
   leg: Leg,
   id: string,
   title: string,
-  rules: string,
   lines: Strike,
   { kind = "Wild", ...more }: Extra & { kind?: string } = {},
 ): CardDefinition => ({
-  ...spot(leg, kind, "monster", id, title, rules),
+  ...spot(leg, kind, "monster", id, title, lines.even),
   strike: lines,
   damage: WILD_HURT[leg],
   ...stakes(more),
@@ -447,11 +450,10 @@ export const gruntStrike = (
   team: string,
   id: string,
   title: string,
-  rules: string,
   lines: Strike,
   { rank = "Grunt", ...more }: Extra & { rank?: string } = {},
 ): CardDefinition => ({
-  ...strike(HIDEOUT_LEG, id, title, rules, lines, more),
+  ...strike(HIDEOUT_LEG, id, title, lines, more),
   ribbon: `${team} · ${rank}`,
 });
 

@@ -62,18 +62,13 @@ export const rooftop: FloorCards = {
       "You lean into it like a music video. Give 5.",
       { curse: "hex" },
     ),
-    strike(
-      8,
-      "Monster",
-      "the-seagull",
-      "The Seagull",
-      "It's eyeing your fries. You don't have fries. It's eyeing you.",
-      {
-        even: "It squawks. Drink 3.",
-        advantage: "You stare it down. Give 5.",
-        disadvantage: "It takes a bite. Drink 5.",
-      },
-    ),
+    strike(8, "Monster", "the-seagull", "The Seagull", {
+      even: "A seagull eyes you, though you have no fries, and squawks. Drink 3.",
+      advantage:
+        "A seagull eyes you, though you have no fries. You stare it down. Give 5.",
+      disadvantage:
+        "A seagull eyes you, though you have no fries, and takes a bite. Drink 5.",
+    }),
     monster(
       8,
       "influencer-golem",
@@ -121,18 +116,13 @@ export const rooftop: FloorCards = {
         ),
       },
     ),
-    strike(
-      8,
-      "Monster",
-      "the-proposal",
-      "The Proposal",
-      "A guy is proposing to his girlfriend at the railing, and you're filming.",
-      {
-        even: "Awkward silence. Drink 3.",
-        advantage: "You hype him up. She says yes. Give 5.",
-        disadvantage: "She says no, and it's somehow your fault. Drink 5.",
-      },
-    ),
+    strike(8, "Monster", "the-proposal", "The Proposal", {
+      even: "A guy proposes at the railing and you're filming. Awkward silence. Drink 3.",
+      advantage:
+        "A guy proposes at the railing and you hype him up. She says yes. Give 5.",
+      disadvantage:
+        "A guy proposes at the railing and she says no, somehow your fault. Drink 5.",
+    }),
     monster(
       8,
       "rooftop-raccoon",
@@ -174,18 +164,13 @@ export const rooftop: FloorCards = {
       "You see your life flash. Drink 4.",
       "You step back, cool as anything. Give 4.",
     ),
-    strike(
-      8,
-      "Trap",
-      "the-sprinklers",
-      "The Sprinklers",
-      "The roof's sprinklers come on, all at once.",
-      {
-        even: "Damp. Drink 3.",
-        advantage: "You stop the water with a wave. Give 4.",
-        disadvantage: "Drenched. Drink 5.",
-      },
-    ),
+    strike(8, "Trap", "the-sprinklers", "The Sprinklers", {
+      even: "The roof's sprinklers come on all at once. Damp. Drink 3.",
+      advantage:
+        "The roof's sprinklers come on. You wave the water away. Give 4.",
+      disadvantage:
+        "The roof's sprinklers come on all at once and drench you. Drink 5.",
+    }),
     trap(
       8,
       "loose-tile",
@@ -194,18 +179,13 @@ export const rooftop: FloorCards = {
       "You slide. Drink 4.",
       "You land it like a parkour video. Give 4.",
     ),
-    strike(
-      8,
-      "Trap",
-      "the-heat-lamp",
-      "The Heat Lamp",
-      "You stood under the patio heater too long, and now you're on fire, slightly.",
-      {
-        even: "Warm. Drink 3.",
-        advantage: "You stop, drop and roll. Give 4.",
-        disadvantage: "Your eyebrows go. Drink 5.",
-      },
-    ),
+    strike(8, "Trap", "the-heat-lamp", "The Heat Lamp", {
+      even: "You stood under the patio heater too long and you're warm. Drink 3.",
+      advantage:
+        "You stood under the patio heater too long. You stop, drop and roll. Give 4.",
+      disadvantage:
+        "You stood under the patio heater too long and your eyebrows go. Drink 5.",
+    }),
     ambush(
       8,
       "rooftop-yoga",
@@ -223,18 +203,13 @@ export const rooftop: FloorCards = {
       "You duck behind the bar. Give 4.",
     ),
     // More of the Rooftop Bar (2026-10-25).
-    strike(
-      8,
-      "Monster",
-      "rogue-drone",
-      "The Rogue Drone",
-      "Somebody's drone is filming you, and now it's dive-bombing.",
-      {
-        even: "It films your bad side. Drink 3.",
-        advantage: "You swat it into the pool. Give 5.",
-        disadvantage: "Hit in the head, on camera. Drink 5.",
-      },
-    ),
+    strike(8, "Monster", "rogue-drone", "The Rogue Drone", {
+      even: "A rogue drone dive-bombs and films your bad side. Drink 3.",
+      advantage:
+        "A rogue drone dive-bombs you. You swat it into the pool. Give 5.",
+      disadvantage:
+        "A rogue drone dive-bombs you and hits you in the head, on camera. Drink 5.",
+    }),
     monster(
       8,
       "hot-tub-wizard",
@@ -243,18 +218,13 @@ export const rooftop: FloorCards = {
       "He's a wizard. Drink 5.",
       "He's just an old man. Give 5.",
     ),
-    strike(
-      8,
-      "Monster",
-      "the-fireworks",
-      "The Fireworks",
-      "Someone's lighting fireworks off the roof, badly.",
-      {
-        even: "Pretty. Drink 3.",
-        advantage: "A heart in the sky. Make a wish and give 5.",
-        disadvantage: "One goes sideways at you. Drink 5.",
-      },
-    ),
+    strike(8, "Monster", "the-fireworks", "The Fireworks", {
+      even: "Someone lights fireworks off the roof, badly. Pretty. Drink 3.",
+      advantage:
+        "Someone lights fireworks off the roof, badly. A heart in the sky: make a wish and give 5.",
+      disadvantage:
+        "Someone lights fireworks off the roof, badly, and one goes sideways at you. Drink 5.",
+    }),
     trial(
       8,
       "the-heckler",

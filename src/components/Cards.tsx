@@ -344,9 +344,13 @@ export function CardFace({
           ) : shown === "end" && card.timer ? (
             <p className="resolved-instruction timer-end">{card.timer.end}</p>
           ) : strikeLine ? (
-            // A strike: the setup, then the line its type matchup picked.
-            <div className="card-strike">
-              <p>{card.rules}</p>
+            // A strike: the line its matchup picked, alone (its `rules` is the
+            // even line). A strike saved before 2026-10-27 still has a
+            // separate setup, which prints above the line.
+            <div
+              className={`card-strike${card.rules === card.strike!.even ? " single" : ""}`}
+            >
+              {card.rules !== card.strike!.even && <p>{card.rules}</p>}
               <p
                 className={`resolved-instruction strike-line strike-${strikeEdge}`}
               >

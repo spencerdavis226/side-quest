@@ -4,6 +4,7 @@ import { Button, Modal } from "../components/UI";
 import { PackLogo } from "../components/PackMarks";
 import { selectedPacks } from "../presentation/packs";
 import {
+  type BagDrop,
   cardMatchup,
   findCard,
   previousCard,
@@ -52,6 +53,7 @@ export function GameDialogs({
   onHideInstallHelp,
   onEnd,
   onSpend = () => {},
+  onDrop = () => {},
 }: {
   modal: DialogName;
   setModal: (modal: DialogName) => void;
@@ -62,6 +64,8 @@ export function GameDialogs({
   /** Use a crawl item from the satchel (the draught, or a Tome, with the
    * path it picks for a forked adventurer). */
   onSpend?: (item: Loot, branch?: number) => void;
+  /** Throw an item out, or let a caught Pokémon go. */
+  onDrop?: (drop: BagDrop) => void;
 }) {
   // Keep the last dialog mounted while it animates out, so pause states do not
   // pop away instantly.
@@ -212,6 +216,7 @@ export function GameDialogs({
           theme={crawl}
           session={session}
           onUse={onSpend}
+          onDrop={onDrop}
           part={part}
         />
       </Modal>

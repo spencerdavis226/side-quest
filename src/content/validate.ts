@@ -177,7 +177,7 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
           (k) =>
             typeof c.strike![k] !== "string" ||
             !c.strike![k].trim() ||
-            c.strike![k].length > 60,
+            c.strike![k].length > 100,
         ))
     )
       fail(`Invalid strike: ${c.id}`);

@@ -13,6 +13,7 @@ import type {
   PokemonType,
 } from "../game/types";
 import {
+  type BagDrop,
   currentCard as currentCardOf,
   PRESS_STEP,
   canQuaff,
@@ -244,13 +245,7 @@ export function CrawlProgress({ quest }: { quest: QuestState }) {
   }
   return plaque(
     "rooms",
-    <>
-      {place.name}
-      <span className="label-count">
-        {" "}
-        · {place.room}/{place.rooms}
-      </span>
-    </>,
+    <>{place.name}</>,
     `${words.Room} ${place.room} of ${place.rooms}, ${place.name}`,
     <span className="room-pips">
       {Array.from({ length: place.rooms }, (_, i) => (
@@ -281,11 +276,13 @@ export type StripDialog =
   | "power"
   | "rule";
 
-/** The strip under the top row in a crawl (2026-10-17): everything the party
- * carries, each a chip that reads at a glance and opens its own dialog. The
- * satchel's slots show their items; the League's badges fill a row; the
- * Quaff lights while it can be drunk; the Cup counts its splashes; a curse
- * or a jinx names itself. */
+/** The strip under the top row in a crawl (2026-10-17): what the table acts
+ * on, each a chip that opens its own dialog. The satchel's slots show their
+ * items; the League's badges fill a row; the Quaff lights while it can be
+ * drunk; the Cup counts its splashes; a curse or a jinx names itself.
+ * Reference only (2026-10-26, owner: too cluttered): the signature power
+ * (its plaque is on the card whenever it can be used) and the floor's or
+ * route's rule (its banner names it) live in the party dialog. */
 export function CrawlStrip({
   session,
   disabled,
@@ -302,9 +299,6 @@ export function CrawlStrip({
   const { words } = theme;
   const jinx = party.jinx ? finaleCard(quest, party.jinx)?.jinx : undefined;
   const quaffReady = party.quaff !== undefined && !party.quaffed;
-  const power = partyPower(quest);
-  const left = powersLeft(quest);
-  const rule = stageRule(quest);
   const locked = badgesLocked(session, theme);
   // The League's type edge on the battle face up (2026-10-25): a mark
   // only; the dialog says what it does.
@@ -353,7 +347,18 @@ export function CrawlStrip({
           `tag-edge edge-${matchup.edge}`,
           `${matchup.tera ? "Terastallized: advantage" : matchup.teammate ? `${matchup.teammate} sent in: advantage` : matchup.edge === "advantage" ? "Type advantage" : "Type disadvantage"}`,
           "matchup",
-          <EdgeMark edge={matchup.edge} />,
+          <>
+            <EdgeMark edge={matchup.edge} />
+            <span className="chip-name">
+              {matchup.tera
+                ? "Tera"
+                : matchup.teammate
+                  ? "Sent in"
+                  : matchup.edge === "advantage"
+                    ? "Strong"
+                    : "Weak"}
+            </span>
+          </>,
         )}
       {knack &&
         theme.knacks &&
@@ -364,29 +369,22 @@ export function CrawlStrip({
           <>
             <EdgeMark edge="advantage" />
             <CrawlIcon name={`knack-${knack}`} theme={theme} />
-          </>,
-        )}
-      {power &&
-        chip(
-          `tag-power${left ? " ready" : " spent"}`,
-          `${words.power.name}: ${power.name}, ${left ? `ready${left > 1 ? `, ${left} left` : ""}` : words.power.lasts}`,
-          "power",
-          <>
-            <CrawlIcon name="power" theme={theme} />
-            {left > 1 && <b>{left}</b>}
+            <span className="chip-name">{theme.knacks[knack].name}</span>
           </>,
         )}
       {chip(
         "tag-satchel",
-        `${words.Satchel}: ${party.loot.length ? party.loot.map((l) => theme.loot[l].name).join(", ") : "empty"}`,
+        `${words.Satchel}: ${[...party.loot.map((l) => theme.loot[l].name), ...partyTeam(quest).map((m) => m.title)].join(", ") || "empty"}`,
         "satchel",
-        Array.from({ length: record.satchel }, (_, i) =>
-          party.loot[i] ? (
-            <CrawlIcon key={i} name={party.loot[i]} theme={theme} />
-          ) : (
-            <i key={i} className="slot-empty" />
-          ),
-        ),
+        <>
+          <CrawlIcon name="satchel" theme={theme} />
+          {party.loot.map((item, i) => (
+            <CrawlIcon key={i} name={item} theme={theme} />
+          ))}
+          {partyTeam(quest).map(
+            (m) => m.type && <TypeMark key={m.id} type={m.type} />,
+          )}
+        </>,
       )}
       {words.badges &&
         record.badges.of > 0 &&
@@ -433,14 +431,6 @@ export function CrawlStrip({
             <CrawlIcon name={party.curse} theme={theme} />
             <span className="chip-name">{theme.curses[party.curse].name}</span>
           </>,
-        )}
-      {rule &&
-        chip(
-          "tag-rule",
-          `${words.rule.name}: ${rule.name}`,
-          "rule",
-          // Its mark only: the strip is crowded, and the dialog names it.
-          <CrawlIcon name="rule" theme={theme} />,
         )}
       {jinx &&
         words.jinx &&
@@ -762,23 +752,23 @@ export function PowerPlaque({
         <span className="offer-name">{power.name}</span>
         <small className="offer-price">
           {power.drinks ? `drink ${power.drinks} · ` : ""}
-          {powerLine(power.kind)}
+          {powerLine(power)}
         </small>
       </span>
     </button>
   );
 }
-/** A power's kind in two words, for its plaque. */
-const powerLine = (kind: Power["kind"]) =>
+/** A power's kind in one or two plain words, for its plaque. */
+const powerLine = (power: Power) =>
   ({
-    reroll: "reroll",
-    spare: "no loss",
-    edge: "the edge",
-    double: "double win",
-    win: "win it",
-    heal: "heal",
-    flee: "escape",
-  })[kind];
+    reroll: "Reroll",
+    spare: "Free loss",
+    edge: "Advantage",
+    double: "Double win",
+    win: "Win it",
+    heal: `Heal ${power.amount ?? 1}`,
+    flee: "Escape",
+  })[power.kind];
 
 /** Pokémon League (2026-10-25): a beaten wild Pokémon, caught for a drink
  * or let go. A full team names the teammate a catch lets go. */
@@ -828,8 +818,8 @@ export function CatchPlaques({
   );
 }
 
-/** A teammate who can be sent in for the battle face up (2026-10-25): its
- * type beats the foe's. */
+/** A caught Pokémon that can be used on the battle face up (2026-10-26):
+ * its type beats the foe's, so it wins the battle and is used up. */
 export function SendInPlaque({
   member,
   onSend,
@@ -840,13 +830,13 @@ export function SendInPlaque({
   return (
     <button
       className="card-choice-option loot-plaque send-plaque"
-      aria-label={`Go, ${member.title}! It fights this battle with the type edge, once a gym.`}
+      aria-label={`Go, ${member.title}! It wins this battle and is used up.`}
       onClick={() => onSend(member.id)}
     >
       {member.type && <TypeMark type={member.type} />}
       <span className="offer-label">
         <span className="offer-name">Go, {member.title}!</span>
-        <small className="offer-price">the edge</small>
+        <small className="offer-price">wins it</small>
       </span>
     </button>
   );
@@ -1028,6 +1018,55 @@ type RunRecord = NonNullable<ReturnType<typeof questRecord>>;
 /** One dialog's share of the run (`CrawlRecord`'s `part`). */
 export type RecordPart = "party" | StripDialog;
 
+/** A bag row's discard (2026-10-27): one small button that turns, in place,
+ * into "Yes, drop" and "Keep"; it turns back by itself after a few seconds.
+ * No dialog on top of a dialog. */
+function DropButton({
+  verb,
+  name,
+  onConfirm,
+}: {
+  verb: string;
+  name: string;
+  onConfirm: () => void;
+}) {
+  const [sure, setSure] = useState(false);
+  useEffect(() => {
+    if (!sure) return;
+    const timer = setTimeout(() => setSure(false), 4000);
+    return () => clearTimeout(timer);
+  }, [sure]);
+  return sure ? (
+    <span
+      className="bag-drop sure"
+      role="group"
+      aria-label={`${verb} ${name}?`}
+    >
+      <button
+        className="bag-drop-yes"
+        aria-label={`Yes, ${verb.toLowerCase()} ${name}`}
+        onClick={onConfirm}
+      >
+        Yes, {verb.toLowerCase()}
+      </button>
+      <button className="bag-drop-no" onClick={() => setSure(false)}>
+        Keep
+      </button>
+    </span>
+  ) : (
+    <button
+      className="bag-drop"
+      aria-label={`${verb} ${name}`}
+      onClick={(event) => {
+        event.currentTarget.focus();
+        setSure(true);
+      }}
+    >
+      {verb}
+    </button>
+  );
+}
+
 /** The run so far, for the satchel dialog and the end screens: the hearts,
  * the satchel (a draught can be drunk from here), the curse, and on the end
  * screens each floor with its rooms faced and its boss. */
@@ -1036,12 +1075,15 @@ export function CrawlRecord({
   theme,
   session,
   onUse,
+  onDrop,
   part,
 }: {
   record: RunRecord;
   theme: CrawlTheme;
   session?: SessionState | null;
   onUse?: (item: Loot, branch?: number) => void;
+  /** Throw an item out, or let a caught Pokémon go (2026-10-27). */
+  onDrop?: (drop: BagDrop) => void;
   /** In play, each dialog shows its own part: the party (hearts, the
    * adventurer or starter, boons), the satchel, the League's badges, or one
    * thing on the party (the Quaff, the Cup, a curse, a jinx). The end
@@ -1189,25 +1231,29 @@ export function CrawlRecord({
           </span>
         </p>
       )}
-      {show("party") && !ending && team.length > 0 && (
-        <ul className="crawl-boons crawl-team" aria-label="Team">
+      {show("satchel") && !party.wiped && !record.won && team.length > 0 && (
+        <ul className="crawl-boons crawl-team" aria-label="Caught Pokémon">
           {team.map((m) => (
-            <li
-              key={m.id}
-              className={quest?.party?.tired?.includes(m.id) ? "tired" : ""}
-            >
+            <li key={m.id}>
               {m.type && <TypeMark type={m.type} />}
               <strong>{m.title}</strong>
               <span>
-                {quest?.party?.tired?.includes(m.id)
-                  ? "Fought this gym. Back when it falls."
-                  : `Ready: sent in when ${m.type ? pokemonTypes[m.type].name : "its"} beats the foe.`}
+                Wins a battle against a foe that{" "}
+                {m.type ? pokemonTypes[m.type].name : "its type"} beats. Then
+                it's gone.
               </span>
+              {onDrop && (
+                <DropButton
+                  verb="Release"
+                  name={m.title}
+                  onConfirm={() => onDrop({ caught: m.id })}
+                />
+              )}
             </li>
           ))}
         </ul>
       )}
-      {part === "rule" && rule && (
+      {(show("party") || part === "rule") && !ending && rule && (
         <p className="crawl-curse crawl-rule">
           <CrawlIcon name="rule" theme={theme} />
           <strong>
@@ -1352,6 +1398,13 @@ export function CrawlRecord({
                       {item === "candy" ? theme.eat : theme.drink}
                     </button>
                   ))}
+                {onDrop && (
+                  <DropButton
+                    verb="Drop"
+                    name={theme.loot[item].name}
+                    onConfirm={() => onDrop({ item })}
+                  />
+                )}
               </li>
             );
           })}

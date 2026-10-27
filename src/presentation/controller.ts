@@ -10,6 +10,8 @@ import {
   catchIt,
   letGo,
   sendIn,
+  dropFromBag,
+  type BagDrop,
   spendPower,
   spendLoot,
   awaitingOffer,
@@ -191,6 +193,15 @@ export class PresentationController {
       this.effect("press");
     }
   }
+  /** Throw an item out of the bag, or let a caught Pokémon go. */
+  drop(drop: BagDrop) {
+    const { session, motion } = this.state;
+    if (!session || motion) return;
+    const next = dropFromBag(session, drop);
+    if (next === session) return;
+    this.persist(next);
+    this.transition(next, null);
+  }
   /** Push your luck: bank the win and roll again, harder. */
   press() {
     const { session, motion } = this.state;
@@ -270,15 +281,16 @@ export class PresentationController {
     this.transition(next, "discard", session);
     this.effect("discard");
   }
-  /** Send a teammate in for the battle face up. */
+  /** Use a caught Pokémon on the battle face up: it wins it and the card
+   * is put aside. */
   send(id: string) {
     const { session, motion } = this.state;
     if (!session || motion) return;
-    const next = sendIn(session, id);
+    const next = sendIn(session, id, this.random);
     if (next === session) return;
     this.persist(next);
-    this.transition(next, null);
-    this.effect("press");
+    this.transition(next, "discard", session);
+    this.effect("discard");
   }
   revealRoll() {
     const { session, motion } = this.state;

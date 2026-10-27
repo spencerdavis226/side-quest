@@ -284,7 +284,8 @@
 .dice-result .resolved-instruction {
   margin: 0;
 }
-/* A strike (League): the setup, a rule, then the line its matchup picked. */
+/* A strike: a setup and a rule above the line its matchup picked (Pub Crawl),
+   or the line alone (the League). */
 .card-strike {
   width: 100%;
   margin-block: auto;
@@ -298,6 +299,11 @@
 .card-strike .strike-line {
   padding-top: clamp(8px, 2.6cqw, max(12px, 2.2cqw));
   border-top: 1.5px solid rgb(55 36 18 / 0.35);
+}
+/* A strike that is one line (the League's): no setup above it, no rule. */
+.card-strike.single .strike-line {
+  padding-top: 0;
+  border-top: 0;
 }
 
 @keyframes result-reveal {

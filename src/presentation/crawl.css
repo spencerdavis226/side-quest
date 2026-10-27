@@ -406,11 +406,9 @@
   gap: 6px;
   color: #dccbff;
 }
-.slot-empty {
-  width: 13px;
-  height: 13px;
-  border: 1.5px dashed rgb(220 203 255 / 0.4);
-  border-radius: 50%;
+/* A caught Pokémon in the bag: its type mark, as small as an item. */
+.tag-satchel .type-mark {
+  --mark-size: 22px;
 }
 .tag-badges {
   color: #f1d58c;
@@ -423,20 +421,6 @@
 }
 .tag-quaff.spent {
   color: #8f7c5c;
-}
-.tag-power.ready {
-  border-color: #8fd8ff;
-  background: linear-gradient(180deg, #8fd8ff, #2f7fc8);
-  color: #06182b;
-}
-.tag-power.spent {
-  color: #6e8296;
-}
-/* A floor's or route's rule: parchment, like a notice on the wall. */
-.tag-rule {
-  border-color: #c9a86a;
-  background: linear-gradient(180deg, #5a4526, #2a1e0e);
-  color: #f6e2b4;
 }
 .tag-cup {
   border-color: #b8833f;
@@ -493,9 +477,8 @@
     width: 16px;
     height: 16px;
   }
-  .tag-satchel .slot-empty {
-    width: 11px;
-    height: 11px;
+  .tag-satchel .type-mark {
+    --mark-size: 18px;
   }
   .chip-name,
   .label-count {
@@ -1353,6 +1336,46 @@
   transform: translateY(2px);
   box-shadow: 0 1px 0 #4a2f12;
 }
+/* A bag row's discard: quiet until tapped, then "Yes" and "Keep" in place
+   (2026-10-27). */
+.bag-drop {
+  margin-left: auto;
+  min-width: 56px;
+  min-height: 44px;
+  padding: 0 10px;
+  border: 1px solid rgb(217 184 119 / 0.4);
+  border-radius: 10px;
+  background: transparent;
+  color: #ceb48a;
+  font: 600 0.95rem/1 var(--font-tavern);
+}
+.satchel-use + .bag-drop,
+.satchel-use ~ .bag-drop {
+  margin-left: 0;
+}
+.bag-drop.sure {
+  display: flex;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+}
+.bag-drop-yes,
+.bag-drop-no {
+  min-height: 44px;
+  padding: 0 10px;
+  border-radius: 10px;
+  font: 700 0.95rem/1 var(--font-tavern);
+}
+.bag-drop-yes {
+  border: 1px solid #d8776c;
+  background: #7a2a22;
+  color: #ffe9e4;
+}
+.bag-drop-no {
+  border: 1px solid rgb(217 184 119 / 0.5);
+  background: transparent;
+  color: #f5e4be;
+}
 .crawl-floors {
   display: grid;
   gap: 8px;
@@ -1994,13 +2017,30 @@
 }
 .crawl-team li {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto 1fr auto;
   gap: 2px 10px;
   align-items: center;
 }
 .crawl-team .type-mark {
-  grid-row: span 2;
+  grid-column: 1;
+  grid-row: 1 / span 2;
 }
-.crawl-team li.tired {
-  opacity: 0.6;
+.crawl-team li > strong {
+  grid-column: 2;
+  grid-row: 1;
+}
+.crawl-team li > span:not(.type-mark):not(.bag-drop) {
+  grid-column: 2;
+  grid-row: 2;
+}
+.crawl-team .bag-drop {
+  grid-column: 3;
+  grid-row: 1 / span 2;
+}
+/* Asking "sure?": the two buttons take their own row under the text. */
+.crawl-team .bag-drop.sure {
+  grid-column: 2 / -1;
+  grid-row: 3;
+  justify-self: end;
+  margin-top: 6px;
 }

@@ -56,18 +56,13 @@ export const wine: FloorCards = {
         ),
       },
     ),
-    strike(
-      3,
-      "Monster",
-      "zombie-sommelier",
-      "Zombie Sommelier",
-      "Brains? No. He wants to describe the finish. It takes eleven minutes.",
-      {
-        even: "Notes of oak. Drink 2.",
-        advantage: "You talk over him until he leaves. Give 3.",
-        disadvantage: "Notes of oak. Drink 3 and describe the finish of yours.",
-      },
-    ),
+    strike(3, "Monster", "zombie-sommelier", "Zombie Sommelier", {
+      even: "A zombie sommelier wants to describe the finish. Notes of oak. Drink 2.",
+      advantage:
+        "A zombie sommelier wants to describe the finish. You talk over him until he leaves. Give 3.",
+      disadvantage:
+        "A zombie sommelier describes the finish for eleven minutes. Drink 3 and describe yours.",
+    }),
     monster(
       3,
       "wine-mom-banshee",
@@ -100,30 +95,20 @@ export const wine: FloorCards = {
         },
       },
     ),
-    strike(
-      3,
-      "Monster",
-      "barrel-mimic",
-      "Barrel Mimic",
-      "Barrel 14 has teeth. Barrel 15 looks nervous.",
-      {
-        even: "Barrel 15 faints. Drink 2.",
-        advantage: "You punch it shut. Give 3 to the most nervous player.",
-        disadvantage: "Barrel 14 wins. Drink 3.",
-      },
-    ),
-    strike(
-      3,
-      "Monster",
-      "corkscrew-crab",
-      "Corkscrew Crab",
-      "A crab with corkscrews for claws, opening anything. Including you.",
-      {
-        even: "It opens a bottle. Drink 2.",
-        advantage: "You flip it on its back. Give 3.",
-        disadvantage: "Uncorked. Drink 3 and walk sideways to your seat.",
-      },
-    ),
+    strike(3, "Monster", "barrel-mimic", "Barrel Mimic", {
+      even: "Barrel 14 has teeth and barrel 15 looks nervous. Barrel 15 faints. Drink 2.",
+      advantage:
+        "Barrel 14 has teeth. You punch it shut. Give 3 to the most nervous player.",
+      disadvantage:
+        "Barrel 14 has teeth and barrel 15 looks nervous. Barrel 14 wins. Drink 3.",
+    }),
+    strike(3, "Monster", "corkscrew-crab", "Corkscrew Crab", {
+      even: "A crab with corkscrew claws opens a bottle instead of you. Drink 2.",
+      advantage:
+        "A crab with corkscrew claws opens anything. You flip it on its back. Give 3.",
+      disadvantage:
+        "A crab with corkscrew claws opens you. Uncorked. Drink 3 and walk sideways to your seat.",
+    }),
     monster(
       3,
       "sangria-sprite",
@@ -181,18 +166,13 @@ export const wine: FloorCards = {
       "Down on your ass, in red. Drink 2 standing up.",
       "Not a drop on you. Give 2.",
     ),
-    strike(
-      3,
-      "Trap",
-      "sulfite-cloud",
-      "Sulfite Cloud",
-      "A cracked cask puffs out a cloud of sulfites. Instant headache.",
-      {
-        even: "Headache. Drink 2.",
-        advantage: "You blow it away with a word. Give 2.",
-        disadvantage: "Migraine. Drink 3 and rub your temples.",
-      },
-    ),
+    strike(3, "Trap", "sulfite-cloud", "Sulfite Cloud", {
+      even: "A cracked cask puffs out sulfites. Instant headache. Drink 2.",
+      advantage:
+        "A cracked cask puffs out sulfites. One word and they blow away. Give 2.",
+      disadvantage:
+        "A cracked cask puffs out sulfites. Migraine. Drink 3 and rub your temples.",
+    }),
     trap(
       3,
       "cork-mines",
@@ -218,30 +198,20 @@ export const wine: FloorCards = {
       "You've read it. They scatter. Give 2.",
     ),
     // More of the Wine Cellar (2026-10-25).
-    strike(
-      3,
-      "Monster",
-      "cork-goblin",
-      "Cork Goblin",
-      "A goblin with a corkscrew for a hand and nothing to open. Then he sees you.",
-      {
-        even: "He opens a twist-off. Drink 2.",
-        advantage: "You hand him a screw-top. He weeps. Give 3.",
-        disadvantage: "He opens you. Drink 3.",
-      },
-    ),
-    strike(
-      3,
-      "Monster",
-      "rose-elemental",
-      "Rosé Elemental",
-      "A pink spirit that says 'rosé all day' and means it as a threat.",
-      {
-        even: "Rosé for an hour. Drink 2.",
-        advantage: "You banish it with one word: blush. Give 3.",
-        disadvantage: "All day it is. Drink 3.",
-      },
-    ),
+    strike(3, "Monster", "cork-goblin", "Cork Goblin", {
+      even: "A goblin with a corkscrew hand finds a twist-off and opens it. Drink 2.",
+      advantage:
+        "A goblin with a corkscrew hand has nothing to open. You hand him a screw-top and he weeps. Give 3.",
+      disadvantage:
+        "A goblin with a corkscrew hand has nothing to open. Then he sees you and opens you. Drink 3.",
+    }),
+    strike(3, "Monster", "rose-elemental", "Rosé Elemental", {
+      even: "A pink spirit says 'rosé all day' as a threat. Rosé for an hour. Drink 2.",
+      advantage:
+        "A pink spirit says 'rosé all day'. You banish it with one word: blush. Give 3.",
+      disadvantage:
+        "A pink spirit says 'rosé all day' as a threat. All day it is. Drink 3.",
+    }),
     monster(
       3,
       "tannin-troll",

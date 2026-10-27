@@ -58,30 +58,20 @@ export const freezer: FloorCards = {
       "You tip him. He warms right up. Give 4.",
       { loot: "shield" },
     ),
-    strike(
-      7,
-      "Monster",
-      "brain-freeze",
-      "Brain Freeze",
-      "It's not a monster. It's the pain behind your eyes, and it's winning.",
-      {
-        even: "A twinge. Drink 3.",
-        advantage: "You think warm thoughts. Give 4.",
-        disadvantage: "Full freeze. Drink 4, holding your forehead.",
-      },
-    ),
-    strike(
-      7,
-      "Monster",
-      "the-snowman",
-      "The Snowman",
-      "Carrot nose, coal eyes, and a grudge from every winter you built one.",
-      {
-        even: "A snowball misses. Drink 3.",
-        advantage: "You take his carrot. Give 4.",
-        disadvantage: "A snowball to the face. Drink 4.",
-      },
-    ),
+    strike(7, "Monster", "brain-freeze", "Brain Freeze", {
+      even: "It's not a monster, just the pain behind your eyes. A twinge. Drink 3.",
+      advantage:
+        "The pain behind your eyes is winning until you think warm thoughts. Give 4.",
+      disadvantage:
+        "The pain behind your eyes is winning. Full freeze. Drink 4, holding your forehead.",
+    }),
+    strike(7, "Monster", "the-snowman", "The Snowman", {
+      even: "A snowman with a grudge throws a snowball and misses. Drink 3.",
+      advantage:
+        "A snowman with a grudge throws a snowball. You take his carrot. Give 4.",
+      disadvantage:
+        "A snowman with a grudge throws a snowball right at your face. Drink 4.",
+    }),
     monster(
       7,
       "ice-sculpture",
@@ -154,18 +144,13 @@ export const freezer: FloorCards = {
       "Flat on your back. Drink 3.",
       "You triple-axel it. Give 3.",
     ),
-    strike(
-      7,
-      "Trap",
-      "the-door-shuts",
-      "The Door Shuts",
-      "Click. The handle's on the outside.",
-      {
-        even: "A chilly wait. Drink 2.",
-        advantage: "You find the safety knob. Give 3.",
-        disadvantage: "You're in here now. Drink 3.",
-      },
-    ),
+    strike(7, "Trap", "the-door-shuts", "The Door Shuts", {
+      even: "Click. The handle's on the outside. A chilly wait. Drink 2.",
+      advantage:
+        "Click. The handle's on the outside. You find the safety knob. Give 3.",
+      disadvantage:
+        "Click. The handle's on the outside, and you're in here now. Drink 3.",
+    }),
     trap(
       7,
       "icicle-drop",
@@ -174,18 +159,13 @@ export const freezer: FloorCards = {
       "One finds you. Drink 3.",
       "You step aside. It shatters. Give 3.",
     ),
-    strike(
-      7,
-      "Trap",
-      "tongue-on-the-pole",
-      "Tongue on the Pole",
-      "A metal shelf, a dare, and you've already done it.",
-      {
-        even: "Stuck a second. Drink 2.",
-        advantage: "You breathe it free. Give 3.",
-        disadvantage: "Stuck. Drink 3, and talk like it for one sentence.",
-      },
-    ),
+    strike(7, "Trap", "tongue-on-the-pole", "Tongue on the Pole", {
+      even: "You licked a metal shelf on a dare and you're stuck a second. Drink 2.",
+      advantage:
+        "You licked a metal shelf on a dare. A slow breath frees you. Give 3.",
+      disadvantage:
+        "You licked a metal shelf on a dare and you're stuck. Drink 3, and talk like it for a sentence.",
+    }),
     ambush(
       7,
       "penguin-gang",
@@ -203,18 +183,13 @@ export const freezer: FloorCards = {
       "You ice your knee with them. Give 3.",
     ),
     // More of the Walk-in Freezer (2026-10-25).
-    strike(
-      7,
-      "Monster",
-      "popsicle-golem",
-      "Popsicle Golem",
-      "A golem of a thousand stuck-together popsicles, in every flavor you hate.",
-      {
-        even: "Grape. Drink 3.",
-        advantage: "You sweet-talk it into melting. Give 4.",
-        disadvantage: "Banana. Drink 4.",
-      },
-    ),
+    strike(7, "Monster", "popsicle-golem", "Popsicle Golem", {
+      even: "A golem of a thousand stuck-together popsicles offers you grape. Drink 3.",
+      advantage:
+        "A golem of a thousand stuck-together popsicles melts when you sweet-talk it. Give 4.",
+      disadvantage:
+        "A golem of a thousand popsicles in every flavor you hate offers you banana. Drink 4.",
+    }),
     monster(
       7,
       "thawed-caveman",
@@ -223,18 +198,13 @@ export const freezer: FloorCards = {
       "He clubs yours. Drink 4.",
       "You show him a meme and he worships you. Give 4.",
     ),
-    strike(
-      7,
-      "Monster",
-      "ice-goblin",
-      "Ice Goblin",
-      "A goblin juggling ice cubes, and aiming them down your back.",
-      {
-        even: "One misses. Drink 3.",
-        advantage: "You juggle better. Give 4.",
-        disadvantage: "Down your shirt. Drink 4.",
-      },
-    ),
+    strike(7, "Monster", "ice-goblin", "Ice Goblin", {
+      even: "A goblin juggles ice cubes at your back and one misses. Drink 3.",
+      advantage:
+        "A goblin juggles ice cubes at your back. You juggle better. Give 4.",
+      disadvantage:
+        "A goblin juggles ice cubes at your back and one goes down your shirt. Drink 4.",
+    }),
     trial(
       7,
       "chattering-teeth",

@@ -109,9 +109,8 @@ describe("how to play", () => {
       "Types",
       "Gyms and badges",
       "Evolution",
-      "Your team",
+      "Caught Pokémon",
       "Signature moves",
-      "Route rules",
       "Bag",
       "Statuses and jinxes",
     ]);

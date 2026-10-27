@@ -32,18 +32,13 @@ export const sewers: FloorCards = {
       "Chomp. Drink 4, and do the gator chomp with your arms.",
       "You give him a belly rub. Give 4.",
     ),
-    strike(
-      4,
-      "Monster",
-      "toilet-mimic",
-      "Toilet Mimic",
-      "The only toilet down here is licking its lips.",
-      {
-        even: "It gurgles. Drink 3.",
-        advantage: "You flush it. Give 4 to the slowest in the bathroom.",
-        disadvantage: "Swirlie. Drink 4.",
-      },
-    ),
+    strike(4, "Monster", "toilet-mimic", "Toilet Mimic", {
+      even: "The only toilet down here licks its lips and gurgles. Drink 3.",
+      advantage:
+        "The only toilet down here licks its lips. You flush it. Give 4 to the slowest in the bathroom.",
+      disadvantage:
+        "The only toilet down here licks its lips and gives you a swirlie. Drink 4.",
+    }),
     monster(
       4,
       "hazmat-goblin",
@@ -53,18 +48,13 @@ export const sewers: FloorCards = {
       "You pull his air hose. He leaves something smoky behind. Give 3.",
       { loot: "smoke" },
     ),
-    strike(
-      4,
-      "Monster",
-      "sludge-bro",
-      "Sludge Bro",
-      "A pile of sludge in a muscle shirt asks if you even lift.",
-      {
-        even: "You say yes. Drink 3.",
-        advantage: "You praise his gains; he slides off happy. Give 4.",
-        disadvantage: "You don't. Drink 4 and do five push-ups.",
-      },
-    ),
+    strike(4, "Monster", "sludge-bro", "Sludge Bro", {
+      even: "A sludge in a muscle shirt asks if you even lift. You say yes. Drink 3.",
+      advantage:
+        "A sludge in a muscle shirt asks if you lift. You praise his gains and he slides off. Give 4.",
+      disadvantage:
+        "A sludge in a muscle shirt asks if you even lift. You don't. Drink 4 and do five push-ups.",
+    }),
     monster(
       4,
       "pizza-rat-prime",
@@ -92,18 +82,13 @@ export const sewers: FloorCards = {
       "You flush it. Give 4.",
       { curse: "bleed" },
     ),
-    strike(
-      4,
-      "Monster",
-      "sewer-mutant",
-      "Sewer Mutant",
-      "A mutant with three arms and a fourth beer wants to arm-wrestle.",
-      {
-        even: "A draw. Drink 3.",
-        advantage: "You win, somehow. Give 4.",
-        disadvantage: "It has three arms. Drink 4.",
-      },
-    ),
+    strike(4, "Monster", "sewer-mutant", "Sewer Mutant", {
+      even: "A three-armed mutant with a fourth beer wants to arm-wrestle. A draw. Drink 3.",
+      advantage:
+        "A three-armed mutant wants to arm-wrestle, and you win, somehow. Give 4.",
+      disadvantage:
+        "A three-armed mutant with a fourth beer wants to arm-wrestle. It has three arms. Drink 4.",
+    }),
     monster(
       4,
       "turtle-sensei",
@@ -161,18 +146,13 @@ export const sewers: FloorCards = {
       "Rat Race",
       "Race your left neighbor: take a sip, then say 'rat' three times. Slower: drink 4.",
     ),
-    strike(
-      4,
-      "Trap",
-      "big-flush",
-      "The Big Flush",
-      "Somewhere above, a whole bar flushes at once.",
-      {
-        even: "Splash. Drink 2.",
-        advantage: "You grab a ladder. Give 3.",
-        disadvantage: "Swept down the pipe. Drink 3.",
-      },
-    ),
+    strike(4, "Trap", "big-flush", "The Big Flush", {
+      even: "Somewhere above, a whole bar flushes at once. Splash. Drink 2.",
+      advantage:
+        "Somewhere above, a whole bar flushes at once. You grab a ladder. Give 3.",
+      disadvantage:
+        "Somewhere above, a whole bar flushes at once and sweeps you down the pipe. Drink 3.",
+    }),
     trap(
       4,
       "loose-grate",
@@ -214,18 +194,13 @@ export const sewers: FloorCards = {
       "You out-cool them. Give 3.",
     ),
     // More of the Sewers (2026-10-25).
-    strike(
-      4,
-      "Monster",
-      "flushed-goldfish",
-      "The Flushed Goldfish",
-      "A goldfish flushed in 2003 grew to the size of a van. It remembers.",
-      {
-        even: "It stares. Drink 3.",
-        advantage: "You say sorry and it forgives you. Give 4.",
-        disadvantage: "It remembers you. Drink 4.",
-      },
-    ),
+    strike(4, "Monster", "flushed-goldfish", "The Flushed Goldfish", {
+      even: "A goldfish flushed in 2003 grew to the size of a van and stares. Drink 3.",
+      advantage:
+        "A goldfish flushed in 2003 grew to van size. You say sorry and it forgives you. Give 4.",
+      disadvantage:
+        "A goldfish flushed in 2003 grew to van size, and it remembers you. Drink 4.",
+    }),
     monster(
       4,
       "rat-don",
@@ -234,18 +209,13 @@ export const sewers: FloorCards = {
       "Something happens to it. Drink 4.",
       "You make him an offer he can't refuse. Give 4.",
     ),
-    strike(
-      4,
-      "Monster",
-      "pipe-octopus",
-      "Pipe Octopus",
-      "Eight arms out of eight pipes, all at once.",
-      {
-        even: "It steals a sip. Drink 3.",
-        advantage: "You hex the arms into a knot. Give 4.",
-        disadvantage: "It grabs your drink with all eight. Drink 4.",
-      },
-    ),
+    strike(4, "Monster", "pipe-octopus", "Pipe Octopus", {
+      even: "Eight arms out of eight pipes, and one steals a sip. Drink 3.",
+      advantage:
+        "Eight arms burst out of eight pipes. You hex them into a knot. Give 4.",
+      disadvantage:
+        "Eight arms burst out of eight pipes and grab your drink all at once. Drink 4.",
+    }),
     trial(
       4,
       "hold-your-breath",
