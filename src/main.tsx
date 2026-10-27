@@ -292,6 +292,7 @@ function App() {
         )}
         <GameDialogs
           onSpend={(item, branch) => controller.spend(item, branch)}
+          onDrop={(drop) => controller.drop(drop)}
           modal={modal}
           setModal={setModal}
           session={session}

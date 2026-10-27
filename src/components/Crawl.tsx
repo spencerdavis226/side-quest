@@ -13,6 +13,7 @@ import type {
   PokemonType,
 } from "../game/types";
 import {
+  type BagDrop,
   currentCard as currentCardOf,
   PRESS_STEP,
   canQuaff,
@@ -1017,6 +1018,55 @@ type RunRecord = NonNullable<ReturnType<typeof questRecord>>;
 /** One dialog's share of the run (`CrawlRecord`'s `part`). */
 export type RecordPart = "party" | StripDialog;
 
+/** A bag row's discard (2026-10-27): one small button that turns, in place,
+ * into "Yes, drop" and "Keep"; it turns back by itself after a few seconds.
+ * No dialog on top of a dialog. */
+function DropButton({
+  verb,
+  name,
+  onConfirm,
+}: {
+  verb: string;
+  name: string;
+  onConfirm: () => void;
+}) {
+  const [sure, setSure] = useState(false);
+  useEffect(() => {
+    if (!sure) return;
+    const timer = setTimeout(() => setSure(false), 4000);
+    return () => clearTimeout(timer);
+  }, [sure]);
+  return sure ? (
+    <span
+      className="bag-drop sure"
+      role="group"
+      aria-label={`${verb} ${name}?`}
+    >
+      <button
+        className="bag-drop-yes"
+        aria-label={`Yes, ${verb.toLowerCase()} ${name}`}
+        onClick={onConfirm}
+      >
+        Yes, {verb.toLowerCase()}
+      </button>
+      <button className="bag-drop-no" onClick={() => setSure(false)}>
+        Keep
+      </button>
+    </span>
+  ) : (
+    <button
+      className="bag-drop"
+      aria-label={`${verb} ${name}`}
+      onClick={(event) => {
+        event.currentTarget.focus();
+        setSure(true);
+      }}
+    >
+      {verb}
+    </button>
+  );
+}
+
 /** The run so far, for the satchel dialog and the end screens: the hearts,
  * the satchel (a draught can be drunk from here), the curse, and on the end
  * screens each floor with its rooms faced and its boss. */
@@ -1025,12 +1075,15 @@ export function CrawlRecord({
   theme,
   session,
   onUse,
+  onDrop,
   part,
 }: {
   record: RunRecord;
   theme: CrawlTheme;
   session?: SessionState | null;
   onUse?: (item: Loot, branch?: number) => void;
+  /** Throw an item out, or let a caught Pokémon go (2026-10-27). */
+  onDrop?: (drop: BagDrop) => void;
   /** In play, each dialog shows its own part: the party (hearts, the
    * adventurer or starter, boons), the satchel, the League's badges, or one
    * thing on the party (the Quaff, the Cup, a curse, a jinx). The end
@@ -1189,6 +1242,13 @@ export function CrawlRecord({
                 {m.type ? pokemonTypes[m.type].name : "its type"} beats. Then
                 it's gone.
               </span>
+              {onDrop && (
+                <DropButton
+                  verb="Release"
+                  name={m.title}
+                  onConfirm={() => onDrop({ caught: m.id })}
+                />
+              )}
             </li>
           ))}
         </ul>
@@ -1338,6 +1398,13 @@ export function CrawlRecord({
                       {item === "candy" ? theme.eat : theme.drink}
                     </button>
                   ))}
+                {onDrop && (
+                  <DropButton
+                    verb="Drop"
+                    name={theme.loot[item].name}
+                    onConfirm={() => onDrop({ item })}
+                  />
+                )}
               </li>
             );
           })}

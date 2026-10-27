@@ -10,6 +10,8 @@ import {
   catchIt,
   letGo,
   sendIn,
+  dropFromBag,
+  type BagDrop,
   spendPower,
   spendLoot,
   awaitingOffer,
@@ -190,6 +192,15 @@ export class PresentationController {
       this.transition(next, null);
       this.effect("press");
     }
+  }
+  /** Throw an item out of the bag, or let a caught Pokémon go. */
+  drop(drop: BagDrop) {
+    const { session, motion } = this.state;
+    if (!session || motion) return;
+    const next = dropFromBag(session, drop);
+    if (next === session) return;
+    this.persist(next);
+    this.transition(next, null);
   }
   /** Push your luck: bank the win and roll again, harder. */
   press() {

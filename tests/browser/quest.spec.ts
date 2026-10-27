@@ -560,6 +560,61 @@ test("a strike reads the line for its matchup and costs HP only against the star
   await expect.poll(async () => (await saved(page)).quest.party.hearts).toBe(9);
 });
 
+test("the bag lets an item or a caught Pokémon go, after a second tap", async ({
+  page,
+}, info) => {
+  const PIDGEY = "pokemon.route-pidgey";
+  const s = leagueAt("pokemon.route-oddish", {}, 0, "pokemon.starter-squirtle");
+  const q = s.quest!;
+  const finale = [...q.finale];
+  const swap = (at: number, id: string) => {
+    const was = finale.indexOf(id);
+    if (was >= 0) finale[was] = finale[at];
+    finale[at] = id;
+  };
+  swap(q.step, PIDGEY);
+  swap(q.step + 1, "pokemon.route-oddish");
+  await seed(
+    page,
+    reveal({
+      ...s,
+      discarded: q.step + 1,
+      previousId: PIDGEY,
+      quest: {
+        ...q,
+        finale,
+        step: q.step + 1,
+        party: { ...q.party!, team: [PIDGEY], loot: ["shield"] },
+      },
+    }),
+  );
+  await page.locator(".tag-satchel").click();
+  const bag = page.getByRole("dialog", { name: "Bag" });
+  // One tap only asks: nothing is dropped, and "Keep" puts the button back.
+  await bag.getByRole("button", { name: "Release Pidgey" }).click();
+  await expect(
+    bag.getByRole("button", { name: "Yes, release Pidgey" }),
+  ).toBeVisible();
+  await page.screenshot({ path: info.outputPath("bag-sure.png") });
+  expect((await saved(page)).quest.party.team).toEqual([PIDGEY]);
+  await bag.getByRole("button", { name: "Keep" }).click();
+  await expect(
+    bag.getByRole("button", { name: "Release Pidgey" }),
+  ).toBeVisible();
+  // The second tap lets it go, and an item goes the same way.
+  await bag.getByRole("button", { name: "Release Pidgey" }).click();
+  await bag.getByRole("button", { name: "Yes, release Pidgey" }).click();
+  await expect
+    .poll(async () => (await saved(page)).quest.party.team)
+    .toBeUndefined();
+  await bag.getByRole("button", { name: "Drop Protect" }).click();
+  await bag.getByRole("button", { name: "Yes, drop Protect" }).click();
+  await expect
+    .poll(async () => (await saved(page)).quest.party.loot)
+    .toEqual([]);
+  await expect(page.locator(".tag-satchel")).toHaveAccessibleName(/empty/);
+});
+
 test("Veteran Ada shuts the badge case until her card is put aside", async ({
   page,
 }, info) => {

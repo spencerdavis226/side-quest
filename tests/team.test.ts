@@ -7,6 +7,7 @@ import {
   catchIt,
   createSession,
   currentCard,
+  dropFromBag,
   letGo,
   sendIn,
   strikeOutcome,
@@ -165,6 +166,41 @@ describe("the League's team", () => {
     // Starly (Flying) is a strike Electric wins: nothing to add.
     expect(strikeOutcome(s.quest, currentCard(s))).toBe("won");
     expect(canSendIn(s, PIDGEY)).toBe(false);
+  });
+
+  it("throws an item out, or lets a caught Pokémon go, any time", () => {
+    let s = facing("pikachu", PIDGEY);
+    s = catchIt(s, zero);
+    s = {
+      ...s,
+      quest: {
+        ...s.quest!,
+        party: { ...party(s), loot: ["draught", "shield", "draught"] },
+      },
+    };
+    // One of two identical items goes, the first; an item not held changes nothing.
+    const less = dropFromBag(s, { item: "draught" });
+    expect(party(less).loot).toEqual(["shield", "draught"]);
+    expect(dropFromBag(s, { item: "die" })).toBe(s);
+    // Letting Pidgey go empties the team; one never caught changes nothing.
+    const free = dropFromBag(s, { caught: PIDGEY });
+    expect(party(free).team).toBeUndefined();
+    expect(dropFromBag(free, { caught: PIDGEY })).toBe(free);
+    round(free);
+    round(less);
+  });
+
+  it("keeps a save that rested a Pokémon valid when it is let go", () => {
+    let s = facing("pikachu", PIDGEY);
+    s = catchIt(s, zero);
+    s = {
+      ...s,
+      quest: { ...s.quest!, party: { ...party(s), tired: [PIDGEY] } },
+    };
+    round(s);
+    const free = dropFromBag(s, { caught: PIDGEY });
+    expect(party(free).tired).toBeUndefined();
+    round(free);
   });
 
   it("adds a catch card's Pokémon to the team", () => {

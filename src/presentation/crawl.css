@@ -1336,6 +1336,46 @@
   transform: translateY(2px);
   box-shadow: 0 1px 0 #4a2f12;
 }
+/* A bag row's discard: quiet until tapped, then "Yes" and "Keep" in place
+   (2026-10-27). */
+.bag-drop {
+  margin-left: auto;
+  min-width: 56px;
+  min-height: 44px;
+  padding: 0 10px;
+  border: 1px solid rgb(217 184 119 / 0.4);
+  border-radius: 10px;
+  background: transparent;
+  color: #ceb48a;
+  font: 600 0.95rem/1 var(--font-tavern);
+}
+.satchel-use + .bag-drop,
+.satchel-use ~ .bag-drop {
+  margin-left: 0;
+}
+.bag-drop.sure {
+  display: flex;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+}
+.bag-drop-yes,
+.bag-drop-no {
+  min-height: 44px;
+  padding: 0 10px;
+  border-radius: 10px;
+  font: 700 0.95rem/1 var(--font-tavern);
+}
+.bag-drop-yes {
+  border: 1px solid #d8776c;
+  background: #7a2a22;
+  color: #ffe9e4;
+}
+.bag-drop-no {
+  border: 1px solid rgb(217 184 119 / 0.5);
+  background: transparent;
+  color: #f5e4be;
+}
 .crawl-floors {
   display: grid;
   gap: 8px;
@@ -1977,13 +2017,30 @@
 }
 .crawl-team li {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto 1fr auto;
   gap: 2px 10px;
   align-items: center;
 }
 .crawl-team .type-mark {
-  grid-row: span 2;
+  grid-column: 1;
+  grid-row: 1 / span 2;
 }
-.crawl-team li.tired {
-  opacity: 0.6;
+.crawl-team li > strong {
+  grid-column: 2;
+  grid-row: 1;
+}
+.crawl-team li > span:not(.type-mark):not(.bag-drop) {
+  grid-column: 2;
+  grid-row: 2;
+}
+.crawl-team .bag-drop {
+  grid-column: 3;
+  grid-row: 1 / span 2;
+}
+/* Asking "sure?": the two buttons take their own row under the text. */
+.crawl-team .bag-drop.sure {
+  grid-column: 2 / -1;
+  grid-row: 3;
+  justify-self: end;
+  margin-top: 6px;
 }

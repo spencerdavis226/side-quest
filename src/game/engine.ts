@@ -727,6 +727,34 @@ export function sendIn(
   // battle is won outright, like a power that wins.
   return discard(used, random, card.strike ? undefined : "won");
 }
+/** What the table can throw out of the bag: an item, or a caught Pokémon. */
+export type BagDrop = { item: Loot } | { caught: string };
+/** Throw an item out of the bag, or let a caught Pokémon go (2026-10-27,
+ * owner: a manual discard, behind a second tap in the dialog). It works
+ * any time the run is on; the card in play is untouched. */
+export function dropFromBag(s: SessionState, drop: BagDrop): SessionState {
+  const q = s.quest;
+  const party = q?.party;
+  if (!q || !party || party.wiped || s.phase === "complete") return s;
+  if ("item" in drop) {
+    const at = party.loot.indexOf(drop.item);
+    if (at < 0) return s;
+    const loot = party.loot.filter((_, i) => i !== at);
+    return { ...s, quest: { ...q, party: { ...party, loot } } };
+  }
+  if (!party.team?.includes(drop.caught) || party.sent === drop.caught)
+    return s;
+  const team = party.team.filter((m) => m !== drop.caught);
+  const next: PartyState = { ...party, team };
+  if (!team.length) delete next.team;
+  // Saves from before 2026-10-26 may rest a Pokémon (`tired`): it can only
+  // name Pokémon still on the team.
+  if (next.tired) {
+    next.tired = next.tired.filter((m) => m !== drop.caught);
+    if (!next.tired.length) delete next.tired;
+  }
+  return { ...s, quest: { ...q, party: next } };
+}
 /** Pub Crawl (2026-10-25): a fight that calls for a knack the adventurer
  * has is fought with the edge; one it lacks is fought as written. */
 export function knackEdge(
