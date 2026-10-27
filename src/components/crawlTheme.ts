@@ -519,8 +519,8 @@ const league: CrawlTheme = {
       },
       {
         icon: "heart",
-        title: "Your team",
-        line: "Beat a wild Pokémon and you can catch it for a drink; the team holds two. Before a battle, send one in when its type beats the foe: it fights with the edge, once a gym.",
+        title: "Caught Pokémon",
+        line: "Beat a wild Pokémon and you can catch it for a drink. It waits in the bag (two at most). Use one on a battle its type beats and it wins it, then it's gone.",
       },
       {
         icon: "power",

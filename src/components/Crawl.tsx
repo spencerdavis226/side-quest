@@ -354,8 +354,8 @@ export function CrawlStrip({
                 : matchup.teammate
                   ? "Sent in"
                   : matchup.edge === "advantage"
-                    ? "Advantage"
-                    : "Disadvantage"}
+                    ? "Strong"
+                    : "Weak"}
             </span>
           </>,
         )}
@@ -373,13 +373,16 @@ export function CrawlStrip({
         )}
       {chip(
         "tag-satchel",
-        `${words.Satchel}: ${party.loot.length ? party.loot.map((l) => theme.loot[l].name).join(", ") : "empty"}`,
+        `${words.Satchel}: ${[...party.loot.map((l) => theme.loot[l].name), ...partyTeam(quest).map((m) => m.title)].join(", ") || "empty"}`,
         "satchel",
         <>
           <CrawlIcon name="satchel" theme={theme} />
           {party.loot.map((item, i) => (
             <CrawlIcon key={i} name={item} theme={theme} />
           ))}
+          {partyTeam(quest).map(
+            (m) => m.type && <TypeMark key={m.id} type={m.type} />,
+          )}
         </>,
       )}
       {words.badges &&
@@ -814,8 +817,8 @@ export function CatchPlaques({
   );
 }
 
-/** A teammate who can be sent in for the battle face up (2026-10-25): its
- * type beats the foe's. */
+/** A caught Pokémon that can be used on the battle face up (2026-10-26):
+ * its type beats the foe's, so it wins the battle and is used up. */
 export function SendInPlaque({
   member,
   onSend,
@@ -826,13 +829,13 @@ export function SendInPlaque({
   return (
     <button
       className="card-choice-option loot-plaque send-plaque"
-      aria-label={`Go, ${member.title}! It fights this battle with the type edge, once a gym.`}
+      aria-label={`Go, ${member.title}! It wins this battle and is used up.`}
       onClick={() => onSend(member.id)}
     >
       {member.type && <TypeMark type={member.type} />}
       <span className="offer-label">
         <span className="offer-name">Go, {member.title}!</span>
-        <small className="offer-price">the edge</small>
+        <small className="offer-price">wins it</small>
       </span>
     </button>
   );
@@ -1175,19 +1178,16 @@ export function CrawlRecord({
           </span>
         </p>
       )}
-      {show("party") && !ending && team.length > 0 && (
-        <ul className="crawl-boons crawl-team" aria-label="Team">
+      {show("satchel") && !party.wiped && !record.won && team.length > 0 && (
+        <ul className="crawl-boons crawl-team" aria-label="Caught Pokémon">
           {team.map((m) => (
-            <li
-              key={m.id}
-              className={quest?.party?.tired?.includes(m.id) ? "tired" : ""}
-            >
+            <li key={m.id}>
               {m.type && <TypeMark type={m.type} />}
               <strong>{m.title}</strong>
               <span>
-                {quest?.party?.tired?.includes(m.id)
-                  ? "Fought this gym. Back when it falls."
-                  : `Ready: sent in when ${m.type ? pokemonTypes[m.type].name : "its"} beats the foe.`}
+                Wins a battle against a foe that{" "}
+                {m.type ? pokemonTypes[m.type].name : "its type"} beats. Then
+                it's gone.
               </span>
             </li>
           ))}

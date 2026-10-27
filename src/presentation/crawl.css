@@ -406,6 +406,10 @@
   gap: 6px;
   color: #dccbff;
 }
+/* A caught Pokémon in the bag: its type mark, as small as an item. */
+.tag-satchel .type-mark {
+  --mark-size: 22px;
+}
 .tag-badges {
   color: #f1d58c;
 }
@@ -472,6 +476,9 @@
   .tag-satchel .crawl-icon {
     width: 16px;
     height: 16px;
+  }
+  .tag-satchel .type-mark {
+    --mark-size: 18px;
   }
   .chip-name,
   .label-count {

@@ -109,7 +109,7 @@ describe("how to play", () => {
       "Types",
       "Gyms and badges",
       "Evolution",
-      "Your team",
+      "Caught Pokémon",
       "Signature moves",
       "Bag",
       "Statuses and jinxes",

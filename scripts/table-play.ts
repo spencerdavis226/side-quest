@@ -69,10 +69,14 @@ export function nextMove(s: SessionState, random: Random): SessionState {
       random,
       powerSpoils(s) ? Math.floor(random() * card.spoils!.length) : undefined,
     );
-  // The League's team (2026-10-25): send a teammate in now and then, and
+  // The League's caught Pokémon (2026-10-25): use one now and then, and
   // catch a beaten wild Pokémon more often than not.
   else if (partyTeam(s.quest).some((m) => canSendIn(s, m.id)) && random() < 0.5)
-    next = sendIn(s, partyTeam(s.quest).find((m) => canSendIn(s, m.id))!.id);
+    next = sendIn(
+      s,
+      partyTeam(s.quest).find((m) => canSendIn(s, m.id))!.id,
+      random,
+    );
   else if (awaitingCatch(s))
     next = random() < 0.7 ? catchIt(s, random) : letGo(s, random);
   else if (can("die")) next = spendLoot(s, "die", random);

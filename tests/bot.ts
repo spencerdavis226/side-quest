@@ -73,8 +73,7 @@ export function botPower(
 
 /** The League's team (2026-10-25): the table catches a beaten wild
  * Pokémon while the team has room, or when its type is new to the team;
- * and sends a teammate in for a gym or a boss, or a battle the starter is
- * weak in. */
+ * and uses one on a gym or a boss, or a battle the starter is weak in. */
 export function botTeam(s: SessionState, random: Random): SessionState {
   if (awaitingCatch(s)) {
     const card = currentCard(s);
@@ -89,5 +88,5 @@ export function botTeam(s: SessionState, random: Random): SessionState {
     !!card.hits || cardMatchup(s.quest, card)?.edge === "disadvantage";
   if (!big) return s;
   const member = partyTeam(s.quest).find((m) => canSendIn(s, m.id));
-  return member ? sendIn(s, member.id) : s;
+  return member ? sendIn(s, member.id, random) : s;
 }

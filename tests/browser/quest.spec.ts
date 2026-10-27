@@ -727,9 +727,9 @@ test("every League card fits its face with its plaques at 393x640", async ({
   expect(overflowing).toEqual([]);
 });
 
-// The League's team (2026-10-25) at 320px: a beaten wild Pokémon is caught
-// for a drink, and a teammate whose type beats the foe is sent in.
-test("@release a beaten wild Pokémon joins the team, and a teammate is sent in for the edge", async ({
+// The League's caught Pokémon at 320px: a beaten wild Pokémon is caught for
+// a drink and kept in the bag, and one whose type beats the foe is used on it.
+test("@release a beaten wild Pokémon is caught into the bag, and used to win a battle", async ({
   page,
 }, info) => {
   await page.setViewportSize({ width: 320, height: 568 });
@@ -776,15 +776,19 @@ test("@release a beaten wild Pokémon joins the team, and a teammate is sent in 
   expect(box.height).toBeGreaterThanOrEqual(44);
   expect(box.x + box.width).toBeLessThanOrEqual(320);
   await page.screenshot({ path: info.outputPath("send-in.png") });
-  await go.click();
-  await expect(page.locator(".tag-edge")).toHaveAccessibleName(
-    "Pidgey sent in: advantage",
-  );
-  const after = await saved(page);
-  expect(after.quest.party).toMatchObject({ sent: PIDGEY, tired: [PIDGEY] });
-  // The team dialog lists Pidgey, resting until the next gym.
-  await meter(page).click();
-  const dialog = page.getByRole("dialog", { name: "The team" });
+  // The caught Pokémon sits in the bag chip and the bag dialog.
+  await expect(page.locator(".tag-satchel")).toHaveAccessibleName(/Pidgey/);
+  await page.locator(".tag-satchel").click();
+  const dialog = page.getByRole("dialog", { name: "Bag" });
   await expect(dialog.locator(".crawl-team li")).toContainText("Pidgey");
-  await page.screenshot({ path: info.outputPath("team-dialog.png") });
+  await page.screenshot({ path: info.outputPath("bag-caught.png") });
+  await page.keyboard.press("Escape");
+  // Go, Pidgey! wins the battle and uses it up.
+  const hearts = (await saved(page)).quest.party.hearts;
+  const step = (await saved(page)).quest.step;
+  await go.click();
+  await expect.poll(async () => (await saved(page)).quest.step).toBe(step + 1);
+  const after = await saved(page);
+  expect(after.quest.party.team ?? []).toEqual([]);
+  expect(after.quest.party.hearts).toBe(hearts);
 });

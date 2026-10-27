@@ -19,9 +19,10 @@ import { cards, packs } from "../src/content/catalog";
 import { gymTiers } from "../src/content/pokemon-league";
 import type { GameConfig, SessionState } from "../src/game/types";
 
-// The League's team (2026-10-25): a beaten wild Pokémon can be caught, two
-// at most, and a teammate whose type beats the foe can be sent in, once a
-// gym. And gyms 5 to 8 send out an ace.
+// The League's caught Pokémon (2026-10-25, bag items since 2026-10-26): a
+// beaten wild Pokémon can be caught, two at most, and one whose type beats
+// the foe can be used on that battle: it wins it and is spent. And gyms 5
+// to 8 send out an ace.
 const league: GameConfig = {
   version: 1,
   packIds: ["pokemon"],
@@ -88,7 +89,7 @@ describe("the League's team", () => {
     expect(party(s).team).toEqual(["pokemon.route-diglett", PIDGEY]);
   });
 
-  it("sends a teammate in for the edge, once until a gym falls", () => {
+  it("uses a caught Pokémon on a foe its type beats: it wins and is spent", () => {
     // Squirtle (Water) is weak to Oddish (Grass); Pidgey (Flying) beats it.
     let s = facing("pikachu", PIDGEY, ODDISH);
     s = advance(catchIt(s, zero), zero);
@@ -105,18 +106,65 @@ describe("the League's team", () => {
     expect(currentCard(s).id).toBe(ODDISH);
     expect(cardMatchup(s.quest, currentCard(s))?.edge).toBe("disadvantage");
     expect(canSendIn(s, PIDGEY)).toBe(true);
-    s = sendIn(s, PIDGEY);
-    expect(cardMatchup(s.quest, currentCard(s))).toMatchObject({
-      edge: "advantage",
-      teammate: "Pidgey",
-    });
-    expect(strikeOutcome(s.quest, currentCard(s))).toBe("won");
-    expect(party(s)).toMatchObject({ sent: PIDGEY, tired: [PIDGEY] });
-    round(s);
-    s = advance(s, zero); // Oddish is beaten: catch it, or let it go.
-    s = letGo(s, zero);
+    const hearts = party(s).hearts;
+    const discarded = s.discarded;
+    s = sendIn(s, PIDGEY, zero);
+    // The strike is won, so nothing is lost; Pidgey is gone, and the card
+    // is put aside with nothing left to carry over.
+    expect(s.discarded).toBe(discarded + 1);
+    expect(party(s).hearts).toBe(hearts);
+    expect(party(s).team ?? []).toEqual([]);
     expect(party(s).sent).toBeUndefined();
-    expect(party(s).tired).toEqual([PIDGEY]);
+    expect(party(s).tired).toBeUndefined();
+    round(s);
+  });
+
+  it("is offered only against a foe its type beats", () => {
+    // Pidgey (Flying) does not beat Pichu (Electric), nor Rattata (Normal).
+    let s = facing("pikachu", PIDGEY, "pokemon.route-pichu");
+    s = advance(catchIt(s, zero), zero);
+    expect(currentCard(s).id).toBe("pokemon.route-pichu");
+    expect(canSendIn(s, PIDGEY)).toBe(false);
+    expect(sendIn(s, PIDGEY, zero)).toBe(s);
+  });
+
+  it("is offered on a rolled battle the starter already beats too, and wins it for certain", () => {
+    // A rolled wild Grass or Bug fight: Charmander (Fire) has the edge, and
+    // so does Pidgey (Flying).
+    const foe = cards.find(
+      (c) =>
+        c.id.startsWith("pokemon.route-") &&
+        c.dice &&
+        c.battle &&
+        (c.type === "grass" || c.type === "bug"),
+    )!;
+    let s = facing("pikachu", PIDGEY, foe.id);
+    s = advance(catchIt(s, zero), zero);
+    s = {
+      ...s,
+      quest: {
+        ...s.quest!,
+        finale: s.quest!.finale.map((id, i) =>
+          i === 0 ? "pokemon.starter-charmander" : id,
+        ),
+        party: { ...party(s), omen: "pokemon.starter-charmander" },
+      },
+    };
+    expect(currentCard(s).id).toBe(foe.id);
+    expect(cardMatchup(s.quest, currentCard(s))?.edge).toBe("advantage");
+    expect(canSendIn(s, PIDGEY)).toBe(true);
+    const discarded = s.discarded;
+    s = sendIn(s, PIDGEY, zero);
+    expect(s.discarded).toBe(discarded + 1);
+    expect(party(s).team ?? []).toEqual([]);
+  });
+
+  it("is not offered on a strike the starter already wins", () => {
+    let s = facing("pikachu", PIDGEY, "pokemon.route-starly");
+    s = advance(catchIt(s, zero), zero);
+    // Starly (Flying) is a strike Electric wins: nothing to add.
+    expect(strikeOutcome(s.quest, currentCard(s))).toBe("won");
+    expect(canSendIn(s, PIDGEY)).toBe(false);
   });
 
   it("adds a catch card's Pokémon to the team", () => {

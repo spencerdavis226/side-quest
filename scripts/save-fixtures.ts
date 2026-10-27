@@ -16,6 +16,8 @@ import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { cards, packs } from "../src/content/catalog";
 import {
+  canSendIn,
+  partyTeam,
   advance,
   awaitingCatch,
   awaitingChoice,
@@ -258,7 +260,13 @@ const situations: [string, GameConfig, Find][] = [
     league,
     (s) => (party(s).team?.length ?? 0) >= 2 && s.phase === "hidden",
   ],
-  ["league-teammate-sent", league, (s) => !!party(s).sent],
+  // A caught Pokémon waiting to be used on a battle its type beats
+  // (2026-10-26; `league-teammate-sent` can no longer be saved).
+  [
+    "league-caught-usable",
+    league,
+    (s) => partyTeam(s.quest).some((m) => canSendIn(s, m.id)),
+  ],
   [
     "league-gym-ace",
     league,
