@@ -483,8 +483,10 @@ test("a Tera Orb turns a bad matchup around for one battle", async ({
   )!;
   await seed(page, reveal(leagueAt(water.id, { loot: ["tera"] })));
   await expect(page.locator(".tag-edge")).toHaveClass(/edge-disadvantage/);
-  const orb = page.getByRole("button", { name: /^Use the Tera Orb/ });
-  await expect(orb).toHaveText("Terastallize");
+  // The starter's move and the orb share one "Use" plaque.
+  await page.getByRole("button", { name: /^Use something/ }).click();
+  const orb = page.getByRole("button", { name: /^Tera Orb:/ });
+  await expect(orb).toBeVisible();
   await page.screenshot({ path: info.outputPath("tera-plaque-320.png") });
   await orb.click();
   await expect(page.locator(".tag-edge")).toHaveClass(/edge-advantage/);
@@ -829,11 +831,10 @@ test("@release a beaten wild Pokémon is caught into the bag, and used to win a 
       },
     }),
   );
-  const go = page.getByRole("button", { name: /^Go, Pidgey!/ });
-  await expect(go).toBeVisible();
-  const box = (await go.boundingBox())!;
-  expect(box.height).toBeGreaterThanOrEqual(44);
-  expect(box.x + box.width).toBeLessThanOrEqual(320);
+  // The starter's move and the send-in don't both fit beside Won and Lost, so
+  // they open from one "Use" plaque.
+  const use = page.getByRole("button", { name: /^Use something/ });
+  await expect(use).toBeVisible();
   await page.screenshot({ path: info.outputPath("send-in.png") });
   // The caught Pokémon sits in the bag chip and the bag dialog.
   await expect(page.locator(".tag-satchel")).toHaveAccessibleName(/Pidgey/);
@@ -845,6 +846,12 @@ test("@release a beaten wild Pokémon is caught into the bag, and used to win a 
   // Go, Pidgey! wins the battle and uses it up.
   const hearts = (await saved(page)).quest.party.hearts;
   const step = (await saved(page)).quest.step;
+  await use.click();
+  const go = page.getByRole("button", { name: /^Go, Pidgey!/ });
+  await expect(go).toBeVisible();
+  const box = (await go.boundingBox())!;
+  expect(box.height).toBeGreaterThanOrEqual(44);
+  expect(box.x + box.width).toBeLessThanOrEqual(320);
   await go.click();
   await expect.poll(async () => (await saved(page)).quest.step).toBe(step + 1);
   const after = await saved(page);
@@ -852,10 +859,6 @@ test("@release a beaten wild Pokémon is caught into the bag, and used to win a 
   expect(after.quest.party.hearts).toBe(hearts);
 });
 
-// A Won/Lost battle can carry up to seven optional actions (two items, the
-// power, two send-ins). However many there are, the card's foot never shows
-// more than three plaques: a short one stays beside Won and Lost, the rest
-// open from one "Use" plaque and its sheet. Checked at both phone widths.
 // The Fisherman (Water, which beats the Fire starter) face up on Route 6, with
 // the team's cards dealt just before it from the same route, as a save needs.
 const FOE = "pokemon.route-fisherman";
@@ -901,6 +904,10 @@ function battleWith(
     },
   });
 }
+// A Won/Lost battle can carry up to seven optional actions (two items, the
+// power, two send-ins). However many there are, the card's foot never shows
+// more than three plaques: a short one stays beside Won and Lost, the rest
+// open from one "Use" plaque and its sheet. Checked at both phone widths.
 for (const width of [320, 390]) {
   test(`${width}px: a battle's optional actions never crowd Won and Lost`, async ({
     page,

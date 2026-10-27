@@ -280,11 +280,14 @@ test("@release a save's Quaff rerolls a lost fight for drinks, once until a boss
       2,
     ),
   );
-  const quaff = page.getByRole("button", { name: /^Quaff: drink 4/ });
-  await expect(quaff).toBeVisible();
+  // The die and the Quaff share one "Use" plaque.
   await expect(
     page.locator(".card-choice.items .card-choice-option"),
-  ).toHaveCount(2);
+  ).toHaveCount(1);
+  await page.getByRole("button", { name: /^Use something: 2 ready/ }).click();
+  const quaff = page.getByRole("button", { name: /^Quaff: Drink 4/ });
+  await expect(quaff).toBeVisible();
+  await expect(page.locator(".extras-row")).toHaveCount(2);
   await page.screenshot({ path: info.outputPath("quaff.png") });
   await quaff.click();
   await expect(page.locator(".game-card")).toHaveAccessibleName(/^Roll 1d20/);
