@@ -1,6 +1,10 @@
 import { test, expect, type Page } from "@playwright/test";
 import {
   advance,
+  canSendIn,
+  canUseLoot,
+  canUsePower,
+  partyPower,
   awaitingCatch,
   awaitingChoice,
   awaitingOffer,
@@ -479,8 +483,10 @@ test("a Tera Orb turns a bad matchup around for one battle", async ({
   )!;
   await seed(page, reveal(leagueAt(water.id, { loot: ["tera"] })));
   await expect(page.locator(".tag-edge")).toHaveClass(/edge-disadvantage/);
-  const orb = page.getByRole("button", { name: /^Use the Tera Orb/ });
-  await expect(orb).toHaveText("Terastallize");
+  // The starter's move and the orb share one "Use" plaque.
+  await page.getByRole("button", { name: /^Use something/ }).click();
+  const orb = page.getByRole("button", { name: /^Tera Orb:/ });
+  await expect(orb).toBeVisible();
   await page.screenshot({ path: info.outputPath("tera-plaque-320.png") });
   await orb.click();
   await expect(page.locator(".tag-edge")).toHaveClass(/edge-advantage/);
@@ -825,11 +831,10 @@ test("@release a beaten wild Pokémon is caught into the bag, and used to win a 
       },
     }),
   );
-  const go = page.getByRole("button", { name: /^Go, Pidgey!/ });
-  await expect(go).toBeVisible();
-  const box = (await go.boundingBox())!;
-  expect(box.height).toBeGreaterThanOrEqual(44);
-  expect(box.x + box.width).toBeLessThanOrEqual(320);
+  // The starter's move and the send-in don't both fit beside Won and Lost, so
+  // they open from one "Use" plaque.
+  const use = page.getByRole("button", { name: /^Use something/ });
+  await expect(use).toBeVisible();
   await page.screenshot({ path: info.outputPath("send-in.png") });
   // The caught Pokémon sits in the bag chip and the bag dialog.
   await expect(page.locator(".tag-satchel")).toHaveAccessibleName(/Pidgey/);
@@ -841,9 +846,157 @@ test("@release a beaten wild Pokémon is caught into the bag, and used to win a 
   // Go, Pidgey! wins the battle and uses it up.
   const hearts = (await saved(page)).quest.party.hearts;
   const step = (await saved(page)).quest.step;
+  await use.click();
+  const go = page.getByRole("button", { name: /^Go, Pidgey!/ });
+  await expect(go).toBeVisible();
+  const box = (await go.boundingBox())!;
+  expect(box.height).toBeGreaterThanOrEqual(44);
+  expect(box.x + box.width).toBeLessThanOrEqual(320);
   await go.click();
   await expect.poll(async () => (await saved(page)).quest.step).toBe(step + 1);
   const after = await saved(page);
   expect(after.quest.party.team ?? []).toEqual([]);
   expect(after.quest.party.hearts).toBe(hearts);
 });
+
+// The Fisherman (Water, which beats the Fire starter) face up on Route 6, with
+// the team's cards dealt just before it from the same route, as a save needs.
+const FOE = "pokemon.route-fisherman";
+const MATES = ["pokemon.route-rotom", "pokemon.route-breloom"];
+function battleWith(
+  party: Partial<PartyState>,
+  team: string[] = [],
+  spent = false,
+): SessionState {
+  const s = leagueAt(FOE, party);
+  const q = s.quest!;
+  const finale = [...q.finale];
+  let start = 0;
+  for (const stage of q.stages) {
+    if (stage.cards.some((c) => c.id === FOE)) break;
+    start += stage.pick;
+  }
+  const put = (at: number, id: string) => {
+    const was = finale.indexOf(id);
+    if (was >= 0) finale[was] = finale[at];
+    finale[at] = id;
+  };
+  const step = start + 2;
+  team.forEach((id, i) => put(start + i, id));
+  put(step, FOE);
+  const omen = finale[0];
+  const power = partyPower({ ...q, party: { ...q.party!, omen } });
+  return reveal({
+    ...s,
+    discarded: step,
+    previousId: finale[step - 1],
+    quest: {
+      ...q,
+      finale,
+      step,
+      party: {
+        ...q.party!,
+        omen,
+        ...party,
+        ...(team.length ? { team } : {}),
+        ...(spent && power ? { powers: power.uses } : {}),
+      },
+    },
+  });
+}
+// A Won/Lost battle can carry up to seven optional actions (two items, the
+// power, two send-ins). However many there are, the card's foot never shows
+// more than three plaques: a short one stays beside Won and Lost, the rest
+// open from one "Use" plaque and its sheet. Checked at both phone widths.
+for (const width of [320, 390]) {
+  test(`${width}px: a battle's optional actions never crowd Won and Lost`, async ({
+    page,
+  }, info) => {
+    await page.setViewportSize({ width, height: 700 });
+    const cases: {
+      name: string;
+      party: Partial<PartyState>;
+      team?: string[];
+      spent?: boolean;
+    }[] = [
+      { name: "tera", party: { loot: ["tera"] }, spent: true },
+      {
+        name: "tera and smoke",
+        party: { loot: ["tera", "smoke"] },
+        spent: true,
+      },
+      { name: "tera, smoke, power", party: { loot: ["tera", "smoke"] } },
+      {
+        name: "tera, smoke, power, one send-in",
+        party: { loot: ["tera", "smoke"] },
+        team: [MATES[0]],
+      },
+      {
+        name: "tera, smoke, power, two send-ins",
+        party: { loot: ["tera", "smoke"] },
+        team: MATES,
+      },
+    ];
+    for (const { name, party, team = [], spent } of cases) {
+      const s = battleWith(party, team, spent);
+      const ready = [
+        ...(["tera", "smoke"] as const).filter((i) => canUseLoot(s, i)),
+        ...(canUsePower(s) ? ["power"] : []),
+        ...(s.quest!.party!.team ?? []).filter((m) => canSendIn(s, m)),
+      ];
+      await seed(page, s);
+      const foot = page.locator(".card-choice.verdict");
+      await expect(foot, name).toBeVisible();
+      await page.evaluate(() => document.fonts.ready);
+      const options = foot.locator(".card-choice-option");
+      const count = await options.count();
+      expect(count, name).toBeLessThanOrEqual(3);
+      const clipped = await options.evaluateAll((els) =>
+        els
+          .filter((el) =>
+            [el, ...el.querySelectorAll("*")].some(
+              (n) => n.scrollWidth > n.clientWidth + 1,
+            ),
+          )
+          .map((el) => el.textContent),
+      );
+      expect(clipped, name).toEqual([]);
+      for (const box of await options.evaluateAll((els) =>
+        els.map((el) => el.getBoundingClientRect().toJSON()),
+      ))
+        expect(box.height, name).toBeGreaterThanOrEqual(44);
+      if (ready.length > 1 || ready.includes("power")) {
+        expect(count, name).toBe(3);
+        const use = foot.getByRole("button", { name: /^Use something/ });
+        await expect(use).toContainText(`${ready.length} ready`);
+        await page.screenshot({
+          path: info.outputPath(`foot-${ready.length}-${width}.png`),
+        });
+        await use.click();
+        const dialog = page.getByRole("dialog", { name: "Use one" });
+        await expect(dialog.locator(".extras-row")).toHaveCount(ready.length);
+        await page.screenshot({
+          path: info.outputPath(`sheet-${ready.length}-${width}.png`),
+        });
+        // Every row can be reached and tapped.
+        const last = dialog.locator(".extras-row").last();
+        await last.scrollIntoViewIfNeeded();
+        const row = (await last.boundingBox())!;
+        expect(row.height, name).toBeGreaterThanOrEqual(44);
+        expect(row.x + row.width, name).toBeLessThanOrEqual(width);
+        await page.keyboard.press("Escape");
+        await expect(dialog).toHaveCount(0);
+      } else {
+        expect(count, name).toBe(ready.length ? 3 : 2);
+      }
+    }
+    // Taking a send-in from the sheet plays it: the battle is won and the
+    // Pokémon leaves the team.
+    const s = battleWith({ loot: ["tera", "smoke"] }, MATES);
+    await seed(page, s);
+    await page.getByRole("button", { name: /^Use something/ }).click();
+    await page.getByRole("button", { name: /^Go, Rotom!/ }).click();
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    expect((await saved(page)).quest.party.team).toEqual([MATES[1]]);
+  });
+}

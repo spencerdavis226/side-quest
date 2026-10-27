@@ -43,18 +43,18 @@ import {
   useCardActions,
 } from "../components/CardActions";
 import {
-  LootPlaque,
+  ExtrasSheet,
+  UsePlaque,
+  buildExtras,
   OfferPlaque,
   CatchPlaques,
-  PowerPlaque,
   PressPlaques,
-  SendInPlaque,
-  QuaffPlaque,
   SpoilsButton,
   SpoilsSheet,
   usableItems,
 } from "../components/Crawl";
 import { crawlTheme } from "../components/crawlTheme";
+import { extrasLayout } from "../components/extras";
 // A dice overlay that can't be fetched (offline before it was cached) must
 // not strand a roll: the saved result goes straight to the card instead.
 type DiceProps = ComponentProps<
@@ -154,8 +154,6 @@ export function Play({
   const senders = motion
     ? []
     : partyTeam(session.quest).filter((m) => canSendIn(session, m.id));
-  const extras =
-    items.length + (quaffable ? 1 : 0) + (powerable ? 1 : 0) + senders.length;
   // A win that fells a boss with spoils asks for the trinket first: Won on
   // a plaque beat, or a power that wins it outright.
   const [asking, setAsking] = useState<{
@@ -168,6 +166,31 @@ export function Play({
       ? setAsking({ at: session.discarded, by: "power" })
       : onPower();
   const crawl = crawlTheme(session.quest?.packId);
+  // Items, the power and send-ins: on the card's foot when a few short ones
+  // fit, otherwise behind one "Use" plaque and its sheet.
+  const extraList = buildExtras(session, crawl, {
+    items,
+    quaffable,
+    powerable,
+    senders,
+    onSpend,
+    onQuaff,
+    onPower: onPowerPlaque,
+    onSend,
+  });
+  const layout = extrasLayout(extraList, !!verdict);
+  const [using, setUsing] = useState<number | null>(null);
+  const usingSheet = layout === "sheet" && using === session.discarded;
+  const extraPlaques =
+    layout === "inline" ? (
+      extraList.map((e) => e.plaque)
+    ) : layout === "sheet" ? (
+      <UsePlaque
+        count={extraList.length}
+        onOpen={() => setUsing(session.discarded)}
+        theme={crawl}
+      />
+    ) : null;
   // A branching starter's evolution splits into one plaque per form; a line
   // names the form it brings next ("Ivysaur · drink 3"). A forked
   // adventurer's paths carry their taglines (2026-10-25).
@@ -292,7 +315,7 @@ export function Play({
             : ""}
         </span>
         <div
-          className={`card-stage ${motion ?? ""} ${choice || verdict || offers || spoils || press || catching || acting || extras ? "choosing" : ""}`}
+          className={`card-stage ${motion ?? ""} ${choice || verdict || offers || spoils || press || catching || acting || extraList.length > 0 ? "choosing" : ""}`}
         >
           <div className="deck-under" aria-hidden="true" />
           <button
@@ -414,7 +437,7 @@ export function Play({
           {verdict && (
             <div
               ref={choiceRef}
-              className={`card-choice verdict plaques-${2 + items.length + (powerable ? 1 : 0) + senders.length}`}
+              className={`card-choice verdict plaques-${2 + (layout === "none" ? 0 : layout === "sheet" ? 1 : extraList.length)}`}
               role="group"
               aria-label="Did you win?"
             >
@@ -434,24 +457,7 @@ export function Play({
               >
                 Lost
               </button>
-              {items.map((item) => (
-                <LootPlaque
-                  key={item}
-                  item={item}
-                  onUse={onSpend}
-                  theme={crawl}
-                />
-              ))}
-              {powerable && (
-                <PowerPlaque
-                  session={session}
-                  onUse={onPowerPlaque}
-                  theme={crawl}
-                />
-              )}
-              {senders.map((m) => (
-                <SendInPlaque key={m.id} member={m} onSend={onSend} />
-              ))}
+              {extraPlaques}
             </div>
           )}
           {catching && (
@@ -520,38 +526,14 @@ export function Play({
             !spoils &&
             !press &&
             !catching &&
-            extras > 0 && (
+            extraList.length > 0 && (
               <div
                 ref={choiceRef}
-                className={`card-choice items plaques-${extras}`}
+                className={`card-choice items plaques-${layout === "sheet" ? 1 : extraList.length}`}
                 role="group"
                 aria-label="Satchel"
               >
-                {items.map((item) => (
-                  <LootPlaque
-                    key={item}
-                    item={item}
-                    onUse={onSpend}
-                    theme={crawl}
-                  />
-                ))}
-                {quaffable && (
-                  <QuaffPlaque
-                    session={session}
-                    onQuaff={onQuaff}
-                    theme={crawl}
-                  />
-                )}
-                {powerable && (
-                  <PowerPlaque
-                    session={session}
-                    onUse={onPowerPlaque}
-                    theme={crawl}
-                  />
-                )}
-                {senders.map((m) => (
-                  <SendInPlaque key={m.id} member={m} onSend={onSend} />
-                ))}
+                {extraPlaques}
               </div>
             )}
           {choice && (
@@ -607,6 +589,16 @@ export function Play({
             />
           </Suspense>
         )}
+      {usingSheet && (
+        <ExtrasSheet
+          extras={extraList}
+          onTake={(extra) => {
+            setUsing(null);
+            extra.run();
+          }}
+          onClose={() => setUsing(null)}
+        />
+      )}
       {ask && card.spoils && (
         <SpoilsSheet
           session={session}

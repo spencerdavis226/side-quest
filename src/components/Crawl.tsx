@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
 import { createPortal } from "react-dom";
 import type {
   Boon,
@@ -55,6 +61,7 @@ import {
 } from "./LeagueMarks";
 import { pokemonTypes, typeStyle } from "../presentation/pokemon-types";
 import { Modal } from "./UI";
+import type { ExtraShape } from "./extras";
 
 // Pub Crawl furniture: the party's hearts, the satchel, the floor's rooms and
 // the boss's wounds. Everything a crawl shows lives here; the engine decides.
@@ -844,6 +851,173 @@ export function SendInPlaque({
         <small className="offer-price">wins it</small>
       </span>
     </button>
+  );
+}
+
+/** One optional action on a card (an item, the power, a send-in), described
+ * once so it can sit on the card's foot or in the "Use" sheet. */
+export interface Extra extends ExtraShape {
+  key: string;
+  name: string;
+  /** What it does here, for the sheet's row. */
+  does: string;
+  mark: ReactNode;
+  run: () => void;
+  /** The plaque already written for the card's foot. */
+  plaque: ReactNode;
+}
+
+export function buildExtras(
+  session: SessionState,
+  theme: CrawlTheme,
+  {
+    items,
+    quaffable,
+    powerable,
+    senders,
+    onSpend,
+    onQuaff,
+    onPower,
+    onSend,
+  }: {
+    items: readonly Loot[];
+    quaffable: boolean;
+    powerable: boolean;
+    senders: readonly CardDefinition[];
+    onSpend?: (item: Loot) => void;
+    onQuaff?: () => void;
+    onPower: () => void;
+    onSend?: (id: string) => void;
+  },
+): Extra[] {
+  const out: Extra[] = items.map((item) => ({
+    key: `item-${item}`,
+    long: false,
+    name: theme.loot[item].name,
+    does: theme.loot[item].does,
+    mark: <CrawlIcon name={item} theme={theme} />,
+    run: () => onSpend?.(item),
+    plaque: (
+      <LootPlaque
+        key={`item-${item}`}
+        item={item}
+        onUse={(i) => onSpend?.(i)}
+        theme={theme}
+      />
+    ),
+  }));
+  const drinks = session.quest?.party?.quaff;
+  if (quaffable && theme.words.quaff && drinks !== undefined)
+    out.push({
+      key: "quaff",
+      long: true,
+      name: theme.words.quaff,
+      does: `Drink ${drinks} and roll again, once until the next boss falls.`,
+      mark: <CrawlIcon name="quaff" theme={theme} />,
+      run: () => onQuaff?.(),
+      plaque: (
+        <QuaffPlaque
+          key="quaff"
+          session={session}
+          onQuaff={() => onQuaff?.()}
+          theme={theme}
+        />
+      ),
+    });
+  const power = powerable ? partyPower(session.quest) : null;
+  if (power)
+    out.push({
+      key: "power",
+      long: true,
+      name: power.name,
+      does: `${power.drinks ? `Drink ${power.drinks}: ` : ""}${power.rules}`,
+      mark: <CrawlIcon name="power" theme={theme} />,
+      run: onPower,
+      plaque: (
+        <PowerPlaque
+          key="power"
+          session={session}
+          onUse={onPower}
+          theme={theme}
+        />
+      ),
+    });
+  for (const member of senders)
+    out.push({
+      key: `send-${member.id}`,
+      long: true,
+      name: `Go, ${member.title}!`,
+      does: "Wins this battle. It is used up.",
+      mark: member.type ? <TypeMark type={member.type} /> : null,
+      run: () => onSend?.(member.id),
+      plaque: (
+        <SendInPlaque
+          key={`send-${member.id}`}
+          member={member}
+          onSend={(id) => onSend?.(id)}
+        />
+      ),
+    });
+  return out;
+}
+
+/** The one plaque for a card's optional actions when they don't all fit on
+ * its foot: it opens the sheet below. */
+export function UsePlaque({
+  count,
+  onOpen,
+  theme,
+}: {
+  count: number;
+  onOpen: () => void;
+  theme: CrawlTheme;
+}) {
+  return (
+    <button
+      className="card-choice-option loot-plaque use-plaque"
+      aria-haspopup="dialog"
+      aria-label={`Use something: ${count} ready`}
+      onClick={onOpen}
+    >
+      <CrawlIcon name="satchel" theme={theme} />
+      <span className="offer-label">
+        <span className="offer-name">Use</span>
+        <small className="offer-price">{count} ready</small>
+      </span>
+    </button>
+  );
+}
+
+/** The sheet behind "Use": a full-width row each, whatever the count, with
+ * what it does. Taking one closes the sheet and plays it. */
+export function ExtrasSheet({
+  extras,
+  onTake,
+  onClose,
+}: {
+  extras: readonly Extra[];
+  onTake: (extra: Extra) => void;
+  onClose: () => void;
+}) {
+  return (
+    <Modal title="Use one" onClose={onClose}>
+      <div className="extras-sheet" role="group" aria-label="Use one">
+        {extras.map((extra) => (
+          <button
+            key={extra.key}
+            className="extras-row"
+            aria-label={`${extra.name}: ${extra.does}`}
+            onClick={() => onTake(extra)}
+          >
+            <span className="extras-mark" aria-hidden="true">
+              {extra.mark}
+            </span>
+            <strong>{extra.name}</strong>
+            <span>{extra.does}</span>
+          </button>
+        ))}
+      </div>
+    </Modal>
   );
 }
 

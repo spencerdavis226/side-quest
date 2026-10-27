@@ -2,6 +2,18 @@
 
 Updated 2026-10-27. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Shipped 2026-10-27: one "Use" plaque for a card's optional actions (#52; owner: "drastically overhaul the ui buttons", then "Merge and deploy")
+
+**Why.** The verdict row put Won, Lost, every usable item, the power and each send-in in one equal-width grid, so a fourth plaque clipped "Terastallize" and "Feint Attack / Advantage" on a phone (owner's iPhone screenshot). Most to reach in play: 2 items (Tera Orb, Escape Rope), the power and 2 send-ins beside Won and Lost, so the count can't be tuned with font sizes.
+
+**What.** The card's foot holds at most three plaques (`src/components/extras.ts`, `extrasLayout`). With Won and Lost, one short item stays inline; anything else (a power, a send-in, the Quaff, or two or more actions) opens from one "Use · N ready" plaque (`UsePlaque`) into a sheet (`ExtrasSheet`) with a full-width row each: name and what it does. With no verdict (after a lost roll), one action or two short ones stay inline. `buildExtras` in `Crawl.tsx` describes each action once. Offers, catch, press and spoils rows are unchanged. No engine, save or schema change.
+
+**Behaviour change.** A power, send-in or Quaff beside Won and Lost, or two actions together, now takes one extra tap through "Use". Three existing tests (Quaff reroll, Tera Orb, send-in) now open the sheet; their assertions on what the action does are unchanged.
+
+**Checks run:** `npm test` (362 with `tests/extras.test.ts`), typecheck, lint, Prettier, `BASE_PATH=/side-quest/ npm run build` (budgets pass), and on Chromium `crawl.spec.ts` and `quest.spec.ts` in full (53 passed, then the 3 updated tests and the new 320/390px test passed). The new test (`quest.spec.ts`, "a battle's optional actions never crowd Won and Lost") poses 2 to 5 actions on the Fisherman at both widths.
+
+**Not done, risks:** no WebKit run locally and no physical-device look (`docs/DEVICE_CHECKLIST.md`); 5 actions was the most reachable in the content checked, the sheet has no cap. **Next (owner):** look at a battle with a power, an item and a caught Pokémon on an iPhone and say whether the extra tap is acceptable or the power should stay inline.
+
 ## Shipped 2026-10-27: Pokémon UI/UX declutter (#49, squash `6711059`, deployed by run #215; every job green, WebKit shards included)
 
 Merged and deployed on the owner's "proceed with those 3 steps in that order" (Pub Crawl strike rewrite, a review pass on the new copy, merge). Not yet played on a physical device or at a table (`docs/DEVICE_CHECKLIST.md`, `docs/PLAYTEST.md`); the 117 rewritten strike lines (`docs/CARD_REVIEW.md`) are unread by the owner. **Next (owner):** read the strike copy, play one run of each mode, and decide whether the League's remaining systems (powers, Tera Orb, evolution) need cutting after that playtest.
