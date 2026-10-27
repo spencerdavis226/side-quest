@@ -1,4 +1,5 @@
 import type { CardDefinition, PokemonType } from "../../game/types";
+import { catchSheet } from "./catches";
 
 // The League's team (2026-10-25): the core Pokémon fantasy the journey was
 // missing. A wild Pokémon the table beats can be caught for a drink, and
@@ -32,5 +33,18 @@ export function applyTeam(cards: CardDefinition[]) {
     if (!c || !offer) throw new Error(`No catch card: pokemon.${id}`);
     c.type = type;
     offer.catch = true;
+  }
+  // The throw (2026-10-27): each catchable Pokémon has a number to beat and
+  // its two lines (`catches.ts`); a catch card's offer throws the ball.
+  for (const c of cards) {
+    const offer = c.offers?.find((o) => o.catch);
+    if (!c.catchable && !offer) continue;
+    const sheet = catchSheet[c.id.replace("pokemon.", "")];
+    if (!sheet) throw new Error(`No throw for ${c.id}`);
+    [c.catchRate, c.catchLines] = [
+      sheet[0],
+      { caught: sheet[1], fled: sheet[2] },
+    ];
+    if (offer) offer.label = "Throw a ball";
   }
 }

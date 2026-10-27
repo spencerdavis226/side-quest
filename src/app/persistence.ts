@@ -267,6 +267,15 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
       (s.phase !== "revealed" ||
         !p.team?.includes(p.sent) ||
         !p.tired?.includes(p.sent))) ||
+    // The ball thrown at the Pokémon face up (2026-10-27), kept until its
+    // card is put aside.
+    (p.throw !== undefined &&
+      (s.phase !== "revealed" ||
+        !p.throw ||
+        p.throw.id !== currentCard(s).id ||
+        !currentCard(s).catchRate ||
+        !whole(p.throw.face, 1) ||
+        p.throw.face > 20)) ||
     // The beat of the phased boss put aside last.
     (p.beat !== undefined &&
       (!whole(p.beat, 1) ||

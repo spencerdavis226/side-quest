@@ -2,6 +2,18 @@
 
 Updated 2026-10-27. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## In progress 2026-10-27: catching is a ball throw (owner: "catching a Pokémon should be harder and more exciting"; "throw a ball, then make the number needed per Pokémon different, with flavor text for caught and not caught")
+
+**Why.** Catching cost one drink and could not fail, and a caught Pokémon is a one-use auto-win on any battle its type beats, so nearly every run carried two (the balance bot ended runs with 1.9 of 2).
+
+**What.** A beaten wild Pokémon, or a route's catch card, is caught by throwing a ball: one d20, and the Pokémon needs `catchRate` or more (`CardDefinition.catchRate`, 2 to 19; a natural 20 always catches, a natural 1 never, `caughtBy`). The plaque reads "Throw a ball · d20 · N+"; the throw is committed when tapped (`throwBall`, or `takeOffer` on a catch card) and saved as `party.throw` (card ID and face) so a reload never throws again. The card then shows the ball, the face, the number it needed, "Caught!" or "It got away." and that Pokémon's own line (`catchLines.caught` / `.fled`, each carrying its Give or Drink); the next tap puts the card aside, and `settleThrow` (top of `discard`) joins the team (a catch card's heal comes only with a catch) or drops the throw. Numbers and 162 lines are in `src/content/league/catches.ts` (81 Pokémon: common and shy ones need 4 to 7, evolved and rare ones 14 to 17; Gyarados 15, Dratini 13, Abra 12, Lapras and the Eevee gift 6 to 7, Snorlax asleep 12). Power, item and send-in plaques are off once the ball is thrown. Cards from a save before the throw have no `catchRate` and are still caught for a drink (`catchIt`), so no save changes; new fixtures `2026-10-27-league-ball-caught` and `-fled`.
+
+**Measured** (`npm run test:balance`, League, needs `NODE_OPTIONS=--max-old-space-size=8000` in this container; the default heap ran out): won 22.2% (25.6% before; band 18% to 40%), a won run 69.7 draws, team at the end 0.8 of 2 (1.9 before), starters 2% (Bidoof) to 41% (Squirtle), hideouts 17% to 31%, 73% evolve once and 49% to the final form. Easier to retune by moving numbers in `catches.ts`: lower them to catch more.
+
+**Checks run:** `npm test` (370), lint, typecheck, Prettier, build and budgets, League balance, and on Chromium `quest.spec.ts` (the catch test now throws; a new test checks all 81 Pokémon's two lines fit the face at 320x568 with no scrolling) and `crawl.spec.ts`. No WebKit, no device look.
+
+**Not done, risks:** the 162 lines are the agent's copy and unread by the owner; Previous Card does not show the throw; the ball wobble is a plain CSS animation, not the 3D dice; the odds are a first guess (the bot's 22.2% says nothing about how a table feels about a 17+ throw).
+
 ## Shipped 2026-10-27: one "Use" plaque for a card's optional actions (#52; owner: "drastically overhaul the ui buttons", then "Merge and deploy")
 
 **Why.** The verdict row put Won, Lost, every usable item, the power and each send-in in one equal-width grid, so a fourth plaque clipped "Terastallize" and "Feint Attack / Advantage" on a phone (owner's iPhone screenshot). Most to reach in play: 2 items (Tera Orb, Escape Rope), the power and 2 send-ins beside Won and Lost, so the count can't be tuned with font sizes.

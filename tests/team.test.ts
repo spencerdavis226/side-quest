@@ -5,6 +5,9 @@ import {
   canSendIn,
   cardMatchup,
   catchIt,
+  caughtBy,
+  thrownBall,
+  throwBall,
   createSession,
   currentCard,
   dropFromBag,
@@ -31,6 +34,9 @@ const league: GameConfig = {
   quest: "pokemon",
 };
 const zero: Random = () => 0;
+const high: Random = () => 0.99; // A natural 20.
+/** Throw a ball that cannot miss, then put the card aside. */
+const caught = (s: SessionState) => advance(throwBall(s, high), zero);
 const party = (s: SessionState) => s.quest!.party!;
 const round = (s: SessionState) =>
   expect(parseSession(JSON.stringify(s))).toEqual(s);
@@ -61,7 +67,7 @@ describe("the League's team", () => {
     expect(awaitingCatch(s)).toBe(true);
     expect(advance(s, zero)).toBe(s); // It waits for the choice.
     round(s);
-    s = catchIt(s, zero);
+    s = caught(s);
     expect(party(s).team).toEqual([PIDGEY]);
     round(s);
     // Grass loses to Flying: nothing to catch.
@@ -86,14 +92,14 @@ describe("the League's team", () => {
     let s = facing("pikachu", PIDGEY);
     s = { ...s, quest: { ...s.quest!, party: { ...party(s), team: [] } } };
     s.quest!.party!.team = ["pokemon.route-pichu", "pokemon.route-diglett"];
-    s = catchIt(s, zero);
+    s = caught(s);
     expect(party(s).team).toEqual(["pokemon.route-diglett", PIDGEY]);
   });
 
   it("uses a caught Pokémon on a foe its type beats: it wins and is spent", () => {
     // Squirtle (Water) is weak to Oddish (Grass); Pidgey (Flying) beats it.
     let s = facing("pikachu", PIDGEY, ODDISH);
-    s = advance(catchIt(s, zero), zero);
+    s = advance(caught(s), zero);
     s = {
       ...s,
       quest: {
@@ -123,7 +129,7 @@ describe("the League's team", () => {
   it("is offered only against a foe its type beats", () => {
     // Pidgey (Flying) does not beat Pichu (Electric), nor Rattata (Normal).
     let s = facing("pikachu", PIDGEY, "pokemon.route-pichu");
-    s = advance(catchIt(s, zero), zero);
+    s = advance(caught(s), zero);
     expect(currentCard(s).id).toBe("pokemon.route-pichu");
     expect(canSendIn(s, PIDGEY)).toBe(false);
     expect(sendIn(s, PIDGEY, zero)).toBe(s);
@@ -140,7 +146,7 @@ describe("the League's team", () => {
         (c.type === "grass" || c.type === "bug"),
     )!;
     let s = facing("pikachu", PIDGEY, foe.id);
-    s = advance(catchIt(s, zero), zero);
+    s = advance(caught(s), zero);
     s = {
       ...s,
       quest: {
@@ -162,7 +168,7 @@ describe("the League's team", () => {
 
   it("is not offered on a strike the starter already wins", () => {
     let s = facing("pikachu", PIDGEY, "pokemon.route-starly");
-    s = advance(catchIt(s, zero), zero);
+    s = advance(caught(s), zero);
     // Starly (Flying) is a strike Electric wins: nothing to add.
     expect(strikeOutcome(s.quest, currentCard(s))).toBe("won");
     expect(canSendIn(s, PIDGEY)).toBe(false);
@@ -170,7 +176,7 @@ describe("the League's team", () => {
 
   it("throws an item out, or lets a caught Pokémon go, any time", () => {
     let s = facing("pikachu", PIDGEY);
-    s = catchIt(s, zero);
+    s = caught(s);
     s = {
       ...s,
       quest: {
@@ -192,7 +198,7 @@ describe("the League's team", () => {
 
   it("keeps a save that rested a Pokémon valid when it is let go", () => {
     let s = facing("pikachu", PIDGEY);
-    s = catchIt(s, zero);
+    s = caught(s);
     s = {
       ...s,
       quest: { ...s.quest!, party: { ...party(s), tired: [PIDGEY] } },
@@ -206,8 +212,31 @@ describe("the League's team", () => {
   it("adds a catch card's Pokémon to the team", () => {
     let s = facing("pikachu", "pokemon.route-caterpie");
     const offer = currentCard(s).offers!.findIndex((o) => o.catch);
-    s = takeOffer(s, offer, zero);
+    s = takeOffer(s, offer, high);
+    // The ball is thrown and read on the card first.
+    expect(party(s).team).toBeUndefined();
+    expect(thrownBall(s)?.caught).toBe(true);
+    round(s);
+    s = advance(s, zero);
     expect(party(s).team).toEqual(["pokemon.route-caterpie"]);
+    expect(party(s).throw).toBeUndefined();
+    round(s);
+  });
+
+  it("still catches a Pokémon from an older save for a drink", () => {
+    let s = facing("pikachu", PIDGEY);
+    // A snapshot from before the throw has no number to beat.
+    const finale = s.quest!.stages.flatMap((st) => st.cards);
+    for (const c of [...finale, ...(s.cards ?? [])]) {
+      if (c.id === PIDGEY) {
+        delete c.catchRate;
+        delete c.catchLines;
+      }
+    }
+    expect(currentCard(s).catchRate).toBeUndefined();
+    expect(throwBall(s, high)).toBe(s);
+    s = catchIt(s, zero);
+    expect(party(s).team).toEqual([PIDGEY]);
     round(s);
   });
 
@@ -228,5 +257,86 @@ describe("gym aces", () => {
         expect(card.phases?.length ?? 0, card.id).toBe(k < 4 ? 0 : 1);
       }
     });
+  });
+});
+
+describe("the League's throws", () => {
+  it("every catchable Pokémon has a number to beat and both lines", () => {
+    const catchable = cards.filter(
+      (c) => c.catchable || c.offers?.some((o) => o.catch),
+    );
+    expect(catchable.length).toBe(81);
+    for (const c of catchable) {
+      expect(c.catchRate, c.id).toBeGreaterThanOrEqual(2);
+      expect(c.catchRate, c.id).toBeLessThanOrEqual(19);
+      expect(c.catchLines?.caught.length, c.id).toBeLessThanOrEqual(120);
+      expect(c.catchLines?.fled.length, c.id).toBeLessThanOrEqual(120);
+    }
+    const need = (id: string) => cards.find((c) => c.id === id)!.catchRate!;
+    // Common and shy ones are easier than evolved and rare ones.
+    expect(need(PIDGEY)).toBeLessThan(need("pokemon.route-gyarados"));
+    expect(need("pokemon.route-gyarados")).toBeLessThan(
+      need("pokemon.route-tyranitar"),
+    );
+  });
+
+  it("a natural 20 always catches and a natural 1 never does", () => {
+    expect(caughtBy(20, 19)).toBe(true);
+    expect(caughtBy(1, 2)).toBe(false);
+    expect(caughtBy(5, 5)).toBe(true);
+    expect(caughtBy(4, 5)).toBe(false);
+  });
+
+  it("is thrown once, saved, and read on the card", () => {
+    let s = facing("pikachu", PIDGEY);
+    const need = currentCard(s).catchRate!;
+    const low: Random = () => 0; // A natural 1.
+    const missed = throwBall(s, low);
+    expect(party(missed).throw).toEqual({ id: PIDGEY, face: 1 });
+    expect(awaitingCatch(missed)).toBe(false); // Cannot throw again.
+    expect(throwBall(missed, high)).toBe(missed);
+    expect(thrownBall(missed)).toMatchObject({
+      face: 1,
+      need,
+      caught: false,
+      line: currentCard(s).catchLines!.fled,
+    });
+    round(missed); // A reload keeps the result.
+    // A fled Pokémon never joins; the card is put aside with the next tap.
+    const gone = advance(missed, zero);
+    expect(party(gone).team).toBeUndefined();
+    expect(party(gone).throw).toBeUndefined();
+    s = throwBall(s, high);
+    expect(thrownBall(s)).toMatchObject({ face: 20, caught: true });
+    expect(party(s).team).toBeUndefined(); // Not until the card is put aside.
+  });
+
+  it("refuses a save whose throw is on another card", () => {
+    const s = throwBall(facing("pikachu", PIDGEY), high);
+    const bad = {
+      ...s,
+      quest: {
+        ...s.quest!,
+        party: { ...party(s), throw: { id: "pokemon.route-rattata", face: 5 } },
+      },
+    };
+    expect(() => parseSession(JSON.stringify(bad))).toThrow();
+  });
+
+  it("a catch card's heal comes only with a catch", () => {
+    const start = facing("pikachu", "pokemon.route-lapras");
+    const hurt = {
+      ...start,
+      quest: { ...start.quest!, party: { ...party(start), hearts: 3 } },
+    };
+    const offer = currentCard(hurt).offers!.findIndex((o) => o.catch);
+    const miss = advance(
+      takeOffer(hurt, offer, () => 0),
+      zero,
+    );
+    expect(party(miss).hearts).toBe(3);
+    const win = advance(takeOffer(hurt, offer, high), zero);
+    expect(party(win).hearts).toBeGreaterThan(3);
+    expect(party(win).team).toEqual(["pokemon.route-lapras"]);
   });
 });

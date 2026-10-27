@@ -811,20 +811,30 @@ export function CatchPlaques({
 }) {
   const card = currentCardOf(session);
   const old = catchReplaces(session.quest);
+  // A throw (2026-10-27) names the number to beat; a card from a save before
+  // it is caught for a drink.
+  const need = card.catchRate;
   return (
     <>
       <button
         className="card-choice-option offer-plaque offer-buy catch-plaque"
-        aria-label={`Catch ${card.title}: drink 1${old ? `, and ${old.title} goes` : ""}`}
+        aria-label={
+          need
+            ? `Throw a ball at ${card.title}: roll d20, ${need} or more catches it${old ? `, and ${old.title} goes` : ""}`
+            : `Catch ${card.title}: drink 1${old ? `, and ${old.title} goes` : ""}`
+        }
         onClick={onCatch}
       >
         <span className="offer-goods" aria-hidden="true">
           <CrawlIcon name="heart" theme={theme} />
         </span>
         <span className="offer-label">
-          <span className="offer-name">Catch it</span>
+          <span className="offer-name">
+            {need ? "Throw a ball" : "Catch it"}
+          </span>
           <small className="offer-price">
-            drink 1{old ? ` · ${old.title} goes` : ""}
+            {need ? `d20 · ${need}+` : "drink 1"}
+            {old ? ` · ${old.title} goes` : ""}
           </small>
         </span>
       </button>

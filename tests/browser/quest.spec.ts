@@ -788,6 +788,44 @@ test("every League card fits its face with its plaques at 393x640", async ({
   expect(overflowing).toEqual([]);
 });
 
+// A thrown ball reads on the card (2026-10-27): every Pokémon's caught and
+// fled lines fit the narrowest phone without scrolling.
+test("every Pokémon's thrown-ball lines fit its face at 320x568", async ({
+  page,
+}) => {
+  test.setTimeout(600000);
+  await page.setViewportSize({ width: 320, height: 568 });
+  const ids = cards
+    .filter(
+      (c) =>
+        c.id.startsWith("pokemon.") &&
+        (c.catchable || c.offers?.some((o) => o.catch)),
+    )
+    .map((c) => c.id);
+  expect(ids.length).toBe(81);
+  const overflowing: string[] = [];
+  await page.goto("./");
+  for (const id of ids) {
+    for (const face of [20, 1]) {
+      const s = reveal(
+        leagueAt(id, { throw: { id, face } }, 0, "pokemon.starter-pikachu"),
+      );
+      await page.evaluate(
+        ({ key, session }) =>
+          localStorage.setItem(key, JSON.stringify(session)),
+        { key, session: s },
+      );
+      await page.reload();
+      await expect(page.locator(".game-card .ball-result")).toBeVisible();
+      await page.evaluate(() => document.fonts.ready);
+      const rules = page.locator(".game-card .study-rules");
+      if ((await rules.getAttribute("data-overflow")) !== "none")
+        overflowing.push(`${id}:${face}`);
+    }
+  }
+  expect(overflowing).toEqual([]);
+});
+
 // The League's caught Pokémon at 320px: a beaten wild Pokémon is caught for
 // a drink and kept in the bag, and one whose type beats the foe is used on it.
 test("@release a beaten wild Pokémon is caught into the bag, and used to win a battle", async ({
@@ -798,14 +836,33 @@ test("@release a beaten wild Pokémon is caught into the bag, and used to win a 
   const ODDISH = "pokemon.route-oddish";
   // Pikachu's Electric beats Pidgey's Flying: the strike is won.
   await seed(page, reveal(leagueAt(PIDGEY, {}, 0, "pokemon.starter-pikachu")));
-  const catchIt = page.getByRole("button", { name: /^Catch Pidgey: drink 1/ });
-  await expect(catchIt).toBeVisible();
+  const throwBall = page.getByRole("button", {
+    name: /^Throw a ball at Pidgey: roll d20, \d+ or more catches it/,
+  });
+  await expect(throwBall).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Let Pidgey go" }),
   ).toBeVisible();
   await page.screenshot({ path: info.outputPath("catch.png") });
-  await catchIt.click();
-  expect((await saved(page)).quest.party.team).toEqual([PIDGEY]);
+  // The ball is thrown for real: a d20 is saved and the result is read on
+  // the card, caught or not.
+  await throwBall.click();
+  await expect(page.locator(".game-card .ball-result")).toBeVisible();
+  await page.screenshot({ path: info.outputPath("thrown.png") });
+  const thrown = (await saved(page)).quest.party.throw;
+  expect(thrown.id).toBe(PIDGEY);
+  expect(thrown.face).toBeGreaterThanOrEqual(1);
+  expect(thrown.face).toBeLessThanOrEqual(20);
+  // A natural 20 always catches: the next tap puts the card aside with
+  // Pidgey on the team.
+  const lucky = await saved(page);
+  lucky.quest.party.throw = { id: PIDGEY, face: 20 };
+  await seed(page, lucky);
+  await expect(page.locator(".game-card .ball-result.caught")).toBeVisible();
+  await page.locator(".game-card").click();
+  await expect
+    .poll(async () => (await saved(page)).quest.party.team)
+    .toEqual([PIDGEY]);
   // Squirtle's Water is weak to Oddish's Grass; Pidgey's Flying beats it.
   const s = leagueAt(ODDISH, {}, 0, "pokemon.starter-squirtle");
   const q = s.quest!;

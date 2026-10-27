@@ -3,6 +3,7 @@ import {
   canSendIn,
   cardMatchup,
   catchIt,
+  throwBall,
   letGo,
   partyTeam,
   sendIn,
@@ -80,7 +81,9 @@ export function botTeam(s: SessionState, random: Random): SessionState {
     const team = partyTeam(s.quest);
     const fresh = !team.some((m) => m.type === card.type);
     return team.length < TEAM_SIZE || fresh
-      ? catchIt(s, random)
+      ? card.catchRate
+        ? throwBall(s, random)
+        : catchIt(s, random)
       : letGo(s, random);
   }
   const card = currentCard(s);
