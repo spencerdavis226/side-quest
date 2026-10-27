@@ -1,8 +1,10 @@
 # Current state and implementation plan
 
-Updated 2026-10-26. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
+Updated 2026-10-27. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## In progress 2026-10-26: Pokémon UI/UX declutter (branch `claude/pokemon-adventure-ui-ux-8ooph8`, not merged, not deployed)
+## Shipped 2026-10-27: Pokémon UI/UX declutter (#49, squash `6711059`, deployed by run #215; every job green, WebKit shards included)
+
+Merged and deployed on the owner's "proceed with those 3 steps in that order" (Pub Crawl strike rewrite, a review pass on the new copy, merge). Not yet played on a physical device or at a table (`docs/DEVICE_CHECKLIST.md`, `docs/PLAYTEST.md`); the 117 rewritten strike lines (`docs/CARD_REVIEW.md`) are unread by the owner. **Next (owner):** read the strike copy, play one run of each mode, and decide whether the League's remaining systems (powers, Tera Orb, evolution) need cutting after that playtest.
 
 Owner: the League screen is too cluttered, strikes read as two sections (a dice-card setup with a pasted outcome), and "do it the hard way". Keep items (they add variety); cutting systems waits for a playtest.
 
