@@ -642,7 +642,12 @@ export function awaitingCatch(s: SessionState): boolean {
   const party = s.quest?.party;
   if (!party || !s.quest?.due || s.phase !== "revealed") return false;
   const card = currentCard(s);
-  if (!card.catchable || !card.type || party.team?.includes(card.id))
+  if (
+    !card.catchable ||
+    !card.type ||
+    party.team?.includes(card.id) ||
+    party.throw
+  )
     return false;
   if (card.strike) return strikeOutcome(s.quest, card) === "won";
   return (
@@ -667,7 +672,7 @@ export function catchIt(
   s: SessionState,
   random: Random = Math.random,
 ): SessionState {
-  if (!awaitingCatch(s)) return s;
+  if (!awaitingCatch(s) || currentCard(s).catchRate) return s;
   const q = s.quest!;
   const party = joinTeam(q.party!, currentCard(s).id);
   const team = new Set(party.team);
@@ -676,6 +681,73 @@ export function catchIt(
     ...(party.tired ? { tired: party.tired.filter((m) => team.has(m)) } : {}),
   };
   return discard({ ...s, quest: { ...q, party: next } }, random);
+}
+/** Whether a d20 `face` catches a Pokémon that needs `need` (2026-10-27):
+ * a natural 20 always does and a natural 1 never. */
+export const caughtBy = (face: number, need: number) =>
+  face === 20 || (face !== 1 && face >= need);
+/** The ball thrown at the Pokémon face up, once it is thrown: the face, the
+ * number it needed, and the line that was read. */
+export function thrownBall(s: SessionState) {
+  const thrown = s.quest?.party?.throw;
+  if (!thrown || s.phase === "complete") return null;
+  const card = currentCard(s);
+  if (card.id !== thrown.id || !card.catchRate || !card.catchLines) return null;
+  const caught = caughtBy(thrown.face, card.catchRate);
+  return {
+    face: thrown.face,
+    need: card.catchRate,
+    caught,
+    line: caught ? card.catchLines.caught : card.catchLines.fled,
+  };
+}
+/** Throw the ball at the Pokémon face up (2026-10-27): a d20 is committed
+ * and kept with the party until the card is put aside. */
+function throwAt(s: SessionState, random: Random): SessionState {
+  const q = s.quest!;
+  const n = random();
+  if (!Number.isFinite(n) || n < 0 || n >= 1)
+    throw Error("Invalid throw randomness");
+  const face = 1 + Math.floor(n * 20);
+  return {
+    ...s,
+    quest: {
+      ...q,
+      party: { ...q.party!, throw: { id: currentCard(s).id, face } },
+    },
+  };
+}
+/** Throw a ball at a beaten wild Pokémon that has a throw. */
+export function throwBall(
+  s: SessionState,
+  random: Random = Math.random,
+): SessionState {
+  return awaitingCatch(s) && currentCard(s).catchRate ? throwAt(s, random) : s;
+}
+/** The thrown ball's result when the card is put aside: a caught Pokémon
+ * joins the team (a catch card's heal with it), a fled one is gone. */
+function settleThrow(s: SessionState): SessionState {
+  const party = s.quest?.party;
+  const thrown = party?.throw;
+  if (!party || !thrown) return s;
+  const result = thrownBall(s);
+  let next: PartyState = { ...party };
+  delete next.throw;
+  if (result?.caught) {
+    const card = currentCard(s);
+    next = joinTeam(next, card.id);
+    const heal = card.offers?.find((o) => o.catch)?.heal;
+    if (heal)
+      next.hearts = Math.min(
+        next.max,
+        next.hearts +
+          Math.max(
+            0,
+            heal + (omenEffect({ ...s.quest!, party: next })?.heal ?? 0),
+          ),
+      );
+  }
+  return { ...s, quest: { ...s.quest!, party: next } };
 }
 /** Let the beaten Pokémon go: the card is put aside. */
 export function letGo(
@@ -691,7 +763,7 @@ export function letGo(
 export function canSendIn(s: SessionState, id: string): boolean {
   const party = s.quest?.party;
   if (!party || !s.quest?.due || s.phase !== "revealed") return false;
-  if (!party.team?.includes(id) || party.sent) return false;
+  if (!party.team?.includes(id) || party.sent || party.throw) return false;
   const card = currentCard(s);
   const member = finaleCard(s.quest, id);
   if (!(card.battle || card.strike) || !card.type || !member?.type)
@@ -975,6 +1047,7 @@ export function awaitingOffer(s: SessionState) {
   return (
     !!s.quest?.party &&
     s.phase === "revealed" &&
+    !s.quest.party.throw &&
     !!currentCard(s).offers?.length
   );
 }
@@ -1000,6 +1073,9 @@ export function takeOffer(
   if (!canTakeOffer(s, index)) return s;
   const q = s.quest!;
   const offer = currentCard(s).offers![index];
+  // A catch card with a throw (2026-10-27): the offer throws the ball, and
+  // the card waits to be put aside with the result.
+  if (offer.catch && currentCard(s).catchRate) return throwAt(s, random);
   const branches = omenForm(q)?.branches;
   if (
     offer.evolve &&
@@ -1092,7 +1168,7 @@ export const DRAUGHT_DRINKS = 4;
 export function canUseLoot(s: SessionState, item: Loot): boolean {
   const party = s.quest?.party;
   if (!party || s.phase === "complete" || party.curse === "hex") return false;
-  if (!party.loot.includes(item)) return false;
+  if (!party.loot.includes(item) || party.throw) return false;
   const card = currentCard(s);
   switch (item) {
     case "draught":
@@ -1262,7 +1338,7 @@ export function canUsePower(s: SessionState): boolean {
   const party = s.quest?.party;
   const power = partyPower(s.quest);
   if (!party || !power || !s.quest!.due || s.phase !== "revealed") return false;
-  if (!powersLeft(s.quest)) return false;
+  if (!powersLeft(s.quest) || party.throw) return false;
   const card = currentCard(s);
   const fight = !!card.battle || !!card.strike;
   // Before the fight is decided: no roll yet, no choice open, no push on.
@@ -1527,6 +1603,7 @@ function discard(
   verdict?: Outcome,
   spoil?: number,
 ): SessionState {
+  s = settleThrow(s);
   const history = { previousRoll: s.roll, roll: null };
   const card = currentCard(s);
   const discarded = s.discarded + 1,

@@ -16,6 +16,7 @@ import {
   canSendIn,
   canUsePower,
   catchIt,
+  throwBall,
   letGo,
   partyTeam,
   sendIn,
@@ -78,7 +79,12 @@ export function nextMove(s: SessionState, random: Random): SessionState {
       random,
     );
   else if (awaitingCatch(s))
-    next = random() < 0.7 ? catchIt(s, random) : letGo(s, random);
+    next =
+      random() < 0.7
+        ? card.catchRate
+          ? throwBall(s, random)
+          : catchIt(s, random)
+        : letGo(s, random);
   else if (can("die")) next = spendLoot(s, "die", random);
   else if (can("round")) next = spendLoot(s, "round", random);
   else if (awaitingVerdict(s)) {

@@ -32,6 +32,7 @@ export function CardFace({
   matchup = null,
   shift,
   strike,
+  ball = null,
 }: {
   card: CardDefinition;
   packIds?: readonly string[];
@@ -52,6 +53,9 @@ export function CardFace({
   /** A strike's outcome (the engine's `strikeOutcome`); read from `matchup`
    * without it. */
   strike?: "won" | "lost" | null;
+  /** The ball thrown at this Pokémon (the engine's `thrownBall`): replaces
+   * the rules with the throw and the line it read. */
+  ball?: { face: number; need: number; caught: boolean; line: string } | null;
 }) {
   // A strike reads the line for its matchup (the engine's `strikeText`).
   const outcome =
@@ -97,6 +101,7 @@ export function CardFace({
   };
   // Keep the original rule until the dice have been dismissed.
   const resolved = !!roll?.returned;
+  const thrown = !!ball;
   // A typed card wears its type in the ribbon (the trio as the brother it
   // sends out, once the starter is known); others keep their badge art.
   const type = matchup?.theirs ?? card.type;
@@ -206,7 +211,7 @@ export function CardFace({
     for (const child of el.children) observer.observe(child);
     document.fonts?.ready.then(refit).catch(() => undefined);
     return () => observer.disconnect();
-  }, [resolved, card.id, shown]);
+  }, [resolved, card.id, shown, thrown]);
   return (
     <div
       className={`study-face${card.ribbon ? ` has-ribbon tone-${card.ribbonTone ?? "gold"}` : ""}${lost ? " battle-lost" : ""}`}
@@ -265,7 +270,7 @@ export function CardFace({
         )}
         <div
           ref={rulesRef}
-          className={`study-rules ${resolved || shown === "end" ? "rules-resolved" : ""}`}
+          className={`study-rules ${resolved || ball || shown === "end" ? "rules-resolved" : ""}`}
           data-overflow={overflow}
           onScroll={(event) => {
             const active = gesture.current;
@@ -277,7 +282,26 @@ export function CardFace({
             updateOverflow();
           }}
         >
-          {resolved ? (
+          {ball ? (
+            <div className={`ball-result ${ball.caught ? "caught" : "fled"}`}>
+              <div
+                className="ball-throw"
+                aria-label={`Threw a ${ball.face}, needed ${ball.need}. ${ball.caught ? "Caught" : "It got away"}.`}
+              >
+                <span className="ball-mark" aria-hidden="true" />
+                <span className="dice-result-face" aria-hidden="true">
+                  {ball.face}
+                </span>
+                <span className="ball-need" aria-hidden="true">
+                  needs {ball.need}+
+                </span>
+              </div>
+              <p className="ball-verdict">
+                {ball.caught ? "Caught!" : "It got away."}
+              </p>
+              <p className="resolved-instruction">{boldNumbers(ball.line)}</p>
+            </div>
+          ) : resolved ? (
             <div className="dice-result">
               <div
                 className="dice-result-equation"

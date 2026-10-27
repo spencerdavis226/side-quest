@@ -166,6 +166,12 @@ export interface CardDefinition {
    * it is beaten (a won roll, or a strike won on the matchup). It joins
    * the team (`party.team`). Never on a trainer. */
   catchable?: true;
+  /** Pokémon League (2026-10-27): the ball is thrown. A d20 of `catchRate`
+   * or more catches the Pokémon (a natural 20 always, a natural 1 never);
+   * `catchLines` are read on the card once it is thrown. Cards from before
+   * have neither and are caught for a drink, with no throw. */
+  catchRate?: number;
+  catchLines?: { caught: string; fled: string };
   /** A run's own omen (an adventurer, a starter) (2026-10-25): its
    * signature power, used when the table chooses, `uses` times until the
    * next boss falls. A later form's `power` replaces it. */
@@ -511,6 +517,10 @@ export interface PartyState {
   /** The teammate sent in for the battle face up: it fights with its type.
    * Cleared when the card is put aside, like a Tera Orb. */
   sent?: string;
+  /** The ball thrown at the Pokémon on the card in play (2026-10-27): its
+   * card ID and the d20 face, kept until the card is put aside so a reload
+   * never throws again. */
+  throw?: { id: string; face: number };
 }
 export interface PackDefinition {
   version: 1;

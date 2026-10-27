@@ -284,6 +284,20 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
       (c.offers?.some((o) => o?.catch) && (!c.type || c.type === "trio"))
     )
       fail(`Invalid catch: ${c.id}`);
+    // The throw (2026-10-27): a number to beat on a d20 and both lines, on
+    // a card that can be caught.
+    const lines = c.catchLines;
+    if (
+      (c.catchRate !== undefined || lines !== undefined) &&
+      ((!c.catchable && !c.offers?.some((o) => o?.catch)) ||
+        !Number.isInteger(c.catchRate) ||
+        (c.catchRate as number) < 2 ||
+        (c.catchRate as number) > 19 ||
+        ![lines?.caught, lines?.fled].every(
+          (l) => typeof l === "string" && !!l.trim() && l.length <= 120,
+        ))
+    )
+      fail(`Invalid throw: ${c.id}`);
     // Dice colours: two hex colours, on an omen or a starter's form.
     const hexColor = (v: unknown) =>
       typeof v === "string" && /^#[0-9a-f]{6}$/i.test(v);

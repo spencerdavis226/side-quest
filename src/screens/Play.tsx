@@ -14,6 +14,7 @@ import { diceResultText } from "../presentation/dice/result-text";
 import { diceNotation } from "../game/dice";
 import {
   awaitingCatch,
+  thrownBall,
   awaitingChoice,
   awaitingOffer,
   awaitingPress,
@@ -151,6 +152,7 @@ export function Play({
   // The League's team (2026-10-25): a beaten wild Pokémon to catch, and
   // teammates who can be sent in for this battle.
   const catching = !motion && awaitingCatch(session);
+  const ball = thrownBall(session);
   const senders = motion
     ? []
     : partyTeam(session.quest).filter((m) => canSendIn(session, m.id));
@@ -376,23 +378,27 @@ export function Play({
                         : press
                           ? `${card.title}. ${diceResultText(card, session.roll!)} Cash out or go again.`
                           : catching
-                            ? `${card.title}. Beaten. Catch it, or let it go.`
-                            : blocked
-                              ? `${card.title}. ${card.rules} ${card.timer!.kind === "fuse" ? "Light the fuse" : "Start the clock"}, or skip it.`
-                              : actions.shown === "end"
-                                ? `${card.title}. ${card.timer!.end} Tap to put this card aside.`
-                                : card.dice && !session.roll?.returned
-                                  ? session.roll
-                                    ? motion === "roll"
-                                      ? "Finish dice roll"
-                                      : "Revealing dice result"
-                                    : `Roll ${diceNotation(card.dice)}. ${card.rules}`
-                                  : `${card.title}. ${session.roll?.returned ? `Rolled ${session.roll.total}. ${diceResultText(card, session.roll)}` : card.rules} ${cardPacks(
-                                      card.id,
-                                      session.config.packIds,
-                                    )
-                                      .map((pack) => pack.title)
-                                      .join(", ")}. Tap to put this card aside.`
+                            ? `${card.title}. Beaten. ${card.catchRate ? "Throw a ball, or let it go." : "Catch it, or let it go."}`
+                            : ball
+                              ? `${card.title}. Threw a ${ball.face}, needed ${ball.need}. ${ball.caught ? "Caught." : "It got away."} ${ball.line} Tap to put this card aside.`
+                              : blocked
+                                ? `${card.title}. ${card.rules} ${card.timer!.kind === "fuse" ? "Light the fuse" : "Start the clock"}, or skip it.`
+                                : actions.shown === "end"
+                                  ? `${card.title}. ${card.timer!.end} Tap to put this card aside.`
+                                  : card.dice && !session.roll?.returned
+                                    ? session.roll
+                                      ? motion === "roll"
+                                        ? "Finish dice roll"
+                                        : "Revealing dice result"
+                                      : `Roll ${diceNotation(card.dice)}. ${card.rules}`
+                                    : `${card.title}. ${session.roll?.returned ? `Rolled ${session.roll.total}. ${diceResultText(card, session.roll)}` : card.rules} ${cardPacks(
+                                        card.id,
+                                        session.config.packIds,
+                                      )
+                                        .map((pack) => pack.title)
+                                        .join(
+                                          ", ",
+                                        )}. Tap to put this card aside.`
             }
           >
             <span
@@ -421,6 +427,7 @@ export function Play({
                     matchup={cardMatchup(session.quest, card)}
                     shift={verdictShift(session.quest, card)}
                     strike={strikeOutcome(session.quest, card)}
+                    ball={ball}
                   />
                 )}
               </span>

@@ -266,6 +266,77 @@
   transform: rotate(-24deg);
 }
 
+/* A thrown ball (2026-10-27): the ball, the d20 face, the number it needed,
+   then Caught or fled and the Pokémon's line. */
+.ball-result {
+  width: 100%;
+  margin-block: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(4px, 1.6cqw, max(10px, 2.2cqw));
+  animation: result-reveal var(--motion-settle, 160ms) ease-out both;
+}
+.ball-throw {
+  display: flex;
+  align-items: center;
+  gap: clamp(6px, 2.4cqw, 12px);
+  color: #31200f;
+}
+.ball-mark {
+  width: clamp(22px, 7cqw, 32px);
+  height: clamp(22px, 7cqw, 32px);
+  border: 2px solid #2b1a0b;
+  border-radius: 50%;
+  background: linear-gradient(
+    to bottom,
+    #c2372c 0 46%,
+    #2b1a0b 46% 54%,
+    #f5e5bd 54%
+  );
+  animation: ball-wobble 520ms ease-in-out 1 both;
+}
+.ball-need {
+  font: italic 600 clamp(13px, 3.8cqw, 17px) / 1 var(--font-tavern);
+  color: #6b4a2a;
+}
+.study-rules p.ball-verdict {
+  margin: 0;
+  font: 700 clamp(18px, 6cqw, 26px) / 1 var(--font-card-title);
+}
+.ball-result.caught .ball-verdict {
+  color: #1d5a3c;
+}
+.ball-result.fled .ball-verdict {
+  color: #8a2a1c;
+}
+.ball-result .resolved-instruction {
+  margin: 0;
+  font-size: calc(
+    clamp(1.25rem, 6cqw, max(1.75rem, 5.6cqw)) * var(--rules-fit, 1)
+  );
+  line-height: 1.12;
+}
+.ball-result .dice-result-face {
+  min-width: clamp(26px, 8.4cqw, 36px);
+  height: clamp(26px, 8.4cqw, 36px);
+}
+@keyframes ball-wobble {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  20% {
+    transform: rotate(-22deg);
+  }
+  45% {
+    transform: rotate(18deg);
+  }
+  70% {
+    transform: rotate(-10deg);
+  }
+}
+
 /* The card's type sits in its ribbon, before the words. */
 .card-ribbon:has(.ribbon-type) {
   display: flex;

@@ -8,6 +8,7 @@ import {
   skipRoll,
   quaff,
   catchIt,
+  throwBall,
   letGo,
   sendIn,
   dropFromBag,
@@ -174,6 +175,13 @@ export class PresentationController {
     const next = takeOffer(session, index, this.random, branch);
     if (next === session) return;
     this.persist(next);
+    // A catch card's ball is thrown and read on the card; any other offer
+    // puts it aside.
+    if (next.discarded === session.discarded) {
+      this.transition(next, "settle");
+      this.effect("press");
+      return;
+    }
     this.transition(next, "discard", session);
     this.effect("discard");
   }
@@ -273,6 +281,8 @@ export class PresentationController {
   catch(keep: boolean) {
     const { session, motion } = this.state;
     if (!session || motion) return;
+    // A Pokémon with a throw is caught by throwing the ball.
+    if (keep && currentCard(session).catchRate) return this.throw();
     const next = keep
       ? catchIt(session, this.random)
       : letGo(session, this.random);
@@ -280,6 +290,17 @@ export class PresentationController {
     this.persist(next);
     this.transition(next, "discard", session);
     this.effect("discard");
+  }
+  /** Throw a ball at the beaten wild Pokémon (2026-10-27): the result
+   * settles onto the card, which is put aside by the next tap. */
+  throw() {
+    const { session, motion } = this.state;
+    if (!session || motion) return;
+    const next = throwBall(session, this.random);
+    if (next === session) return;
+    this.persist(next);
+    this.transition(next, "settle");
+    this.effect("press");
   }
   /** Use a caught Pokémon on the battle face up: it wins it and the card
    * is put aside. */

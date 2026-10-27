@@ -30,6 +30,7 @@ import {
   replaces,
   stageRule,
   strikeOutcome,
+  thrownBall,
 } from "../src/game/engine";
 import { nextMove, seeded } from "./table-play";
 import { parseSession } from "../src/app/persistence";
@@ -259,6 +260,18 @@ const situations: [string, GameConfig, Find][] = [
     "league-team-caught",
     league,
     (s) => (party(s).team?.length ?? 0) >= 2 && s.phase === "hidden",
+  ],
+  // The ball thrown at a Pokémon (2026-10-27): the result is on the card
+  // until it is put aside, caught or fled.
+  [
+    "league-ball-caught",
+    league,
+    (s) => !!party(s).throw && thrownBall(s)?.caught === true,
+  ],
+  [
+    "league-ball-fled",
+    league,
+    (s) => !!party(s).throw && thrownBall(s)?.caught === false,
   ],
   // A caught Pokémon waiting to be used on a battle its type beats
   // (2026-10-26; `league-teammate-sent` can no longer be saved).

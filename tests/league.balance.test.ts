@@ -101,6 +101,8 @@ function playRun(seed: number, starter?: string) {
         canTakeOffer(s, pick) ? pick : offers.length - 1,
         random,
       );
+      // A catch card's ball is thrown and read; the next tap puts it aside.
+      if (party(s).throw) s = advance(s, random);
       continue;
     }
     // A Tera Orb on a bad matchup, or before a boss (2026-10-25).
@@ -152,7 +154,8 @@ function playRun(seed: number, starter?: string) {
     // A beaten wild Pokémon: catch it or let it go, which puts it aside.
     const before = s;
     s = botTeam(s, random);
-    if (s === before) s = advance(s, random);
+    // A thrown ball is read on the card, and the next tap puts it aside.
+    if (s === before || party(s).throw) s = advance(s, random);
     if (party(s).hearts <= 4) use("draught");
   }
   return s;
