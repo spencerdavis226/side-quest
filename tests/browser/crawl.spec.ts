@@ -1028,10 +1028,11 @@ for (const width of [320, 390])
     const centre = (b: { y: number; height: number }) => b.y + b.height / 2;
     expect(Math.abs(centre(left!) - centre(middle!))).toBeLessThan(2);
     expect(Math.abs(centre(menu!) - centre(middle!))).toBeLessThan(2);
-    // The strip: three chips under the row (the power and the floor's rule
-    // moved to the party dialog), inside the screen, above the card.
+    // The strip: four chips here, all there is (the satchel, the Cup, the
+    // curse and the jinx; the power and the floor's rule moved to the party
+    // dialog), under the row, inside the screen, above the card.
     const chips = page.locator(".hud-strip .hud-chip");
-    await expect(chips).toHaveCount(3);
+    await expect(chips).toHaveCount(4);
     for (const chip of await chips.all()) {
       const b = (await chip.boundingBox())!;
       expect(b.x).toBeGreaterThanOrEqual(0);
