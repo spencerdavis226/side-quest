@@ -781,10 +781,29 @@ export function hitsNeeded(
 }
 /** Finale cards are dealt between deck cards and take no deck position. */
 export function currentCard(s: SessionState) {
-  if (!s.quest?.due) return s.cards.find((c) => c.id === s.order[s.position])!;
+  if (!s.quest?.due)
+    return withSecret(
+      s,
+      s.cards.find((c) => c.id === s.order[s.position])!,
+    );
   const card = finaleCard(s.quest, s.quest.finale[s.quest.step])!;
   // A boss with phases reads the beat its hits have reached.
-  return card.phases ? atBeat(card, bossBeat(s.quest, card)) : card;
+  return withSecret(
+    s,
+    card.phases ? atBeat(card, bossBeat(s.quest, card)) : card,
+  );
+}
+/** A card with a `secretPool` holds one of them for the whole game: picked by
+ * hashing the game's shuffle and the card's id, so it is stable across
+ * reloads, differs between games, and needs nothing saved. */
+function withSecret(s: SessionState, card: CardDefinition): CardDefinition {
+  const pool = card.secretPool;
+  if (!pool?.length) return card;
+  const key = `${s.order.join(",")}|${s.quest?.finale.join(",") ?? ""}|${card.id}`;
+  let h = 2166136261;
+  for (let i = 0; i < key.length; i++)
+    h = Math.imul(h ^ key.charCodeAt(i), 16777619);
+  return { ...card, secret: pool[(h >>> 0) % pool.length] };
 }
 /** The card put aside last, as it read then: a boss's beat (`party.beat`). */
 export function previousCard(s: SessionState) {

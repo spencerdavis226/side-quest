@@ -19,7 +19,9 @@ import {
   trainer,
   vs,
   wild,
+  type Leg,
 } from "./journey";
+import { quizPools } from "./whosthat";
 import { moments } from "./moments";
 import { moreEvolutions, moreWilds } from "./wilds";
 
@@ -28,6 +30,30 @@ import { moreEvolutions, moreWilds } from "./wilds";
 // Pokémon get tougher route by route, from every generation. Five routes
 // carry a chance to evolve the starter; the others a risky find instead.
 // Never write Team HP or items into these rules: the card's seals show them.
+
+// Who's That Pokémon?: three cards, each holding a share of the ~266 answers
+// in `whosthat.ts`; one answer per game is picked when the card is dealt. The
+// drawer reads it alone, then has twenty seconds to describe it without the
+// banned words (2026-10-31: 20 s, was 45).
+const quizzes = quizPools(3);
+const whosThat = (route: Leg, id: string, k: number): CardDefinition => ({
+  ...tableMoment(
+    route,
+    id,
+    "Who's That Pokémon?",
+    "Quiz",
+    "category",
+    "Read alone, start the clock, then describe it without saying its name. The table guesses.",
+  ),
+  secret: quizzes[k]![0]!,
+  secretPool: quizzes[k]!,
+  timer: {
+    version: 1,
+    kind: "countdown",
+    seconds: 20,
+    end: "Time. Someone guessed it? Give 3. Nobody did? Drink 3.",
+  },
+});
 
 // --- Route 1 -----------------------------------------------------------------
 const route1: CardDefinition[] = [
@@ -361,23 +387,7 @@ const route2: CardDefinition[] = [
       fumble: "Gyarados. Roar at the table, then drink 6.",
     },
   ),
-  {
-    ...tableMoment(
-      1,
-      "route-whos-that",
-      "Who's That Pokémon?",
-      "Quiz",
-      "category",
-      "Read alone, start the clock, then describe it without saying its name. The table guesses.",
-    ),
-    secret: "JIGGLYPUFF. Don't say pink, balloon, sing or sleep.",
-    timer: {
-      version: 1,
-      kind: "countdown",
-      seconds: 45,
-      end: "Time. Someone guessed it? Give 3. Nobody did? Drink 3.",
-    },
-  },
+  whosThat(1, "route-whos-that", 0),
   tableMoment(
     1,
     "route-cute-contest",
@@ -423,23 +433,6 @@ const route2Aces: CardDefinition[] = [
 // --- Route 3 -----------------------------------------------------------------
 const route3: CardDefinition[] = [
   // The variety pass (2026-10-31).
-  {
-    ...tableMoment(
-      2,
-      "route-whos-that-3",
-      "Who's That Pokémon?",
-      "Quiz",
-      "category",
-      "Read alone, start the clock, then describe it without saying its name. The table guesses.",
-    ),
-    secret: "SNORLAX. Don't say sleep, big, fat or blocking.",
-    timer: {
-      version: 1,
-      kind: "countdown",
-      seconds: 45,
-      end: "Time. Someone guessed it? Give 3. Nobody did? Drink 3.",
-    },
-  },
   tableMoment(
     2,
     "route-cool-contest",
@@ -815,24 +808,7 @@ const route4Aces: CardDefinition[] = [
 
 // --- Route 5 -----------------------------------------------------------------
 const route5: CardDefinition[] = [
-  // The variety pass (2026-10-31).
-  {
-    ...tableMoment(
-      4,
-      "route-whos-that-5",
-      "Who's That Pokémon?",
-      "Quiz",
-      "category",
-      "Read alone, start the clock, then describe it without saying its name. The table guesses.",
-    ),
-    secret: "GENGAR. Don't say ghost, purple, grin or shadow.",
-    timer: {
-      version: 1,
-      kind: "countdown",
-      seconds: 45,
-      end: "Time. Someone guessed it? Give 3. Nobody did? Drink 3.",
-    },
-  },
+  whosThat(4, "route-whos-that-5", 1),
   tableMoment(
     4,
     "route-beauty-contest",
@@ -1013,23 +989,6 @@ const route5Aces: CardDefinition[] = [
 // --- Route 6 -----------------------------------------------------------------
 const route6: CardDefinition[] = [
   // The variety pass (2026-10-31).
-  {
-    ...tableMoment(
-      5,
-      "route-whos-that-6",
-      "Who's That Pokémon?",
-      "Quiz",
-      "category",
-      "Read alone, start the clock, then describe it without saying its name. The table guesses.",
-    ),
-    secret: "PSYDUCK. Don't say duck, headache, yellow or confused.",
-    timer: {
-      version: 1,
-      kind: "countdown",
-      seconds: 45,
-      end: "Time. Someone guessed it? Give 3. Nobody did? Drink 3.",
-    },
-  },
   tableMoment(
     5,
     "route-day-care-gossip",
@@ -1402,24 +1361,7 @@ const route7Aces: CardDefinition[] = [
 
 // --- Route 8 -----------------------------------------------------------------
 const route8: CardDefinition[] = [
-  // The variety pass (2026-10-31).
-  {
-    ...tableMoment(
-      7,
-      "route-whos-that-8",
-      "Who's That Pokémon?",
-      "Quiz",
-      "category",
-      "Read alone, start the clock, then describe it without saying its name. The table guesses.",
-    ),
-    secret: "MEWTWO. Don't say clone, psychic, purple or Mew.",
-    timer: {
-      version: 1,
-      kind: "countdown",
-      seconds: 45,
-      end: "Time. Someone guessed it? Give 3. Nobody did? Drink 3.",
-    },
-  },
+  whosThat(7, "route-whos-that-8", 2),
   tableMoment(
     7,
     "route-tough-contest",

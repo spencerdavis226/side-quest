@@ -2,6 +2,10 @@
 
 Updated 2026-10-31. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## In progress 2026-10-31: Who's That Pokémon? (owner: "drastically more options ... a group of Pokemon experts has made this card trivial")
+
+Uncommitted. Five fixed 45 s quiz cards became three (Routes 2, 5 and 8) on a 20 s timer, each holding a share of 264 answers (every Gen 1 and 2 Pokémon plus 15 favorites, four banned words each, `src/content/league/whosthat.ts`). `CardDefinition.secretPool` (optional, no migration) is resolved in `currentCard` by hashing the shuffle and card id: stable on reload, different each game, nothing saved. Old saves keep their snapshot cards. Cards 1851 to 1849. **Checks:** `npm test` (403, new `tests/whos-that.test.ts`), lint, typecheck, `cards:review`, build (budgets pass), `league.balance` at 120 runs a starter (4/4; an earlier 6-extra-card version failed Gible at 7.5%). Not run: Playwright, device. **Open:** banned words are unreviewed by a Pokémon expert; the 20 s fit on the card face is unchecked in a browser.
+
 ## Shipped 2026-10-31: deterministic browser tests, faster CI (owner: "make Side Quest's test suites much faster and reliable, without losing the coverage that matters")
 
 PR #58, fast-forwarded to `main` on the owner's "Merge to main" (`c26ae20`; revert to `c1b4d58` to undo). Deployed by run #252 in 3 min 26 s, every job green (its `npm ci` steps missed the cache, which is kept per branch; later `main` runs skip them). No app code changed: tests, Playwright config, lint and `pages.yml`.

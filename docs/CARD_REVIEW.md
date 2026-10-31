@@ -311,7 +311,7 @@ the Review column is intentionally blank so you can mark it up.
 
 ## Pokémon night (`pokemon`)
 
-579 cards · 52 sip · 75 group · 20 category · 383 challenge · 49 rule · 212 dice
+577 cards · 52 sip · 75 group · 18 category · 383 challenge · 49 rule · 212 dice
 
 | Review | Title | ID | Cat | Rules | Dice, secret or timer |
 | --- | --- | --- | --- | --- | --- |
@@ -450,18 +450,16 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Professor's Quiz | `pokemon.route-professors-quiz` | category | Read alone, start the clock, then describe it without saying its name. The table guesses. | Secret: PIKACHU. Don't say yellow, electric, mouse or Ash. · Clock 45 s: Time. Someone guessed it? Give 3. Nobody did? Drink 3. |
 | ☐ | Pokédex Entry | `pokemon.route-pokedex-entry` | category | Describe the player on your left like a Pokédex entry. If the table finds it boring, you drink 2. |  |
 | ☐ | Tall Grass Names | `pokemon.route-tall-grass-names` | category | Go around naming Pokémon found in tall grass. Whoever repeats one or stalls drinks 2. |  |
-| ☐ | Who's That Pokémon? | `pokemon.route-whos-that` | category | Read alone, start the clock, then describe it without saying its name. The table guesses. | Secret: JIGGLYPUFF. Don't say pink, balloon, sing or sleep. · Clock 45 s: Time. Someone guessed it? Give 3. Nobody did? Drink 3. |
+| ☐ | Who's That Pokémon? | `pokemon.route-whos-that` | category | Read alone, start the clock, then describe it without saying its name. The table guesses. | Secret: BULBASAUR. Don't say seed, plant, bulb or frog. · Clock 20 s: Time. Someone guessed it? Give 3. Nobody did? Drink 3. |
 | ☐ | Whose Cry? | `pokemon.route-whose-cry` | category | The drawer makes a Pokémon's cry. First to name it gives 2. Nobody does: the drawer drinks 2. |  |
 | ☐ | Fossil Dig | `pokemon.route-fossil-dig` | category | Go around naming dinosaurs, fossils or rocks. The first to blank drinks 2. |  |
-| ☐ | Who's That Pokémon? | `pokemon.route-whos-that-3` | category | Read alone, start the clock, then describe it without saying its name. The table guesses. | Secret: SNORLAX. Don't say sleep, big, fat or blocking. · Clock 45 s: Time. Someone guessed it? Give 3. Nobody did? Drink 3. |
 | ☐ | Type Quiz | `pokemon.route-type-quiz` | category | The drawer names a type. The next player names one that beats it. Wrong drinks 2, right gives 1. |  |
 | ☐ | The Pokérap | `pokemon.route-pokerap` | category | Category: Pokémon names, clockwise, no repeats. First to stall or repeat drinks 2. |  |
-| ☐ | Who's That Pokémon? | `pokemon.route-whos-that-5` | category | Read alone, start the clock, then describe it without saying its name. The table guesses. | Secret: GENGAR. Don't say ghost, purple, grin or shadow. · Clock 45 s: Time. Someone guessed it? Give 3. Nobody did? Drink 3. |
+| ☐ | Who's That Pokémon? | `pokemon.route-whos-that-5` | category | Read alone, start the clock, then describe it without saying its name. The table guesses. | Secret: IVYSAUR. Don't say bulb, flower, plant or vine. · Clock 20 s: Time. Someone guessed it? Give 3. Nobody did? Drink 3. |
 | ☐ | Hidden Machine | `pokemon.route-hidden-machine` | category | Everyone names a chore they'd use Cut or Strength on. The funniest, by vote, gives 3. |  |
 | ☐ | Rain Dance | `pokemon.route-weather-report` | category | Go around naming Water-type Pokémon. The first to stall or repeat drinks 2. |  |
-| ☐ | Who's That Pokémon? | `pokemon.route-whos-that-6` | category | Read alone, start the clock, then describe it without saying its name. The table guesses. | Secret: PSYDUCK. Don't say duck, headache, yellow or confused. · Clock 45 s: Time. Someone guessed it? Give 3. Nobody did? Drink 3. |
 | ☐ | Dream Team | `pokemon.route-dream-team` | category | Name a team of six Pokémon in 15 seconds. Stall: drink 2. |  |
-| ☐ | Who's That Pokémon? | `pokemon.route-whos-that-8` | category | Read alone, start the clock, then describe it without saying its name. The table guesses. | Secret: MEWTWO. Don't say clone, psychic, purple or Mew. · Clock 45 s: Time. Someone guessed it? Give 3. Nobody did? Drink 3. |
+| ☐ | Who's That Pokémon? | `pokemon.route-whos-that-8` | category | Read alone, start the clock, then describe it without saying its name. The table guesses. | Secret: VENUSAUR. Don't say flower, big, plant or vine. · Clock 20 s: Time. Someone guessed it? Give 3. Nobody did? Drink 3. |
 | ☐ | Mareep | `pokemon.mareep` | challenge | Wild Mareep appeared! Grab it by the fluff and roll d6. | 1d6 — 1-2: Static shock to the nipples. Drink 3. 3-4: It headbutts you in the crotch. Drink 2. 5-6: Free wool sweater. Give 2. |
 | ☐ | Unown | `pokemon.unown` | challenge | Unown used Sobriety Test! Recite the alphabet backwards. Drink 1 for each mistake. |  |
 | ☐ | Slowpoke | `pokemon.slowpoke` | challenge | Slowpoke tails are valuable. Cut it off: drink 2. Dick. Leave it: give 1. |  |

@@ -600,7 +600,6 @@ export const packs: PackDefinition[] = [
           intro: "The road gets longer",
           pick: 4,
           cardIds: [
-            "pokemon.route-whos-that-3",
             "pokemon.route-cool-contest",
             "pokemon.route-psyduck",
             "pokemon.route-machop",
@@ -912,7 +911,6 @@ export const packs: PackDefinition[] = [
           intro: "Deeper into the region",
           pick: 4,
           cardIds: [
-            "pokemon.route-whos-that-6",
             "pokemon.route-day-care-gossip",
             "pokemon.route-gyarados",
             "pokemon.route-lucario",

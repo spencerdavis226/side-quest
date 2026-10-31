@@ -71,6 +71,11 @@ export interface CardDefinition {
    * Hold to read plaque and hides on release (a Paranoia question, a secret
    * mission, a word for the table to act out). The rules say who reads it. */
   secret?: string;
+  /** Other secrets this card may hold (Who's That Pokémon?). `currentCard`
+   * picks one per game from the shuffled order, so nothing is saved and a
+   * reload shows the same answer; `secret` is the fallback where no game is
+   * in play (previews, old saves). */
+  secretPool?: string[];
   /** A timed card: a plaque starts it and the card can't be put aside until
    * time is up, when `end` replaces the rules. */
   timer?: TimerDefinition;
