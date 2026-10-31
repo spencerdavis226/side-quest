@@ -736,3 +736,23 @@ dialog p {
 .league-deck .card-back {
   background-image: url("/art/card-back-league.webp");
 }
+
+/* The preview site (the preview branch at next/) marks itself, so a test
+   build is never mistaken for the live game. */
+html[data-channel="preview"] body::after {
+  content: "Preview";
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: #b0302a;
+  color: #fff;
+  font:
+    600 11px/1.4 system-ui,
+    sans-serif;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+}

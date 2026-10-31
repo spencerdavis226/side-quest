@@ -4,7 +4,8 @@ Read `docs/STATUS.md` before planning or editing. It is the single current hando
 
 ## Constraints
 
-- Work on `main` (the only active branch; every push to it deploys). Preserve HEAD and all untracked work; never discard work in progress.
+- Work on `main` (every push to it deploys). Preserve HEAD and all untracked work; never discard work in progress.
+- Preview site (owner, 2026-10-31): the `preview` branch is published at `/side-quest/next/` beside the live game, for trying changes on a phone first. A push to `preview` runs `.github/workflows/preview.yml` (unit tests, lint, build, balance), which dispatches `pages.yml` on `main`; that run builds both and deploys them together (Pages deploys only from `main`). The preview build sets `VITE_CHANNEL=preview` (`src/app/channel.ts`): storage keys `side-quest-preview.*` (never the live save; no `drink-at-ron` migration), a red Preview badge, and its own Home Screen name. The live worker's `navigateFallbackDenylist` leaves `next/` to the network. Merge `preview` into `main` when the owner approves; a push to `preview` needs the same authorization as `main` (it publishes).
 - Work on one assigned task at a time; do not repeat completed milestones or replace the stack on your own.
 - Keep the pure engine (`src/game`) and saved outcomes independent of rendering. Preserve session schema v2 + v1 migration and the `side-quest.session.v1` storage key (pre-rename `drink-at-ron.*` keys are moved by `migrateStorageKeys`; keep that path); rendering changes must not force a migration.
 - Preserve the approved painted frame and constant 2:3 outer ratio (front/back/Previous Card agree). Stationary taps must keep working while long rules stay scrollable.

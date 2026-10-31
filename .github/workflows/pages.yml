@@ -41,10 +41,6 @@ jobs:
         with:
           name: dist
           path: dist
-      - uses: actions/upload-pages-artifact@v3
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        with:
-          path: dist
   browser:
     needs: build
     runs-on: ubuntu-latest
@@ -112,9 +108,50 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run test:balance
+  # The preview site: the `preview` branch, built at <base>next/ with its own
+  # storage keys and Home Screen name (VITE_CHANNEL), published beside the
+  # live game. Pages deploys only from main, so a push to `preview` runs
+  # preview.yml, which checks it and then dispatches this workflow on main.
+  # No branch, no preview: the live site deploys alone.
+  preview:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    outputs:
+      built: ${{ steps.branch.outputs.exists }}
+    steps:
+      - id: branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh api "repos/${{ github.repository }}/branches/preview" --silent 2>/dev/null; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.branch.outputs.exists == 'true'
+        with:
+          ref: preview
+      - uses: actions/setup-node@v4
+        if: steps.branch.outputs.exists == 'true'
+        with:
+          node-version: 22
+          cache: npm
+      - if: steps.branch.outputs.exists == 'true'
+        run: npm ci
+      - if: steps.branch.outputs.exists == 'true'
+        run: npm run build
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/next/
+          VITE_CHANNEL: preview
+      - uses: actions/upload-artifact@v4
+        if: steps.branch.outputs.exists == 'true'
+        with:
+          name: preview-dist
+          path: dist
   deploy:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-    needs: [build, browser, balance]
+    needs: [build, browser, balance, preview]
     runs-on: ubuntu-latest
     permissions:
       pages: write
@@ -123,6 +160,18 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: site
+      - uses: actions/download-artifact@v4
+        if: needs.preview.outputs.built == 'true'
+        with:
+          name: preview-dist
+          path: site/next
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
       - uses: actions/configure-pages@v5
       - name: Deploy
         id: deployment

@@ -1,4 +1,5 @@
-export const INSTALL_HELP_KEY = "side-quest.install-help-dismissed.v1";
+import { KEY_PREFIX } from "./channel";
+export const INSTALL_HELP_KEY = `${KEY_PREFIX}install-help-dismissed.v1`;
 
 /** A conservative hint gate, not an installed-app inventory. iPad Safari
  * can use a desktop Mac UA; touch support distinguishes that case. */

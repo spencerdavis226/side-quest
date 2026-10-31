@@ -15,16 +15,20 @@ import {
 } from "../game/engine";
 import type { GameConfig, PartyState, SessionState } from "../game/types";
 import { LOOT } from "../game/types";
-export const SAVE_KEY = "side-quest.session.v1";
-export const SETTINGS_KEY = "side-quest.settings.v1";
+import { IS_PREVIEW, KEY_PREFIX } from "./channel";
+export const SAVE_KEY = `${KEY_PREFIX}session.v1`;
+export const SETTINGS_KEY = `${KEY_PREFIX}settings.v1`;
 /** The last save that failed to load, kept as it was so a later fix can
  * recover the game. Only the latest is kept. */
-export const CORRUPT_KEY = "side-quest.session.corrupt.v1";
-/** Keys from before the rename to Side Quest, mapped to their new names. */
-export const LEGACY_KEYS: Record<string, string> = {
-  "drink-at-ron.session.v1": SAVE_KEY,
-  "drink-at-ron.settings.v1": SETTINGS_KEY,
-};
+export const CORRUPT_KEY = `${KEY_PREFIX}session.corrupt.v1`;
+/** Keys from before the rename to Side Quest, mapped to their new names.
+ * The preview site has none: those saves belong to the live game. */
+export const LEGACY_KEYS: Record<string, string> = IS_PREVIEW
+  ? {}
+  : {
+      "drink-at-ron.session.v1": SAVE_KEY,
+      "drink-at-ron.settings.v1": SETTINGS_KEY,
+    };
 type KeyStore = Pick<Storage, "getItem" | "setItem" | "removeItem">;
 /** Moves a pre-rename save and settings to the new keys, once. A value
  * already under a new key wins; an old key is removed only after its value

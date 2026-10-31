@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRegisterSW } from "virtual:pwa-register/react";
+import { KEY_PREFIX } from "./channel";
 // A new release's worker can take control before the app has mounted (the
 // first render is held for its art) or before the update hook is listening.
 // Catch that takeover here, at import, so the Update game offer is never
@@ -20,7 +21,7 @@ if ("serviceWorker" in navigator) {
   });
 }
 /** When the page last reloaded for a missing chunk; one reload per window. */
-export const PRELOAD_RELOAD_KEY = "side-quest.preload-reload";
+export const PRELOAD_RELOAD_KEY = `${KEY_PREFIX}preload-reload`;
 const PRELOAD_RELOAD_MS = 30_000;
 /** The service worker's state: whether the game is cached for offline play,
  * and whether a newer release has taken over and wants a reload. */

@@ -2,6 +2,10 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 const base = process.env.BASE_PATH || "/";
+// The preview site (the `preview` branch, served at <base>next/) installs as
+// its own Home Screen app with its own name.
+const preview = process.env.VITE_CHANNEL === "preview";
+const name = preview ? "Side Quest Preview" : "Side Quest";
 export default defineConfig({
   base,
   build: {
@@ -13,6 +17,19 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    {
+      // iOS names a Home Screen icon from these, not the manifest.
+      name: "channel-title",
+      transformIndexHtml: (html) =>
+        preview
+          ? html
+              .replace("<title>Side Quest</title>", `<title>${name}</title>`)
+              .replace(
+                'name="apple-mobile-web-app-title" content="Side Quest"',
+                'name="apple-mobile-web-app-title" content="SQ Preview"',
+              )
+          : html,
+    },
     VitePWA({
       // An installed Home Screen app has no refresh control, so a waiting
       // worker would strand the icon on an old build until a reinstall.
@@ -23,8 +40,8 @@ export default defineConfig({
       includeAssets: ["apple-touch-icon.png", "art/*.svg"],
       manifest: {
         id: base,
-        name: "Side Quest",
-        short_name: "Side Quest",
+        name,
+        short_name: preview ? "SQ Preview" : "Side Quest",
         description: "The main quest can wait.",
         start_url: base,
         scope: base,
@@ -51,6 +68,9 @@ export default defineConfig({
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,png,webp,avif,woff2}"],
         cleanupOutdatedCaches: true,
+        // The preview site lives under this scope at next/. Its pages must
+        // reach the network (and its own worker), never this build's shell.
+        navigateFallbackDenylist: [new RegExp(`^${base}next/`)],
       },
     }),
   ],

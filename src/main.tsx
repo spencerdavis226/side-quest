@@ -46,6 +46,7 @@ import {
 } from "./components/StageBanner";
 import { PartyPulse } from "./components/Crawl";
 import { Announcer } from "./components/Announcer";
+import { IS_PREVIEW } from "./app/channel";
 import "./style.css";
 import "./presentation/theme.css";
 import "./presentation/card-front.css";
@@ -314,6 +315,7 @@ function App() {
 }
 document.documentElement.dataset.release =
   import.meta.env.VITE_RELEASE_ID || "development";
+if (IS_PREVIEW) document.documentElement.dataset.channel = "preview";
 const root = createRoot(document.getElementById("root")!);
 const params = new URLSearchParams(location.search);
 const renderApp = () =>
