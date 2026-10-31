@@ -284,7 +284,11 @@ describe("Pub Crawl", () => {
     let s = deal(start(), "dungeon.drunk-goblin");
     s = fight(s, 15);
     expect(party(s).loot).toEqual(["smoke"]);
-    s = fight(deal(fromStep(start(), STEP.floor2), "dungeon.leech-swarm"), 2);
+    // A table duel since 2026-10-31 (the variety pass): lost with the plaque.
+    s = settleBattle(
+      advance(deal(fromStep(start(), STEP.floor2), "dungeon.leech-swarm")),
+      false,
+    );
     // Curses became jinxes (2026-10-25).
     expect(party(s)).toMatchObject({
       jinx: "dungeon.leech-swarm",

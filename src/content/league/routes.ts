@@ -31,6 +31,32 @@ import { moreEvolutions, moreWilds } from "./wilds";
 
 // --- Route 1 -----------------------------------------------------------------
 const route1: CardDefinition[] = [
+  // The variety pass (2026-10-31).
+  {
+    ...tableMoment(
+      0,
+      "route-professors-quiz",
+      "Professor's Quiz",
+      "Quiz",
+      "category",
+      "Read alone, start the clock, then describe it without saying its name. The table guesses.",
+    ),
+    secret: "PIKACHU. Don't say yellow, electric, mouse or Ash.",
+    timer: {
+      version: 1,
+      kind: "countdown",
+      seconds: 45,
+      end: "Time. Someone guessed it? Give 3. Nobody did? Drink 3.",
+    },
+  },
+  tableMoment(
+    0,
+    "route-name-your-rival",
+    "Name Your Rival",
+    "Vote",
+    "group",
+    "On three, everyone points at who'd be your rival. Most fingers: drink 2 and say 'Smell ya later!'",
+  ),
   strike(0, "route-pidgey", "Pidgey", {
     even: "Wild Pidgey throws Sand Attack. Eyes shut: drink 2 without looking.",
     advantage:
@@ -397,6 +423,32 @@ const route2Aces: CardDefinition[] = [
 
 // --- Route 3 -----------------------------------------------------------------
 const route3: CardDefinition[] = [
+  // The variety pass (2026-10-31).
+  {
+    ...tableMoment(
+      2,
+      "route-whos-that-3",
+      "Who's That Pokémon?",
+      "Quiz",
+      "category",
+      "Read alone, start the clock, then describe it without saying its name. The table guesses.",
+    ),
+    secret: "SNORLAX. Don't say sleep, big, fat or blocking.",
+    timer: {
+      version: 1,
+      kind: "countdown",
+      seconds: 45,
+      end: "Time. Someone guessed it? Give 3. Nobody did? Drink 3.",
+    },
+  },
+  tableMoment(
+    2,
+    "route-cool-contest",
+    "Coolness Contest",
+    "Contest",
+    "challenge",
+    "Strike your starter's coolest pose for five seconds. Table votes thumbs. Up: give 3. Down: drink 3.",
+  ),
   strike(2, "route-psyduck", "Psyduck", {
     even: "Wild Psyduck clutches its head. Clutch yours too. Headache for everyone: drink 2.",
     advantage:
@@ -565,6 +617,29 @@ const route3Aces: CardDefinition[] = [
 
 // --- Route 4 -----------------------------------------------------------------
 const route4: CardDefinition[] = [
+  // The variety pass (2026-10-31).
+  press(
+    3,
+    "Fishing",
+    "route-good-rod",
+    "Good Rod",
+    "Cast the Good Rod. Each bite, reel it in or cast again, deeper. Roll d20.",
+    "A Tentacool stings you on the way up. Drink 3.",
+    "A bite! Give 2.",
+    ["draught", "shield", "die"],
+    {
+      crit: "A Lapras surfaces and lets you ride it. Give 4.",
+      fumble: "Gyarados. Roar at the table, then drink 6.",
+    },
+  ),
+  tableMoment(
+    3,
+    "route-pokerap",
+    "The Pokérap",
+    "Category",
+    "category",
+    "Category: Pokémon names, clockwise, no repeats. First to stall or repeat drinks 2.",
+  ),
   strike(3, "route-ponyta", "Ponyta", {
     even: "Wild Ponyta, a horse on fire, gallops past. Gallop around your chair, singed. Drink 2.",
     advantage:
@@ -741,6 +816,32 @@ const route4Aces: CardDefinition[] = [
 
 // --- Route 5 -----------------------------------------------------------------
 const route5: CardDefinition[] = [
+  // The variety pass (2026-10-31).
+  {
+    ...tableMoment(
+      4,
+      "route-whos-that-5",
+      "Who's That Pokémon?",
+      "Quiz",
+      "category",
+      "Read alone, start the clock, then describe it without saying its name. The table guesses.",
+    ),
+    secret: "GENGAR. Don't say ghost, purple, grin or shadow.",
+    timer: {
+      version: 1,
+      kind: "countdown",
+      seconds: 45,
+      end: "Time. Someone guessed it? Give 3. Nobody did? Drink 3.",
+    },
+  },
+  tableMoment(
+    4,
+    "route-beauty-contest",
+    "Beauty Contest",
+    "Contest",
+    "challenge",
+    "Give your best runway walk to the door and back. Table votes thumbs. Up: give 3. Down: drink 3.",
+  ),
   strike(4, "route-haunter", "Haunter", {
     even: "Wild Haunter licks you, cold and lingering. Lick your lips and shiver. Drink 2.",
     advantage:
@@ -912,6 +1013,32 @@ const route5Aces: CardDefinition[] = [
 
 // --- Route 6 -----------------------------------------------------------------
 const route6: CardDefinition[] = [
+  // The variety pass (2026-10-31).
+  {
+    ...tableMoment(
+      5,
+      "route-whos-that-6",
+      "Who's That Pokémon?",
+      "Quiz",
+      "category",
+      "Read alone, start the clock, then describe it without saying its name. The table guesses.",
+    ),
+    secret: "PSYDUCK. Don't say duck, headache, yellow or confused.",
+    timer: {
+      version: 1,
+      kind: "countdown",
+      seconds: 45,
+      end: "Time. Someone guessed it? Give 3. Nobody did? Drink 3.",
+    },
+  },
+  tableMoment(
+    5,
+    "route-day-care-gossip",
+    "Day Care Gossip",
+    "Vote",
+    "group",
+    "On three, everyone points at who'd leave their Pokémon at the Day Care. Most fingers: drink 3.",
+  ),
   wild(
     5,
     "route-gyarados",
@@ -1084,6 +1211,29 @@ const route6Aces: CardDefinition[] = [
 
 // --- Route 7 -----------------------------------------------------------------
 const route7: CardDefinition[] = [
+  // The variety pass (2026-10-31).
+  press(
+    6,
+    "Fishing",
+    "route-super-rod",
+    "Super Rod",
+    "Cast the Super Rod. Each bite, reel it in or cast again, deeper. Roll d20.",
+    "A Feebas. Nobody wants a Feebas. Drink 3.",
+    "A bite! Give 2.",
+    ["draught", "die", "shield"],
+    {
+      crit: "A shiny Magikarp. Everyone else gasps and drinks 2.",
+      fumble: "Gyarados, and it's angry. Drink 6, then roar.",
+    },
+  ),
+  tableMoment(
+    6,
+    "route-smart-contest",
+    "Smartness Contest",
+    "Contest",
+    "challenge",
+    "Explain how a Poké Ball works in 20 seconds. Table votes thumbs. Up: give 4. Down: drink 4.",
+  ),
   strike(6, "route-snorlax-awake", "Angry Snorlax", {
     even: "A Snorlax woke up on the wrong side of the road. It yawns. Drink 3.",
     advantage:
@@ -1253,6 +1403,32 @@ const route7Aces: CardDefinition[] = [
 
 // --- Route 8 -----------------------------------------------------------------
 const route8: CardDefinition[] = [
+  // The variety pass (2026-10-31).
+  {
+    ...tableMoment(
+      7,
+      "route-whos-that-8",
+      "Who's That Pokémon?",
+      "Quiz",
+      "category",
+      "Read alone, start the clock, then describe it without saying its name. The table guesses.",
+    ),
+    secret: "MEWTWO. Don't say clone, psychic, purple or Mew.",
+    timer: {
+      version: 1,
+      kind: "countdown",
+      seconds: 45,
+      end: "Time. Someone guessed it? Give 3. Nobody did? Drink 3.",
+    },
+  },
+  tableMoment(
+    7,
+    "route-tough-contest",
+    "Toughness Contest",
+    "Contest",
+    "challenge",
+    "Flex like your starter for five seconds. Table votes thumbs. Up: give 4. Down: drink 4.",
+  ),
   // Moved from Route 7 in the 2026-10-31 retune: a later chance, so fewer
   // runs reach their final form (see moreEvolutions in wilds.ts).
   evolution(
