@@ -2,6 +2,24 @@
 
 Updated 2026-10-31. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## In progress 2026-10-31: the full variety pass, caught Pokémon as a Nuzlocke, roll gems, the big ball throw (owner: "incorporate all the new cards and full revamp into the preview"; "power groups that add X to your roll"; "nuzlocke"; "a gemstone ... for the number you have to beat"; "only 3 buttons"; "make the catch screen ... more exciting")
+
+On branch `preview` (published at `/side-quest/next/`), not on `main`.
+
+**Every floor and route.** `src/content/dungeon/variety.ts` rewrites the other eight Pub Crawl floors by card ID (the Cellar was rewritten in place): do-nothing rooms become pointing votes, reflex calls, hidden fuses, secrets on a clock, four-seat dice and auctions; 16 d20 monsters become table duels (Won and Lost); about 50 d20 rooms ask for something before the roll, many with natural 1 and 20 lines of their own; two bosses a floor open with side bets; one new table moment a floor. Every floor now has 11 or 12 kinds of card and passes the mix test's higher bar. The League gets 14 more route cards (Routes 1 and 3 to 8: Who's That Pokémon? quizzes, contests the table judges, votes, a Pokérap round, and the Good Rod and Super Rod, push-your-luck like Route 2's Old Rod). 1,851 cards.
+
+**Caught Pokémon (Nuzlocke, `party.assist`, `party.fainted`).** A caught Pokémon whose type beats the foe can be sent into a single-d20 fight: it adds `assistBonus` to the roll (from its catch number: +1 for a Caterpie on a 5, up to +4 for a Gyarados on a 15; +1 for one caught before catch numbers). Win and it stays on the team; lose and it faints for good (off the team, a "Fainted" banner, the drawer drinks 2). Not on strikes or 2d6/d6 fights. The starter's type edge (advantage rolls) is the only edge; a send-in stacks on it. Plaque: "Go, Pidgey! +1 to the roll"; the strip shows the Pokémon's mark and "+1" while it is in. Fixtures `2026-10-31-league-teammate-assist` and `-fainted` (an earlier same-day fixture of the superseded edge version was never on `main` or `preview` and was regenerated).
+
+**Gems (`rollTarget` in `game/dice.ts`).** Every crawl battle's foot shows a red hexagon gem bottom left (hearts or HP lost) and a blue one bottom right with the roll to beat ("11+", with "2d6" under it when it is not a d20), counting the omen, the starter's form, push-your-luck pulls and a sent-in Pokémon. How to play's seal legend shows it.
+
+**Three plaques at most (`MAX_PLAQUES`, `foldBranches` in `components/extras.ts`).** Eevee's evolution card (three forms beside Press B) shows Evolve and Press B; Evolve opens an "Evolve into" sheet, a row per form with what it changes. A unit test checks every evolution card against every branching starter.
+
+**The ball throw (`components/BallThrow.tsx`).** A live throw dims and blurs the table; the ball spins while a number reel runs, both landing on the committed face after 2.3 s; a catch clicks the button gold with confetti and "Gotcha! Pidgey was caught!", a miss flies the top half off with a red flash and "Oh no! Pidgey broke free!". A tap skips it; Reduced Motion and hidden tabs never play it; a reload never replays it.
+
+**League retune.** LEAGUE_RETUNE_PLACEHOLDER
+
+**Checks run:** CHECKS_PLACEHOLDER
+
 ## In progress 2026-10-31: preview site and the variety pass (owner: "double down on what makes the game good, which is variety and interesting fun cards ... especially variety within cards"; then "Set up the preview site, then start steps 1 and 2")
 
 **Preview site (on `main`, `27ba239`).** The `preview` branch publishes at `/side-quest/next/` beside the live game (see AGENTS.md): `preview.yml` checks a push (unit tests, lint, build, balance) and dispatches `pages.yml` on `main`, which builds both and deploys them together. `VITE_CHANNEL=preview` gives it `side-quest-preview.*` storage keys, a red Preview badge and the Home Screen name "SQ Preview"; the live worker's `navigateFallbackDenylist` leaves `next/` alone. Checked locally in Chromium with both builds served together: each page is controlled by its own worker, the right title and badge show, and going back to the live page keeps the live worker. Known wrinkle: the first visit to `next/` from a browser that has the live game shows "Update game" once (the preview worker takes over the page); tapping it reloads. No device look.

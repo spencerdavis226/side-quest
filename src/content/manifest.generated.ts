@@ -937,6 +937,7 @@ export const packs: PackDefinition[] = [
             "pokemon.route-memory-lane",
             "pokemon.route-cheer-squad",
             "pokemon.route-group-selfie",
+            "pokemon.route-friendship-glow",
           ],
           elite: ["pokemon.route-ace-karate-king", "pokemon.route-ace-veteran"],
         },

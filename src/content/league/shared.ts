@@ -16,7 +16,7 @@ import { withNaturals } from "../naturals";
 // picks one leader per tier still ramps up.
 
 /** The d20 a dice gym leader needs, tier by tier (gym 1 to gym 8). */
-export const GYM_NEED = [4, 5, 6, 7, 7, 7, 8, 8] as const;
+export const GYM_NEED = [4, 5, 6, 7, 7, 7, 7, 7] as const;
 /** Swings a gym leader takes to fall, tier by tier. */
 export const GYM_HITS = [1, 1, 1, 1, 2, 2, 2, 2] as const;
 /** Team HP a lost gym battle costs, tier by tier. */
@@ -26,7 +26,7 @@ export const LEGENDARY_NEED = 7;
 export const LEGENDARY_HITS = 2;
 export const LEGENDARY_HURT = 2;
 /** An Elite Four member (or Galar's Champion Cup finalist). */
-export const ELITE_NEED = 7;
+export const ELITE_NEED = 6;
 export const ELITE_HITS = 1;
 export const ELITE_HURT = 2;
 /** A Champion: the whole table fights, three swings to bring one down. */

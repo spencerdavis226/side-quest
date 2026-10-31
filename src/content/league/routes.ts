@@ -1816,7 +1816,7 @@ export const routes: {
   {
     label: "Route 6",
     intro: "Deeper into the region",
-    cards: [...route6, ...moreWilds[5], ...moments[5]],
+    cards: [...route6, ...moreWilds[5], ...moments[5], moreEvolutions[5]!],
     aces: route6Aces,
   },
   {
