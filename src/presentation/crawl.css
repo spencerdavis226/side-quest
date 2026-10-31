@@ -398,8 +398,15 @@
   opacity: 0.5;
 }
 /* A caught Pokémon in the bag: its type mark, as small as an item. */
-.tag-satchel .type-mark {
+.tag-satchel .type-mark,
+.tag-assist .type-mark {
   --mark-size: 22px;
+}
+/* A caught Pokémon sent into the fight face up (2026-10-31): its mark and
+   what it adds to the roll, in the gold of a won roll. */
+.tag-assist {
+  border-color: #d8b25a;
+  color: #f6dc8f;
 }
 .tag-badges {
   color: #f1d58c;
@@ -428,8 +435,13 @@
     width: 16px;
     height: 16px;
   }
-  .tag-satchel .type-mark {
+  .tag-satchel .type-mark,
+  .tag-assist .type-mark {
     --mark-size: 18px;
+  }
+  /* The bonus is the chip's whole point: it stays. */
+  .tag-assist .chip-name {
+    display: inline;
   }
   .chip-name,
   .label-count {
@@ -502,6 +514,36 @@
 .stake-loss {
   background: radial-gradient(circle at 30% 25%, #a93a30, #7c1712 75%);
   color: #ffe2c9;
+}
+/* The two corner gems (2026-10-31, owner: like Hearthstone's attack and
+   health): what a loss costs, bottom left, and the roll to beat, bottom
+   right. A faceted hexagon, lit from the top left. */
+.stake-gem {
+  min-width: max(42px, 9cqw);
+  height: max(30px, 6.4cqw);
+  padding: 0 max(9px, 2cqw);
+  border-radius: 0;
+  clip-path: polygon(18% 0, 82% 0, 100% 50%, 82% 100%, 18% 100%, 0 50%);
+  box-shadow: none;
+  filter: drop-shadow(0 1px 2px rgb(40 20 8 / 0.55));
+  text-shadow: 0 1px 1px rgb(0 0 0 / 0.45);
+}
+.stake-gem.stake-loss {
+  background:
+    linear-gradient(160deg, rgb(255 255 255 / 0.35), transparent 45%),
+    radial-gradient(circle at 30% 25%, #d0473b, #7c1712 75%);
+}
+.stake-target {
+  flex-direction: column;
+  gap: 0;
+  background:
+    linear-gradient(160deg, rgb(255 255 255 / 0.4), transparent 45%),
+    radial-gradient(circle at 30% 25%, #4f8fd8, #173f7a 75%);
+  color: #f2f8ff;
+}
+.stake-target small {
+  font: 600 max(9px, 2cqw) / 1 var(--font-card-title);
+  opacity: 0.85;
 }
 .stake-heal {
   background: radial-gradient(circle at 30% 25%, #f6e2a5, #b88a3c 75%);

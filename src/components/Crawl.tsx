@@ -21,6 +21,7 @@ import {
   currentCard as currentCardOf,
   PRESS_STEP,
   canUseLoot,
+  assistBonus,
   cardMatchup,
   finaleCard,
   finaleStage,
@@ -286,9 +287,11 @@ export function CrawlStrip({
     session.phase === "revealed"
       ? cardMatchup(quest, currentCardOf(session))
       : null;
-  // A caught Pokémon sent into this battle (2026-10-31): the edge is its.
+  // A caught Pokémon sent into this battle (2026-10-31): its bonus.
   const helper =
-    matchup && party.assist ? finaleCard(quest, party.assist) : undefined;
+    session.phase === "revealed" && party.assist
+      ? finaleCard(quest, party.assist)
+      : undefined;
   const chip = (
     className: string,
     label: string,
@@ -316,21 +319,23 @@ export function CrawlStrip({
       {matchup?.edge &&
         chip(
           `tag-edge edge-${matchup.edge}`,
-          helper
-            ? `${helper.title} sent in: roll twice, keep the better`
-            : matchup.edge === "advantage"
-              ? "Type advantage"
-              : "Type disadvantage",
+          matchup.edge === "advantage" ? "Type advantage" : "Type disadvantage",
           "matchup",
           <>
             <EdgeMark edge={matchup.edge} />
             <span className="chip-name">
-              {helper
-                ? helper.title
-                : matchup.edge === "advantage"
-                  ? "Strong"
-                  : "Weak"}
+              {matchup.edge === "advantage" ? "Strong" : "Weak"}
             </span>
+          </>,
+        )}
+      {helper &&
+        chip(
+          "tag-assist",
+          `${helper.title} sent in: +${assistBonus(helper)} to the roll`,
+          "satchel",
+          <>
+            {helper.type && <TypeMark type={helper.type} />}
+            <span className="chip-name">+{assistBonus(helper)}</span>
           </>,
         )}
       {chip(
@@ -391,11 +396,15 @@ export function CardStakes({
   hits = 0,
   theme,
   strike,
+  target,
 }: {
   card: CardDefinition;
   party: PartyState;
   hits?: number;
   theme: CrawlTheme;
+  /** The roll to beat (`rollTarget`): a gem in the foot's right corner
+   * (2026-10-31, owner: like Hearthstone's attack and health gems). */
+  target?: { target: number; count: number; sides: number } | null;
   /** A strike's matchup: it costs hearts only when it is lost (against the
    * starter's type). */
   strike?: "advantage" | "disadvantage" | "even";
@@ -413,14 +422,16 @@ export function CardStakes({
       : undefined;
   const jinx = card.jinx;
   const prizes = card.press?.prizes;
-  if (!damage && !gain && !hits && !trinket && !jinx && !prizes) return null;
+  if (!damage && !gain && !hits && !trinket && !jinx && !prizes && !target)
+    return null;
+  const d20 = target?.count === 1 && target.sides === 20;
   const boss = isBossCard(card);
   return (
     <span className="card-stakes">
       <span className="stake-group">
         {damage ? (
           <span
-            className="stake stake-loss"
+            className="stake stake-loss stake-gem"
             aria-label={`${card.strike ? "Costs" : "Losing costs"} ${heartCount(theme, damage)}`}
           >
             <b>−{damage}</b>
@@ -491,6 +502,19 @@ export function CardStakes({
           >
             <b>+</b>
             <CrawlIcon name="trinket" theme={theme} />
+          </span>
+        )}
+        {target && (
+          <span
+            className="stake stake-target stake-gem"
+            aria-label={`Roll ${target.target} or more${d20 ? "" : ` on ${target.count}d${target.sides}`} to win`}
+          >
+            <b>{target.target}+</b>
+            {!d20 && (
+              <small>
+                {target.count}d{target.sides}
+              </small>
+            )}
           </span>
         )}
       </span>
@@ -670,39 +694,37 @@ export function CatchPlaques({
   );
 }
 
-/** A caught Pokémon that can be used on the battle face up: its type beats
- * the foe's, so the battle has the edge (2026-10-31; it won outright
- * before), and it is used up. */
+/** A caught Pokémon that can be sent into the battle face up: its type
+ * beats the foe's, so its bonus joins the roll (2026-10-31; it won outright
+ * before). */
 export function SendInPlaque({
   member,
-  card,
   onSend,
 }: {
   member: CardDefinition;
-  card: CardDefinition;
   onSend: (id: string) => void;
 }) {
   return (
     <button
       className="card-choice-option loot-plaque send-plaque"
-      aria-label={`Go, ${member.title}! ${sendInDoes(card)}`}
+      aria-label={`Go, ${member.title}! ${sendInDoes(member)}`}
       onClick={() => onSend(member.id)}
     >
       {member.type && <TypeMark type={member.type} />}
       <span className="offer-label">
         <span className="offer-name">Go, {member.title}!</span>
-        <small className="offer-price">{card.strike ? "wins it" : "roll ×2"}</small>
+        <small className="offer-price">
+          +{assistBonus(member)} to the roll
+        </small>
       </span>
     </button>
   );
 }
 
-/** What sending a caught Pokémon in does on `card`: a strike is won (the
- * edge wins a strike); a dice battle is rolled twice, keeping the better. */
-export const sendInDoes = (card: CardDefinition) =>
-  card.strike
-    ? "Wins this battle. It is used up."
-    : "Roll twice, keep the better. It is used up.";
+/** What sending caught Pokémon `member` in does (2026-10-31): its bonus
+ * joins the roll; it stays after a win and faints for good after a loss. */
+export const sendInDoes = (member: CardDefinition) =>
+  `+${assistBonus(member)} to this roll. Win and it stays; lose and it faints.`;
 
 /** One optional action on a card (an item, a send-in), described
  * once so it can sit on the card's foot or in the "Use" sheet. */
@@ -722,14 +744,11 @@ export function buildExtras(
   {
     items,
     senders,
-    card,
     onSpend,
     onSend,
   }: {
     items: readonly Loot[];
     senders: readonly CardDefinition[];
-    /** The card face up, which the senders would fight. */
-    card: CardDefinition;
     onSpend?: (item: Loot) => void;
     onSend?: (id: string) => void;
   },
@@ -755,14 +774,13 @@ export function buildExtras(
       key: `send-${member.id}`,
       long: true,
       name: `Go, ${member.title}!`,
-      does: sendInDoes(card),
+      does: sendInDoes(member),
       mark: member.type ? <TypeMark type={member.type} /> : null,
       run: () => onSend?.(member.id),
       plaque: (
         <SendInPlaque
           key={`send-${member.id}`}
           member={member}
-          card={card}
           onSend={(id) => onSend?.(id)}
         />
       ),
@@ -1194,15 +1212,8 @@ export function CrawlRecord({
         (() => {
           const card = currentCardOf(session);
           const m = cardMatchup(session.quest, card);
-          const helper = session.quest?.party?.assist
-            ? finaleCard(session.quest, session.quest.party.assist)
-            : undefined;
           return m?.edge && record.form ? (
-            <MatchupPanel
-              matchup={m}
-              card={card}
-              starter={helper?.title ?? record.form.title}
-            />
+            <MatchupPanel matchup={m} card={card} starter={record.form.title} />
           ) : null;
         })()}
       {ending && (
@@ -1517,11 +1528,18 @@ export function SealLegend({ theme }: { theme: CrawlTheme }) {
   return (
     <dl className="crawl-legend" aria-label="The seals on a card">
       <div>
-        <dt className="stake stake-loss">
+        <dt className="stake stake-loss stake-gem">
           <b>−2</b>
           <CrawlIcon name="heart" theme={theme} />
         </dt>
         <dd>{theme.legend[0]}</dd>
+      </div>
+      {/* The roll to beat (2026-10-31), bottom right on a fight. */}
+      <div>
+        <dt className="stake stake-target stake-gem">
+          <b>11+</b>
+        </dt>
+        <dd>Roll this or more to win, bonuses counted.</dd>
       </div>
       <div>
         <dt className="stake stake-hits">

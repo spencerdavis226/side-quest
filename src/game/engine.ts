@@ -550,14 +550,7 @@ export function cardMatchup(
 ): Matchup | null {
   const mine = partyType(quest);
   if (!quest?.party || !(card.dice ? card.battle : card.strike)) return null;
-  if (!card.type) return null;
-  // A caught Pokémon sent into a dice battle fights it with its own type,
-  // which beats the foe's: the roll has the edge (2026-10-31).
-  const helper = quest.party.assist
-    ? finaleCard(quest, quest.party.assist)?.type
-    : undefined;
-  if (helper && card.dice) return matchup(helper, card.type);
-  if (!mine) return null;
+  if (!card.type || !mine) return null;
   return matchup(mine, card.type);
 }
 
@@ -685,41 +678,39 @@ export function letGo(
 ): SessionState {
   return awaitingCatch(s) ? discard(s, random) : s;
 }
-/** Whether caught Pokémon `id` can be used on the battle face up: before
- * it is decided, with its type super effective on the foe's. Since
- * 2026-10-31 (owner: "not just instant win") it gives the edge, so it has
- * nothing to add where the starter already has it, and a battle settled
- * with Won and Lost (no roll for a type to bend) takes none. */
+/** What a caught Pokémon adds to a roll it is sent into (2026-10-31,
+ * owner: "power groups"): the harder it was to catch, the more, from +1 (a
+ * Caterpie, caught on a 5) to +4 (a Gyarados, on a 15). One caught before
+ * catch numbers (2026-10-27) adds 1. */
+export function assistBonus(member: CardDefinition | undefined): number {
+  if (!member?.catchRate) return 1;
+  return Math.max(1, Math.min(5, Math.round(member.catchRate / 4)));
+}
+/** Whether caught Pokémon `id` can be sent into the battle face up: a
+ * single-d20 battle not yet rolled, with its type super effective on the
+ * foe's. The starter's own type edge is separate and stacks. */
 export function canSendIn(s: SessionState, id: string): boolean {
   const party = s.quest?.party;
   if (!party || !s.quest?.due || s.phase !== "revealed") return false;
   if (!party.team?.includes(id) || party.throw || party.assist) return false;
   const card = currentCard(s);
   const member = finaleCard(s.quest, id);
-  if (!card.type || !member?.type) return false;
-  if (card.dice ? !card.battle : !card.strike) return false;
-  if (s.roll || card.dice?.choice || party.press) return false;
-  if (cardMatchup(s.quest, card)?.edge === "advantage") return false;
+  if (!card.type || !member?.type || !card.battle) return false;
+  if (card.dice?.count !== 1 || card.dice.sides !== 20) return false;
+  if (s.roll || card.dice.choice || party.press) return false;
   return matchup(member.type, card.type).edge === "advantage";
 }
-/** Use caught Pokémon `id` on the battle face up; it leaves the bag either
- * way. A strike is won (the edge wins a strike), and a dice battle is
- * rolled with the edge: twice, keeping the better (`party.assist`). A boss
- * gets the edge for this swing only. */
+/** Send caught Pokémon `id` into the battle face up (2026-10-31, a
+ * Nuzlocke): its bonus joins the roll (`party.assist`). It stays on the team
+ * if the battle is won; lost, it faints for good (`party.fainted`). */
 export function sendIn(
   s: SessionState,
   id: string,
-  random: Random = Math.random,
+  _random: Random = Math.random,
 ): SessionState {
   if (!canSendIn(s, id)) return s;
   const q = s.quest!;
-  const party = q.party!;
-  const team = (party.team ?? []).filter((m) => m !== id);
-  const next: PartyState = { ...party, team };
-  if (!team.length) delete next.team;
-  if (currentCard(s).strike)
-    return discard({ ...s, quest: { ...q, party: next } }, random, "won");
-  return { ...s, quest: { ...q, party: { ...next, assist: id } } };
+  return { ...s, quest: { ...q, party: { ...q.party!, assist: id } } };
 }
 /** What the table can throw out of the bag: an item, or a caught Pokémon. */
 export type BagDrop = { item: Loot } | { caught: string };
@@ -1253,19 +1244,49 @@ function settleParty(
     next = gainBoon(next, card, quest, spoil);
   return next;
 }
+/** Put the card aside. A caught Pokémon sent into it goes back to the
+ * team on a win and faints on a loss; the last one that fainted is news
+ * for this put-aside only. */
 function discard(
   s: SessionState,
   random: Random,
   verdict?: Outcome,
   spoil?: number,
 ): SessionState {
+  const party = s.quest?.party;
+  if (!party || (!party.assist && !party.fainted))
+    return discardCard(s, random, verdict, spoil);
+  const sent = party.assist;
+  const card = currentCard(s);
+  const lost =
+    !!sent &&
+    (verdict ??
+      (card.dice && s.roll && rollWins(card.dice, s.roll.values, s.roll)
+        ? "won"
+        : "lost")) === "lost";
+  const clean: PartyState = { ...party };
+  delete clean.assist;
+  delete clean.fainted;
+  const next = discardCard(
+    { ...s, quest: { ...s.quest!, party: clean } },
+    random,
+    verdict,
+    spoil,
+  );
+  const after = next.quest?.party;
+  if (!lost || !after || !sent) return next;
+  const team = (after.team ?? []).filter((m) => m !== sent);
+  const fallen: PartyState = { ...after, team, fainted: sent };
+  if (!team.length) delete fallen.team;
+  return { ...next, quest: { ...next.quest!, party: fallen } };
+}
+function discardCard(
+  s: SessionState,
+  random: Random,
+  verdict?: Outcome,
+  spoil?: number,
+): SessionState {
   s = settleThrow(s);
-  // A teammate sent in helps this deal only; its roll keeps the edge.
-  if (s.quest?.party?.assist) {
-    const party = { ...s.quest.party };
-    delete party.assist;
-    s = { ...s, quest: { ...s.quest, party } };
-  }
   const history = { previousRoll: s.roll, roll: null };
   const card = currentCard(s);
   const discarded = s.discarded + 1,

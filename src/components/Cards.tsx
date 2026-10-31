@@ -29,6 +29,7 @@ export function CardFace({
   party,
   hits = 0,
   crawl,
+  target,
   matchup = null,
   strike,
   ball = null,
@@ -44,6 +45,8 @@ export function CardFace({
   hits?: number;
   /** The crawl's words and marks, with `party`. */
   crawl?: CrawlTheme;
+  /** The roll a crawl battle has to beat (`rollTarget`), for its gem. */
+  target?: { target: number; count: number; sides: number } | null;
   /** A League fight's type matchup against the starter (`cardMatchup`). */
   matchup?: Matchup | null;
   /** A strike's outcome (the engine's `strikeOutcome`); read from `matchup`
@@ -388,6 +391,7 @@ export function CardFace({
               hits={hits}
               theme={crawl}
               strike={card.strike ? strikeEdge : undefined}
+              target={target}
             />
           )}
           {/* A crawl plays one pack: its seals take the foot instead. */}

@@ -1,12 +1,15 @@
 import type {
+  CardDefinition,
   DiceDefinition,
   DiceOutcome,
   DiceRoll,
   SessionState,
 } from "./types";
 import {
+  assistBonus,
   cardEdge,
   currentCard,
+  finaleCard,
   omenEffect,
   PRESS_STEP,
   type Random,
@@ -153,6 +156,43 @@ export function rollWins(
   if (doubles && dice.doubles) return !!dice.doublesWin;
   return !!dice.outcomes?.find((range) => covers(range, total))?.win;
 }
+/** What a crawl adds to a single-d20 battle's face before it is read:
+ * tonight's omen (and the starter's form), less each push-your-luck pull,
+ * plus a caught Pokémon sent in (2026-10-31). 0 off a crawl. */
+export function rollBonus(session: SessionState, card: CardDefinition): number {
+  const party = session.quest?.party;
+  const dice = card.dice;
+  if (!party || !card.battle || dice?.count !== 1 || dice.sides !== 20)
+    return 0;
+  const effect = omenEffect(session.quest) ?? {};
+  // Each pull on a push-your-luck card rolls lower.
+  const pulls = card.press ? (party.press ?? 0) : 0;
+  const sent = party.assist ? finaleCard(session.quest!, party.assist) : null;
+  return (
+    (effect.roll?.all ?? 0) +
+    (card.encounter ? (effect.roll?.[card.encounter] ?? 0) : 0) -
+    PRESS_STEP * pulls +
+    (sent ? assistBonus(sent) : 0)
+  );
+}
+/** The face a crawl battle's dice must show to win (2026-10-31, owner: a
+ * gem on the card): the lowest winning total, less the d20's bonus, held to
+ * 2..20 on a d20 (a natural 20 always reads 20, a natural 1 always 1).
+ * `null` for a card with no winning roll. */
+export function rollTarget(
+  session: SessionState,
+  card: CardDefinition,
+): { target: number; count: number; sides: number } | null {
+  const dice = card.dice;
+  const wins = dice?.outcomes?.filter((o) => o.win) ?? [];
+  if (!dice || !card.battle || !wins.length) return null;
+  const lowest = Math.min(...wins.map((o) => o.min));
+  const single = dice.count === 1 && dice.sides === 20;
+  const target = single
+    ? Math.min(20, Math.max(2, lowest - rollBonus(session, card)))
+    : lowest;
+  return { target, count: dice.count, sides: dice.sides };
+}
 /** Only the engine samples randomness. Renderers receive these committed values. */
 export function rollDice(
   session: SessionState,
@@ -184,12 +224,7 @@ export function rollDice(
         flinched = true;
       }
       const face = values[0];
-      // Each pull on a push-your-luck card rolls lower.
-      const pulls = card.press ? (session.quest!.party!.press ?? 0) : 0;
-      const bonus =
-        (effect.roll?.all ?? 0) +
-        (card.encounter ? (effect.roll?.[card.encounter] ?? 0) : 0) -
-        PRESS_STEP * pulls;
+      const bonus = rollBonus(session, card);
       const natural =
         face >= (effect.crit ?? 20)
           ? 20

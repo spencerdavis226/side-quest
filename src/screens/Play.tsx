@@ -11,7 +11,7 @@ import {
 } from "react";
 import type { SessionState, CardDefinition, Loot, Offer } from "../game/types";
 import { diceResultText } from "../presentation/dice/result-text";
-import { diceNotation } from "../game/dice";
+import { diceNotation, rollTarget } from "../game/dice";
 import {
   awaitingCatch,
   thrownBall,
@@ -156,13 +156,7 @@ export function Play({
   const crawl = crawlTheme(session.quest?.packId);
   // Items and send-ins: on the card's foot when a few short ones fit,
   // otherwise behind one "Use" plaque and its sheet.
-  const extraList = buildExtras(crawl, {
-    items,
-    senders,
-    card,
-    onSpend,
-    onSend,
-  });
+  const extraList = buildExtras(crawl, { items, senders, onSpend, onSend });
   const layout = extrasLayout(extraList, !!verdict);
   const [using, setUsing] = useState<number | null>(null);
   const usingSheet = layout === "sheet" && using === session.discarded;
@@ -418,6 +412,9 @@ export function Play({
                     shown={session.phase === "revealed" ? actions.shown : null}
                     party={session.quest?.party}
                     hits={hitsNeeded(session.quest, card)}
+                    target={
+                      session.quest?.party ? rollTarget(session, card) : null
+                    }
                     crawl={crawl}
                     matchup={cardMatchup(session.quest, card)}
                     strike={strikeOutcome(session.quest, card)}
