@@ -721,6 +721,13 @@ export function SendInPlaque({
   );
 }
 
+/** A caught Pokémon's bag row (2026-10-31, Nuzlocke): its bonus, which
+ * foes it can face, and what a loss costs. */
+export const teamRowDoes = (member: CardDefinition) =>
+  `+${assistBonus(member)} to a d20 roll vs. a foe ${
+    member.type ? pokemonTypes[member.type].name : "its type"
+  } beats. Faints on a loss.`;
+
 /** What sending caught Pokémon `member` in does (2026-10-31): its bonus
  * joins the roll; it stays after a win and faints for good after a loss. */
 export const sendInDoes = (member: CardDefinition) =>
@@ -1235,13 +1242,11 @@ export function CrawlRecord({
       {show("satchel") && !party.wiped && !record.won && team.length > 0 && (
         <ul className="crawl-boons crawl-team" aria-label="Caught Pokémon">
           {team.map((m) => (
-            <li key={m.id}>
+            <li key={m.id} className="satchel-slot">
               {m.type && <TypeMark type={m.type} />}
-              <strong>{m.title}</strong>
               <span>
-                Wins a battle against a foe that{" "}
-                {m.type ? pokemonTypes[m.type].name : "its type"} beats. Then
-                it's gone.
+                <strong>{m.title}</strong>
+                <small>{teamRowDoes(m)}</small>
               </span>
               {onDrop && (
                 <DropButton

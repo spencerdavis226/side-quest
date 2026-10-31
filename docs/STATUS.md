@@ -2,6 +2,10 @@
 
 Updated 2026-10-31. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## In progress 2026-10-31: the bag's caught-Pokémon row (owner: "This UI sucks and the tooltip is now inaccurate")
+
+Branch `claude/ui-tooltip-accuracy-kp47ux`, draft PR; not merged. The Bag dialog's caught-Pokémon row still read the 2026-10-26 rule ("Wins a battle against a foe that Fairy beats. Then it's gone.") and sat unboxed beside the boxed item rows. It now uses the item row (`satchel-slot`: mark, name over one line, Release right) and reads the Nuzlocke rule from `assistBonus` (`teamRowDoes` in `Crawl.tsx`): "+1 to a d20 roll vs. a foe Flying beats. Faints on a loss." Checks: `npm test` (400), typecheck, lint, Prettier, build (budgets pass), Chromium `quest.spec.ts` bag tests (2 passed; screenshots looked at, including the Release "sure?" state). No WebKit, no device.
+
 ## Shipped 2026-10-31: the full variety pass, caught Pokémon as a Nuzlocke, roll gems, the big ball throw (owner: "incorporate all the new cards and full revamp into the preview"; "power groups that add X to your roll"; "nuzlocke"; "a gemstone ... for the number you have to beat"; "only 3 buttons"; "make the catch screen ... more exciting")
 
 Merged to `main` on the owner's "Merge and deploy everything to main" (fast-forward to `a5f8e9c`, deployed by run #236, every job green including the WebKit shards; revert to `27ba239` to undo). `preview` is at the same commit.

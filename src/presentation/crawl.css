@@ -1840,34 +1840,25 @@
   width: 1.2em;
   height: 1.2em;
 }
-.crawl-team li {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 2px 10px;
-  align-items: center;
+/* Caught Pokémon share the bag's item rows (2026-10-31): mark, name over
+   what it does, Release on the right. */
+.crawl-team .satchel-slot > .type-mark {
+  --mark-size: 30px;
+  flex: none;
+  width: 30px;
+  height: 30px;
 }
-.crawl-team .type-mark {
-  grid-column: 1;
-  grid-row: 1 / span 2;
+.crawl-team .satchel-slot {
+  flex-wrap: wrap;
 }
-.crawl-team li > strong {
-  grid-column: 2;
-  grid-row: 1;
-}
-.crawl-team li > span:not(.type-mark):not(.bag-drop) {
-  grid-column: 2;
-  grid-row: 2;
-}
-.crawl-team .bag-drop {
-  grid-column: 3;
-  grid-row: 1 / span 2;
+/* A zero basis keeps the text beside the mark until "sure?" wraps. */
+.crawl-team .satchel-slot > span {
+  flex: 1 1 0;
 }
 /* Asking "sure?": the two buttons take their own row under the text. */
 .crawl-team .bag-drop.sure {
-  grid-column: 2 / -1;
-  grid-row: 3;
-  justify-self: end;
-  margin-top: 6px;
+  flex-basis: 100%;
+  justify-content: flex-end;
 }
 
 /* --- The "Use" plaque and its sheet (2026-10-27) ---------------------------
