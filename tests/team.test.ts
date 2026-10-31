@@ -181,6 +181,46 @@ describe("the League's team", () => {
     expect(canSendIn(s, PIDGEY)).toBe(false);
   });
 
+  it("sends a Normal Pokémon into any d20 fight it does not lose to, for one less", () => {
+    const TAUROS = "pokemon.route-chansey"; // Caught on a 14: +4, +3 as Normal.
+    // Normal beats nothing, but Machop (Fighting) is a disadvantage: refused.
+    let s = facing("pikachu", TAUROS, MACHOP);
+    s = advance(
+      takeOffer(
+        s,
+        currentCard(s).offers!.findIndex((o) => o.catch),
+        high,
+      ),
+      zero,
+    );
+    s = advance(s, zero);
+    expect(currentCard(s).id).toBe(MACHOP);
+    expect(canSendIn(s, TAUROS)).toBe(false);
+    // Voltorb (Electric) is a neutral d20 fight for Normal: allowed.
+    s = facing("pikachu", TAUROS, "pokemon.route-voltorb");
+    s = advance(
+      takeOffer(
+        s,
+        currentCard(s).offers!.findIndex((o) => o.catch),
+        high,
+      ),
+      zero,
+    );
+    s = advance(s, zero);
+    expect(party(s).team).toEqual([TAUROS]);
+    expect(currentCard(s).id).toBe("pokemon.route-voltorb");
+    expect(canSendIn(s, TAUROS)).toBe(true);
+    const before = rollBonus(s, currentCard(s));
+    s = sendIn(s, TAUROS, zero);
+    expect(party(s).assist).toBe(TAUROS);
+    expect(rollBonus(s, currentCard(s))).toBe(before + 3);
+    expect(assistBonus(cards.find((c) => c.id === TAUROS))).toBe(3);
+    // Never below +1: a Rattata (caught on a 5) still adds 1.
+    expect(
+      assistBonus(cards.find((c) => c.id === "pokemon.route-rattata")),
+    ).toBe(1);
+  });
+
   it("adds more the harder a Pokémon was to catch", () => {
     const rated = cards.filter((c) => c.catchRate);
     const bonus = (rate: number) =>
