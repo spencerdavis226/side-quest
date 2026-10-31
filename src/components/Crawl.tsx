@@ -1331,7 +1331,8 @@ export function CrawlRecord({
                 </small>
               </h3>
               <p className="bag-hint">
-                Send one into a d20 battle its type beats. Lose and it faints.
+                Send one into a d20 battle its type beats (Normal: any it
+                doesn’t lose to, one less). Lose and it faints.
               </p>
               <ul className="bag-list crawl-team" aria-label="Caught Pokémon">
                 {team.map((m) => (

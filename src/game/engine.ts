@@ -684,11 +684,16 @@ export function letGo(
  * catch numbers (2026-10-27) adds 1. */
 export function assistBonus(member: CardDefinition | undefined): number {
   if (!member?.catchRate) return 1;
-  return Math.max(1, Math.min(5, Math.round(member.catchRate / 4)));
+  const bonus = Math.max(1, Math.min(5, Math.round(member.catchRate / 4)));
+  // Normal has no super-effective type, so it is sent into any fight that is
+  // not a disadvantage (see `canSendIn`); one less in return, down to +1.
+  return member.type === "normal" ? Math.max(1, bonus - 1) : bonus;
 }
 /** Whether caught Pokémon `id` can be sent into the battle face up: a
  * single-d20 battle not yet rolled, with its type super effective on the
- * foe's. The starter's own type edge is separate and stacks. */
+ * foe's. A Normal Pokémon beats nothing, so it goes in on any matchup that
+ * is not a disadvantage (2026-10-31, owner), for one less (`assistBonus`).
+ * The starter's own type edge is separate and stacks. */
 export function canSendIn(s: SessionState, id: string): boolean {
   const party = s.quest?.party;
   if (!party || !s.quest?.due || s.phase !== "revealed") return false;
@@ -698,7 +703,10 @@ export function canSendIn(s: SessionState, id: string): boolean {
   if (!card.type || !member?.type || !card.battle) return false;
   if (card.dice?.count !== 1 || card.dice.sides !== 20) return false;
   if (s.roll || card.dice.choice || party.press) return false;
-  return matchup(member.type, card.type).edge === "advantage";
+  const edge = matchup(member.type, card.type).edge;
+  return member.type === "normal"
+    ? edge !== "disadvantage"
+    : edge === "advantage";
 }
 /** Send caught Pokémon `id` into the battle face up (2026-10-31, a
  * Nuzlocke): its bonus joins the roll (`party.assist`). It stays on the team
