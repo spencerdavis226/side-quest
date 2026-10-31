@@ -18,7 +18,7 @@ const reelTicks = () => {
   const ticks: number[] = [];
   let at = 0;
   let gap = 45;
-  while (at + gap < SPIN_MS - 120) {
+  while (at + gap < SPIN_MS - gap * 0.6) {
     at += gap;
     ticks.push(at);
     gap *= 1.11;
@@ -76,7 +76,17 @@ export function BallThrowStage({
   useEffect(() => {
     if (!live || !ball) return;
     const timers = reelTicks().map((at) =>
-      setTimeout(() => setShown(1 + Math.floor(Math.random() * 20)), at),
+      setTimeout(
+        () =>
+          setShown((was) => {
+            // Never repeat the last number or hint at the real face early.
+            let n = 1 + Math.floor(Math.random() * 20);
+            while (n === was || n === ball.face)
+              n = 1 + Math.floor(Math.random() * 20);
+            return n;
+          }),
+        at,
+      ),
     );
     timers.push(
       setTimeout(() => {
@@ -110,7 +120,7 @@ export function BallThrowStage({
         <span className="ball-stage-button" />
       </div>
       <div className="ball-stage-reel">
-        <b key={result ? "final" : shown}>{result ? ball.face : shown}</b>
+        <b key={shown}>{result ? ball.face : shown}</b>
         <small>needs {ball.need}+</small>
       </div>
       {result && (
