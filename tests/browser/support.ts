@@ -133,15 +133,25 @@ export async function reseed(page: Page, session: object) {
   await page.reload({ waitUntil: "commit" });
 }
 
-/** Wait until no CSS transition is running: after a resize, the card's size
- * transitions (0.01 ms under Reduced Motion, but they still land on the next
- * frame), so a measurement taken at once reads the old size. Looping
- * animations (the atmosphere) are not transitions and are ignored. */
-export const transitionsDone = (page: Page) =>
-  page.waitForFunction(() =>
-    document
-      .getAnimations()
-      .every((a) => !(a instanceof CSSTransition) || a.playState !== "running"),
+/** Wait until `selector`'s box holds still across two rendered frames:
+ * after a resize the card's size transitions (0.01 ms under Reduced Motion,
+ * but it still lands on a later frame), so a measurement taken at once reads
+ * the old size. Waits on the element itself rather than on every CSS
+ * transition: WebKit can leave an unrelated one reported as running. */
+export const layoutSettled = (page: Page, selector: string) =>
+  page.waitForFunction(
+    (selector) => {
+      const el = document.querySelector(selector);
+      if (!el) return false;
+      const r = el.getBoundingClientRect();
+      const box = [r.x, r.y, r.width, r.height].join();
+      const w = window as unknown as { __box?: string };
+      const still = w.__box === box;
+      w.__box = still ? undefined : box;
+      return still;
+    },
+    selector,
+    { polling: "raf" },
   );
 
 /** Turn motion back on for one test (before its first navigation), where a

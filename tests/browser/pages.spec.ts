@@ -1,4 +1,4 @@
-import { test, expect, frames, seed as seedSession, rng } from "./support";
+import { test, expect, seed as seedSession, rng } from "./support";
 import { createSession } from "../../src/game/engine";
 import { cards, packs } from "../../src/content/catalog";
 const key = "side-quest.session.v1";
@@ -108,7 +108,11 @@ test("@release first screen waits for its painted art and fonts", async ({
   page,
 }) => {
   // The button art is held until the test lets it go, so "in flight" is a
-  // state the test controls rather than a race against a timer.
+  // state the test controls rather than a race against a timer. The page's
+  // clock is held still too: the app draws a themed fallback after a 4 s cap
+  // (main.tsx), and a slow runner must not reach it while the art is held.
+  await page.clock.install({ time: new Date("2026-10-31T12:00:00Z") });
+  await page.clock.pauseAt(new Date("2026-10-31T12:00:01Z"));
   let delivered = false;
   let release = () => {};
   const held = new Promise<void>((resolve) => (release = resolve));
@@ -129,14 +133,20 @@ test("@release first screen waits for its painted art and fonts", async ({
   const play = page.getByRole("button", { name: "Play", exact: true });
   await requested;
   await Promise.all(others);
-  await page.waitForFunction(() => document.fonts.check("700 24px Grenze"));
+  // Polled from here: the held clock also holds the page's frames.
+  await expect
+    .poll(() => page.evaluate(() => document.fonts.check("700 24px Grenze")))
+    .toBe(true);
   // Nothing is drawn with the fallback bar while the art is in flight, a
-  // few rendered frames after everything else arrived.
-  await frames(page, 3);
+  // few frames (by the page's clock) after everything else arrived.
+  await page.clock.runFor(100);
   await expect(play).toHaveCount(0);
   expect(delivered).toBe(false);
+  // The art alone, with the clock still held, lets the screen draw: the
+  // held clock is not what kept it blank.
   release();
   await expect(play).toBeVisible();
+  await page.clock.resume();
   expect(delivered).toBe(true);
   expect(
     await page.evaluate(

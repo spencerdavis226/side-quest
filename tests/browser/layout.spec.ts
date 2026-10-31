@@ -4,7 +4,7 @@ import {
   expect,
   rng,
   seed as seedSession,
-  transitionsDone,
+  layoutSettled,
   withMotion,
 } from "./support";
 import sharp from "sharp";
@@ -324,7 +324,7 @@ test("@release the play screen fits a Safari tab at every phone height without s
   ]) {
     await page.setViewportSize(viewport);
     // The card's size transitions to the new height; measure where it lands.
-    await transitionsDone(page);
+    await layoutSettled(page, ".card-stage");
     const fit = await page.evaluate(() => {
       const stage = document
         .querySelector(".card-stage")!
