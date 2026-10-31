@@ -20,13 +20,13 @@ export function QuestMeter({
 }) {
   const quest = session.quest;
   if (!quest) return null;
-  // A crawl's meter is the party: hearts, curse and satchel.
+  // A crawl's meter is the party: hearts and satchel.
   if (quest.party)
     return (
       <div className="quest-meters">
         <button
           type="button"
-          className={`quest-meter crawl-meter${quest.party.hearts <= 3 ? " low" : ""}${quest.party.curse ? ` cursed curse-${quest.party.curse}` : ""}`}
+          className={`quest-meter crawl-meter${quest.party.hearts <= 3 ? " low" : ""}`}
           aria-label={crawlMeterLabel(quest)}
           aria-haspopup="dialog"
           disabled={disabled}

@@ -126,15 +126,6 @@ describe("League starters", () => {
     });
     // Bulbasaur's two short of the team's HP, halved, rounded up.
     expect(party(s).hearts).toBe(Math.ceil((TEAM_HP - 2) / 2));
-    // Confused (a sealed bag) keeps the Revive shut.
-    let hexed = withStarter("bulbasaur", "pokemon.route-zigzagoon");
-    Object.assign(hexed.quest!.party!, {
-      hearts: 1,
-      loot: ["revive"],
-      curse: "hex",
-    });
-    hexed = advance(returnToCard(rollDice(advance(hexed, zero), zero)), zero);
-    expect(party(hexed).wiped).toBe(true);
   });
 
   it("reads a roll through the starter: bonus, natural range, a flinch", () => {

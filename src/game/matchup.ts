@@ -108,26 +108,12 @@ export function resolveType(theirs: PokemonType, mine: Attacking): Attacking {
   return brothers.reduce((a, b) => (worst(b) > worst(a) ? b : a));
 }
 
-/** A Tera Orb's type against `theirs`: a type super effective against it
- * that takes least back, first in chart order on a tie. Every type has one:
- * Fighting beats Normal, Dark beats Ghost. */
-export function teraType(theirs: Attacking): Attacking {
-  const all = Object.keys(chart) as Attacking[];
-  const edge = (t: Attacking) =>
-    effectiveness(t, theirs) - effectiveness(theirs, t);
-  return all.reduce((a, b) => (edge(b) > edge(a) ? b : a));
-}
-
 export interface Matchup {
   mine: Attacking;
   /** The foe's type as it plays (the trio resolved). */
   theirs: Attacking;
   /** Absent when the matchup is neutral. */
   edge: Edge | null;
-  /** The starter Terastallized for this fight: `mine` is its Tera type. */
-  tera?: true;
-  /** A teammate fights this one (2026-10-25): `mine` is its type. */
-  teammate?: string;
 }
 
 /** The starter's type against a foe's. */
@@ -143,12 +129,6 @@ export function matchup(mine: PokemonType, theirs: PokemonType): Matchup {
     edge:
       strong && !weak ? "advantage" : weak && !strong ? "disadvantage" : null,
   };
-}
-
-/** A Terastallized starter against a foe: always the edge. */
-export function teraMatchup(mine: PokemonType, theirs: PokemonType): Matchup {
-  const foe = resolveType(theirs, mine === "trio" ? "normal" : mine);
-  return { mine: teraType(foe), theirs: foe, edge: "advantage", tera: true };
 }
 
 /** The types `mine` has the edge on, and the ones that have it on `mine`,

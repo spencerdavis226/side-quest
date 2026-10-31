@@ -27,16 +27,9 @@ export type DialogName =
   // A crawl's party, from the hearts stud.
   | "party"
   | "satchel"
-  | "quaff"
-  | "cup"
-  | "curse"
   | "jinx"
   // The League's type matchup chip (2026-10-25).
   | "matchup"
-  // Pub Crawl's knack chip (2026-10-25).
-  | "knack"
-  | "power"
-  | "rule"
   | "guide"
   // The previous card opened from the header's stud.
   | "recap"
@@ -179,14 +172,8 @@ export function GameDialogs({
     (displayed === "party" ||
       displayed === "badges" ||
       displayed === "satchel" ||
-      displayed === "quaff" ||
-      displayed === "cup" ||
-      displayed === "curse" ||
       displayed === "jinx" ||
-      displayed === "matchup" ||
-      displayed === "knack" ||
-      displayed === "power" ||
-      displayed === "rule") &&
+      displayed === "matchup") &&
     record?.party
   ) {
     const crawl = crawlTheme(session?.quest?.packId);
@@ -200,14 +187,8 @@ export function GameDialogs({
       party: words.party,
       badges: words.badges ?? words.party,
       satchel: words.Satchel,
-      quaff: `The ${words.quaff ?? "Quaff"}`,
-      cup: words.cup?.name ?? "The Cup",
-      curse: words.curse[0].toUpperCase() + words.curse.slice(1),
       jinx: words.jinx?.name ?? "Jinx",
       matchup: "Type matchup",
-      knack: "Knack",
-      power: words.power.name,
-      rule: words.rule.name,
     }[part];
     return (
       <Modal title={title} onClose={() => setModal(null)} exiting={exiting}>
@@ -236,8 +217,6 @@ export function GameDialogs({
               ? {
                   packId: session.quest.packId,
                   hearts: party.max,
-                  quaff: party.quaff,
-                  cup: party.cup !== undefined,
                 }
               : undefined
           }

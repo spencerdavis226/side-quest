@@ -6,7 +6,6 @@ import {
   awaitingVerdict,
   canTakeOffer,
   canUseLoot,
-  cardMatchup,
   createSession,
   currentCard,
   finaleStage,
@@ -22,7 +21,7 @@ import {
   type Random,
 } from "../src/game/engine";
 import { returnToCard, rollDice, rollWins } from "../src/game/dice";
-import { botPower, botTeam } from "./bot";
+import { botTeam } from "./bot";
 import { parseSession } from "../src/app/persistence";
 import { cards, packs } from "../src/content/catalog";
 import type { GameConfig, Loot, SessionState } from "../src/game/types";
@@ -105,21 +104,13 @@ function playRun(seed: number, starter?: string) {
       if (party(s).throw) s = advance(s, random);
       continue;
     }
-    // A Tera Orb on a bad matchup, or before a boss (2026-10-25).
-    if (
-      cardMatchup(s.quest, card)?.edge === "disadvantage" ||
-      (card.hits && card.type)
-    )
-      use("tera");
     if (card.battle && !card.hits && !card.dice?.choice) {
       use("smoke");
       if (s.phase !== "revealed" || currentCard(s) !== card) continue;
     }
-    // The class's or starter's power, and the team (2026-10-25).
+    // The team (2026-10-25).
     if (s.phase === "revealed") {
       s = botTeam(s, random);
-      if (s.phase !== "revealed" || currentCard(s).id !== card.id) continue;
-      s = botPower(s, random, "before");
       if (s.phase !== "revealed" || currentCard(s).id !== card.id) continue;
     }
     if (awaitingChoice(s)) {
@@ -146,7 +137,6 @@ function playRun(seed: number, starter?: string) {
       if (!s.roll) s = rollDice(s, random);
       s = returnToCard(s);
       if (card.battle && !rollWins(card.dice, s.roll!.values, s.roll!)) {
-        s = botPower(s, random, "lost");
         use("die");
         if (!s.roll) s = returnToCard(rollDice(s, random));
       }

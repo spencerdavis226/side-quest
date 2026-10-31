@@ -1,6 +1,5 @@
 import type {
   CardDefinition,
-  Curse,
   Jinx,
   DiceDefinition,
   DiceOutcome,
@@ -164,10 +163,9 @@ const spot = (
   encounter,
 });
 
-type Extra = { loot?: Loot; curse?: Curse; jinx?: Jinx };
-const stakes = ({ loot, curse, jinx }: Extra) => ({
+type Extra = { loot?: Loot; jinx?: Jinx };
+const stakes = ({ loot, jinx }: Extra) => ({
   ...(loot ? { reward: { loot } } : {}),
-  ...(curse ? { curse } : {}),
   ...(jinx ? { jinx } : {}),
 });
 
@@ -258,12 +256,10 @@ export const hazard = (
   title: string,
   rules: string,
   fight: Roll,
-  curse?: Curse,
 ): CardDefinition => ({
   ...spot(leg, "Hazard", "trap", id, title, rules, fight(HAZARD_SAVE[leg])),
   battle: true,
   damage: 1,
-  ...(curse ? { curse } : {}),
 });
 
 /** A wild Pokémon to catch: a drink for a ball, and it joins the team. */
@@ -295,7 +291,6 @@ export const gamble = (
   win: string,
   labels: [string, string],
   loot: Loot,
-  curse?: Curse,
 ): CardDefinition => ({
   ...spot(
     leg,
@@ -310,7 +305,6 @@ export const gamble = (
   battle: true,
   damage: 1,
   reward: { loot },
-  ...(curse ? { curse } : {}),
 });
 
 /** An item ball on the ground. */
@@ -465,7 +459,6 @@ export const villain = (
   title: string,
   rules: string,
   fight: Roll,
-  curse?: Curse,
 ): CardDefinition => ({
   ...withNaturals(
     card(id, title, "challenge", rules, fight(HIDEOUT_BOSS_NEED)),
@@ -476,11 +469,10 @@ export const villain = (
   battle: true,
   hits: HIDEOUT_BOSS_HITS,
   damage: HIDEOUT_BOSS_HURT,
-  ...(curse ? { curse } : {}),
 });
 
 /** Team HP at the start of a League run, before the starter. */
-export const TEAM_HP = 15;
+export const TEAM_HP = 16;
 
 /** A starter: the run's first card. Its effect holds for the run and grows
  * as it evolves (`evolves`, each form replacing the one before). With

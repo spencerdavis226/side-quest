@@ -208,7 +208,6 @@ export const closingCards: CardDefinition[] = [
       "You accidentally pay it. Drink 4.",
       "You request $15 back for 'better vibes'. Give 4.",
     ),
-    { curse: "bleed" },
   ),
   closing(
     "dance-off",
@@ -301,7 +300,6 @@ export const lastCallBosses: CardDefinition[] = [
       "You smash a bulb. Give 5.",
       { crit: "Darkness again. Everyone else drinks 4." },
     ),
-    { curse: "hex" },
   ),
   boss(
     2,
@@ -329,7 +327,6 @@ export const lastCallBosses: CardDefinition[] = [
       "You find a driver who's going your way. Give 5.",
       { crit: "Free ride. Everyone else drinks 4." },
     ),
-    { curse: "bleed" },
   ),
   boss(
     2,

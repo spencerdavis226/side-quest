@@ -5,7 +5,7 @@ import { HIDEOUT_BOSS_NEED, RIVAL_NEED } from "./journey";
 import { CHAMPION_NEED, GYM_NEED, LEGENDARY_NEED } from "./shared";
 
 // Boss phases in the League (2026-10-25): a Legendary's second beat is the
-// catch, a Champion sends out its second Pokémon and then its ace, and the
+// catch, a Champion sends out its ace (one beat since 2026-10-31), and the
 // rival and every villain boss have a second act. The card's own roll opens
 // the fight; each hit landed moves it to the next beat, and the felling
 // swing plays the last. A beat is a duel (a table contest, Won or Lost) or
@@ -211,11 +211,8 @@ const beats: Readonly<Record<string, Beat[]>> = {
       ),
     ),
   ],
-  // Champions: the switch, then the ace.
+  // Champions: the ace (the switch beat was cut 2026-10-31, one hit less).
   "league-champion-blue": [
-    duel(
-      "Blue sends out Pidgeot. Rock, paper, scissors with your left neighbor, playing Blue. Lose: drink 4.",
-    ),
     roll(
       "His last Pokémon beats your starter. Of course it does. Roll d20.",
       vs(
@@ -225,45 +222,30 @@ const beats: Readonly<Record<string, Beat[]>> = {
     ),
   ],
   "league-champion-red": [
-    duel(
-      "Snorlax used Rest. The table stays silent while you count to 20 in your head. Anyone talks: drink 4.",
-    ),
     roll(
       "Pikachu, at level 88. Roll d20 in silence.",
       vs("Thunder. Everyone drinks 4.", "Red nods once. Give 6."),
     ),
   ],
   "league-champion-lance": [
-    duel(
-      "Lance sends out Gyarados. Name eight Dragon-type Pokémon in 20 seconds. Fall short: drink 4.",
-    ),
     roll(
       "Dragonite, with a cape. Roll d20.",
       vs("Outrage. Everyone drinks 4.", "Dragonite bows. Give 6."),
     ),
   ],
   "league-champion-steven": [
-    duel(
-      "Name rocks, minerals or gems back and forth with your left neighbor. Stall or repeat first: drink 4.",
-    ),
     roll(
       "Metagross Mega Evolves. Roll d20.",
       vs("Meteor Mash. Everyone drinks 4.", "It cracks like a geode. Give 6."),
     ),
   ],
   "league-champion-wallace": [
-    duel(
-      "Contest round: walk a runway across the room. The table votes. Booed: drink 4.",
-    ),
     roll(
       "Milotic, glittering. Roll d20.",
       vs("Too beautiful to hit. Everyone drinks 4.", "Ruffled. Give 6."),
     ),
   ],
   "league-champion-cynthia": [
-    duel(
-      "Spiritomb laughs at you. The table has ten seconds to crack your straight face. Laugh: drink 4.",
-    ),
     roll(
       "Garchomp, again. Roll d20.",
       vs(
@@ -273,18 +255,12 @@ const beats: Readonly<Record<string, Beat[]>> = {
     ),
   ],
   "league-champion-alder": [
-    duel(
-      "Alder wants a story about a day you skipped work. Tell it in 20 seconds. Boring: drink 4.",
-    ),
     roll(
       "Volcarona, and it's very warm in here. Roll d20.",
       vs("Fiery Dance. Everyone drinks 4.", "It cools off. Give 6."),
     ),
   ],
   "league-champion-iris": [
-    duel(
-      "Staring contest with your left neighbor, playing Iris. Blink first: drink 4.",
-    ),
     roll(
       "Haxorus, and she's already crying. Roll d20.",
       vs(
@@ -294,9 +270,6 @@ const beats: Readonly<Record<string, Beat[]>> = {
     ),
   ],
   "league-champion-diantha": [
-    duel(
-      "Gardevoir Mega Evolves. Deliver a dramatic movie line; the table rates it. Bad: drink 4.",
-    ),
     roll(
       "Her final scene. Roll d20.",
       vs(
@@ -306,18 +279,12 @@ const beats: Readonly<Record<string, Beat[]>> = {
     ),
   ],
   "league-champion-kukui": [
-    duel(
-      "Lycanroc howls. Howl at the ceiling for five seconds. Laugh or stop: drink 4.",
-    ),
     roll(
       "Incineroar, shirtless too. Roll d20.",
       vs("Darkest Lariat. Everyone drinks 4.", "Woo! Give 6."),
     ),
   ],
   "league-champion-leon": [
-    duel(
-      "Leon is lost. Eyes shut, point at the bathroom; the table checks. Wrong: drink 4.",
-    ),
     roll(
       "Charizard Gigantamaxes. Roll d20.",
       vs(
@@ -327,18 +294,12 @@ const beats: Readonly<Record<string, Beat[]>> = {
     ),
   ],
   "league-champion-geeta": [
-    duel(
-      "Agenda item two: sum up your week in exactly three words. The table judges. Fail: drink 4.",
-    ),
     roll(
       "Glimmora Terastallizes. Roll d20.",
       vs("Tera Blast. Everyone drinks 4.", "Meeting adjourned. Give 6."),
     ),
   ],
   "league-champion-nemona": [
-    duel(
-      "Again! Thumb war with your left neighbor, playing Nemona, best of three. Lose: drink 4.",
-    ),
     roll(
       "Pawmot, and she's never been happier. Roll d20.",
       vs(

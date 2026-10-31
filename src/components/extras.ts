@@ -1,12 +1,12 @@
 // Where a card's optional actions go (2026-10-27). A card's foot holds Won and
 // Lost, or nothing but these, and has room for two or three short plaques at
-// most; items, a power and send-ins can add up to seven more. Rather than
+// most; items and send-ins can add up to four more. Rather than
 // squeezing them into a column count, a few short ones stay on the card and
 // the rest open from one "Use" plaque, a sheet with a full-width row each.
 
 /** What the foot needs to know about each optional action. */
 export interface ExtraShape {
-  /** A power or a send-in: a name too long for a third of the card. */
+  /** A send-in: a name too long for a third of the card. */
   long: boolean;
 }
 

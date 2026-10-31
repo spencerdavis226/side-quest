@@ -261,8 +261,6 @@ function App() {
               onSettle={(won, spoil) => controller.settle(won, spoil)}
               onSpend={(item) => controller.spend(item)}
               onOffer={(index, branch) => controller.offer(index, branch)}
-              onQuaff={() => controller.quaff()}
-              onPower={(spoil) => controller.power(spoil)}
               onCatch={() => controller.catch(true)}
               onRelease={() => controller.catch(false)}
               onSend={(id) => controller.send(id)}
@@ -291,7 +289,7 @@ function App() {
           <PartyPulse party={display.quest.party} hidden={hidden} />
         )}
         <GameDialogs
-          onSpend={(item, branch) => controller.spend(item, branch)}
+          onSpend={(item) => controller.spend(item)}
           onDrop={(drop) => controller.drop(drop)}
           modal={modal}
           setModal={setModal}

@@ -19,7 +19,7 @@ import {
   wild,
 } from "./journey";
 import { moments } from "./moments";
-import { moreEvolutions, moreWilds, teraRaid } from "./wilds";
+import { moreEvolutions, moreWilds } from "./wilds";
 
 // The League's routes: eight, one before each gym, four cards each from the
 // route's fifteen (eighteen since the 2026-10-25 type expansion, `wilds.ts`), plus two Ace Trainers behind its crossroads. Wild
@@ -280,7 +280,6 @@ const route2: CardDefinition[] = [
         "No Zubat at all. A miracle. Give 3.",
       ],
     ),
-    "hex",
   ),
   catchable(
     1,
@@ -547,7 +546,6 @@ const route4: CardDefinition[] = [
       "You poke back harder. Your right neighbor drinks 3 and groans.",
       "A pair! Croagunk laughs at the player you poked. They drink {total}.",
     ),
-    { curse: "bleed" },
   ),
   strike(3, "route-sandile", "Sandile", {
     even: "Wild Sandile wears sunglasses and doesn't care about you. Awkward. Drink 2 to break the silence.",
@@ -750,7 +748,6 @@ const route5: CardDefinition[] = [
       "Booed off stage. Drink 3 and play one more riff.",
       "Encore! Pick a bandmate: they air-guitar for 5 seconds or drink 3.",
     ),
-    { curse: "bleed" },
   ),
   trainer(
     4,
@@ -804,7 +801,6 @@ const route5: CardDefinition[] = [
     'You put it to rest. Everyone whispers "rest"; the loudest drinks 4.',
     ["Leave", "Climb"],
     "shield",
-    "hex",
   ),
   center(
     4,
@@ -963,7 +959,6 @@ const route6: CardDefinition[] = [
         "Found the Master Ball. Give 4.",
       ],
     ),
-    "hex",
   ),
   catchable(
     5,
@@ -992,7 +987,7 @@ const route6: CardDefinition[] = [
     "A Mart in Silph's lobby, guarded by a Rocket who also works the register.",
     [
       { label: "Drink 5", loot: "die" },
-      { label: "Drink 6", loot: "tera" },
+      { label: "Drink 6", loot: "draught" },
       { label: "Just looking" },
     ],
   ),
@@ -1192,7 +1187,6 @@ const route7: CardDefinition[] = [
     "Infinite items. Give 5.",
     ["Walk away", "Surf the shore"],
     "die",
-    "hex",
   ),
 ];
 const route7Aces: CardDefinition[] = [
@@ -1292,7 +1286,6 @@ const route8: CardDefinition[] = [
         "It laughs so hard it vanishes. Give 5.",
       ],
     ),
-    { curse: "hex" },
   ),
   trainer(
     7,
@@ -1458,7 +1451,7 @@ const victoryRoad: CardDefinition[] = [
     "The Indigo Plateau Mart. Last chance, highest prices.",
     [
       { label: "Drink 5", loot: "shield" },
-      { label: "Drink 6", loot: "tera" },
+      { label: "Drink 6", loot: "die" },
       { label: "Just looking" },
     ],
   ),
@@ -1608,7 +1601,7 @@ export const routes: {
   {
     label: "Route 7",
     intro: "The badges get heavier",
-    cards: [...route7, ...moreWilds[6], ...moments[6], teraRaid],
+    cards: [...route7, ...moreWilds[6], ...moments[6]],
     aces: route7Aces,
   },
   {

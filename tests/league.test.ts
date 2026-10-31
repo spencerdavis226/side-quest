@@ -28,7 +28,7 @@ const pack = packs.find((p) => p.id === "pokemon")!;
 describe("Pokémon League journey", () => {
   it("is a crawl of the Pokémon pack alone, opening on a starter", () => {
     const s = createSession(league, cards, packs, seeded(1));
-    expect(s.quest!.party).toMatchObject({ hearts: 15, max: 15 });
+    expect(s.quest!.party).toMatchObject({ hearts: 16, max: 16 });
     const labels = s.quest!.stages.map((st) => st.label);
     expect(labels[0]).toBe("Your starter");
     expect(labels.filter((l) => /^Route \d$/.test(l))).toHaveLength(8);
@@ -44,8 +44,9 @@ describe("Pokémon League journey", () => {
     expect(labels[labels.indexOf("Gym 4") + 1]).toMatch(
       /Hideout|HQ|Castle|Lab|House|Tower|Base/,
     );
-    // About 53 cards are dealt, before rematches and boss swings.
-    expect(s.quest!.finale).toHaveLength(53);
+    // About 52 cards are dealt, before rematches and boss swings (one
+    // hideout grunt since 2026-10-31).
+    expect(s.quest!.finale).toHaveLength(52);
     expect(currentCard(s).encounter).toBe("omen");
     // The plain deck never plays in the League.
     expect(s.cards.every((c) => pack.cardIds.includes(c.id))).toBe(true);

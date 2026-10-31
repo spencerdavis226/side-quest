@@ -82,7 +82,7 @@ export interface CardDefinition {
   /** Pokémon League (2026-10-25): a fight with no roll and no plaque. The
    * type matchup picks the line the card reads and what it costs when it is
    * put aside: the starter's edge wins (a reward and no `damage`), a
-   * disadvantage loses (`damage`, a curse), and anything else, or an untyped
+   * disadvantage loses (`damage`), and anything else, or an untyped
    * card, is even and costs only what the line says. */
   strike?: Strike;
   /** Pub Crawl: hearts the party loses when this battle (or a strike on a
@@ -94,9 +94,6 @@ export interface CardDefinition {
   /** Pub Crawl: what the card brings the party when it is put aside (a
    * battle only on a win): an item for the satchel, or hearts back. */
   reward?: { loot?: Loot; heal?: number };
-  /** Pub Crawl: a curse on the party to the end of the floor (a battle's
-   * only when lost). */
-  curse?: Curse;
   /** Pub Crawl: what kind of room the card is, so an omen can single out
    * traps or monsters. A boss is told apart from an ambush (both have
    * `hits`) only by this; saves from before it have no ambushes. */
@@ -115,17 +112,6 @@ export interface CardDefinition {
    * picks one of them (Eevee: Vaporeon, Jolteon or Flareon), and that is
    * its last. */
   branches?: true;
-  /** Pub Crawl (2026-10-25): `evolves` is two paths of two levels, flat as
-   * `[A1, B1, A2, B2]`. The first level picks A1 or B1 (`party.form` 1 or
-   * 2), and the second follows that path (3 or 4). */
-  fork?: true;
-  /** Pub Crawl (2026-10-25): an adventurer's knacks, two (none for a joke
-   * class). */
-  knacks?: Knack[];
-  /** Pub Crawl (2026-10-25): the knack a fight calls for. An adventurer
-   * with it has the edge: the dice fight is rolled with advantage, a
-   * plaque fight's loss costs one heart less. Never a disadvantage. */
-  knack?: Knack;
   /** A crawl omen's dice colours while it holds (`DicePalette`). */
   palette?: DicePalette;
   /** Pub Crawl (2026-10-17): an effect the party keeps for the rest of the
@@ -149,8 +135,8 @@ export interface CardDefinition {
   press?: { prizes: Loot[] };
   /** Pokémon League (2026-10-25): the Pokémon type a fight is against, or a
    * starter's type. A dice fight against a type the starter beats is rolled
-   * with advantage, one that beats it with disadvantage; a fight settled
-   * with plaques costs one HP less or more when lost (`matchup.ts`). */
+   * with advantage, one that beats it with disadvantage; a strike reads
+   * its line for the matchup (`matchup.ts`). */
   type?: PokemonType;
   /** Pub Crawl (2026-10-17): a spoken rule the table keeps until the
    * floor's boss falls, laid when the card is put aside (a battle only when
@@ -172,53 +158,11 @@ export interface CardDefinition {
    * have neither and are caught for a drink, with no throw. */
   catchRate?: number;
   catchLines?: { caught: string; fled: string };
-  /** A run's own omen (an adventurer, a starter) (2026-10-25): its
-   * signature power, used when the table chooses, `uses` times until the
-   * next boss falls. A later form's `power` replaces it. */
-  power?: Power;
 }
 /** One beat of a boss fight after its first (`CardDefinition.phases`). */
 export interface Phase {
   rules: string;
   dice?: DiceDefinition;
-}
-/** What a signature power does, on the card face up:
- * `reroll`: roll a lost fight again. `spare`: this fight's loss costs no
- * hearts. `edge`: fight this one with the edge (advantage, or a strike
- * won). `double`: a win here counts twice (a natural 20's swing, heal and
- * item). `win`: win this fight outright, for `cost` hearts. `heal`: get
- * `amount` hearts back. `flee`: slip past a room fight before it starts. */
-export const POWER_KINDS = [
-  "reroll",
-  "spare",
-  "edge",
-  "double",
-  "win",
-  "heal",
-  "flee",
-] as const;
-export type PowerKind = (typeof POWER_KINDS)[number];
-export interface Power {
-  /** Its name on the plaque, e.g. "Rage" (at most 16 characters). */
-  name: string;
-  kind: PowerKind;
-  /** What it does, in a few words for the plaque (at most 28). */
-  rules: string;
-  /** Uses until the next boss falls; 1 when absent. */
-  uses?: number;
-  /** Hearts it costs (`win`). */
-  cost?: number;
-  /** Hearts it brings back (`heal`). */
-  amount?: number;
-  /** Drinks the drawer pays to use it, spoken (the app never pours). */
-  drinks?: number;
-}
-/** A floor's or a route's rule (2026-10-25): a spoken table rule, and an
- * effect stacked with the party's while the run is on that stage. */
-export interface StageRule {
-  name: string;
-  rule: string;
-  effect?: OmenEffect;
 }
 /** A lasting effect and its name, as the party dialog shows it. `rules` is
  * written from `effect` (`describeOmen`). */
@@ -250,11 +194,6 @@ export interface Evolution {
   palette?: DicePalette;
   /** The form's type, when it differs from the starter's (Eevee's). */
   type?: PokemonType;
-  /** A forked adventurer's path, in a few words for its plaque (at most
-   * 28 characters), read from across the table (2026-10-25). */
-  tagline?: string;
-  /** The form's signature power, replacing the one before it. */
-  power?: Power;
 }
 /** A crawl omen's (or a starter form's) dice colours: `primary` is the
  * enamel, `secondary` the metal and trim (2026-10-17). Display only. */
@@ -288,10 +227,6 @@ export const POKEMON_TYPES = [
 export type PokemonType = (typeof POKEMON_TYPES)[number];
 /** How a type matchup bends a roll. */
 export type Edge = "advantage" | "disadvantage";
-/** Pub Crawl's knacks (2026-10-25): what a class is good at. A room that
- * calls for one rolls with the edge for an adventurer who has it. */
-export const KNACKS = ["brawn", "sneak", "magic", "charm", "faith"] as const;
-export type Knack = (typeof KNACKS)[number];
 export const ENCOUNTERS = [
   "monster",
   "elite",
@@ -367,15 +302,8 @@ export const LOOT = [
   "candy",
   // A lost fight's drinks go to someone else (2026-10-17).
   "round",
-  // Pokémon League (2026-10-25): before a typed battle's roll, the starter
-  // Terastallizes into the type that beats the foe, for that fight.
-  "tera",
 ] as const;
 export type Loot = (typeof LOOT)[number];
-/** Pub Crawl curses, to the end of the floor. `bleed`: every heart loss
- * costs one more. `hex`: the satchel is sealed (no items, no shield). */
-export const CURSES = ["bleed", "hex"] as const;
-export type Curse = (typeof CURSES)[number];
 /** `fuse`: a hidden length between `min` and `max` seconds, picked when it is
  * lit, so nobody knows who will hold the phone at the boom. `countdown`: the
  * seconds are shown counting down. Display only: a reload unlights it. */
@@ -396,8 +324,6 @@ export interface QuestStage {
   /** Pub Crawl: the floor's elites, dealt only through a fork's loud door
    * (never picked, never in `cardIds`). */
   elite?: string[];
-  /** The floor's or route's rule, while the run is on this stage. */
-  rule?: StageRule;
 }
 /** A run's place in the finale: one stage, or `oneOf` a set of routes (each
  * a list of stages, such as a floor and its boss), one picked per game. */
@@ -427,10 +353,10 @@ export interface PackQuest {
    * (`goal` is 0 and the deck is never dealt), and the table shares
    * `hearts`. Losing them all ends the game. Stage cards may also be in the
    * pack's deck, which plays them as ordinary cards in the plain modes.
-   * `quaff` (2026-10-17): a lost d20 can be rolled again for that many
-   * drinks, once until the next boss falls. `cup`: every lost fight pours a
-   * splash into a shared cup, and the run's end hands it to someone. */
-  party?: { hearts: number; quaff?: number; cup?: true };
+   * Retired systems (2026-10-31: powers, knacks, floor rules, the Cup, the
+   * Quaff, curses, the Tera Orb) are dropped from saves by `retireSystems`
+   * in `persistence.ts`. */
+  party?: { hearts: number };
 }
 /** A quest's progress in one game. `stages` snapshots each stage's pool and
  * `finale` holds the cards picked at the start, in the order they are dealt.
@@ -449,8 +375,6 @@ export interface QuestState {
     cards: CardDefinition[];
     /** A crawl floor's elites (`QuestStage.elite`); older saves omit it. */
     elite?: CardDefinition[];
-    /** The stage's rule (`QuestStage.rule`); older saves omit it. */
-    rule?: StageRule;
   }[];
   finale: string[];
   step: number;
@@ -465,7 +389,6 @@ export interface PartyState {
   max: number;
   /** The satchel, oldest first. */
   loot: Loot[];
-  curse: Curse | null;
   /** Swings landed on the boss in play. */
   hits: number;
   /** Boss swings that landed without felling it: each dealt the boss again
@@ -483,40 +406,18 @@ export interface PartyState {
   boons?: string[];
   /** The card whose `jinx` holds until the floor's boss falls. */
   jinx?: string;
-  /** The Quaff's price in drinks, when the crawl has one, and whether it
-   * has been drunk since the last boss fell. */
-  quaff?: number;
-  quaffed?: true;
-  /** Splashes in the Cup, when the crawl keeps one: one per lost fight. */
-  cup?: number;
   /** Pulls already won on the push-your-luck card in play (`press`); the
    * roll on the card now is the next. Absent is 0. */
   press?: number;
   /** The draw (`SessionState.discarded`) whose lost drinks were passed on
    * with a `round`, so it is passed once. */
   passed?: number;
-  /** The card in play the starter has Terastallized against (a Tera Orb):
-   * the fight is rolled with advantage. Cleared when the card is put
-   * aside, so a boss dealt again needs another orb. */
-  tera?: string;
-  /** Signature power uses spent since the last boss fell (a League gym)
-   * (2026-10-25);
-   * absent is 0. */
-  powers?: number;
-  /** The card in play a power is armed on (`spare`, `edge`, `double`);
-   * cleared when the card is put aside, like a Tera Orb. */
-  armed?: string;
   /** The beat of the boss just put aside (`phases`), when it has phases,
    * so Previous Card shows the beat that was played. */
   beat?: number;
   /** Pokémon League (2026-10-25): the Pokémon caught for the team, by card
    * ID, oldest first (at most `TEAM_SIZE`). */
   team?: string[];
-  /** Teammates sent in since the last gym fell; each fights once a gym. */
-  tired?: string[];
-  /** The teammate sent in for the battle face up: it fights with its type.
-   * Cleared when the card is put aside, like a Tera Orb. */
-  sent?: string;
   /** The ball thrown at the Pokémon on the card in play (2026-10-27): its
    * card ID and the d20 face, kept until the card is put aside so a reload
    * never throws again. */

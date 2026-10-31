@@ -3,8 +3,8 @@ import type { CardDefinition, Jinx } from "../../game/types";
 // Curses become jinxes (2026-10-25): Pub Crawl had two numeric curses
 // (Bleeding, Hexed) beside its spoken jinxes, two systems doing one job.
 // Every card that cursed the party now lays a jinx on a loss instead, a
-// table rule the app shows until the floor's boss falls. The League keeps
-// its statuses (Poisoned, Confused); old saves keep any curse they hold.
+// table rule the app shows until the floor's boss falls. The League's
+// statuses went too (2026-10-31).
 const jinxes: Readonly<Record<string, Jinx>> = {
   "the-landlord": {
     name: "Rent Due",
@@ -144,15 +144,12 @@ const jinxes: Readonly<Record<string, Jinx>> = {
   },
 };
 
-/** Swap each listed card's curse for its jinx. */
+/** Lay each listed card's jinx (2026-10-25: Pub Crawl's curses became
+ * jinxes; the curses themselves were cut 2026-10-31). */
 export function applyJinxes(cards: CardDefinition[]) {
   for (const [id, jinx] of Object.entries(jinxes)) {
     const card = cards.find((c) => c.id === `dungeon.${id}`);
-    if (!card?.curse) throw new Error(`No curse to swap: dungeon.${id}`);
-    delete card.curse;
+    if (!card) throw new Error(`No card for a jinx: dungeon.${id}`);
     card.jinx = jinx;
   }
-  const left = cards.filter((c) => c.id.startsWith("dungeon.") && c.curse);
-  if (left.length)
-    throw new Error(`Curses left: ${left.map((c) => c.id).join(", ")}`);
 }

@@ -14,8 +14,6 @@ const picks: Record<string, string> = {
   "crawl/shield": "delapouite/heart-shield",
   "crawl/die": "delapouite/dice-six-faces-five",
   "crawl/smoke": "darkzaitzev/smoke-bomb",
-  "crawl/bleed": "skoll/blood",
-  "crawl/hex": "lorc/cursed-star",
   "crawl/boss": "lorc/crowned-skull",
   "crawl/satchel": "lorc/knapsack",
   "crawl/wiped": "lorc/candle-skull",
@@ -23,44 +21,25 @@ const picks: Record<string, string> = {
   "crawl/ambush": "lorc/two-shadows",
   "crawl/elite": "lorc/crossed-swords",
   "crawl/door": "lorc/wooden-door",
-  // Pub Crawl's adventurer, trinkets, the Cup, the Quaff, the landing's
-  // rest and a jinx (2026-10-17).
+  // Pub Crawl's adventurer, trinkets, the landing's rest and a jinx
+  // (2026-10-17).
   "crawl/adventurer": "lorc/visored-helm",
   "crawl/trinket": "lorc/gem-pendant",
   // Pub Crawl's equipment slots (2026-10-25); the trinket slot keeps the
   // trinket's mark.
   "crawl/weapon": "lorc/broadsword",
   "crawl/armor": "lorc/breastplate",
-  "crawl/cup": "lorc/chalice-drops",
-  "crawl/quaff": "lorc/beer-stein",
   "crawl/rest": "lorc/campfire",
   "crawl/jinx": "delapouite/tongue",
   // A Bar Tab, and the League's Baton Pass.
   "crawl/round": "delapouite/beer-bottle",
   "league/baton-pass": "skoll/baton",
-  // The Tera Orb (2026-10-25): Pub Crawl never deals it, but every item
-  // needs a crawl mark.
-  "crawl/tera": "lorc/floating-crystal",
-  "league/tera-orb": "lorc/crystal-shine",
-  // Pub Crawl's five knacks (2026-10-25): a class's two, and the room that
-  // calls for one.
-  "crawl/knack-brawn": "delapouite/biceps",
-  "crawl/knack-sneak": "delapouite/robber-mask",
-  "crawl/knack-magic": "lorc/magic-swirl",
-  "crawl/knack-charm": "lorc/drama-masks",
-  "crawl/knack-faith": "lorc/holy-symbol",
-  // A class's or starter's signature power, and a floor's or route's rule
-  // (2026-10-25).
-  "crawl/power": "lorc/power-lightning",
-  "crawl/rule": "lorc/scroll-unfurled",
   // Pokémon League (src/components/crawlTheme.ts maps them to the crawl's
   // marks).
   "league/potion": "lorc/spray",
   "league/protect": "lorc/energy-shield",
   "league/x-attack": "lorc/punch-blast",
   "league/escape-rope": "delapouite/lasso",
-  "league/poison": "lorc/poison-gas",
-  "league/confused": "delapouite/knocked-out-stars",
   "league/badge": "skoll/achievement",
   "league/bag": "lorc/swap-bag",
   "league/whited-out": "skoll/knockout",

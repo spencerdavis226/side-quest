@@ -357,7 +357,6 @@ describe("choice cards", () => {
       "pokemon.route-slots",
       "pokemon.route-silph-scope",
       "pokemon.route-missingno",
-      "pokemon.route-tera-raid",
       "pokemon.route-mew-truck",
       // Dungeon night relics: walk away, or roll for the loot.
       "dungeon.mimic-cooler",

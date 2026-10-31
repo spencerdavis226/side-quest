@@ -14,7 +14,7 @@ import {
   trial,
   trinket,
   type FloorCards,
-  strike,
+  mishap,
 } from "./shared";
 
 // Floor 3, the other way down: the Kitchen. The dinner rush never ended.
@@ -22,13 +22,13 @@ import {
 
 export const kitchen: FloorCards = {
   fights: [
-    strike(5, "Monster", "deep-fryer-demon", "Deep Fryer Demon", {
-      even: "A deep fryer demon eyes your hand and fries a fry instead. Drink 3.",
-      advantage:
-        "A deep fryer demon eyes your hand. You freeze the oil with a spell. Give 5.",
-      disadvantage:
-        "A deep fryer demon eyes your hand and batters it. Drink 5.",
-    }),
+    mishap(
+      5,
+      "Monster",
+      "deep-fryer-demon",
+      "Deep Fryer Demon",
+      "A deep fryer demon eyes your hand and fries a fry instead. Drink 3.",
+    ),
     monster(
       5,
       "line-cook-golem",
@@ -58,7 +58,6 @@ export const kitchen: FloorCards = {
       "A wraith that only ever exhales. Roll d20.",
       "You'll taste it for a week. Drink 4.",
       "You hold your breath. Give 5.",
-      { curse: "hex" },
     ),
     monster(
       5,
@@ -91,20 +90,20 @@ export const kitchen: FloorCards = {
       "You comp his meal. He tips you his hip flask. Give 4.",
       { loot: "draught" },
     ),
-    strike(5, "Monster", "walk-in-yeti", "Cold Room Yeti", {
-      even: "A yeti in the cold room ate all the shrimp and breathes cold on you. Drink 3.",
-      advantage:
-        "A yeti in the cold room ate all the shrimp. You lock it in. Give 5.",
-      disadvantage:
-        "A yeti in the cold room ate all the shrimp and gives you a cold hug. Drink 5.",
-    }),
-    strike(5, "Monster", "dish-pit-horror", "Dish Pit Horror", {
-      even: "Something in the dish pit has been eating forks and burps one up. Drink 3.",
-      advantage:
-        "Something in the dish pit has been eating forks. You bless the water and it sinks. Give 5.",
-      disadvantage:
-        "Something in the dish pit has been eating forks and eats yours. Drink 5.",
-    }),
+    mishap(
+      5,
+      "Monster",
+      "walk-in-yeti",
+      "Cold Room Yeti",
+      "A yeti in the cold room ate all the shrimp and breathes cold on you. Drink 3.",
+    ),
+    mishap(
+      5,
+      "Monster",
+      "dish-pit-horror",
+      "Dish Pit Horror",
+      "Something in the dish pit has been eating forks and burps one up. Drink 3.",
+    ),
     monster(
       5,
       "gordon-wraith",
@@ -167,13 +166,13 @@ export const kitchen: FloorCards = {
       "Down. Drink 4, and lie on the floor for 5 seconds.",
       "You skate it. Give 3.",
     ),
-    strike(5, "Trap", "swinging-door", "The Swinging Door", {
-      even: "A server comes through the swinging door with a full tray and you flinch. Drink 3.",
-      advantage:
-        "A server charges through the swinging door with a full tray. You spin past. Give 4.",
-      disadvantage:
-        "A server charges through the swinging door and the tray hits your face. Drink 5.",
-    }),
+    mishap(
+      5,
+      "Trap",
+      "swinging-door",
+      "The Swinging Door",
+      "A server comes through the swinging door with a full tray and you flinch. Drink 3.",
+    ),
     trap(
       5,
       "mandoline",
@@ -207,13 +206,13 @@ export const kitchen: FloorCards = {
       "You smell like it now. Drink 5.",
       "You open a window and it's gone. Give 5.",
     ),
-    strike(5, "Monster", "rat-chef", "The Rat Chef", {
-      even: "A rat in a chef's hat takes your order and you order the special. Drink 3.",
-      advantage:
-        "A rat in a chef's hat wants your order. You compliment the chef. Give 5.",
-      disadvantage:
-        "A rat in a chef's hat wants your order, and serves you. Drink 5.",
-    }),
+    mishap(
+      5,
+      "Monster",
+      "rat-chef",
+      "The Rat Chef",
+      "A rat in a chef's hat takes your order and you order the special. Drink 3.",
+    ),
     monster(
       5,
       "ticket-machine",
@@ -235,13 +234,13 @@ export const kitchen: FloorCards = {
       "The Order",
       "Repeat back every drink at the table, in order, from memory. Miss one: drink 5.",
     ),
-    strike(5, "Trap", "hot-pan", "The Hot Pan", {
-      even: "A pan on the burner has a glowing handle. Hot. Drink 3.",
-      advantage:
-        "A pan on the burner has a glowing handle. You grab a towel like a pro. Give 4.",
-      disadvantage:
-        "A pan on the burner has a glowing handle and you grab it. Drink 5, then blow on your hand.",
-    }),
+    mishap(
+      5,
+      "Trap",
+      "hot-pan",
+      "The Hot Pan",
+      "A pan on the burner has a glowing handle. Hot. Drink 3.",
+    ),
     ambush(
       5,
       "food-truck-guys",
@@ -281,7 +280,7 @@ export const kitchen: FloorCards = {
       "It lifts the lid back. Drink 5.",
       "Brisket. Perfect brisket. Give 5.",
       ["Don't", "Lift it"],
-      { loot: "shield", curse: "hex" },
+      { loot: "shield" },
     ),
     treasure(
       5,

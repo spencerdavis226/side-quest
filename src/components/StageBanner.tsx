@@ -27,8 +27,6 @@ export function StageBanner({ session }: { session: SessionState }) {
           banner.mode,
           banner.intro,
           banner.wanted && `${banner.wantedWord}: ${banner.wanted}`,
-          banner.rule &&
-            `${banner.ruleWord}: ${banner.rule.name}. ${banner.rule.rule}`,
         ]
           .filter(Boolean)
           .join(". ")
@@ -36,7 +34,7 @@ export function StageBanner({ session }: { session: SessionState }) {
     banner?.key ?? null,
   );
   if (!banner) return null;
-  const { tone, art, mode, intro, wanted, wantedWord, rule, ruleWord } = banner;
+  const { tone, art, mode, intro, wanted, wantedWord } = banner;
   return (
     <div
       // Keyed by stage so a new stage replays the sweep.
@@ -51,12 +49,6 @@ export function StageBanner({ session }: { session: SessionState }) {
         {wanted && (
           <span className="banner-wanted">
             {wantedWord}: {wanted}
-          </span>
-        )}
-        {/* The floor's or route's rule (2026-10-25). */}
-        {rule && (
-          <span className="banner-wanted banner-rule">
-            {ruleWord}: {rule.name}
           </span>
         )}
       </div>
@@ -84,8 +76,6 @@ function stageBanner(session: SessionState) {
   const wantedWord = crawlTheme(quest.packId).words.wanted;
   const wanted =
     wantedWord && stage.size > 1 ? wantedBoss(quest)?.title : undefined;
-  const rule = stage.size > 1 ? quest.stages[stage.stage].rule : undefined;
-  const ruleWord = crawlTheme(quest.packId).words.rule.name;
   return {
     key: `${stage.stage}:${session.discarded}`,
     stage: stage.stage,
@@ -95,8 +85,6 @@ function stageBanner(session: SessionState) {
     art,
     wanted,
     wantedWord,
-    rule,
-    ruleWord,
   };
 }
 
@@ -130,30 +118,20 @@ export function EvolutionBanner({ session }: { session: SessionState }) {
   useEffect(() => {
     if (form > seen.current) {
       const now = omenForm(quest);
-      // A branching starter (Eevee) evolves straight from its base form; a
-      // forked adventurer's second level grows from its path's first.
+      // A branching starter (Eevee) evolves straight from its base form.
       const from =
-        form === 1 || now?.card.branches || (now?.card.fork && form === 2)
+        form === 1 || now?.card.branches
           ? now?.card.title
-          : now?.card.evolves?.[form - (now?.card.fork ? 3 : 2)]?.title;
+          : now?.card.evolves?.[form - 2]?.title;
       // What the evolution did, from the numbers: "Max HP 15 → 17." The
       // form alone: boons a crawl keeps beside it didn't change.
       const words = crawlTheme(quest?.packId).omenWords;
       const after = formEffect(quest) ?? {};
       const base = (quest?.party?.max ?? 0) - (after.hearts ?? 0);
-      const numbers =
+      const change =
         words && now?.before
           ? describeChange(now.before, after, words, base)
           : "";
-      // A form's own power is news too (2026-10-25).
-      const power = now?.card.evolves?.[form - 1]?.power;
-      const powerWord = crawlTheme(quest?.packId).words.power.name;
-      const change = [
-        numbers,
-        power && `New ${powerWord.toLowerCase()}: ${power.name}.`,
-      ]
-        .filter(Boolean)
-        .join(" ");
       if (now && from) setShown({ from, to: now.title, change });
     }
     seen.current = form;
@@ -201,10 +179,7 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
   const boons = party?.boons?.at(-1) ?? null;
   const jinx = party?.jinx;
   const passed = party?.passed;
-  const cup = party?.cup ?? 0;
-  const seen = useRef({ boons, jinx, passed, cup });
-  // The Cup explains itself once, on the first splash this screen sees.
-  const cupTold = useRef(false);
+  const seen = useRef({ boons, jinx, passed });
   const [shown, setShown] = useState<{
     key: string;
     kicker: string;
@@ -215,7 +190,7 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
   const words = crawlTheme(quest?.packId).words;
   useEffect(() => {
     const before = seen.current;
-    seen.current = { boons, jinx, passed, cup };
+    seen.current = { boons, jinx, passed };
     if (!quest || !party) return;
     if (passed !== undefined && passed !== before.passed) {
       const item = crawlTheme(quest.packId).loot.round;
@@ -264,17 +239,7 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
         line: "",
         tone: "pearl",
       });
-    else if (cup > before.cup && !cupTold.current && words.cup) {
-      cupTold.current = true;
-      setShown({
-        key: `cup-${cup}`,
-        kicker: words.cup.name,
-        title: words.cup.first.title,
-        line: words.cup.first.line,
-        tone: "amber",
-      });
-    }
-  }, [boons, jinx, passed, cup, quest, party, words]);
+  }, [boons, jinx, passed, quest, party, words]);
   const clear = useCallback(() => setShown(null), []);
   useBannerTimeout(shown?.key ?? null, clear);
   useAnnounce(

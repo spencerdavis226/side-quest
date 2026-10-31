@@ -1,4 +1,4 @@
-import type { Curse, Knack, Loot, QuestStage, Slot } from "../game/types";
+import type { Loot, QuestStage, Slot } from "../game/types";
 import { DRAUGHT_DRINKS, DRAUGHT_HEAL } from "../game/engine";
 import {
   dungeonOmenWords,
@@ -12,7 +12,6 @@ import {
 
 export type CrawlIconName =
   | Loot
-  | Curse
   | "heart"
   | "boss"
   | "satchel"
@@ -23,18 +22,11 @@ export type CrawlIconName =
   | "door"
   | "adventurer"
   | "trinket"
-  | "cup"
-  | "quaff"
   | "rest"
   | "jinx"
-  // Pub Crawl's knacks (2026-10-25).
-  | `knack-${Knack}`
   // Pub Crawl's equipment slots (2026-10-25); a trinket keeps its mark.
   | "weapon"
-  | "armor"
-  // A signature power, and a floor's or route's rule (2026-10-25).
-  | "power"
-  | "rule";
+  | "armor";
 
 /** One row of the how-to-play guide: a mark, a name, one line. */
 export interface GuideRow {
@@ -45,24 +37,18 @@ export interface GuideRow {
 
 export interface CrawlTheme {
   loot: Record<Loot, { name: string; does: string }>;
-  curses: Record<Curse, { name: string; does: string }>;
   /** The card plaques for an item used on the card in play. */
   flee: string;
   reroll: string;
   /** The plaque that passes a lost fight's drinks on (`round`). */
   pass: string;
-  /** The plaque that spends a Tera Orb before a battle (`tera`). */
-  tera: string;
   /** Drink the draught from the satchel dialog. */
   drink: string;
   /** Use the candy from the satchel dialog. */
   eat: string;
-  /** Pokémon League: its starters' powers and evolutions are written from
-   * their numbers in these words (`game/omenText.ts`). */
+  /** A class's or starter's perk and its levels are written from their
+   * numbers in these words (`game/omenText.ts`). */
   omenWords?: OmenWords;
-  /** Pub Crawl's knacks (2026-10-25): each one's name, and the rooms that
-   * call for it. */
-  knacks?: Record<Knack, { name: string; rooms: string }>;
   /** Pub Crawl's equipment (2026-10-25): the slots' names and the spoils
    * sheet's words. */
   equipment?: {
@@ -81,8 +67,6 @@ export interface CrawlTheme {
     hearts: string;
     /** Leads the meter's spoken label: "Hearts: 10 of 12". */
     Hearts: string;
-    /** "A curse" or "a status" on a card's seal. */
-    curse: string;
     Satchel: string;
     /** The party dialog's title. */
     party: string;
@@ -99,8 +83,6 @@ export interface CrawlTheme {
     omen: string;
     /** What a fork's loud door brings. */
     elite: string;
-    /** After a curse's name in the party dialog. */
-    curseLasts: string;
     /** The setup screen's section and summary. */
     setupTitle: string;
     setupBrief: (hearts: number, floors: number) => string;
@@ -121,28 +103,13 @@ export interface CrawlTheme {
     trophies?: string;
     tab?: string;
     grows: { who: string; verb: string; done: string };
-    /** Pub Crawl only (2026-10-17): the boons kept for the run, a jinx, the
-     * Quaff and the Cup. A theme without them never shows them. */
+    /** Pub Crawl only (2026-10-17): the boons kept for the run. A theme
+     * without them never shows them. */
     trinkets?: string;
     trinketFound?: string;
     jinx?: { name: string; landed: string; lifted: string; lasts: string };
-    quaff?: string;
-    cup?: {
-      name: string;
-      pour: string;
-      /** The end screens: who drinks it. */
-      won: string;
-      wiped: string;
-      /** The banner on the first splash a game shows. */
-      first: { title: string; line: string };
-    };
     /** A floor's banner names the boss waiting at the bottom. */
     wanted?: string;
-    /** The class's or starter's signature power (2026-10-25): what it is
-     * called, and when it comes back. */
-    power: { name: string; lasts: string };
-    /** A floor's or route's rule (2026-10-25). */
-    rule: { name: string; lasts: string };
   };
   /** Cards that ask the table to name the badges from memory: while one is
    * face up, the badge case stays shut (owner, 2026-10-24). `why` ends the
@@ -151,19 +118,18 @@ export interface CrawlTheme {
   /** What the setup screen counts as the run's length (floors, gyms);
    * by default every stage of several rooms. */
   lengthOf?: (stages: QuestStage[]) => number;
-  /** The seals legend in the guide: −hearts, curse, hits, +item. Pub
-   * Crawl deals no curses since 2026-10-25 (`null`). */
-  legend: [string, string | null, string, string];
+  /** The seals legend in the guide: −hearts, hits, +item. */
+  legend: [string, string, string];
   /** The legend's last two lines, the standing rule on a d20: what a
    * natural 20 doubles, then what a natural 1 doubles. */
   naturals: [string, string];
   /** Pub Crawl's extra seals: a trinket on a win, a jinx on a loss. */
   legendMore?: { trinket?: string; jinx?: string };
   /** The how-to-play guide (2026-10-17): the goal in a line, then one row
-   * per mechanic. `quaff` and `cup` are the pack's quest's. */
+   * per mechanic. */
   guide: {
     goal: string;
-    rows: (n: { hearts: number; quaff?: number; cup?: boolean }) => GuideRow[];
+    rows: (n: { hearts: number }) => GuideRow[];
   };
   /** The end screens: two title lines (the second in italics) and the
    * verdict. */
@@ -190,30 +156,13 @@ const dungeon: CrawlTheme = {
       name: "Bar Tab",
       does: "A lost fight's drinks go to someone else",
     },
-    // The League's Tera Orb; nothing below the bar deals it.
-    tera: { name: "Prism Shard", does: "Turns a fight your way" },
-  },
-  curses: {
-    bleed: { name: "Bleeding", does: "Every heart loss costs one more" },
-    hex: { name: "Hexed", does: "The satchel is sealed" },
   },
   flee: "Flee",
   reroll: "Reroll",
   pass: "Pass it",
-  tera: "Attune",
   eat: "Read",
   drink: "Drink",
   omenWords: dungeonOmenWords,
-  knacks: {
-    brawn: { name: "Brawn", rooms: "the big and the physical" },
-    sneak: { name: "Sneak", rooms: "traps and footwork" },
-    magic: {
-      name: "Magic",
-      rooms: "spells and things that shouldn't be alive",
-    },
-    charm: { name: "Charm", rooms: "anyone you can talk round" },
-    faith: { name: "Faith", rooms: "the dead and the haunted" },
-  },
   equipment: {
     slots: { weapon: "Weapon", armor: "Armor", trinket: "Trinket" },
     spoils: "Spoils",
@@ -226,7 +175,6 @@ const dungeon: CrawlTheme = {
     heart: "heart",
     hearts: "hearts",
     Hearts: "Hearts",
-    curse: "curse",
     Satchel: "Satchel",
     party: "The party",
     Room: "Room",
@@ -238,10 +186,9 @@ const dungeon: CrawlTheme = {
     anAmbush: "An ambush",
     omen: "Tonight's omen",
     elite: "the next room is an elite: harder, and it drops a trinket",
-    curseLasts: "to the end of the floor",
     setupTitle: "The crawl",
     setupBrief: (hearts, floors) =>
-      `${hearts} shared hearts, ${floors} floors, an adventurer who levels up, trinkets from bosses, and the Cup`,
+      `${hearts} shared hearts, ${floors} floors, an adventurer who levels up, and gear from bosses`,
     setupHearts: "hearts",
     setupFloors: "floors",
     evolving: (from) => `${from} levels up!`,
@@ -261,25 +208,10 @@ const dungeon: CrawlTheme = {
       lifted: "The jinx lifts",
       lasts: "until the floor's boss falls",
     },
-    quaff: "Quaff",
-    cup: {
-      name: "The Cup",
-      pour: "Every lost fight, the drawer pours a splash into the Cup",
-      won: "Whoever landed the last swing hands the Cup to anyone.",
-      wiped: "Whoever drew the last card drinks the Cup.",
-      first: {
-        title: "Pour a splash in",
-        line: "Lost fight: the drawer pours some of their drink into the Cup in the middle.",
-      },
-    },
     wanted: "Wanted",
-    power: { name: "Power", lasts: "back when the floor's boss falls" },
-    rule: { name: "Floor rule", lasts: "until the floor's boss falls" },
   },
   legend: [
     "Hearts the party loses if the fight is lost",
-    // Curses became jinxes (2026-10-25); the jinx seal is below.
-    null,
     "Wins it takes: the next drawer swings again",
     "An item for the satchel, on a win",
   ],
@@ -296,7 +228,7 @@ const dungeon: CrawlTheme = {
   },
   guide: {
     goal: "Beat Last Call before the party's hearts run out.",
-    rows: ({ hearts, quaff, cup }) => [
+    rows: ({ hearts }) => [
       {
         icon: "heart",
         title: "Hearts",
@@ -315,46 +247,13 @@ const dungeon: CrawlTheme = {
       {
         icon: "rest",
         title: "Landings",
-        line: "After a boss: level up your adventurer for 3 drinks, or rest for 3 hearts. The first level up picks one of two paths.",
-      },
-      {
-        icon: "knack-brawn",
-        title: "Knacks",
-        line: "Each adventurer has two. A room that calls for one shows green arrows: roll twice, keep the best. A room with no roll is won with its knack and lost without it.",
+        line: "After a boss: level up your adventurer for 3 drinks, or rest for 3 hearts.",
       },
       {
         icon: "satchel",
         title: "Satchel and gear",
         line: "Items show up as buttons on a card when they help. Bosses and elites drop gear: one weapon, one armor, one trinket, and a new piece replaces the old. Tap the hearts to see both.",
       },
-      {
-        icon: "power",
-        title: "Powers",
-        line: "Your adventurer has one, a button on the card when it helps: a reroll, a win, a heal. It comes back when a boss falls.",
-      },
-      {
-        icon: "rule",
-        title: "Floor rules",
-        line: "Every floor has one, on its banner and the strip. It holds until the floor's boss falls.",
-      },
-      ...(quaff
-        ? [
-            {
-              icon: "quaff" as const,
-              title: "Quaff",
-              line: `Lost a d20? Drink ${quaff} to roll it again. Once per boss.`,
-            },
-          ]
-        : []),
-      ...(cup
-        ? [
-            {
-              icon: "cup" as const,
-              title: "The Cup",
-              line: "Each lost fight, the drawer pours a splash in. Win: the last swing hands it to anyone. Wipe: the last drawer drinks it.",
-            },
-          ]
-        : []),
       {
         icon: "jinx",
         title: "Jinxes",
@@ -372,9 +271,8 @@ const dungeon: CrawlTheme = {
   },
 };
 
-// Pokémon League as a journey: Team HP, the Bag, statuses for curses and a
-// white-out for a wipe. A placeholder until the League's crawl lands (the
-// pack's quest gains `party`).
+// Pokémon League as a journey: Team HP, the Bag, and a white-out for a
+// wipe.
 const league: CrawlTheme = {
   loot: {
     draught: {
@@ -396,19 +294,10 @@ const league: CrawlTheme = {
       name: "Baton Pass",
       does: "A lost battle's drinks go to someone else",
     },
-    tera: {
-      name: "Tera Orb",
-      does: "Before a battle: your starter takes the type that beats it",
-    },
-  },
-  curses: {
-    bleed: { name: "Poisoned", does: "Every HP loss costs one more" },
-    hex: { name: "Confused", does: "The bag is sealed" },
   },
   flee: "Escape",
   reroll: "Reroll",
   pass: "Pass it",
-  tera: "Terastallize",
   drink: "Use",
   eat: "Use",
   omenWords: leagueOmenWords,
@@ -423,9 +312,6 @@ const league: CrawlTheme = {
       revive: "revive",
       candy: "rare-candy",
       round: "baton-pass",
-      tera: "tera-orb",
-      bleed: "poison",
-      hex: "confused",
       boss: "badge",
       satchel: "bag",
       wiped: "whited-out",
@@ -437,7 +323,6 @@ const league: CrawlTheme = {
     heart: "HP",
     hearts: "HP",
     Hearts: "Team HP",
-    curse: "status",
     Satchel: "Bag",
     party: "The team",
     Room: "Battle",
@@ -449,7 +334,6 @@ const league: CrawlTheme = {
     anAmbush: "A rival battle",
     omen: "Your starter",
     elite: "the next battle is an elite trainer: harder, and it pays",
-    curseLasts: "until the next gym falls",
     setupTitle: "The journey",
     setupBrief: (hearts, gyms) =>
       `${hearts} team HP, ${gyms} gyms with a route before each, a villain hideout, the League, and a new starter every run`,
@@ -468,8 +352,6 @@ const league: CrawlTheme = {
       lifted: "The jinx lifts",
       lasts: "until the next boss falls",
     },
-    power: { name: "Move", lasts: "back when the next gym falls" },
-    rule: { name: "Route rule", lasts: "until the route's gym falls" },
   },
   lengthOf: (stages) => stages.filter((st) => /^Gym \d/.test(st.label)).length,
   badgeLock: {
@@ -478,7 +360,6 @@ const league: CrawlTheme = {
   },
   legend: [
     "HP the team loses if the battle is lost",
-    "A status on a loss, until the next gym falls",
     "Wins it takes: the next trainer battles again",
     "An item for the bag, on a win",
   ],
@@ -505,7 +386,7 @@ const league: CrawlTheme = {
       {
         icon: "omen",
         title: "Types",
-        line: "Your starter has a type. Super effective on them: roll double the dice and keep the highest. Super effective on you: keep the lowest. No dice: a loss costs 1 HP less or more. A strike needs no roll: its type decides the line.",
+        line: "Your starter has a type. Super effective on them: roll double the dice and keep the highest. Super effective on you: keep the lowest. A strike needs no roll: its type decides the line.",
       },
       {
         icon: "boss",
@@ -523,19 +404,14 @@ const league: CrawlTheme = {
         line: "Beat a wild Pokémon and you can catch it for a drink. It waits in the bag (two at most). Use one on a battle its type beats and it wins it, then it's gone.",
       },
       {
-        icon: "power",
-        title: "Signature moves",
-        line: "Your starter has one, a button on the card when it helps: a reroll, a win, a heal. Evolving can teach a better one. It comes back when a gym falls.",
-      },
-      {
         icon: "satchel",
         title: "Bag",
         line: "Items show up as buttons on a card when they help. Tap the HP to see the bag.",
       },
       {
-        icon: "bleed",
-        title: "Statuses and jinxes",
-        line: "A lost battle can poison or confuse the team until the next gym falls, or jinx a player with a table rule.",
+        icon: "jinx",
+        title: "Jinxes",
+        line: "A lost battle can jinx a player with a table rule. It lifts when the next boss falls.",
       },
     ],
   },

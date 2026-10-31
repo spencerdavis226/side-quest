@@ -1,6 +1,5 @@
 import type {
   CardDefinition,
-  Curse,
   DiceDefinition,
   DiceOutcome,
   Encounter,
@@ -9,7 +8,6 @@ import type {
   Offer,
   OmenEffect,
   Slot,
-  Strike,
 } from "../../game/types";
 import { cardFactory, choice, rollTable } from "../author";
 import { describeOmen, dungeonOmenWords } from "../../game/omenText";
@@ -83,9 +81,8 @@ export const KEEPER_HURT = 2;
 /** A landing between floors: level up for drinks, or rest for hearts. */
 export const LANDING_HEAL = 3;
 export const LEVEL_DRINK = 3;
-/** The party's shared hearts before the adventurer, and the Quaff's price. */
-export const PARTY_HEARTS = 11;
-export const QUAFF_DRINKS = 4;
+/** The party's shared hearts before the adventurer. */
+export const PARTY_HEARTS = 12;
 
 /** A d20 table: below `need` loses, `need` and up wins. A `crit` replaces
  * the win on a natural 20, a `fumble` the loss on a natural 1. */
@@ -172,10 +169,9 @@ export const pair =
     return doubles ? { ...dice, doubles, doublesWin: true } : dice;
   };
 
-type Stakes = { loot?: Loot; curse?: Curse; jinx?: Jinx };
-const stakes = ({ loot, curse, jinx }: Stakes) => ({
+type Stakes = { loot?: Loot; jinx?: Jinx };
+const stakes = ({ loot, jinx }: Stakes) => ({
   ...(loot ? { reward: { loot } } : {}),
-  ...(curse ? { curse } : {}),
   ...(jinx ? { jinx } : {}),
 });
 
@@ -193,7 +189,7 @@ const room = (
 });
 
 /** A room monster: a d20 fight at the floor's target, or another roll
- * (`roll`: a d6 move list or 2d6) at the same odds. A `curse` or a `jinx`
+ * (`roll`: a d6 move list or 2d6) at the same odds. A `jinx`
  * lands on a loss; `loot` comes with a win. */
 export const monster = (
   floor: Floor,
@@ -220,28 +216,19 @@ export const monster = (
   };
 };
 
-/** Hearts a lost strike costs (2026-10-25). Every class without the
- * strike's knack loses it, so it costs less than a rolled room. */
-export const STRIKE_HURT = [1, 1, 2] as const;
-
-/** A strike (owner, 2026-10-25: "simple is better"): a room with no roll.
- * It calls for a knack (`strikeKnacks` in `knacks.ts`): an adventurer with
- * it wins (the `advantage` line, and `loot`), one without it loses (the
- * `disadvantage` line, hearts, a curse or a jinx). The plain modes read the
- * `even` line and nothing is at stake. Since 2026-10-27 a strike is one line
- * like the League's: each of the three is the whole card, the face prints
- * the one that applies, and `rules` holds the `even` line. */
-export const strike = (
+/** A mishap (2026-10-31): a room with no roll and nothing at stake but
+ * its line, read as written in every mode. Pub Crawl's knack strikes became
+ * these when knacks were cut; each keeps the line it read for a class
+ * without the edge either way (its `even` line). */
+export const mishap = (
   floor: Floor,
   kind: "Monster" | "Trap",
   id: string,
   title: string,
-  lines: Strike,
+  line: string,
   more: Stakes = {},
 ): CardDefinition => ({
-  ...room(floor, kind, id, title, lines.even),
-  strike: lines,
-  damage: STRIKE_HURT[tier(floor)],
+  ...room(floor, kind, id, title, line),
   ...stakes(more),
 });
 
@@ -293,7 +280,7 @@ export const relic = (
   lose: string,
   win: string,
   labels: [string, string],
-  more: { loot: Loot; curse?: Curse; jinx?: Jinx },
+  more: { loot: Loot; jinx?: Jinx },
 ): CardDefinition => ({
   ...room(
     floor,
@@ -413,7 +400,7 @@ export type Spoils = [signature: Trinket, alternative: Trinket];
 
 /** A boss: dealt again, to the next drawer, until it has been beaten
  * `hits` times, then it offers its spoils. Last Call's bosses close both
- * third floors and drop nothing. A boss's curse lands on a missed swing
+ * third floors and drop nothing. A boss's jinx lands on a missed swing
  * and lifts when it falls. */
 export const boss = (
   floor: Floor,
@@ -421,7 +408,7 @@ export const boss = (
   title: string,
   rules: string,
   dice: DiceDefinition,
-  more: { curse?: Curse; jinx?: Jinx; drops?: Spoils } = {},
+  more: { jinx?: Jinx; drops?: Spoils } = {},
 ): CardDefinition => ({
   ...card(id, title, "challenge", rules, dice),
   ribbon: tier(floor) === 2 ? "Last Call · Boss" : `${FLOORS[floor]} · Boss`,
@@ -430,7 +417,6 @@ export const boss = (
   battle: true,
   hits: BOSS_HITS[tier(floor)],
   damage: BOSS_HURT[tier(floor)],
-  ...(more.curse ? { curse: more.curse } : {}),
   ...(more.jinx ? { jinx: more.jinx } : {}),
   ...(more.drops ? { spoils: more.drops } : {}),
 });
@@ -560,7 +546,7 @@ export const adventurer = (
   title: string,
   flavor: string,
   effect: OmenEffect,
-  levels: { title: string; omen: OmenEffect; tagline?: string }[],
+  levels: { title: string; omen: OmenEffect }[],
 ): CardDefinition => ({
   ...card(
     `class-${id}`,
@@ -574,7 +560,6 @@ export const adventurer = (
   ribbonTone: "pearl",
   encounter: "omen",
   omen: effect,
-  ...(levels.length === 4 ? { fork: true as const } : {}),
   evolves: levels.map((e) => ({
     ...e,
     rules: describeOmen(e.omen, dungeonOmenWords, PARTY_HEARTS, false),
@@ -654,7 +639,7 @@ export const closing = (
   title: string,
   rules: string,
   fight: Roll,
-  more: { curse?: Curse; jinx?: Jinx } = {},
+  more: { jinx?: Jinx } = {},
 ): CardDefinition => ({
   ...card(`closing-${id}`, title, "challenge", rules, fight(CLOSING_NEED)),
   ribbon: "Closing Time · Rival",
@@ -702,7 +687,7 @@ export const keeper = (
   title: string,
   rules: string,
   fight: Roll,
-  more: { curse?: Curse; jinx?: Jinx; drops: Spoils },
+  more: { jinx?: Jinx; drops: Spoils },
 ): CardDefinition => ({
   ...card(id, title, "challenge", rules, fight(KEEPER_NEED)),
   ribbon: `${room} · Boss`,
@@ -711,7 +696,6 @@ export const keeper = (
   battle: true,
   hits: 2,
   damage: KEEPER_HURT,
-  ...(more.curse ? { curse: more.curse } : {}),
   ...(more.jinx ? { jinx: more.jinx } : {}),
   spoils: more.drops,
 });

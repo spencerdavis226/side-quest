@@ -144,8 +144,9 @@ test("home has one How to play, for the mode chosen", async ({ page }) => {
   await page.locator(".quest-mode").filter({ hasText: "Pub Crawl" }).click();
   await page.getByRole("button", { name: /How to play/ }).click();
   guide = page.getByRole("dialog", { name: "How to play" });
-  // Powers and floor rules joined, the Quaff left (2026-10-25).
-  await expect(guide.locator(".guide-rows li")).toHaveCount(10);
+  // One row a system since 2026-10-31: hearts, fights, bosses, landings,
+  // the satchel and gear, jinxes.
+  await expect(guide.locator(".guide-rows li")).toHaveCount(6);
 });
 
 test("How to play explains every card from the pause menu", async ({

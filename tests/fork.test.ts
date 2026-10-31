@@ -16,21 +16,16 @@ import type {
   SessionState,
 } from "../src/game/types";
 
-// Starter evolution on a small crawl of its own: a starter omen with two
-// later forms, three evolution events and a boss.
+// The levelling fork was cut on 2026-10-31: a class has one line. A save
+// from before holds a forked adventurer (`fork`, four levels flat as
+// `[A1, B1, A2, B2]`); `retireSystems` keeps the path it is on.
 const card = cardFactory("fork");
 const starter: CardDefinition = {
   ...card("class", "Squire", "rule", "A squire."),
   encounter: "omen",
   omen: { hearts: 1 },
-  fork: true,
   evolves: [
-    {
-      title: "Knight",
-      rules: "Two more hearts.",
-      omen: { hearts: 2 },
-      tagline: "Tougher",
-    },
+    { title: "Knight", rules: "Two more hearts.", omen: { hearts: 2 } },
     {
       title: "Archer",
       rules: "Roll 2 more on monsters.",
@@ -93,71 +88,56 @@ const config: GameConfig = {
   quest: "fork",
 };
 const party = (s: SessionState) => s.quest!.party!;
-const roundTrip = (s: SessionState) =>
-  expect(parseSession(JSON.stringify(s))).toEqual(s);
 const atLanding = () =>
   advance(advance(advance(createSession(config, cards, [pack], () => 0.5))));
+/** A save as an old build wrote it: the adventurer forked, on `form`. */
+const oldSave = (s: SessionState, form: number) => {
+  const old = structuredClone(s) as SessionState & Record<string, never>;
+  const at = old.quest!.stages[0].cards[0] as unknown as Record<
+    string,
+    unknown
+  >;
+  at.fork = true;
+  if (form) old.quest!.party!.form = form;
+  return JSON.stringify(old);
+};
 
-// A forked adventurer (2026-10-25): the first level picks one of two paths,
-// and the second follows it.
-describe("forked levels", () => {
-  it("validates", () => {
-    expect(() => validateCatalog(cards, [pack])).not.toThrow();
-    const long = { ...starter.evolves![0], tagline: "x".repeat(29) };
-    expect(() =>
-      validateCatalog(
-        [{ ...starter, evolves: [long, ...starter.evolves!.slice(1)] }],
-        [],
-      ),
-    ).toThrow("Invalid evolves");
-    expect(() =>
-      validateCatalog([{ ...starter, branches: true }], []),
-    ).toThrow();
-    expect(() =>
-      validateCatalog(
-        [{ ...starter, evolves: starter.evolves!.slice(0, 2) }],
-        [],
-      ),
-    ).toThrow("Invalid evolves");
+describe("a forked adventurer from an old save", () => {
+  it("a class has one line now: four levels no longer validate", () => {
+    expect(() => validateCatalog(cards, [pack])).toThrow("Invalid evolves");
+    const line = { ...starter, evolves: starter.evolves!.slice(0, 2) };
+    expect(() => validateCatalog([line], [])).not.toThrow();
   });
-  it("picks a path, then follows it", () => {
-    let s = atLanding();
-    expect(omenForm(s.quest)).toMatchObject({
-      form: 0,
-      canEvolve: true,
-      branches: ["Knight", "Archer"],
-      taglines: ["Tougher", ""],
-      next: null,
-    });
-    // An out-of-range pick is refused.
-    expect(takeOffer(s, 0, () => 0.5, 2)).toBe(s);
-    s = takeOffer(s, 0, () => 0.5, 1);
-    // Effects replace each other: the Archer has no hearts, so one is lost.
-    expect(party(s)).toMatchObject({ form: 2, max: 10 });
-    roundTrip(s);
-    s = advance(s);
-    expect(omenForm(s.quest)).toMatchObject({
-      form: 2,
+  it("keeps the path it is on", () => {
+    const s = atLanding();
+    // Path B's first level (form 2) becomes form 1 of the line B1, B2.
+    const b = parseSession(oldSave(s, 2));
+    const card = b.quest!.stages[0].cards[0];
+    expect(card.evolves!.map((e) => e.title)).toEqual(["Archer", "Sniper"]);
+    expect(party(b).form).toBe(1);
+    expect(omenForm(b.quest)).toMatchObject({
       title: "Archer",
+      next: "Sniper",
       canEvolve: true,
       branches: null,
-      next: "Sniper",
-      line: ["Squire", "Archer", "Sniper"],
     });
-    s = takeOffer(s, 0);
-    expect(party(s)).toMatchObject({ form: 4, max: 10 });
-    expect(omenEffect(s.quest)!.roll).toEqual({ monster: 3 });
-    expect(omenForm(s.quest)).toMatchObject({
+    expect(omenEffect(b.quest)!.roll).toEqual({ monster: 2 });
+    // Path A's second level (form 3): fully levelled.
+    const a = parseSession(oldSave(s, 3));
+    expect(party(a).form).toBe(2);
+    expect(omenForm(a.quest)).toMatchObject({
+      title: "Paladin",
       canEvolve: false,
-      title: "Sniper",
-      before: { roll: { monster: 2 } },
     });
-    roundTrip(s);
   });
-  it("the other path", () => {
-    let s = takeOffer(atLanding(), 0, () => 0.5, 0);
-    s = takeOffer(advance(s), 0);
-    expect(party(s)).toMatchObject({ form: 3, max: 13 });
-    expect(omenForm(s.quest)!.title).toBe("Paladin");
+  it("one not yet levelled keeps its first path and levels down it", () => {
+    let s = parseSession(oldSave(atLanding(), 0));
+    expect(s.quest!.stages[0].cards[0].evolves!.map((e) => e.title)).toEqual([
+      "Knight",
+      "Paladin",
+    ]);
+    s = takeOffer(s, 0);
+    expect(party(s)).toMatchObject({ form: 1, max: 12 });
+    expect(parseSession(JSON.stringify(s))).toEqual(s);
   });
 });

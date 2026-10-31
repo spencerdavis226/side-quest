@@ -28,8 +28,6 @@ import {
   awaitingSpoils,
   partyBoons,
   replaces,
-  stageRule,
-  strikeOutcome,
   thrownBall,
 } from "../src/game/engine";
 import { nextMove, seeded } from "./table-play";
@@ -102,9 +100,9 @@ const situations: [string, GameConfig, Find][] = [
     (s) => party(s).hits > 0 && isBossCard(currentCard(s)),
   ],
   [
-    "league-bag-and-status",
+    "league-bag-of-two",
     league,
-    (s) => !!party(s).curse && party(s).loot.length >= 2,
+    (s) => party(s).loot.length >= 2 && s.phase === "hidden",
   ],
   [
     "league-hall-of-fame",
@@ -134,16 +132,14 @@ const situations: [string, GameConfig, Find][] = [
         (cardMatchup(s.quest, currentCard(s))?.edge ?? "even") === edge,
     ],
   ),
-  // A Tera Orb spent on the battle face up, before its roll or verdict.
-  ["league-terastallized", league, (s) => !!party(s).tera],
   [
     "crawl-boons-and-jinx",
     crawl,
     (s) => (party(s).boons?.length ?? 0) >= 2 && !!party(s).jinx,
   ],
-  // New runs have no Quaff and no curses since 2026-10-25 (powers and
-  // jinxes took their places); their 2026-10-18 and 2026-10-25 fixtures
-  // stay and keep loading.
+  // Systems new runs no longer reach keep their earlier fixtures, which
+  // must keep loading: the Quaff and curses (2026-10-25); powers, knacks,
+  // floor rules, the Cup, the Tera Orb and forked levels (2026-10-31).
   ["crawl-pressing-luck", crawl, (s) => (party(s).press ?? 0) >= 1],
   [
     "crawl-boss-mid-fight",
@@ -151,30 +147,15 @@ const situations: [string, GameConfig, Find][] = [
     (s) => party(s).hits > 0 && isBossCard(currentCard(s)),
   ],
 
-  // Forked levels (2026-10-25): a class on its second path, then at its
-  // second level; and the Quarter-Zips on the stairs.
-  [
-    "crawl-second-path",
-    crawl,
-    (s) => party(s).form === 2 && s.phase === "hidden",
-  ],
-  ["crawl-second-level", crawl, (s) => (party(s).form ?? 0) >= 3],
+  // A class at its last level (one line since 2026-10-31); and the
+  // Quarter-Zips on the stairs.
+  ["crawl-last-level", crawl, (s) => (party(s).form ?? 0) >= 2],
   [
     "crawl-rival-on-the-stairs",
     crawl,
     (s) =>
       s.phase === "revealed" && currentCard(s).id.startsWith("dungeon.stairs-"),
   ],
-  // Pub Crawl strikes (2026-10-25): a room with no roll, face up, settled
-  // by the class's knack each way.
-  ...(["won", "lost"] as const).map((outcome): [string, GameConfig, Find] => [
-    `crawl-strike-${outcome}`,
-    crawl,
-    (s) =>
-      s.phase === "revealed" &&
-      !!currentCard(s).strike &&
-      strikeOutcome(s.quest, currentCard(s)) === outcome,
-  ]),
   // Equipment (2026-10-25): gear worn in two slots, and spoils waiting that
   // would replace a piece.
   [
@@ -199,22 +180,8 @@ const situations: [string, GameConfig, Find][] = [
       awaitingSpoils(s) &&
       currentCard(s).spoils!.some((b) => replaces(s.quest, b).length > 0),
   ],
-  // A knack (2026-10-25): a room rolled with the edge for the class.
-  ["crawl-knack-roll", crawl, (s) => !!s.roll?.edge && !s.roll.returned],
-  // The 2026-10-25 overhaul: a power armed on the card face up and spent;
-  // a boss on a later beat, as a duel, and as the beat Previous Card
-  // shows; a floor's rule bending a roll; the League's catch, a Champion's
-  // ace, a route's rule and a starter's move.
-  [
-    "crawl-power-armed",
-    crawl,
-    (s) => !!party(s).armed && s.phase === "revealed",
-  ],
-  [
-    "crawl-power-spent",
-    crawl,
-    (s) => (party(s).powers ?? 0) >= 1 && s.phase === "hidden",
-  ],
+  // The 2026-10-25 overhaul: a boss on a later beat, as a duel, and as the
+  // beat Previous Card shows; the League's catch and a Champion's ace.
   [
     "crawl-boss-duel-beat",
     crawl,
@@ -230,11 +197,6 @@ const situations: [string, GameConfig, Find][] = [
     (s) => party(s).beat !== undefined && s.phase === "hidden",
   ],
   [
-    "crawl-floor-rule-roll",
-    crawl,
-    (s) => !!stageRule(s.quest) && !!s.roll && !s.roll.returned,
-  ],
-  [
     "league-catch-beat",
     league,
     (s) =>
@@ -248,11 +210,6 @@ const situations: [string, GameConfig, Find][] = [
     (s) =>
       party(s).hits >= 2 &&
       currentCard(s).id.startsWith("pokemon.league-champion-"),
-  ],
-  [
-    "league-move-spent",
-    league,
-    (s) => (party(s).powers ?? 0) >= 1 && s.phase === "revealed",
   ],
   // The League's team and gym aces (2026-10-25).
   ["league-catch-waiting", league, (s) => awaitingCatch(s)],

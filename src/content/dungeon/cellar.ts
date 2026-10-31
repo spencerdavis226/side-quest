@@ -8,7 +8,7 @@ import {
   monster,
   relic,
   shrine,
-  strike,
+  mishap,
   trap,
   treasure,
   trial,
@@ -60,20 +60,20 @@ export const cellar: FloorCards = {
       "He passes out on you. Loot his pockets. Give 2.",
       { loot: "smoke" },
     ),
-    strike(0, "Monster", "skeleton-barback", "Skeleton Barback", {
-      even: "Skeleton Barback restocks limes since 1974. He hands you a dry one. Drink 2.",
-      advantage:
-        "Skeleton Barback has restocked limes since 1974. Ask nicely: a perfect one. Give 3, with a lime.",
-      disadvantage:
-        "Skeleton Barback has restocked limes since 1974, and throws one at your eye. Drink 3.",
-    }),
-    strike(0, "Monster", "possessed-mop", "Possessed Mop", {
-      even: "A possessed mop comes for your shoes and mops your feet. Drink 2 and lift them.",
-      advantage:
-        "A possessed mop comes for your shoes. You snap the handle. Give 3.",
-      disadvantage:
-        "A possessed mop comes for your shoes and mops your face. Drink 3.",
-    }),
+    mishap(
+      0,
+      "Monster",
+      "skeleton-barback",
+      "Skeleton Barback",
+      "Skeleton Barback restocks limes since 1974. He hands you a dry one. Drink 2.",
+    ),
+    mishap(
+      0,
+      "Monster",
+      "possessed-mop",
+      "Possessed Mop",
+      "A possessed mop comes for your shoes and mops your feet. Drink 2 and lift them.",
+    ),
     monster(
       0,
       "keg-spider",
@@ -105,13 +105,13 @@ export const cellar: FloorCards = {
         },
       },
     ),
-    strike(0, "Monster", "cask-bat", "Cask Bat", {
-      even: "A bat in the empty cask hates the lights and flaps past your ear. Drink 2.",
-      advantage:
-        "A bat in the empty cask hates the lights. You shoo it into a bucket. Give 3.",
-      disadvantage:
-        "A bat in the empty cask hates the lights and gets tangled in your hair. Drink 3.",
-    }),
+    mishap(
+      0,
+      "Monster",
+      "cask-bat",
+      "Cask Bat",
+      "A bat in the empty cask hates the lights and flaps past your ear. Drink 2.",
+    ),
     trial(
       0,
       "clipboard-troll",
@@ -160,18 +160,12 @@ export const cellar: FloorCards = {
       "Flattened. Drink 3.",
       "You dive clear. Give 2.",
     ),
-    strike(
+    mishap(
       0,
       "Trap",
       "falling-taps",
       "Loose Tap Handles",
-      {
-        even: "A rack of novelty tap handles sways overhead and a foam one bonks you. Drink 2.",
-        advantage:
-          "A rack of tap handles sways overhead. You dodge, then catch the shark. Give 2.",
-        disadvantage:
-          "A rack of tap handles sways overhead and a plastic shark hits your skull. Drink 3.",
-      },
+      "A rack of novelty tap handles sways overhead and a foam one bonks you. Drink 2.",
       {
         jinx: {
           name: "Thumb Master",
@@ -196,13 +190,13 @@ export const cellar: FloorCards = {
       "You heckle them offstage. Give 2.",
     ),
     // More of the Cellar (2026-10-25).
-    strike(0, "Monster", "fryer-oil-ooze", "Fryer Oil Ooze", {
-      even: "Twenty years of fryer oil got up and walked. It slicks your shoes. Drink 2.",
-      advantage:
-        "Fryer oil got up and walked. A spell and a pinch of salt, and it shrivels. Give 3.",
-      disadvantage:
-        "Fryer oil got up and walked, then hugs you. Drink 3 and wipe your hands on your jeans.",
-    }),
+    mishap(
+      0,
+      "Monster",
+      "fryer-oil-ooze",
+      "Fryer Oil Ooze",
+      "Twenty years of fryer oil got up and walked. It slicks your shoes. Drink 2.",
+    ),
     monster(
       0,
       "barback-poltergeist",
@@ -211,13 +205,13 @@ export const cellar: FloorCards = {
       "The tower falls. Drink 3.",
       "You tip him a coin and he floats off. Give 3.",
     ),
-    strike(0, "Monster", "cobweb-bartender", "Cobweb Bartender", {
-      even: "A cobweb bartender slides you something cloudy. You sip it anyway. Drink 2.",
-      advantage:
-        "A cobweb bartender slides you something cloudy. You bless the glass and it clears. Give 3.",
-      disadvantage:
-        "A cobweb bartender slides you something cloudy. It's mostly spider. Drink 3 and shiver.",
-    }),
+    mishap(
+      0,
+      "Monster",
+      "cobweb-bartender",
+      "Cobweb Bartender",
+      "A cobweb bartender slides you something cloudy. You sip it anyway. Drink 2.",
+    ),
     trial(
       0,
       "low-beam",
@@ -470,7 +464,6 @@ export const cellar: FloorCards = {
         { fumble: "Evicted. Finish your drink." },
       ),
       {
-        curse: "hex",
         drops: [
           trinket("The Master Key", { roll: { relic: 3 } }),
           trinket("Eviction Notice", { hurt: { monster: -1 } }),
@@ -507,7 +500,6 @@ export const cellar: FloorCards = {
         { fumble: "You join the chord. Hum for 10 seconds, then drink 8." },
       ),
       {
-        curse: "bleed",
         drops: [
           trinket("Organ Stop", { hurt: { monster: -1 } }),
           trinket("Pipe Whistle", { roll: { ambush: 2 }, loot: ["smoke"] }),

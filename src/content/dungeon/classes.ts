@@ -5,15 +5,13 @@ import { adventurer } from "./shared";
 // League's starters done as a dungeon party). Each has one signature you
 // feel on the dice or in the satchel, and levels up twice, at a landing for
 // drinks or with a Dog-Eared Tome, each level a change the level-up banner
-// can name. Since 2026-10-25 every class forks: its first level up picks one
-// of two paths (`[A1, B1, A2, B2]`), each with a tagline for its plaque, and
-// the second follows that path. Path A is the class's original line; path B
-// a sidegrade. The Drunken Monk is bad until it isn't. Three joke classes
-// (the Plus-One, the Intern and the Mimic, owner 2026-10-25: "intentionally
-// bad", humor first) are the worst by design, and both their paths make
-// them worse in a different way, so the table picks its poison (or rests
-// instead). Powers are written from the numbers, so the flavor here is only
-// the first sentence. Check every class's own win rate in
+// can name. The second level follows the first: one line, no paths (the
+// two-path fork was cut 2026-10-31, keeping each class's original line). The
+// Drunken Monk is bad until it isn't. Three joke classes (the Plus-One, the
+// Intern and the Mimic, owner 2026-10-25: "intentionally bad", humor first)
+// are the worst by design, and levelling makes them worse, so the table
+// rests instead. Perks are written from the numbers, so the flavor here is
+// only the first sentence. Check every class's own win rate in
 // `tests/dungeon.balance.test.ts`.
 
 export const classes: CardDefinition[] = [
@@ -26,23 +24,11 @@ export const classes: CardDefinition[] = [
     [
       {
         title: "Berserker",
-        tagline: "Hits bosses and elites",
         omen: { hearts: 2, roll: { boss: 2, elite: 2 }, hurt: { trap: 1 } },
       },
       {
-        title: "Brute",
-        tagline: "Big, dumb, hard to kill",
-        omen: { hearts: 4, roll: { boss: 1 }, hurt: { trap: 1 } },
-      },
-      {
         title: "Warlord",
-        tagline: "Bosses fear the Warlord",
         omen: { hearts: 3, roll: { boss: 3, elite: 2 } },
-      },
-      {
-        title: "Juggernaut",
-        tagline: "Walks through walls",
-        omen: { hearts: 5, roll: { boss: 1 } },
       },
     ],
   ),
@@ -55,7 +41,6 @@ export const classes: CardDefinition[] = [
     [
       {
         title: "Cutpurse",
-        tagline: "Picks pockets and locks",
         omen: {
           satchel: 4,
           loot: ["smoke"],
@@ -63,19 +48,8 @@ export const classes: CardDefinition[] = [
         },
       },
       {
-        title: "Card Sharp",
-        tagline: "Loves a gamble",
-        omen: { satchel: 4, roll: { trap: 2, relic: 3 }, crit: 19 },
-      },
-      {
         title: "Shadow",
-        tagline: "Unseen, unbothered",
         omen: { satchel: 5, roll: { trap: 3, relic: 3, monster: 2 } },
-      },
-      {
-        title: "High Roller",
-        tagline: "The house always loses",
-        omen: { satchel: 5, roll: { relic: 3, all: 1 }, crit: 19 },
       },
     ],
   ),
@@ -83,23 +57,11 @@ export const classes: CardDefinition[] = [
   adventurer("cleric", "Cleric", "Blesses every drink, loudly.", { heal: 1 }, [
     {
       title: "Priest",
-      tagline: "Brings a Revive",
       omen: { hearts: 1, heal: 1, loot: ["revive"] },
     },
     {
-      title: "Battle Priest",
-      tagline: "Heals and hits",
-      omen: { heal: 1, roll: { boss: 1 } },
-    },
-    {
       title: "High Priest",
-      tagline: "Every heal heals more",
       omen: { hearts: 2, heal: 2 },
-    },
-    {
-      title: "Inquisitor",
-      tagline: "Smites the wicked",
-      omen: { hearts: 1, heal: 1, roll: { boss: 2, ambush: 1 } },
     },
   ]),
   // Loaded dice, then one back whenever a boss falls; or smoke and mirrors.
@@ -111,28 +73,11 @@ export const classes: CardDefinition[] = [
     [
       {
         title: "Sorcerer",
-        tagline: "A loaded die every boss",
         omen: { hearts: -1, loot: ["die"], restock: "die" },
       },
       {
-        title: "Illusionist",
-        tagline: "Never where you swung",
-        omen: { hearts: -1, loot: ["smoke", "smoke"], restock: "smoke" },
-      },
-      {
         title: "Archmage",
-        tagline: "Every roll a little better",
         omen: { roll: { all: 1 }, restock: "die" },
-      },
-      {
-        title: "Grand Illusionist",
-        tagline: "Gone before the punch",
-        omen: {
-          hearts: 1,
-          satchel: 4,
-          roll: { ambush: 2 },
-          restock: "smoke",
-        },
       },
     ],
   ),
@@ -145,23 +90,11 @@ export const classes: CardDefinition[] = [
     [
       {
         title: "Minstrel",
-        tagline: "Even luckier",
         omen: { hearts: 1, crit: 18 },
       },
       {
-        title: "Hype Man",
-        tagline: "Keeps the party going",
-        omen: { hearts: 2, crit: 19, heal: 1 },
-      },
-      {
         title: "Rock Star",
-        tagline: "Luck and talent",
         omen: { hearts: 2, crit: 18, roll: { all: 1 } },
-      },
-      {
-        title: "Headliner",
-        tagline: "Sold-out show",
-        omen: { hearts: 3, crit: 19, heal: 1, roll: { boss: 1 } },
       },
     ],
   ),
@@ -174,27 +107,15 @@ export const classes: CardDefinition[] = [
     [
       {
         title: "Crusader",
-        tagline: "Bosses hurt less",
         omen: { hurt: { boss: -1 }, loot: ["shield"] },
       },
       {
-        title: "Oathbreaker",
-        tagline: "Broke the oath, hits harder",
-        omen: { hearts: -1, roll: { all: 1 }, loot: ["shield"] },
-      },
-      {
         title: "Templar",
-        tagline: "A shield every boss",
         omen: {
           hearts: 2,
           hurt: { boss: -1, ambush: -1 },
           restock: "shield",
         },
-      },
-      {
-        title: "Blackguard",
-        tagline: "All offense, no oath",
-        omen: { hearts: -1, roll: { all: 2 } },
       },
     ],
   ),
@@ -207,23 +128,11 @@ export const classes: CardDefinition[] = [
     [
       {
         title: "Tracker",
-        tagline: "Hunts monsters and ambushes",
         omen: { roll: { monster: 2, ambush: 2 } },
       },
       {
-        title: "Sharpshooter",
-        tagline: "Calls the shot",
-        omen: { roll: { monster: 1, boss: 1 }, crit: 19 },
-      },
-      {
         title: "Beastmaster",
-        tagline: "The whole pack hunts",
         omen: { hearts: 2, roll: { monster: 3, ambush: 2 } },
-      },
-      {
-        title: "Deadeye",
-        tagline: "Never misses a boss",
-        omen: { roll: { monster: 1, boss: 2 }, crit: 18 },
       },
     ],
   ),
@@ -236,23 +145,11 @@ export const classes: CardDefinition[] = [
     [
       {
         title: "Brawler",
-        tagline: "Drunk, and fighting",
         omen: { roll: { all: 1 } },
       },
       {
-        title: "Sober Monk",
-        tagline: "Quit drinking. Mostly.",
-        omen: { hearts: 2 },
-      },
-      {
         title: "Drunken Master",
-        tagline: "Drunk, and winning",
         omen: { hearts: 1, roll: { all: 2 }, crit: 19 },
-      },
-      {
-        title: "Zen Master",
-        tagline: "Feels nothing, heals plenty",
-        omen: { hearts: 3, heal: 1 },
       },
     ],
   ),
@@ -265,23 +162,11 @@ export const classes: CardDefinition[] = [
     [
       {
         title: "Bone Caller",
-        tagline: "Raises bones at bosses",
         omen: { hearts: -3, roll: { boss: 1 } },
       },
       {
-        title: "Plague Doctor",
-        tagline: "Weird mask, good meds",
-        omen: { hearts: -2, heal: 1 },
-      },
-      {
         title: "Lich",
-        tagline: "Cheats death again",
         omen: { hearts: -2, roll: { boss: 2 }, loot: ["revive"] },
-      },
-      {
-        title: "Plague Lord",
-        tagline: "Sick, and getting sicker",
-        omen: { hearts: -1, heal: 1, roll: { boss: 1 }, loot: ["revive"] },
       },
     ],
   ),
@@ -294,33 +179,11 @@ export const classes: CardDefinition[] = [
     [
       {
         title: "Apothecary",
-        tagline: "Better heals",
         omen: { hearts: 1, satchel: 4, heal: 1, loot: ["draught"] },
       },
       {
-        title: "Bombardier",
-        tagline: "Throws the flasks instead",
-        omen: {
-          hearts: 1,
-          satchel: 4,
-          roll: { monster: 1, ambush: 1 },
-          loot: ["smoke"],
-        },
-      },
-      {
         title: "Brewmaster",
-        tagline: "A fresh draught every boss",
         omen: { hearts: 2, satchel: 5, heal: 1, restock: "draught" },
-      },
-      {
-        title: "Demolitionist",
-        tagline: "Everything explodes",
-        omen: {
-          hearts: 1,
-          satchel: 4,
-          roll: { monster: 2, ambush: 2, boss: 1 },
-          restock: "smoke",
-        },
       },
     ],
   ),
@@ -333,23 +196,11 @@ export const classes: CardDefinition[] = [
     [
       {
         title: "Hexblade",
-        tagline: "Luckier, still fragile",
         omen: { hearts: -3, roll: { all: 2 }, crit: 19 },
       },
       {
-        title: "Pact Keeper",
-        tagline: "Renegotiated the deal",
-        omen: { hearts: -2, roll: { all: 2 }, heal: 1 },
-      },
-      {
         title: "Archfiend",
-        tagline: "All power, no hearts",
         omen: { hearts: -2, roll: { all: 3 }, crit: 19 },
-      },
-      {
-        title: "Soul Broker",
-        tagline: "Sells other people's souls",
-        omen: { hearts: -1, roll: { all: 2 }, heal: 1 },
       },
     ],
   ),
@@ -362,23 +213,11 @@ export const classes: CardDefinition[] = [
     [
       {
         title: "Security",
-        tagline: "Nobody gets past",
         omen: { hearts: 2, hurt: { ambush: -1 }, roll: { ambush: 1 } },
       },
       {
-        title: "Doorman",
-        tagline: "Holds the door, and a shield",
-        omen: { hearts: 2, hurt: { ambush: -1 }, loot: ["shield"] },
-      },
-      {
         title: "Head of Security",
-        tagline: "Throws out bosses too",
         omen: { hearts: 3, hurt: { ambush: -1 }, roll: { ambush: 2, boss: 1 } },
-      },
-      {
-        title: "The Velvet Rope",
-        tagline: "A shield every boss",
-        omen: { hearts: 2, hurt: { ambush: -1 }, restock: "shield" },
       },
     ],
   ),
@@ -391,23 +230,11 @@ export const classes: CardDefinition[] = [
     [
       {
         title: "Mixologist",
-        tagline: "Fancy drinks, better heals",
         omen: { hearts: 1, satchel: 4, heal: 1, loot: ["draught"] },
       },
       {
-        title: "Bar Manager",
-        tagline: "Puts it on someone's tab",
-        omen: { hearts: 2, satchel: 4, loot: ["round", "round"] },
-      },
-      {
         title: "Master Mixologist",
-        tagline: "A fresh draught every boss",
         omen: { hearts: 1, satchel: 4, heal: 1, restock: "draught" },
-      },
-      {
-        title: "Bar Owner",
-        tagline: "Runs the tab, and the place",
-        omen: { hearts: 2, satchel: 5, restock: "round" },
       },
     ],
   ),
@@ -420,23 +247,11 @@ export const classes: CardDefinition[] = [
     [
       {
         title: "Bounty Hunter",
-        tagline: "Hunts the big ones",
         omen: { roll: { elite: 3, monster: 1, boss: 1 } },
       },
       {
-        title: "Bodyguard",
-        tagline: "Takes the hit for you",
-        omen: { hearts: 2, roll: { elite: 2 } },
-      },
-      {
         title: "Legend for Hire",
-        tagline: "Expensive, and worth it",
         omen: { hearts: 2, roll: { elite: 3, monster: 2, boss: 1 } },
-      },
-      {
-        title: "Champion",
-        tagline: "The table's champion",
-        omen: { hearts: 3, roll: { elite: 2 }, hurt: { boss: -1 } },
       },
     ],
   ),
@@ -449,23 +264,11 @@ export const classes: CardDefinition[] = [
     [
       {
         title: "Shapeshifter",
-        tagline: "Turns into a bear",
         omen: { hearts: 1, roll: { trap: 2, monster: 1, ambush: 1 } },
       },
       {
-        title: "Hedge Witch",
-        tagline: "Herbal remedies",
-        omen: { hearts: 1, roll: { trap: 2 }, heal: 1, loot: ["draught"] },
-      },
-      {
         title: "Archdruid",
-        tagline: "Stays a bear",
         omen: { hearts: 2, roll: { trap: 2, monster: 2, ambush: 2 } },
-      },
-      {
-        title: "Grove Keeper",
-        tagline: "A fresh draught every boss",
-        omen: { hearts: 2, roll: { trap: 2 }, heal: 1, restock: "draught" },
       },
     ],
   ),
@@ -480,28 +283,11 @@ export const classes: CardDefinition[] = [
     [
       {
         title: "The Plus-Two",
-        tagline: "Brought a friend. Why?",
         omen: { hearts: -4, roll: { boss: -1 }, reroll20: true, satchel: 2 },
       },
       {
-        title: "The Ex",
-        tagline: "It's awkward now",
-        omen: {
-          hearts: -3,
-          roll: { boss: -1 },
-          hurt: { ambush: 1 },
-          reroll20: true,
-        },
-      },
-      {
         title: "The Plus-Three",
-        tagline: "Their friend brought one",
         omen: { hearts: -5, roll: { boss: -2 }, reroll20: true, satchel: 1 },
-      },
-      {
-        title: "The Ex's New Partner",
-        tagline: "Really nice, sadly",
-        omen: { hearts: -4, roll: { all: -1 }, reroll20: true },
       },
     ],
   ),
@@ -514,23 +300,11 @@ export const classes: CardDefinition[] = [
     [
       {
         title: "Senior Intern",
-        tagline: "Two years, still unpaid",
         omen: { hearts: -2, satchel: 1, fumble: 3 },
       },
       {
-        title: "Coffee Runner",
-        tagline: "Fetches coffee, spills it",
-        omen: { hearts: -3, satchel: 2, loot: ["draught"], fumble: 2 },
-      },
-      {
         title: "Middle Manager",
-        tagline: "Schedules a follow-up",
         omen: { hearts: -2, satchel: 1, fumble: 3, bossHits: 1 },
-      },
-      {
-        title: "LinkedIn Guru",
-        tagline: "Thrilled to announce",
-        omen: { hearts: -3, satchel: 2, roll: { all: -1 }, reroll20: true },
       },
     ],
   ),
@@ -544,29 +318,11 @@ export const classes: CardDefinition[] = [
     [
       {
         title: "Bigger Chest",
-        tagline: "More room, less everything",
         omen: { hearts: -5, satchel: 5, roll: { all: -2 } },
       },
       {
-        title: "Self-Aware Chest",
-        tagline: "Has feelings now. Ow.",
-        omen: { hearts: -4, satchel: 4, roll: { all: -1 }, heal: -1 },
-      },
-      {
         title: "Storage Unit",
-        tagline: "Just a box now",
         omen: { hearts: -6, satchel: 5, roll: { all: -2 }, hurt: { trap: 1 } },
-      },
-      {
-        title: "Chest With Anxiety",
-        tagline: "Overthinks every roll",
-        omen: {
-          hearts: -4,
-          satchel: 3,
-          roll: { all: -1 },
-          heal: -1,
-          fumble: 2,
-        },
       },
     ],
   ),
