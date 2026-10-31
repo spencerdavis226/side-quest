@@ -332,8 +332,9 @@ describe("Pub Crawl", () => {
   });
 
   it("a boss is dealt again until it falls; then the jinx lifts, and it drops its trinket", () => {
-    let s = fromStep(start(), STEP.boss2);
-    s = deal(s, "dungeon.hangover-hydra");
+    // The jinx's card dealt earlier on the second floor, so it can hold.
+    let s = deal(fromStep(start(), STEP.floor2), "dungeon.leech-swarm");
+    s = deal(fromStep(s, STEP.boss2), "dungeon.hangover-hydra");
     s.quest!.party!.jinx = "dungeon.leech-swarm";
     s = fight(s, 2); // a miss
     expect(currentCard(s).id).toBe("dungeon.hangover-hydra");
@@ -407,7 +408,7 @@ describe("Pub Crawl", () => {
   });
 
   it("losing the last heart wipes the party and ends the game", () => {
-    let s = deal(start(), "dungeon.tab-goblin");
+    let s = deal(start(), "dungeon.keg-spider");
     s.quest!.party!.hearts = 1;
     s = fight(s, 1);
     expect(s.phase).toBe("complete");
@@ -875,7 +876,7 @@ describe("Pub Crawl", () => {
   });
 
   it("replay starts a fresh crawl, with an empty Cup", () => {
-    let s = fight(deal(start(), "dungeon.tab-goblin"), 1);
+    let s = fight(deal(start(), "dungeon.keg-spider"), 1);
     s = takeSpoils(
       fight(deal(fromStep(s, STEP.boss1), "dungeon.keg-golem"), 15),
       0,

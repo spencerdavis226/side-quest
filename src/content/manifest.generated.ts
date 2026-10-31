@@ -2045,6 +2045,7 @@ export const packs: PackDefinition[] = [
                   "dungeon.cellar-mystery-bottle",
                   "dungeon.cellar-spider-check",
                   "dungeon.cellar-dry-storage",
+                  "dungeon.cellar-last-glass",
                 ],
                 elite: [
                   "dungeon.grease-trap-horror",

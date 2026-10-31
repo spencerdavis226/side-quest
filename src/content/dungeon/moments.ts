@@ -34,6 +34,14 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
       "You find a crate of crackers. Everyone eats one or drinks 1.",
       1,
     ),
+    // An auction (2026-10-31, the variety pass).
+    moment(
+      0,
+      "cellar-last-glass",
+      "The Last Clean Glass",
+      "Bid sips for the last clean glass, clockwise, until everyone passes. Top bid drinks it and toasts.",
+      1,
+    ),
   ],
   wine: [
     moment(

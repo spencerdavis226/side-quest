@@ -26,27 +26,31 @@ export const cellar: FloorCards = {
       0,
       "gelatinous-shot",
       "Gelatinous Shot",
-      "A wobbling cube of jello shots. Something's floating in it. A tooth? Roll d20.",
+      "A wobbling cube of jello shots, a tooth floating in it. Hands behind your back. Roll d20.",
       "It engulfs you. Drink 3, no hands.",
       "You eat your way out. Give 3.",
-      { crit: "You eat the whole thing. Give 6." },
+      {
+        crit: "You eat the whole thing, tooth and all. Give 6.",
+        fumble: "You find the tooth. It's yours now. Drink 6, no hands.",
+      },
     ),
-    monster(
+    // A table duel since 2026-10-31 (the variety pass): the left neighbor
+    // plays the bouncer and calls it.
+    trial(
       0,
       "rat-trench-coat",
       "Rats in a Coat",
-      "Nine rats in a trench coat are trying to order a drink. Card them. Roll d20.",
-      "Their ID is better than yours. Drink 3.",
-      "Bounced. Give 3 to whoever looks most like a rat in a coat.",
+      "Nine rats in a coat get carded. Left neighbor bounces: talk your way in, 10 seconds. Out: drink 3.",
     ),
     monster(
       0,
       "mold-elemental",
       "Mold Elemental",
-      "The thing growing behind the ice machine has feelings and a mouth. Roll d20.",
+      "The thing behind the ice machine has feelings and a mouth. Hold your breath and roll d20.",
       "You breathe it in. Drink 3 and cough on your left neighbor.",
       "Bleach. So much bleach. Give 3.",
       {
+        crit: "It thanks you for the bleach. Everyone else holds their breath; first to gasp drinks 6.",
         fumble:
           "It moves into your lungs. Drink 6 and cough on both neighbors.",
       },
@@ -55,41 +59,49 @@ export const cellar: FloorCards = {
       0,
       "drunk-goblin",
       "Drunk Goblin",
-      "A goblin who's had nine. He wants to fight you, then hug you. Roll d20.",
+      "A goblin who's had nine. He wants to fight you, then hug you. Arms out, then roll d20.",
       "He wins both. Drink 3 and hug your right neighbor.",
       "He passes out on you. Loot his pockets. Give 2.",
-      { loot: "smoke" },
+      {
+        loot: "smoke",
+        crit: "He passes out, and his pockets are deep. Give 4, and everyone toasts the goblin.",
+        fumble:
+          "He hugs you and won't let go. Drink 6 with an arm around your right neighbor.",
+      },
     ),
     mishap(
       0,
       "Monster",
       "skeleton-barback",
       "Skeleton Barback",
-      "Skeleton Barback restocks limes since 1974. He hands you a dry one. Drink 2.",
+      "On three, everyone points at who looks like they work here since 1974. Most fingers: drink 2.",
     ),
     mishap(
       0,
       "Monster",
       "possessed-mop",
       "Possessed Mop",
-      "A possessed mop comes for your shoes and mops your feet. Drink 2 and lift them.",
+      "A possessed mop sweeps under the table. Last to lift both feet off the floor drinks 2.",
     ),
     monster(
       0,
       "keg-spider",
       "Keg Spider",
-      "Eight legs, eight beers, zero manners. Roll d20.",
+      "Eight legs, eight beers, zero manners. Wiggle eight fingers at it, then roll d20.",
       "Bitten. Drink 3, and do a spider walk to the fridge and back.",
       "Squished. Give 3.",
-      { crit: "Squished, and its web was full of coasters. Give 6." },
+      {
+        crit: "Squished, and its web was full of coasters. Give 6.",
+        fumble:
+          "It lays eggs in your drink. Drink 6, then spider-walk to the fridge and back.",
+      },
     ),
-    monster(
+    // A table duel since 2026-10-31 (the variety pass).
+    trial(
       0,
       "tab-goblin",
       "Tab Goblin",
-      "It's been putting drinks on your tab since 2019. Roll d20.",
-      "It collects. Drink 4.",
-      "You stiff it. Give 3 to whoever owes you money.",
+      "The Tab Goblin wants paying. Your right neighbor plays him: thumb war, best of three. Lose: drink 4.",
     ),
     monster(
       0,
@@ -105,13 +117,23 @@ export const cellar: FloorCards = {
         },
       },
     ),
-    mishap(
-      0,
-      "Monster",
-      "cask-bat",
-      "Cask Bat",
-      "A bat in the empty cask hates the lights and flaps past your ear. Drink 2.",
-    ),
+    // A hidden fuse since 2026-10-31 (the variety pass).
+    {
+      ...mishap(
+        0,
+        "Monster",
+        "cask-bat",
+        "Cask Bat",
+        "Light the fuse. Pass a beer clockwise, naming a beer as you pass. The bat hits whoever holds it.",
+      ),
+      timer: {
+        version: 1,
+        kind: "fuse",
+        min: 12,
+        max: 40,
+        end: "The bat swoops. Whoever is holding the beer drinks 3.",
+      },
+    },
     trial(
       0,
       "clipboard-troll",
@@ -143,6 +165,9 @@ export const cellar: FloorCards = {
       "Your shoes are glued to forty years of spilled lager. Roll d20 to pull free.",
       "You leave a shoe behind. Drink 2, and stay one shoe down until your next turn.",
       "You peel free. Give 2.",
+      {
+        crit: "You peel free and moonwalk. Everyone copies it; the worst moonwalk drinks 4.",
+      },
     ),
     trap(
       0,
@@ -185,18 +210,28 @@ export const cellar: FloorCards = {
       0,
       "rat-pack",
       "The Rat Pack",
-      "Three rats in fedoras, singing Sinatra, and they want your stool. Roll d20.",
+      "Three rats in fedoras sing Sinatra for your stool. Sing them a line back, then roll d20.",
       "They do it their way. Drink 2.",
       "You heckle them offstage. Give 2.",
     ),
     // More of the Cellar (2026-10-25).
-    mishap(
-      0,
-      "Monster",
-      "fryer-oil-ooze",
-      "Fryer Oil Ooze",
-      "Twenty years of fryer oil got up and walked. It slicks your shoes. Drink 2.",
-    ),
+    // Four seats, four dice since 2026-10-31 (the variety pass).
+    {
+      ...mishap(
+        0,
+        "Monster",
+        "fryer-oil-ooze",
+        "Fryer Oil Ooze",
+        "Twenty years of fryer oil got up and walked, and it slides clockwise from you. Roll four dice.",
+      ),
+      dice: {
+        version: 1,
+        count: 4,
+        sides: 6,
+        instruction:
+          "It slicks four seats. You drink {first}; the next three clockwise drink {second}, {third} and {fourth}.",
+      },
+    },
     monster(
       0,
       "barback-poltergeist",
@@ -205,13 +240,23 @@ export const cellar: FloorCards = {
       "The tower falls. Drink 3.",
       "You tip him a coin and he floats off. Give 3.",
     ),
-    mishap(
-      0,
-      "Monster",
-      "cobweb-bartender",
-      "Cobweb Bartender",
-      "A cobweb bartender slides you something cloudy. You sip it anyway. Drink 2.",
-    ),
+    // A secret on a clock since 2026-10-31 (the variety pass).
+    {
+      ...mishap(
+        0,
+        "Monster",
+        "cobweb-bartender",
+        "Cobweb Bartender",
+        "Read alone what he poured you, then start the clock and mime drinking it. The table guesses.",
+      ),
+      secret: "A PICKLEBACK.",
+      timer: {
+        version: 1,
+        kind: "countdown",
+        seconds: 45,
+        end: "Time. Someone guessed it? Give 3. Nobody did? Drink 3.",
+      },
+    },
     trial(
       0,
       "low-beam",
@@ -416,7 +461,7 @@ export const cellar: FloorCards = {
       0,
       "keg-golem",
       "Keg Golem",
-      "It's 800 pounds of lager and it's been tapped. Everyone drinks 1, then you roll d20.",
+      "800 pounds of tapped lager. Side bets: thumbs up or down on you; wrong bets drink 1. Roll d20.",
       d20(
         BOSS_NEED[0],
         "It sits on you. Drink 4.",
@@ -456,7 +501,7 @@ export const cellar: FloorCards = {
       0,
       "the-landlord",
       "The Landlord",
-      "He wants three months' rent and he's taking it out of your drink. Roll d20.",
+      "He wants three months' rent. Side bets: thumbs up or down on you; wrong bets drink 1. Roll d20.",
       d20(
         BOSS_NEED[0],
         "Late fee. Drink 4.",
@@ -474,7 +519,7 @@ export const cellar: FloorCards = {
       0,
       "big-cheese",
       "Big Cheese",
-      "A rat the size of a fridge, wearing a cheese wheel as armor. Roll d20.",
+      "A rat in cheese armor. Side bets: thumbs up or down on you; wrong bets drink 1. Roll d20.",
       d20(
         BOSS_NEED[0],
         "It sits on your snacks. Drink 4.",
