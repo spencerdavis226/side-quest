@@ -121,8 +121,6 @@ describe("the League's team", () => {
     expect(s.discarded).toBe(discarded + 1);
     expect(party(s).hearts).toBe(hearts);
     expect(party(s).team ?? []).toEqual([]);
-    expect(party(s).sent).toBeUndefined();
-    expect(party(s).tired).toBeUndefined();
     round(s);
   });
 
@@ -196,17 +194,14 @@ describe("the League's team", () => {
     round(less);
   });
 
-  it("keeps a save that rested a Pokémon valid when it is let go", () => {
-    let s = facing("pikachu", PIDGEY);
-    s = caught(s);
-    s = {
-      ...s,
-      quest: { ...s.quest!, party: { ...party(s), tired: [PIDGEY] } },
-    };
-    round(s);
-    const free = dropFromBag(s, { caught: PIDGEY });
-    expect(party(free).tired).toBeUndefined();
-    round(free);
+  it("loads a save that rested a Pokémon, and forgets the rest", () => {
+    const s = caught(facing("pikachu", PIDGEY));
+    const old = JSON.parse(JSON.stringify(s));
+    old.quest.party.tired = [PIDGEY];
+    old.quest.party.sent = PIDGEY;
+    const loaded = parseSession(JSON.stringify(old));
+    expect(loaded).toEqual(s);
+    round(dropFromBag(loaded, { caught: PIDGEY }));
   });
 
   it("adds a catch card's Pokémon to the team", () => {

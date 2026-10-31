@@ -20,16 +20,12 @@ import {
   awaitingPress,
   awaitingSpoils,
   awaitingVerdict,
-  canQuaff,
   canTakeOffer,
   canSendIn,
-  canUsePower,
   partyTeam,
-  powerSpoils,
   spoilsOnWin,
   currentCard,
   cardMatchup,
-  verdictShift,
   strikeOutcome,
   hitsNeeded,
   omenForm,
@@ -87,8 +83,6 @@ export function Play({
   onSettle,
   onSpend = () => {},
   onOffer = () => {},
-  onQuaff = () => {},
-  onPower = () => {},
   onCatch = () => {},
   onRelease = () => {},
   onSend = () => {},
@@ -110,8 +104,6 @@ export function Play({
   onSettle: (won: boolean, spoil?: number) => void;
   onSpend?: (item: Loot) => void;
   onOffer?: (index: number, branch?: number) => void;
-  onQuaff?: () => void;
-  onPower?: (spoil?: number) => void;
   onCatch?: () => void;
   onRelease?: () => void;
   onSend?: (id: string) => void;
@@ -145,10 +137,6 @@ export function Play({
   const sheet = !!spoils && sheetClosed !== session.discarded;
   // A push-your-luck win: cash out or go again.
   const press = !motion && awaitingPress(session);
-  // Pub Crawl's Quaff: drinks for another go at a lost roll.
-  const quaffable = !motion && canQuaff(session);
-  // The class's or starter's signature power (2026-10-25).
-  const powerable = !motion && canUsePower(session);
   // The League's team (2026-10-25): a beaten wild Pokémon to catch, and
   // teammates who can be sent in for this battle.
   const catching = !motion && awaitingCatch(session);
@@ -156,30 +144,14 @@ export function Play({
   const senders = motion
     ? []
     : partyTeam(session.quest).filter((m) => canSendIn(session, m.id));
-  // A win that fells a boss with spoils asks for the trinket first: Won on
-  // a plaque beat, or a power that wins it outright.
-  const [asking, setAsking] = useState<{
-    at: number;
-    by: "won" | "power";
-  } | null>(null);
-  const ask = asking?.at === session.discarded && !motion ? asking.by : null;
-  const onPowerPlaque = () =>
-    powerSpoils(session)
-      ? setAsking({ at: session.discarded, by: "power" })
-      : onPower();
+  // A win that fells a boss with spoils asks for the trinket first (Won on
+  // a plaque beat): the draw it was asked on.
+  const [asking, setAsking] = useState<number | null>(null);
+  const ask = asking === session.discarded && !motion;
   const crawl = crawlTheme(session.quest?.packId);
-  // Items, the power and send-ins: on the card's foot when a few short ones
-  // fit, otherwise behind one "Use" plaque and its sheet.
-  const extraList = buildExtras(session, crawl, {
-    items,
-    quaffable,
-    powerable,
-    senders,
-    onSpend,
-    onQuaff,
-    onPower: onPowerPlaque,
-    onSend,
-  });
+  // Items and send-ins: on the card's foot when a few short ones fit,
+  // otherwise behind one "Use" plaque and its sheet.
+  const extraList = buildExtras(crawl, { items, senders, onSpend, onSend });
   const layout = extrasLayout(extraList, !!verdict);
   const [using, setUsing] = useState<number | null>(null);
   const usingSheet = layout === "sheet" && using === session.discarded;
@@ -194,8 +166,7 @@ export function Play({
       />
     ) : null;
   // A branching starter's evolution splits into one plaque per form; a line
-  // names the form it brings next ("Ivysaur · drink 3"). A forked
-  // adventurer's paths carry their taglines (2026-10-25).
+  // names the form it brings next ("Ivysaur · drink 3").
   const form = omenForm(session.quest);
   const branches = form?.branches;
   const next = form?.next;
@@ -206,26 +177,12 @@ export function Play({
     ): {
       offer: Offer;
       i: number;
-      branch?: { name: string; index: number; tagline?: string };
+      branch?: { name: string; index: number };
     }[] =>
       offer.evolve && branches
-        ? branches.map((name, index) => ({
-            offer,
-            i,
-            branch: {
-              name,
-              index,
-              tagline: form?.taglines?.[index] || undefined,
-            },
-          }))
+        ? branches.map((name, index) => ({ offer, i, branch: { name, index } }))
         : offer.evolve && next
-          ? [
-              {
-                offer,
-                i,
-                branch: { name: next, index: 0, tagline: form?.nextTagline },
-              },
-            ]
+          ? [{ offer, i, branch: { name: next, index: 0 } }]
           : [{ offer, i, branch: undefined }],
   );
   // Secret and timed cards: plaques once the card has landed face up; a timed
@@ -425,7 +382,6 @@ export function Play({
                     hits={hitsNeeded(session.quest, card)}
                     crawl={crawl}
                     matchup={cardMatchup(session.quest, card)}
-                    shift={verdictShift(session.quest, card)}
                     strike={strikeOutcome(session.quest, card)}
                     ball={ball}
                   />
@@ -452,7 +408,7 @@ export function Play({
                 className="card-choice-option won"
                 onClick={() =>
                   spoilsOnWin(session)
-                    ? setAsking({ at: session.discarded, by: "won" })
+                    ? setAsking(session.discarded)
                     : onSettle(true)
                 }
               >
@@ -613,13 +569,11 @@ export function Play({
           theme={crawl}
           onTake={(i) => {
             setAsking(null);
-            if (ask === "won") onSettle(true, i);
-            else onPower(i);
+            onSettle(true, i);
           }}
           onKeep={() => {
             setAsking(null);
-            if (ask === "won") onSettle(true);
-            else onPower();
+            onSettle(true);
           }}
           onClose={() => setAsking(null)}
         />

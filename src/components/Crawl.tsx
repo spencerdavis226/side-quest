@@ -9,11 +9,9 @@ import { createPortal } from "react-dom";
 import type {
   Boon,
   CardDefinition,
-  Knack,
   Loot,
   Offer,
   PartyState,
-  Power,
   QuestState,
   SessionState,
   PokemonType,
@@ -22,7 +20,6 @@ import {
   type BagDrop,
   currentCard as currentCardOf,
   PRESS_STEP,
-  canQuaff,
   canUseLoot,
   cardMatchup,
   finaleCard,
@@ -30,20 +27,14 @@ import {
   hitsNeeded,
   isBossCard,
   isLasting,
-  knackEdge,
-  omenForm,
   catchReplaces,
-  partyPower,
   partyTeam,
-  powersLeft,
   questRecord,
   replaces,
   stageKind,
-  stageRule,
   wantedBoss,
 } from "../game/engine";
 import { asset } from "../presentation/theme";
-import { describeOmen } from "../game/omenText";
 import {
   crawlIconPath,
   crawlTheme,
@@ -144,13 +135,9 @@ export function crawlMeterLabel(quest: QuestState) {
   return [
     `${theme.words.Hearts}: ${party.hearts} of ${party.max}`,
     place.name,
-    party.curse && theme.curses[party.curse].name,
     party.loot.length &&
       `${theme.words.Satchel}: ${party.loot.map((l) => theme.loot[l].name).join(", ")}`,
     jinx && theme.words.jinx && `${theme.words.jinx.name}: ${jinx.name}`,
-    !!party.cup &&
-      theme.words.cup &&
-      `${theme.words.cup.name}: ${party.cup} ${party.cup === 1 ? "splash" : "splashes"}`,
   ]
     .filter(Boolean)
     .join(". ");
@@ -269,27 +256,12 @@ export function CrawlProgress({ quest }: { quest: QuestState }) {
 
 /** What the strip opens: the satchel, the League's badge case, or one thing
  * on the party, on its own. */
-export type StripDialog =
-  | "satchel"
-  | "badges"
-  | "quaff"
-  | "cup"
-  | "curse"
-  | "jinx"
-  | "matchup"
-  // Pub Crawl's knack on the fight face up (2026-10-25).
-  | "knack"
-  // The signature power, and the floor's or route's rule (2026-10-25).
-  | "power"
-  | "rule";
+export type StripDialog = "satchel" | "badges" | "jinx" | "matchup";
 
 /** The strip under the top row in a crawl (2026-10-17): what the table acts
- * on, each a chip that opens its own dialog. The satchel's slots show their
- * items; the League's badges fill a row; the Quaff lights while it can be
- * drunk; the Cup counts its splashes; a curse or a jinx names itself.
- * Reference only (2026-10-26, owner: too cluttered): the signature power
- * (its plaque is on the card whenever it can be used) and the floor's or
- * route's rule (its banner names it) live in the party dialog. */
+ * on, each a chip that opens its own dialog. The League's type edge on the
+ * battle face up; the satchel's items; the League's badges; a jinx names
+ * itself. */
 export function CrawlStrip({
   session,
   disabled,
@@ -305,7 +277,6 @@ export function CrawlStrip({
   const theme = crawlTheme(quest.packId);
   const { words } = theme;
   const jinx = party.jinx ? finaleCard(quest, party.jinx)?.jinx : undefined;
-  const quaffReady = party.quaff !== undefined && !party.quaffed;
   const locked = badgesLocked(session, theme);
   const caught = partyTeam(quest);
   const bagEmpty = !party.loot.length && !caught.length;
@@ -314,12 +285,6 @@ export function CrawlStrip({
   const matchup =
     session.phase === "revealed"
       ? cardMatchup(quest, currentCardOf(session))
-      : null;
-  // Pub Crawl's knack (2026-10-25): the same green arrows, with the knack's
-  // mark; never against the party, so never red.
-  const knack =
-    session.phase === "revealed" && !matchup?.edge
-      ? knackEdge(quest, currentCardOf(session))
       : null;
   const chip = (
     className: string,
@@ -344,41 +309,17 @@ export function CrawlStrip({
     </button>
   );
   return (
-    // A curse and a jinx together leave no room for their names: they keep
-    // their marks, and the effects dialog names them.
-    <div
-      className={`hud-strip${party.curse && jinx ? " tight" : ""}`}
-      role="group"
-      aria-label={words.party}
-    >
+    <div className="hud-strip" role="group" aria-label={words.party}>
       {matchup?.edge &&
         chip(
           `tag-edge edge-${matchup.edge}`,
-          `${matchup.tera ? "Terastallized: advantage" : matchup.teammate ? `${matchup.teammate} sent in: advantage` : matchup.edge === "advantage" ? "Type advantage" : "Type disadvantage"}`,
+          matchup.edge === "advantage" ? "Type advantage" : "Type disadvantage",
           "matchup",
           <>
             <EdgeMark edge={matchup.edge} />
             <span className="chip-name">
-              {matchup.tera
-                ? "Tera"
-                : matchup.teammate
-                  ? "Sent in"
-                  : matchup.edge === "advantage"
-                    ? "Strong"
-                    : "Weak"}
+              {matchup.edge === "advantage" ? "Strong" : "Weak"}
             </span>
-          </>,
-        )}
-      {knack &&
-        theme.knacks &&
-        chip(
-          "tag-edge edge-advantage tag-knack",
-          `Knack: ${theme.knacks[knack].name}, advantage`,
-          "knack",
-          <>
-            <EdgeMark edge="advantage" />
-            <CrawlIcon name={`knack-${knack}`} theme={theme} />
-            <span className="chip-name">{theme.knacks[knack].name}</span>
           </>,
         )}
       {chip(
@@ -414,36 +355,6 @@ export function CrawlStrip({
           </>,
           locked,
         )}
-      {words.quaff &&
-        party.quaff !== undefined &&
-        chip(
-          `tag-quaff${quaffReady ? " ready" : " spent"}`,
-          `${words.quaff}: ${quaffReady ? `ready, drink ${party.quaff} to reroll a lost d20` : "drunk, back when the boss falls"}`,
-          "quaff",
-          <CrawlIcon name="quaff" theme={theme} />,
-        )}
-      {words.cup &&
-        party.cup !== undefined &&
-        chip(
-          `tag-cup${party.cup ? "" : " empty"}`,
-          `${words.cup.name}: ${party.cup} ${party.cup === 1 ? "splash" : "splashes"}`,
-          "cup",
-          <>
-            <CrawlIcon name="cup" theme={theme} />
-            {/* Keyed by the count so each splash replays the tip. */}
-            <b key={party.cup}>{party.cup}</b>
-          </>,
-        )}
-      {party.curse &&
-        chip(
-          `tag-curse curse-${party.curse}`,
-          `${theme.curses[party.curse].name}: ${theme.curses[party.curse].does}`,
-          "curse",
-          <>
-            <CrawlIcon name={party.curse} theme={theme} />
-            <span className="chip-name">{theme.curses[party.curse].name}</span>
-          </>,
-        )}
       {jinx &&
         words.jinx &&
         chip(
@@ -461,14 +372,13 @@ export function CrawlStrip({
 
 /** What a card in a crawl puts on the line, as wax seals in the card's
  * foot. Every seal is the same pill: what can go wrong on the left (hearts
- * lost, a curse, and a boss's or ambush's swings), what it brings on the
+ * lost, a jinx, and a boss's or ambush's swings), what it brings on the
  * right (an item or hearts back), each marked − or +. */
 export function CardStakes({
   card,
   party,
   hits = 0,
   theme,
-  shift = 0,
   strike,
 }: {
   card: CardDefinition;
@@ -476,14 +386,12 @@ export function CardStakes({
   hits?: number;
   theme: CrawlTheme;
   /** A strike's matchup: it costs hearts only when it is lost (against the
-   * starter's type, or a Pub Crawl room whose knack the class lacks). */
+   * starter's type). */
   strike?: "advantage" | "disadvantage" | "even";
-  /** A League type edge on a plaque-settled fight: the loss moves by one. */
-  shift?: number;
 }) {
   const damage = card.strike
     ? strike === "disadvantage" && card.damage
-    : card.battle && card.damage && card.damage + shift;
+    : card.battle && card.damage;
   const gain = card.reward?.loot ?? (card.reward?.heal ? "heal" : null);
   // Tonight's omen is a boon too, but its card says so in words; a boss or
   // an elite offers its spoils.
@@ -494,9 +402,7 @@ export function CardStakes({
       : undefined;
   const jinx = card.jinx;
   const prizes = card.press?.prizes;
-  if (!damage && !gain && !card.curse && !hits && !trinket && !jinx && !prizes)
-    return null;
-  const bleed = party.curse === "bleed" ? 1 : 0;
+  if (!damage && !gain && !hits && !trinket && !jinx && !prizes) return null;
   const boss = isBossCard(card);
   return (
     <span className="card-stakes">
@@ -504,20 +410,12 @@ export function CardStakes({
         {damage ? (
           <span
             className="stake stake-loss"
-            aria-label={`${card.strike ? "Costs" : "Losing costs"} ${heartCount(theme, damage + bleed)}`}
+            aria-label={`${card.strike ? "Costs" : "Losing costs"} ${heartCount(theme, damage)}`}
           >
-            <b>−{damage + bleed}</b>
+            <b>−{damage}</b>
             <CrawlIcon name="heart" theme={theme} />
           </span>
         ) : null}
-        {card.curse && (
-          <span
-            className={`stake stake-curse curse-${card.curse}`}
-            aria-label={`${card.battle ? "Losing brings" : "Brings"} a ${theme.words.curse}: ${theme.curses[card.curse].name}`}
-          >
-            <CrawlIcon name={card.curse} theme={theme} />
-          </span>
-        )}
         {jinx && (
           <span
             className="stake stake-jinx"
@@ -605,9 +503,8 @@ export function OfferPlaque({
   can: boolean;
   onTake: (index: number, branch?: number) => void;
   theme: CrawlTheme;
-  /** One of a branching starter's forms, on its own evolve plaque, with a
-   * forked adventurer's tagline. */
-  branch?: { name: string; index: number; tagline?: string };
+  /** One of a branching starter's forms, on its own evolve plaque. */
+  branch?: { name: string; index: number };
 }) {
   // A branch plaque names its form, with its price ("drink 3") under the
   // name: four across leave no room for the whole label ("Evolve · drink 3"),
@@ -646,7 +543,7 @@ export function OfferPlaque({
       className={`card-choice-option offer-plaque ${offer.elite ? "offer-loud" : icon ? "offer-buy" : "offer-pass"}`}
       style={{ animationDelay: `${index * 70}ms` }}
       disabled={!can}
-      aria-label={`${branch ? `${branch.name}${branch.tagline ? `, ${branch.tagline}` : ""}${price ? ` · ${price}` : ""}` : offer.label}${offer.cost ? `, ${heartCount(theme, offer.cost)}` : ""}: ${brings}`}
+      aria-label={`${branch ? `${branch.name}${price ? ` · ${price}` : ""}` : offer.label}${offer.cost ? `, ${heartCount(theme, offer.cost)}` : ""}: ${brings}`}
       onClick={() => onTake(index, branch?.index)}
     >
       <span className="offer-goods" aria-hidden="true">
@@ -663,10 +560,6 @@ export function OfferPlaque({
       </span>
       <span className="offer-label">
         <span className="offer-name">{branch ? branch.name : offer.label}</span>
-        {/* A path's tagline sits between its name and its price. */}
-        {branch?.tagline && (
-          <small className="offer-price offer-tagline">{branch.tagline}</small>
-        )}
         {under && <small className="offer-price">{under}</small>}
       </span>
     </button>
@@ -674,10 +567,10 @@ export function OfferPlaque({
 }
 
 /** Items the party can use on the card in play, offered as plaques at the
- * card's foot: a Tera Orb or a smoke bomb before a fight, a loaded die after
- * a lost roll. The draught waits in the satchel (the meter). */
+ * card's foot: a smoke bomb before a fight, a loaded die after a lost roll.
+ * The draught waits in the satchel (the meter). */
 export function usableItems(s: SessionState): Loot[] {
-  return (["tera", "smoke", "die", "round"] as const).filter((item) =>
+  return (["smoke", "die", "round"] as const).filter((item) =>
     canUseLoot(s, item),
   );
 }
@@ -702,99 +595,11 @@ export function LootPlaque({
           ? theme.flee
           : item === "round"
             ? theme.pass
-            : item === "tera"
-              ? theme.tera
-              : theme.reroll}
+            : theme.reroll}
       </span>
     </button>
   );
 }
-
-/** The Quaff, beside Reroll on a lost roll: drinks for another go, once
- * until the next boss falls. */
-export function QuaffPlaque({
-  session,
-  onQuaff,
-  theme,
-}: {
-  session: SessionState;
-  onQuaff: () => void;
-  theme: CrawlTheme;
-}) {
-  const drinks = session.quest?.party?.quaff;
-  if (!theme.words.quaff || drinks === undefined || !canQuaff(session))
-    return null;
-  return (
-    <button
-      className="card-choice-option loot-plaque quaff-plaque"
-      aria-label={`${theme.words.quaff}: drink ${drinks} and roll again, once until the next boss falls`}
-      onClick={onQuaff}
-    >
-      <CrawlIcon name="quaff" theme={theme} />
-      <span className="offer-label">
-        <span className="offer-name">{theme.words.quaff}</span>
-        <small className="offer-price">drink {drinks} · reroll</small>
-      </span>
-    </button>
-  );
-}
-
-/** The class's or starter's signature power (2026-10-25), on a card it
- * helps: its name over what it does here. */
-export function PowerPlaque({
-  session,
-  onUse,
-  theme,
-}: {
-  session: SessionState;
-  onUse: () => void;
-  theme: CrawlTheme;
-}) {
-  const power = partyPower(session.quest);
-  if (!power) return null;
-  const card = currentCardOf(session);
-  const drinks = power.drinks ? `Drink ${power.drinks}: ` : "";
-  const does = power.kind === "edge" ? edgeOn(card).does : power.rules;
-  return (
-    <button
-      className={`card-choice-option loot-plaque power-plaque power-${power.kind}`}
-      aria-label={`${theme.words.power.name}, ${power.name}: ${drinks}${does}`}
-      onClick={onUse}
-    >
-      <CrawlIcon name="power" theme={theme} />
-      <span className="offer-label">
-        <span className="offer-name">{power.name}</span>
-        <small className="offer-price">
-          {power.drinks ? `drink ${power.drinks} · ` : ""}
-          {powerLine(power, card)}
-        </small>
-      </span>
-    </button>
-  );
-}
-/** What an edge does on this card: a strike has no roll, so it wins; a dice
- * fight rolls twice and keeps the best; a plaque fight softens a loss. */
-const edgeOn = (card: CardDefinition) =>
-  card.strike
-    ? { line: "Win it", does: "This strike is won outright." }
-    : card.dice
-      ? {
-          line: "Roll twice",
-          does: "Roll twice and keep the better roll this fight.",
-        }
-      : { line: "Softer loss", does: "A loss costs 1 less this fight." };
-
-/** A power's kind in one or two plain words, for its plaque. */
-const powerLine = (power: Power, card: CardDefinition) =>
-  ({
-    reroll: "Reroll",
-    spare: "Free loss",
-    edge: edgeOn(card).line,
-    double: "Double win",
-    win: "Win it",
-    heal: `Heal ${power.amount ?? 1}`,
-    flee: "Escape",
-  })[power.kind];
 
 /** Pokémon League (2026-10-25): a beaten wild Pokémon, caught for a drink
  * or let go. A full team names the teammate a catch lets go. */
@@ -878,7 +683,7 @@ export function SendInPlaque({
   );
 }
 
-/** One optional action on a card (an item, the power, a send-in), described
+/** One optional action on a card (an item, a send-in), described
  * once so it can sit on the card's foot or in the "Use" sheet. */
 export interface Extra extends ExtraShape {
   key: string;
@@ -892,25 +697,16 @@ export interface Extra extends ExtraShape {
 }
 
 export function buildExtras(
-  session: SessionState,
   theme: CrawlTheme,
   {
     items,
-    quaffable,
-    powerable,
     senders,
     onSpend,
-    onQuaff,
-    onPower,
     onSend,
   }: {
     items: readonly Loot[];
-    quaffable: boolean;
-    powerable: boolean;
     senders: readonly CardDefinition[];
     onSpend?: (item: Loot) => void;
-    onQuaff?: () => void;
-    onPower: () => void;
     onSend?: (id: string) => void;
   },
 ): Extra[] {
@@ -930,46 +726,6 @@ export function buildExtras(
       />
     ),
   }));
-  const drinks = session.quest?.party?.quaff;
-  if (quaffable && theme.words.quaff && drinks !== undefined)
-    out.push({
-      key: "quaff",
-      long: true,
-      name: theme.words.quaff,
-      does: `Drink ${drinks} and roll again, once until the next boss falls.`,
-      mark: <CrawlIcon name="quaff" theme={theme} />,
-      run: () => onQuaff?.(),
-      plaque: (
-        <QuaffPlaque
-          key="quaff"
-          session={session}
-          onQuaff={() => onQuaff?.()}
-          theme={theme}
-        />
-      ),
-    });
-  const power = powerable ? partyPower(session.quest) : null;
-  if (power)
-    out.push({
-      key: "power",
-      long: true,
-      name: power.name,
-      does: `${power.drinks ? `Drink ${power.drinks}: ` : ""}${
-        power.kind === "edge"
-          ? edgeOn(currentCardOf(session)).does
-          : power.rules
-      }`,
-      mark: <CrawlIcon name="power" theme={theme} />,
-      run: onPower,
-      plaque: (
-        <PowerPlaque
-          key="power"
-          session={session}
-          onUse={onPower}
-          theme={theme}
-        />
-      ),
-    });
   for (const member of senders)
     out.push({
       key: `send-${member.id}`,
@@ -1275,7 +1031,7 @@ function DropButton({
 }
 
 /** The run so far, for the satchel dialog and the end screens: the hearts,
- * the satchel (a draught can be drunk from here), the curse, and on the end
+ * the satchel (a draught can be drunk from here), a jinx, and on the end
  * screens each floor with its rooms faced and its boss. */
 export function CrawlRecord({
   record,
@@ -1288,26 +1044,19 @@ export function CrawlRecord({
   record: RunRecord;
   theme: CrawlTheme;
   session?: SessionState | null;
-  onUse?: (item: Loot, branch?: number) => void;
+  onUse?: (item: Loot) => void;
   /** Throw an item out, or let a caught Pokémon go (2026-10-27). */
   onDrop?: (drop: BagDrop) => void;
   /** In play, each dialog shows its own part: the party (hearts, the
    * adventurer or starter, boons), the satchel, the League's badges, or one
-   * thing on the party (the Quaff, the Cup, a curse, a jinx). The end
+   * thing on the party (a jinx, a type matchup). The end
    * screens show everything. */
   part?: RecordPart;
 }) {
   const show = (p: RecordPart) => !part || part === p;
   const party = record.party!;
-  // A forked adventurer still to pick a path (a Tome's two buttons).
-  const paths =
-    session && omenForm(session.quest)?.card.fork
-      ? omenForm(session.quest)?.branches
-      : null;
   const { words } = theme;
   const quest = session?.quest;
-  const power = partyPower(quest);
-  const rule = stageRule(quest);
   const team = partyTeam(quest);
   // The boss waiting at the bottom of this floor, while the run is on.
   const wanted =
@@ -1386,22 +1135,6 @@ export function CrawlRecord({
             <MatchupPanel matchup={m} card={card} starter={record.form.title} />
           ) : null;
         })()}
-      {part === "knack" &&
-        session &&
-        theme.knacks &&
-        (() => {
-          const card = currentCardOf(session);
-          const k = knackEdge(session.quest, card);
-          return k && record.form ? (
-            <KnackPanel
-              knack={k}
-              adventurer={record.form.title}
-              dice={!!card.dice}
-              strike={!!card.strike}
-              theme={theme}
-            />
-          ) : null;
-        })()}
       {ending && (
         <TrophyWall record={record} theme={theme} label={words.trophies!} />
       )}
@@ -1416,27 +1149,7 @@ export function CrawlRecord({
         />
       )}
       {show("party") && !ending && record.form && (
-        <FormPanel
-          form={record.form}
-          theme={theme}
-          knacks={record.form.card.knacks}
-        />
-      )}
-      {(show("party") || part === "power") && !ending && power && (
-        <p className={`crawl-power${powersLeft(quest) ? "" : " spent"}`}>
-          <CrawlIcon name="power" theme={theme} />
-          <strong>
-            {words.power.name}: {power.name}
-          </strong>
-          <span>
-            {power.drinks ? `Drink ${power.drinks}: ` : ""}
-            {power.rules}.{" "}
-            {(power.uses ?? 1) > 1
-              ? `Twice, ${words.power.lasts}`
-              : `Once, ${words.power.lasts}`}
-            . {powersLeft(quest) ? "Ready." : "Used."}
-          </span>
-        </p>
+        <FormPanel form={record.form} theme={theme} />
       )}
       {show("satchel") && !party.wiped && !record.won && team.length > 0 && (
         <ul className="crawl-boons crawl-team" aria-label="Caught Pokémon">
@@ -1459,21 +1172,6 @@ export function CrawlRecord({
             </li>
           ))}
         </ul>
-      )}
-      {(show("party") || part === "rule") && !ending && rule && (
-        <p className="crawl-curse crawl-rule">
-          <CrawlIcon name="rule" theme={theme} />
-          <strong>
-            {words.rule.name}: {rule.name}
-          </strong>
-          <span>
-            {rule.rule}
-            {rule.effect && theme.omenWords
-              ? ` ${describeOmen(rule.effect, theme.omenWords, 0)}`
-              : ""}{" "}
-            Lasts {words.rule.lasts}.
-          </span>
-        </p>
       )}
       {show("party") && !ending && record.boons.length > 0 && (
         <ul className="crawl-boons" aria-label={words.trinkets}>
@@ -1509,28 +1207,6 @@ export function CrawlRecord({
       {show("badges") && words.badgesNote && record.badges.of > 0 && (
         <p className="crawl-note">{words.badgesNote}</p>
       )}
-      {part === "quaff" && words.quaff && party.quaff !== undefined && (
-        <p className={`crawl-cup crawl-quaff${party.quaffed ? " spent" : ""}`}>
-          <CrawlIcon name="quaff" theme={theme} />
-          <strong>
-            {words.quaff}: {party.quaffed ? "drunk" : "ready"}
-          </strong>
-          <span>
-            {party.quaffed
-              ? "Back when the floor's boss falls."
-              : `Lost a d20? Drink ${party.quaff} to roll it again. Once per boss.`}
-          </span>
-        </p>
-      )}
-      {show("curse") && party.curse && (
-        <p className={`crawl-curse curse-${party.curse}`}>
-          <CrawlIcon name={party.curse} theme={theme} />
-          <strong>{theme.curses[party.curse].name}</strong>
-          <span>
-            {theme.curses[party.curse].does}, {words.curseLasts}
-          </span>
-        </p>
-      )}
       {show("jinx") && jinx && words.jinx && !record.won && !party.wiped && (
         <p className="crawl-curse crawl-jinx">
           <CrawlIcon name="jinx" theme={theme} />
@@ -1539,22 +1215,6 @@ export function CrawlRecord({
           </strong>
           <span>
             {jinx.rule} Lasts {words.jinx.lasts}.
-          </span>
-        </p>
-      )}
-      {show("cup") && party.cup !== undefined && words.cup && (
-        <p className="crawl-cup">
-          <CrawlIcon name="cup" theme={theme} />
-          <strong>
-            {words.cup.name}: {party.cup}{" "}
-            {party.cup === 1 ? "splash" : "splashes"}
-          </strong>
-          <span>
-            {record.won
-              ? words.cup.won
-              : party.wiped
-                ? words.cup.wiped
-                : `${words.cup.pour}. ${words.cup.won}`}
           </span>
         </p>
       )}
@@ -1583,28 +1243,11 @@ export function CrawlRecord({
                   <strong>{theme.loot[item].name}</strong>
                   <small>{theme.loot[item].does}</small>
                 </span>
-                {/* A Tome on a forked adventurer picks its path: one button
-                    a path, named for it (2026-10-25). */}
-                {usable &&
-                  (item === "candy" && paths ? (
-                    paths.map((name: string, b: number) => (
-                      <button
-                        key={name}
-                        className="satchel-use"
-                        aria-label={`${theme.eat}: ${name}`}
-                        onClick={() => onUse!(item, b)}
-                      >
-                        {name}
-                      </button>
-                    ))
-                  ) : (
-                    <button
-                      className="satchel-use"
-                      onClick={() => onUse!(item)}
-                    >
-                      {item === "candy" ? theme.eat : theme.drink}
-                    </button>
-                  ))}
+                {usable && (
+                  <button className="satchel-use" onClick={() => onUse!(item)}>
+                    {item === "candy" ? theme.eat : theme.drink}
+                  </button>
+                )}
                 {onDrop && (
                   <DropButton
                     verb="Drop"
@@ -1720,19 +1363,15 @@ function RunTab({
 }) {
   const party = record.party!;
   const form = record.form;
-  // The adventurer's line as it was taken: a forked class's path only.
-  const taken: string[] = [];
-  if (form) {
-    const { card } = form;
-    const levels = card.evolves ?? [];
-    const now = party.form ?? 0;
-    taken.push(card.title);
-    if (card.fork) {
-      const path = (now - 1) % 2;
-      if (now >= 1) taken.push(levels[path].title);
-      if (now >= 3) taken.push(levels[path + 2].title);
-    } else taken.push(...levels.slice(0, now).map((e) => e.title));
-  }
+  // The adventurer's line as far as it levelled.
+  const taken = form
+    ? [
+        form.card.title,
+        ...(form.card.evolves ?? [])
+          .slice(0, party.form ?? 0)
+          .map((e) => e.title),
+      ]
+    : [];
   // Tonight's omen is the one boon that is neither gear nor a trinket; a
   // class's starting gear (2026-10-25) comes from an omen card too.
   const omen = record.boons.find((b) => isOmenBoon(b));
@@ -1765,18 +1404,15 @@ function RunTab({
 }
 
 /** The starter or adventurer it is now (owner, 2026-10-17), with its
- * power. A League starter wears its type (2026-10-25: one for the run): the
+ * perk. A League starter wears its type (2026-10-25: one for the run): the
  * medallion, a tint, its type named under it, and the types it is strong
  * and weak against, so the table can plan ahead. */
 function FormPanel({
   form,
   theme,
-  knacks,
 }: {
   form: { title: string; rules: string; type?: PokemonType };
   theme: CrawlTheme;
-  /** A Pub Crawl adventurer's knacks (2026-10-25). */
-  knacks?: Knack[];
 }) {
   const type = theme.words.badges ? form.type : undefined;
   if (!type)
@@ -1785,18 +1421,6 @@ function FormPanel({
         <CrawlIcon name="adventurer" theme={theme} />
         <strong>{form.title}</strong>
         <span className="omen-rules">{form.rules}</span>
-        {theme.knacks && (
-          <small className="knack-chips">
-            {knacks?.length
-              ? knacks.map((k) => (
-                  <span key={k} className="knack-chip">
-                    <CrawlIcon name={`knack-${k}`} theme={theme} />
-                    {theme.knacks![k].name}
-                  </span>
-                ))
-              : "No knacks. Obviously."}
-          </small>
-        )}
       </p>
     );
   return (
@@ -1817,45 +1441,6 @@ function FormPanel({
   );
 }
 
-/** The strip's knack dialog (2026-10-25): which knack, and what it does
- * here. */
-function KnackPanel({
-  knack,
-  adventurer,
-  dice,
-  strike,
-  theme,
-}: {
-  knack: Knack;
-  adventurer: string;
-  dice: boolean;
-  /** A strike (2026-10-25): the knack wins it outright. */
-  strike: boolean;
-  theme: CrawlTheme;
-}) {
-  const { name, rooms } = theme.knacks![knack];
-  return (
-    <div className="knack-panel">
-      <span className="knack-medal" aria-hidden="true">
-        <CrawlIcon name={`knack-${knack}`} theme={theme} />
-      </span>
-      <strong>
-        {adventurer} has {name}
-      </strong>
-      <span>
-        {strike
-          ? "This fight is won outright, with no roll."
-          : dice
-            ? "This fight is rolled with double the dice, keeping the best."
-            : "Losing this fight costs a heart less."}
-      </span>
-      <small>
-        {name} is for {rooms}.
-      </small>
-    </div>
-  );
-}
-
 /** The seals a crawl card wears, and the standing d20 rule, explained: touch
  * has no hover, so the guide spells them out. */
 export function SealLegend({ theme }: { theme: CrawlTheme }) {
@@ -1868,14 +1453,6 @@ export function SealLegend({ theme }: { theme: CrawlTheme }) {
         </dt>
         <dd>{theme.legend[0]}</dd>
       </div>
-      {theme.legend[1] && (
-        <div>
-          <dt className="stake stake-curse curse-bleed">
-            <CrawlIcon name="bleed" theme={theme} />
-          </dt>
-          <dd>{theme.legend[1]}</dd>
-        </div>
-      )}
       <div>
         <dt className="stake stake-hits">
           <CrawlIcon name="boss" theme={theme} />
@@ -1884,14 +1461,14 @@ export function SealLegend({ theme }: { theme: CrawlTheme }) {
             <i />
           </span>
         </dt>
-        <dd>{theme.legend[2]}</dd>
+        <dd>{theme.legend[1]}</dd>
       </div>
       <div>
         <dt className="stake stake-loot">
           <b>+</b>
           <CrawlIcon name="die" theme={theme} />
         </dt>
-        <dd>{theme.legend[3]}</dd>
+        <dd>{theme.legend[2]}</dd>
       </div>
       {theme.legendMore?.trinket && (
         <div>

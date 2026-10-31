@@ -1,6 +1,6 @@
 import { writeFile } from "node:fs/promises";
 import { cards, packs } from "../src/content/catalog";
-import { finaleCardIds, questStages } from "../src/game/engine";
+import { finaleCardIds } from "../src/game/engine";
 import { diceNotation } from "../src/game/dice";
 import type { CardDefinition } from "../src/game/types";
 
@@ -37,15 +37,10 @@ const mechanicCell = (card: CardDefinition) => {
     card.secret ? `Secret: ${card.secret}` : "",
     t?.kind === "fuse" ? `Fuse ${t.min}–${t.max} s: ${t.end}` : "",
     t?.kind === "countdown" ? `Clock ${t.seconds} s: ${t.end}` : "",
-    // The crawls' extra copy (2026-10-25): a boss's later beats, a class's
-    // or starter's power line by line, a jinx.
+    // The crawls' extra copy (2026-10-25): a boss's later beats, a jinx.
     ...(card.phases ?? []).map(
       (p, i) =>
         `Beat ${i + 2}: ${p.rules}${p.dice ? ` (${diceCell({ ...card, dice: p.dice })})` : " (Won/Lost)"}`,
-    ),
-    card.power ? `Power: ${card.power.name} (${card.power.rules})` : "",
-    ...(card.evolves ?? []).flatMap((e) =>
-      e.power ? [`${e.title}'s power: ${e.power.name} (${e.power.rules})`] : [],
     ),
     card.jinx ? `Jinx ${card.jinx.name}: ${card.jinx.rule}` : "",
   ]
@@ -96,28 +91,6 @@ for (const pack of packs) {
     );
   md.push("");
 }
-
-// Floor and route rules (2026-10-25) belong to stages, not cards.
-const rules = packs.flatMap((pack) =>
-  pack.quest
-    ? questStages(pack.quest).flatMap((st) =>
-        st.rule && st.pick > 1
-          ? [{ pack: pack.title, stage: st.label, ...st.rule }]
-          : [],
-      )
-    : [],
-);
-if (rules.length)
-  md.push(
-    "## Floor and route rules",
-    "",
-    "| Review | Pack | Stage | Rule | Says |",
-    "| --- | --- | --- | --- | --- |",
-    ...rules.map(
-      (r) => `| ☐ | ${r.pack} | ${r.stage} | ${r.name} | ${r.rule} |`,
-    ),
-    "",
-  );
 
 md.push(
   "## Notes for review",

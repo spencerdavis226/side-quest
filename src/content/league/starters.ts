@@ -73,12 +73,12 @@ export const starters: CardDefinition[] = [
     crit: 19,
   }),
   // A big bag, and the table picks what it becomes. Adaptability: Normal
-  // never has the type edge, so it starts with a Tera Orb (2026-10-25).
+  // never has the type edge, so it starts with an X Attack.
   starter(
     "eevee",
     "Eevee",
     "Eevee chose you. The table picks its evolution.",
-    { hearts: -2, satchel: 4, loot: ["tera"] },
+    { hearts: -2, satchel: 4, loot: ["die"] },
     [
       { title: "Vaporeon", omen: { hearts: 3, satchel: 4, heal: 2 } },
       {
@@ -265,12 +265,12 @@ export const starters: CardDefinition[] = [
     "rowlet",
     "Rowlet",
     "Rowlet chose you, asleep.",
-    { hearts: 1, hurt: { trap: -1, relic: -1 }, roll: { monster: 1 } },
+    { hearts: 2, hurt: { trap: -1, relic: -1 }, roll: { monster: 1 } },
     [
       {
         title: "Dartrix",
         omen: {
-          hearts: 1,
+          hearts: 2,
           hurt: { trap: -1, relic: -1 },
           roll: { monster: 1 },
           loot: ["draught"],
@@ -279,7 +279,7 @@ export const starters: CardDefinition[] = [
       {
         title: "Decidueye",
         omen: {
-          hearts: 3,
+          hearts: 4,
           hurt: { trap: -1, relic: -1 },
           roll: { trap: 2, relic: 2, monster: 1 },
         },
@@ -439,16 +439,16 @@ export const starters: CardDefinition[] = [
       },
     ],
   ),
-  // Illusion: a Tera Orb, and Zoroark gets one back at every gym.
+  // Illusion: an Escape Rope, and Zoroark gets one back at every gym.
   starter(
     "zorua",
     "Zorua",
     "Zorua chose you, disguised as your ex.",
-    { hearts: 1, loot: ["tera"] },
+    { hearts: 1, loot: ["smoke"] },
     [
       {
         title: "Zoroark",
-        omen: { hearts: 2, loot: ["tera"], restock: "tera", crit: 19 },
+        omen: { hearts: 2, loot: ["smoke"], restock: "smoke", crit: 19 },
       },
     ],
   ),

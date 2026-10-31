@@ -6,14 +6,12 @@ import {
   currentCard,
   settleBattle,
   skipRoll,
-  quaff,
   catchIt,
   throwBall,
   letGo,
   sendIn,
   dropFromBag,
   type BagDrop,
-  spendPower,
   spendLoot,
   awaitingOffer,
   awaitingPress,
@@ -187,10 +185,10 @@ export class PresentationController {
   }
   /** Use a crawl item from the satchel. A smoke bomb puts the room aside;
    * a loaded die clears the lost roll so the card can be rolled again. */
-  spend(item: Loot, branch?: number) {
+  spend(item: Loot) {
     const { session, motion } = this.state;
     if (!session || motion) return;
-    const next = spendLoot(session, item, this.random, branch);
+    const next = spendLoot(session, item, this.random);
     if (next === session) return;
     this.persist(next);
     if (item === "smoke") {
@@ -248,33 +246,6 @@ export class PresentationController {
     this.persist(next);
     this.transition(next, "discard", session);
     this.effect("discard");
-  }
-  /** Quaff: the drawer drinks for another go at a lost roll, which clears
-   * it so the card can be rolled again. */
-  quaff() {
-    const { session, motion } = this.state;
-    if (!session || motion) return;
-    const next = quaff(session);
-    if (next === session) return;
-    this.persist(next);
-    this.transition(next, null);
-    this.effect("press");
-  }
-  /** The class's or starter's signature power (2026-10-25), on the card in
-   * play: a win or an escape puts it aside; anything else stays. */
-  power(spoil?: number) {
-    const { session, motion } = this.state;
-    if (!session || motion) return;
-    const next = spendPower(session, this.random, spoil);
-    if (next === session) return;
-    this.persist(next);
-    if (next.discarded !== session.discarded) {
-      this.transition(next, "discard", session);
-      this.effect("discard");
-    } else {
-      this.transition(next, null);
-      this.effect("press");
-    }
   }
   /** Pokémon League (2026-10-25): catch the wild Pokémon just beaten, or
    * let it go; either puts the card aside. */

@@ -41,7 +41,6 @@ export const hideouts = [
           disadvantage:
             "A Grunt sells twitching Slowpoke Tails and sells you two. Drink 5, slowly.",
         },
-        { curse: "bleed" },
       ),
       gruntStrike("Team Rocket", "rocket-grunt-spinner", "Spinner Tiles", {
         even: "A Grunt laughs as you spin on the spinner tiles. Dizzy. Drink 2.",
@@ -96,7 +95,7 @@ export const hideouts = [
           "Yours wins. Give 3.",
           "A pair! Everyone laughs evilly; the worst laugh drinks 3.",
         ),
-        { rank: "Admin", curse: "bleed" },
+        { rank: "Admin" },
       ),
     ],
     villain(
@@ -108,7 +107,6 @@ export const hideouts = [
         "Drought. Fan yourself, then drink 5.",
         "Groudon goes back to sleep. Give 4.",
       ),
-      "bleed",
     ),
   ),
   hideout(
@@ -139,7 +137,7 @@ export const hideouts = [
           "Asleep. Drink 3 with your eyes shut.",
           "Awake. Anyone who yawned drinks 2.",
         ),
-        { rank: "Admin", curse: "hex" },
+        { rank: "Admin" },
       ),
     ],
     villain(
@@ -190,7 +188,7 @@ export const hideouts = [
           disadvantage:
             "Charon the scientist points a ray gun at you and fires full blast. Drink 5.",
         },
-        { rank: "Scientist", curse: "hex" },
+        { rank: "Scientist" },
       ),
     ],
     villain(
@@ -202,7 +200,6 @@ export const hideouts = [
         "Feelings erased. Drink 5 without any expression.",
         "Cyrus flinches. The first player who smiled drinks 3.",
       ),
-      "hex",
     ),
   ),
   hideout(
@@ -252,7 +249,6 @@ export const hideouts = [
         "Worthless. Drink 5 and call yourself trash.",
         "His cape rips. Give 4.",
       ),
-      "bleed",
     ),
   ),
   hideout(
@@ -278,7 +274,7 @@ export const hideouts = [
           disadvantage:
             "A Flare scientist in orange goggles shows you a doomsday weapon. It works. Drink 5.",
         },
-        { rank: "Scientist", curse: "bleed" },
+        { rank: "Scientist" },
       ),
       grunt(
         "Team Flare",
@@ -340,7 +336,7 @@ export const hideouts = [
             "She joins your side. Give 4.",
           ],
         ),
-        { rank: "Admin", curse: "bleed" },
+        { rank: "Admin" },
       ),
     ],
     villain(
@@ -394,7 +390,7 @@ export const hideouts = [
           disadvantage:
             "Tower Security wants your ID badge and escorts you out. Drink 5.",
         },
-        { rank: "Security", curse: "hex" },
+        { rank: "Security" },
       ),
     ],
     villain(
@@ -407,7 +403,6 @@ export const hideouts = [
         "The lights stay on. Give 4.",
         "A pair! You pull his plug. Give {total}.",
       ),
-      "hex",
     ),
   ),
   hideout(
@@ -434,19 +429,13 @@ export const hideouts = [
         ),
         { rank: "Squad Boss" },
       ),
-      gruntStrike(
-        "Team Star",
-        "star-squad",
-        "Star Squad",
-        {
-          even: "Thirty grunts, thirty seconds, everyone points at you. You hold your ground. Drink 2.",
-          advantage:
-            "Thirty grunts, thirty seconds, everyone points at you. You point back. Give 3.",
-          disadvantage:
-            "Thirty grunts, thirty seconds, everyone points at you. They pounce. Drink 5.",
-        },
-        { curse: "bleed" },
-      ),
+      gruntStrike("Team Star", "star-squad", "Star Squad", {
+        even: "Thirty grunts, thirty seconds, everyone points at you. You hold your ground. Drink 2.",
+        advantage:
+          "Thirty grunts, thirty seconds, everyone points at you. You point back. Give 3.",
+        disadvantage:
+          "Thirty grunts, thirty seconds, everyone points at you. They pounce. Drink 5.",
+      }),
     ],
     villain(
       "Team Star",

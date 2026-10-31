@@ -4,19 +4,17 @@ import type {
   DiceRoll,
   Edge,
   GameConfig,
-  Knack,
   Loot,
   OmenEffect,
   PackDefinition,
   PackQuest,
   PartyState,
-  Power,
   QuestStage,
   QuestState,
   SessionState,
 } from "./types";
 import { rollWins } from "./dice";
-import { matchup, teraMatchup, type Matchup } from "./matchup";
+import { matchup, type Matchup } from "./matchup";
 export type Random = () => number;
 export function shuffle(
   ids: string[],
@@ -146,12 +144,11 @@ export function createSession(
         return structuredClone(card);
       });
     const stages = questRoute(rules, random).map(
-      ({ label, pick, cardIds, elite, rule }) => ({
+      ({ label, pick, cardIds, elite }) => ({
         label,
         pick,
         cards: snapshot(cardIds),
         ...(elite?.length ? { elite: snapshot(elite) } : {}),
-        ...(rule ? { rule: structuredClone(rule) } : {}),
       }),
     );
     const { label, goal, length } = rules;
@@ -166,14 +163,7 @@ export function createSession(
       stages,
       finale: pickFinale(stages, random),
       step: 0,
-      ...(rules.party
-        ? {
-            party: newParty(rules.party.hearts, {
-              quaff: rules.party.quaff,
-              cup: rules.party.cup ? 0 : undefined,
-            }),
-          }
-        : {}),
+      ...(rules.party ? { party: newParty(rules.party.hearts) } : {}),
     };
   }
   return {
@@ -199,19 +189,13 @@ export function createSession(
     ...(quest ? { quest } : {}),
   };
 }
-const newParty = (
-  hearts: number,
-  { quaff, cup }: { quaff?: number; cup?: number } = {},
-): PartyState => ({
+const newParty = (hearts: number): PartyState => ({
   hearts,
   max: hearts,
   loot: [],
-  curse: null,
   hits: 0,
   rounds: 0,
   wiped: false,
-  ...(quaff !== undefined ? { quaff } : {}),
-  ...(cup !== undefined ? { cup } : {}),
 });
 /** Every card a pack can deal: its deck, its quest-only cards and its
  * quest's finale. */
@@ -464,17 +448,8 @@ export function omenEffect(
 ): OmenEffect | undefined {
   const form = formEffect(quest);
   const boons = partyBoons(quest).map((b) => b.boon.effect);
-  // The floor's or route's rule holds while the run is on it (2026-10-25).
-  const rule = stageRule(quest)?.effect;
-  if (rule) boons.push(rule);
   if (!boons.length) return form;
   return stackEffects(form ?? {}, boons);
-}
-/** The rule of the stage the run is on (a floor and its boss, a route and
- * its gym), once the run is under way. */
-export function stageRule(quest: QuestState | undefined) {
-  if (!quest?.party || !quest.due) return undefined;
-  return quest.stages[finaleStage(quest).stage]?.rule;
 }
 /** The beat of a boss fight a card is on (`phases`): the hits landed walk
  * through the phases in order, and the felling swing plays the last. 0 for
@@ -510,69 +485,32 @@ export function omenForm(quest: QuestState | undefined) {
   const now = form ? forms[form - 1] : undefined;
   // A branching starter evolves once, into the form the table picks.
   const branching = !!card.branches;
-  // A forked adventurer (`fork`) picks a path, then follows it: forms 1 and
-  // 2 are the paths' first levels, 3 and 4 their second.
-  const fork = !!card.fork;
-  const canEvolve = fork
-    ? form < 3
-    : branching
-      ? form === 0 && forms.length > 0
-      : form < forms.length;
-  const pick = branching || (fork && form === 0);
-  const path = fork && form ? (form - 1) % 2 : 0;
+  const canEvolve = branching
+    ? form === 0 && forms.length > 0
+    : form < forms.length;
   return {
     card,
     form,
     title: now?.title ?? card.title,
     rules: now?.rules ?? card.rules,
-    line: fork
-      ? [
-          card.title,
-          form ? forms[path].title : `${forms[0].title} / ${forms[1].title}`,
-          ...(form ? [forms[path + 2].title] : []),
-        ]
-      : branching
-        ? [card.title, now ? now.title : forms.map((e) => e.title).join(" / ")]
-        : [card.title, ...forms.map((e) => e.title)],
+    line: branching
+      ? [card.title, now ? now.title : forms.map((e) => e.title).join(" / ")]
+      : [card.title, ...forms.map((e) => e.title)],
     canEvolve,
-    /** The forms the table picks from, while a branching starter (or a
-     * forked adventurer's first level) can still evolve. */
-    branches:
-      pick && canEvolve
-        ? (fork ? forms.slice(0, 2) : forms).map((e) => e.title)
-        : null,
-    /** Each pick's tagline, beside `branches` (a forked adventurer's). */
-    taglines:
-      pick && canEvolve && fork
-        ? forms.slice(0, 2).map((e) => e.tagline ?? "")
-        : null,
+    /** The forms the table picks from, while a branching starter can still
+     * evolve. */
+    branches: branching && canEvolve ? forms.map((e) => e.title) : null,
     /** How many later forms the card has. */
     forms: forms.length,
     /** The League type of the form it is now (none before 2026-10-25). */
     type: now?.type ?? card.type,
     /** The dice colours of the form it is now. */
     palette: now ? (now.palette ?? card.palette) : card.palette,
-    /** The form an evolution brings next, while one evolves in a line (or
-     * down a forked adventurer's chosen path). */
-    next: fork
-      ? form && canEvolve
-        ? forms[path + 2].title
-        : null
-      : !branching && canEvolve
-        ? forms[form].title
-        : null,
-    /** The tagline of the form `next` brings (a forked adventurer's). */
-    nextTagline:
-      fork && form && canEvolve ? forms[path + 2].tagline : undefined,
+    /** The form an evolution brings next, while one evolves in a line. */
+    next: !branching && canEvolve ? forms[form].title : null,
     /** The effect of the form before this one (for what an evolution
      * changed); the card's own for its first form. */
-    before: fork
-      ? form > 2
-        ? forms[path].omen
-        : card.omen
-      : form > 1 && !branching
-        ? forms[form - 2].omen
-        : card.omen,
+    before: form > 1 && !branching ? forms[form - 2].omen : card.omen,
   };
 }
 /** The starter's next form: its effect replaces the current one. The change
@@ -581,13 +519,7 @@ export function omenForm(quest: QuestState | undefined) {
 function evolve(party: PartyState, quest: QuestState, branch = 0): PartyState {
   const now = omenForm(quest);
   if (!now?.canEvolve) return party;
-  // A forked adventurer's second level is its path's: forms 1 and 2 go on
-  // to entries 2 and 3 of `evolves`.
-  const target = now.branches
-    ? branch
-    : now.card.fork
-      ? now.form + 1
-      : now.form;
+  const target = now.branches ? branch : now.form;
   const before = formEffect(quest) ?? {};
   const after = now.card.evolves![target].omen;
   const delta = (after.hearts ?? 0) - (before.hearts ?? 0);
@@ -609,20 +541,16 @@ export function partyType(quest: QuestState | undefined) {
   const form = quest?.party?.form ?? 0;
   return (form ? card?.evolves?.[form - 1]?.type : undefined) ?? card?.type;
 }
-/** A League fight's type matchup against the starter: only a battle with a
- * type, once the starter has one. */
+/** A League fight's type matchup against the starter, once the starter has
+ * a type: a dice battle (rolled with the edge) or a strike (settled by it).
+ * A battle settled with Won and Lost has nothing for a type to bend. */
 export function cardMatchup(
   quest: QuestState | undefined,
   card: CardDefinition,
 ): Matchup | null {
   const mine = partyType(quest);
-  if (!quest?.party || !(card.battle || card.strike) || !card.type || !mine)
-    return null;
-  if (quest.party.tera === card.id) return teraMatchup(mine, card.type);
-  // A teammate sent in fights with its own type (2026-10-25).
-  const sent = quest.party.sent ? finaleCard(quest, quest.party.sent) : null;
-  if (sent?.type)
-    return { ...matchup(sent.type, card.type), teammate: sent.title };
+  if (!quest?.party || !(card.dice ? card.battle : card.strike)) return null;
+  if (!card.type || !mine) return null;
   return matchup(mine, card.type);
 }
 
@@ -664,7 +592,6 @@ export function catchReplaces(quest: QuestState | undefined) {
 const joinTeam = (party: PartyState, id: string): PartyState => ({
   ...party,
   team: [...(party.team ?? []).filter((m) => m !== id), id].slice(-TEAM_SIZE),
-  ...(party.tired ? { tired: party.tired.filter((m) => m !== id) } : {}),
 });
 /** Catch the wild Pokémon just beaten (a drink, spoken), and put it aside;
  * a full team lets its oldest go. */
@@ -675,12 +602,7 @@ export function catchIt(
   if (!awaitingCatch(s) || currentCard(s).catchRate) return s;
   const q = s.quest!;
   const party = joinTeam(q.party!, currentCard(s).id);
-  const team = new Set(party.team);
-  const next = {
-    ...party,
-    ...(party.tired ? { tired: party.tired.filter((m) => team.has(m)) } : {}),
-  };
-  return discard({ ...s, quest: { ...q, party: next } }, random);
+  return discard({ ...s, quest: { ...q, party } }, random);
 }
 /** Whether a d20 `face` catches a Pokémon that needs `need` (2026-10-27):
  * a natural 20 always does and a natural 1 never. */
@@ -763,13 +685,12 @@ export function letGo(
 export function canSendIn(s: SessionState, id: string): boolean {
   const party = s.quest?.party;
   if (!party || !s.quest?.due || s.phase !== "revealed") return false;
-  if (!party.team?.includes(id) || party.sent || party.throw) return false;
+  if (!party.team?.includes(id) || party.throw) return false;
   const card = currentCard(s);
   const member = finaleCard(s.quest, id);
   if (!(card.battle || card.strike) || !card.type || !member?.type)
     return false;
-  if (s.roll || card.dice?.choice || party.press || party.tera === card.id)
-    return false;
+  if (s.roll || card.dice?.choice || party.press) return false;
   if (card.strike && strikeOutcome(s.quest, card) === "won") return false;
   return matchup(member.type, card.type).edge === "advantage";
 }
@@ -783,21 +704,14 @@ export function sendIn(
   if (!canSendIn(s, id)) return s;
   const q = s.quest!;
   const party = q.party!;
-  const card = currentCard(s);
   const used = {
     ...s,
     quest: {
       ...q,
-      party: {
-        ...party,
-        team: (party.team ?? []).filter((m) => m !== id),
-        sent: id,
-      },
+      party: { ...party, team: (party.team ?? []).filter((m) => m !== id) },
     },
   };
-  // A strike reads the sent Pokémon's type (`cardMatchup`): won. Any other
-  // battle is won outright, like a power that wins.
-  return discard(used, random, card.strike ? undefined : "won");
+  return discard(used, random, "won");
 }
 /** What the table can throw out of the bag: an item, or a caught Pokémon. */
 export type BagDrop = { item: Loot } | { caught: string };
@@ -814,76 +728,26 @@ export function dropFromBag(s: SessionState, drop: BagDrop): SessionState {
     const loot = party.loot.filter((_, i) => i !== at);
     return { ...s, quest: { ...q, party: { ...party, loot } } };
   }
-  if (!party.team?.includes(drop.caught) || party.sent === drop.caught)
-    return s;
+  if (!party.team?.includes(drop.caught)) return s;
   const team = party.team.filter((m) => m !== drop.caught);
   const next: PartyState = { ...party, team };
   if (!team.length) delete next.team;
-  // Saves from before 2026-10-26 may rest a Pokémon (`tired`): it can only
-  // name Pokémon still on the team.
-  if (next.tired) {
-    next.tired = next.tired.filter((m) => m !== drop.caught);
-    if (!next.tired.length) delete next.tired;
-  }
   return { ...s, quest: { ...q, party: next } };
 }
-/** Pub Crawl (2026-10-25): a fight that calls for a knack the adventurer
- * has is fought with the edge; one it lacks is fought as written. */
-export function knackEdge(
-  quest: QuestState | undefined,
-  card: CardDefinition,
-): Knack | null {
-  const id = quest?.party?.omen;
-  if (!(card.battle || card.strike) || !card.knack || !id) return null;
-  return finaleCard(quest, id)?.knacks?.includes(card.knack)
-    ? card.knack
-    : null;
-}
-/** The edge a fight is fought with: a League type matchup, else a crawl
- * knack (always the advantage). */
+/** The edge a League fight is fought with: its type matchup. */
 export function cardEdge(
   quest: QuestState | undefined,
   card: CardDefinition,
 ): Edge | null {
-  if (armedPower(quest, card) === "edge") return "advantage";
-  return (
-    cardMatchup(quest, card)?.edge ??
-    (knackEdge(quest, card) ? "advantage" : null)
-  );
-}
-/** The kind of power armed on this card, if any (`spare`, `edge`,
- * `double`). */
-export function armedPower(
-  quest: QuestState | undefined,
-  card: CardDefinition,
-) {
-  const party = quest?.party;
-  if (!party?.armed || party.armed !== card.id) return null;
-  return partyPower(quest)?.kind ?? null;
-}
-/** A plaque-settled fight has no roll to bend: a lost one costs one HP less
- * with the edge, one more against it. */
-export function verdictShift(
-  quest: QuestState | undefined,
-  card: CardDefinition,
-): number {
-  // A strike prints its own cost for each matchup.
-  if (card.dice || card.strike) return 0;
-  const edge = cardEdge(quest, card);
-  return edge === "advantage" ? -1 : edge === "disadvantage" ? 1 : 0;
+  return cardMatchup(quest, card)?.edge ?? null;
 }
 /** What a strike comes to: the starter's edge wins it, a disadvantage loses
- * it, and an even matchup (or no type) is neither. In Pub Crawl a strike
- * calls for a knack instead (2026-10-25): an adventurer with it wins, one
- * without it loses. Outside a crawl a strike is neither. */
+ * it, and an even matchup (or no type) is neither. */
 export function strikeOutcome(
   quest: QuestState | undefined,
   card: CardDefinition,
 ): "won" | "lost" | null {
   if (!card.strike) return null;
-  if (armedPower(quest, card) === "edge") return "won";
-  if (card.knack)
-    return quest?.party ? (knackEdge(quest, card) ? "won" : "lost") : null;
   const edge = cardMatchup(quest, card)?.edge;
   return edge === "advantage" ? "won" : edge === "disadvantage" ? "lost" : null;
 }
@@ -952,7 +816,7 @@ export function awaitingSpoils(s: SessionState): boolean {
 function fells(s: SessionState, nat: 20 | 1 | null): boolean {
   const card = currentCard(s);
   const need = hitsNeeded(s.quest, card);
-  const swing = nat === 20 || armedPower(s.quest, card) === "double" ? 2 : 1;
+  const swing = nat === 20 ? 2 : 1;
   return !need || s.quest!.party!.hits + swing >= need;
 }
 /** A plaque fight face up whose win would bring its spoils (a boss's
@@ -1167,7 +1031,7 @@ export const DRAUGHT_DRINKS = 4;
 /** Whether the party can use the satchel's item `item` now. */
 export function canUseLoot(s: SessionState, item: Loot): boolean {
   const party = s.quest?.party;
-  if (!party || s.phase === "complete" || party.curse === "hex") return false;
+  if (!party || s.phase === "complete") return false;
   if (!party.loot.includes(item) || party.throw) return false;
   const card = currentCard(s);
   switch (item) {
@@ -1190,27 +1054,13 @@ export function canUseLoot(s: SessionState, item: Loot): boolean {
         !card.dice?.choice &&
         !party.press
       );
-    case "tera": {
-      // Before a typed battle's roll (or its verdict), when the starter
-      // doesn't already have the edge.
-      const edge = cardMatchup(s.quest, card)?.edge;
-      return (
-        s.phase === "revealed" &&
-        !s.roll &&
-        !card.dice?.choice &&
-        !party.press &&
-        edge !== undefined &&
-        edge !== "advantage"
-      );
-    }
     case "shield":
     case "revive":
       return false; // Each works on its own, when it is needed.
     case "candy": {
-      // A branching starter picks its form on an evolution card; a forked
-      // adventurer's Tome picks its path (`spendLoot`'s `branch`).
+      // A branching starter picks its form on an evolution card.
       const form = omenForm(s.quest);
-      return !!form?.canEvolve && (!form.branches || !!form.card.fork);
+      return !!form?.canEvolve && !form.branches;
     }
   }
 }
@@ -1220,16 +1070,8 @@ export function spendLoot(
   s: SessionState,
   item: Loot,
   random: Random = Math.random,
-  /** A Tome on a forked adventurer that has yet to pick a path: 0 or 1. */
-  branch = 0,
 ): SessionState {
   if (!canUseLoot(s, item)) return s;
-  if (
-    item === "candy" &&
-    omenForm(s.quest)?.branches &&
-    !(branch === 0 || branch === 1)
-  )
-    return s;
   const party = s.quest!.party!;
   const loot = [...party.loot];
   loot.splice(loot.indexOf(item), 1);
@@ -1246,20 +1088,12 @@ export function spendLoot(
       return { ...used, roll: null };
     case "smoke":
       return discard(used, random, "fled");
-    case "tera":
-      return {
-        ...used,
-        quest: {
-          ...used.quest,
-          party: { ...used.quest.party!, tera: currentCard(s).id },
-        },
-      };
     case "candy":
       return {
         ...used,
         quest: {
           ...used.quest,
-          party: evolve(used.quest.party!, used.quest, branch),
+          party: evolve(used.quest.party!, used.quest),
         },
       };
     case "round":
@@ -1272,168 +1106,6 @@ export function spendLoot(
       };
     default:
       return s;
-  }
-}
-/** Whether the drawer can Quaff now: the crawl has one, it hasn't been
- * drunk since the last boss fell, and a lost fight's roll is on the card.
- * A hex seals the satchel, not the drawer's throat. */
-export function canQuaff(s: SessionState): boolean {
-  const party = s.quest?.party;
-  const card = s.quest?.due ? currentCard(s) : undefined;
-  return (
-    !!party &&
-    !!card &&
-    party.quaff !== undefined &&
-    !party.quaffed &&
-    s.phase === "revealed" &&
-    !!card.battle &&
-    !!card.dice &&
-    !!s.roll?.returned &&
-    !rollWins(card.dice, s.roll.values, s.roll)
-  );
-}
-/** Down the Quaff's drinks and roll the lost fight again. It comes back
- * when the next boss falls. */
-export function quaff(s: SessionState): SessionState {
-  if (!canQuaff(s)) return s;
-  const party = s.quest!.party!;
-  return {
-    ...s,
-    roll: null,
-    quest: { ...s.quest!, party: { ...party, quaffed: true } },
-  };
-}
-/** The run's signature power as it stands (2026-10-25): its current
- * form's, else the last form before it that had one, else the card's own.
- * A forked adventurer's second level falls back down its own path. */
-export function partyPower(quest: QuestState | undefined): Power | undefined {
-  const id = quest?.party?.omen;
-  const card = id ? finaleCard(quest, id) : undefined;
-  if (!card) return undefined;
-  const form = quest!.party!.form ?? 0;
-  const forms = card.evolves ?? [];
-  const line = !form
-    ? []
-    : card.fork
-      ? form > 2
-        ? [form - 2, form]
-        : [form]
-      : card.branches
-        ? [form]
-        : Array.from({ length: form }, (_, i) => i + 1);
-  for (const f of line.reverse()) {
-    const power = forms[f - 1]?.power;
-    if (power) return power;
-  }
-  return card.power;
-}
-/** Uses of the power left until the next boss falls. */
-export function powersLeft(quest: QuestState | undefined): number {
-  const power = partyPower(quest);
-  if (!power) return 0;
-  return Math.max(0, (power.uses ?? 1) - (quest!.party!.powers ?? 0));
-}
-/** Whether the party's power can be used on the card face up now. */
-export function canUsePower(s: SessionState): boolean {
-  const party = s.quest?.party;
-  const power = partyPower(s.quest);
-  if (!party || !power || !s.quest!.due || s.phase !== "revealed") return false;
-  if (!powersLeft(s.quest) || party.throw) return false;
-  const card = currentCard(s);
-  const fight = !!card.battle || !!card.strike;
-  // Before the fight is decided: no roll yet, no choice open, no push on.
-  const before =
-    fight && !s.roll && !card.dice?.choice && !party.press && !card.press;
-  const armed = party.armed === card.id;
-  switch (power.kind) {
-    case "reroll":
-      return lostRoll(s, card);
-    case "spare":
-      // Before the loss is taken: a fight undecided, or a lost roll on it.
-      return (
-        !armed &&
-        !!card.damage &&
-        fight &&
-        (card.strike
-          ? strikeOutcome(s.quest, card) === "lost"
-          : !s.roll || lostRoll(s, card))
-      );
-    case "edge":
-      return (
-        !armed &&
-        before &&
-        (card.strike
-          ? strikeOutcome(s.quest, card) !== "won"
-          : cardEdge(s.quest, card) !== "advantage")
-      );
-    case "double":
-      return !armed && before && !card.strike;
-    case "win":
-      return before && !card.strike && party.hearts > (power.cost ?? 0);
-    case "heal":
-      return party.hearts < party.max;
-    case "flee":
-      return (
-        !!card.battle &&
-        !card.hits &&
-        !s.roll &&
-        !card.dice?.choice &&
-        !party.press
-      );
-  }
-}
-/** A `win` power that would fell a boss with spoils: the table picks a
- * trinket as it uses it. */
-export function powerSpoils(s: SessionState): boolean {
-  return (
-    canUsePower(s) &&
-    partyPower(s.quest)!.kind === "win" &&
-    !!currentCard(s).spoils?.length &&
-    fells(s, null)
-  );
-}
-/** Use the party's power on the card face up. */
-export function spendPower(
-  s: SessionState,
-  random: Random = Math.random,
-  /** A `win` that fells a boss with spoils: the trinket taken. */
-  spoil?: number,
-): SessionState {
-  if (!canUsePower(s)) return s;
-  const power = partyPower(s.quest)!;
-  const party = {
-    ...s.quest!.party!,
-    powers: (s.quest!.party!.powers ?? 0) + 1,
-  };
-  const used = { ...s, quest: { ...s.quest!, party } };
-  const card = currentCard(s);
-  switch (power.kind) {
-    case "reroll":
-      return { ...used, roll: null };
-    case "spare":
-    case "edge":
-    case "double":
-      party.armed = card.id;
-      return used;
-    case "win":
-      party.hearts -= power.cost ?? 0;
-      return discard(
-        { ...used, roll: null },
-        random,
-        "won",
-        spoil !== undefined &&
-          Number.isSafeInteger(spoil) &&
-          spoil >= 0 &&
-          spoil < (card.spoils?.length ?? 0) &&
-          fells(s, null)
-          ? spoil
-          : undefined,
-      );
-    case "heal":
-      party.hearts = Math.min(party.max, party.hearts + (power.amount ?? 1));
-      return used;
-    case "flee":
-      return discard(used, random, "fled");
   }
 }
 /** A boon joins the party: its hearts move the maximum and the hearts left
@@ -1496,17 +1168,15 @@ export function replaces(quest: QuestState | undefined, boon: Boon) {
     ? partyBoons(quest).filter((b) => b.boon.slot === boon.slot)
     : [];
 }
-/** A heart loss: the shield takes it whole unless the satchel is hexed, and
- * bleeding costs one more. */
+/** A heart loss: the shield takes it whole. */
 function hurt(party: PartyState, damage: number): PartyState {
   if (damage <= 0) return party;
-  const shield = party.curse === "hex" ? -1 : party.loot.indexOf("shield");
+  const shield = party.loot.indexOf("shield");
   if (shield >= 0)
     return { ...party, loot: party.loot.filter((_, i) => i !== shield) };
-  const loss = damage + (party.curse === "bleed" ? 1 : 0);
-  return { ...party, hearts: Math.max(0, party.hearts - loss) };
+  return { ...party, hearts: Math.max(0, party.hearts - damage) };
 }
-/** What a card brings: its reward (a battle's only on a win) and its curse
+/** What a card brings: its reward (a battle's only on a win) and its jinx
  * (a battle's only on a loss), bent by tonight's omen. The omen card itself
  * sets the omen and its hearts and items. */
 function settleParty(
@@ -1519,16 +1189,12 @@ function settleParty(
 ): PartyState {
   const omen = omenEffect(quest);
   const size = satchelSize(quest);
-  const armed = armedPower(quest, card);
-  // A doubled win brings what a natural 20 does.
-  if (armed === "double" && outcome === "won") nat = 20;
   let next = party;
-  if (outcome === "lost" && card.damage && armed !== "spare")
+  if (outcome === "lost" && card.damage)
     next = hurt(
       next,
       (card.damage +
-        (card.encounter ? (omen?.hurt?.[card.encounter] ?? 0) : 0) +
-        verdictShift(quest, card)) *
+        (card.encounter ? (omen?.hurt?.[card.encounter] ?? 0) : 0)) *
         (nat === 1 ? 2 : 1),
     );
   if (outcome === null || outcome === "won") {
@@ -1559,13 +1225,8 @@ function settleParty(
     // An adventurer's starting gear goes on with it (2026-10-25).
     if (card.kit) next = gainBoon(next, card, quest, "kit");
   }
-  if (card.curse && (outcome === null || outcome === "lost"))
-    next = { ...next, curse: card.curse };
   if (card.jinx && (outcome === null || outcome === "lost"))
     next = { ...next, jinx: card.id };
-  // Every lost fight pours a splash into the Cup.
-  if (outcome === "lost" && next.cup !== undefined)
-    next = { ...next, cup: next.cup + 1 };
   // Push your luck: a win takes every prize banked and this one; a loss
   // forfeits them. The count clears either way.
   if (card.press && outcome !== null) {
@@ -1578,19 +1239,6 @@ function settleParty(
     }
     next = { ...next };
     delete next.press;
-  }
-  // A Tera Orb, and an armed power, last the one fight.
-  if (next.tera !== undefined) {
-    next = { ...next };
-    delete next.tera;
-  }
-  if (next.armed !== undefined) {
-    next = { ...next };
-    delete next.armed;
-  }
-  if (next.sent !== undefined) {
-    next = { ...next };
-    delete next.sent;
   }
   // A boss's or an ambush's boon comes when it falls (`discard`).
   if (!card.hits && (outcome === null || outcome === "won"))
@@ -1608,12 +1256,13 @@ function discard(
   const card = currentCard(s);
   const discarded = s.discarded + 1,
     previousId = card.id;
-  // In a quest only a won battle counts.
+  // In a quest only a won battle counts. A strike reads its matchup unless
+  // it was won another way (a caught Pokémon).
   const outcome: Outcome | null =
     !s.quest || !(card.battle || card.strike)
       ? null
       : card.strike
-        ? strikeOutcome(s.quest, card)
+        ? (verdict ?? strikeOutcome(s.quest, card))
         : (verdict ??
           (card.dice && s.roll && rollWins(card.dice, s.roll.values, s.roll)
             ? "won"
@@ -1624,7 +1273,6 @@ function discard(
   if (s.quest?.due && party) {
     const q = s.quest;
     const nat = natural(card, s.roll);
-    const doubled = armedPower(q, card) === "double" && outcome === "won";
     let next = settleParty(party, card, outcome, q, nat, spoil);
     // Previous Card shows the beat of a phased boss as it was played.
     const raw = finaleCard(q, card.id);
@@ -1635,7 +1283,7 @@ function discard(
       delete next.beat;
     }
     // A Revive in the satchel saves the run once: back at half the maximum.
-    const revive = next.curse === "hex" ? -1 : next.loot.indexOf("revive");
+    const revive = next.loot.indexOf("revive");
     if (next.hearts === 0 && revive >= 0)
       next = {
         ...next,
@@ -1658,7 +1306,7 @@ function discard(
     if (need && outcome !== "fled") {
       const hits = Math.min(
         need,
-        next.hits + (outcome === "won" ? (nat === 20 || doubled ? 2 : 1) : 0),
+        next.hits + (outcome === "won" ? (nat === 20 ? 2 : 1) : 0),
       );
       if (hits < need)
         return {
@@ -1677,14 +1325,9 @@ function discard(
             },
           },
         };
-      // The floor's boss falls: its curse and the jinx lift with it, and
-      // the Quaff comes back.
+      // The floor's boss falls, and the jinx lifts with it.
       next = { ...next, hits: 0 };
-      if (isBossCard(card)) {
-        next = { ...next, curse: null };
-        delete next.jinx;
-        delete next.quaffed;
-      }
+      if (isBossCard(card)) delete next.jinx;
       next = gainBoon(next, card, q, spoil);
       // A badge restocks the starter's item, room permitting; in a crawl
       // without badges (Pub Crawl), any boss does.
@@ -1692,12 +1335,6 @@ function discard(
       const badges = q.stages.some((st) =>
         st.cards.some((c) => c.quest === q.packId),
       );
-      // The signature power comes back with the same boss: a gym in the
-      // League, any boss in Pub Crawl (2026-10-25).
-      if (badges ? card.quest === q.packId : isBossCard(card)) {
-        delete next.powers;
-        delete next.tired;
-      }
       if (
         restock &&
         (badges ? card.quest === q.packId : isBossCard(card)) &&
@@ -1835,10 +1472,6 @@ export function replaySession(
               ? {
                   party: newParty(
                     s.quest.party.max - (omenEffect(s.quest)?.hearts ?? 0),
-                    {
-                      quaff: s.quest.party.quaff,
-                      cup: s.quest.party.cup === undefined ? undefined : 0,
-                    },
                   ),
                 }
               : {}),

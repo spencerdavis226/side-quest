@@ -7,10 +7,7 @@ import { cellar } from "./dungeon/cellar";
 import { classes } from "./dungeon/classes";
 import { freezer } from "./dungeon/freezer";
 import { kitchen } from "./dungeon/kitchen";
-import { applyKnacks } from "./dungeon/knacks";
-import { applyClassPowers } from "./dungeon/powers";
 import { applyPhases } from "./dungeon/phases";
-import { floorRules } from "./dungeon/rules";
 import { applyJinxes } from "./dungeon/jinxes";
 import { floorMoments } from "./dungeon/moments";
 import { applyOutcomes } from "./dungeon/outcomes";
@@ -50,10 +47,10 @@ import { wine } from "./dungeon/wine";
 // (now a boon that stacks). The rival party, the Quarter-Zips, cut the queue
 // at the door and come back at closing time. Each floor has eight rooms,
 // elites and bosses drop trinkets (boons kept for the run), a landing
-// between floors trades drinks for a level or rests, a jinx is a spoken rule
-// that holds until the floor's boss falls, the Quaff rerolls a lost fight
-// for drinks once between bosses, and every lost fight pours a splash into
-// the Cup, which the end of the run hands to someone. The floor files hold
+// between floors trades drinks for a level or rests, and a jinx is a spoken
+// rule that holds until the floor's boss falls. Since 2026-10-31 (owner:
+// "too much clutter") there are no powers, knacks, floor rules, Cup or
+// Quaff: a class is its perk and its level line. The floor files hold
 // the cards; `dungeon/shared.ts` holds the builders and every tuning
 // constant, measured by `tests/dungeon.balance.test.ts`.
 
@@ -103,11 +100,7 @@ export const dungeonCards: CardDefinition[] = applyPhases(
     ...hiddenRoomCards,
   ]),
 ).map(withNaturals);
-// Knacks (2026-10-25): each class's two, and the rooms that call for one.
-applyKnacks(dungeonCards);
 applyKits(dungeonCards);
-// Signature powers (2026-10-25): one a class, and one a level.
-applyClassPowers(dungeonCards);
 // Curses became jinxes (2026-10-25): one spoken system, not two.
 applyJinxes(dungeonCards);
 
@@ -121,15 +114,7 @@ const floor = (label: string, intro: string, f: FloorCards) => ({
   pick: 8,
   cardIds: ids([...f.fights, ...f.finds]),
   elite: ids(f.elites),
-  rule: floorRules[label],
 });
-/** A floor's boss: the floor's rule holds until it falls. */
-const bossOf = (
-  floorLabel: string,
-  label: string,
-  intro: string,
-  cards: CardDefinition[],
-) => ({ ...one(label, intro, cards), rule: floorRules[floorLabel] });
 const one = (label: string, intro: string, cards: CardDefinition[]) => ({
   label,
   intro,
@@ -153,9 +138,7 @@ export const dungeonPack: PackDefinition = {
     goal: 0,
     length: 1,
     cardIds: [],
-    // The Quaff retired 2026-10-25: its once-a-floor reroll became the
-    // classes' signature powers. Saves that hold one keep it.
-    party: { hearts: PARTY_HEARTS, cup: true },
+    party: { hearts: PARTY_HEARTS },
     // The adventurer and tonight's omen, the queue, then one of three floors
     // at each depth (eight rooms, and a boss on the first two) with a
     // landing after each boss, then closing time and Last Call.
@@ -167,30 +150,15 @@ export const dungeonPack: PackDefinition = {
         oneOf: [
           [
             floor("The Cellar", "Down into the Cellar", cellar),
-            bossOf(
-              "The Cellar",
-              "Cellar boss",
-              "Something blocks the stairs",
-              cellar.bosses,
-            ),
+            one("Cellar boss", "Something blocks the stairs", cellar.bosses),
           ],
           [
             floor("The Wine Cellar", "Down into the Wine Cellar", wine),
-            bossOf(
-              "The Wine Cellar",
-              "Wine Cellar boss",
-              "Something uncorks itself",
-              wine.bosses,
-            ),
+            one("Wine Cellar boss", "Something uncorks itself", wine.bosses),
           ],
           [
             floor("The Brewery", "Down into the Brewery", brewery),
-            bossOf(
-              "The Brewery",
-              "Brewery boss",
-              "Something is fermenting",
-              brewery.bosses,
-            ),
+            one("Brewery boss", "Something is fermenting", brewery.bosses),
           ],
         ],
       },
@@ -209,30 +177,15 @@ export const dungeonPack: PackDefinition = {
         oneOf: [
           [
             floor("The Catacombs", "Down into the Catacombs", catacombs),
-            bossOf(
-              "The Catacombs",
-              "Catacombs boss",
-              "The bones stand up",
-              catacombs.bosses,
-            ),
+            one("Catacombs boss", "The bones stand up", catacombs.bosses),
           ],
           [
             floor("The Sewers", "Down into the Sewers", sewers),
-            bossOf(
-              "The Sewers",
-              "Sewers boss",
-              "Something big in the pipes",
-              sewers.bosses,
-            ),
+            one("Sewers boss", "Something big in the pipes", sewers.bosses),
           ],
           [
             floor("The Walk-in Freezer", "Into the Walk-in Freezer", freezer),
-            bossOf(
-              "The Walk-in Freezer",
-              "Freezer boss",
-              "The light goes out",
-              freezer.bosses,
-            ),
+            one("Freezer boss", "The light goes out", freezer.bosses),
           ],
         ],
       },
@@ -247,7 +200,7 @@ export const dungeonPack: PackDefinition = {
         ],
       },
       one("Closing Time", "The Quarter-Zips are back", closingCards),
-      one("Last Call", "Last call. The Cup waits", lastCallBosses),
+      one("Last Call", "Last call. Last fight", lastCallBosses),
     ],
   },
 };

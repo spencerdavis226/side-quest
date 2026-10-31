@@ -193,8 +193,6 @@ export function Setup({
               crawlPack && {
                 packId: crawlPack.id,
                 hearts: crawlPack.quest!.party!.hearts,
-                quaff: crawlPack.quest!.party!.quaff,
-                cup: !!crawlPack.quest!.party!.cup,
               }
             }
           />

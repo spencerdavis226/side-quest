@@ -68,12 +68,11 @@ export function MatchupPanel({
   return (
     <div className={`matchup-panel edge-${matchup.edge}`}>
       <div className="matchup-sides">
-        {side(matchup.mine, matchup.tera ? `${starter} (Tera)` : starter)}
+        {side(matchup.mine, starter)}
         <EdgeMark edge={matchup.edge!} />
         {side(matchup.theirs, brother ?? card.title)}
       </div>
       <p className="matchup-verdict">
-        {matchup.tera ? "Terastallized! " : ""}
         {good
           ? `Your ${pokemonTypes[matchup.mine].name} moves are super effective!`
           : `${brother ?? card.title}'s ${pokemonTypes[matchup.theirs].name} moves are super effective against you!`}
@@ -84,8 +83,8 @@ export function MatchupPanel({
             ? `Roll two dice and keep the ${good ? "better" : "worse"}.`
             : `Roll ${card.dice.count * 2} dice and keep the ${good ? "highest" : "lowest"} ${card.dice.count}.`
           : good
-            ? "A loss costs 1 HP less."
-            : "A loss costs 1 HP more."}
+            ? "Your type wins this one."
+            : "Their type wins this one."}
       </p>
     </div>
   );

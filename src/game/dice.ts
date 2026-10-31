@@ -205,7 +205,6 @@ export function rollDice(
   // the better or worse of two (a win over a loss, then the higher total);
   // 2d6 keeps the two highest or lowest of four (owner, 2026-10-25: four
   // dice on screen read as four dice, so they are one pool, not two pairs).
-  // Since 2026-10-25 a Pub Crawl knack brings the same advantage.
   const edge = cardEdge(session.quest, card);
   let kept = attempt();
   let dropped: number[] | undefined;

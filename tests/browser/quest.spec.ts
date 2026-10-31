@@ -3,8 +3,6 @@ import {
   advance,
   canSendIn,
   canUseLoot,
-  canUsePower,
-  partyPower,
   awaitingCatch,
   awaitingChoice,
   awaitingOffer,
@@ -135,14 +133,14 @@ test("@release Pokémon League opens on a starter, then the first route", async 
   await page.getByRole("button", { name: /^Pokémon League/ }).click();
   const brief = page.locator(".crawl-brief");
   await expect(brief).toContainText("Pokémon night");
-  await expect(brief).toContainText("15 HP · 8 gyms");
+  await expect(brief).toContainText("16 HP · 8 gyms");
   // The League plays its own pack alone: the pack picker steps aside.
   await expect(page.getByRole("button", { name: /^Choose packs/ })).toHaveCount(
     0,
   );
   await page.screenshot({ path: info.outputPath("setup-320.png") });
   await page.getByRole("button", { name: "Play", exact: true }).click();
-  await expect(meter(page)).toHaveAccessibleName(/^Team HP: 15 of 15/);
+  await expect(meter(page)).toHaveAccessibleName(/^Team HP: 16 of 16/);
   await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
     "Your starter",
   );
@@ -199,16 +197,16 @@ test("@release a starter evolves on a route, and the banner says what changed", 
   await plaques(page).nth(0).click();
   const banner = page.locator(".evolution-banner");
   await expect(banner).toHaveText(
-    /What\? Charmander is evolving!\s*Charmeleon\s*Max HP 15 → 16\. New move: Flamethrower\.$/,
+    /What\? Charmander is evolving!\s*Charmeleon\s*Max HP 16 → 17\.$/,
   );
   await page.screenshot({ path: info.outputPath("evolution-banner.png") });
   expect((await saved(page)).quest.party).toMatchObject({ form: 1 });
   await meter(page).click();
   const dialog = page.getByRole("dialog", { name: "The team" });
-  // Only the starter it is now, and its power.
+  // Only the starter it is now.
   await expect(dialog.locator(".crawl-omen strong")).toHaveText("Charmeleon");
   await expect(dialog.locator(".crawl-omen .omen-rules")).toHaveText(
-    "Max HP 16. +2 to route battle d20s.",
+    "Max HP 17. +2 to route battle d20s.",
   );
   // It wears its type, with what it beats and what beats it, and the
   // badges have their own dialog.
@@ -221,13 +219,12 @@ test("@release a starter evolves on a route, and the banner says what changed", 
   );
   await expect(dialog.locator(".crawl-badges")).toHaveCount(0);
   await page.screenshot({ path: info.outputPath("team-dialog.png") });
-  // How to play, from the pause menu, speaks the League's words: no Quaff,
-  // no Cup.
+  // How to play, from the pause menu, speaks the League's words.
   await page.keyboard.press("Escape");
   await page.getByRole("button", { name: "Open game menu" }).click();
   await page.getByRole("button", { name: "How to play" }).click();
   const guide = page.getByRole("dialog", { name: "How to play" });
-  await expect(guide.locator(".guide-rows li")).toHaveCount(9);
+  await expect(guide.locator(".guide-rows li")).toHaveCount(8);
   await expect(guide.locator(".guide-rows")).toContainText("Team HP");
   await expect(guide.locator(".guide-rows")).not.toContainText("Quaff");
   await guide.screenshot({ path: info.outputPath("league-guide.png") });
@@ -470,52 +467,19 @@ test("a 2d6 battle against the type rolls four dice and keeps the lowest two", a
   await page.screenshot({ path: info.outputPath("four-dice-card.png") });
 });
 
-test("a Tera Orb turns a bad matchup around for one battle", async ({
-  page,
-}, info) => {
-  await page.setViewportSize({ width: 320, height: 568 });
-  const water = cards.find(
-    (c) =>
-      c.quest === "pokemon" &&
-      c.type === "water" &&
-      c.dice?.count === 1 &&
-      c.dice.sides === 20,
-  )!;
-  await seed(page, reveal(leagueAt(water.id, { loot: ["tera"] })));
-  await expect(page.locator(".tag-edge")).toHaveClass(/edge-disadvantage/);
-  // The starter's move and the orb share one "Use" plaque.
-  await page.getByRole("button", { name: /^Use something/ }).click();
-  const orb = page.getByRole("button", { name: /^Tera Orb:/ });
-  await expect(orb).toBeVisible();
-  await page.screenshot({ path: info.outputPath("tera-plaque-320.png") });
-  await orb.click();
-  await expect(page.locator(".tag-edge")).toHaveClass(/edge-advantage/);
-  expect((await saved(page)).quest.party).toMatchObject({
-    loot: [],
-    tera: water.id,
-  });
-  await page.locator(".tag-edge").click();
-  const dialog = page.getByRole("dialog", { name: "Type matchup" });
-  await expect(dialog).toContainText("Terastallized!");
-  await expect(dialog).toContainText("Your Grass moves are super effective!");
-  await expect(dialog).toContainText("Charmander (Tera)");
-  await expect(dialog).toContainText("Grass");
-  await expect(dialog).toContainText("Roll two dice and keep the better.");
-  await page.screenshot({ path: info.outputPath("tera-dialog-320.png") });
-});
-
-test("a plaque-settled gym against a weaker type costs 1 HP less", async ({
+test("a plaque-settled gym is the table's call: no type chip, the full cost", async ({
   page,
 }) => {
-  // Jasmine (Steel) against Charmander (Fire).
+  // Jasmine (Steel) against Charmander (Fire): a type edge on a roll, but
+  // nothing for a type to bend on Won and Lost (2026-10-31).
   await seed(page, reveal(leagueAt("pokemon.gym-jasmine", { hearts: 10 })));
-  await expect(page.locator(".tag-edge")).toHaveClass(/edge-advantage/);
-  // The seal shows the HP the loss will cost: 2, less 1.
+  await expect(page.locator(".hud-strip")).toBeVisible();
+  await expect(page.locator(".tag-edge")).toHaveCount(0);
   await expect(page.locator(".game-card .stake-loss")).toHaveAccessibleName(
-    "Losing costs 1 HP",
+    "Losing costs 2 HP",
   );
   await page.getByRole("button", { name: "Lost", exact: true }).click();
-  expect((await saved(page)).quest.party.hearts).toBe(9);
+  expect((await saved(page)).quest.party.hearts).toBe(8);
 });
 
 test("a strike reads the line for its matchup and costs HP only against the starter", async ({
@@ -888,10 +852,12 @@ test("@release a beaten wild Pokémon is caught into the bag, and used to win a 
       },
     }),
   );
-  // The starter's move and the send-in don't both fit beside Won and Lost, so
-  // they open from one "Use" plaque.
-  const use = page.getByRole("button", { name: /^Use something/ });
-  await expect(use).toBeVisible();
+  // A strike has no Won and Lost, so the one send-in sits on the card.
+  const go = page.getByRole("button", { name: /^Go, Pidgey!/ });
+  await expect(go).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: /^Use something/ }),
+  ).toHaveCount(0);
   await page.screenshot({ path: info.outputPath("send-in.png") });
   // The caught Pokémon sits in the bag chip and the bag dialog.
   await expect(page.locator(".tag-satchel")).toHaveAccessibleName(/Pidgey/);
@@ -903,9 +869,6 @@ test("@release a beaten wild Pokémon is caught into the bag, and used to win a 
   // Go, Pidgey! wins the battle and uses it up.
   const hearts = (await saved(page)).quest.party.hearts;
   const step = (await saved(page)).quest.step;
-  await use.click();
-  const go = page.getByRole("button", { name: /^Go, Pidgey!/ });
-  await expect(go).toBeVisible();
   const box = (await go.boundingBox())!;
   expect(box.height).toBeGreaterThanOrEqual(44);
   expect(box.x + box.width).toBeLessThanOrEqual(320);
@@ -923,7 +886,6 @@ const MATES = ["pokemon.route-rotom", "pokemon.route-breloom"];
 function battleWith(
   party: Partial<PartyState>,
   team: string[] = [],
-  spent = false,
 ): SessionState {
   const s = leagueAt(FOE, party);
   const q = s.quest!;
@@ -942,7 +904,6 @@ function battleWith(
   team.forEach((id, i) => put(start + i, id));
   put(step, FOE);
   const omen = finale[0];
-  const power = partyPower({ ...q, party: { ...q.party!, omen } });
   return reveal({
     ...s,
     discarded: step,
@@ -956,13 +917,12 @@ function battleWith(
         omen,
         ...party,
         ...(team.length ? { team } : {}),
-        ...(spent && power ? { powers: power.uses } : {}),
       },
     },
   });
 }
-// A Won/Lost battle can carry up to seven optional actions (two items, the
-// power, two send-ins). However many there are, the card's foot never shows
+// A Won/Lost battle can carry a few optional actions (an Escape Rope, two
+// send-ins). However many there are, the card's foot never shows
 // more than three plaques: a short one stays beside Won and Lost, the rest
 // open from one "Use" plaque and its sheet. Checked at both phone widths.
 for (const width of [320, 390]) {
@@ -974,31 +934,19 @@ for (const width of [320, 390]) {
       name: string;
       party: Partial<PartyState>;
       team?: string[];
-      spent?: boolean;
     }[] = [
-      { name: "tera", party: { loot: ["tera"] }, spent: true },
+      { name: "smoke", party: { loot: ["smoke"] } },
       {
-        name: "tera and smoke",
-        party: { loot: ["tera", "smoke"] },
-        spent: true,
-      },
-      { name: "tera, smoke, power", party: { loot: ["tera", "smoke"] } },
-      {
-        name: "tera, smoke, power, one send-in",
-        party: { loot: ["tera", "smoke"] },
+        name: "smoke, one send-in",
+        party: { loot: ["smoke"] },
         team: [MATES[0]],
       },
-      {
-        name: "tera, smoke, power, two send-ins",
-        party: { loot: ["tera", "smoke"] },
-        team: MATES,
-      },
+      { name: "smoke, two send-ins", party: { loot: ["smoke"] }, team: MATES },
     ];
-    for (const { name, party, team = [], spent } of cases) {
-      const s = battleWith(party, team, spent);
+    for (const { name, party, team = [] } of cases) {
+      const s = battleWith(party, team);
       const ready = [
-        ...(["tera", "smoke"] as const).filter((i) => canUseLoot(s, i)),
-        ...(canUsePower(s) ? ["power"] : []),
+        ...(["smoke"] as const).filter((i) => canUseLoot(s, i)),
         ...(s.quest!.party!.team ?? []).filter((m) => canSendIn(s, m)),
       ];
       await seed(page, s);
@@ -1022,7 +970,7 @@ for (const width of [320, 390]) {
         els.map((el) => el.getBoundingClientRect().toJSON()),
       ))
         expect(box.height, name).toBeGreaterThanOrEqual(44);
-      if (ready.length > 1 || ready.includes("power")) {
+      if (ready.length > 1 || ready.some((r) => r.startsWith("pokemon."))) {
         expect(count, name).toBe(3);
         const use = foot.getByRole("button", { name: /^Use something/ });
         await expect(use).toContainText(`${ready.length} ready`);
@@ -1049,7 +997,7 @@ for (const width of [320, 390]) {
     }
     // Taking a send-in from the sheet plays it: the battle is won and the
     // Pokémon leaves the team.
-    const s = battleWith({ loot: ["tera", "smoke"] }, MATES);
+    const s = battleWith({ loot: ["smoke"] }, MATES);
     await seed(page, s);
     await page.getByRole("button", { name: /^Use something/ }).click();
     await page.getByRole("button", { name: /^Go, Rotom!/ }).click();

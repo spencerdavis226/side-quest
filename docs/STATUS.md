@@ -1,6 +1,28 @@
 # Current state and implementation plan
 
-Updated 2026-10-27. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
+Updated 2026-10-31. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
+
+## In progress 2026-10-31: streamline both crawls (owner: "powers are a bad design for both Pokemon and the pub crawl", "too many systems are getting in the way of good card design", "Make it clean, elegant, and streamline. It's way too much clutter right now")
+
+Branch `streamline-systems`, draft PR; not merged or deployed.
+
+**Why.** Each crawl stacked about 14 systems. Powers were 7 generic effects under 53 names, each duplicating an item; knacks, floor rules and the plaque-fight HP shift were hidden numbers; the Cup, the Quaff, curses and the Tera Orb were bookkeeping beside jinxes, items and the type chart. Cards were being written to feed systems (126 knack tags, 54 three-line knack strikes, 72 path levels with taglines).
+
+**Cut (engine, content, UI, tests):**
+- Signature powers, both crawls (`content/powers.ts`, `dungeon/powers.ts`, `league/powers.ts`, `PowerPlaque`, the party dialog's power, "New move" on the banner, the guide rows).
+- Pub Crawl: knacks (`dungeon/knacks.ts`, the strip chip and dialog, the party dialog's chips), floor rules (`dungeon/rules.ts`, `QuestStage.rule`, `stageRule`), the Cup and the Quaff (state, strip, banners, end screens), and the two-path levels: each class keeps its original line (path A) of two levels. The 54 knack strikes became one-line `mishap` rooms (their `even` line, nothing at stake; `mishap()` in `dungeon/shared.ts`).
+- League: the Tera Orb (Eevee now starts with an X Attack, Zorua and Zoroark with an Escape Rope; the two Marts sell a Potion and an X Attack; the Tera Raid Den card is gone, 1,825 cards), Poisoned and Confused (no `curse` anywhere now), and `verdictShift`: a Won/Lost battle has no type matchup or chip.
+- Strip after the cut: the League's type edge (dice battles and strikes), the bag, badges, a jinx. Guide rows: Pub Crawl 6 (was 10), League 8 (was 9).
+
+**Saves.** `retireSystems` in `src/app/persistence.ts` runs before every check: it drops the cut party fields (`curse`, `cup`, `quaff`, `quaffed`, `tera`, `powers`, `armed`, `tired`, `sent`) and stage rules, turns any saved Tera Orb into an X Attack, and collapses a forked adventurer to the path it is on (one not yet levelled keeps path A). Snapshot card fields the engine no longer reads (`power`, `knack`, `curse`) stay and are ignored. Every frozen fixture loads and plays on (57 in `save-fixtures.test.ts`); `tests/fork.test.ts` now checks the fork collapse, `tests/team.test.ts` the rest fields. New fixtures `2026-10-31-crawl-last-level` and `2026-10-31-league-bag-of-two`; the fixture script no longer looks for the cut situations.
+
+**Retune** (without powers: Pub Crawl 17.8%, League 13.0%, measured before the cut):
+- Pub Crawl: `PARTY_HEARTS` 11 → 12. Measured: won 25.1%, a won run 50.7 draws; classes 19% (Ranger) to 43% (Paladin); jokes 2% to 8%; every omen, floor and hidden room 15% to 35%; 75% level once, 21% reach the last level.
+- League: `TEAM_HP` 15 → 16; `GYM_NEED` gym 6 8 → 7 and gym 8 9 → 8; `LEGENDARY_NEED` 8 → 7, `ELITE_NEED` 9 → 7, `CHAMPION_NEED` 8 → 7; a Champion takes 2 hits (`CHAMPION_HITS` 3 → 2: its "switch" beat cut, the ace kept); a hideout deals 1 grunt of 3 (was 2); Rowlet +1 HP at every form. Measured: won 23.3%, a won run 69.2 draws (it sat at 70 to 71.5 until the hideout and Champion trims: without "win" powers, lost boss swings add draws, and easier odds alone only let longer runs win); starters 13% (Drowzee) to 45% (Mudkip), Bidoof 7%; hideouts 17% to 40%; 76% evolve once, 48% to the final form.
+
+**Checks run:** `npm run typecheck`, `npm run lint`, Prettier on every changed file, `npm test` (350), `npm run test:balance` (both suites, every band), `BASE_PATH=/side-quest/ npm run build` (budgets pass: 3,699 KiB runtime), Chromium Playwright: `crawl.spec.ts` and `quest.spec.ts` (52, after fixing three League assertions for the new HP and the inline send-in), then the full Chromium suite (see the PR). No WebKit run locally (not installed here; CI runs it), no device look.
+
+**Not done, risks:** the 54 mishaps read their old even line and cost nothing, so a few floors have more flat "drink 2" rooms; worth a rewrite pass into table moments or d20 rooms. Champions lost their middle duel. The League is easier at the end (Elite Four and Champion at 7). No playtest; the owner may want some cut system back after one (each cut is its own part of the diff). **Next (owner):** play a run of each mode, then merge on your word.
 
 ## In progress 2026-10-27: catching is a ball throw (owner: "catching a Pokémon should be harder and more exciting"; "throw a ball, then make the number needed per Pokémon different, with flavor text for caught and not caught")
 

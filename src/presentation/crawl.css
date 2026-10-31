@@ -15,7 +15,7 @@
   -webkit-mask: center / contain no-repeat;
 }
 
-/* --- The meter: hearts, curse, satchel ----------------------------------- */
+/* --- The meter: hearts, satchel ------------------------------------------ */
 
 /* The hearts meter is a brass stud like the menu's: the heart with the
    hearts left inside it. The rest of the party is on the strip below. */
@@ -35,18 +35,7 @@
     0 3px 0 #150e09,
     0 7px 12px #000a;
 }
-.crawl-meter.curse-bleed {
-  box-shadow:
-    0 0 0 2px rgb(224 53 42 / 0.55),
-    0 3px 0 #150e09,
-    0 7px 14px #000a;
-}
-.crawl-meter.curse-hex {
-  box-shadow:
-    0 0 0 2px rgb(138 79 224 / 0.6),
-    0 3px 0 #150e09,
-    0 7px 14px #000a;
-}
+
 .meter-heart {
   position: relative;
   display: grid;
@@ -327,10 +316,10 @@
 
 /* --- The strip: what the party carries -----------------------------------
    One row of chips under the header, each opening its own dialog: the
-   satchel's slots, the League's badges, the Quaff, the Cup, a curse, a
-   jinx. A chip reads at a glance: a mark, and a number or a name. */
+   League's type edge, the satchel's slots, the League's badges, a jinx. A
+   chip reads at a glance: a mark, and a number or a name. */
 
-/* A full strip (a five-slot satchel, the Quaff, the Cup, a curse and a jinx)
+/* A full strip (a five-slot satchel, the badges and a jinx)
    is wider than the header on a phone: it reaches 12px into the app's side
    padding, a name gives way first (it shrinks to an ellipsis; the dialog
    names it), and `safe center` keeps the first chip on screen if it still
@@ -388,9 +377,7 @@
   flex: 0 1 auto;
   min-width: 0;
 }
-.hud-strip.tight .chip-name {
-  display: none;
-}
+
 .chip-name {
   min-width: 0;
   max-width: 8.5em;
@@ -417,53 +404,13 @@
 .tag-badges {
   color: #f1d58c;
 }
-/* The Quaff lights amber while it can be drunk, and goes dark after. */
-.tag-quaff.ready {
-  border-color: #f0c56a;
-  background: linear-gradient(180deg, #f0c56a, #b9782c);
-  color: #2b1806;
-}
-.tag-quaff.spent {
-  color: #8f7c5c;
-}
-.tag-cup {
-  border-color: #b8833f;
-  color: #f6d9a3;
-}
-.tag-cup.empty {
-  border-color: #6e5736;
-  color: #9c8968;
-}
-.tag-cup b {
-  display: inline-block;
-  animation: cup-tip 600ms cubic-bezier(0.22, 1.4, 0.36, 1);
-}
-@keyframes cup-tip {
-  from {
-    transform: scale(1.6);
-    color: #fff2d6;
-  }
-}
-.tag-curse.curse-bleed {
-  border-color: #b3221a;
-  background: linear-gradient(180deg, #6a1f1c, #2a0b0a);
-  color: #ffb3a8;
-}
-.tag-curse.curse-hex {
-  border-color: #8a4fe0;
-  background: linear-gradient(180deg, #4a2f75, #1f1236);
-  color: #e0c8ff;
-}
+
 .tag-jinx {
   border-color: #b5426b;
   background: linear-gradient(180deg, #6b1e3c, #2e0b19);
   color: #ffd6e4;
 }
-@media (prefers-reduced-motion: reduce) {
-  .tag-cup b {
-    animation: none;
-  }
-}
+
 /* A narrow phone: chips keep their marks and numbers; names are in the
    dialogs, and the plaque's label drops the count its pips already show. */
 @media (max-width: 380px) {
@@ -506,25 +453,7 @@
     font-size: 18px;
   }
 }
-/* The party dialog's effects: the Quaff and the power, spent or ready. */
-.crawl-quaff.spent,
-.crawl-power.spent {
-  opacity: 0.7;
-}
-.crawl-power {
-  border-color: #4f9ad8;
-  background: rgb(12 40 70 / 0.5);
-}
-.crawl-power .crawl-icon {
-  color: #8fd8ff;
-}
-.crawl-rule {
-  border-color: #c9a86a;
-  background: rgb(70 50 20 / 0.5);
-}
-.crawl-rule .crawl-icon {
-  color: #f6e2b4;
-}
+
 /* The line under the League's badges: what they are for. */
 .crawl-note {
   margin: -6px 0 0;
@@ -535,7 +464,7 @@
 }
 
 /* --- Stakes: wax seals in the card's foot ---------------------------------
-   One pill for every seal: risks on the left (hearts lost, a curse, a boss's
+   One pill for every seal: risks on the left (hearts lost, a jinx, a boss's
    swings), gains on the right, each number marked − or +. */
 
 .card-stakes {
@@ -589,14 +518,7 @@
   background: radial-gradient(circle at 30% 25%, #7552b8, #4b2d80 75%);
   color: #fbefff;
 }
-.stake-curse {
-  color: #ffd9d3;
-  background: radial-gradient(circle at 30% 25%, #6a3247, #2a0f1a 75%);
-}
-.stake-curse.curse-hex {
-  color: #e7d3ff;
-  background: radial-gradient(circle at 30% 25%, #5b3b8a, #1f1236 75%);
-}
+
 /* A boss's or an ambush's swings, as pips beside its mark. */
 .stake-hits {
   background: radial-gradient(circle at 30% 25%, #4a3a2a, #1b1310 75%);
@@ -729,14 +651,7 @@
   font-size: max(13px, 0.78em);
   opacity: 0.85;
 }
-/* A forked adventurer's path (2026-10-25): what it does, at full strength,
-   over its price. */
-.offer-tagline {
-  opacity: 1;
-}
-.offer-tagline + .offer-price {
-  margin-top: 1px;
-}
+
 /* A price the party can't pay: solid (the frame must not show through), but
    greyed and flat. */
 .offer-plaque:disabled {
@@ -757,13 +672,7 @@
    width, so a line under them wider than both no longer stretches them
    apart (owner, 2026-10-18: the mark drifted left and the name wrapped). */
 .card-choice:not(.plaques-3, .plaques-4)
-  :is(
-    .offer-plaque,
-    .spoils-plaque,
-    .quaff-plaque,
-    .power-plaque,
-    .send-plaque
-  ) {
+  :is(.offer-plaque, .spoils-plaque, .send-plaque) {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto auto minmax(0, 1fr);
   justify-content: center;
@@ -783,22 +692,12 @@
   text-align: left;
 }
 .card-choice:not(.plaques-3, .plaques-4)
-  :is(
-    .offer-goods,
-    .quaff-plaque > .crawl-icon,
-    .power-plaque > .crawl-icon,
-    .send-plaque > .type-mark
-  ) {
+  :is(.offer-goods, .send-plaque > .type-mark) {
   grid-row: 1;
   grid-column: 2;
 }
 .card-choice:not(.plaques-3, .plaques-4)
-  :is(
-    .offer-goods > .crawl-icon,
-    .quaff-plaque > .crawl-icon,
-    .power-plaque > .crawl-icon,
-    .loot-plaque > .crawl-icon
-  ) {
+  :is(.offer-goods > .crawl-icon, .loot-plaque > .crawl-icon) {
   width: 1.05em;
   height: 1.05em;
 }
@@ -837,7 +736,7 @@
   font-size: 1em;
 }
 
-/* --- The run: hearts, curse, satchel, floors ------------------------------ */
+/* --- The run: hearts, satchel, floors ------------------------------------- */
 
 .crawl-record {
   display: grid;
@@ -1095,78 +994,6 @@
   border-color: #9a3a30;
 }
 
-/* Pub Crawl's knack chip (2026-10-25): the green chevrons and the knack's
-   mark, side by side. */
-.tag-knack {
-  gap: 2px;
-}
-.tag-knack .crawl-icon {
-  width: 20px;
-  height: 20px;
-  color: #bff0cf;
-}
-/* The adventurer's two knacks under its power, in the party dialog. */
-.crawl-omen .knack-chips {
-  grid-column: 1 / -1;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 4px;
-  color: #c9b893;
-  font-size: 0.85rem;
-}
-.crawl-omen .knack-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 3px 10px 3px 7px;
-  border: 1px solid rgb(127 227 160 / 0.45);
-  border-radius: 999px;
-  background: rgb(20 60 36 / 0.55);
-  color: #e6ffe9;
-  font: 700 0.75rem / 1 var(--font-tavern);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.crawl-omen .knack-chip .crawl-icon {
-  grid-row: auto;
-  width: 16px;
-  height: 16px;
-  color: #7fe3a0;
-}
-/* The knack dialog: the knack's mark large, what it does, where it helps. */
-.knack-panel {
-  display: grid;
-  gap: 6px;
-  justify-items: center;
-  text-align: center;
-}
-.knack-medal {
-  display: grid;
-  place-items: center;
-  width: 64px;
-  height: 64px;
-  border: 2px solid #c9a227;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #3f9a63, #14402a);
-}
-.knack-medal .crawl-icon {
-  width: 38px;
-  height: 38px;
-  color: #f5ffe9;
-}
-.knack-panel strong {
-  color: #7fe3a0;
-  font: 700 1.15rem / 1.2 var(--font-tavern);
-}
-.knack-panel span {
-  color: #e9d7b0;
-}
-.knack-panel small {
-  color: #c9b893;
-  font-size: 0.85rem;
-}
-
 /* The matchup dialog: the starter and the foe, the chevrons between. */
 .matchup-panel {
   display: grid;
@@ -1261,13 +1088,7 @@
   height: 26px;
   color: #ff7a6a;
 }
-.crawl-curse.curse-hex {
-  border-color: #5f4690;
-  background: rgb(40 20 70 / 0.45);
-}
-.crawl-curse.curse-hex .crawl-icon {
-  color: #c79bff;
-}
+
 .crawl-curse strong {
   color: #fff0cf;
   font-family: var(--font-tavern);
@@ -1665,8 +1486,7 @@
 }
 
 /* --- Pub Crawl at League depth (2026-10-17) -------------------------------
-   The trinket and jinx seals, the Quaff plaque, and the party dialog's
-   boons, jinx and Cup. */
+   The trinket and jinx seals, and the party dialog's boons and jinx. */
 
 .stake-trinket {
   background: radial-gradient(circle at 30% 25%, #257a60, #1a5846 75%);
@@ -1675,17 +1495,6 @@
 .stake-jinx {
   background: radial-gradient(circle at 30% 25%, #b5426b, #4a0f26 75%);
   color: #ffd6e4;
-}
-/* The Quaff: amber, like the drink it costs. */
-.loot-plaque.quaff-plaque {
-  color: #2b1806;
-  background: linear-gradient(145deg, #f0c56a, #b9782c);
-}
-/* A signature power (2026-10-25): electric blue, the one plaque that is
-   the party's own. */
-.loot-plaque.power-plaque {
-  color: #06182b;
-  background: linear-gradient(145deg, #8fd8ff, #2f7fc8);
 }
 
 /* The medallion: the adventurer's helm, a landing's fire, the rival's
@@ -1723,36 +1532,7 @@
 .crawl-jinx .crawl-icon {
   color: #ff9fc0;
 }
-.crawl-cup,
-.crawl-power {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 2px 10px;
-  align-items: center;
-  margin: 0;
-  padding: 8px 12px;
-  border: 1px solid #9a6a2e;
-  border-radius: 10px;
-  background: rgb(70 40 10 / 0.45);
-  font-size: 1rem;
-}
-.crawl-cup .crawl-icon,
-.crawl-power .crawl-icon {
-  grid-row: span 2;
-  width: 26px;
-  height: 26px;
-  color: #f0c56a;
-}
-.crawl-cup strong,
-.crawl-power strong {
-  color: #fff0cf;
-  font-family: var(--font-tavern);
-}
-.crawl-cup span,
-.crawl-power span {
-  color: #d9c7a4;
-  font-size: 0.95rem;
-}
+
 .crawl-wanted {
   color: #ff9b8c;
 }
@@ -2008,9 +1788,8 @@
   color: #b9cdf0;
 }
 
-/* The League's team (2026-10-25): a catch is a Poké Ball plaque; a
-   teammate sent in carries its type's medallion; a tired one is dimmed in
-   the team dialog. */
+/* The League's team (2026-10-25): a catch is a Poké Ball plaque; a caught
+   Pokémon's plaque carries its type's medallion. */
 .loot-plaque.send-plaque {
   color: #06182b;
   background: linear-gradient(145deg, #f6e7a8, #c9a227);
@@ -2050,7 +1829,7 @@
 }
 
 /* --- The "Use" plaque and its sheet (2026-10-27) ---------------------------
-   Items, a power and send-ins no longer share the card's foot with Won and
+   Items and send-ins no longer share the card's foot with Won and
    Lost: more than a short plaque or two open from this one, a row each. */
 
 .use-plaque {

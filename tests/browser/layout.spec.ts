@@ -207,7 +207,7 @@ test("@release home fits Safari's visible height without moving Install into the
     await expect(page.locator(".setup")).toBeVisible();
     // The League is a journey that plays its own pack: its brief stands in
     // for the pack picker.
-    await expect(page.locator(".crawl-brief")).toContainText("15 HP · 8 gyms");
+    await expect(page.locator(".crawl-brief")).toContainText("16 HP · 8 gyms");
     await page.evaluate(() => document.fonts.ready);
     await page.addStyleTag({
       content: `:root { --top-safe: ${top}px; --bottom-safe: ${bottom}px }`,

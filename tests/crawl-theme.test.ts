@@ -11,7 +11,6 @@ import {
   LANDING_HEAL,
   LEVEL_DRINK,
   PARTY_HEARTS,
-  QUAFF_DRINKS,
 } from "../src/content/dungeon/shared";
 
 const marks: CrawlIconName[] = [
@@ -21,8 +20,6 @@ const marks: CrawlIconName[] = [
   "smoke",
   "revive",
   "candy",
-  "bleed",
-  "hex",
   "heart",
   "boss",
   "satchel",
@@ -33,8 +30,6 @@ const marks: CrawlIconName[] = [
   "door",
   "adventurer",
   "trinket",
-  "cup",
-  "quaff",
   "rest",
   "jinx",
 ];
@@ -54,7 +49,6 @@ describe("crawl themes", () => {
     expect(crawlTheme(undefined)).toBe(dungeon);
     expect(crawlIconPath(dungeon, "heart")).toBe("art/crawl/heart.svg");
     expect(dungeon.loot.smoke.name).toBe("Smoke Bomb");
-    expect(dungeon.curses.bleed.name).toBe("Bleeding");
     expect(heartCount(dungeon, 1)).toBe("1 heart");
     expect(heartCount(dungeon, 2)).toBe("2 hearts");
     expect(dungeon.loot.candy.name).toBe("Dog-Eared Tome");
@@ -68,10 +62,6 @@ describe("crawl themes", () => {
       name: "X Attack",
       does: "Roll a lost battle again",
     });
-    expect(league.curses.hex).toEqual({
-      name: "Confused",
-      does: "The bag is sealed",
-    });
     expect(league.words.party).toBe("The team");
     expect(league.wiped.title.join(" ")).toBe("Whited out.");
     expect(heartCount(league, 1)).toBe("1 HP");
@@ -83,24 +73,28 @@ describe("how to play", () => {
     const quest = packs.find((p) => p.id === "dungeon")!.quest!;
     const rows = crawlTheme("dungeon").guide.rows({
       hearts: quest.party!.hearts,
-      // A save from before the Quaff retired still shows its row.
-      quaff: QUAFF_DRINKS,
-      cup: !!quest.party!.cup,
     });
     const line = (title: string) => rows.find((r) => r.title === title)!.line;
     expect(line("Hearts")).toContain(`shares ${PARTY_HEARTS}.`);
-    expect(line("Quaff")).toContain(`Drink ${QUAFF_DRINKS} to roll`);
     expect(line("Landings")).toContain(
       `for ${LEVEL_DRINK} drinks, or rest for ${LANDING_HEAL} hearts`,
     );
-    expect(rows.map((r) => r.title)).toContain("The Cup");
+    // One row a system, and nothing cut on 2026-10-31.
+    expect(rows.map((r) => r.title)).toEqual([
+      "Hearts",
+      "Fights",
+      "Bosses",
+      "Landings",
+      "Satchel and gear",
+      "Jinxes",
+    ]);
     // Every row's mark exists.
     for (const row of rows)
       expect(
         existsSync(`public/${crawlIconPath(crawlTheme("dungeon"), row.icon)}`),
       ).toBe(true);
   });
-  it("speaks the League's words, with no Quaff or Cup", () => {
+  it("speaks the League's words", () => {
     const league = crawlTheme("pokemon");
     const rows = league.guide.rows({ hearts: 17 });
     expect(rows.map((r) => r.title)).toEqual([
@@ -110,9 +104,8 @@ describe("how to play", () => {
       "Gyms and badges",
       "Evolution",
       "Caught Pokémon",
-      "Signature moves",
       "Bag",
-      "Statuses and jinxes",
+      "Jinxes",
     ]);
     for (const row of rows)
       expect(existsSync(`public/${crawlIconPath(league, row.icon)}`)).toBe(

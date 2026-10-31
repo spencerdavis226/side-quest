@@ -16,7 +16,7 @@ import {
   trinket,
   BOSS_NEED,
   type FloorCards,
-  strike,
+  mishap,
 } from "./shared";
 
 // Floor 2: the Catacombs. Bones, regrets, and a bachelor party that never
@@ -56,7 +56,6 @@ export const catacombs: FloorCards = {
       "Leeches that drink blood and, apparently, Fireball. Roll d20.",
       "They latch on and won't let go. Drink 3.",
       "You salt them. Give 4.",
-      { curse: "bleed" },
     ),
     monster(
       1,
@@ -65,7 +64,6 @@ export const catacombs: FloorCards = {
       "A witch who reads tarot and your browser history. Roll d20.",
       "Hexed. Drink 3, and confess your last search.",
       "You flip her table. Give 4.",
-      { curse: "hex" },
     ),
     monster(
       1,
@@ -91,20 +89,20 @@ export const catacombs: FloorCards = {
         ),
       },
     ),
-    strike(1, "Monster", "hungover-mummy", "Hungover Mummy", {
-      even: "A mummy in bar napkins, hungover for three thousand years, groans at you. Drink 3.",
-      advantage:
-        "A mummy in bar napkins is hungover. A Gatorade lays it to rest. Give 4.",
-      disadvantage:
-        "A mummy in bar napkins is hungover and throws up sand on you. Drink 4.",
-    }),
-    strike(1, "Monster", "banshee-karaoke", "Karaoke Banshee", {
-      even: "A karaoke banshee picks your song. You hum along. Drink 3.",
-      advantage:
-        "A karaoke banshee picks your song. You duet and she swoons. Give 4.",
-      disadvantage:
-        "A karaoke banshee picks your song. Sing the Total Eclipse of the Heart chorus, then drink 4.",
-    }),
+    mishap(
+      1,
+      "Monster",
+      "hungover-mummy",
+      "Hungover Mummy",
+      "A mummy in bar napkins, hungover for three thousand years, groans at you. Drink 3.",
+    ),
+    mishap(
+      1,
+      "Monster",
+      "banshee-karaoke",
+      "Karaoke Banshee",
+      "A karaoke banshee picks your song. You hum along. Drink 3.",
+    ),
     monster(
       1,
       "lich-intern",
@@ -143,13 +141,13 @@ export const catacombs: FloorCards = {
       "The Séance",
       "Hands joined, you summon a spirit. Make someone laugh in 20 seconds, or drink 4.",
     ),
-    strike(1, "Trap", "collapsing-floor", "Collapsing Floor", {
-      even: "The floor gives way under you and you wobble. Drink 2.",
-      advantage:
-        "The floor gives way under you and you leap to safety. Give 3.",
-      disadvantage:
-        "The floor gives way under you and you fall a whole floor. Drink 3.",
-    }),
+    mishap(
+      1,
+      "Trap",
+      "collapsing-floor",
+      "Collapsing Floor",
+      "The floor gives way under you and you wobble. Drink 2.",
+    ),
     trap(
       1,
       "dart-wall",
@@ -197,13 +195,13 @@ export const catacombs: FloorCards = {
       "You conduct them into a wall. Give 3.",
     ),
     // More of the Catacombs (2026-10-25).
-    strike(1, "Monster", "zombie-roommate", "Zombie Roommate", {
-      even: "Your undead roommate still owes you rent and returns your hoodie, worse. Drink 3.",
-      advantage:
-        "Your undead roommate still owes you rent. You throw him out. Give 4.",
-      disadvantage:
-        "Your undead roommate still owes you rent and moves back in. Drink 4.",
-    }),
+    mishap(
+      1,
+      "Monster",
+      "zombie-roommate",
+      "Zombie Roommate",
+      "Your undead roommate still owes you rent and returns your hoodie, worse. Drink 3.",
+    ),
     monster(
       1,
       "gym-ghoul",
@@ -212,26 +210,26 @@ export const catacombs: FloorCards = {
       "He drops the bar on you. Drink 4.",
       "You out-lift a corpse. Give 4.",
     ),
-    strike(1, "Monster", "skeleton-mariachi", "Skeleton Mariachi", {
-      even: "Three skeletons with guitars won't stop until someone dances. The worst dancer drinks 3.",
-      advantage:
-        "Three skeletons with guitars won't stop until you charm their strings into a slow one. Give 4.",
-      disadvantage:
-        "Three skeletons with guitars won't stop until someone dances. You dance, badly. Drink 4.",
-    }),
+    mishap(
+      1,
+      "Monster",
+      "skeleton-mariachi",
+      "Skeleton Mariachi",
+      "Three skeletons with guitars won't stop until someone dances. The worst dancer drinks 3.",
+    ),
     trial(
       1,
       "own-eulogy",
       "Your Own Eulogy",
       "Give your own eulogy in 10 seconds. The table says if it moved them. Not moved: drink 4.",
     ),
-    strike(1, "Trap", "grabbing-hand", "The Grabbing Hand", {
-      even: "A coffin lid slides open and a hand grabs your ankle. It squeezes. Drink 2.",
-      advantage:
-        "A hand grabs your ankle from a coffin. You stamp on it and it lets go. Give 3.",
-      disadvantage:
-        "A coffin lid slides open, a hand grabs your ankle and pulls. Drink 3.",
-    }),
+    mishap(
+      1,
+      "Trap",
+      "grabbing-hand",
+      "The Grabbing Hand",
+      "A coffin lid slides open and a hand grabs your ankle. It squeezes. Drink 2.",
+    ),
     ambush(
       1,
       "ghost-tour",
@@ -260,7 +258,7 @@ export const catacombs: FloorCards = {
       "The plinth bleeds. So do you. Drink 3.",
       "Real gold, and something rattling inside. Give 4.",
       ["Leave it", "Grab it"],
-      { loot: "die", curse: "bleed" },
+      { loot: "die" },
     ),
     relic(
       1,
@@ -497,7 +495,6 @@ export const catacombs: FloorCards = {
         { fumble: "You drink his soul. Finish your drink." },
       ),
       {
-        curse: "hex",
         drops: [
           trinket("Phylactery Shot", { loot: ["revive"], hearts: -1 }),
           trinket("Lich's Crown", { roll: { boss: 1 }, crit: 19 }),
@@ -516,7 +513,6 @@ export const catacombs: FloorCards = {
         { crit: "You buy the whole bar. Everyone else drinks 3." },
       ),
       {
-        curse: "bleed",
         drops: [
           trinket("Last Receipt", { hurt: { boss: -1 } }),
           trinket("Lost Tab", { loot: ["die", "shield"] }),

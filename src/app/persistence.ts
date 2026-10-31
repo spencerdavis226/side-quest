@@ -1,5 +1,5 @@
 import { packs } from "../content/manifest.generated";
-import { badStageRule, validateCatalog } from "../content/validate";
+import { validateCatalog } from "../content/validate";
 import { validateRoll } from "../game/dice";
 import {
   currentCard,
@@ -8,14 +8,13 @@ import {
   formEffect,
   hitsNeeded,
   omenForm,
-  partyPower,
   previousCard,
   satchelSize,
   TEAM_SIZE,
   validConfig,
 } from "../game/engine";
 import type { GameConfig, PartyState, SessionState } from "../game/types";
-import { CURSES, LOOT } from "../game/types";
+import { LOOT } from "../game/types";
 export const SAVE_KEY = "side-quest.session.v1";
 export const SETTINGS_KEY = "side-quest.settings.v1";
 /** The last save that failed to load, kept as it was so a later fix can
@@ -144,7 +143,6 @@ function validateQuest(s: SessionState) {
       picks.length !== stage.pick ||
       (elite !== undefined &&
         (!q.party || !Array.isArray(elite) || !elite.length)) ||
-      (stage.rule !== undefined && (!q.party || badStageRule(stage.rule))) ||
       picks.some(
         (id, i) =>
           !stage.cards.some((c) => c.id === id) &&
@@ -189,7 +187,6 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
     !Array.isArray(p.loot) ||
     p.loot.length > satchelSize(s.quest) ||
     p.loot.some((item) => !LOOT.includes(item)) ||
-    !(p.curse === null || CURSES.includes(p.curse)) ||
     !whole(p.hits, 0) ||
     !whole(p.rounds, 0) ||
     typeof p.wiped !== "boolean" ||
@@ -225,31 +222,12 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
       (typeof p.jinx !== "string" ||
         !dealt.includes(p.jinx) ||
         !finaleCard(s.quest!, p.jinx)?.jinx)) ||
-    (p.quaff !== undefined && !whole(p.quaff, 0)) ||
-    (p.quaffed !== undefined &&
-      (p.quaffed !== true || p.quaff === undefined)) ||
-    (p.cup !== undefined && !whole(p.cup, 0)) ||
     (p.press !== undefined &&
       (!whole(p.press, 1) ||
         s.phase !== "revealed" ||
         p.press >= (currentCard(s).press?.prizes.length ?? 0))) ||
-    // A Tera Orb holds only for the battle face up.
-    (p.tera !== undefined &&
-      (s.phase !== "revealed" || p.tera !== currentCard(s).id)) ||
-    // A signature power's uses, and the card it is armed on (2026-10-25).
-    (p.powers !== undefined &&
-      (!whole(p.powers, 1) ||
-        p.powers > (partyPower(s.quest)?.uses ?? 1) ||
-        !partyPower(s.quest))) ||
-    (p.armed !== undefined &&
-      (s.phase !== "revealed" ||
-        p.armed !== currentCard(s).id ||
-        !["spare", "edge", "double"].includes(
-          partyPower(s.quest)?.kind ?? "",
-        ))) ||
     // The League's team (2026-10-25): caught cards already dealt, each a
-    // typed Pokémon, at most two; the rested ones on it; the one sent in
-    // only on the battle face up.
+    // typed Pokémon, at most two.
     (p.team !== undefined &&
       (!Array.isArray(p.team) ||
         p.team.length > TEAM_SIZE ||
@@ -260,13 +238,6 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
             !dealt.includes(id) ||
             !finaleCard(s.quest!, id)?.type,
         ))) ||
-    (p.tired !== undefined &&
-      (!Array.isArray(p.tired) ||
-        p.tired.some((id) => !p.team?.includes(id)))) ||
-    (p.sent !== undefined &&
-      (s.phase !== "revealed" ||
-        !p.team?.includes(p.sent) ||
-        !p.tired?.includes(p.sent))) ||
     // The ball thrown at the Pokémon face up (2026-10-27), kept until its
     // card is put aside.
     (p.throw !== undefined &&
@@ -289,6 +260,67 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
         p.form > (omenForm(s.quest)?.forms ?? 0)))
   )
     throw Error("Invalid party");
+}
+/** Systems cut on 2026-10-31 (owner: "way too much clutter"): signature
+ * powers, Pub Crawl's knacks, floor rules, Cup and Quaff, curses, the Tera
+ * Orb, the levelling fork and the League's legacy team rests. A save from
+ * before keeps playing without them: their party fields go, a Tera Orb is
+ * an X Attack (a loaded die), and a forked adventurer keeps the path it is
+ * on as its one line (one not yet levelled keeps its first path). Card
+ * fields the engine no longer reads (`power`, `knack`, `curse`) stay in the
+ * snapshot, ignored. Exported for the save fixtures' tests. */
+export function retireSystems(parsed: unknown) {
+  const s = parsed as Record<string, unknown> | null;
+  const q = s?.quest as Record<string, unknown> | undefined;
+  type Obj = Record<string, unknown>;
+  const isObj = (v: unknown): v is Obj => !!v && typeof v === "object";
+  const tera = (v: unknown) => (v === "tera" ? "die" : v);
+  const noTera = (c: Obj) => {
+    if (Array.isArray(c.offers))
+      for (const o of c.offers) if (isObj(o)) o.loot = tera(o.loot);
+    if (isObj(c.reward)) c.reward.loot = tera(c.reward.loot);
+    for (const o of [c.omen, ...(Array.isArray(c.evolves) ? c.evolves : [])]) {
+      const e = isObj(o) && isObj(o.omen) ? o.omen : o;
+      if (!isObj(e)) continue;
+      if (Array.isArray(e.loot)) e.loot = e.loot.map(tera);
+      if (e.restock !== undefined) e.restock = tera(e.restock);
+    }
+  };
+  if (Array.isArray(s?.cards)) for (const c of s.cards) if (isObj(c)) noTera(c);
+  if (!isObj(q)) return;
+  const party = isObj(q.party) ? q.party : undefined;
+  for (const stage of Array.isArray(q.stages) ? q.stages : []) {
+    if (!isObj(stage)) continue;
+    delete stage.rule;
+    for (const c of [
+      ...(Array.isArray(stage.cards) ? stage.cards : []),
+      ...(Array.isArray(stage.elite) ? stage.elite : []),
+    ]) {
+      if (!isObj(c)) continue;
+      noTera(c);
+      if (c.fork !== true || !Array.isArray(c.evolves)) continue;
+      const mine = !!party && party.omen === c.id;
+      const form = mine && typeof party.form === "number" ? party.form : 0;
+      const path = form ? (form - 1) % 2 : 0;
+      c.evolves = [c.evolves[path], c.evolves[path + 2]];
+      delete c.fork;
+      if (party && mine && form) party.form = form > 2 ? 2 : 1;
+    }
+  }
+  if (!party) return;
+  for (const key of [
+    "curse",
+    "cup",
+    "quaff",
+    "quaffed",
+    "tera",
+    "powers",
+    "armed",
+    "tired",
+    "sent",
+  ])
+    delete party[key];
+  if (Array.isArray(party.loot)) party.loot = party.loot.map(tera);
 }
 export function parseSession(raw: string): SessionState {
   const parsed = JSON.parse(raw);
@@ -317,6 +349,7 @@ export function parseSession(raw: string): SessionState {
       finale: [legacy.finale.id],
       step: 0,
     };
+  retireSystems(parsed);
   const s = parsed as SessionState;
   if (
     !s ||

@@ -12,7 +12,6 @@ import { ids, TEAM_HP } from "./league/journey";
 import { rivals, routeCards, routes, victory } from "./league/routes";
 import { starters } from "./league/starters";
 import { applyTypes } from "./league/types";
-import { applyStarterPowers } from "./league/powers";
 import { applyLeaguePhases } from "./league/phases";
 import { applyTeam } from "./league/team";
 
@@ -909,8 +908,6 @@ export const pokemonCards: CardDefinition[] = [
 applyTypes(pokemonCards);
 // The team (2026-10-25): wild Pokémon and catch cards can be caught.
 applyTeam(pokemonCards);
-// Signature moves (2026-10-25): one a starter, and one a form.
-applyStarterPowers(pokemonCards);
 // Boss phases (2026-10-25): the catch, the Champion's switch and ace.
 applyLeaguePhases(pokemonCards);
 
@@ -934,8 +931,9 @@ const journey = routes.flatMap((route, k) => [
   ...(k === 3
     ? [
         {
+          // One grunt of three, then the boss (two grunts until 2026-10-31).
           oneOf: hideouts.map((h) => [
-            { label: h.label, intro: h.intro, pick: 2, cardIds: ids(h.grunts) },
+            { label: h.label, intro: h.intro, pick: 1, cardIds: ids(h.grunts) },
             { label: `${h.label} boss`, pick: 1, cardIds: [h.boss.id] },
           ]),
         },

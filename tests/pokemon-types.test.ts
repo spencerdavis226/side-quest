@@ -101,7 +101,6 @@ describe("League type marks", () => {
         "route-missingno",
         "route-waterfall",
         "route-mew-truck",
-        "route-tera-raid",
         "route-boulder-puzzle",
         // Trainers whose card names no Pokémon, of no one type.
         "route-picnicker",

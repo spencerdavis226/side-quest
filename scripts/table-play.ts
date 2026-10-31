@@ -10,11 +10,9 @@ import {
   awaitingPress,
   awaitingSpoils,
   awaitingVerdict,
-  canQuaff,
   canTakeOffer,
   canUseLoot,
   canSendIn,
-  canUsePower,
   catchIt,
   throwBall,
   letGo,
@@ -23,16 +21,13 @@ import {
   cashOut,
   currentCard,
   omenForm,
-  powerSpoils,
   pressOn,
-  quaff,
   settleBattle,
   spoilsOnWin,
   skipRoll,
   spendLoot,
   takeOffer,
   takeSpoils,
-  spendPower,
   type Random,
 } from "../src/game/engine";
 import { returnToCard, rollDice } from "../src/game/dice";
@@ -55,21 +50,11 @@ export function nextMove(s: SessionState, random: Random): SessionState {
   else if (party && party.hearts <= 3 && can("draught"))
     next = spendLoot(s, "draught", random);
   else if (can("candy")) next = spendLoot(s, "candy", random);
-  else if (can("tera") && random() < 0.5) next = spendLoot(s, "tera", random);
   else if (can("smoke") && random() < 0.3) next = spendLoot(s, "smoke", random);
   else if (awaitingChoice(s))
     next = random() < 0.5 ? skipRoll(s, random) : rollDice(s, random);
   else if (card.dice && !s.roll) next = rollDice(s, random);
   else if (card.dice && !s.roll!.returned) next = returnToCard(s);
-  else if (canQuaff(s) && random() < 0.6) next = quaff(s);
-  // The class's or starter's power (2026-10-25), now and then; a win that
-  // fells a boss with spoils picks one.
-  else if (canUsePower(s) && random() < 0.35)
-    next = spendPower(
-      s,
-      random,
-      powerSpoils(s) ? Math.floor(random() * card.spoils!.length) : undefined,
-    );
   // The League's caught Pokémon (2026-10-25): use one now and then, and
   // catch a beaten wild Pokémon more often than not.
   else if (partyTeam(s.quest).some((m) => canSendIn(s, m.id)) && random() < 0.5)

@@ -4,17 +4,12 @@ import type {
   CardDefinition,
   OmenEffect,
   PackDefinition,
-  Power,
   QuestStage,
-  StageRule,
 } from "../game/types";
 import {
-  CURSES,
   ENCOUNTERS,
-  KNACKS,
   LOOT,
   POKEMON_TYPES,
-  POWER_KINDS,
   RIBBON_TONES,
   SLOTS,
   type Slot,
@@ -26,8 +21,7 @@ import {
 const step = (n: unknown, lo: number, hi: number) =>
   n === undefined ||
   (Number.isSafeInteger(n) && (n as number) >= lo && (n as number) <= hi);
-/** Whether an omen effect (an omen's, a form's, a boon's, a stage rule's)
- * is malformed. */
+/** Whether an omen effect (an omen's, a form's, a boon's) is malformed. */
 export function badEffect(o: OmenEffect): boolean {
   return (
     !o ||
@@ -58,41 +52,6 @@ export function badEffect(o: OmenEffect): boolean {
     !step(o.fumble, 1, 3) ||
     (o.reroll20 !== undefined && o.reroll20 !== true) ||
     (o.restock !== undefined && !LOOT.includes(o.restock))
-  );
-}
-/** Whether a signature power is malformed (2026-10-25). */
-export function badPower(p: Power): boolean {
-  return (
-    !p ||
-    typeof p.name !== "string" ||
-    !p.name.trim() ||
-    p.name.length > 16 ||
-    typeof p.rules !== "string" ||
-    !p.rules.trim() ||
-    p.rules.length > 28 ||
-    !POWER_KINDS.includes(p.kind) ||
-    !step(p.uses, 1, 3) ||
-    !step(p.cost, 1, 3) ||
-    !step(p.amount, 1, 4) ||
-    !step(p.drinks, 1, 6) ||
-    (p.kind === "heal") !== (p.amount !== undefined) ||
-    (p.cost !== undefined && p.kind !== "win")
-  );
-}
-/** Whether a floor's or route's rule is malformed (2026-10-25). It never
- * moves hearts, items or the satchel, which would change between stages. */
-export function badStageRule(r: StageRule): boolean {
-  return (
-    !r ||
-    typeof r.name !== "string" ||
-    !r.name.trim() ||
-    r.name.length > 22 ||
-    typeof r.rule !== "string" ||
-    !r.rule.trim() ||
-    r.rule.length > 110 ||
-    (r.effect !== undefined &&
-      (badEffect(r.effect) ||
-        ["hearts", "loot", "satchel", "restock"].some((k) => k in r.effect!)))
   );
 }
 export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
@@ -181,7 +140,7 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         ))
     )
       fail(`Invalid strike: ${c.id}`);
-    // Pub Crawl stakes: hearts lost, boss swings, rewards and curses.
+    // Pub Crawl stakes: hearts lost, boss swings and rewards.
     const count = (n: unknown, max: number) =>
       Number.isSafeInteger(n) && (n as number) >= 1 && (n as number) <= max;
     if (
@@ -199,8 +158,6 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         (c.reward.heal !== undefined && !count(c.reward.heal, 5)))
     )
       fail(`Invalid reward: ${c.id}`);
-    if (c.curse !== undefined && !CURSES.includes(c.curse))
-      fail(`Invalid curse: ${c.id}`);
     if (c.encounter !== undefined && !ENCOUNTERS.includes(c.encounter))
       fail(`Invalid encounter: ${c.id}`);
     // A merchant's wares or a fork's doors: two or three plaques, on a card
@@ -235,9 +192,7 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
       (c.omen === undefined ||
         !Array.isArray(c.evolves) ||
         c.evolves.length < 1 ||
-        c.evolves.length > (c.branches ? 3 : 2) + (c.fork ? 2 : 0) ||
-        (c.fork !== undefined &&
-          (c.fork !== true || c.evolves.length !== 4 || c.branches)) ||
+        c.evolves.length > (c.branches ? 3 : 2) ||
         c.evolves.some(
           (e) =>
             !e ||
@@ -245,10 +200,6 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
               (text) => typeof text !== "string" || !text.trim(),
             ) ||
             e.title.length > 24 ||
-            (e.tagline !== undefined &&
-              (typeof e.tagline !== "string" ||
-                !e.tagline.trim() ||
-                e.tagline.length > 28)) ||
             !e.omen,
         ))
     )
@@ -312,18 +263,6 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         fail(`Invalid palette: ${c.id}`);
     if (c.branches !== undefined && (c.branches !== true || !c.evolves))
       fail(`Invalid branches: ${c.id}`);
-    // Pub Crawl's knacks (2026-10-25): two on an adventurer, one on a fight.
-    if (
-      (c.knacks !== undefined &&
-        (!c.omen ||
-          !Array.isArray(c.knacks) ||
-          c.knacks.length > 2 ||
-          new Set(c.knacks).size !== c.knacks.length ||
-          c.knacks.some((k) => !KNACKS.includes(k)))) ||
-      (c.knack !== undefined &&
-        (!(c.battle || c.strike) || !KNACKS.includes(c.knack)))
-    )
-      fail(`Invalid knack: ${c.id}`);
     // A boon: a name, its rules, and an effect like an omen's. It may sit on
     // a fight (a trinket a boss drops), never beside an omen.
     if (
@@ -444,15 +383,6 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         }))
     )
       fail(`Invalid phases: ${c.id}`);
-    // A run's omen's signature power, and its forms'.
-    for (const power of [
-      ...(c.power !== undefined ? [c.power] : []),
-      ...(Array.isArray(c.evolves)
-        ? c.evolves.flatMap((e) => (e?.power !== undefined ? [e.power] : []))
-        : []),
-    ])
-      if (c.omen === undefined || badPower(power))
-        fail(`Invalid power: ${c.id}`);
     const omens = [
       ...(c.omen !== undefined ? [c.omen] : []),
       ...(Array.isArray(c.evolves) ? c.evolves.map((e) => e.omen) : []),
@@ -552,12 +482,7 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
           (goal !== 0 ||
             !Number.isSafeInteger(party?.hearts) ||
             party!.hearts < 1 ||
-            party!.hearts > 30 ||
-            (party!.quaff !== undefined &&
-              (!Number.isSafeInteger(party!.quaff) ||
-                party!.quaff < 1 ||
-                party!.quaff > 6)) ||
-            (party!.cup !== undefined && party!.cup !== true))) ||
+            party!.hearts > 30)) ||
         (mark !== undefined &&
           (typeof mark !== "string" ||
             !/^art\/[a-zA-Z0-9/_-]+\.svg$/.test(mark))) ||
@@ -582,8 +507,7 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
             !Array.isArray(stage.cardIds) ||
             stage.pick > stage.cardIds.length ||
             (stage.elite !== undefined &&
-              (!crawl || !Array.isArray(stage.elite) || !stage.elite.length)) ||
-            (stage.rule !== undefined && (!crawl || badStageRule(stage.rule))),
+              (!crawl || !Array.isArray(stage.elite) || !stage.elite.length)),
         ) ||
         new Set(finaleIds).size !== finaleIds.length ||
         finaleIds.some(

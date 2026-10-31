@@ -1,5 +1,5 @@
 import type { CardDefinition } from "../../game/types";
-import { evolution, gamble, pair, strike, trainer, vs, wild } from "./journey";
+import { evolution, pair, strike, trainer, vs, wild } from "./journey";
 
 // Type expansion (owner, 2026-10-25): three more fights on each route, so
 // every starter type meets about as many good matchups as bad ones. The
@@ -255,16 +255,3 @@ export const moreEvolutions: Partial<Record<number, CardDefinition>> = {
     "The Day Care couple trained your starter while you napped. It looks different.",
   ),
 };
-
-/** A Tera Raid den on Route 7: walk past, or join the raid for a Tera Orb. */
-export const teraRaid = gamble(
-  6,
-  "route-tera-raid",
-  "Tera Raid Den",
-  "A den glows like a geode. Something huge and crystal sleeps inside.",
-  11,
-  "The raid boss shrugs you off. Drink 3.",
-  "The crystal shatters into an orb. Give 3.",
-  ["Walk past", "Join the raid"],
-  "tera",
-);

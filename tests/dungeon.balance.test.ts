@@ -6,7 +6,6 @@ import {
   awaitingPress,
   awaitingSpoils,
   awaitingVerdict,
-  canQuaff,
   cashOut,
   pressOn,
   canTakeOffer,
@@ -15,7 +14,6 @@ import {
   currentCard,
   finaleStage,
   omenForm,
-  quaff,
   questRecord,
   satchelSize,
   settleBattle,
@@ -28,7 +26,6 @@ import {
   type Random,
 } from "../src/game/engine";
 import { returnToCard, rollDice, rollWins } from "../src/game/dice";
-import { botPower } from "./bot";
 import { parseSession } from "../src/app/persistence";
 import { cards, packs } from "../src/content/catalog";
 import type { GameConfig, Loot, SessionState } from "../src/game/types";
@@ -82,21 +79,19 @@ const deal = (s: SessionState, id: string): SessionState => {
 };
 
 // The table plays sensibly: a draught at 3 hearts or less, a loaded die on
-// any lost roll and the Quaff when there's no die, smoke on any room fight
+// any lost roll, smoke on any room fight
 // it can, relics opened above 4 hearts, trials won a little over half the
 // time, a merchant's drink-priced ware whenever the satchel has room (a
 // price in hearts only above 8), the loud door above 6 hearts, a Tome read
 // at once, and at a landing a level up unless the hearts are low (6 or
 // fewer) or the adventurer is a joke class (the Plus-One, the Intern, the
-// Mimic), who rests; a forked level up picks either path, at random. Real cards, real
-// engine, so a change to either shows up here.
+// Mimic), who rests. Real cards, real engine, so a change to either shows up here.
 function playRun(seed: number, adventurer?: string) {
   const random = seeded(seed);
   let s = createSession(crawl, cards, packs, random);
   if (adventurer) s = deal(s, `dungeon.class-${adventurer}`);
   const use = (item: Loot) => {
-    if (canUseLoot(s, item))
-      s = spendLoot(s, item, random, random() < 0.5 ? 0 : 1);
+    if (canUseLoot(s, item)) s = spendLoot(s, item, random);
   };
   const joke = () => JOKE_CLASSES.includes(party(s).omen ?? "");
   for (let guard = 0; guard < 500 && s.phase !== "complete"; guard++) {
@@ -126,18 +121,12 @@ function playRun(seed: number, adventurer?: string) {
         s,
         canTakeOffer(s, pick) ? pick : offers.length - 1,
         random,
-        random() < 0.5 ? 0 : 1,
       );
       continue;
     }
     if (card.battle && !card.hits && !card.dice?.choice) {
       use("smoke");
       if (s.phase !== "revealed" || currentCard(s) !== card) continue;
-    }
-    // The class's or starter's power (2026-10-25).
-    if (s.phase === "revealed") {
-      s = botPower(s, random, "before");
-      if (s.phase !== "revealed" || currentCard(s).id !== card.id) continue;
     }
     if (awaitingChoice(s)) {
       if (party(s).hearts > 4) s = rollDice(s, random);
@@ -163,9 +152,7 @@ function playRun(seed: number, adventurer?: string) {
       if (!s.roll) s = rollDice(s, random);
       s = returnToCard(s);
       if (card.battle && !rollWins(card.dice, s.roll!.values, s.roll!)) {
-        s = botPower(s, random, "lost");
         use("die");
-        if (s.roll && canQuaff(s)) s = quaff(s);
         if (!s.roll) s = returnToCard(rollDice(s, random));
       }
     }
@@ -240,7 +227,7 @@ it("a crawl is hard: the party wins about a quarter of its runs", () => {
     (of.map(f).reduce((a, b) => a + b, 0) / of.length).toFixed(1);
   console.log(
     `crawl: won ${(won * 100).toFixed(1)}%; a won run takes ${mean.toFixed(1)} draws, ` +
-      `keeps ${avg((s) => party(s).boons?.length ?? 0)} boons, pours ${avg((s) => party(s).cup ?? 0, runs)} splashes a run\n` +
+      `keeps ${avg((s) => party(s).boons?.length ?? 0)} boons\n` +
       `wiped at: ${[...wipes].map(([l, n]) => `${l} ${pct(n / RUNS)}`).join(", ")}`,
   );
   expect(won).toBeGreaterThan(0.18);
@@ -262,18 +249,8 @@ it("adventurers level up often, but not always all the way", () => {
   );
   const once = levelling.filter((s) => (party(s).form ?? 0) >= 1).length;
   const full = levelling.filter((s) => !omenForm(s.quest)!.canEvolve).length;
-  // Each forked path's rate among the runs that took it (2026-10-25): a
-  // run that levels is a run that got far, so these read high.
-  const paths = new Map<string, SessionState[]>();
-  for (const s of levelling.filter((s) => (party(s).form ?? 0) >= 1)) {
-    const card = omenForm(s.quest)!.card;
-    const path = card.evolves![((party(s).form ?? 1) - 1) % 2].title;
-    const key = `${card.title}/${path}`;
-    paths.set(key, [...(paths.get(key) ?? []), s]);
-  }
   console.log(
-    `levels: ${pct(once / levelling.length)} level up at least once, ${pct(full / levelling.length)} reach level 3\n` +
-      `paths: ${[...paths].map(([k, g]) => `${k} ${pct(rate(g))} (${g.length})`).join(", ")}`,
+    `levels: ${pct(once / levelling.length)} level up at least once, ${pct(full / levelling.length)} reach level 3`,
   );
   expect(once / levelling.length).toBeGreaterThan(0.6);
   expect(full / levelling.length).toBeGreaterThan(0.2);

@@ -30,7 +30,6 @@ export function CardFace({
   hits = 0,
   crawl,
   matchup = null,
-  shift,
   strike,
   ball = null,
 }: {
@@ -47,9 +46,6 @@ export function CardFace({
   crawl?: CrawlTheme;
   /** A League fight's type matchup against the starter (`cardMatchup`). */
   matchup?: Matchup | null;
-  /** How far a plaque fight's loss moves (the engine's `verdictShift`,
-   * which also counts a Pub Crawl knack); read from `matchup` without it. */
-  shift?: number;
   /** A strike's outcome (the engine's `strikeOutcome`); read from `matchup`
    * without it. */
   strike?: "won" | "lost" | null;
@@ -380,19 +376,6 @@ export function CardFace({
                 {boldNumbers(strikeLine)}
               </p>
             </div>
-          ) : card.power ? (
-            // A class's or starter's signature power (2026-10-25), under
-            // its rules like a strike's line.
-            <div className="card-strike card-power">
-              <p>{card.rules}</p>
-              <p className="resolved-instruction power-line">
-                <strong>{card.power.name}:</strong>{" "}
-                {card.power.drinks
-                  ? `drink ${card.power.drinks}, ${card.power.rules[0].toLowerCase()}${card.power.rules.slice(1)}`
-                  : card.power.rules}
-                {(card.power.uses ?? 1) > 1 ? ", twice" : ""}.
-              </p>
-            </div>
           ) : (
             <p>{card.rules}</p>
           )}
@@ -404,7 +387,6 @@ export function CardFace({
               party={party}
               hits={hits}
               theme={crawl}
-              shift={shift ?? matchupShift(card, matchup)}
               strike={card.strike ? strikeEdge : undefined}
             />
           )}
@@ -415,15 +397,6 @@ export function CardFace({
     </div>
   );
 }
-/** A plaque-settled fight's loss moves by one HP with a type edge (the
- * engine's `verdictShift`). */
-const matchupShift = (card: CardDefinition, matchup: Matchup | null) =>
-  card.dice || card.strike || !matchup?.edge
-    ? 0
-    : matchup.edge === "advantage"
-      ? -1
-      : 1;
-
 export function CardFrame({
   card,
   packIds,

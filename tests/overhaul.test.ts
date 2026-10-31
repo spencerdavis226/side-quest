@@ -2,17 +2,11 @@ import { describe, expect, it } from "vitest";
 import {
   advance,
   bossBeat,
-  canUsePower,
   createSession,
   currentCard,
-  omenEffect,
-  partyPower,
-  powersLeft,
   previousCard,
   settleBattle,
   spoilsOnWin,
-  stageRule,
-  spendPower,
   type Random,
 } from "../src/game/engine";
 import { returnToCard, rollDice } from "../src/game/dice";
@@ -22,13 +16,12 @@ import type {
   CardDefinition,
   DiceDefinition,
   PackDefinition,
-  Power,
   SessionState,
 } from "../src/game/types";
 
-// The 2026-10-25 overhaul's engine: boss phases, signature powers and stage
-// rules, on a small synthetic crawl so the rules are pinned apart from the
-// content.
+// The 2026-10-25 overhaul's engine that stayed: boss phases, on a small
+// synthetic crawl so the rules are pinned apart from the content (signature
+// powers and stage rules were cut 2026-10-31).
 const d20 = (need: number): DiceDefinition => ({
   version: 1,
   count: 1,
@@ -47,28 +40,12 @@ const base = (id: string, more: Partial<CardDefinition>): CardDefinition => ({
   artwork: "art/cards/test.svg",
   ...more,
 });
-const power = (p: Partial<Power>): Power => ({
-  name: "Power",
-  rules: "Does a thing",
-  kind: "reroll",
-  ...p,
-});
-const hero = (p: Power, evolvesPower?: Power) =>
+const hero = () =>
   base("hero", {
     encounter: "omen",
     omen: {},
-    power: p,
-    evolves: [
-      { title: "Hero II", rules: "Better.", omen: {}, power: evolvesPower },
-    ],
+    evolves: [{ title: "Hero II", rules: "Better.", omen: {} }],
   });
-const room = base("room", {
-  battle: true,
-  dice: d20(11),
-  damage: 2,
-  encounter: "monster",
-});
-const duel = base("duel", { battle: true, damage: 1, encounter: "monster" });
 const boss = base("boss", {
   battle: true,
   dice: d20(11),
@@ -111,11 +88,6 @@ function crawl(heroCard: CardDefinition, rooms: CardDefinition[]) {
           label: `Stage ${c.id}`,
           pick: 1,
           cardIds: [c.id],
-          rule: {
-            name: "Cold Floor",
-            rule: "Everyone drinks with their off hand. Slip: drink 1.",
-            effect: { roll: { all: -1 } },
-          },
         })),
       ],
     },
@@ -141,7 +113,7 @@ function start(heroCard: CardDefinition, rooms: CardDefinition[]) {
   s = advance(advance(s, zero), zero); // Reveal the hero, put it aside.
   return advance(s, zero); // Reveal the first room.
 }
-// d20 faces: random 0 rolls a 1, 0.99 a 20, 0.6 a 13 (12 under the floor rule).
+// d20 faces: random 0 rolls a 1, 0.99 a 20, 0.6 a 13.
 const roll = (s: SessionState, r: number) =>
   returnToCard(rollDice(s, always(r)));
 const round = (s: SessionState) =>
@@ -149,7 +121,7 @@ const round = (s: SessionState) =>
 
 describe("boss phases", () => {
   it("walk the hits through each beat, and the felling swing plays the last", () => {
-    let s = start(hero(power({})), [boss]);
+    let s = start(hero(), [boss]);
     expect(currentCard(s).rules).toBe("boss rules.");
     expect(currentCard(s).dice).toBeDefined();
     s = advance(roll(s, 0.6), zero); // A hit: on to the duel.
@@ -176,7 +148,7 @@ describe("boss phases", () => {
       hits: 2,
       phases: [{ rules: "Last stand: a duel." }],
     };
-    let s = start(hero(power({})), [twoBeat]);
+    let s = start(hero(), [twoBeat]);
     s = advance(roll(s, 0), zero); // A miss: the same beat again.
     s = advance(s, zero);
     expect(currentCard(s).dice).toBeDefined();
@@ -206,118 +178,5 @@ describe("boss phases", () => {
       ],
     };
     expect(() => validateCatalog([bad], [])).toThrow(/Invalid phases/);
-  });
-});
-
-describe("signature powers", () => {
-  it("reroll a lost roll, once until a boss falls", () => {
-    let s = start(hero(power({ kind: "reroll" })), [room, boss]);
-    expect(canUsePower(s)).toBe(false); // Nothing lost yet.
-    s = roll(s, 0);
-    expect(canUsePower(s)).toBe(true);
-    s = spendPower(s, zero);
-    expect(s.roll).toBeNull();
-    expect(powersLeft(s.quest)).toBe(0);
-    round(s);
-    s = roll(s, 0);
-    expect(canUsePower(s)).toBe(false);
-  });
-
-  it("spare a loss its hearts", () => {
-    let s = start(hero(power({ kind: "spare" })), [room]);
-    s = roll(s, 0);
-    s = spendPower(s, zero);
-    expect(party(s).armed).toBe(room.id);
-    round(s);
-    const hearts = party(s).hearts;
-    s = advance(s, zero);
-    expect(party(s).hearts).toBe(hearts);
-    expect(party(s).armed).toBeUndefined();
-  });
-
-  it("take the edge: the roll is made twice and the better kept", () => {
-    let s = start(hero(power({ kind: "edge" })), [room]);
-    s = spendPower(s, zero);
-    s = rollDice(s, zero);
-    expect(s.roll!.edge).toBe("advantage");
-    round(returnToCard(s));
-  });
-
-  it("double a win: a boss takes two swings", () => {
-    let s = start(hero(power({ kind: "double" })), [boss]);
-    s = spendPower(s, zero);
-    s = advance(roll(s, 0.6), zero);
-    expect(party(s).hits).toBe(2);
-  });
-
-  it("win outright for hearts, and pick the spoils when it fells a boss", () => {
-    const oneHit = { ...boss, hits: 1, phases: undefined };
-    let s = start(hero(power({ kind: "win", cost: 2 })), [oneHit]);
-    const hearts = party(s).hearts;
-    s = spendPower(s, zero, 0);
-    expect(s.phase).toBe("complete");
-    expect(party(s).hearts).toBe(hearts - 2 + 1); // The ring's heart.
-    expect(party(s).boons).toContain("test.boss#0");
-  });
-
-  it("heal, and flee a room fight but never a boss", () => {
-    let s = start(hero(power({ kind: "heal", amount: 2 })), [duel]);
-    expect(canUsePower(s)).toBe(false); // Full hearts.
-    s = settleBattle(s, false, zero);
-    expect(s.phase).toBe("complete");
-    let f = start(hero(power({ kind: "flee" })), [room]);
-    expect(canUsePower(f)).toBe(true);
-    f = spendPower(f, zero);
-    expect(f.phase).toBe("complete");
-    const b = start(hero(power({ kind: "flee" })), [boss]);
-    expect(canUsePower(b)).toBe(false);
-  });
-
-  it("come back when a boss falls, and a form's power replaces the card's", () => {
-    const plain = { ...boss, spoils: undefined };
-    let s = start(hero(power({ kind: "reroll" })), [plain, room]);
-    s = roll(s, 0);
-    s = spendPower(s, zero);
-    s = roll(s, 0.99); // A natural 20: two swings.
-    s = advance(s, zero);
-    s = roll(advance(s, zero), 0.99);
-    s = advance(s, zero); // The boss falls.
-    expect(party(s).powers).toBeUndefined();
-    const evolved = {
-      ...s,
-      quest: { ...s.quest!, party: { ...party(s), form: 1 } },
-    };
-    expect(partyPower(evolved.quest)!.kind).toBe("reroll");
-    const h = hero(
-      power({ kind: "reroll" }),
-      power({ kind: "spare", name: "Ward" }),
-    );
-    const t = start(h, [room]);
-    const t1 = {
-      ...t,
-      quest: { ...t.quest!, party: { ...party(t), form: 1 } },
-    };
-    expect(partyPower(t1.quest)!.name).toBe("Ward");
-  });
-
-  it("are validated", () => {
-    expect(() => validateCatalog([hero(power({ kind: "heal" }))], [])).toThrow(
-      /Invalid power/,
-    );
-    expect(() =>
-      validateCatalog([hero(power({ name: "A very long power name" }))], []),
-    ).toThrow(/Invalid power/);
-  });
-});
-
-describe("stage rules", () => {
-  it("hold while the run is on their stage, and are kept in the save", () => {
-    const s = start(hero(power({})), [room]);
-    expect(stageRule(s.quest)?.name).toBe("Cold Floor");
-    expect(omenEffect(s.quest)?.roll?.all).toBe(-1);
-    round(s);
-    const bad = structuredClone(s);
-    bad.quest!.stages[1].rule!.effect = { hearts: 2 };
-    expect(() => parseSession(JSON.stringify(bad))).toThrow();
   });
 });

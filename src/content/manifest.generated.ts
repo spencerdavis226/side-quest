@@ -451,7 +451,7 @@ export const packs: PackDefinition[] = [
       goal: 0,
       length: 1,
       cardIds: [],
-      party: { hearts: 15 },
+      party: { hearts: 16 },
       finale: [
         {
           label: "Your starter",
@@ -694,7 +694,7 @@ export const packs: PackDefinition[] = [
               {
                 label: "Rocket Hideout",
                 intro: "Team Rocket's hideout",
-                pick: 2,
+                pick: 1,
                 cardIds: [
                   "pokemon.rocket-grunt-slots",
                   "pokemon.rocket-grunt-slowpoke",
@@ -711,7 +711,7 @@ export const packs: PackDefinition[] = [
               {
                 label: "Magma Hideout",
                 intro: "Team Magma's volcano",
-                pick: 2,
+                pick: 1,
                 cardIds: [
                   "pokemon.magma-grunt-hood",
                   "pokemon.magma-grunt-sweat",
@@ -728,7 +728,7 @@ export const packs: PackDefinition[] = [
               {
                 label: "Aqua Hideout",
                 intro: "Team Aqua's sea cave",
-                pick: 2,
+                pick: 1,
                 cardIds: [
                   "pokemon.aqua-grunt-bandana",
                   "pokemon.aqua-grunt-submarine",
@@ -745,7 +745,7 @@ export const packs: PackDefinition[] = [
               {
                 label: "Galactic HQ",
                 intro: "Team Galactic's headquarters",
-                pick: 2,
+                pick: 1,
                 cardIds: [
                   "pokemon.galactic-grunt-bowl",
                   "pokemon.galactic-commander-mars",
@@ -762,7 +762,7 @@ export const packs: PackDefinition[] = [
               {
                 label: "Plasma Castle",
                 intro: "Team Plasma's castle",
-                pick: 2,
+                pick: 1,
                 cardIds: [
                   "pokemon.plasma-grunt-knight",
                   "pokemon.plasma-sage",
@@ -779,7 +779,7 @@ export const packs: PackDefinition[] = [
               {
                 label: "Flare Lab",
                 intro: "Team Flare's lab",
-                pick: 2,
+                pick: 1,
                 cardIds: [
                   "pokemon.flare-grunt-suit",
                   "pokemon.flare-scientist",
@@ -796,7 +796,7 @@ export const packs: PackDefinition[] = [
               {
                 label: "Shady House",
                 intro: "Team Skull's Shady House",
-                pick: 2,
+                pick: 1,
                 cardIds: [
                   "pokemon.skull-grunt-yo",
                   "pokemon.skull-grunt-rap",
@@ -813,7 +813,7 @@ export const packs: PackDefinition[] = [
               {
                 label: "Rose Tower",
                 intro: "Rose Tower",
-                pick: 2,
+                pick: 1,
                 cardIds: [
                   "pokemon.cosmos-oleana",
                   "pokemon.cosmos-intern",
@@ -830,7 +830,7 @@ export const packs: PackDefinition[] = [
               {
                 label: "Star Base",
                 intro: "Team Star's base",
-                pick: 2,
+                pick: 1,
                 cardIds: [
                   "pokemon.star-grunt-dance",
                   "pokemon.star-car",
@@ -972,7 +972,6 @@ export const packs: PackDefinition[] = [
             "pokemon.route-dream-team",
             "pokemon.route-center-choir",
             "pokemon.route-last-toast",
-            "pokemon.route-tera-raid",
           ],
           elite: ["pokemon.route-ace-scientist", "pokemon.route-ace-burglar"],
         },
@@ -1925,7 +1924,7 @@ export const packs: PackDefinition[] = [
       goal: 0,
       length: 1,
       cardIds: [],
-      party: { hearts: 11, cup: true },
+      party: { hearts: 12 },
       finale: [
         {
           label: "Your adventurer",
@@ -2053,11 +2052,6 @@ export const packs: PackDefinition[] = [
                   "dungeon.keg-mimic-queen",
                   "dungeon.the-exterminator",
                 ],
-                rule: {
-                  name: "Rat Run",
-                  rule: "When a card mentions a rat, everyone squeaks. Last to squeak drinks 1.",
-                  effect: { roll: { monster: 1 } },
-                },
               },
               {
                 label: "Cellar boss",
@@ -2070,11 +2064,6 @@ export const packs: PackDefinition[] = [
                   "dungeon.big-cheese",
                   "dungeon.the-pipe-organ",
                 ],
-                rule: {
-                  name: "Rat Run",
-                  rule: "When a card mentions a rat, everyone squeaks. Last to squeak drinks 1.",
-                  effect: { roll: { monster: 1 } },
-                },
               },
             ],
             [
@@ -2134,11 +2123,6 @@ export const packs: PackDefinition[] = [
                   "dungeon.cellar-master",
                   "dungeon.wine-influencer",
                 ],
-                rule: {
-                  name: "Tasting Notes",
-                  rule: "Before every sip, describe your drink in one fancy word. Forget: drink 1.",
-                  effect: { crit: 19 },
-                },
               },
               {
                 label: "Wine Cellar boss",
@@ -2151,11 +2135,6 @@ export const packs: PackDefinition[] = [
                   "dungeon.the-sommelier",
                   "dungeon.the-barrel-room",
                 ],
-                rule: {
-                  name: "Tasting Notes",
-                  rule: "Before every sip, describe your drink in one fancy word. Forget: drink 1.",
-                  effect: { crit: 19 },
-                },
               },
             ],
             [
@@ -2215,11 +2194,6 @@ export const packs: PackDefinition[] = [
                   "dungeon.hostile-brewer",
                   "dungeon.head-brewer",
                 ],
-                rule: {
-                  name: "Prost!",
-                  rule: "After every lost fight, everyone clinks glasses and says 'Prost!' Last to clink drinks 1.",
-                  effect: { heal: 1 },
-                },
               },
               {
                 label: "Brewery boss",
@@ -2232,11 +2206,6 @@ export const packs: PackDefinition[] = [
                   "dungeon.keg-kraken",
                   "dungeon.brewery-owner",
                 ],
-                rule: {
-                  name: "Prost!",
-                  rule: "After every lost fight, everyone clinks glasses and says 'Prost!' Last to clink drinks 1.",
-                  effect: { heal: 1 },
-                },
               },
             ],
           ],
@@ -2410,11 +2379,6 @@ export const packs: PackDefinition[] = [
                   "dungeon.bone-dragon",
                   "dungeon.banshee-bride",
                 ],
-                rule: {
-                  name: "Echoes",
-                  rule: "The player on the drawer's left repeats the drawer's last word, every turn. Forget: drink 1.",
-                  effect: { fumble: 2, roll: { boss: 1 } },
-                },
               },
               {
                 label: "Catacombs boss",
@@ -2427,11 +2391,6 @@ export const packs: PackDefinition[] = [
                   "dungeon.the-lich-lord",
                   "dungeon.the-ghost-of-closing",
                 ],
-                rule: {
-                  name: "Echoes",
-                  rule: "The player on the drawer's left repeats the drawer's last word, every turn. Forget: drink 1.",
-                  effect: { fumble: 2, roll: { boss: 1 } },
-                },
               },
             ],
             [
@@ -2491,11 +2450,6 @@ export const packs: PackDefinition[] = [
                   "dungeon.sewer-king",
                   "dungeon.sewer-siren",
                 ],
-                rule: {
-                  name: "The Smell",
-                  rule: "Pinch your nose to talk. Caught talking without it: drink 1.",
-                  effect: { hurt: { trap: 1 }, roll: { monster: 1 } },
-                },
               },
               {
                 label: "Sewers boss",
@@ -2508,11 +2462,6 @@ export const packs: PackDefinition[] = [
                   "dungeon.the-crocodile-mom",
                   "dungeon.the-pipe-worm",
                 ],
-                rule: {
-                  name: "The Smell",
-                  rule: "Pinch your nose to talk. Caught talking without it: drink 1.",
-                  effect: { hurt: { trap: 1 }, roll: { monster: 1 } },
-                },
               },
             ],
             [
@@ -2572,11 +2521,6 @@ export const packs: PackDefinition[] = [
                   "dungeon.the-enforcer",
                   "dungeon.freezer-witch",
                 ],
-                rule: {
-                  name: "Frostbite",
-                  rule: "Hold your drink in your off hand. Caught with the other: drink 1.",
-                  effect: { roll: { all: -1 }, crit: 19 },
-                },
               },
               {
                 label: "Freezer boss",
@@ -2589,11 +2533,6 @@ export const packs: PackDefinition[] = [
                   "dungeon.the-ice-cream-man",
                   "dungeon.the-frozen-ex",
                 ],
-                rule: {
-                  name: "Frostbite",
-                  rule: "Hold your drink in your off hand. Caught with the other: drink 1.",
-                  effect: { roll: { all: -1 }, crit: 19 },
-                },
               },
             ],
           ],
@@ -2684,11 +2623,6 @@ export const packs: PackDefinition[] = [
                   "dungeon.the-kraken-bouncer",
                   "dungeon.lighthouse-keeper",
                 ],
-                rule: {
-                  name: "Waterlogged",
-                  rule: "Anyone who says 'water' drinks 1. Everyone else says 'wet beer'.",
-                  effect: { hurt: { ambush: -1 }, roll: { trap: -1 } },
-                },
               },
             ],
             [
@@ -2748,11 +2682,6 @@ export const packs: PackDefinition[] = [
                   "dungeon.the-owner",
                   "dungeon.celebrity-chef",
                 ],
-                rule: {
-                  name: "Health Inspection",
-                  rule: "Anyone who touches their face drinks 1. The table watches.",
-                  effect: { heal: 1, hurt: { monster: 1 } },
-                },
               },
             ],
             [
@@ -2812,11 +2741,6 @@ export const packs: PackDefinition[] = [
                   "dungeon.storm-chaser",
                   "dungeon.helicopter-pilot",
                 ],
-                rule: {
-                  name: "High Winds",
-                  rule: "Hold your drink with both hands. One hand: drink 1.",
-                  effect: { roll: { boss: 1, monster: -1 }, crit: 19 },
-                },
               },
             ],
           ],
@@ -2838,7 +2762,7 @@ export const packs: PackDefinition[] = [
         },
         {
           label: "Last Call",
-          intro: "Last call. The Cup waits",
+          intro: "Last call. Last fight",
           pick: 1,
           cardIds: [
             "dungeon.last-call-lich",

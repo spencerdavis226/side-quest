@@ -17,7 +17,7 @@ import {
   trinket,
   BOSS_NEED,
   type FloorCards,
-  strike,
+  mishap,
 } from "./shared";
 
 // Floor 1, the other way down: the Wine Cellar. Racks to the ceiling, a
@@ -56,13 +56,13 @@ export const wine: FloorCards = {
         ),
       },
     ),
-    strike(3, "Monster", "zombie-sommelier", "Zombie Sommelier", {
-      even: "A zombie sommelier wants to describe the finish. Notes of oak. Drink 2.",
-      advantage:
-        "A zombie sommelier wants to describe the finish. You talk over him until he leaves. Give 3.",
-      disadvantage:
-        "A zombie sommelier describes the finish for eleven minutes. Drink 3 and describe yours.",
-    }),
+    mishap(
+      3,
+      "Monster",
+      "zombie-sommelier",
+      "Zombie Sommelier",
+      "A zombie sommelier wants to describe the finish. Notes of oak. Drink 2.",
+    ),
     monster(
       3,
       "wine-mom-banshee",
@@ -95,20 +95,20 @@ export const wine: FloorCards = {
         },
       },
     ),
-    strike(3, "Monster", "barrel-mimic", "Barrel Mimic", {
-      even: "Barrel 14 has teeth and barrel 15 looks nervous. Barrel 15 faints. Drink 2.",
-      advantage:
-        "Barrel 14 has teeth. You punch it shut. Give 3 to the most nervous player.",
-      disadvantage:
-        "Barrel 14 has teeth and barrel 15 looks nervous. Barrel 14 wins. Drink 3.",
-    }),
-    strike(3, "Monster", "corkscrew-crab", "Corkscrew Crab", {
-      even: "A crab with corkscrew claws opens a bottle instead of you. Drink 2.",
-      advantage:
-        "A crab with corkscrew claws opens anything. You flip it on its back. Give 3.",
-      disadvantage:
-        "A crab with corkscrew claws opens you. Uncorked. Drink 3 and walk sideways to your seat.",
-    }),
+    mishap(
+      3,
+      "Monster",
+      "barrel-mimic",
+      "Barrel Mimic",
+      "Barrel 14 has teeth and barrel 15 looks nervous. Barrel 15 faints. Drink 2.",
+    ),
+    mishap(
+      3,
+      "Monster",
+      "corkscrew-crab",
+      "Corkscrew Crab",
+      "A crab with corkscrew claws opens a bottle instead of you. Drink 2.",
+    ),
     monster(
       3,
       "sangria-sprite",
@@ -124,7 +124,6 @@ export const wine: FloorCards = {
       "A vampire who only drinks from bottles that turned. He's been at yours. Roll d20.",
       "He's right, it turned. Drink 3, make the face.",
       "You hold up a cross made of corkscrews. Give 3.",
-      { curse: "bleed" },
     ),
     trial(
       3,
@@ -166,13 +165,13 @@ export const wine: FloorCards = {
       "Down on your ass, in red. Drink 2 standing up.",
       "Not a drop on you. Give 2.",
     ),
-    strike(3, "Trap", "sulfite-cloud", "Sulfite Cloud", {
-      even: "A cracked cask puffs out sulfites. Instant headache. Drink 2.",
-      advantage:
-        "A cracked cask puffs out sulfites. One word and they blow away. Give 2.",
-      disadvantage:
-        "A cracked cask puffs out sulfites. Migraine. Drink 3 and rub your temples.",
-    }),
+    mishap(
+      3,
+      "Trap",
+      "sulfite-cloud",
+      "Sulfite Cloud",
+      "A cracked cask puffs out sulfites. Instant headache. Drink 2.",
+    ),
     trap(
       3,
       "cork-mines",
@@ -198,20 +197,20 @@ export const wine: FloorCards = {
       "You've read it. They scatter. Give 2.",
     ),
     // More of the Wine Cellar (2026-10-25).
-    strike(3, "Monster", "cork-goblin", "Cork Goblin", {
-      even: "A goblin with a corkscrew hand finds a twist-off and opens it. Drink 2.",
-      advantage:
-        "A goblin with a corkscrew hand has nothing to open. You hand him a screw-top and he weeps. Give 3.",
-      disadvantage:
-        "A goblin with a corkscrew hand has nothing to open. Then he sees you and opens you. Drink 3.",
-    }),
-    strike(3, "Monster", "rose-elemental", "Rosé Elemental", {
-      even: "A pink spirit says 'rosé all day' as a threat. Rosé for an hour. Drink 2.",
-      advantage:
-        "A pink spirit says 'rosé all day'. You banish it with one word: blush. Give 3.",
-      disadvantage:
-        "A pink spirit says 'rosé all day' as a threat. All day it is. Drink 3.",
-    }),
+    mishap(
+      3,
+      "Monster",
+      "cork-goblin",
+      "Cork Goblin",
+      "A goblin with a corkscrew hand finds a twist-off and opens it. Drink 2.",
+    ),
+    mishap(
+      3,
+      "Monster",
+      "rose-elemental",
+      "Rosé Elemental",
+      "A pink spirit says 'rosé all day' as a threat. Rosé for an hour. Drink 2.",
+    ),
     monster(
       3,
       "tannin-troll",
@@ -441,7 +440,6 @@ export const wine: FloorCards = {
         { crit: "Sunlight. Everyone else drinks 3." },
       ),
       {
-        curse: "bleed",
         drops: [
           trinket("Corkula's Cape", { heal: 1 }),
           trinket("Corkula's Fang", { roll: { boss: 2 } }),
@@ -518,7 +516,6 @@ export const wine: FloorCards = {
         { crit: "You surf a barrel out. Everyone else drinks 3." },
       ),
       {
-        curse: "hex",
         drops: [
           trinket("Bung Mallet", { loot: ["die", "draught"] }),
           trinket("Barrel Stave", { hearts: 1, hurt: { trap: -1 } }),

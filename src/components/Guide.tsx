@@ -7,9 +7,8 @@ import { crawlTheme } from "./crawlTheme";
 export function Guide({
   crawl,
 }: {
-  /** The crawl being played or chosen: its pack, its starting hearts, and
-   * its quest's Quaff and Cup. */
-  crawl?: { packId: string; hearts: number; quaff?: number; cup?: boolean };
+  /** The crawl being played or chosen: its pack and its starting hearts. */
+  crawl?: { packId: string; hearts: number };
 }) {
   const theme = crawl && crawlTheme(crawl.packId);
   return (
