@@ -3,10 +3,10 @@ import { createPortal } from "react-dom";
 
 // The ball throw, played big (2026-10-31, owner: "much more exciting to
 // watch"), as a hollow donut ball with one number in its hole. One eased value
-// turns the ring (a whole number of turns, ending upright) and picks the
-// number from a shuffled strip, so the number changes exactly as fast as the
-// ball spins and the last number shown is the engine's committed face;
-// nothing is swapped at the landing. The strip's order is random every throw,
+// turns the ring (a whole number of turns, ending upright) while the number
+// counts through a shuffled strip, slowing with it and settling on the
+// engine's committed face while the ball is still turning, so the face is
+// steady on screen before the ball rests; nothing is swapped at the landing. The strip's order is random every throw,
 // never sequential. The throw is snapshotted when it starts, so a parent
 // re-render (the ball object is new every render) can never restart it.
 // Display only: a reload shows the card's result and never plays it again, a
@@ -23,9 +23,17 @@ const LAPS = 4;
 /** Turns the ball makes while its number counts to the face. */
 const TURNS = 5;
 
-/** Fast, then slower to a stop at exactly 1. Drives the ball's turn and its
- * number from one value, so the count slows as the ball does. */
-const ease = (t: number) => 1 - Math.pow(1 - t, 2.8);
+/** The ball's turn: fast, then slower to a stop at exactly 1 over the whole
+ * spin. */
+const easeTurn = (t: number) => 1 - Math.pow(1 - t, 2.2);
+/** The count reaches the face at this share of the spin, so the final number
+ * is on screen, steady, while the ball is still visibly turning. Earlier it
+ * changed at the very last instant, when the ball had all but stopped, so the
+ * ball seemed to stop on one number and then show another (owner, 2026-10-31). */
+const COUNT_DONE = 0.82;
+/** The count: fast, then slower, reaching exactly 1 at `COUNT_DONE`. */
+const easeCount = (t: number) =>
+  1 - Math.pow(1 - Math.min(1, t / COUNT_DONE), 2.4);
 
 export interface ThrownBall {
   face: number;
@@ -79,8 +87,8 @@ function buildCount(face: number) {
 }
 
 /** The ball: a hollow ring (red over white, a black band, a hole) turned by
- * one eased value that also picks its number, so the number changes exactly
- * as fast as the ball spins. It turns a whole number of times, ending upright
+ * two eased values that share one clock: the count slows as the ball does, and
+ * settles on the face a little before the ball comes to rest. It turns a whole number of times, ending upright
  * for the landing animations. Per-frame work touches the DOM directly, not
  * React. */
 function DonutBall({
@@ -101,22 +109,27 @@ function DonutBall({
     const t0 = performance.now();
     let shownAt = -1;
     let frame = 0;
-    const draw = (p: number) => {
+    const draw = (t: number) => {
       if (ring.current)
-        ring.current.style.transform = `rotate(${p * TURNS * 360}deg)`;
-      const at = Math.min(count.stop, Math.floor(p * count.stop));
+        ring.current.style.transform = `rotate(${easeTurn(t) * TURNS * 360}deg)`;
+      const at = Math.min(count.stop, Math.floor(easeCount(t) * count.stop));
       if (at !== shownAt && num.current) {
         shownAt = at;
         num.current.textContent = String(count.rows[at]);
+        // The last number is the face: a bigger pulse says "this one".
+        const last = at === count.stop;
         num.current.animate?.(
-          [{ transform: "scale(1.14)" }, { transform: "scale(1)" }],
-          { duration: 80, easing: "ease-out" },
+          [
+            { transform: `scale(${last ? 1.35 : 1.14})` },
+            { transform: "scale(1)" },
+          ],
+          { duration: last ? 260 : 80, easing: "ease-out" },
         );
       }
     };
     const step = (now: number) => {
       const t = Math.min(1, (now - t0) / SPIN_MS);
-      draw(ease(t));
+      draw(t);
       if (t < 1) frame = requestAnimationFrame(step);
       else done.current();
     };
