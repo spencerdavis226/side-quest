@@ -20,6 +20,7 @@ import {
   type BagDrop,
   currentCard as currentCardOf,
   PRESS_STEP,
+  TEAM_SIZE,
   canUseLoot,
   assistBonus,
   cardMatchup,
@@ -721,13 +722,6 @@ export function SendInPlaque({
   );
 }
 
-/** A caught Pokémon's bag row (2026-10-31, Nuzlocke): its bonus, which
- * foes it can face, and what a loss costs. */
-export const teamRowDoes = (member: CardDefinition) =>
-  `+${assistBonus(member)} to a d20 roll vs. a foe ${
-    member.type ? pokemonTypes[member.type].name : "its type"
-  } beats. Faints on a loss.`;
-
 /** What sending caught Pokémon `member` in does (2026-10-31): its bonus
  * joins the roll; it stays after a win and faints for good after a loss. */
 export const sendInDoes = (member: CardDefinition) =>
@@ -1069,17 +1063,26 @@ type RunRecord = NonNullable<ReturnType<typeof questRecord>>;
 /** One dialog's share of the run (`CrawlRecord`'s `part`). */
 export type RecordPart = "party" | StripDialog;
 
-/** A bag row's discard (2026-10-27): one small button that turns, in place,
- * into "Yes, drop" and "Keep"; it turns back by itself after a few seconds.
- * No dialog on top of a dialog. */
-function DropButton({
-  verb,
+/** One row of the bag (2026-10-31 rebuild): a mark, a name over one short
+ * line, and at most a Use button and a quiet x (Drop or Release). The x
+ * only asks: the row turns into the question with Keep and the verb, and
+ * settles back after four seconds. */
+function BagRow({
+  mark,
   name,
-  onConfirm,
+  badge,
+  detail,
+  use,
+  drop,
+  className,
 }: {
-  verb: string;
+  mark: ReactNode;
   name: string;
-  onConfirm: () => void;
+  badge?: ReactNode;
+  detail: ReactNode;
+  use?: { label: string; onUse: () => void };
+  drop?: { verb: string; onConfirm: () => void };
+  className?: string;
 }) {
   const [sure, setSure] = useState(false);
   useEffect(() => {
@@ -1087,34 +1090,67 @@ function DropButton({
     const timer = setTimeout(() => setSure(false), 4000);
     return () => clearTimeout(timer);
   }, [sure]);
-  return sure ? (
-    <span
-      className="bag-drop sure"
-      role="group"
-      aria-label={`${verb} ${name}?`}
+  const verb = drop?.verb.toLowerCase();
+  return (
+    <li
+      className={`bag-row satchel-slot${sure ? " asking" : ""}${className ? ` ${className}` : ""}`}
     >
-      <button
-        className="bag-drop-yes"
-        aria-label={`Yes, ${verb.toLowerCase()} ${name}`}
-        onClick={onConfirm}
-      >
-        Yes, {verb.toLowerCase()}
-      </button>
-      <button className="bag-drop-no" onClick={() => setSure(false)}>
-        Keep
-      </button>
-    </span>
-  ) : (
-    <button
-      className="bag-drop"
-      aria-label={`${verb} ${name}`}
-      onClick={(event) => {
-        event.currentTarget.focus();
-        setSure(true);
-      }}
-    >
-      {verb}
-    </button>
+      <span className="bag-mark">{mark}</span>
+      {sure ? (
+        <span className="bag-question">
+          {drop!.verb} {name}?
+        </span>
+      ) : (
+        <span className="bag-text">
+          <span className="bag-name">
+            <strong>{name}</strong>
+            {badge}
+          </span>
+          <span className="bag-detail">{detail}</span>
+        </span>
+      )}
+      <span className="bag-actions">
+        {sure && drop ? (
+          <>
+            <button className="bag-action quiet" onClick={() => setSure(false)}>
+              Keep
+            </button>
+            <button
+              className="bag-action danger"
+              aria-label={`Yes, ${verb} ${name}`}
+              onClick={drop.onConfirm}
+            >
+              {drop.verb}
+            </button>
+          </>
+        ) : (
+          <>
+            {use && (
+              <button
+                className="bag-action primary satchel-use"
+                onClick={use.onUse}
+              >
+                {use.label}
+              </button>
+            )}
+            {drop && (
+              <button
+                className="bag-action bag-x"
+                aria-label={`${drop.verb} ${name}`}
+                onClick={(event) => {
+                  event.currentTarget.focus();
+                  setSure(true);
+                }}
+              >
+                <svg viewBox="0 0 16 16" aria-hidden="true">
+                  <path d="M4 4l8 8M12 4l-8 8" />
+                </svg>
+              </button>
+            )}
+          </>
+        )}
+      </span>
+    </li>
   );
 }
 
@@ -1239,26 +1275,6 @@ export function CrawlRecord({
       {show("party") && !ending && record.form && (
         <FormPanel form={record.form} theme={theme} />
       )}
-      {show("satchel") && !party.wiped && !record.won && team.length > 0 && (
-        <ul className="crawl-boons crawl-team" aria-label="Caught Pokémon">
-          {team.map((m) => (
-            <li key={m.id} className="satchel-slot">
-              {m.type && <TypeMark type={m.type} />}
-              <span>
-                <strong>{m.title}</strong>
-                <small>{teamRowDoes(m)}</small>
-              </span>
-              {onDrop && (
-                <DropButton
-                  verb="Release"
-                  name={m.title}
-                  onConfirm={() => onDrop({ caught: m.id })}
-                />
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
       {show("party") && !ending && record.boons.length > 0 && (
         <ul className="crawl-boons" aria-label={words.trinkets}>
           {record.boons.map((b) => (
@@ -1305,46 +1321,107 @@ export function CrawlRecord({
         </p>
       )}
       {show("satchel") && !party.wiped && !record.won && (
-        <ul className="satchel" aria-label={words.Satchel}>
-          {Array.from({ length: record.satchel }, (_, i) => {
-            const item = party.loot[i];
-            if (!item)
-              return (
-                <li key={i} className="satchel-slot empty">
-                  <CrawlIcon name="satchel" theme={theme} />
-                  <span className="sr-only">Empty</span>
-                </li>
-              );
-            // The draught and the candy are used from here; the others work
-            // on the card in play, or on their own.
-            const usable =
-              !!session &&
-              !!onUse &&
-              (item === "draught" || item === "candy") &&
-              canUseLoot(session, item);
-            return (
-              <li key={i} className="satchel-slot">
-                <CrawlIcon name={item} theme={theme} />
-                <span>
-                  <strong>{theme.loot[item].name}</strong>
-                  <small>{theme.loot[item].does}</small>
-                </span>
-                {usable && (
-                  <button className="satchel-use" onClick={() => onUse!(item)}>
-                    {item === "candy" ? theme.eat : theme.drink}
-                  </button>
-                )}
-                {onDrop && (
-                  <DropButton
-                    verb="Drop"
-                    name={theme.loot[item].name}
-                    onConfirm={() => onDrop({ item })}
+        <div className="bag">
+          {team.length > 0 && (
+            <section className="bag-section">
+              <h3 className="bag-heading">
+                Team{" "}
+                <small>
+                  {team.length} of {TEAM_SIZE}
+                </small>
+              </h3>
+              <p className="bag-hint">
+                Send one into a d20 battle its type beats. Lose and it faints.
+              </p>
+              <ul className="bag-list crawl-team" aria-label="Caught Pokémon">
+                {team.map((m) => (
+                  <BagRow
+                    key={m.id}
+                    mark={m.type && <TypeMark type={m.type} />}
+                    name={m.title}
+                    badge={
+                      <span
+                        className="bag-bonus"
+                        aria-label={`+${assistBonus(m)} to the roll`}
+                      >
+                        +{assistBonus(m)}
+                      </span>
+                    }
+                    detail={
+                      m.type ? (
+                        <span
+                          className="bag-type"
+                          style={typeStyle(m.type) as CSSProperties}
+                        >
+                          {pokemonTypes[m.type].name}
+                        </span>
+                      ) : (
+                        "Caught"
+                      )
+                    }
+                    drop={
+                      onDrop && {
+                        verb: "Release",
+                        onConfirm: () => onDrop({ caught: m.id }),
+                      }
+                    }
                   />
-                )}
-              </li>
-            );
-          })}
-        </ul>
+                ))}
+              </ul>
+            </section>
+          )}
+          <section className="bag-section">
+            {team.length > 0 && (
+              <h3 className="bag-heading">
+                Items{" "}
+                <small>
+                  {party.loot.length} of {record.satchel}
+                </small>
+              </h3>
+            )}
+            <ul className="bag-list satchel" aria-label={words.Satchel}>
+              {Array.from({ length: record.satchel }, (_, i) => {
+                const item = party.loot[i];
+                if (!item)
+                  return (
+                    <li key={i} className="bag-row satchel-slot empty">
+                      <span className="bag-mark" aria-hidden="true" />
+                      <span className="bag-detail">Empty</span>
+                    </li>
+                  );
+                // The draught and the candy are used from here; the others
+                // work on the card in play, or on their own.
+                const usable =
+                  !!session &&
+                  !!onUse &&
+                  (item === "draught" || item === "candy") &&
+                  canUseLoot(session, item);
+                return (
+                  <BagRow
+                    key={i}
+                    mark={<CrawlIcon name={item} theme={theme} />}
+                    name={theme.loot[item].name}
+                    detail={theme.loot[item].does}
+                    use={
+                      usable
+                        ? {
+                            label: item === "candy" ? theme.eat : theme.drink,
+                            onUse: () => onUse!(item),
+                          }
+                        : undefined
+                    }
+                    drop={
+                      onDrop && {
+                        verb: "Drop",
+                        onConfirm: () => onDrop({ item }),
+                      }
+                    }
+                  />
+                );
+              })}
+            </ul>
+          </section>
+        </div>
       )}
       {/* The run floor by floor, on the end screens only: in play, the
           stage banners already name each floor and its boss. */}
