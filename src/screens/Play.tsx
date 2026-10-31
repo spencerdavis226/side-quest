@@ -29,7 +29,9 @@ import {
   strikeOutcome,
   hitsNeeded,
   omenForm,
+  formEffect,
 } from "../game/engine";
+import { describeChange } from "../game/omenText";
 import type { Motion } from "../presentation/controller";
 import { cardPacks } from "../presentation/packs";
 import { CardFace } from "../components/Cards";
@@ -41,6 +43,7 @@ import {
 } from "../components/CardActions";
 import {
   ExtrasSheet,
+  FanPlaque,
   UsePlaque,
   buildExtras,
   OfferPlaque,
@@ -51,7 +54,9 @@ import {
   usableItems,
 } from "../components/Crawl";
 import { crawlTheme } from "../components/crawlTheme";
-import { extrasLayout } from "../components/extras";
+import { extrasLayout, foldBranches } from "../components/extras";
+import { TypeMark } from "../components/LeagueMarks";
+import { CrawlIcon } from "../components/Crawl";
 // A dice overlay that can't be fetched (offline before it was cached) must
 // not strand a roll: the saved result goes straight to the card instead.
 type DiceProps = ComponentProps<
@@ -151,7 +156,13 @@ export function Play({
   const crawl = crawlTheme(session.quest?.packId);
   // Items and send-ins: on the card's foot when a few short ones fit,
   // otherwise behind one "Use" plaque and its sheet.
-  const extraList = buildExtras(crawl, { items, senders, onSpend, onSend });
+  const extraList = buildExtras(crawl, {
+    items,
+    senders,
+    card,
+    onSpend,
+    onSend,
+  });
   const layout = extrasLayout(extraList, !!verdict);
   const [using, setUsing] = useState<number | null>(null);
   const usingSheet = layout === "sheet" && using === session.discarded;
@@ -185,6 +196,33 @@ export function Play({
           ? [{ offer, i, branch: { name: next, index: 0 } }]
           : [{ offer, i, branch: undefined }],
   );
+  // Never more than three across (2026-10-31): Eevee's three forms beside
+  // Press B fold into one Evolve plaque that opens a sheet of forms.
+  const evolveAt = (offers ?? []).findIndex((o) => o.evolve);
+  const fold = foldBranches(plaques.length, branches?.length ?? 0);
+  const [fanning, setFanning] = useState<number | null>(null);
+  const fanSheet = fold && fanning === session.discarded;
+  const branchRows =
+    fold && form && evolveAt >= 0
+      ? form.card.evolves!.map((to, index) => {
+          const words = crawl.omenWords;
+          const now = formEffect(session.quest) ?? {};
+          const base = (session.quest?.party?.max ?? 0) - (now.hearts ?? 0);
+          return {
+            key: `branch-${index}`,
+            long: true,
+            name: to.title,
+            does: words ? describeChange(now, to.omen, words, base) : "",
+            mark: to.type ? (
+              <TypeMark type={to.type} />
+            ) : (
+              <CrawlIcon name="adventurer" theme={crawl} />
+            ),
+            run: () => onOffer?.(evolveAt, index),
+            plaque: null,
+          };
+        })
+      : [];
   // Secret and timed cards: plaques once the card has landed face up; a timed
   // card stays on the table until its time is up.
   const actions = useCardActions(
@@ -438,7 +476,38 @@ export function Play({
               />
             </div>
           )}
-          {offers && (
+          {offers && fold && (
+            <div
+              ref={choiceRef}
+              className={`card-choice offers plaques-${offers.length}`}
+              role="group"
+              aria-label="Your choice"
+            >
+              {offers.map((offer, i) =>
+                offer.evolve ? (
+                  <FanPlaque
+                    key={i}
+                    name="Evolve"
+                    under={offer.label.split(" · ")[1] ?? offer.label}
+                    icon="adventurer"
+                    count={branchRows.length}
+                    onOpen={() => setFanning(session.discarded)}
+                    theme={crawl}
+                  />
+                ) : (
+                  <OfferPlaque
+                    key={i}
+                    offer={offer}
+                    index={i}
+                    can={canTakeOffer(session, i)}
+                    onTake={onOffer}
+                    theme={crawl}
+                  />
+                ),
+              )}
+            </div>
+          )}
+          {offers && !fold && (
             <div
               ref={choiceRef}
               className={`card-choice offers plaques-${plaques.length}`}
@@ -552,6 +621,17 @@ export function Play({
             />
           </Suspense>
         )}
+      {fanSheet && (
+        <ExtrasSheet
+          title="Evolve into"
+          extras={branchRows}
+          onTake={(row) => {
+            setFanning(null);
+            row.run();
+          }}
+          onClose={() => setFanning(null)}
+        />
+      )}
       {usingSheet && (
         <ExtrasSheet
           extras={extraList}

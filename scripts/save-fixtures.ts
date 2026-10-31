@@ -237,6 +237,9 @@ const situations: [string, GameConfig, Find][] = [
     league,
     (s) => partyTeam(s.quest).some((m) => canSendIn(s, m.id)),
   ],
+  // A caught Pokémon sent into a dice battle, before the roll (2026-10-31:
+  // the edge, no longer the win).
+  ["league-teammate-assist", league, (s) => !!party(s).assist && !s.roll],
   [
     "league-gym-ace",
     league,

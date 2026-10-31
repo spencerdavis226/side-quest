@@ -53,16 +53,17 @@ export function nextMove(s: SessionState, random: Random): SessionState {
   else if (can("smoke") && random() < 0.3) next = spendLoot(s, "smoke", random);
   else if (awaitingChoice(s))
     next = random() < 0.5 ? skipRoll(s, random) : rollDice(s, random);
-  else if (card.dice && !s.roll) next = rollDice(s, random);
-  else if (card.dice && !s.roll!.returned) next = returnToCard(s);
-  // The League's caught Pokémon (2026-10-25): use one now and then, and
-  // catch a beaten wild Pokémon more often than not.
+  // The League's caught Pokémon (2026-10-25): sent in now and then, before
+  // the roll it gives the edge to (2026-10-31).
   else if (partyTeam(s.quest).some((m) => canSendIn(s, m.id)) && random() < 0.5)
     next = sendIn(
       s,
       partyTeam(s.quest).find((m) => canSendIn(s, m.id))!.id,
       random,
     );
+  else if (card.dice && !s.roll) next = rollDice(s, random);
+  else if (card.dice && !s.roll!.returned) next = returnToCard(s);
+  // Catch a beaten wild Pokémon more often than not.
   else if (awaitingCatch(s))
     next =
       random() < 0.7

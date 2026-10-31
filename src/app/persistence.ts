@@ -251,6 +251,16 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
         !currentCard(s).catchRate ||
         !whole(p.throw.face, 1) ||
         p.throw.face > 20)) ||
+    // The caught Pokémon sent into the dice battle face up (2026-10-31): a
+    // typed card already dealt, out of the bag.
+    (p.assist !== undefined &&
+      (typeof p.assist !== "string" ||
+        s.phase !== "revealed" ||
+        !dealt.includes(p.assist) ||
+        !!p.team?.includes(p.assist) ||
+        !finaleCard(s.quest!, p.assist)?.type ||
+        !currentCard(s).dice ||
+        !currentCard(s).battle)) ||
     // The beat of the phased boss put aside last.
     (p.beat !== undefined &&
       (!whole(p.beat, 1) ||

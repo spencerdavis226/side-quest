@@ -29,3 +29,16 @@ export function extrasLayout(
   if (extras.length === 1) return "inline";
   return extras.length === 2 && !anyLong ? "inline" : "sheet";
 }
+
+/** The most plaques a card's foot shows at once (owner, 2026-10-31). */
+export const MAX_PLAQUES = 3;
+
+/**
+ * Whether a card's offer plaques fold a group into one fan-out plaque:
+ * a branching evolution (Eevee's three forms beside Press B) would put
+ * `plaques` across, so its `branches` fold into one "Evolve" plaque that
+ * opens a sheet of forms.
+ */
+export function foldBranches(plaques: number, branches: number): boolean {
+  return plaques > MAX_PLAQUES && branches > 1;
+}

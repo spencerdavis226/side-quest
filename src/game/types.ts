@@ -422,6 +422,10 @@ export interface PartyState {
    * card ID and the d20 face, kept until the card is put aside so a reload
    * never throws again. */
   throw?: { id: string; face: number };
+  /** The caught Pokémon sent into the dice battle face up (2026-10-31,
+   * owner: "not just instant win"): its card ID, out of the bag. The battle
+   * is rolled with the edge; it is cleared when the card is put aside. */
+  assist?: string;
 }
 export interface PackDefinition {
   version: 1;

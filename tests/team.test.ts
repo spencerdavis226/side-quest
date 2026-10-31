@@ -25,8 +25,9 @@ import type { GameConfig, SessionState } from "../src/game/types";
 
 // The League's caught Pokémon (2026-10-25, bag items since 2026-10-26): a
 // beaten wild Pokémon can be caught, two at most, and one whose type beats
-// the foe can be used on that battle: it wins it and is spent. And gyms 5
-// to 8 send out an ace.
+// the foe can be used on that battle and is spent: a strike is won, a dice
+// battle rolled with the edge (2026-10-31; it was won outright before). And
+// gyms 5 to 8 send out an ace.
 const league: GameConfig = {
   version: 1,
   packIds: ["pokemon"],
@@ -55,6 +56,25 @@ function facing(starter: string, ...rooms: string[]) {
   s = { ...s, quest: { ...s.quest!, finale } };
   s = advance(advance(s, zero), zero); // The starter, put aside.
   return advance(s, zero); // Reveal the first room.
+}
+/** `member` caught on Route 1, then `foe` revealed as Route 2's first
+ * card (Wurmple, the only rolled Grass or Bug fight, is a Route 2 card). */
+function onRoute2(starter: string, member: string, foe: string) {
+  let s = facing(starter, member);
+  s = advance(caught(s), zero);
+  const finale = [...s.quest!.finale];
+  const at = 6; // Four Route 1 cards and Gym 1 after the starter.
+  const was = finale.indexOf(foe);
+  if (was >= 0) finale[was] = finale[at];
+  finale[at] = foe;
+  s = {
+    ...s,
+    quest: { ...s.quest!, finale, step: at },
+    discarded: at,
+    previousId: finale[at - 1],
+    phase: "hidden",
+  };
+  return advance(s, zero);
 }
 const PIDGEY = "pokemon.route-pidgey"; // Flying strike, Route 1
 const ODDISH = "pokemon.route-oddish"; // Grass strike, Route 1
@@ -133,9 +153,9 @@ describe("the League's team", () => {
     expect(sendIn(s, PIDGEY, zero)).toBe(s);
   });
 
-  it("is offered on a rolled battle the starter already beats too, and wins it for certain", () => {
-    // A rolled wild Grass or Bug fight: Charmander (Fire) has the edge, and
-    // so does Pidgey (Flying).
+  it("on a rolled battle gives the edge, not the win, and is spent either way", () => {
+    // A rolled wild Grass or Bug fight: Pikachu (Electric) is even, and
+    // Pidgey (Flying) beats it (2026-10-31: the edge, no longer a win).
     const foe = cards.find(
       (c) =>
         c.id.startsWith("pokemon.route-") &&
@@ -143,8 +163,43 @@ describe("the League's team", () => {
         c.battle &&
         (c.type === "grass" || c.type === "bug"),
     )!;
-    let s = facing("pikachu", PIDGEY, foe.id);
-    s = advance(caught(s), zero);
+    let s = onRoute2("pikachu", PIDGEY, foe.id);
+    expect(currentCard(s).id).toBe(foe.id);
+    expect(cardMatchup(s.quest, currentCard(s))?.edge ?? null).toBe(null);
+    expect(canSendIn(s, PIDGEY)).toBe(true);
+    const discarded = s.discarded;
+    s = sendIn(s, PIDGEY, zero);
+    // Still face up, Pidgey out of the bag and fighting it.
+    expect(s.discarded).toBe(discarded);
+    expect(party(s).team ?? []).toEqual([]);
+    expect(party(s).assist).toBe(PIDGEY);
+    expect(cardMatchup(s.quest, currentCard(s))?.edge).toBe("advantage");
+    round(s);
+    // Wurmple's 2d6, rolled with the edge: four dice, the two highest kept.
+    const faces = [0, 0.99, 0.5, 0.2];
+    s = rollDice(s, () => faces.shift() ?? 0.5);
+    expect(s.roll!.edge).toBe("advantage");
+    expect(s.roll!.values).toEqual([6, 4]);
+    expect(s.roll!.dropped).toEqual([1, 2]);
+    round(s);
+    s = advance(returnToCard(s), zero);
+    // A beaten Wurmple waits to be caught; letting it go puts it aside.
+    if (awaitingCatch(s)) s = letGo(s, zero);
+    expect(s.discarded).toBe(discarded + 1);
+    expect(party(s).assist).toBeUndefined();
+    round(s);
+  });
+
+  it("is not offered on a rolled battle the starter already beats", () => {
+    // Charmander (Fire) already has the edge on Grass and Bug.
+    const foe = cards.find(
+      (c) =>
+        c.id.startsWith("pokemon.route-") &&
+        c.dice &&
+        c.battle &&
+        (c.type === "grass" || c.type === "bug"),
+    )!;
+    let s = onRoute2("pikachu", PIDGEY, foe.id);
     s = {
       ...s,
       quest: {
@@ -155,13 +210,24 @@ describe("the League's team", () => {
         party: { ...party(s), omen: "pokemon.starter-charmander" },
       },
     };
-    expect(currentCard(s).id).toBe(foe.id);
     expect(cardMatchup(s.quest, currentCard(s))?.edge).toBe("advantage");
-    expect(canSendIn(s, PIDGEY)).toBe(true);
-    const discarded = s.discarded;
-    s = sendIn(s, PIDGEY, zero);
-    expect(s.discarded).toBe(discarded + 1);
-    expect(party(s).team ?? []).toEqual([]);
+    expect(canSendIn(s, PIDGEY)).toBe(false);
+  });
+
+  it("refuses a save whose sent-in Pokémon is still in the bag", () => {
+    const foe = cards.find(
+      (c) =>
+        c.id.startsWith("pokemon.route-") &&
+        c.dice &&
+        c.battle &&
+        (c.type === "grass" || c.type === "bug"),
+    )!;
+    const s = onRoute2("pikachu", PIDGEY, foe.id);
+    const bad = {
+      ...s,
+      quest: { ...s.quest!, party: { ...party(s), assist: PIDGEY } },
+    };
+    expect(() => parseSession(JSON.stringify(bad))).toThrow();
   });
 
   it("is not offered on a strike the starter already wins", () => {
