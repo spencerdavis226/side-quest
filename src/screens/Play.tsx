@@ -56,6 +56,7 @@ import {
 import { crawlTheme } from "../components/crawlTheme";
 import { extrasLayout, foldBranches } from "../components/extras";
 import { TypeMark } from "../components/LeagueMarks";
+import { BallThrowStage } from "../components/BallThrow";
 import { CrawlIcon } from "../components/Crawl";
 // A dice overlay that can't be fetched (offline before it was cached) must
 // not strand a roll: the saved result goes straight to the card instead.
@@ -618,6 +619,12 @@ export function Play({
             />
           </Suspense>
         )}
+      {/* The ball throw, played big over the table (2026-10-31). */}
+      <BallThrowStage
+        ball={ball}
+        throwKey={ball ? `${card.id}-${session.discarded}` : null}
+        name={card.title}
+      />
       {fanSheet && (
         <ExtrasSheet
           title="Evolve into"
