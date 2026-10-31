@@ -2,9 +2,9 @@
 
 Updated 2026-10-31. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## In progress 2026-10-31: deterministic browser tests, faster CI (owner: "make Side Quest's test suites much faster and reliable, without losing the coverage that matters")
+## Shipped 2026-10-31: deterministic browser tests, faster CI (owner: "make Side Quest's test suites much faster and reliable, without losing the coverage that matters")
 
-Branch `faster-tests`, draft PR #58; not merged. No app code changed: tests, Playwright config, lint and `pages.yml`.
+PR #58, fast-forwarded to `main` on the owner's "Merge to main" (`c26ae20`; revert to `c1b4d58` to undo). Deployed by run #252 in 3 min 26 s, every job green (its `npm ci` steps missed the cache, which is kept per branch; later `main` runs skip them). No app code changed: tests, Playwright config, lint and `pages.yml`.
 
 **Tests.** Every browser spec imports `test` from `tests/browser/support.ts`: `Math.random` seeded from the test title (Node and page), Reduced Motion by default (motion specs opt in with `motion`/`withMotion`), and `seed`/`seedStorage` writing saves before the first load. Lint rejects `Math.random`, `waitForTimeout` and importing `test` from `@playwright/test` in a spec; all 8 sleeps became state waits. `leagueAt`/`crawlAt` live in `tests/browser/sessions.ts`. Retries are 0. Layout: `@release` is 13 smoke tests (the CI gate); `test:e2e` runs everything but `@sweep`; `test:sweep` runs the three every-card fit sweeps (`sweeps.spec.ts`, chunked). See `tests/CLAUDE.md`.
 
