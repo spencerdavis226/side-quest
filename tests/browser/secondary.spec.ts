@@ -1,4 +1,5 @@
-import { test, expect, type Page } from "@playwright/test";
+import { type Page } from "@playwright/test";
+import { test, expect, seed as seedSession, rng } from "./support";
 import { createSession } from "../../src/game/engine";
 import { cards, packs } from "../../src/content/catalog";
 const key = "side-quest.session.v1";
@@ -8,14 +9,10 @@ async function seedDice(page: Page) {
     { version: 1, packIds: ["core"], limit: 1 },
     [diceCard],
     [{ ...packs[0], cardIds: [diceCard.id] }],
+    rng("secondary:8"),
   );
   session.phase = "revealed";
-  await page.goto("./");
-  await page.evaluate(
-    ({ key, session }) => localStorage.setItem(key, JSON.stringify(session)),
-    { key, session },
-  );
-  await page.reload();
+  await seedSession(page, session);
 }
 test("unselected packs stay readable and selection is unambiguous", async ({
   page,
@@ -70,7 +67,7 @@ test("the pack dialog carries no prose and closes on a tap outside it", async ({
   await page.mouse.click(box.x + box.width / 2, box.y / 2);
   await expect(dialog).toHaveCount(0);
 });
-test("@release the pack count stays readable with every pack selected", async ({
+test("the pack count stays readable with every pack selected", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 320, height: 568 });
@@ -103,7 +100,7 @@ test("@release the pack count stays readable with every pack selected", async ({
   ).toBe(true);
   await row.screenshot({ path: test.info().outputPath("five-packs.png") });
 });
-test("@release VIP is a selectable add-on and Core can be deselected", async ({
+test("VIP is a selectable add-on and Core can be deselected", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 320, height: 568 });
@@ -163,7 +160,7 @@ test("dialog copy sits on a quiet panel surface", async ({ page }) => {
   expect(surface.background).toContain("panel.webp");
   expect(surface.background).toContain("linear-gradient");
 });
-test("@release leaving a quest mode takes its pack back out of the deck", async ({
+test("leaving a quest mode takes its pack back out of the deck", async ({
   page,
 }) => {
   await page.goto("./");
@@ -186,7 +183,7 @@ test("@release leaving a quest mode takes its pack back out of the deck", async 
   expect(session.config.packIds).toEqual(["core"]);
   expect(session.cards).toHaveLength(packs[0].cardIds.length);
 });
-test("@release a quest mode chosen before a reload is still chosen", async ({
+test("a quest mode chosen before a reload is still chosen", async ({
   page,
 }) => {
   await page.goto("./");

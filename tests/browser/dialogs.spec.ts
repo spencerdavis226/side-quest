@@ -1,29 +1,23 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect, rng, seed, withMotion } from "./support";
 import { createSession, advance } from "../../src/game/engine";
 import { cards, packs } from "../../src/content/catalog";
-const key = "side-quest.session.v1";
 const core = packs.find((p) => p.id === "core")!;
 const plain = cards.filter((c) => !c.dice && core.cardIds.includes(c.id));
-async function seed(page: Page, session: unknown) {
-  await page.goto("./");
-  await page.evaluate(
-    ({ key, session }) => localStorage.setItem(key, JSON.stringify(session)),
-    { key, session },
-  );
-  await page.reload();
-}
 function game(limit = 3) {
   const list = plain.slice(0, limit);
   return createSession(
     { version: 1, packIds: ["core"], limit: list.length },
     list,
     [{ ...core, cardIds: list.map((c) => c.id) }],
+    rng(limit),
   );
 }
 // Reveal, discard, reveal: an active session that has a previous card.
 const withHistory = () => advance(advance(advance(game(3))));
 
 test("dialog enter and exit share the motion tokens", async ({ page }) => {
+  // The dialog's own enter and exit animations are what this checks.
+  await withMotion(page);
   await page.goto("./");
   const tokens = await page.locator("main").evaluate((el) => ({
     enter: getComputedStyle(el).getPropertyValue("--motion-dialog").trim(),
@@ -197,9 +191,7 @@ test("menu → Previous card → Close returns to play", async ({ page }) => {
   await expect(page.locator(".game-card")).toBeVisible();
 });
 
-test("@release cancelling End game keeps the active session", async ({
-  page,
-}) => {
+test("cancelling End game keeps the active session", async ({ page }) => {
   await seed(page, game());
   await page.getByRole("button", { name: "Open game menu" }).click();
   await expect(

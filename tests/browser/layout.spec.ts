@@ -1,8 +1,15 @@
-import { test, expect, type Page } from "@playwright/test";
+import { type Page } from "@playwright/test";
+import {
+  test,
+  expect,
+  rng,
+  seed as seedSession,
+  transitionsDone,
+  withMotion,
+} from "./support";
 import sharp from "sharp";
 import { createSession, advance } from "../../src/game/engine";
 import { cards, packs } from "../../src/content/catalog";
-const key = "side-quest.session.v1";
 const core = packs.find((p) => p.id === "core")!;
 const vip = packs.find((p) => p.id === "vip")!;
 const pokemon = packs.find((p) => p.id === "pokemon")!;
@@ -20,20 +27,16 @@ function revealed(card: (typeof cards)[number], list = [card]) {
     { version: 1, packIds: ["core"], limit: list.length },
     list,
     [{ ...packs[0], cardIds: list.map((c) => c.id) }],
+    rng(card.id),
   );
   session.phase = "revealed";
   return session;
 }
-async function seed(page: Page, session: unknown) {
-  await page.goto("./");
-  await page.evaluate(
-    ({ key, session }) => localStorage.setItem(key, JSON.stringify(session)),
-    { key, session },
-  );
-  await page.reload();
+async function seed(page: Page, session: object) {
+  await seedSession(page, session);
   await page.evaluate(() => document.fonts.ready);
 }
-test("@release Core instructions fit at 390x844 with ratio, pack mark and no CTA occlusion", async ({
+test("Core instructions fit at 390x844 with ratio, pack mark and no CTA occlusion", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
@@ -101,6 +104,7 @@ test("every pack seal stays inside the parchment at supported widths", async ({
         },
         [card],
         packs,
+        rng("layout:98"),
       );
       session.phase = "revealed";
       await seed(page, session);
@@ -144,6 +148,7 @@ test("Previous Card owns the same 2:3 geometry as gameplay", async ({
     { version: 1, packIds: ["core"], limit: 3 },
     [a, b],
     [{ ...packs[0], cardIds: [a.id, b.id] }],
+    rng("layout:145"),
   );
   session = advance(advance(advance(session))); // reveal, discard, reveal
   await seed(page, session);
@@ -175,7 +180,7 @@ test("Previous Card owns the same 2:3 geometry as gameplay", async ({
   expect(back!.y).toBeGreaterThanOrEqual(0);
   expect(back!.y + back!.height).toBeLessThanOrEqual(568);
 });
-test("@release home fits Safari's visible height without moving Install into the status bar", async ({
+test("home fits Safari's visible height without moving Install into the status bar", async ({
   page,
 }) => {
   // Match the owner's screenshot: League mode, with Core, House, VIP and
@@ -318,6 +323,8 @@ test("@release the play screen fits a Safari tab at every phone height without s
     { width: 820, height: 1050 },
   ]) {
     await page.setViewportSize(viewport);
+    // The card's size transitions to the new height; measure where it lands.
+    await transitionsDone(page);
     const fit = await page.evaluate(() => {
       const stage = document
         .querySelector(".card-stage")!
@@ -343,6 +350,8 @@ test("@release the play screen fits a Safari tab at every phone height without s
 test("an iOS top inset keeps topbar controls below the status-bar frost", async ({
   page,
 }) => {
+  // The atmosphere layer is measured here; Reduced Motion hides it.
+  await withMotion(page);
   await page.setViewportSize({ width: 393, height: 852 });
   await page.goto("./");
   // Browser emulation cannot produce env() insets; pose an iPhone 15 Pro
@@ -415,12 +424,18 @@ test("@release the installed app lays out at the full screen height and never sc
   // Installed iOS apps report navigator.standalone. Emulation cannot reproduce
   // their short svh/dvh viewport (see docs/DEVICE_CHECKLIST.md); this checks
   // the layout targets the large viewport, which is the full screen there.
+  // The atmosphere layer is measured here; Reduced Motion hides it.
+  await withMotion(page);
   await page.addInitScript(() =>
     Object.defineProperty(navigator, "standalone", { value: true }),
   );
   await page.setViewportSize({ width: 393, height: 852 });
   await page.goto("./");
   await expect(page.locator("html")).toHaveClass(/standalone/);
+  // The inline script flags standalone before the first render, which waits
+  // for the screen's art: wait for the layers this measures.
+  await expect(page.locator(".app")).toBeVisible();
+  await expect(page.locator(".atmosphere")).toBeAttached();
   const measure = () =>
     page.evaluate(() => {
       const html = document.documentElement;
@@ -528,7 +543,7 @@ test("@release the installed app lays out at the full screen height and never sc
   expect(Math.abs(card.width / card.height - 2 / 3)).toBeLessThan(0.01);
   expect(card.y + card.height).toBeLessThanOrEqual(852);
 });
-test("@release a short phone scrolls long rules with a visible overflow affordance", async ({
+test("a short phone scrolls long rules with a visible overflow affordance", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 320, height: 568 });

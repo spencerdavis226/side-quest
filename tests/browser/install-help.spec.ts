@@ -1,7 +1,7 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./support";
 
 const safari = "AppleWebKit/605.1.15 Version/26.0 Mobile/15E148 Safari/604.1";
-test("@release installation information is limited to Safari on an uninstalled iPhone/iPad", async ({
+test("installation information is limited to Safari on an uninstalled iPhone/iPad", async ({
   page,
 }) => {
   for (const [userAgent, maxTouchPoints, standalone, dismissed, eligible] of [

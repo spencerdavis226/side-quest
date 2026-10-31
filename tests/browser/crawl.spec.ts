@@ -1,100 +1,14 @@
-import { test, expect, type Page } from "@playwright/test";
-import {
-  advance,
-  createSession,
-  currentCard,
-  finaleStage,
-} from "../../src/game/engine";
+import { type Page } from "@playwright/test";
+import { test, expect, seed, saved } from "./support";
+import { advance, currentCard, finaleStage } from "../../src/game/engine";
 import { returnToCard, rollDice } from "../../src/game/dice";
-import type { PartyState, SessionState } from "../../src/game/types";
-import { cards, packs } from "../../src/content/catalog";
+import type { SessionState } from "../../src/game/types";
+import { cards } from "../../src/content/catalog";
 import { PARTY_HEARTS as H } from "../../src/content/dungeon/shared";
-const key = "side-quest.session.v1";
-
-// Where a run is, step by step: the adventurer, tonight's omen, the queue,
-// the first floor's eight rooms and its boss, a landing, the second floor
-// and its boss, a landing, the third floor, closing time, Last Call.
-const STEP = {
-  adventurer: 0,
-  omen: 1,
-  queue: 2,
-  floor1: 3,
-  boss1: 11,
-  landing1: 12,
-  hidden: 13,
-  keeper: 15,
-  floor2: 16,
-  boss2: 24,
-  landing2: 25,
-  stairs: 26,
-  floor3: 27,
-  closing: 35,
-  lastCall: 36,
-};
-
-// A Pub Crawl seeded at `step` with `id` in play, the party as given. The
-// floors are the first at each depth (the Cellar, the Catacombs, the Drowned
-// Taproom) and the Speakeasy, unless `other` picks the second three (the
-// Wine Cellar, the Sewers, the Kitchen) and the Basement, or `route` picks
-// floors by index (2: the Brewery, the Walk-in Freezer, the Rooftop Bar).
-// With `adventurer`, that class was dealt and put aside first.
-function crawlAt(
-  id: string,
-  step = 0,
-  party: Partial<PartyState> = {},
-  {
-    other = false,
-    route = other ? 1 : 0,
-    adventurer,
-    room = other ? 4 : 0,
-  }: {
-    other?: boolean;
-    route?: number;
-    adventurer?: string;
-    room?: number;
-  } = {},
-): SessionState {
-  // The route draws come in run order: floor 1, the hidden room (0 to 4),
-  // floor 2, floor 3.
-  const f = (route + 0.5) / 3;
-  const floors = [f, (room + 0.5) / 5, f, f];
-  let s = createSession(
-    { version: 1, packIds: ["dungeon"], limit: null, quest: "dungeon" },
-    cards,
-    packs,
-    () => floors.shift() ?? Math.random(),
-  );
-  const place = (s: SessionState, id: string, step: number) => {
-    const finale = [...s.quest!.finale];
-    const at = finale.indexOf(id);
-    if (at >= 0) finale[at] = finale[step];
-    finale[step] = id;
-    return { ...s, quest: { ...s.quest!, finale } };
-  };
-  if (adventurer)
-    s = advance(advance(place(s, `dungeon.class-${adventurer}`, 0)));
-  s = place(s, id, step);
-  const q = s.quest!;
-  return {
-    ...s,
-    discarded: step,
-    previousId: step ? q.finale[step - 1] : null,
-    quest: { ...q, step, party: { ...q.party!, ...party } },
-  };
-}
+import { STEP, crawlAt } from "./sessions";
 const reveal = (s: SessionState) => advance(s);
 const rolled = (s: SessionState, face: number) =>
   returnToCard(rollDice(s, () => (face - 0.5) / currentCard(s).dice!.sides));
-async function seed(page: Page, session: SessionState) {
-  await page.goto("./");
-  await page.evaluate(
-    ({ key, session }) => localStorage.setItem(key, JSON.stringify(session)),
-    { key, session },
-  );
-  await page.reload();
-}
-const saved = (page: Page) =>
-  page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), key);
 const meter = (page: Page) => page.locator(".crawl-meter");
 const full = new RegExp(`^Hearts: ${H} of ${H}`);
 
@@ -259,7 +173,7 @@ test("a loaded die rerolls a lost fight", async ({ page }, info) => {
   expect(s.quest.party.loot).toEqual([]);
 });
 
-test("@release pushing your luck: cash out, or go again for the next prize", async ({
+test("pushing your luck: cash out, or go again for the next prize", async ({
   page,
 }, info) => {
   const won = rolled(
@@ -310,7 +224,7 @@ test("a Bar Tab passes a lost fight's drinks to someone else", async ({
   expect(s.quest.party).toMatchObject({ loot: [], passed: STEP.floor2 });
 });
 
-test("@release a trial is settled with plaques; a loss costs hearts", async ({
+test("a trial is settled with plaques; a loss costs hearts", async ({
   page,
 }, info) => {
   await seed(page, reveal(crawlAt("dungeon.tomb-of-silence", STEP.floor2 + 1)));
@@ -438,8 +352,25 @@ test("with Reduce Motion a banner fades and goes, and the splat stays centred", 
   await page.locator(".game-card").click();
   const banner = page.locator(".news-banner");
   await expect(banner).toHaveText(/Jinxed!\s*Goblin Tongue/);
-  // The banner fades rather than vanishing at once: still shown a moment in.
-  await page.waitForTimeout(400);
+  // The banner fades rather than vanishing at once: still shown a moment
+  // in. Every running animation is held at 400 ms in (rather than sleeping
+  // 400 ms, which a slow runner can overshoot), then let go.
+  const held = await page.evaluate(() => {
+    const running = document
+      .getAnimations()
+      .filter(
+        (a) =>
+          a.playState === "running" &&
+          Number(a.effect?.getComputedTiming().endTime) > 400,
+      );
+    for (const a of running) {
+      a.pause();
+      a.currentTime = 400;
+    }
+    (window as unknown as { __held: Animation[] }).__held = running;
+    return running.length;
+  });
+  expect(held).toBeGreaterThan(0);
   await expect(banner.locator(".stage-banner-cloth")).not.toHaveCSS(
     "opacity",
     "0",
@@ -449,6 +380,10 @@ test("with Reduce Motion a banner fades and goes, and the splat stays centred", 
     page.locator(".heart-splat").boundingBox(),
     meter(page).boundingBox(),
   ]);
+  await page.evaluate(() => {
+    for (const a of (window as unknown as { __held: Animation[] }).__held)
+      a.play();
+  });
   expect(
     Math.abs(splat!.x + splat!.width / 2 - (heart!.x + heart!.width / 2)),
   ).toBeLessThanOrEqual(1);
@@ -460,7 +395,7 @@ test("with Reduce Motion a banner fades and goes, and the splat stays centred", 
   await expect(page.locator(".tag-jinx")).toBeVisible();
 });
 
-test("@release a landing levels the adventurer up for drinks, or rests", async ({
+test("a landing levels the adventurer up for drinks, or rests", async ({
   page,
 }, info) => {
   await seed(
@@ -506,7 +441,7 @@ test("@release a landing levels the adventurer up for drinks, or rests", async (
 
 // One line of levels (2026-10-31): the plaques read at a glance on a
 // 320px phone, and the second landing offers the next level.
-test("@release a level up reads at 320px, then the line goes on", async ({
+test("a level up reads at 320px, then the line goes on", async ({
   page,
 }, info) => {
   await page.setViewportSize({ width: 320, height: 640 });
@@ -683,9 +618,7 @@ test("the party dialog lays out the run: adventurer, boons and jinx", async ({
   await guide.screenshot({ path: info.outputPath("guide-end.png") });
 });
 
-test("@release losing the last heart wipes the party", async ({
-  page,
-}, info) => {
+test("losing the last heart wipes the party", async ({ page }, info) => {
   await seed(
     page,
     rolled(
@@ -983,59 +916,9 @@ test("tonight's omen is kept in the party dialog", async ({ page }, info) => {
   await page.screenshot({ path: info.outputPath("omen-party.png") });
 });
 
-test("every Dungeon night card fits its face with its plaques at 393x640", async ({
-  page,
-}) => {
-  // 530 cards since 2026-10-25 (5.7 minutes alone in Chromium), each
-  // reloaded.
-  test.setTimeout(900000);
-  await page.setViewportSize({ width: 393, height: 640 });
-  const ids = cards.filter((c) => c.id.startsWith("dungeon.")).map((c) => c.id);
-  // Where each card is dealt: its stage's first step on the route that has
-  // it (an elite, behind a fork, one room later).
-  const routes = [0, 1, 2].flatMap((route) =>
-    [0, 1, 2, 3, 4].map((room) => ({
-      route,
-      room,
-      base: crawlAt(ids[0], 0, {}, { route, room }),
-    })),
-  );
-  const placeOf = (id: string) => {
-    for (const { route, room, base } of routes) {
-      let first = 0;
-      for (const stage of base.quest!.stages) {
-        if (stage.cards.some((c) => c.id === id))
-          return { step: first, route, room };
-        if (stage.elite?.some((c) => c.id === id))
-          return { step: first + 1, route, room };
-        first += stage.pick;
-      }
-    }
-    throw Error(id);
-  };
-  const overflowing: string[] = [];
-  await page.goto("./");
-  for (const id of ids) {
-    // A smoke bomb in the satchel puts the Flee plaque on every room fight.
-    const { step, route, room } = placeOf(id);
-    const s = reveal(crawlAt(id, step, { loot: ["smoke"] }, { route, room }));
-    await page.evaluate(
-      ({ key, session }) => localStorage.setItem(key, JSON.stringify(session)),
-      { key, session: s },
-    );
-    await page.reload();
-    const rules = page.locator(".game-card .study-rules");
-    await expect(rules).toBeVisible();
-    await page.evaluate(() => document.fonts.ready);
-    if ((await rules.getAttribute("data-overflow")) !== "none")
-      overflowing.push(id);
-  }
-  expect(overflowing).toEqual([]);
-});
-
 // The 2026-10-25 overhaul at 320px: a boss's second beat as a duel with Won
 // and Lost, and its spoils on the felling win.
-test("@release a boss's next beat is a duel, and its felling win brings spoils", async ({
+test("a boss's next beat is a duel, and its felling win brings spoils", async ({
   page,
 }, info) => {
   await page.setViewportSize({ width: 320, height: 568 });

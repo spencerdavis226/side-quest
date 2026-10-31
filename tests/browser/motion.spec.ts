@@ -1,8 +1,17 @@
-import { test, expect, type Page } from "@playwright/test";
+import { type Page } from "@playwright/test";
+import {
+  test,
+  expect,
+  frames,
+  motion,
+  seed as seedSession,
+  rng,
+} from "./support";
+// These tests watch the flip, deal and press motion itself.
+test.use(motion);
 import { createSession } from "../../src/game/engine";
 import { rollDice } from "../../src/game/dice";
 import { cards, packs } from "../../src/content/catalog";
-const key = "side-quest.session.v1";
 const cheers = cards.find((c) => c.id === "core.cheers-idiots")!;
 const diceCard = cards.find((c) => c.dice)!;
 function sessionFor(
@@ -15,6 +24,7 @@ function sessionFor(
     { version: 1, packIds: ["core"], limit: list.length },
     list,
     [{ ...packs[0], cardIds: list.map((c) => c.id) }],
+    rng("motion:23"),
   );
   // Keep the first card current so a seeded phase is deterministic.
   session.order = list.map((c) => c.id);
@@ -22,13 +32,8 @@ function sessionFor(
   session.phase = phase;
   return session;
 }
-async function seed(page: Page, session: unknown) {
-  await page.goto("./");
-  await page.evaluate(
-    ({ key, session }) => localStorage.setItem(key, JSON.stringify(session)),
-    { key, session },
-  );
-  await page.reload();
+async function seed(page: Page, session: object) {
+  await seedSession(page, session);
   // The first render waits for the screen's art, so it lands after load.
   await page.locator("#root > *").first().waitFor({ state: "attached" });
 }
@@ -170,7 +175,8 @@ test("a press never offsets the card and never jumps on release", async ({
   const mid = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
   await page.mouse.move(mid.x, mid.y);
   await page.mouse.down();
-  await page.waitForTimeout(60);
+  // A few rendered frames in, where a press transition would have moved it.
+  await frames(page, 4);
   const pressed = await page
     .locator(".game-card")
     .evaluate((el) => getComputedStyle(el).transform);
@@ -181,7 +187,7 @@ test("a press never offsets the card and never jumps on release", async ({
     .locator(".game-card")
     .evaluate((el) => getComputedStyle(el).transform);
   await page.mouse.up();
-  await page.waitForTimeout(60);
+  await frames(page, 4);
   const released = await page
     .locator(".game-card")
     .evaluate((el) => getComputedStyle(el).transform);
@@ -404,7 +410,8 @@ test("hiding the tab stops the turn and resyncs the front on return", async ({
     });
     document.dispatchEvent(new Event("visibilitychange"));
   });
-  await page.waitForTimeout(120);
+  // Hidden, the turn stops at once: the flip settles while the tab is away.
+  await expect(page.locator(".card-stage")).not.toHaveClass(/flip/);
   await page.evaluate(() => {
     Object.defineProperty(document, "hidden", {
       configurable: true,

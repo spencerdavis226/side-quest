@@ -1,4 +1,5 @@
-import { test, expect, type Page } from "@playwright/test";
+import { type Page } from "@playwright/test";
+import { test, expect, rng, seed, saved, withMotion } from "./support";
 import {
   advance,
   canSendIn,
@@ -6,7 +7,9 @@ import {
   awaitingCatch,
   awaitingChoice,
   awaitingOffer,
+  awaitingPress,
   awaitingVerdict,
+  cashOut,
   canTakeOffer,
   createSession,
   currentCard,
@@ -18,106 +21,50 @@ import {
 import { returnToCard, rollDice } from "../../src/game/dice";
 import type { PartyState, SessionState } from "../../src/game/types";
 import { cards, packs } from "../../src/content/catalog";
-const key = "side-quest.session.v1";
 
-// Pokémon League plays on the crawl engine since 2026-10-16: a starter, eight
-// routes each closed by a gym, a villain hideout, Victory Road, the rival and
-// the League. The run's balance is tested in tests/league.balance.test.ts.
-const league = {
-  version: 1,
-  packIds: ["pokemon"],
-  limit: null,
-  quest: "pokemon",
-} as const;
-
-// A League run with `id` in play at its stage's first step, the starter put
-// aside, and the party as given. `hideout` picks which villain team's route
-// (0 to 8) the run takes.
-function leagueAt(
-  id: string,
-  party: Partial<PartyState> = {},
-  hideout = 0,
-  starter = "pokemon.starter-charmander",
-): SessionState {
-  const draws = [(hideout + 0.5) / 9];
-  const s = createSession(
-    { ...league, packIds: [...league.packIds] },
-    cards,
-    packs,
-    () => (draws.length ? draws.shift()! : Math.random()),
-  );
-  const q = s.quest!;
-  const finale = [...q.finale];
-  let step = 0;
-  let first = 0;
-  for (const stage of q.stages) {
-    if (stage.cards.some((c) => c.id === id)) step = first;
-    else if (stage.elite?.some((c) => c.id === id)) step = first + 1;
-    else {
-      first += stage.pick;
-      continue;
-    }
-    break;
-  }
-  const swap = (at: number, card: string) => {
-    const was = finale.indexOf(card);
-    if (was >= 0) finale[was] = finale[at];
-    finale[at] = card;
-  };
-  swap(0, starter);
-  if (step) swap(step, id);
-  return {
-    ...s,
-    discarded: step,
-    previousId: step ? finale[step - 1] : null,
-    quest: {
-      ...q,
-      finale,
-      step,
-      party: { ...q.party!, ...(step ? { omen: starter } : {}), ...party },
-    },
-  };
-}
+import { league, leagueAt } from "./sessions";
 const reveal = (s: SessionState) => advance(s);
-async function seed(page: Page, session: SessionState) {
-  await page.goto("./");
-  await page.evaluate(
-    ({ key, session }) => localStorage.setItem(key, JSON.stringify(session)),
-    { key, session },
-  );
-  await page.reload();
-}
-const saved = (page: Page) =>
-  page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), key);
 const meter = (page: Page) => page.locator(".crawl-meter");
 const plaques = (page: Page) =>
   page.locator(".card-choice.offers .card-choice-option");
 
-// Play a League run through the engine, always evolving, walking past every
-// other offer and healing the team to full after each card, until `stop`.
-function playLeague(stop: (s: SessionState) => boolean) {
+// Play a seeded League run through the engine, always evolving, walking
+// past every other offer, cashing out of every push-your-luck cast and
+// healing the team to full after each card, until `stop`. It throws rather
+// than hand back a run it could not finish: a card it does not know how to
+// play would otherwise seed a game stuck mid-route (the 2026-10-31 rods
+// stalled about one run in five, the WebKit Hall of Fame "flake").
+function playLeague(stop: (s: SessionState) => boolean, seed = 1) {
+  const random = rng(`league run ${seed}`);
   let s = createSession(
     { ...league, packIds: [...league.packIds] },
     cards,
     packs,
+    random,
   );
-  for (let guard = 0; guard < 2000 && !stop(s); guard++) {
-    if (s.phase === "complete") break;
-    s = advance(s);
+  for (let guard = 0; !stop(s); guard++) {
+    if (s.phase === "complete" || guard === 2000)
+      throw new Error(
+        `playLeague stopped at ${currentCard(s).id} (${s.phase}) after ${guard} moves`,
+      );
+    s = advance(s, random);
     if (awaitingOffer(s)) {
       const offers = currentCard(s).offers!;
       const evolve = offers.findIndex((o) => o.evolve);
       s = takeOffer(
         s,
         evolve >= 0 && canTakeOffer(s, evolve) ? evolve : offers.length - 1,
+        random,
       );
-    } else if (awaitingCatch(s)) s = letGo(s);
-    else if (awaitingChoice(s)) s = skipRoll(s);
-    else if (awaitingVerdict(s)) s = settleBattle(s, true);
+    } else if (awaitingCatch(s)) s = letGo(s, random);
+    else if (awaitingChoice(s)) s = skipRoll(s, random);
+    else if (awaitingVerdict(s)) s = settleBattle(s, true, random);
     else {
-      if (currentCard(s).dice) s = returnToCard(rollDice(s));
+      if (currentCard(s).dice) s = returnToCard(rollDice(s, random));
+      // A won cast of a rod waits for Cash out or Again (2026-10-31).
+      if (awaitingPress(s)) s = cashOut(s, random);
       // A beaten wild Pokémon waits to be caught (2026-10-25).
-      s = awaitingCatch(s) ? letGo(s) : advance(s);
+      else s = awaitingCatch(s) ? letGo(s, random) : advance(s, random);
     }
     const party = s.quest!.party!;
     if (!party.wiped) party.hearts = party.max;
@@ -179,7 +126,7 @@ test("a plain mode plays the Pokémon pack without a meter", async ({
   expect(s.quest).toBeUndefined();
 });
 
-test("@release a starter evolves on a route, and the banner says what changed", async ({
+test("a starter evolves on a route, and the banner says what changed", async ({
   page,
 }, info) => {
   await page.setViewportSize({ width: 375, height: 667 });
@@ -234,7 +181,7 @@ test("@release a starter evolves on a route, and the banner says what changed", 
   await expect(page.locator(".evolution-banner")).toHaveCount(0);
 });
 
-test("@release Eevee's evolution lets the table pick its form", async ({
+test("Eevee's evolution lets the table pick its form", async ({
   page,
 }, info) => {
   await page.setViewportSize({ width: 320, height: 568 });
@@ -327,7 +274,7 @@ test("a fully evolved starter can only press B", async ({ page }) => {
   });
 });
 
-test("@release a gym leader is a boss battle, and beating it earns a badge", async ({
+test("a gym leader is a boss battle, and beating it earns a badge", async ({
   page,
 }, info) => {
   await page.setViewportSize({ width: 320, height: 568 });
@@ -375,7 +322,7 @@ test("@release a gym leader is a boss battle, and beating it earns a badge", asy
   await page.screenshot({ path: info.outputPath("badges-320.png") });
 });
 
-test("@release a type matchup shows before the roll, and the roll keeps the worse", async ({
+test("a type matchup shows before the roll, and the roll keeps the worse", async ({
   page,
 }, info) => {
   await page.setViewportSize({ width: 320, height: 568 });
@@ -387,6 +334,8 @@ test("@release a type matchup shows before the roll, and the roll keeps the wors
       c.dice?.count === 1 &&
       c.dice.sides === 20,
   )!;
+  // The two dice are watched as they land: the overlay needs motion.
+  await withMotion(page);
   await seed(page, reveal(leagueAt(water.id)));
   const ribbon = page.locator(".game-card .card-ribbon");
   await expect(ribbon.getByRole("img", { name: "Water type" })).toHaveCount(1);
@@ -429,7 +378,9 @@ test("a 2d6 battle against the type rolls four dice and keeps the lowest two", a
   page,
 }, info) => {
   await page.setViewportSize({ width: 375, height: 667 });
-  // Lt. Surge (Electric, 2d6) against Squirtle (Water).
+  // Lt. Surge (Electric, 2d6) against Squirtle (Water). The four dice are
+  // watched as they land: the overlay needs motion.
+  await withMotion(page);
   await seed(
     page,
     reveal(leagueAt("pokemon.gym-lt-surge", {}, 0, "pokemon.starter-squirtle")),
@@ -662,7 +613,7 @@ test("a League card is dealt face down without turning the last one back over", 
   ).toEqual({ fresh: true, turning: 0 });
 });
 
-test("@release every card of a League game wears the Ancient Mew pair", async ({
+test("every card of a League game wears the Ancient Mew pair", async ({
   page,
 }) => {
   const bg = (selector: string, pseudo?: string) =>
@@ -694,6 +645,7 @@ test("@release every card of a League game wears the Ancient Mew pair", async ({
     { version: 1, packIds: ["pokemon"], limit: 30 },
     cards,
     packs,
+    rng("plain pokemon"),
   );
   await seed(page, plain);
   expect(await bg(".card-back")).toContain("card-back.webp");
@@ -701,90 +653,6 @@ test("@release every card of a League game wears the Ancient Mew pair", async ({
   await page.locator(".game-card").click();
   await expect(page.locator(".card-stage")).not.toHaveClass(/flip/);
   expect(await bg(".game-card .study-face")).not.toContain("league-front");
-});
-
-test("every League card fits its face with its plaques at 393x640", async ({
-  page,
-}) => {
-  // About 400 cards since the 2026-10-25 type expansion, each reloaded.
-  test.setTimeout(600000);
-  await page.setViewportSize({ width: 393, height: 640 });
-  const pack = packs.find((p) => p.id === "pokemon")!;
-  const deck = new Set(pack.cardIds);
-  const ids = cards
-    .filter((c) => c.id.startsWith("pokemon.") && !deck.has(c.id))
-    .map((c) => c.id);
-  // Which villain route holds a hideout card.
-  const hideoutOf = (id: string) => {
-    for (let h = 0; h < 9; h++)
-      if (
-        leagueAt(id, {}, h).quest!.stages.some((st) =>
-          st.cards.some((c) => c.id === id),
-        )
-      )
-        return h;
-    return 0;
-  };
-  const overflowing: string[] = [];
-  await page.goto("./");
-  for (const id of ids) {
-    const starter = id.startsWith("pokemon.starter-");
-    // An Escape Rope in the bag puts its plaque on every route fight.
-    const s = reveal(
-      starter
-        ? leagueAt(id, {}, 0, id)
-        : leagueAt(id, { loot: ["smoke"] }, hideoutOf(id)),
-    );
-    await page.evaluate(
-      ({ key, session }) => localStorage.setItem(key, JSON.stringify(session)),
-      { key, session: s },
-    );
-    await page.reload();
-    const rules = page.locator(".game-card .study-rules");
-    await expect(rules).toBeVisible();
-    await page.evaluate(() => document.fonts.ready);
-    if ((await rules.getAttribute("data-overflow")) !== "none")
-      overflowing.push(id);
-  }
-  expect(overflowing).toEqual([]);
-});
-
-// A thrown ball reads on the card (2026-10-27): every Pokémon's caught and
-// fled lines fit the narrowest phone without scrolling.
-test("every Pokémon's thrown-ball lines fit its face at 320x568", async ({
-  page,
-}) => {
-  test.setTimeout(600000);
-  await page.setViewportSize({ width: 320, height: 568 });
-  const ids = cards
-    .filter(
-      (c) =>
-        c.id.startsWith("pokemon.") &&
-        (c.catchable || c.offers?.some((o) => o.catch)),
-    )
-    .map((c) => c.id);
-  expect(ids.length).toBe(81);
-  const overflowing: string[] = [];
-  await page.goto("./");
-  for (const id of ids) {
-    for (const face of [20, 1]) {
-      const s = reveal(
-        leagueAt(id, { throw: { id, face } }, 0, "pokemon.starter-pikachu"),
-      );
-      await page.evaluate(
-        ({ key, session }) =>
-          localStorage.setItem(key, JSON.stringify(session)),
-        { key, session: s },
-      );
-      await page.reload();
-      await expect(page.locator(".game-card .ball-result")).toBeVisible();
-      await page.evaluate(() => document.fonts.ready);
-      const rules = page.locator(".game-card .study-rules");
-      if ((await rules.getAttribute("data-overflow")) !== "none")
-        overflowing.push(`${id}:${face}`);
-    }
-  }
-  expect(overflowing).toEqual([]);
 });
 
 // The League's caught Pokémon at 320px: a beaten wild Pokémon is caught for

@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, seed as seedSession, rng } from "./support";
 import { createSession } from "../../src/game/engine";
 import { cards, packs } from "../../src/content/catalog";
 
@@ -51,13 +51,9 @@ test("rotation during a roll keeps its predetermined saved result", async ({
     { version: 1, packIds: ["core"], limit: 30 },
     [diceCard],
     [{ ...packs[0], cardIds: [diceCard.id] }],
+    rng("orientation:50"),
   );
-  await page.goto("./");
-  await page.evaluate(
-    ({ key, value }) => localStorage.setItem(key, JSON.stringify(value)),
-    { key: saveKey, value: session },
-  );
-  await page.reload();
+  await seedSession(page, session);
   await page.getByRole("button", { name: "Reveal card" }).click();
   await expect(page.locator(".card-stage")).not.toHaveClass(/flip/);
   await page.locator(".game-card").click();

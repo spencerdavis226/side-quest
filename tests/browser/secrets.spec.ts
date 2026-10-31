@@ -1,4 +1,5 @@
-import { test, expect, type Page } from "@playwright/test";
+import { type Page } from "@playwright/test";
+import { test, expect, seed as seedSession, rng } from "./support";
 import { createSession } from "../../src/game/engine";
 import { cards, packs } from "../../src/content/catalog";
 const key = "side-quest.session.v1";
@@ -9,15 +10,11 @@ async function seed(page: Page, first: string) {
     { version: 1, packIds: ["secrets"], limit: 30 },
     cards,
     packs,
+    rng("secrets:9"),
   );
   session.order = [first, ...session.order.filter((id) => id !== first)];
   session.phase = "revealed";
-  await page.goto("./");
-  await page.evaluate(
-    ({ key, session }) => localStorage.setItem(key, JSON.stringify(session)),
-    { key, session },
-  );
-  await page.reload();
+  await seedSession(page, session);
 }
 const discarded = (page: Page) =>
   page.evaluate(
@@ -34,7 +31,7 @@ async function hold(page: Page, name: RegExp) {
 }
 
 for (const width of [320, 390])
-  test(`@release a secret shows only while held, at ${width}px`, async ({
+  test(`a secret shows only while held, at ${width}px`, async ({
     page,
   }, info) => {
     await page.setViewportSize({ width, height: 700 });
@@ -68,9 +65,7 @@ for (const width of [320, 390])
     await expect.poll(() => discarded(page)).toBe(1);
   });
 
-test("@release a fuse holds the card until the boom", async ({
-  page,
-}, info) => {
+test("a fuse holds the card until the boom", async ({ page }, info) => {
   await page.clock.install();
   await seed(page, "secrets.potato-01");
   const card = page.locator(".game-card");
@@ -150,7 +145,7 @@ test("a countdown counts, keeps its secret, and a reload unlights it", async ({
 });
 
 for (const width of [320, 390])
-  test(`@release a timed card can be skipped, lit or not, at ${width}px`, async ({
+  test(`a timed card can be skipped, lit or not, at ${width}px`, async ({
     page,
   }, info) => {
     await page.setViewportSize({ width, height: 700 });

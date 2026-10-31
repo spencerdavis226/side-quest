@@ -26,15 +26,16 @@ npm run lint           # eslint: typescript-eslint + react-hooks rules
 npm run typecheck      # tsc -b over src, scripts, tests and *.config.ts
 BASE_PATH=/side-quest/ npm run build    # validate-content -> tsc -b -> vite -> check-budget
 npx playwright install chromium webkit
-CI=1 BASE_PATH=/side-quest/ TEST_PORT=4398 npm run test:e2e -- --workers=2
-CI=1 BASE_PATH=/side-quest/ TEST_PORT=4398 npm run test:release -- --workers=2
+CI=1 BASE_PATH=/side-quest/ TEST_PORT=4398 npm run test:release -- --workers=2   # the CI gate (@release)
+CI=1 BASE_PATH=/side-quest/ TEST_PORT=4398 npm run test:e2e -- --workers=2       # all but @sweep
+CI=1 BASE_PATH=/side-quest/ TEST_PORT=4398 npm run test:sweep -- --workers=4     # every-card fit sweeps
 BASE_PATH=/side-quest/ npm run test:update   # two-build update/PWA flow
 npm run test:workshop  # dev server on :5175
 ```
 
-- Playwright specs (`*.spec.ts`) are not run by `npm test`. E2E serves `dist` through `npm run preview`; build first. Locally `reuseExistingServer` is on, so a stale preview on the default `:4173` will silently serve an old build — set `TEST_PORT`.
+- Playwright specs (`*.spec.ts`) are not run by `npm test`. E2E serves `dist` through `npm run preview`; build first. Locally `reuseExistingServer` is on, so a stale preview on the default `:4173` will silently serve an old build — set `TEST_PORT`. Specs import `test` from `tests/browser/support.ts` (seeded randomness, Reduced Motion by default, single-load seeding) and run with no retries; see `tests/CLAUDE.md`.
 - `?workshop=1` and `npm run test:workshop` use the dev server, not `dist`; workshop code must never reach production.
-- CI (`.github/workflows/pages.yml`) runs unit tests -> lint -> build in one job and the balance simulations in a parallel job (a deploy waits for both), then the tagged release smoke suite in parallel jobs, one Chromium and three WebKit shards, WebKit one test at a time (each installs only its browser, with binaries cached per Playwright version; the update test runs in the Chromium job) against that same `dist`, builds with `BASE_PATH=/side-quest/`, and deploys `dist` to Pages only from `main`. Pushes that change only Markdown or `docs/` skip the pipeline (and so don't deploy). Full production E2E and exhaustive workshop sweeps remain available through a manual workflow dispatch with `full_validation` enabled. Run them after layout/engine changes or for a dedicated card review, not on every publish.
+- CI (`.github/workflows/pages.yml`, since 2026-10-31) starts four kinds of job at once: the build (`BASE_PATH=/side-quest/`), unit tests + lint, and the two balance files in their own jobs; as soon as `dist` exists, the @release smoke suite runs against it in one Chromium and one WebKit job (2 workers, no retries) inside the `mcr.microsoft.com/playwright` image, whose tag must match the lockfile's `@playwright/test` (a step checks it); the update test runs in the Chromium job. `node_modules` is cached on the lockfile, so `npm ci` runs only when it changes. A deploy waits for every job and runs only from `main`. PR runs share a group per PR and cancel older ones; `main` runs queue and are never cancelled. Pushes that change only Markdown or `docs/` skip the pipeline (and so don't deploy). Full production E2E, the @sweep fit sweeps and the workshop suite run through a manual dispatch with `full_validation` (and `repeat_each` repeats the release suite). Run them after layout/engine changes or for a dedicated card review, not on every publish.
 
 ## Budgets and dice prototype
 

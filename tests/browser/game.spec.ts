@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, reseed, seedStorage, withMotion } from "./support";
 import type { CardDefinition } from "../../src/game/types";
 const key = "side-quest.session.v1";
 async function ready(page: import("@playwright/test").Page) {
@@ -41,6 +41,8 @@ test("@release legacy finite game, rapid taps, restore, previous card, replay an
 }) => {
   // Multi-step flow; Linux WebKit on CI is slow enough to exceed the default.
   test.setTimeout(90000);
+  // Rapid taps must land while the flip is still turning.
+  await withMotion(page);
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("./");
@@ -65,6 +67,8 @@ test("@release legacy finite game, rapid taps, restore, previous card, replay an
     "border-top-width",
     "0px",
   );
+  // The front is shown once the turn has ended; read the title from it then.
+  await expect(page.locator(".card-front")).toHaveCSS("visibility", "visible");
   const title = await page.locator(".study-title h2").innerText();
   await page.reload();
   await expect(page.locator(".study-title h2")).toHaveText(title);
@@ -155,9 +159,7 @@ test("Standard and Infinite create the advertised limits", async ({ page }) => {
   ).toBeNull();
 });
 test("corrupt save recovery", async ({ page }) => {
-  await page.goto("./");
-  await page.evaluate((k) => localStorage.setItem(k, '{"bad":true}'), key);
-  await page.reload();
+  await seedStorage(page, { [key]: '{"bad":true}' });
   await expect(page.getByText("This save lost")).toBeVisible();
   await page.getByRole("button", { name: "Return to setup" }).click();
   await expect(
@@ -239,6 +241,8 @@ test("reduced motion and keyboard play", async ({ page }) => {
   await ready(page);
   await expect(page.locator(".study-title h2")).toBeVisible();
   await page.getByRole("button", { name: "Open game menu" }).click();
+  // Escape closes an open dialog; wait for it to be open first.
+  await expect(page.getByRole("dialog", { name: "Paused" })).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).not.toBeVisible();
 });
@@ -258,6 +262,8 @@ test("offline reload keeps the same revealed card", async ({
   await expect(page.locator(".progress")).toBeVisible();
   await page.getByRole("button", { name: "Reveal card" }).click();
   await ready(page);
+  // The front is shown once the turn has ended; read the title from it then.
+  await expect(page.locator(".card-front")).toHaveCSS("visibility", "visible");
   const title = await page.locator(".study-title h2").innerText();
   await context.setOffline(true);
   await page.reload();
@@ -320,11 +326,7 @@ test("representative Core cards keep edge clearance and a 2:3 frame across devic
         ],
         phase: "revealed",
       };
-      await page.evaluate(
-        ({ key, state }) => localStorage.setItem(key, JSON.stringify(state)),
-        { key, state },
-      );
-      await page.reload();
+      await reseed(page, state);
       await page.addStyleTag({ content: ":root {font-size:24px}" });
       await expect(page.locator(".study-title h2")).toHaveText(card.title);
       const fits = await page.locator(".game-card").evaluate((el) => {
@@ -539,6 +541,8 @@ test("minimal interface and a real two-sided flip", async ({ page }) => {
 test("legacy audio and atmosphere preferences are ignored and toggles are gone", async ({
   page,
 }) => {
+  // The atmosphere is checked here; Reduced Motion hides it.
+  await withMotion(page);
   await page.goto("./");
   // Seeded under the pre-rename key, so this also covers its migration.
   await page.evaluate(() =>
@@ -646,6 +650,8 @@ test("readable fallback when artwork fails and keyboard focus returns", async ({
   await ready(page);
   await expect(page.locator(".study-rules p")).toBeVisible();
   await page.getByRole("button", { name: "Open game menu" }).click();
+  // Escape closes an open dialog; wait for it to be open first.
+  await expect(page.getByRole("dialog", { name: "Paused" })).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(
     page.getByRole("button", { name: "Open game menu" }),
@@ -677,7 +683,7 @@ test("a game saved before the rename to Side Quest resumes", async ({
   expect(moved.session.order).toEqual(saved.order);
   expect(moved.session.position).toBe(saved.position);
 });
-test("@release the table goes still after a minute without a tap, and a tap wakes it", async ({
+test("the table goes still after a minute without a tap, and a tap wakes it", async ({
   page,
 }) => {
   await page.clock.install();

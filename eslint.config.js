@@ -35,4 +35,35 @@ export default tseslint.config(
       "react-hooks/exhaustive-deps": "error",
     },
   },
+  // Browser specs are deterministic (tests/browser/support.ts): seeded
+  // randomness, and waits on state rather than on the clock.
+  {
+    files: ["tests/browser/**/*.spec.ts"],
+    rules: {
+      "no-restricted-properties": [
+        "error",
+        {
+          object: "Math",
+          property: "random",
+          message: "Seed it: pass rng(...) from ./support.",
+        },
+        {
+          property: "waitForTimeout",
+          message: "Wait on the state with a web-first assertion instead.",
+        },
+      ],
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "@playwright/test",
+              importNames: ["test", "expect"],
+              message: "Import test and expect from ./support.",
+            },
+          ],
+        },
+      ],
+    },
+  },
 );

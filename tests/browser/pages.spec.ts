@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, frames, seed as seedSession, rng } from "./support";
 import { createSession } from "../../src/game/engine";
 import { cards, packs } from "../../src/content/catalog";
 const key = "side-quest.session.v1";
@@ -11,13 +11,10 @@ async function seedPlain(page: import("@playwright/test").Page) {
     { version: 1, packIds: ["core"], limit: 40 },
     [plain],
     [{ ...packs[0], cardIds: [plain.id] }],
+    rng("pages:10"),
   );
   session.phase = "hidden";
-  await page.evaluate(
-    ({ key, session }) => localStorage.setItem(key, JSON.stringify(session)),
-    { key, session },
-  );
-  await page.reload();
+  await seedSession(page, session);
 }
 test("@release Pages manifest, assets and production exclusion", async ({
   page,
@@ -110,19 +107,35 @@ test("a Home Screen web app hides Install but keeps the in-game menu", async ({
 test("@release first screen waits for its painted art and fonts", async ({
   page,
 }) => {
+  // The button art is held until the test lets it go, so "in flight" is a
+  // state the test controls rather than a race against a timer.
   let delivered = false;
+  let release = () => {};
+  const held = new Promise<void>((resolve) => (release = resolve));
+  const requested = page.waitForRequest("**/art/button.webp");
   await page.route("**/art/button.webp", async (route) => {
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await held;
     delivered = true;
     await route.continue();
   });
+  // Everything else the first screen waits for: the table, the crest and
+  // the fonts. Once they are in, only the held art keeps the screen blank.
+  const others = [
+    "**/art/table.webp",
+    "**/art/side-quest-title-crest.webp",
+  ].map((url) => page.waitForResponse(url));
   // The preload hint holds the load event until the art arrives.
   await page.goto("./", { waitUntil: "commit" });
   const play = page.getByRole("button", { name: "Play", exact: true });
-  // Nothing is drawn with the fallback bar while the art is in flight.
-  await page.waitForTimeout(700);
-  expect(delivered).toBe(false);
+  await requested;
+  await Promise.all(others);
+  await page.waitForFunction(() => document.fonts.check("700 24px Grenze"));
+  // Nothing is drawn with the fallback bar while the art is in flight, a
+  // few rendered frames after everything else arrived.
+  await frames(page, 3);
   await expect(play).toHaveCount(0);
+  expect(delivered).toBe(false);
+  release();
   await expect(play).toBeVisible();
   expect(delivered).toBe(true);
   expect(
@@ -196,7 +209,7 @@ test("Core logo matches selection, card, pause legend and previous card", async 
 test.describe("a pack's cards that can't be fetched", () => {
   // The service worker would serve the precached chunk around the route.
   test.use({ serviceWorkers: "block" });
-  test("@release reloads once, then says so instead of reloading again", async ({
+  test("reloads once, then says so instead of reloading again", async ({
     page,
   }) => {
     let loads = 0;
@@ -213,7 +226,7 @@ test.describe("a pack's cards that can't be fetched", () => {
     ).toBeEnabled();
     expect(loads).toBe(2);
   });
-  test("@release Play says Dealing… while the cards are on their way", async ({
+  test("Play says Dealing… while the cards are on their way", async ({
     page,
   }) => {
     let release: () => void = () => {};
@@ -237,7 +250,7 @@ test.describe("a pack's cards that can't be fetched", () => {
     expect(session.config.packIds).toEqual(["core"]);
   });
 });
-test("@release the League's card art loads only once the League is chosen", async ({
+test("the League's card art loads only once the League is chosen", async ({
   page,
 }) => {
   const league: string[] = [];

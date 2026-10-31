@@ -1,8 +1,6 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./support";
 
-test("@release the screen stays awake only while a game is active", async ({
-  page,
-}) => {
+test("the screen stays awake only while a game is active", async ({ page }) => {
   await page.addInitScript(() => {
     const w = window as unknown as { __locks: { released: boolean }[] };
     w.__locks = [];

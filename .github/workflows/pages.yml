@@ -13,17 +13,27 @@ on:
         description: Run the exhaustive browser and card workshop suites
         type: boolean
         default: false
+      repeat_each:
+        description: Run the release suite this many times (to prove it steady)
+        type: number
+        default: 1
 permissions:
   contents: read
+# One run per PR, a newer push cancelling the older; main runs (push and the
+# preview dispatch) queue instead of cancelling. Keyed on the PR number, not
+# github.ref: a pull_request run for a PR that is merged as it starts reports
+# the base branch as its ref, and on 2026-10-31 that cancelled the main push
+# run it shared a group with, so nothing deployed.
 concurrency:
-  group: pages-${{ github.ref }}
-  cancel-in-progress: true
+  group: pages-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 env:
   # Pages serves a project site at /<repository name>/, so the base follows
   # the repository name and survives a rename.
   BASE_PATH: /${{ github.event.repository.name }}/
   VITE_RELEASE_ID: ${{ github.sha }}
 jobs:
+  # The build alone, so the browser jobs can start as soon as dist exists.
   build:
     runs-on: ubuntu-latest
     steps:
@@ -32,82 +42,116 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
-      - run: npm test
-      - run: npm run lint
+      # node_modules is cached whole on the lockfile; npm ci runs only when
+      # the lockfile changes (it took 40 s on every job).
+      - id: modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: modules-${{ runner.os }}-node22-${{ hashFiles('package-lock.json') }}
+      - if: steps.modules.outputs.cache-hit != 'true'
+        run: npm ci
       - run: npm run build
       # The browser jobs test this exact build, and deploy publishes it.
       - uses: actions/upload-artifact@v4
         with:
           name: dist
           path: dist
-  browser:
-    needs: build
+  # Unit tests and lint, beside the build.
+  checks:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: true
-      # Two WebKit pages rendering at once on one runner can stall its
-      # painting (a tap then waits forever for a stable element), so each
-      # WebKit shard runs one test at a time, and WebKit is split across
-      # three shards to finish alongside the Chromium job.
-      matrix:
-        include:
-          - { project: chromium, shard: 1, shards: 1, workers: 2 }
-          - { project: webkit, shard: 1, shards: 3, workers: 1 }
-          - { project: webkit, shard: 2, shards: 3, workers: 1 }
-          - { project: webkit, shard: 3, shards: 3, workers: 1 }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
-      # Browser binaries are cached per Playwright version; their system
-      # libraries are not cacheable, so those install on every run.
-      - id: playwright
-        run: echo "version=$(node -p 'require("@playwright/test/package.json").version')" >> "$GITHUB_OUTPUT"
-      - id: browsers
+      - id: modules
         uses: actions/cache@v4
         with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ steps.playwright.outputs.version }}-${{ matrix.project }}
-      - if: steps.browsers.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps ${{ matrix.project }}
-      - if: steps.browsers.outputs.cache-hit == 'true'
-        run: npx playwright install-deps ${{ matrix.project }}
+          path: node_modules
+          key: modules-${{ runner.os }}-node22-${{ hashFiles('package-lock.json') }}
+      - if: steps.modules.outputs.cache-hit != 'true'
+        run: npm ci
+      - run: npm test
+      - run: npm run lint
+  # The release smoke suite (tests tagged @release) against that build, in
+  # the Playwright image: browsers and their system libraries come with it
+  # (installing WebKit's libraries took 30 s to almost 2 minutes a job).
+  # Retries are off: the specs are deterministic (tests/browser/support.ts),
+  # so a failure is a bug to fix, not noise to retry past.
+  browser:
+    needs: build
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --ipc=host
+    strategy:
+      fail-fast: true
+      matrix:
+        project: [chromium, webkit]
+    env:
+      # The image's browsers are installed for root (Playwright's advice for
+      # its container on Actions, which sets HOME elsewhere).
+      HOME: /root
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - id: modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: modules-playwright-node22-${{ hashFiles('package-lock.json') }}
+      - if: steps.modules.outputs.cache-hit != 'true'
+        run: npm ci
+      # The image must match the lockfile's Playwright, or its browsers are
+      # the wrong build. Bump the image tag with @playwright/test.
+      - run: test "$(node -p 'require("@playwright/test/package.json").version')" = "1.63.0"
       - uses: actions/download-artifact@v4
         with:
           name: dist
           path: dist
-      - run: npm run test:release -- --project=${{ matrix.project }} --shard=${{ matrix.shard }}/${{ matrix.shards }} --workers=${{ matrix.workers }}
+      - run: npm run test:release -- --project=${{ matrix.project }} --workers=2 --repeat-each=${{ inputs.repeat_each || 1 }}
       # Two fresh builds on one origin, driven in Chromium.
       - run: npm run test:update
         if: matrix.project == 'chromium'
-      - run: npm run test:e2e -- --project=${{ matrix.project }} --shard=${{ matrix.shard }}/${{ matrix.shards }} --workers=${{ matrix.workers }}
+      - run: npm run test:e2e -- --project=${{ matrix.project }} --workers=2
         if: github.event_name == 'workflow_dispatch' && inputs.full_validation
-      - run: npm run test:workshop -- --project=${{ matrix.project }} --shard=${{ matrix.shard }}/${{ matrix.shards }} --workers=${{ matrix.workers }}
+      - run: npm run test:sweep -- --project=${{ matrix.project }} --workers=2
+        if: github.event_name == 'workflow_dispatch' && inputs.full_validation
+      - run: npm run test:workshop -- --project=${{ matrix.project }}
         if: github.event_name == 'workflow_dispatch' && inputs.full_validation
         env:
           BASE_PATH: /
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: browser-failures-${{ matrix.project }}-${{ matrix.shard }}
+          name: browser-failures-${{ matrix.project }}
           path: test-results/
-  # The crawl and League balance simulations (4,000 seeded runs each) take
-  # about two minutes, so they run beside the build and browser jobs instead
-  # of inside `npm test`; a deploy still waits for them.
+  # The crawl and League balance simulations (4,000 seeded runs each), one
+  # job per file so the two run at once; a deploy still waits for both.
   balance:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        suite: [dungeon, league]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
-      - run: npm run test:balance
+      - id: modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: modules-${{ runner.os }}-node22-${{ hashFiles('package-lock.json') }}
+      - if: steps.modules.outputs.cache-hit != 'true'
+        run: npm ci
+      - run: npx vitest run tests/${{ matrix.suite }}.balance.test.ts
   # The preview site: the `preview` branch, built at <base>next/ with its own
   # storage keys and Home Screen name (VITE_CHANNEL), published beside the
   # live game. Pages deploys only from main, so a push to `preview` runs
@@ -151,7 +195,7 @@ jobs:
           path: dist
   deploy:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-    needs: [build, browser, balance, preview]
+    needs: [build, checks, browser, balance, preview]
     runs-on: ubuntu-latest
     permissions:
       pages: write

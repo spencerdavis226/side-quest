@@ -23,23 +23,39 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      - id: modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: modules-${{ runner.os }}-node22-${{ hashFiles('package-lock.json') }}
+      - if: steps.modules.outputs.cache-hit != 'true'
+        run: npm ci
       - run: npm test
       - run: npm run lint
       - run: npm run build
         env:
           BASE_PATH: /${{ github.event.repository.name }}/next/
           VITE_CHANNEL: preview
+  # One job per balance file, so the two simulations run at once.
   balance:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        suite: [dungeon, league]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
-      - run: npm run test:balance
+      - id: modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: modules-${{ runner.os }}-node22-${{ hashFiles('package-lock.json') }}
+      - if: steps.modules.outputs.cache-hit != 'true'
+        run: npm ci
+      - run: npx vitest run tests/${{ matrix.suite }}.balance.test.ts
   publish:
     needs: [check, balance]
     runs-on: ubuntu-latest

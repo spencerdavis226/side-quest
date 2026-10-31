@@ -1,37 +1,35 @@
-import { test, expect, devices, type Page } from "@playwright/test";
+import { devices, type Page } from "@playwright/test";
+import {
+  test,
+  expect,
+  rng,
+  motion,
+  seed as seedSession,
+  saved,
+} from "./support";
 import { createSession } from "../../src/game/engine";
 import { diceResultText } from "../../src/presentation/dice/result-text";
 import { cards, packs } from "../../src/content/catalog";
-const key = "side-quest.session.v1";
 const webgl = (page: Page) =>
   page.evaluate(() => {
     const canvas = document.createElement("canvas");
     return !!(canvas.getContext("webgl2") || canvas.getContext("webgl"));
   });
 const diceIds = ["core.same-shit", "core.fuck-around"] as const;
+// The dice overlay is motion: these tests watch it throw, land and settle.
+test.use(motion);
 async function seed(page: Page, index = 0) {
   const card = cards.find((c) => c.id === diceIds[index])!;
   const session = createSession(
     { version: 1, packIds: ["core"], limit: 2 },
     [card],
     [{ ...packs[0], cardIds: [card.id] }],
+    rng(card.id),
   );
   session.phase = "revealed";
-  await page.goto("./");
-  await Promise.all([
-    page.waitForNavigation(),
-    page.evaluate(
-      ({ key, session }) => {
-        localStorage.setItem(key, JSON.stringify(session));
-        location.reload();
-      },
-      { key, session },
-    ),
-  ]);
+  await seedSession(page, session);
   await expect(page.locator(".game-card")).toHaveAccessibleName(/^Roll /);
 }
-const saved = (page: Page) =>
-  page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), key);
 for (const index of [0, 1])
   test(`dice overlay renders saved ${index ? "d20" : "2d6"} faces over the card`, async ({
     page,
@@ -189,7 +187,7 @@ test("dragging the resolved rules does not discard", async ({ page }) => {
   await page.locator(".game-card").click();
   await expect.poll(async () => (await saved(page)).discarded).toBe(1);
 });
-test("@release a second tap finishes the moving dice, then reveals the bold amount", async ({
+test("a second tap finishes the moving dice, then reveals the bold amount", async ({
   page,
 }) => {
   test.skip(!(await webgl(page)), "WebGL unavailable");
@@ -248,8 +246,9 @@ test("@release a second tap finishes the moving dice, then reveals the bold amou
     returned: true,
   });
   expect((await saved(page)).discarded).toBe(0);
-  // Stale animation callbacks must not advance the deck after an early finish.
-  await page.waitForTimeout(600);
+  // Stale animation callbacks must not advance the deck after an early
+  // finish: run the page's clock 600 ms on, firing every timer and frame due.
+  await page.clock.runFor(600);
   expect((await saved(page)).discarded).toBe(0);
   expect(errors).toEqual([]);
   await page.locator(".game-card").click();
@@ -394,15 +393,11 @@ test("legacy cursed-number saves show the number in the rule without a Rolled he
     { version: 1, packIds: ["core"], limit: 1 },
     [card],
     [{ ...packs[0], cardIds: [card.id] }],
+    rng("dice:392"),
   );
   state.phase = "revealed";
   state = rollDice(state, () => 1 / 6);
-  await page.goto("./");
-  await page.evaluate(
-    ({ key, state }) => localStorage.setItem(key, JSON.stringify(state)),
-    { key, state },
-  );
-  await page.reload();
+  await seedSession(page, state);
   await expect(page.locator(".roll-layer")).toHaveCount(0);
   await expect(page.locator(".resolved-instruction")).toHaveText(
     "2 is banned. Say it: drink 2.",
@@ -430,6 +425,7 @@ test("resolved 1d20 through 4d6 summaries fit a small phone with enlarged text",
       { version: 1, packIds: ["core"], limit: 1 },
       [card],
       [{ ...packs[0], cardIds: [card.id] }],
+      rng("dice:423"),
     );
     const values = Array.from({ length: count }, () => sides);
     const total = values.reduce((sum, value) => sum + value, 0);
@@ -440,12 +436,7 @@ test("resolved 1d20 through 4d6 summaries fit a small phone with enlarged text",
       instruction: `Give ${total}.`,
       returned: true,
     };
-    await page.goto("./");
-    await page.evaluate(
-      ({ key, state }) => localStorage.setItem(key, JSON.stringify(state)),
-      { key, state },
-    );
-    await page.reload();
+    await seedSession(page, state);
     await page
       .locator("main")
       .evaluate((element) => element.classList.add("enlarged"));
@@ -489,14 +480,10 @@ for (const viewport of [
         { version: 1, packIds: ["core"], limit: 2 },
         [card],
         [{ ...packs[0], cardIds: [card.id] }],
+        rng("dice:477"),
       );
       state.phase = "revealed";
-      await page.goto("./");
-      await page.evaluate(
-        ({ key, state }) => localStorage.setItem(key, JSON.stringify(state)),
-        { key, state },
-      );
-      await page.reload();
+      await seedSession(page, state);
       const errors: string[] = [];
       page.on("pageerror", (error) => errors.push(error.message));
       await page.locator(".game-card").click();
@@ -571,26 +558,17 @@ async function seedChoice(page: Page) {
     { version: 1, packIds: ["core"], limit: 3 },
     [card],
     [{ ...core, cardIds: [card.id] }],
+    rng("dice:554"),
   );
   session.phase = "revealed";
-  await page.goto("./");
-  await Promise.all([
-    page.waitForNavigation(),
-    page.evaluate(
-      ({ key, session }) => {
-        localStorage.setItem(key, JSON.stringify(session));
-        location.reload();
-      },
-      { key, session },
-    ),
-  ]);
+  await seedSession(page, session);
   await expect(page.locator(".card-choice")).toBeVisible();
 }
 for (const viewport of [
   { width: 390, height: 844 },
   { width: 375, height: 548 },
 ])
-  test(`choice card offers both options on the card at ${viewport.width}x${viewport.height} @release`, async ({
+  test(`choice card offers both options on the card at ${viewport.width}x${viewport.height}`, async ({
     page,
   }) => {
     await page.setViewportSize(viewport);
