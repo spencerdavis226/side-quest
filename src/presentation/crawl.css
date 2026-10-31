@@ -2022,7 +2022,7 @@
   filter: drop-shadow(0 0 22px rgb(255 230 160 / 0.3));
 }
 .spinning .ball-stage-ball {
-  animation: ball-stage-spin 2300ms cubic-bezier(0.12, 0.55, 0.25, 1) both;
+  animation: ball-stage-spin 2600ms cubic-bezier(0.12, 0.55, 0.25, 1) both;
 }
 /* Two half-domes, each outlined, so the top can fly off on its own. */
 .ball-stage-top,
@@ -2071,25 +2071,88 @@
   animation: ball-stage-flash 700ms ease-out both;
 }
 .ball-stage-reel {
+  --reel-ms: 2600ms;
+  --row: min(15vmin, 84px);
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 1.5vmin;
   color: #fff3d0;
 }
-.ball-stage-reel b {
-  font: 700 min(22vmin, 120px) / 1 var(--font-card-title);
+/* The slot: three rows, the middle one under the payline, fading at the
+   edges. The strip scrolls once, to an offset that puts the committed face in
+   the middle row, and stays there (`both`), so the face on screen when it
+   stops is the face that was thrown. */
+.ball-reel-window {
+  position: relative;
+  width: calc(var(--row) * 2.4);
+  height: calc(var(--row) * 3);
+  overflow: hidden;
+  border: 3px solid #1d120a;
+  border-radius: 14px;
+  background: linear-gradient(#2a1c10, #120b06 50%, #2a1c10);
+  box-shadow:
+    inset 0 0 18px rgb(0 0 0 / 0.7),
+    0 0 0 2px rgb(246 211 101 / 0.35);
+}
+.ball-reel-strip {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  will-change: transform;
+  animation: ball-reel-run var(--reel-ms) both;
+}
+.ball-reel-strip li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--row);
+  font: 700 calc(var(--row) * 0.8) / 1 var(--font-card-title);
   font-variant-numeric: lining-nums tabular-nums;
+  color: #fff3d0;
   text-shadow: 0 3px 0 rgb(0 0 0 / 0.5);
-  animation: ball-reel-tick 90ms ease-out both;
 }
-.landed .ball-stage-reel b {
-  animation: ball-reel-land 420ms cubic-bezier(0.2, 1.6, 0.4, 1) both;
+.ball-reel-line {
+  position: absolute;
+  inset: var(--row) 0 auto;
+  height: var(--row);
+  box-sizing: border-box;
+  border-block: 3px solid rgb(246 211 101 / 0.8);
+  background: linear-gradient(
+    90deg,
+    rgb(246 211 101 / 0.12),
+    transparent 30%,
+    transparent 70%,
+    rgb(246 211 101 / 0.12)
+  );
+  pointer-events: none;
 }
-.landed.caught .ball-stage-reel b {
+/* Shade the rows above and below the payline. */
+.ball-reel-window::before,
+.ball-reel-window::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  height: var(--row);
+  z-index: 1;
+  pointer-events: none;
+}
+.ball-reel-window::before {
+  top: 0;
+  background: linear-gradient(rgb(8 5 3 / 0.85), rgb(8 5 3 / 0.35));
+}
+.ball-reel-window::after {
+  bottom: 0;
+  background: linear-gradient(rgb(8 5 3 / 0.35), rgb(8 5 3 / 0.85));
+}
+.landed.caught .ball-reel-face {
   color: #f6d365;
 }
-.landed.fled .ball-stage-reel b {
+.landed.fled .ball-reel-face {
   color: #ff8a7a;
+}
+.landed .ball-reel-line {
+  animation: ball-reel-flash 500ms ease-out both;
 }
 .ball-stage-reel small {
   font: italic 600 min(5vmin, 22px) / 1 var(--font-tavern);
@@ -2176,10 +2239,24 @@
     background: rgb(8 5 3 / 0.82);
   }
 }
-@keyframes ball-reel-tick {
+/* Fast and then slower to a stop just past the face, then a small settle back
+   onto it. Both ends are fixed by `--stop`, so the landing is exact. */
+@keyframes ball-reel-run {
   from {
-    transform: translateY(-18%);
-    opacity: 0.4;
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0.1, 0.55, 0.2, 1);
+  }
+  90% {
+    transform: translateY(calc(var(--row) * (var(--stop) - 1 + 0.16) * -1));
+    animation-timing-function: ease-in-out;
+  }
+  to {
+    transform: translateY(calc(var(--row) * (var(--stop) - 1) * -1));
+  }
+}
+@keyframes ball-reel-flash {
+  from {
+    background-color: rgb(246 211 101 / 0.55);
   }
 }
 @keyframes ball-reel-land {
@@ -2196,5 +2273,99 @@
   to {
     transform: translate(var(--x), var(--y)) rotate(var(--r));
     opacity: 0;
+  }
+}
+
+/* The donut variant (2026-10-31): a hollow ball turned by script, its one
+   number in the hole changing as fast as it turns (`DonutBall`). The same
+   landing as the slot ball: a shake and a gold glow for a catch, the top half
+   flying off and a red flash for one that broke free. */
+.ball-donut {
+  --d: min(58vmin, 300px);
+  position: relative;
+  width: var(--d);
+  height: var(--d);
+  filter: drop-shadow(0 0 22px rgb(255 230 160 / 0.3));
+}
+.ball-donut-ring {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+.ball-donut-half {
+  position: absolute;
+  inset: 0;
+  -webkit-mask-image: radial-gradient(
+    circle closest-side,
+    transparent 0 61.5%,
+    #000 62.5% 99%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    circle closest-side,
+    transparent 0 61.5%,
+    #000 62.5% 99%,
+    transparent 100%
+  );
+}
+/* Outline rings over the fill; the band is a dark stripe at the join. */
+.ball-donut-half.top {
+  clip-path: inset(0 0 50% 0);
+  background:
+    radial-gradient(
+      circle closest-side,
+      transparent 0 62%,
+      #1d120a 62% 67%,
+      transparent 67% 94%,
+      #1d120a 94% 100%
+    ),
+    linear-gradient(transparent 0 45%, #1d120a 45%),
+    radial-gradient(circle at 35% 25%, #ff6b5c, #b8261d 72%);
+}
+.ball-donut-half.bottom {
+  clip-path: inset(50% 0 0 0);
+  background:
+    radial-gradient(
+      circle closest-side,
+      transparent 0 62%,
+      #1d120a 62% 67%,
+      transparent 67% 94%,
+      #1d120a 94% 100%
+    ),
+    linear-gradient(#1d120a 0 55%, transparent 55%),
+    radial-gradient(circle at 35% 75%, #ffffff, #d9d2c4 75%);
+}
+.ball-donut-number {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 700 calc(var(--d) * 0.34) / 1 var(--font-card-title);
+  font-variant-numeric: lining-nums tabular-nums;
+  color: #fff3d0;
+  text-shadow: 0 3px 0 rgb(0 0 0 / 0.5);
+}
+.donut.landed.caught .ball-donut {
+  animation:
+    ball-stage-shake 700ms ease-in-out both,
+    ball-donut-glow 900ms 700ms ease-out both;
+}
+.donut.landed.caught .ball-donut-number {
+  color: #f6d365;
+}
+.donut.landed.fled .ball-donut-half.top {
+  animation: ball-stage-pop 600ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  transform-origin: 0% 100%;
+}
+.donut.landed.fled .ball-donut-number {
+  color: #ff8a7a;
+}
+@keyframes ball-donut-glow {
+  50% {
+    filter: drop-shadow(0 0 40px rgb(242 201 76 / 0.95));
+  }
+  to {
+    filter: drop-shadow(0 0 20px rgb(242 201 76 / 0.6));
   }
 }
