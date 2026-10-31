@@ -22,7 +22,7 @@ export const GYM_HITS = [1, 1, 1, 1, 2, 2, 2, 2] as const;
 /** Team HP a lost gym battle costs, tier by tier. */
 export const GYM_HURT = [1, 1, 1, 1, 2, 2, 2, 2] as const;
 /** A Legendary: its d20 target, swings to catch it, HP a miss costs. */
-export const LEGENDARY_NEED = 7;
+export const LEGENDARY_NEED = 6;
 export const LEGENDARY_HITS = 2;
 export const LEGENDARY_HURT = 2;
 /** An Elite Four member (or Galar's Champion Cup finalist). */

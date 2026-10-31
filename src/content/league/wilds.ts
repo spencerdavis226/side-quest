@@ -230,7 +230,7 @@ export const moreWilds: CardDefinition[][] = [
  * Routes 2 and 4, so the bigger route pools (the strikes and table moments
  * of 2026-10-25) still evolve about as often as before. Route 7's moved
  * to Route 8 in the 2026-10-31 retune (Route 6's second, Friendship Glow,
- * left then and came back once the variety pass grew the pools): with the balance runs
+ * came back as Route 7's once the variety pass grew the pools): with the balance runs
  * on independent seeds, 53% of runs reached the final form (band 30 to
  * 50%). */
 export const moreEvolutions: Partial<Record<number, CardDefinition>> = {
@@ -246,8 +246,8 @@ export const moreEvolutions: Partial<Record<number, CardDefinition>> = {
     "Sun Stone",
     "A Sun Stone glows in a flower patch. Your starter leans toward it.",
   ),
-  5: evolution(
-    5,
+  6: evolution(
+    6,
     "route-friendship-glow",
     "Friendship Glow",
     "Your starter hasn't left your side all journey. It starts to glow.",

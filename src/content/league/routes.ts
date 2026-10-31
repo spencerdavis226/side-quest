@@ -1816,13 +1816,13 @@ export const routes: {
   {
     label: "Route 6",
     intro: "Deeper into the region",
-    cards: [...route6, ...moreWilds[5], ...moments[5], moreEvolutions[5]!],
+    cards: [...route6, ...moreWilds[5], ...moments[5]],
     aces: route6Aces,
   },
   {
     label: "Route 7",
     intro: "The badges get heavier",
-    cards: [...route7, ...moreWilds[6], ...moments[6]],
+    cards: [...route7, ...moreWilds[6], ...moments[6], moreEvolutions[6]!],
     aces: route7Aces,
   },
   {
