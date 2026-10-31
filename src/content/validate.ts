@@ -96,6 +96,17 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         c.secret.length > 120)
     )
       fail(`Invalid secret: ${c.id}`);
+    if (
+      c.secretPool !== undefined &&
+      (!c.secret ||
+        !Array.isArray(c.secretPool) ||
+        !c.secretPool.length ||
+        new Set(c.secretPool).size !== c.secretPool.length ||
+        c.secretPool.some(
+          (t) => typeof t !== "string" || !t.trim() || t.length > 120,
+        ))
+    )
+      fail(`Invalid secret pool: ${c.id}`);
     if (c.timer !== undefined) {
       validateTimer(c.timer);
       // One mechanic at a time: a timed card never also rolls.
