@@ -314,7 +314,7 @@ export const classes: CardDefinition[] = [
     "mimic",
     "The Mimic",
     "A very confused chest.",
-    { hearts: -4, satchel: 5, roll: { all: -1 } },
+    { hearts: -5, satchel: 5, roll: { all: -1 } },
     [
       {
         title: "Bigger Chest",
