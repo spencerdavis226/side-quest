@@ -2275,3 +2275,97 @@
     opacity: 0;
   }
 }
+
+/* The donut variant (2026-10-31): a hollow ball turned by script, its one
+   number in the hole changing as fast as it turns (`DonutBall`). The same
+   landing as the slot ball: a shake and a gold glow for a catch, the top half
+   flying off and a red flash for one that broke free. */
+.ball-donut {
+  --d: min(58vmin, 300px);
+  position: relative;
+  width: var(--d);
+  height: var(--d);
+  filter: drop-shadow(0 0 22px rgb(255 230 160 / 0.3));
+}
+.ball-donut-ring {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+.ball-donut-half {
+  position: absolute;
+  inset: 0;
+  -webkit-mask-image: radial-gradient(
+    circle closest-side,
+    transparent 0 61.5%,
+    #000 62.5% 99%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    circle closest-side,
+    transparent 0 61.5%,
+    #000 62.5% 99%,
+    transparent 100%
+  );
+}
+/* Outline rings over the fill; the band is a dark stripe at the join. */
+.ball-donut-half.top {
+  clip-path: inset(0 0 50% 0);
+  background:
+    radial-gradient(
+      circle closest-side,
+      transparent 0 62%,
+      #1d120a 62% 67%,
+      transparent 67% 94%,
+      #1d120a 94% 100%
+    ),
+    linear-gradient(transparent 0 45%, #1d120a 45%),
+    radial-gradient(circle at 35% 25%, #ff6b5c, #b8261d 72%);
+}
+.ball-donut-half.bottom {
+  clip-path: inset(50% 0 0 0);
+  background:
+    radial-gradient(
+      circle closest-side,
+      transparent 0 62%,
+      #1d120a 62% 67%,
+      transparent 67% 94%,
+      #1d120a 94% 100%
+    ),
+    linear-gradient(#1d120a 0 55%, transparent 55%),
+    radial-gradient(circle at 35% 75%, #ffffff, #d9d2c4 75%);
+}
+.ball-donut-number {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 700 calc(var(--d) * 0.34) / 1 var(--font-card-title);
+  font-variant-numeric: lining-nums tabular-nums;
+  color: #fff3d0;
+  text-shadow: 0 3px 0 rgb(0 0 0 / 0.5);
+}
+.donut.landed.caught .ball-donut {
+  animation:
+    ball-stage-shake 700ms ease-in-out both,
+    ball-donut-glow 900ms 700ms ease-out both;
+}
+.donut.landed.caught .ball-donut-number {
+  color: #f6d365;
+}
+.donut.landed.fled .ball-donut-half.top {
+  animation: ball-stage-pop 600ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  transform-origin: 0% 100%;
+}
+.donut.landed.fled .ball-donut-number {
+  color: #ff8a7a;
+}
+@keyframes ball-donut-glow {
+  50% {
+    filter: drop-shadow(0 0 40px rgb(242 201 76 / 0.95));
+  }
+  to {
+    filter: drop-shadow(0 0 20px rgb(242 201 76 / 0.6));
+  }
+}

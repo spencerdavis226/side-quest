@@ -20,6 +20,21 @@ const SPIN_MS = 2600;
 const RESULT_MS = 1700;
 /** Full laps of 1 to 20 before the reel reaches its face. */
 const LAPS = 4;
+/** Turns the donut ball makes while its number counts down to the face. */
+const DONUT_TURNS = 5;
+
+/** The look of the throw: a three-row slot window under the spinning ball, or
+ * the donut, a hollow ball whose one number changes as fast as it turns.
+ * `?ball=donut` or `?ball=slot` overrides the default (dev and comparison). */
+export type BallStyle = "slot" | "donut";
+const DEFAULT_STYLE: BallStyle = "slot";
+const ballStyle = (): BallStyle => {
+  const asked = new URLSearchParams(window.location.search).get("ball");
+  return asked === "donut" || asked === "slot" ? asked : DEFAULT_STYLE;
+};
+/** Fast, then slower to a stop at exactly 1. Drives the donut's turn and its
+ * number from one value, so the count slows as the ball does. */
+const ease = (t: number) => 1 - Math.pow(1 - t, 2.8);
 
 export interface ThrownBall {
   face: number;
@@ -72,6 +87,71 @@ function buildReel(face: number) {
   return { rows: rows.slice(0, at + 2), stop: at };
 }
 
+/** The donut: a hollow ball (red over white, a black band, a hole) turned by
+ * one eased value that also picks its number from the shuffled strip, so the
+ * number changes exactly as fast as the ball spins and the last number shown
+ * is the face. It turns a whole number of times, ending upright for the
+ * landing animations. Per-frame work touches the DOM directly, not React. */
+function DonutBall({
+  reel,
+  landed,
+  onLanded,
+}: {
+  reel: { rows: number[]; stop: number };
+  landed: boolean;
+  onLanded: () => void;
+}) {
+  const ring = useRef<HTMLDivElement>(null);
+  const num = useRef<HTMLElement>(null);
+  const done = useRef(onLanded);
+  done.current = onLanded;
+  useEffect(() => {
+    if (landed) return;
+    const t0 = performance.now();
+    let shownAt = -1;
+    let frame = 0;
+    const draw = (p: number) => {
+      if (ring.current)
+        ring.current.style.transform = `rotate(${p * DONUT_TURNS * 360}deg)`;
+      const at = Math.min(reel.stop, Math.floor(p * reel.stop));
+      if (at !== shownAt && num.current) {
+        shownAt = at;
+        num.current.textContent = String(reel.rows[at]);
+        num.current.animate?.(
+          [{ transform: "scale(1.14)" }, { transform: "scale(1)" }],
+          { duration: 80, easing: "ease-out" },
+        );
+      }
+    };
+    const step = (now: number) => {
+      const t = Math.min(1, (now - t0) / SPIN_MS);
+      draw(ease(t));
+      if (t < 1) frame = requestAnimationFrame(step);
+      else done.current();
+    };
+    draw(0);
+    frame = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frame);
+  }, [reel, landed]);
+  // However it ended (the backstop included), rest upright on the face.
+  useEffect(() => {
+    if (!landed) return;
+    if (ring.current) ring.current.style.transform = "rotate(0deg)";
+    if (num.current) num.current.textContent = String(reel.rows[reel.stop]);
+  }, [landed, reel]);
+  return (
+    <div className="ball-donut">
+      <div className="ball-donut-ring" ref={ring}>
+        <span className="ball-donut-half top" />
+        <span className="ball-donut-half bottom" />
+      </div>
+      <b className="ball-donut-number" ref={num}>
+        {reel.rows[0]}
+      </b>
+    </div>
+  );
+}
+
 export function BallThrowStage({
   ball,
   throwKey,
@@ -89,12 +169,14 @@ export function BallThrowStage({
     null,
   );
   const [landed, setLanded] = useState(false);
+  const [style, setStyle] = useState<BallStyle>("slot");
   useEffect(() => {
     const was = seen.current;
     seen.current = throwKey;
     if (throwKey && throwKey !== was && ball && !quiet()) {
       // Snapshot: the throw plays from these values whatever re-renders follow.
       setLive({ key: throwKey, ball: { ...ball } });
+      setStyle(ballStyle());
       setLanded(false);
     }
     // `ball` is a new object every render; only a new throw key starts a throw.
@@ -126,37 +208,53 @@ export function BallThrowStage({
   const verdict = thrown.caught ? "caught" : "fled";
   return createPortal(
     <div
-      className={`ball-stage ${landed ? `landed ${verdict}` : "spinning"}`}
+      className={`ball-stage ${style === "donut" ? "donut " : ""}${landed ? `landed ${verdict}` : "spinning"}`}
       aria-hidden="true"
       onPointerDown={(event) => {
         event.stopPropagation();
         setLive(null);
       }}
     >
-      <div className="ball-stage-ball">
-        <span className="ball-stage-top" />
-        <span className="ball-stage-bottom" />
-        <span className="ball-stage-button" />
-      </div>
-      <div className="ball-stage-reel">
-        <div className="ball-reel-window">
-          <ol
-            className="ball-reel-strip"
-            style={{ "--stop": reel.stop } as React.CSSProperties}
-            onAnimationEnd={(event) => {
-              if (event.target === event.currentTarget) setLanded(true);
-            }}
-          >
-            {reel.rows.map((n, i) => (
-              <li key={i} className={i === reel.stop ? "ball-reel-face" : ""}>
-                {n}
-              </li>
-            ))}
-          </ol>
-          <span className="ball-reel-line" />
+      {style === "donut" ? (
+        <div className="ball-stage-reel">
+          <DonutBall
+            reel={reel}
+            landed={landed}
+            onLanded={() => setLanded(true)}
+          />
+          <small>needs {thrown.need}+</small>
         </div>
-        <small>needs {thrown.need}+</small>
-      </div>
+      ) : (
+        <>
+          <div className="ball-stage-ball">
+            <span className="ball-stage-top" />
+            <span className="ball-stage-bottom" />
+            <span className="ball-stage-button" />
+          </div>
+          <div className="ball-stage-reel">
+            <div className="ball-reel-window">
+              <ol
+                className="ball-reel-strip"
+                style={{ "--stop": reel.stop } as React.CSSProperties}
+                onAnimationEnd={(event) => {
+                  if (event.target === event.currentTarget) setLanded(true);
+                }}
+              >
+                {reel.rows.map((n, i) => (
+                  <li
+                    key={i}
+                    className={i === reel.stop ? "ball-reel-face" : ""}
+                  >
+                    {n}
+                  </li>
+                ))}
+              </ol>
+              <span className="ball-reel-line" />
+            </div>
+            <small>needs {thrown.need}+</small>
+          </div>
+        </>
+      )}
       {landed && (
         <p className="ball-stage-verdict">
           {thrown.caught
