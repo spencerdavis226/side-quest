@@ -143,7 +143,7 @@ export const brewery: FloorCards = {
       6,
       "bottling-line",
       "The Bottling Line",
-      "Pass an empty bottle around the table and back. Anyone laughs: you drink 3.",
+      "Balance an empty bottle on the back of your hand while the table counts to ten. It falls: drink 3.",
     ),
     trap(
       6,

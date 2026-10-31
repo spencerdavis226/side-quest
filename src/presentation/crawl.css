@@ -2200,3 +2200,233 @@
     filter: drop-shadow(0 0 20px rgb(242 201 76 / 0.6));
   }
 }
+
+/* Pub Crawl's flourishes (2026-10-31, Flourish.tsx). A natural 20 floods
+   the table gold with turning rays and a stamped 20; a natural 1 drains it
+   red and the 1 lands cracked and shaking. Never takes a tap. */
+.natural-burst {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-blast);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  pointer-events: none;
+  animation: natural-flash 1.4s ease-out both;
+}
+.natural-burst.crit {
+  background: radial-gradient(
+    circle at 50% 44%,
+    #fff3c8 0,
+    #f2c45a 16%,
+    #8a5a14d9 46%,
+    #140c02f0 100%
+  );
+}
+.natural-burst.fumble {
+  background: radial-gradient(
+    circle at 50% 44%,
+    #5a0a0ae6 0,
+    #2a0404f0 50%,
+    #0c0101f7 100%
+  );
+}
+.natural-rays {
+  position: absolute;
+  width: 160vmax;
+  height: 160vmax;
+  left: 50%;
+  top: 46%;
+  margin: -80vmax 0 0 -80vmax;
+  background: repeating-conic-gradient(
+    from 0deg,
+    #fff2b833 0deg 7deg,
+    transparent 7deg 22deg
+  );
+  -webkit-mask-image: radial-gradient(circle, #000 12%, transparent 58%);
+  mask-image: radial-gradient(circle, #000 12%, transparent 58%);
+  animation: natural-rays 1.4s ease-out both;
+}
+.natural-word {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  margin-top: -8vh;
+  color: #fff8e4;
+  font-family: var(--font-card-title);
+  text-transform: uppercase;
+  text-align: center;
+}
+.natural-word small {
+  font-size: clamp(18px, 6vw, 40px);
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  margin-right: -0.32em;
+  text-shadow:
+    0 2px 0 #3a2205,
+    0 0 18px #000a;
+}
+.natural-word strong {
+  font-size: clamp(120px, 44vw, 300px);
+  font-weight: 700;
+  line-height: 0.9;
+}
+.crit .natural-word strong {
+  color: #fff3c4;
+  text-shadow:
+    0 5px 0 #8a5a10,
+    0 10px 0 #3a2205,
+    0 0 48px #ffd36a;
+  animation: natural-slam 1.4s cubic-bezier(0.2, 1.5, 0.4, 1) both;
+}
+.fumble .natural-word {
+  color: #ffd8d0;
+}
+.fumble .natural-word strong {
+  color: #ffd0c4;
+  text-shadow:
+    0 5px 0 #5a0808,
+    0 0 40px #ff2a2a;
+  /* The crack: a jagged line through the 1. */
+  -webkit-mask-image: linear-gradient(
+    104deg,
+    #000 47%,
+    transparent 47.5% 49%,
+    #000 49.5%
+  );
+  mask-image: linear-gradient(
+    104deg,
+    #000 47%,
+    transparent 47.5% 49%,
+    #000 49.5%
+  );
+  animation: natural-thud 1.4s ease-out both;
+}
+.natural-word small {
+  animation: natural-kicker 1.4s ease-out both;
+}
+@keyframes natural-flash {
+  0% {
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  68% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes natural-rays {
+  from {
+    transform: rotate(0deg) scale(0.6);
+  }
+  to {
+    transform: rotate(40deg) scale(1.1);
+  }
+}
+@keyframes natural-slam {
+  0% {
+    transform: scale(2.6) rotate(-10deg);
+    opacity: 0;
+  }
+  18% {
+    transform: scale(0.94) rotate(2deg);
+    opacity: 1;
+  }
+  28%,
+  100% {
+    transform: scale(1) rotate(0);
+  }
+}
+@keyframes natural-thud {
+  0% {
+    transform: translateY(-40%) scale(1.2);
+    opacity: 0;
+  }
+  16% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  22% {
+    transform: translateX(-6px) rotate(-2deg);
+  }
+  28% {
+    transform: translateX(5px) rotate(1.5deg);
+  }
+  34% {
+    transform: translateX(-3px);
+  }
+  40%,
+  100% {
+    transform: none;
+  }
+}
+@keyframes natural-kicker {
+  0%,
+  12% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  30%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* A boss's felling swing: a red rubber stamp slams across the card. It
+   multiplies into the parchment, so the result under it stays readable. */
+.felled-stamp {
+  position: absolute;
+  left: 50%;
+  top: 34%;
+  z-index: 3;
+  padding: 0.08em 0.42em 0.02em;
+  border: 0.12em solid currentColor;
+  border-radius: 0.14em;
+  color: #a8141e;
+  font: 700 clamp(28px, 11cqw, 56px) / 1 var(--font-card-title);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  mix-blend-mode: multiply;
+  opacity: 0.82;
+  pointer-events: none;
+  transform: translate(-50%, -50%) rotate(-14deg);
+  /* A worn stamp: ink missing in flecks. */
+  -webkit-mask-image: radial-gradient(
+    circle at 30% 60%,
+    transparent 0 1.5px,
+    #000 2px
+  );
+  -webkit-mask-size: 9px 7px;
+  mask-image: radial-gradient(circle at 30% 60%, transparent 0 1.5px, #000 2px);
+  mask-size: 9px 7px;
+  animation: felled-slam 520ms cubic-bezier(0.3, 1.6, 0.5, 1) 120ms both;
+}
+@keyframes felled-slam {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(-24deg) scale(2.4);
+  }
+  60% {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) rotate(-12deg) scale(0.94);
+  }
+  100% {
+    opacity: 0.82;
+    transform: translate(-50%, -50%) rotate(-14deg) scale(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* The flash still fades in and out (opacity only); nothing moves. */
+  .natural-burst {
+    animation-duration: 1.4s !important;
+  }
+  .natural-rays {
+    display: none;
+  }
+}

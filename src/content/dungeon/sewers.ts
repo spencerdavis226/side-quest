@@ -135,8 +135,8 @@ export const sewers: FloorCards = {
     trial(
       4,
       "the-echo",
-      "The Echo",
-      "Talk for 30 seconds while everyone repeats your last word back at you. Stop: drink 4.",
+      "Spell the Sewer",
+      "Say a word starting with each letter of SEWER, in order, in 10 seconds. Stumble: drink 4.",
     ),
     trial(
       4,

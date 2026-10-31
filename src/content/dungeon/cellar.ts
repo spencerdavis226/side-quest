@@ -74,7 +74,7 @@ export const cellar: FloorCards = {
       "Monster",
       "skeleton-barback",
       "Skeleton Barback",
-      "On three, everyone points at who looks like they work here since 1974. Most fingers: drink 2.",
+      "On three, everyone points at who looks like they've worked here since 1974. Most fingers: drink 2.",
     ),
     mishap(
       0,

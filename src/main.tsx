@@ -33,6 +33,7 @@ import {
   loadInstallHelpDismissed,
 } from "./app/install-help";
 import { Atmosphere } from "./components/Atmosphere";
+import { crawlScene } from "./components/crawlTheme";
 import { Setup } from "./screens/Setup";
 import { Play } from "./screens/Play";
 import { Completion } from "./screens/Completion";
@@ -157,7 +158,7 @@ function App() {
   const finish = (id: number) => controller.finish(id);
   return (
     <>
-      <Atmosphere hidden={hidden} />
+      <Atmosphere hidden={hidden} scene={crawlScene(display)} />
       <Announcer />
       <PortraitGate />
       <main

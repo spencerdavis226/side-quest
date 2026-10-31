@@ -460,7 +460,7 @@ export const wine: FloorCards = {
       {
         jinx: {
           name: "Curtsy Court",
-          rule: "The jinxed player curtsies before every drink. Forget: drink 1.",
+          rule: "The jinxed player curtsies before every drink. Forgets: drink 1.",
         },
         drops: [
           trinket("Barrel Crown", { hearts: 1, satchel: 4 }),

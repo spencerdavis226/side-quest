@@ -24,9 +24,8 @@ export const omens: CardDefinition[] = [
   omen(
     "running-a-tab",
     "Running a Tab",
-    "Say 'on my tab' when handed a drink, or drink 1. Two hearts short, with a shield and a draught.",
+    "You open a tab with the bartender: drink 1. Two hearts short, with a shield and a draught.",
     { hearts: -2, loot: ["shield", "draught"] },
-    "Say 'on my tab' when handed a drink, or drink 1.",
   ),
   omen(
     "lock-in",
@@ -52,9 +51,8 @@ export const omens: CardDefinition[] = [
   omen(
     "blood-moon",
     "Blood Moon",
-    "Howl at every monster; last to howl drinks 1. Fights cost a heart more, but two more hearts.",
+    "Everyone howls at the red moon; last to howl drinks 2. Fights cost a heart more; two more hearts.",
     { hurt: { monster: 1, elite: 1, ambush: 1 }, hearts: 2 },
-    "Howl at every monster; last to howl drinks 1.",
   ),
   omen(
     "lefty-night",
@@ -69,16 +67,14 @@ export const omens: CardDefinition[] = [
   omen(
     "the-regulars",
     "The Regulars",
-    "Everyone shouts the drawer's name when they draw, like a regular. Forget: drink 1. Two more hearts.",
+    "The bar knows your names. Everyone toasts the person on their left. Two more hearts.",
     { hearts: 2 },
-    "Everyone shouts the drawer's name when they draw. Forget: drink 1.",
   ),
   omen(
     "thin-walls",
     "Thin Walls",
-    "Whisper the whole crawl; too loud, drink 1. Trials cost a heart more, but heals heal one more.",
+    "The neighbors bang on the wall: everyone shushes. Trials cost a heart more; heals heal one more.",
     { hurt: { trial: 1 }, heal: 1 },
-    "Whisper the whole crawl; too loud, drink 1.",
   ),
   omen(
     "cold-open",
@@ -115,7 +111,7 @@ export const omens: CardDefinition[] = [
   omen(
     "brads-birthday",
     "Brad's Birthday",
-    "Brad's birthday: the Quarter-Zips are feral. Ambushes cost a heart more. Take a shield.",
+    "It's Brad's birthday, and his crew are feral. Ambushes cost a heart more. Take a shield.",
     { hurt: { ambush: 1 }, loot: ["shield"] },
   ),
   omen(

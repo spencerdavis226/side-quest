@@ -38,8 +38,8 @@ export const kitchen: FloorCards = {
       "You run his food. He respects you. Give 5.",
       {
         jinx: {
-          name: "Behind!",
-          rule: "The jinxed player yells 'Behind!' whenever they stand up. Forget: drink 1.",
+          name: "Hands!",
+          rule: "Whenever the jinxed player yells 'Hands!', the last to raise both hands drinks 1.",
         },
       },
     ),
@@ -231,8 +231,8 @@ export const kitchen: FloorCards = {
     trial(
       5,
       "the-order",
-      "The Order",
-      "Repeat back every drink at the table, in order, from memory. Miss one: drink 5.",
+      "The Specials",
+      "Read tonight's specials: make up three dishes, with prices, in 15 seconds. Stall: drink 5.",
     ),
     mishap(
       5,

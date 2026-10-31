@@ -53,7 +53,7 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
     moment(
       3,
       "wine-swirl",
-      "Swirl and Sniff",
+      "The Snob Stare",
       "Everyone swirls and sniffs their drink like a snob, and holds eye contact. First to laugh drinks 2.",
     ),
     moment(
@@ -73,7 +73,7 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
     moment(
       3,
       "wine-best-year",
-      "Vintage",
+      "Best Year",
       "Everyone names their best year, fast, around the table. Repeat a year or stall: drink 2.",
     ),
   ],
@@ -99,16 +99,16 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
     moment(
       6,
       "brewery-quality-control",
-      "Quality Control",
-      "The drawer inspects everyone's drink and approves it. Rejected drinks get a sip taken out.",
+      "Inspection",
+      "The drawer inspects everyone's drink. Anyone whose drink fails takes a sip to prove it's fine.",
       1,
     ),
     // The variety pass (2026-10-31).
     moment(
       6,
       "brewery-name-a-beer",
-      "Name a Beer",
-      "Category: beer brands, clockwise, no repeats. First to stall or repeat drinks 2.",
+      "Glasses Down",
+      "Glasses up. The drawer counts down from three; the last glass back on the table drinks 2.",
     ),
   ],
   catacombs: [
@@ -134,15 +134,15 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
       1,
       "catacombs-candlelight",
       "Candlelight",
-      "Phone lights up for a moment of silence for the fallen. Anyone who talks drinks 1.",
+      "Phone lights up: a moment of silence for the fallen. Anyone who talks drinks 1.",
       1,
     ),
     // The variety pass (2026-10-31).
     moment(
       1,
       "catacombs-epitaphs",
-      "Epitaphs",
-      "Everyone says their own epitaph in five words. The table picks a favorite; they give 3.",
+      "Play Dead",
+      "On three, everyone plays dead. First to move, laugh or blink drinks 2.",
     ),
   ],
   sewers: [
@@ -201,29 +201,29 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
     moment(
       7,
       "freezer-hot-cocoa",
-      "Hot Cocoa",
-      "Everyone warms their hands on their drink and takes a slow, cozy sip.",
+      "Pins and Needles",
+      "Everyone wiggles their fingers to prove they can still feel them, then takes a slow sip.",
       1,
     ),
     // The variety pass (2026-10-31).
     moment(
       7,
       "freezer-cold-takes",
-      "Cold Takes",
-      "Everyone shares a cold take. The table boos the coldest one; its owner drinks 2.",
+      "Snowball Fight",
+      "On three, everyone throws a mime snowball at someone. Whoever is hit most drinks 2.",
     ),
   ],
   taproom: [
     moment(
       2,
       "taproom-shanty",
-      "The Shanty",
-      "The drawer starts a sea shanty; everyone joins on the second line. Anyone silent drinks 2.",
+      "Bottoms Up or Hold",
+      "Glasses up. The drawer calls 'Bottoms up!' or 'Hold!' three times. Anyone who sips on Hold drinks 2.",
     ),
     moment(
       2,
       "taproom-message-bottle",
-      "Message in a Bottle",
+      "SOS",
       "Everyone says what they'd write in a message in a bottle. The saddest one drinks 2.",
     ),
     moment(
@@ -235,24 +235,24 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
     moment(
       2,
       "taproom-dry-land",
-      "Dry Land",
-      "You find a dry booth. Everyone sits up straight and takes a breath.",
+      "Land Ho",
+      "Everyone shouts 'Land ho!', takes a deep breath, then a sip.",
       1,
     ),
     // The variety pass (2026-10-31).
     moment(
       2,
       "taproom-shanty-round",
-      "Shanty Round",
-      "Everyone adds a line to a sea shanty, clockwise. First to stall drinks 2.",
+      "The Fish Tale",
+      "Clockwise, everyone shows with their hands a fish bigger than the last. First who can't drinks 2.",
     ),
   ],
   kitchen: [
     moment(
       5,
       "kitchen-yes-chef",
-      "Yes, Chef",
-      "The drawer is chef until their next turn. Anyone who doesn't answer them with 'Yes, chef' drinks 1.",
+      "86'd",
+      "The drawer names a word. It's 86'd until their next turn: anyone who says it drinks 1.",
     ),
     moment(
       5,
@@ -264,13 +264,13 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
       5,
       "kitchen-order-up",
       "Order Up",
-      "The drawer shouts an order; everyone repeats it back. Anyone who gets it wrong drinks 2.",
+      "Before their next turn, the drawer shouts 'Order up!' once. Last to slap the table drinks 2.",
     ),
     moment(
       5,
       "kitchen-staff-meal",
-      "Staff Meal",
-      "Everyone takes a bite of something, or a sip, and thanks the kitchen.",
+      "Bread Basket",
+      "The bread basket comes round. Everyone takes a bite of something, or a sip, and thanks the kitchen.",
       1,
     ),
     // The variety pass (2026-10-31).
@@ -297,8 +297,8 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
     moment(
       8,
       "rooftop-pigeon",
-      "The Pigeon",
-      "A pigeon lands on the table. Everyone coos; the worst coo drinks 2.",
+      "Group Selfie",
+      "Everyone squeezes into one selfie with the skyline. Anyone cut off or blinking drinks 2.",
     ),
     moment(
       8,

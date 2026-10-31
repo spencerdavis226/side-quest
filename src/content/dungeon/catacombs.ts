@@ -166,7 +166,7 @@ export const catacombs: FloorCards = {
       {
         jinx: {
           name: "Tequila Flashback",
-          rule: "The jinxed player shudders at every drink, like it's tequila. Forget: drink 1.",
+          rule: "The jinxed player shudders at every drink, like it's tequila. Forgets: drink 1.",
         },
       },
     ),
@@ -215,7 +215,7 @@ export const catacombs: FloorCards = {
       "Monster",
       "skeleton-mariachi",
       "Skeleton Mariachi",
-      "Three skeletons with guitars won't stop until someone dances. The worst dancer drinks 3.",
+      "Three skeletons with guitars. Everyone dances for 10 seconds; the worst dancer drinks 3.",
     ),
     trial(
       1,

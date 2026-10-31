@@ -5,6 +5,7 @@ import {
   awaitingOffer,
   awaitingPress,
   awaitingSpoils,
+  fellingSwing,
   awaitingVerdict,
   cashOut,
   pressOn,
@@ -721,6 +722,38 @@ describe("Pub Crawl", () => {
     );
     b = rollTo(b, 15);
     expect(awaitingSpoils(b)).toBe(false);
+    // The Felled stamp (display only) waits for the felling swing too.
+    expect(fellingSwing(b)).toBe(false);
+    b = rollTo(advance(advance(b)), 15);
+    expect(fellingSwing(b)).toBe(true);
+    expect(
+      fellingSwing(
+        rollTo(
+          advance(
+            advance(
+              rollTo(
+                advance(
+                  deal(fromStep(start(), STEP.boss2), "dungeon.hangover-hydra"),
+                ),
+                15,
+              ),
+            ),
+          ),
+          2,
+        ),
+      ),
+    ).toBe(false);
+    // An elite's win brings spoils but is not a boss felled.
+    expect(
+      fellingSwing(
+        rollTo(
+          advance(
+            deal(fromStep(start(), STEP.floor1 + 1), "dungeon.keg-mimic-queen"),
+          ),
+          19,
+        ),
+      ),
+    ).toBe(false);
     // In the plain modes a won elite is just put aside.
     const plain = createSession(
       { version: 1, packIds: ["dungeon"], limit: 30 },

@@ -459,12 +459,28 @@ dialog.closing {
   pointer-events: none;
   overflow: hidden;
 }
+.scene-light {
+  position: absolute;
+  inset: 0;
+}
+/* A new scene's light fades in over the old table's. */
+.atmosphere[data-scene] .scene-light {
+  animation: scene-in 1.8s ease-out both;
+}
 .firelight {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 0 90%, #d98b241c, transparent 45%),
-    radial-gradient(ellipse at 100% 70%, #e8a44914, transparent 35%);
+    radial-gradient(
+      ellipse at 0 90%,
+      var(--glow-a, #d98b241c),
+      transparent 45%
+    ),
+    radial-gradient(
+      ellipse at 100% 70%,
+      var(--glow-b, #e8a44914),
+      transparent 35%
+    );
   animation: fire-breathe 7s ease-in-out infinite alternate;
 }
 .ember {
@@ -473,9 +489,9 @@ dialog.closing {
   width: 3px;
   height: 5px;
   border-radius: 50%;
-  background: #eac275;
-  box-shadow: 0 0 8px #ffad44;
-  animation: ember-rise 12s linear infinite;
+  background: var(--ember, #eac275);
+  box-shadow: 0 0 8px var(--ember-glow, #ffad44);
+  animation: ember-rise var(--ember-time, 12s) linear infinite;
   opacity: 0;
 }
 .ember-0 {
@@ -508,7 +524,11 @@ dialog.closing {
 .candle {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 50% 100%, #e8a44924, transparent 55%);
+  background: radial-gradient(
+    ellipse at 50% 100%,
+    var(--candle, #e8a44924),
+    transparent 55%
+  );
   animation: candle-flicker 2.6s ease-in-out infinite;
   will-change: opacity;
 }
@@ -522,9 +542,9 @@ dialog.closing {
   width: 2px;
   height: 2px;
   border-radius: 50%;
-  background: #f0d79a;
+  background: var(--mote, #f0d79a);
   opacity: 0;
-  box-shadow: 0 0 4px #ffcf7a55;
+  box-shadow: 0 0 4px var(--mote-glow, #ffcf7a55);
   /* Longhands: the shorthand would reset the duration to 0s at a
      specificity the per-mote .dust-N rules can't beat. */
   animation-name: dust-drift;
@@ -659,6 +679,192 @@ dialog.closing {
   }
   100% {
     transform: none;
+  }
+}
+/* Pub Crawl's places (2026-10-31, `crawlScene` in crawlTheme.ts): the same
+   glow, embers and motes, recoloured, so each floor of the run has its own
+   light. Display only; Reduced Motion hides the whole backdrop. */
+.atmosphere[data-scene="wine"] {
+  --glow-a: #a3264a51;
+  --glow-b: #c8436840;
+  --glow-top: #c8436833;
+  --candle: #b8325a4e;
+  --ember: #f0a0b4;
+  --ember-glow: #d64a72;
+  --mote: #f4c0cc;
+  --mote-glow: #e0607f55;
+}
+.atmosphere[data-scene="brewery"] {
+  --glow-a: #e0a03047;
+  --glow-b: #f0c04c33;
+  --glow-top: #f0c04c28;
+  --candle: #e8b0404e;
+  --mote: #f5d27a;
+}
+.atmosphere[data-scene="catacombs"] {
+  --glow-a: #7fae8a3d;
+  --glow-b: #b4d0a42f;
+  --glow-top: #b4d0a425;
+  --candle: #c4dcb444;
+  --ember: #dff5cf;
+  --ember-glow: #8fe09a;
+  --ember-time: 16s;
+  --mote: #e4f2d8;
+  --mote-glow: #a8e0a855;
+}
+.atmosphere[data-scene="sewers"] {
+  --glow-a: #6a9a2a4a;
+  --glow-b: #8aae3a33;
+  --glow-top: #8aae3a28;
+  --candle: #7aa03a40;
+  --ember: #c4e070;
+  --ember-glow: #7ab030;
+  --mote: #b8d870;
+  --mote-glow: transparent;
+}
+.atmosphere[data-scene="freezer"] {
+  --glow-a: #5aa8e051;
+  --glow-b: #9ad0ff3d;
+  --glow-top: #9ad0ff30;
+  --candle: #a8d8ff40;
+  --ember: #e8f6ff;
+  --ember-glow: #8cccff;
+  --ember-time: 15s;
+  --mote: #f4fbff;
+  --mote-glow: #bfe4ff88;
+}
+.atmosphere[data-scene="taproom"] {
+  --glow-a: #1f9a9a51;
+  --glow-b: #3cb8b039;
+  --glow-top: #3cb8b02d;
+  --candle: #2aa0a047;
+  --ember: #bff0ea;
+  --ember-glow: #40c8c0;
+  --mote: #aee8e2;
+  --mote-glow: transparent;
+}
+.atmosphere[data-scene="kitchen"] {
+  --glow-a: #ff5a1f58;
+  --glow-b: #ff8a3a3d;
+  --glow-top: #ff8a3a30;
+  --candle: #ff6a2a51;
+  --ember: #ffd27a;
+  --ember-glow: #ff6a1a;
+  --ember-time: 7s;
+}
+.atmosphere[data-scene="rooftop"] {
+  --glow-a: #3d5ab047;
+  --glow-b: #7a5ac033;
+  --glow-top: #7a5ac028;
+  --candle: #e8a44928;
+  --ember: #ffe6b0;
+  --mote: #fff8e4;
+  --mote-glow: #fff0c088;
+}
+.atmosphere[data-scene="lastcall"] {
+  --glow-a: #c0283a58;
+  --glow-b: #e0405040;
+  --glow-top: #e0405033;
+  --candle: #c8303c4e;
+  --ember: #ffb0a0;
+  --ember-glow: #ff3040;
+  --ember-time: 9s;
+  --mote: #ffc8bc;
+  --mote-glow: #ff506055;
+}
+.atmosphere[data-scene="rival"] {
+  --glow-a: #b04ad04a;
+  --glow-b: #e04aa039;
+  --glow-top: #e04aa02d;
+  --candle: #a040c040;
+  --ember: #f0b8ff;
+  --ember-glow: #c050ff;
+  --mote: #f4c8ff;
+  --mote-glow: #d070ff55;
+}
+.atmosphere[data-scene="hidden"] {
+  --glow-a: #7a4ad047;
+  --glow-b: #d9a84036;
+  --glow-top: #d9a8402b;
+  --candle: #8a5ad03d;
+  --ember: #f2dca0;
+  --ember-glow: #b080ff;
+  --mote: #e8d8ff;
+}
+.atmosphere[data-scene="landing"] {
+  --glow-a: #d98b241e;
+  --glow-b: #e8a44914;
+  --glow-top: #e8a44910;
+  --candle: #e8a44922;
+  --ember-time: 18s;
+}
+/* Bubbles, not dust, in the wet places and the brewery's vats. */
+.atmosphere:is(
+    [data-scene="sewers"],
+    [data-scene="taproom"],
+    [data-scene="brewery"]
+  )
+  .dust
+  i {
+  width: 6px;
+  height: 6px;
+  background: transparent;
+  border: 1px solid var(--mote);
+}
+/* Snow falls in the Freezer: the same drift, played backwards. */
+.atmosphere[data-scene="freezer"] .dust i {
+  width: 3px;
+  height: 3px;
+  animation-direction: reverse;
+}
+/* Stars over the Rooftop: the motes hold still high up and twinkle. */
+.atmosphere[data-scene="rooftop"] .dust i {
+  bottom: auto;
+  animation-name: star-twinkle;
+  animation-duration: 4.5s;
+  animation-timing-function: ease-in-out;
+}
+.atmosphere[data-scene="rooftop"] .dust-0 {
+  top: 6%;
+}
+.atmosphere[data-scene="rooftop"] .dust-1 {
+  top: 14%;
+}
+.atmosphere[data-scene="rooftop"] .dust-2 {
+  top: 4%;
+}
+.atmosphere[data-scene="rooftop"] .dust-3 {
+  top: 19%;
+}
+.atmosphere[data-scene="rooftop"] .dust-4 {
+  top: 9%;
+}
+.atmosphere[data-scene="rooftop"] .dust-5 {
+  top: 24%;
+}
+.atmosphere[data-scene="rooftop"] .dust-6 {
+  top: 28%;
+}
+.atmosphere[data-scene="rooftop"] .dust-7 {
+  top: 2%;
+}
+@keyframes star-twinkle {
+  0%,
+  100% {
+    opacity: 0.08;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.2);
+  }
+}
+@keyframes scene-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 @keyframes fire-breathe {

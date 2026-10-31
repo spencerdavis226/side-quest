@@ -3,15 +3,28 @@ import { useEffect, useState } from "react";
 /** After this long without a tap the table goes still (owner, 2026-10-18). */
 export const IDLE_MS = 60_000;
 
-export function Atmosphere({ hidden }: { hidden: boolean }) {
+/** The table's backdrop. `scene` (Pub Crawl, 2026-10-31) recolours the
+ * same glow and motes for the place the run has reached (theme.css,
+ * `[data-scene]`): snow in the Freezer, bubbles in the Sewers, stars on the
+ * Rooftop. Its glow fades in when the scene changes. */
+export function Atmosphere({
+  hidden,
+  scene,
+}: {
+  hidden: boolean;
+  scene?: string;
+}) {
   const idle = useIdle(IDLE_MS);
   return (
     <div
       className={`atmosphere${hidden ? " suspended" : ""}${idle ? " idle" : ""}`}
+      data-scene={scene}
       aria-hidden="true"
     >
-      <div className="firelight" />
-      <div className="candle" />
+      <div className="scene-light" key={scene ?? "table"}>
+        <div className="firelight" />
+        <div className="candle" />
+      </div>
       <div className="embers">
         {[0, 1, 2, 3, 4, 5].map((i) => (
           <i className={`ember ember-${i}`} key={i} />

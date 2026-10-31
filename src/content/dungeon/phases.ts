@@ -175,7 +175,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "the-ghost-of-closing": [
     duel(
-      "Name every bar the table has been to together, in ten seconds. Fall short: drink 4.",
+      "Name five bars that ever closed on you, in ten seconds. Fall short: drink 4.",
     ),
   ],
   // The Sewers.
@@ -330,7 +330,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   // Closing time: the Quarter-Zips again.
   "closing-last-table": [
     duel(
-      "Brad's still on it. On go, race Brad (your left neighbor) to sit on it. Lose: drink 4.",
+      "Brad wants the seat. On go, you and Brad (left neighbor) stand, spin and sit. Last down: drink 4.",
     ),
   ],
   "closing-the-boys-toast": [
@@ -373,7 +373,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "closing-thads-uber": [
     duel(
-      "Shotgun: you and Thad (your left neighbor) call it. The table says who was first. Thad: drink 4.",
+      "Shotgun: you and Thad (left neighbor) call it. The table says who was first. Thad: drink 4.",
     ),
   ],
   "closing-the-rematch": [

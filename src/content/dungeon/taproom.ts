@@ -93,7 +93,7 @@ export const taproom: FloorCards = {
       {
         jinx: {
           name: "Pirate Tongue",
-          rule: "The jinxed player ends every sentence with 'arr'. Forget: drink 1.",
+          rule: "The jinxed player ends every sentence with 'arr'. Forgets: drink 1.",
         },
       },
     ),

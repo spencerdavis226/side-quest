@@ -56,7 +56,7 @@ const jinxes: Readonly<Record<string, Jinx>> = {
   },
   "the-pipe-worm": {
     name: "Pipe Down",
-    rule: "Only the drawer may talk to the jinxed player. Anyone else does: they drink 1.",
+    rule: "Nobody talks to the jinxed player, and they talk to nobody. Slip: drink 1.",
   },
   "merfolk-ex": {
     name: "Fish Out of Water",
@@ -80,15 +80,15 @@ const jinxes: Readonly<Record<string, Jinx>> = {
   },
   "brewery-owner": {
     name: "Artisanal",
-    rule: "The jinxed player calls everything 'artisanal'. Misses a chance the table spots: drink 1.",
+    rule: "The jinxed player says 'artisanal' before every sip. Forgets: drink 1.",
   },
   "freezer-burn": {
-    name: "Brain Freeze",
+    name: "Freezer Burn",
     rule: "The jinxed player clutches their head and says 'brain freeze' after every sip. Forgets: drink 1.",
   },
   "hypothermia-hal": {
-    name: "Chattering Teeth",
-    rule: "The jinxed player chatters their teeth before speaking. Forgets: drink 1.",
+    name: "Not Even Cold",
+    rule: "The jinxed player says 'I'm not even cold' before every sip. Forgets: drink 1.",
   },
   "the-snow-bartender": {
     name: "Brrr",
@@ -131,7 +131,7 @@ const jinxes: Readonly<Record<string, Jinx>> = {
     rule: "The jinxed player turns away from whoever is talking. Caught facing them: drink 1.",
   },
   "the-chest-freezer": {
-    name: "Frozen Solid",
+    name: "Ice Pack",
     rule: "The jinxed player keeps one hand on their head. Lets go: drink 1.",
   },
   "the-water-tower": {

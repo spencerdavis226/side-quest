@@ -199,7 +199,7 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
   "lich-intern": {
     duel: true,
     rules:
-      "The lich's intern quizzes you: your left neighbor asks three trivia questions. Miss two: drink 4.",
+      "The lich's accountant audits you: your left neighbor asks three trivia questions. Miss two: drink 4.",
   },
   "ex-wraith": {
     rules:
@@ -357,7 +357,7 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
   "tap-mimic": {
     duel: true,
     rules:
-      "Pour-off: you and your right neighbor mime a perfect pint. The table picks. Worse pour: drink 5.",
+      "The tap's a mimic. Pour-off with your right neighbor: mime a pint. Table's worse pour: drink 5.",
   },
   "last-orders-siren": {
     rules:

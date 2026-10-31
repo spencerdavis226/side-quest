@@ -6,7 +6,8 @@ import {
   heartCount,
   type CrawlIconName,
 } from "../src/components/crawlTheme";
-import { packs } from "../src/content/catalog";
+import { cards, packs } from "../src/content/catalog";
+import { questStages } from "../src/game/engine";
 import {
   LANDING_HEAL,
   LEVEL_DRINK,
@@ -111,5 +112,39 @@ describe("how to play", () => {
       expect(existsSync(`public/${crawlIconPath(league, row.icon)}`)).toBe(
         true,
       );
+  });
+});
+
+describe("Pub Crawl's lit scenes (2026-10-31)", () => {
+  const rules = packs.find((p) => p.id === "dungeon")!.quest!;
+  const scene = crawlTheme("dungeon").flourish!.scene;
+  it("lights every stage after the omen with its own scene", () => {
+    for (const stage of questStages(rules)) {
+      if (["Your adventurer", "Tonight's omen"].includes(stage.label)) continue;
+      expect(scene(stage.label), stage.label).toBeTruthy();
+    }
+    expect(scene("The Wine Cellar")).toBe("wine");
+    expect(scene("Wine Cellar boss")).toBe("wine");
+    expect(scene("Cellar boss")).toBe("cellar");
+    expect(scene("The Walk-in Freezer")).toBe("freezer");
+  });
+  it("the League has no flourishes", () => {
+    expect(crawlTheme("pokemon").flourish).toBeUndefined();
+  });
+});
+
+describe("Pub Crawl floors read as different rooms", () => {
+  it("no title appears twice on one floor", () => {
+    const byFloor = new Map<string, string[]>();
+    for (const c of cards) {
+      const floor = c.id.startsWith("dungeon.") && c.ribbon?.split(" · ")[0];
+      if (!floor) continue;
+      byFloor.set(floor, [...(byFloor.get(floor) ?? []), c.title]);
+    }
+    for (const [floor, titles] of byFloor)
+      expect(
+        titles.filter((t, i) => titles.indexOf(t) !== i),
+        floor,
+      ).toEqual([]);
   });
 });

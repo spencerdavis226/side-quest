@@ -1,5 +1,5 @@
-import type { Loot, QuestStage, Slot } from "../game/types";
-import { DRAUGHT_DRINKS, DRAUGHT_HEAL } from "../game/engine";
+import type { Loot, QuestStage, SessionState, Slot } from "../game/types";
+import { DRAUGHT_DRINKS, DRAUGHT_HEAL, finaleStage } from "../game/engine";
 import {
   dungeonOmenWords,
   leagueOmenWords,
@@ -131,10 +131,41 @@ export interface CrawlTheme {
     goal: string;
     rows: (n: { hearts: number }) => GuideRow[];
   };
+  /** Pub Crawl's flourishes (2026-10-31, display only): the stamp on a
+   * boss's felling swing, the words of a natural 20 or 1 flash, and the
+   * table's light for each place in the run (`crawlScene`). A theme
+   * without them shows none. */
+  flourish?: {
+    felled: string;
+    naturals: [string, string];
+    scene: (stageLabel: string) => string | undefined;
+  };
   /** The end screens: two title lines (the second in italics) and the
    * verdict. */
   wiped: { title: [string, string]; verdict: string };
   won: { title: [string, string]; verdict: string };
+}
+
+/** The table's light for a Pub Crawl stage, from its label ("The Cellar",
+ * "Cellar boss", "The Queue"): each floor glows its own colour, so a run
+ * reads as a descent. Wine Cellar is tested before Cellar. */
+const SCENES: [RegExp, string][] = [
+  [/Wine Cellar/, "wine"],
+  [/Cellar/, "cellar"],
+  [/Brewery/, "brewery"],
+  [/Catacombs/, "catacombs"],
+  [/Sewers/, "sewers"],
+  [/Freezer/, "freezer"],
+  [/Taproom/, "taproom"],
+  [/Kitchen/, "kitchen"],
+  [/Rooftop/, "rooftop"],
+  [/Last Call/, "lastcall"],
+  [/Queue|Stairs|Closing Time/, "rival"],
+  [/Landing/, "landing"],
+  [/Speakeasy|VIP|Back Office|Poker|Basement/, "hidden"],
+];
+function dungeonScene(label: string) {
+  return SCENES.find(([test]) => test.test(label))?.[1];
 }
 
 const dungeon: CrawlTheme = {
@@ -209,6 +240,11 @@ const dungeon: CrawlTheme = {
       lasts: "until the floor's boss falls",
     },
     wanted: "Wanted",
+  },
+  flourish: {
+    felled: "Felled",
+    naturals: ["Natural 20", "Natural 1"],
+    scene: dungeonScene,
   },
   legend: [
     "Hearts the party loses if the fight is lost",
@@ -431,6 +467,16 @@ const themes: Record<string, CrawlTheme> = { dungeon, pokemon: league };
  * dungeon. */
 export function crawlTheme(packId: string | undefined): CrawlTheme {
   return (packId && themes[packId]) || dungeon;
+}
+
+/** The place a crawl's table is lit for (`Atmosphere`'s scene): the stage
+ * now in play, while the run is on. Undefined outside a themed crawl. */
+export function crawlScene(s: SessionState | null | undefined) {
+  const quest = s?.quest;
+  if (!quest?.party || !quest.due || s!.phase === "complete") return undefined;
+  if (quest.step >= quest.finale.length) return undefined;
+  const scene = crawlTheme(quest.packId).flourish?.scene;
+  return scene?.(finaleStage(quest).label);
 }
 
 /** A mark's path under `public/`. */

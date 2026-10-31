@@ -333,7 +333,7 @@ export const freezer: FloorCards = {
       7,
       "mimic-fridge",
       "Mimic Fridge",
-      "A mini fridge with a heartbeat. It pays out until it bites. Roll d20.",
+      "A mini fridge with a heartbeat. It pays out until it bites. Cash out or open again. Roll d20.",
       "It bites. Drink 4.",
       "A cold one. Give 3.",
       ["shield", "draught", "revive"],
@@ -421,7 +421,7 @@ export const freezer: FloorCards = {
       7,
       "the-snow-bartender",
       "The Snow Bartender",
-      "He pours with snow and he serves only frozen drinks, and he never stops. Roll d20.",
+      "He serves only frozen drinks, with snow for ice, and he never stops pouring. Roll d20.",
       d20(
         BOSS_NEED[1],
         "Frozen daiquiri, straight to the brain. Drink 5.",
@@ -448,8 +448,8 @@ export const freezer: FloorCards = {
       ),
       {
         jinx: {
-          name: "Chattering",
-          rule: "The jinxed player's teeth chatter whenever they speak. Forget: drink 1.",
+          name: "Absolute Zero",
+          rule: "The jinxed player counts down from three, out loud, before every sip. Forgets: drink 1.",
         },
         drops: [
           trinket("Kelvin's Thermometer", { crit: 19 }),

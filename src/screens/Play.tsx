@@ -19,6 +19,7 @@ import {
   awaitingOffer,
   awaitingPress,
   awaitingSpoils,
+  fellingSwing,
   awaitingVerdict,
   canTakeOffer,
   canSendIn,
@@ -58,6 +59,8 @@ import { extrasLayout, foldBranches } from "../components/extras";
 import { TypeMark } from "../components/LeagueMarks";
 import { BallThrowStage } from "../components/BallThrow";
 import { CrawlIcon } from "../components/Crawl";
+import { FelledStamp, NaturalBurst } from "../components/Flourish";
+import { useAnnounce } from "../components/Announcer";
 // A dice overlay that can't be fetched (offline before it was cached) must
 // not strand a roll: the saved result goes straight to the card instead.
 type DiceProps = ComponentProps<
@@ -79,6 +82,10 @@ function NoDice({ roll, rolling, onReveal, onFinish }: DiceProps) {
   }, [roll, rolling]);
   return null;
 }
+/** How long a boss's Felled stamp holds the spoils sheet back: its slam
+ * (crawl.css, 120 ms delay + 520 ms) and a beat to read it. */
+const STAMP_MS = 1100;
+
 export function Play({
   session,
   motion,
@@ -136,11 +143,28 @@ export function Play({
   // a loaded die after a lost roll. They join the card's own plaques.
   const items =
     !motion && session.phase === "revealed" ? usableItems(session) : [];
+  // Pub Crawl's stamp on a boss's felling swing (display only).
+  const felledWord = crawlTheme(session.quest?.packId).flourish?.felled;
+  const felled = !!felledWord && fellingSwing(session);
+  useEffect(() => {
+    if (!felled) return;
+    const id = setTimeout(
+      () => setStamped(session.discarded),
+      matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : STAMP_MS,
+    );
+    return () => clearTimeout(id);
+  }, [felled, session.discarded]);
   // A won boss or elite: its spoils, in a sheet that opens by itself and
   // reopens from the card's one plaque once closed (2026-10-25).
   const spoils = !motion && awaitingSpoils(session) ? card.spoils! : null;
   const [sheetClosed, setSheetClosed] = useState<number | null>(null);
-  const sheet = !!spoils && sheetClosed !== session.discarded;
+  // On a boss's felling swing the sheet waits for the Felled stamp to
+  // land (Pub Crawl, 2026-10-31); everything else opens it at once.
+  const [stamped, setStamped] = useState<number | null>(null);
+  const sheet =
+    !!spoils &&
+    sheetClosed !== session.discarded &&
+    (!felled || stamped === session.discarded);
   // A push-your-luck win: cash out or go again.
   const press = !motion && awaitingPress(session);
   // The League's team (2026-10-25): a beaten wild Pokémon to catch, and
@@ -155,6 +179,10 @@ export function Play({
   const [asking, setAsking] = useState<number | null>(null);
   const ask = asking === session.discarded && !motion;
   const crawl = crawlTheme(session.quest?.packId);
+  useAnnounce(
+    felled ? `${card.title}: ${felledWord!.toLowerCase()}.` : "",
+    felled ? `felled-${session.discarded}` : null,
+  );
   // Items and send-ins: on the card's foot when a few short ones fit,
   // otherwise behind one "Use" plaque and its sheet.
   const extraList = buildExtras(crawl, { items, senders, onSpend, onSend });
@@ -422,6 +450,7 @@ export function Play({
                     ball={ball}
                   />
                 )}
+                {felled && <FelledStamp word={felledWord!} />}
               </span>
             </span>
           </button>
@@ -600,6 +629,9 @@ export function Play({
       </span>
       {session.phase === "revealed" && (
         <TimerBlast card={card} actions={actions} />
+      )}
+      {session.quest?.party && (
+        <NaturalBurst session={session} card={card} theme={crawl} />
       )}
       {overlay &&
         session.phase === "revealed" &&

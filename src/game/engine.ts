@@ -845,6 +845,15 @@ function fells(s: SessionState, nat: 20 | 1 | null): boolean {
   const swing = nat === 20 ? 2 : 1;
   return !need || s.quest!.party!.hits + swing >= need;
 }
+/** A crawl boss's felling swing face up: a won roll that lands its last
+ * hit. Display only (the card's Felled stamp); nothing is saved. */
+export function fellingSwing(s: SessionState): boolean {
+  if (!s.quest?.party || !s.quest.due || s.phase !== "revealed") return false;
+  const card = currentCard(s);
+  if (!isBossCard(card) || !card.dice || !s.roll?.returned) return false;
+  if (!rollWins(card.dice, s.roll.values, s.roll)) return false;
+  return fells(s, natural(card, s.roll));
+}
 /** A plaque fight face up whose win would bring its spoils (a boss's
  * felling beat, 2026-10-25): Won asks which trinket first. */
 export function spoilsOnWin(s: SessionState): boolean {

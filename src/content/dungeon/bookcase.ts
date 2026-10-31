@@ -178,7 +178,7 @@ export const hiddenRooms: HiddenRoom[] = [
       {
         jinx: {
           name: "Per My Last Email",
-          rule: "The jinxed player starts every sentence with 'Per my last email'. Forget: drink 1.",
+          rule: "The jinxed player starts every sentence with 'Per my last email'. Forgets: drink 1.",
         },
         drops: [
           trinket("Petty Cash", { loot: ["round", "shield"] }),

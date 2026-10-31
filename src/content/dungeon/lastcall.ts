@@ -32,7 +32,7 @@ export const queueCards: CardDefinition[] = [
   queue(
     "fake-id",
     "Chad's Fake ID",
-    "You and your left neighbor (Chad) do 10 seconds of Canadian each. Chad wins: drink 3.",
+    "Chad's fake ID is Canadian. You and Chad (left neighbor) each talk Canadian. Chad's better: drink 3.",
     null,
     { loot: "smoke" },
   ),
@@ -196,7 +196,7 @@ export const closingCards: CardDefinition[] = [
     {
       jinx: {
         name: "For the Boys",
-        rule: "The jinxed player says 'for the boys' before every drink. Forget: drink 1.",
+        rule: "The jinxed player says 'for the boys' before every drink. Forgets: drink 1.",
       },
     },
   ),
