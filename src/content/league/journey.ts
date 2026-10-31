@@ -307,6 +307,36 @@ export const gamble = (
   reward: { loot },
 });
 
+/** Push your luck (2026-10-31, the variety pass; Pub Crawl's `press`):
+ * each won roll banks the next prize and offers Cash out or Again, each
+ * Again harder; a loss forfeits the lot and costs one. Rolled at the leg's
+ * hazard save. Fishing, the Game Corner, the Safari Zone. */
+export const press = (
+  leg: Leg,
+  kind: string,
+  id: string,
+  title: string,
+  rules: string,
+  lose: string,
+  win: string,
+  prizes: Loot[],
+  extra: { crit?: string; fumble?: string } = {},
+): CardDefinition => ({
+  ...spot(
+    leg,
+    kind,
+    "relic",
+    id,
+    title,
+    rules,
+    d20(HAZARD_SAVE[leg], lose, win, extra),
+  ),
+  ribbonTone: "violet",
+  battle: true,
+  damage: 1,
+  press: { prizes },
+});
+
 /** An item ball on the ground. */
 export const item = (
   leg: Leg,

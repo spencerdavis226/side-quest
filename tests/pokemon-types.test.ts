@@ -93,6 +93,7 @@ describe("League type marks", () => {
         // Hazards and finds.
         "route-ledge",
         "route-mystery-egg",
+        "route-old-rod",
         "route-slots",
         "route-safari",
         "route-silph-scope",

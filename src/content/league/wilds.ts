@@ -227,8 +227,12 @@ export const moreWilds: CardDefinition[][] = [
 ];
 
 /** An evolution chance on Route 5, which had none, and a second one on
- * Routes 2, 4 and 6, so the bigger route pools (the strikes and table
- * moments of 2026-10-25) still evolve about as often as before. */
+ * Routes 2 and 4, so the bigger route pools (the strikes and table moments
+ * of 2026-10-25) still evolve about as often as before. Route 6's second
+ * (Friendship Glow) went, and Route 7's moved to Route 8, in the 2026-10-31
+ * retune: with the balance runs
+ * on independent seeds, 53% of runs reached the final form (band 30 to
+ * 50%). */
 export const moreEvolutions: Partial<Record<number, CardDefinition>> = {
   1: evolution(
     1,
@@ -241,12 +245,6 @@ export const moreEvolutions: Partial<Record<number, CardDefinition>> = {
     "route-sun-stone",
     "Sun Stone",
     "A Sun Stone glows in a flower patch. Your starter leans toward it.",
-  ),
-  5: evolution(
-    5,
-    "route-friendship-glow",
-    "Friendship Glow",
-    "Your starter hasn't left your side all journey. It starts to glow.",
   ),
   4: evolution(
     4,

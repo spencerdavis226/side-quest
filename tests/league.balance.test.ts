@@ -1,8 +1,11 @@
 import { expect, it } from "vitest";
+import { appendFileSync } from "node:fs";
 import {
   advance,
   awaitingChoice,
   awaitingOffer,
+  awaitingPress,
+  cashOut,
   awaitingVerdict,
   canTakeOffer,
   canUseLoot,
@@ -10,6 +13,7 @@ import {
   currentCard,
   finaleStage,
   omenForm,
+  pressOn,
   questRecord,
   satchelSize,
   settleBattle,
@@ -45,6 +49,14 @@ const seeded = (seed: number): Random => {
     seed = (seed * 16807) % 2147483647;
     return (seed - 1) / 2147483646;
   };
+};
+// For tuning: LEAGUE_RUNS=400 plays more runs per starter (each 120-run
+// sample carries about ±3 points of noise per starter), and LEAGUE_LOG=<file>
+// keeps the measurements, which Vitest hides for passing tests.
+const log = (...a: unknown[]) => {
+  console.log(...a);
+  if (process.env.LEAGUE_LOG)
+    appendFileSync(process.env.LEAGUE_LOG, a.join(" ") + "\n");
 };
 const party = (s: SessionState) => s.quest!.party!;
 const roundTrip = (s: SessionState) =>
@@ -141,6 +153,15 @@ function playRun(seed: number, starter?: string) {
         if (!s.roll) s = returnToCard(rollDice(s, random));
       }
     }
+    // Push your luck (2026-10-31, the Old Rod): one more cast when
+    // healthy, then cash out, as the Pub Crawl table plays its gambles.
+    if (awaitingPress(s)) {
+      s =
+        party(s).hearts > 6 && !party(s).press
+          ? pressOn(s)
+          : cashOut(s, random);
+      continue;
+    }
     // A beaten wild Pokémon: catch it or let it go, which puts it aside.
     const before = s;
     s = botTeam(s, random);
@@ -154,7 +175,7 @@ function playRun(seed: number, starter?: string) {
 // 35 starters since 2026-10-25: each plays its own seeded runs (a 35th of
 // 4,000 random ones was too few to read one), and every test below reads
 // all of them together, as a table picking its starter at random would.
-const PER_STARTER = 120;
+const PER_STARTER = Number(process.env.LEAGUE_RUNS ?? 120);
 const starterIds = (
   packs.find((p) => p.id === "pokemon")!.quest!.finale[0] as {
     cardIds: string[];
@@ -167,11 +188,16 @@ const starterIds = (
 let kept = 0;
 const slim = (s: SessionState): SessionState =>
   kept++ < 50 ? s : { ...s, cards: [] };
+// Each starter its own seeds (2026-10-31): with seeds 1 to 120 shared,
+// every starter met the same 120 shuffles, so the whole sample read like 120
+// runs, and adding one route card swung evolution by 15 points.
 const byStarter = starterIds.map(
-  (id) =>
+  (id, k) =>
     [
       id,
-      Array.from({ length: PER_STARTER }, (_, i) => slim(playRun(i + 1, id))),
+      Array.from({ length: PER_STARTER }, (_, i) =>
+        slim(playRun(k * PER_STARTER + i + 1, id)),
+      ),
     ] as const,
 );
 const runs = byStarter.flatMap(([, group]) => group);
@@ -204,7 +230,7 @@ it("the League is hard: the team wins between 18% and 40% of its runs", () => {
   }
   const avg = (f: (s: SessionState) => number, of = winners) =>
     (of.map(f).reduce((a, b) => a + b, 0) / of.length).toFixed(1);
-  console.log(
+  log(
     `extra draws on won runs: ${avg((s) => s.quest!.lost ?? 0)} lost to bosses, ${avg((s) => party(s).rounds)} boss swings landed, ${avg((s) => s.quest!.finale.length)} dealt\n` +
       `league: won ${(won * 100).toFixed(1)}%; a won run takes ${mean.toFixed(1)} draws (10th ${at(0.1)}, 90th ${at(0.9)})\n` +
       `whited out at: ${[...wipes].map(([l, n]) => `${l} ${pct(n / runs.length)}`).join(", ")}\n` +
@@ -222,7 +248,7 @@ it("starters evolve often, but not always all the way", () => {
   const evolving = runs.filter((s) => (omenForm(s.quest)?.forms ?? 0) > 0);
   const once = evolving.filter((s) => (party(s).form ?? 0) >= 1).length;
   const full = evolving.filter((s) => !omenForm(s.quest)!.canEvolve).length;
-  console.log(
+  log(
     `evolution: ${pct(once / evolving.length)} evolve at least once, ${pct(full / evolving.length)} reach the final form`,
   );
   expect(once / evolving.length).toBeGreaterThan(0.7);
@@ -237,7 +263,7 @@ it("no starter and no hideout makes the League a walkover or hopeless", () => {
     const at = s.quest!.stages.findIndex((st) => st.label === "Gym 4");
     return s.quest!.stages[at + 1].label;
   });
-  console.log(
+  log(
     `starters: ${starters.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}\n` +
       `hideouts: ${hideouts.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}`,
   );
@@ -262,7 +288,7 @@ it("Bidoof is the worst starter, and still wins now and then", () => {
   const worst = Math.min(
     ...starterRates.filter(([n]) => n !== "bidoof").map(([, r]) => r),
   );
-  console.log(`bidoof (600 runs) ${pct(bidoof)}; next worst ${pct(worst)}`);
+  log(`bidoof (600 runs) ${pct(bidoof)}; next worst ${pct(worst)}`);
   expect(bidoof).toBeGreaterThan(0.01);
   expect(bidoof).toBeLessThan(Math.min(0.08, worst));
   // 600 more runs: about 7 s on CI, past the 5 s default, and longer since

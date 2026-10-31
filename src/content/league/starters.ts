@@ -122,7 +122,7 @@ export const starters: CardDefinition[] = [
     "treecko",
     "Treecko",
     "Treecko chose you, unbothered.",
-    { loot: ["smoke"], roll: { monster: 1 } },
+    { hearts: 2, loot: ["smoke"], roll: { monster: 1 } },
     [
       {
         title: "Grovyle",
@@ -145,7 +145,7 @@ export const starters: CardDefinition[] = [
     "torchic",
     "Torchic",
     "Torchic chose you. Everyone flap and peep.",
-    { hearts: -2, roll: { ambush: 2, elite: 2 } },
+    { hearts: -1, roll: { ambush: 2, elite: 2 } },
     [
       {
         title: "Combusken",
@@ -427,7 +427,7 @@ export const starters: CardDefinition[] = [
     "gible",
     "Gible",
     "Gible chose you. It's chewing on your chair.",
-    { hearts: -2, roll: { elite: 1, ambush: 1, boss: 1 } },
+    { hearts: -1, roll: { elite: 1, ambush: 1, boss: 1 } },
     [
       {
         title: "Gabite",
@@ -474,7 +474,7 @@ export const starters: CardDefinition[] = [
     "bidoof",
     "Bidoof",
     "Nobody chooses Bidoof.",
-    { hearts: -1, satchel: 2, reroll20: true },
+    { hearts: -2, satchel: 2, reroll20: true },
     [
       {
         title: "Bibarel",
@@ -508,16 +508,16 @@ export const starters: CardDefinition[] = [
     "sunkern",
     "Sunkern",
     "Sunkern chose you. It is a seed with a face.",
-    { hearts: 3 },
-    [{ title: "Sunflora", omen: { hearts: 4 } }],
+    { hearts: 4 },
+    [{ title: "Sunflora", omen: { hearts: 5 } }],
   ),
   // Sleepy: slow to finish anything, but it naps it off.
   starter(
     "drowzee",
     "Drowzee",
     "Drowzee chose you, yawning.",
-    { bossHits: 1, heal: 2 },
-    [{ title: "Hypno", omen: { hearts: 1, heal: 2 } }],
+    { hearts: 2, bossHits: 1, heal: 3 },
+    [{ title: "Hypno", omen: { hearts: 2, heal: 3 } }],
   ),
   // Blind as a bat: more natural 1s.
   starter(

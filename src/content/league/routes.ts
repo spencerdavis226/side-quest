@@ -9,9 +9,11 @@ import {
   gamble,
   hazard,
   item,
+  moment as tableMoment,
   mart,
   moves,
   pair,
+  press,
   rival,
   strike,
   trainer,
@@ -317,6 +319,47 @@ const route2: CardDefinition[] = [
     "Mt. Moon Fork",
     "Through the cave, or around it, past trainers who haven't seen daylight in weeks.",
     ["The cave", "Around it"],
+  ),
+  // The variety pass (2026-10-31): the League's first push-your-luck, a
+  // secret on a clock, and a contest the table judges.
+  press(
+    1,
+    "Fishing",
+    "route-old-rod",
+    "Old Rod",
+    "Cast the Old Rod. Each bite, reel it in or cast again, deeper. Something big lives here. Roll d20.",
+    "A Magikarp slaps you and swims off. Drink 3.",
+    "A bite! Give 2.",
+    ["draught", "shield", "die"],
+    {
+      crit: "A Lapras surfaces and nods at you. Give 4.",
+      fumble: "Gyarados. Roar at the table, then drink 6.",
+    },
+  ),
+  {
+    ...tableMoment(
+      1,
+      "route-whos-that",
+      "Who's That Pokémon?",
+      "Quiz",
+      "category",
+      "Read alone, start the clock, then describe it without saying its name. The table guesses.",
+    ),
+    secret: "JIGGLYPUFF. Don't say pink, balloon, sing or sleep.",
+    timer: {
+      version: 1,
+      kind: "countdown",
+      seconds: 45,
+      end: "Time. Someone guessed it? Give 3. Nobody did? Drink 3.",
+    },
+  },
+  tableMoment(
+    1,
+    "route-cute-contest",
+    "Cuteness Contest",
+    "Contest",
+    "challenge",
+    "Strike your starter's cutest pose for five seconds. Table votes thumbs. Up: give 3. Down: drink 3.",
   ),
   item(
     1,
@@ -1147,12 +1190,6 @@ const route7: CardDefinition[] = [
     3,
     2,
   ),
-  evolution(
-    6,
-    "route-evolving-2",
-    "It's Evolving Again!",
-    "Your starter is glowing mid-battle. Everyone hums the evolution music, loud.",
-  ),
   center(
     6,
     "route-cinnabar-center",
@@ -1216,6 +1253,14 @@ const route7Aces: CardDefinition[] = [
 
 // --- Route 8 -----------------------------------------------------------------
 const route8: CardDefinition[] = [
+  // Moved from Route 7 in the 2026-10-31 retune: a later chance, so fewer
+  // runs reach their final form (see moreEvolutions in wilds.ts).
+  evolution(
+    7,
+    "route-evolving-2",
+    "It's Evolving Again!",
+    "Your starter is glowing mid-battle. Everyone hums the evolution music, loud.",
+  ),
   wild(
     7,
     "route-tyranitar",
@@ -1595,7 +1640,7 @@ export const routes: {
   {
     label: "Route 6",
     intro: "Deeper into the region",
-    cards: [...route6, ...moreWilds[5], ...moments[5], moreEvolutions[5]!],
+    cards: [...route6, ...moreWilds[5], ...moments[5]],
     aces: route6Aces,
   },
   {

@@ -48,22 +48,22 @@ Typed fights met per run, weighted by how often each is dealt (about 32 in all),
 
 | Starter type | Starters | Advantage | Disadvantage |
 | --- | --- | --- | --- |
-| Grass | 6 | 6.0 | 7.2 |
+| Grass | 6 | 6.0 | 7.1 |
 | Fire | 6 | 5.5 | 6.1 |
 | Water | 7 | 5.6 | 4.2 |
 | Electric | 1 | 3.8 | 2.2 |
-| Normal | 2 | 0.0 | 1.8 |
-| Ice | 1 | 7.3 | 7.1 |
-| Fighting | 1 | 9.3 | 4.7 |
-| Ground | 1 | 9.2 | 4.8 |
+| Normal | 2 | 0.0 | 1.9 |
+| Ice | 1 | 7.2 | 7.1 |
+| Fighting | 1 | 9.2 | 4.6 |
+| Ground | 1 | 9.1 | 4.8 |
 | Flying | 1 | 4.6 | 5.2 |
-| Bug | 1 | 5.1 | 5.2 |
+| Bug | 1 | 5.1 | 5.1 |
 | Rock | 1 | 5.6 | 9.6 |
 | Ghost | 1 | 1.7 | 2.0 |
-| Dragon | 1 | 0.0 | 2.4 |
-| Dark | 1 | 3.2 | 4.5 |
+| Dragon | 1 | 0.0 | 2.3 |
+| Dark | 1 | 3.2 | 4.4 |
 | Steel | 1 | 4.0 | 5.9 |
-| Fairy | 1 | 5.7 | 3.2 |
+| Fairy | 1 | 5.8 | 3.2 |
 | Psychic | 1 | 3.3 | 4.8 |
 | Poison | 1 | 2.9 | 3.8 |
 
@@ -116,6 +116,7 @@ Typed fights met per run, weighted by how often each is dealt (about 32 in all),
 | Hiker Dave | Route 2 · Trainer | Rock | strike | Hiker Dave hasn't showered since Mt. Moon, but he shares his trail mix. Drink 2. |
 | Picnicker Gina | Route 2 · Trainer | — | plaques | Picnicker Gina dares you to eat something off the floor. Do it or drink 3. |
 | Zubat Cave | Route 2 · Hazard | Poison | d6 | Mt. Moon. No Repel. Zubat every step. Roll d6 for how many. |
+| Old Rod | Route 2 · Fishing | — | d20 | Cast the Old Rod. Each bite, reel it in or cast again, deeper. Something big lives here. Roll d20. |
 | Seedot | Route 2 · Wild | Grass | strike | Wild Seedot, an acorn judging you, headbutts your shin. Drink 2. |
 | Geodude | Route 2 · Wild | Rock | strike | The rock you sat on was a Geodude. It Defense Curls, then headbutts. Drink 2. |
 | Snubbull | Route 2 · Wild | Fairy | strike | Wild Snubbull growls through its underbite. Growl back; it wants belly rubs. Give 2. |

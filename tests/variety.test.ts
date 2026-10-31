@@ -11,7 +11,7 @@ import type { CardDefinition, QuestStage } from "../src/game/types";
 // human still reads the cards. Every pool must hold the floor below; a pool
 // listed in REWORKED has had its variety pass and holds the higher bar.
 // Add a pool to REWORKED when its pass is done.
-const REWORKED = ["The Cellar"];
+const REWORKED = ["The Cellar", "Route 2"];
 
 /** What the table does with a card, by its fields. */
 export function kind(c: CardDefinition): string {
