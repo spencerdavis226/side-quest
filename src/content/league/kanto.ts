@@ -161,7 +161,7 @@ export const kanto: Region = {
         "agatha",
         "Agatha",
         "Ghost",
-        "Agatha's ghosts eat names. No names for a minute. Anyone slips: drink 3. You slip: lost.",
+        "Nobody says a name for one minute. Anyone else who slips drinks 3. You slip: you lose.",
       ),
       jinx: {
         name: "No Names",
@@ -175,12 +175,12 @@ export const kanto: Region = {
       "blue",
       "Blue",
       "Kanto",
-      "Blue got here first and smells like your mom. The whole table fights. Roll d20.",
+      "Blue got here first and won't shut up about it. The whole table fights. Roll d20.",
       rollTable(1, 20, [
         {
           min: 1,
           max: 5,
-          instruction: "Blue smells you. Everyone finishes their drink.",
+          instruction: "Blue sweeps your team. Everyone finishes their drink.",
         },
         {
           min: 6,
@@ -263,7 +263,7 @@ export const kanto: Region = {
         LEGENDARY_NEED,
         "Overpowered. Finish your drink.",
         "You hold on. Pick a player: they share their worst thought or drink 4.",
-        { crit: "Caught! Everyone else finishes their drink." },
+        { crit: "Mewtwo reels. Everyone else finishes their drink." },
       ),
     ),
     legendary(

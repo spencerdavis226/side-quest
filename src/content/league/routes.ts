@@ -65,9 +65,8 @@ const route1: CardDefinition[] = [
       "Wild Pidgey throws Sand Attack, then Gust ruins your hair. Drink 3.",
   }),
   strike(0, "route-rattata", "Rattata", {
-    even: "Wild Rattata chews your shoelaces like it pays rent. Evicted: the worst shoes drink 2.",
-    advantage:
-      "A top percentage Rattata goes for your laces and you still outrun it. Give 2.",
+    even: "Wild Rattata chews on everyone's shoelaces. The worst shoes at the table drink 2.",
+    advantage: "Wild Rattata goes for your laces and you outrun it. Give 2.",
     disadvantage:
       "Wild Rattata skips the laces and bites your ankle. Drink 4 on one foot.",
   }),
@@ -114,7 +113,7 @@ const route1: CardDefinition[] = [
     "Joey says his Rattata is in the top percentage of Rattata. Prove him wrong. Roll d20.",
     vs(
       "It was. Drink 3 and apologize to Joey.",
-      "Top percentage, bottom of the bracket. The player on your right plays Joey, sobbing, or drinks 2.",
+      "His Rattata faints and Joey sobs. Give 2.",
     ),
   ),
   challenge(
@@ -144,10 +143,10 @@ const route1: CardDefinition[] = [
     0,
     "route-mystery-egg",
     "Mystery Egg",
-    "A stranger in a trench coat hands you an egg. It's warm. Too warm.",
+    "A stranger in a trench coat hands you an egg. It's warm. Too warm. Crack it?",
     9,
     "It hatches into a Togepi and pisses on you. Drink 3.",
-    "It hatches into something useful. Name it: the player on your left gives 2 and does its cry.",
+    "It hatches! Name the baby, do its cry, and give 2.",
     ["Hand it back", "Crack it"],
     "die",
   ),
@@ -247,7 +246,7 @@ const route2: CardDefinition[] = [
     "Wild Wurmple appeared! Nobody knows what it becomes. Not even Wurmple. Roll 2d6.",
     pair(
       "Existential dread. Drink 2 and name your biggest regret.",
-      "It becomes a footnote. Everyone says what they'd evolve into; the dullest answer drinks 2.",
+      "It wanders off to evolve. Everyone says what they'd evolve into; the dullest answer drinks 2.",
       "A pair! It evolves mid-fight into something nobody predicted. Give {total}.",
     ),
   ),
@@ -259,7 +258,7 @@ const route2: CardDefinition[] = [
       "A flock of Starly steals your snack and your dignity. Drink 4.",
   }),
   strike(1, "route-lillipup", "Lillipup", {
-    even: "Wild Lillipup wants belly rubs. Rub the nearest belly; that good boy gives 2.",
+    even: "Wild Lillipup wants belly rubs. Rub your own belly, good boy, and give 2.",
     advantage:
       "Wild Lillipup wants belly rubs, then fetches your drink. Give 3.",
     disadvantage:
@@ -282,7 +281,7 @@ const route2: CardDefinition[] = [
     {
       even: "Hiker Dave hasn't showered since Mt. Moon, but he shares his trail mix. Drink 2.",
       advantage:
-        "Unshowered since Mt. Moon, Hiker Dave is too tired to fight. Hug your left neighbor. Give 3.",
+        "Hiker Dave is too tired to fight and gives you a sweaty hug instead. Give 3.",
       disadvantage:
         "Hiker Dave hasn't showered since Mt. Moon, but his Geodude rolls you flat. Drink 4.",
     },
@@ -353,7 +352,7 @@ const route2: CardDefinition[] = [
     "Fishing",
     "route-old-rod",
     "Old Rod",
-    "Cast the Old Rod. Each bite, reel it in or cast again, deeper. Something big lives here. Roll d20.",
+    "Roll d20. Each bite wins a prize: reel in to keep them, or cast again and risk them all.",
     "A Magikarp slaps you and swims off. Drink 3.",
     "A bite! Give 2.",
     ["draught", "shield", "die"],
@@ -493,9 +492,9 @@ const route3: CardDefinition[] = [
     2,
     "route-nickit",
     "Nickit",
-    "Wild Nickit steals the drink nearest you. Roll d20 to get it back.",
+    "Wild Nickit grabs your drink and runs. Roll d20 to get it back.",
     vs(
-      "It's gone. Finish whatever you have.",
+      "You get it back, licked. Finish your drink.",
       "Recovered, with a tip. Steal a sip from any drink at the table.",
     ),
   ),
@@ -578,7 +577,7 @@ const route3: CardDefinition[] = [
     2,
     "route-hidden-item",
     "Hidden Item",
-    "The Itemfinder beeps at a bush. Somebody kick it. The drawer gives 1.",
+    "The Itemfinder beeps at a bush. You kick it and something falls out. Give 1.",
     "shield",
   ),
 ];
@@ -623,7 +622,7 @@ const route4: CardDefinition[] = [
     "Fishing",
     "route-good-rod",
     "Good Rod",
-    "Cast the Good Rod. Each bite, reel it in or cast again, deeper. Roll d20.",
+    "Roll d20. Each bite wins a prize: reel in to keep them, or cast again and risk them all.",
     "A Tentacool stings you on the way up. Drink 3.",
     "A bite! Give 2.",
     ["draught", "shield", "die"],
@@ -739,7 +738,7 @@ const route4: CardDefinition[] = [
     3,
     "route-lapras",
     "Lapras",
-    "A man in Silph Co. gives you a Lapras for free. Don't ask why. Take it?",
+    "A man in Silph Co. says the Lapras in the tank is yours if you can catch it.",
     3,
     2,
   ),
@@ -849,9 +848,9 @@ const route5: CardDefinition[] = [
     disadvantage: "Wild Haunter licks you, then uses Hypnosis. Drink 5.",
   }),
   strike(4, "route-scyther", "Scyther", {
-    even: "Wild Scyther, knives for arms, in the Safari Zone. Hold still, still enough. Drink 2 slowly.",
+    even: "Wild Scyther, knives for arms, sizes you up. Hold very still and drink 2 slowly.",
     advantage:
-      "Wild Scyther, knives for arms, in the Safari Zone. You hold still and it spares you. Give 4.",
+      "Wild Scyther, knives for arms, sizes you up. You hold still and it spares you. Give 4.",
     disadvantage:
       "Wild Scyther, knives for arms, in the Safari Zone, uses Slash. Drink 5.",
   }),
@@ -1046,7 +1045,7 @@ const route6: CardDefinition[] = [
     "You fished for a Magikarp and got its angry dad. Roll 2d6.",
     pair(
       "Hyper Beam. Drink 4, then recharge: say nothing until your next turn.",
-      "It's yours. Somehow. Give 3.",
+      "It wears itself out. Give 3.",
       "A pair! It's a red one. Give {total}.",
     ),
   ),
@@ -1064,7 +1063,7 @@ const route6: CardDefinition[] = [
     "Wild Zoroark is disguised as someone here. Accuse a player, then roll d20.",
     vs(
       "Wrong person. You and the accused drink 3.",
-      "Caught it. The accused drinks 3 and admits nothing.",
+      "Found it. The accused drinks 3 and admits nothing.",
     ),
   ),
   strike(5, "route-goodra", "Goodra", {
@@ -1110,7 +1109,7 @@ const route6: CardDefinition[] = [
     5,
     "route-fisherman",
     "Fisherman Ned",
-    "Fisherman Ned (your left neighbor) tells a fish story. Top it. Ned wins the vote: drink 4.",
+    "Your left neighbor plays Fisherman Ned and tells a fish story. Top it. Ned wins the vote: drink 4.",
   ),
   hazard(
     5,
@@ -1217,7 +1216,7 @@ const route7: CardDefinition[] = [
     "Fishing",
     "route-super-rod",
     "Super Rod",
-    "Cast the Super Rod. Each bite, reel it in or cast again, deeper. Roll d20.",
+    "Roll d20. Each bite wins a prize: reel in to keep them, or cast again and risk them all.",
     "A Feebas. Nobody wants a Feebas. Drink 3.",
     "A bite! Give 2.",
     ["draught", "die", "shield"],
@@ -1312,7 +1311,7 @@ const route7: CardDefinition[] = [
     6,
     "route-sage",
     "Sage Li",
-    "Sage Li asks: what has keys but opens no locks? 5 seconds. Wrong: drink 4.",
+    "Sage Li tests your balance: drink 2 on one foot with your eyes shut. Wobble: drink 4.",
   ),
   hazard(
     6,
@@ -1336,7 +1335,7 @@ const route7: CardDefinition[] = [
     6,
     "route-eevee-gift",
     "Gift Eevee",
-    "A man in a mansion gives you an Eevee and doesn't explain. Take it?",
+    "A man in a mansion lets an Eevee loose and says it's yours if you can catch it.",
     3,
     2,
   ),
@@ -1657,7 +1656,7 @@ const victoryRoad: CardDefinition[] = [
     8,
     "route-veteran-victory",
     "Veteran Ada",
-    "Veteran Ada wants to see your badges. Name all eight from this run. Miss one: drink 4.",
+    "Veteran Ada wants proof. Name the eight gym leaders you beat this run. Miss one: drink 4.",
   ),
   center(
     8,

@@ -420,7 +420,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
     atTier(
       4,
       roll(
-        "Opal sends out Alcremie and asks your favorite color. Roll d20.",
+        "Opal sends out Alcremie and asks your favorite color. Say pink, then roll d20.",
         vs("Wrong color. Drink 4.", "Pink. She approves. Give 4."),
       ),
     ),
@@ -558,7 +558,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
     atTier(
       6,
       duel(
-        "Olympia sends out Meowstic. Predict who at the table yawns first. Wrong: drink 4.",
+        "Olympia sends out Meowstic. Predict who at the table speaks next. Wrong: drink 4.",
       ),
     ),
   ],
@@ -617,7 +617,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
     atTier(
       7,
       duel(
-        "Volkner sends out Electivire. Bore the table with another fun fact. Nobody yawns: drink 5.",
+        'Volkner sends out Electivire. Tell a fun fact that gets a "whoa." Nobody says it: drink 5.',
       ),
     ),
   ],

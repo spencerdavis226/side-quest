@@ -115,7 +115,7 @@ export const hideouts = [
     "Team Aqua's sea cave",
     [
       gruntStrike("Team Aqua", "aqua-grunt-bandana", "Aqua Grunt", {
-        even: "An Aqua Grunt wants more sea. Spit your drink back in the glass. Soggy. Drink 2.",
+        even: "An Aqua Grunt wants more sea and splashes you with it. Soggy. Drink 2.",
         advantage:
           "An Aqua Grunt in a bandana wants more sea, and floods himself. Give 3.",
         disadvantage:

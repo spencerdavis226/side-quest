@@ -101,7 +101,7 @@ export const moreWilds: CardDefinition[][] = [
       "Wild Ralts senses your feelings and looks worried. Roll d20.",
       vs(
         "It cries with you. Drink 3 for your feelings.",
-        "It feels better. Compliment the player on your left: they give 3.",
+        "It cheers up. Compliment the player on your left, then give 3.",
       ),
     ),
     wild(
@@ -151,7 +151,7 @@ export const moreWilds: CardDefinition[][] = [
       "A tree blocks the road and won't make eye contact. Roll d20.",
       vs(
         "It's Sudowoodo. Drink 3 and stand still like a tree.",
-        "You water it. It panics and runs. Everyone runs in place; the last to stop drinks 3.",
+        "You water it. It panics and runs. Everyone runs in place; the last to start drinks 3.",
       ),
     ),
     strike(5, "route-rotom", "Rotom", {

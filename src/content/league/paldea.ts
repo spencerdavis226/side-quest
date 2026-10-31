@@ -149,7 +149,7 @@ export const paldea: Region = {
       "hassel",
       "Hassel",
       "Dragon",
-      "Hassel weeps at art. Paint the table in words. No laugh or tear: drink 5.",
+      "Hassel weeps at art. Describe the table like a painting. Nobody is moved: drink 5.",
     ),
     eliteFour(
       "crispin",

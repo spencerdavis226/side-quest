@@ -75,7 +75,7 @@ export const moments: CardDefinition[][] = [
       "Cave Echo",
       "Mt. Moon",
       "group",
-      'Pass "Zubat" around the table, each player louder. The first to break the pattern drinks 2.',
+      'Pass "Zubat" around the table, each player louder. Anyone not louder drinks 2.',
     ),
     moment(
       1,
@@ -153,7 +153,7 @@ export const moments: CardDefinition[][] = [
       "Safari Toss",
       "Safari Zone",
       "challenge",
-      "The player on your right flicks a coaster across the table. Flat: you give 2. Else they drink 2.",
+      "Flick a coaster into an empty cup across the table, one try. In: give 3. Miss: drink 2.",
     ),
     moment(
       3,
@@ -196,7 +196,7 @@ export const moments: CardDefinition[][] = [
       "Hidden Machine",
       "HM",
       "category",
-      "Say which chore you'd use Cut or Strength on. The funniest answer, by vote, gives 3.",
+      "Everyone names a chore they'd use Cut or Strength on. The funniest, by vote, gives 3.",
     ),
     moment(
       4,
@@ -209,10 +209,10 @@ export const moments: CardDefinition[][] = [
     moment(
       4,
       "route-weather-report",
-      "Weather Report",
-      "Weather",
+      "Rain Dance",
+      "Category",
       "category",
-      "Go around naming Pokémon that change with the weather. The first to stall drinks 2.",
+      "Go around naming Water-type Pokémon. The first to stall or repeat drinks 2.",
     ),
     moment(
       4,
@@ -275,7 +275,7 @@ export const moments: CardDefinition[][] = [
       "Pep Talk",
       "Pep Talk",
       "challenge",
-      "Give the player on your right a 10-second pep talk. Moved: they give 3. Unmoved: they drink 2.",
+      "Give the player on your right a 10-second pep talk. They're moved: give 3. They're not: drink 2.",
     ),
     moment(
       6,
@@ -291,7 +291,7 @@ export const moments: CardDefinition[][] = [
       "Dream Team",
       "Dream Team",
       "category",
-      "Name a team of six in 15 seconds. The player who stalls drinks 2.",
+      "Name a team of six Pokémon in 15 seconds. Stall: drink 2.",
     ),
     moment(
       6,
@@ -335,7 +335,7 @@ export const moments: CardDefinition[][] = [
       "Trainer Card",
       "Trainer Card",
       "group",
-      "Each player says their trainer name aloud. The most ridiculous, by vote, gives 3.",
+      "Everyone makes up a trainer name for themselves. The best, by vote, gives 3.",
     ),
     moment(
       7,

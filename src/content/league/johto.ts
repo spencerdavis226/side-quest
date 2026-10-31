@@ -164,7 +164,7 @@ export const johto: Region = {
     legendary(
       "ho-oh",
       "Ho-Oh",
-      "Ho-Oh used Sacred Fire. It burns going down and comes back twice as hot. Roll d6.",
+      "Ho-Oh used Sacred Fire. Roll d6 to ride it out.",
       rollTable(
         1,
         6,
@@ -173,13 +173,13 @@ export const johto: Region = {
             ? {
                 min: n,
                 max: n,
-                instruction: `You ride the fire. Give ${n - 2}, then ${(n - 2) * 2} more.`,
+                instruction: `You ride the fire. Give ${(n - 2) * 3}.`,
                 win: true,
               }
             : {
                 min: n,
                 max: n,
-                instruction: `Sacred Fire. Drink ${5 - n}, then ${(5 - n) * 2} more.`,
+                instruction: `Burned. Drink ${(5 - n) * 3}.`,
               },
         ),
       ),
@@ -201,7 +201,7 @@ export const johto: Region = {
       "Celebi travels in time. Relive your most regrettable night out for the table, then roll d20.",
       d20(
         LEGENDARY_NEED,
-        "It makes you live it again. Drink 5 and tell the ending you skipped.",
+        "It makes you live it again. Drink 5.",
         "You rewrite history. Pick a player: they tell their worst night out or drink 4.",
         { crit: "That night never happened. Give 8." },
       ),

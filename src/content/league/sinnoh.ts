@@ -94,13 +94,13 @@ export const sinnoh: Region = {
       "volkner",
       "Volkner",
       "Beacon",
-      "Volkner is so bored he blacked out the city. Bore the table with a fun fact, then roll d20.",
+      "Volkner is so bored he blacked out the city. Tell the table a fun fact, then roll d20.",
       d20(
         GYM_NEED[7],
-        "He yawns at you. Drink 6 and tell another fun fact.",
-        "You spark him up. Whoever yawned during your fact drinks 4.",
+        "He yawns at you. Drink 6.",
+        "You spark him up. Give 4.",
         {
-          crit: "He's finally interested. Everyone else drinks 4.",
+          crit: "He's finally interested. Everyone else drinks 8.",
           fumble: "Blackout. Finish your drink in the dark.",
         },
       ),
