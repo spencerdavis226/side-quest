@@ -11,6 +11,7 @@ import { applyPhases } from "./dungeon/phases";
 import { applyJinxes } from "./dungeon/jinxes";
 import { floorMoments } from "./dungeon/moments";
 import { applyOutcomes } from "./dungeon/outcomes";
+import { applyVariety } from "./dungeon/variety";
 import { applyKits } from "./dungeon/kits";
 import {
   closingCards,
@@ -86,19 +87,22 @@ const deck = [
 // (`naturals.ts`), in Pub Crawl and in the plain modes alike.
 // Boss phases (2026-10-25) go on before the naturals pass, so their d20s
 // double on a 20 and a 1 too.
+// The variety pass (2026-10-31) rewrites rooms by ID after the outcomes.
 export const dungeonCards: CardDefinition[] = applyPhases(
-  applyOutcomes([
-    ...deck,
-    ...Object.values(floors).flatMap((f) => f.finds),
-    ...omens,
-    ...classes,
-    ...upperLandings,
-    ...lowerLandings,
-    ...queueCards,
-    ...stairsCards,
-    ...closingCards,
-    ...hiddenRoomCards,
-  ]),
+  applyVariety(
+    applyOutcomes([
+      ...deck,
+      ...Object.values(floors).flatMap((f) => f.finds),
+      ...omens,
+      ...classes,
+      ...upperLandings,
+      ...lowerLandings,
+      ...queueCards,
+      ...stairsCards,
+      ...closingCards,
+      ...hiddenRoomCards,
+    ]),
+  ),
 ).map(withNaturals);
 applyKits(dungeonCards);
 // Curses became jinxes (2026-10-25): one spoken system, not two.

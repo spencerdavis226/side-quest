@@ -422,6 +422,14 @@ export interface PartyState {
    * card ID and the d20 face, kept until the card is put aside so a reload
    * never throws again. */
   throw?: { id: string; face: number };
+  /** The caught Pokémon sent into the d20 battle face up (2026-10-31,
+   * owner: "power groups", a Nuzlocke): its card ID, still on the team. Its
+   * bonus (`assistBonus`) joins the roll; cleared when the card is put
+   * aside. */
+  assist?: string;
+  /** The caught Pokémon that fainted on the card just put aside (lost with
+   * it sent in): off the team for good. News until the next put-aside. */
+  fainted?: string;
 }
 export interface PackDefinition {
   version: 1;

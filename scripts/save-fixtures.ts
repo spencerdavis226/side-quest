@@ -237,6 +237,10 @@ const situations: [string, GameConfig, Find][] = [
     league,
     (s) => partyTeam(s.quest).some((m) => canSendIn(s, m.id)),
   ],
+  // A caught Pokémon sent into a d20 fight, before the roll, and one that
+  // fainted when its fight was lost (2026-10-31, a Nuzlocke).
+  ["league-teammate-assist", league, (s) => !!party(s).assist && !s.roll],
+  ["league-teammate-fainted", league, (s) => !!party(s).fainted],
   [
     "league-gym-ace",
     league,

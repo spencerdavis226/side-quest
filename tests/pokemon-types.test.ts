@@ -94,6 +94,8 @@ describe("League type marks", () => {
         "route-ledge",
         "route-mystery-egg",
         "route-old-rod",
+        "route-good-rod",
+        "route-super-rod",
         "route-slots",
         "route-safari",
         "route-silph-scope",

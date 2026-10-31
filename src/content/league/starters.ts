@@ -166,9 +166,9 @@ export const starters: CardDefinition[] = [
     [
       {
         title: "Marshtomp",
-        omen: { hearts: -4, hurt: { boss: -1 }, loot: ["shield"] },
+        omen: { hearts: -5, hurt: { boss: -1 }, loot: ["shield"] },
       },
-      { title: "Swampert", omen: { hearts: -2, hurt: { boss: -1 } } },
+      { title: "Swampert", omen: { hearts: -3, hurt: { boss: -1 } } },
     ],
   ),
   // Huge HP, too proud to finish bosses quickly until it grows up.

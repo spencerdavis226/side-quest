@@ -249,19 +249,13 @@ test("@release Eevee's evolution lets the table pick its form", async ({
       ),
     ),
   );
-  // Evolve splits into the three forms; Press B stays.
-  await expect(plaques(page)).toHaveCount(4);
+  // Never more than three plaques (2026-10-31): the three forms fold into
+  // one Evolve plaque beside Press B, and it opens a sheet of forms.
+  await expect(plaques(page)).toHaveCount(2);
   await expect(plaques(page).nth(0)).toHaveAccessibleName(
-    "Vaporeon · drink 3: your starter evolves into Vaporeon",
+    "Evolve, drink 3: pick one of 3",
   );
-  await expect(plaques(page).nth(3)).toHaveAccessibleName("Press B: 1 HP back");
-  // Four plaques fit inside the card on a small phone.
-  const [card, last] = await Promise.all([
-    page.locator(".game-card").boundingBox(),
-    plaques(page).nth(3).boundingBox(),
-  ]);
-  expect(last!.x + last!.width).toBeLessThanOrEqual(card!.x + card!.width);
-  // Nothing spills out of a plaque, and a form's name stays whole.
+  await expect(plaques(page).nth(1)).toHaveAccessibleName("Press B: 1 HP back");
   for (const spilled of await plaques(page).evaluateAll((els) =>
     els.map((e) => [
       e.scrollHeight - e.clientHeight,
@@ -269,14 +263,17 @@ test("@release Eevee's evolution lets the table pick its form", async ({
     ]),
   ))
     expect(Math.max(...spilled)).toBeLessThanOrEqual(1);
-  await expect(plaques(page).nth(0).locator(".offer-name")).toHaveText(
-    "Vaporeon",
-  );
-  await expect(plaques(page).nth(0).locator(".offer-price")).toHaveText(
-    "drink 3",
-  );
   await page.screenshot({ path: info.outputPath("eevee-320.png") });
-  await plaques(page).nth(1).click();
+  await plaques(page).nth(0).click();
+  const forms = page.getByRole("dialog", { name: "Evolve into" });
+  await expect(forms.locator(".extras-row")).toHaveCount(3);
+  await expect(forms.locator(".extras-row strong")).toHaveText([
+    "Vaporeon",
+    "Jolteon",
+    "Flareon",
+  ]);
+  await page.screenshot({ path: info.outputPath("eevee-forms-320.png") });
+  await forms.locator(".extras-row").nth(1).click();
   await expect(page.locator(".evolution-banner")).toHaveText(
     /What\? Eevee is evolving!\s*Jolteon/,
   );
@@ -792,12 +789,11 @@ test("every Pokémon's thrown-ball lines fit its face at 320x568", async ({
 
 // The League's caught Pokémon at 320px: a beaten wild Pokémon is caught for
 // a drink and kept in the bag, and one whose type beats the foe is used on it.
-test("@release a beaten wild Pokémon is caught into the bag, and used to win a battle", async ({
+test("@release a beaten wild Pokémon is caught into the bag, and sent in for +1", async ({
   page,
 }, info) => {
   await page.setViewportSize({ width: 320, height: 568 });
   const PIDGEY = "pokemon.route-pidgey";
-  const ODDISH = "pokemon.route-oddish";
   // Pikachu's Electric beats Pidgey's Flying: the strike is won.
   await seed(page, reveal(leagueAt(PIDGEY, {}, 0, "pokemon.starter-pikachu")));
   const throwBall = page.getByRole("button", {
@@ -827,37 +823,29 @@ test("@release a beaten wild Pokémon is caught into the bag, and used to win a 
   await expect
     .poll(async () => (await saved(page)).quest.party.team)
     .toEqual([PIDGEY]);
-  // Squirtle's Water is weak to Oddish's Grass; Pidgey's Flying beats it.
-  const s = leagueAt(ODDISH, {}, 0, "pokemon.starter-squirtle");
+  // Machop (Fighting, a d20 fight on Route 3); Pidgey's Flying beats it
+  // and Pikachu's Electric is even on it (2026-10-31: a send-in adds to the
+  // roll, a Nuzlocke).
+  const MACHOP = "pokemon.route-machop";
+  const s = leagueAt(MACHOP, {}, 0, "pokemon.starter-pikachu");
   const q = s.quest!;
   const finale = [...q.finale];
-  const swap = (at: number, id: string) => {
-    const was = finale.indexOf(id);
-    if (was >= 0) finale[was] = finale[at];
-    finale[at] = id;
-  };
-  swap(q.step, PIDGEY);
-  swap(q.step + 1, ODDISH);
+  const was = finale.indexOf(PIDGEY);
+  if (was >= 0) finale[was] = finale[1];
+  finale[1] = PIDGEY;
   await seed(
     page,
     reveal({
       ...s,
-      discarded: q.step + 1,
-      previousId: PIDGEY,
-      quest: {
-        ...q,
-        finale,
-        step: q.step + 1,
-        party: { ...q.party!, team: [PIDGEY] },
-      },
+      previousId: finale[q.step - 1],
+      quest: { ...q, finale, party: { ...q.party!, team: [PIDGEY] } },
     }),
   );
-  // A strike has no Won and Lost, so the one send-in sits on the card.
   const go = page.getByRole("button", { name: /^Go, Pidgey!/ });
   await expect(go).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: /^Use something/ }),
-  ).toHaveCount(0);
+  await expect(go).toHaveAccessibleName(
+    "Go, Pidgey! +1 to this roll. Win and it stays; lose and it faints.",
+  );
   await page.screenshot({ path: info.outputPath("send-in.png") });
   // The caught Pokémon sits in the bag chip and the bag dialog.
   await expect(page.locator(".tag-satchel")).toHaveAccessibleName(/Pidgey/);
@@ -866,17 +854,21 @@ test("@release a beaten wild Pokémon is caught into the bag, and used to win a 
   await expect(dialog.locator(".crawl-team li")).toContainText("Pidgey");
   await page.screenshot({ path: info.outputPath("bag-caught.png") });
   await page.keyboard.press("Escape");
-  // Go, Pidgey! wins the battle and uses it up.
-  const hearts = (await saved(page)).quest.party.hearts;
-  const step = (await saved(page)).quest.step;
+  // The gem shows the roll to beat; Pidgey takes one off it.
+  const gem = page.locator(".game-card .stake-target b");
+  const need = Number((await gem.textContent())!.replace("+", ""));
   const box = (await go.boundingBox())!;
   expect(box.height).toBeGreaterThanOrEqual(44);
   expect(box.x + box.width).toBeLessThanOrEqual(320);
   await go.click();
-  await expect.poll(async () => (await saved(page)).quest.step).toBe(step + 1);
+  await expect(gem).toHaveText(`${need - 1}+`);
+  await expect(page.locator(".tag-assist")).toHaveAccessibleName(
+    "Pidgey sent in: +1 to the roll",
+  );
   const after = await saved(page);
-  expect(after.quest.party.team ?? []).toEqual([]);
-  expect(after.quest.party.hearts).toBe(hearts);
+  expect(after.quest.party.assist).toBe(PIDGEY);
+  expect(after.quest.party.team).toEqual([PIDGEY]);
+  await page.screenshot({ path: info.outputPath("sent-in.png") });
 });
 
 // The Fisherman (Water, which beats the Fire starter) face up on Route 6, with
@@ -995,13 +987,11 @@ for (const width of [320, 390]) {
         expect(count, name).toBe(ready.length ? 3 : 2);
       }
     }
-    // Taking a send-in from the sheet plays it: the battle is won and the
-    // Pokémon leaves the team.
-    const s = battleWith({ loot: ["smoke"] }, MATES);
+    // A battle settled with Won and Lost has no roll for a caught Pokémon
+    // to add to (2026-10-31): no send-in, even with the whole team ready.
+    const s = battleWith({}, MATES);
     await seed(page, s);
-    await page.getByRole("button", { name: /^Use something/ }).click();
-    await page.getByRole("button", { name: /^Go, Rotom!/ }).click();
-    await expect(page.getByRole("dialog")).toHaveCount(0);
-    expect((await saved(page)).quest.party.team).toEqual([MATES[1]]);
+    await expect(page.locator(".card-choice.verdict")).toBeVisible();
+    await expect(page.getByRole("button", { name: /^Go, / })).toHaveCount(0);
   });
 }

@@ -673,7 +673,8 @@ test("the party dialog lays out the run: adventurer, boons and jinx", async ({
   // One row a system (2026-10-31): hearts, fights, bosses, landings, the
   // satchel and gear, jinxes.
   await expect(guide.locator(".guide-rows li")).toHaveCount(6);
-  await expect(guide.locator(".crawl-legend dd")).toHaveCount(7);
+  // The seals, the naturals, and the roll-to-beat gem (2026-10-31).
+  await expect(guide.locator(".crawl-legend dd")).toHaveCount(8);
   await expect(guide.locator(".crawl-legend")).toContainText(
     "A natural 1 doubles a loss",
   );
@@ -688,7 +689,9 @@ test("@release losing the last heart wipes the party", async ({
   await seed(
     page,
     rolled(
-      reveal(crawlAt("dungeon.tab-goblin", STEP.floor1 + 2, { hearts: 1 })),
+      // Keg Spider, a d20 fight (the Tab Goblin is a table duel since
+      // 2026-10-31).
+      reveal(crawlAt("dungeon.keg-spider", STEP.floor1 + 2, { hearts: 1 })),
       1,
     ),
   );

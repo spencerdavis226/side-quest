@@ -500,6 +500,8 @@ export const packs: PackDefinition[] = [
           intro: "Your journey begins",
           pick: 4,
           cardIds: [
+            "pokemon.route-professors-quiz",
+            "pokemon.route-name-your-rival",
             "pokemon.route-pidgey",
             "pokemon.route-rattata",
             "pokemon.route-zigzagoon",
@@ -598,6 +600,8 @@ export const packs: PackDefinition[] = [
           intro: "The road gets longer",
           pick: 4,
           cardIds: [
+            "pokemon.route-whos-that-3",
+            "pokemon.route-cool-contest",
             "pokemon.route-psyduck",
             "pokemon.route-machop",
             "pokemon.route-shinx",
@@ -648,6 +652,8 @@ export const packs: PackDefinition[] = [
           intro: "Halfway to the League",
           pick: 4,
           cardIds: [
+            "pokemon.route-good-rod",
+            "pokemon.route-pokerap",
             "pokemon.route-ponyta",
             "pokemon.route-sableye",
             "pokemon.route-croagunk",
@@ -853,6 +859,8 @@ export const packs: PackDefinition[] = [
           intro: "The wild gets wilder",
           pick: 4,
           cardIds: [
+            "pokemon.route-whos-that-5",
+            "pokemon.route-beauty-contest",
             "pokemon.route-haunter",
             "pokemon.route-scyther",
             "pokemon.route-tauros",
@@ -904,6 +912,8 @@ export const packs: PackDefinition[] = [
           intro: "Deeper into the region",
           pick: 4,
           cardIds: [
+            "pokemon.route-whos-that-6",
+            "pokemon.route-day-care-gossip",
             "pokemon.route-gyarados",
             "pokemon.route-lucario",
             "pokemon.route-zoroark",
@@ -951,6 +961,8 @@ export const packs: PackDefinition[] = [
           intro: "The badges get heavier",
           pick: 4,
           cardIds: [
+            "pokemon.route-super-rod",
+            "pokemon.route-smart-contest",
             "pokemon.route-snorlax-awake",
             "pokemon.route-garchomp",
             "pokemon.route-hydreigon",
@@ -973,6 +985,7 @@ export const packs: PackDefinition[] = [
             "pokemon.route-dream-team",
             "pokemon.route-center-choir",
             "pokemon.route-last-toast",
+            "pokemon.route-friendship-glow",
           ],
           elite: ["pokemon.route-ace-scientist", "pokemon.route-ace-burglar"],
         },
@@ -997,6 +1010,8 @@ export const packs: PackDefinition[] = [
           intro: "One badge to go",
           pick: 4,
           cardIds: [
+            "pokemon.route-whos-that-8",
+            "pokemon.route-tough-contest",
             "pokemon.route-evolving-2",
             "pokemon.route-tyranitar",
             "pokemon.route-metagross",
@@ -2119,6 +2134,7 @@ export const packs: PackDefinition[] = [
                   "dungeon.wine-swirl",
                   "dungeon.wine-vintage",
                   "dungeon.wine-cheers",
+                  "dungeon.wine-best-year",
                 ],
                 elite: [
                   "dungeon.wine-snob",
@@ -2190,6 +2206,7 @@ export const packs: PackDefinition[] = [
                   "dungeon.brewery-beer-names",
                   "dungeon.brewery-foam-mustache",
                   "dungeon.brewery-quality-control",
+                  "dungeon.brewery-name-a-beer",
                 ],
                 elite: [
                   "dungeon.the-brewmaster",
@@ -2375,6 +2392,7 @@ export const packs: PackDefinition[] = [
                   "dungeon.catacombs-skull-face",
                   "dungeon.catacombs-bone-count",
                   "dungeon.catacombs-candlelight",
+                  "dungeon.catacombs-epitaphs",
                 ],
                 elite: [
                   "dungeon.crypt-keepers-mom",
@@ -2446,6 +2464,7 @@ export const packs: PackDefinition[] = [
                   "dungeon.sewers-rubber-duck",
                   "dungeon.sewers-gator-chomp",
                   "dungeon.sewers-clean-water",
+                  "dungeon.sewers-down-the-drain",
                 ],
                 elite: [
                   "dungeon.clog-beast",
@@ -2517,6 +2536,7 @@ export const packs: PackDefinition[] = [
                   "dungeon.freezer-cold-take",
                   "dungeon.freezer-huddle",
                   "dungeon.freezer-hot-cocoa",
+                  "dungeon.freezer-cold-takes",
                 ],
                 elite: [
                   "dungeon.the-ice-queen",
@@ -2619,6 +2639,7 @@ export const packs: PackDefinition[] = [
                   "dungeon.taproom-message-bottle",
                   "dungeon.taproom-man-overboard",
                   "dungeon.taproom-dry-land",
+                  "dungeon.taproom-shanty-round",
                 ],
                 elite: [
                   "dungeon.sea-hag",
@@ -2678,6 +2699,7 @@ export const packs: PackDefinition[] = [
                   "dungeon.kitchen-last-meal",
                   "dungeon.kitchen-order-up",
                   "dungeon.kitchen-staff-meal",
+                  "dungeon.kitchen-drunk-food",
                 ],
                 elite: [
                   "dungeon.head-chef",
@@ -2737,6 +2759,7 @@ export const packs: PackDefinition[] = [
                   "dungeon.rooftop-shooting-star",
                   "dungeon.rooftop-pigeon",
                   "dungeon.rooftop-fresh-air",
+                  "dungeon.rooftop-first-to-post",
                 ],
                 elite: [
                   "dungeon.penthouse-owner",

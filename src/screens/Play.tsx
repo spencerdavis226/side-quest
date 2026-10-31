@@ -11,7 +11,7 @@ import {
 } from "react";
 import type { SessionState, CardDefinition, Loot, Offer } from "../game/types";
 import { diceResultText } from "../presentation/dice/result-text";
-import { diceNotation } from "../game/dice";
+import { diceNotation, rollTarget } from "../game/dice";
 import {
   awaitingCatch,
   thrownBall,
@@ -29,7 +29,9 @@ import {
   strikeOutcome,
   hitsNeeded,
   omenForm,
+  formEffect,
 } from "../game/engine";
+import { describeChange } from "../game/omenText";
 import type { Motion } from "../presentation/controller";
 import { cardPacks } from "../presentation/packs";
 import { CardFace } from "../components/Cards";
@@ -41,6 +43,7 @@ import {
 } from "../components/CardActions";
 import {
   ExtrasSheet,
+  FanPlaque,
   UsePlaque,
   buildExtras,
   OfferPlaque,
@@ -51,7 +54,10 @@ import {
   usableItems,
 } from "../components/Crawl";
 import { crawlTheme } from "../components/crawlTheme";
-import { extrasLayout } from "../components/extras";
+import { extrasLayout, foldBranches } from "../components/extras";
+import { TypeMark } from "../components/LeagueMarks";
+import { BallThrowStage } from "../components/BallThrow";
+import { CrawlIcon } from "../components/Crawl";
 // A dice overlay that can't be fetched (offline before it was cached) must
 // not strand a roll: the saved result goes straight to the card instead.
 type DiceProps = ComponentProps<
@@ -185,6 +191,33 @@ export function Play({
           ? [{ offer, i, branch: { name: next, index: 0 } }]
           : [{ offer, i, branch: undefined }],
   );
+  // Never more than three across (2026-10-31): Eevee's three forms beside
+  // Press B fold into one Evolve plaque that opens a sheet of forms.
+  const evolveAt = (offers ?? []).findIndex((o) => o.evolve);
+  const fold = foldBranches(plaques.length, branches?.length ?? 0);
+  const [fanning, setFanning] = useState<number | null>(null);
+  const fanSheet = fold && fanning === session.discarded;
+  const branchRows =
+    fold && form && evolveAt >= 0
+      ? form.card.evolves!.map((to, index) => {
+          const words = crawl.omenWords;
+          const now = formEffect(session.quest) ?? {};
+          const base = (session.quest?.party?.max ?? 0) - (now.hearts ?? 0);
+          return {
+            key: `branch-${index}`,
+            long: true,
+            name: to.title,
+            does: words ? describeChange(now, to.omen, words, base) : "",
+            mark: to.type ? (
+              <TypeMark type={to.type} />
+            ) : (
+              <CrawlIcon name="adventurer" theme={crawl} />
+            ),
+            run: () => onOffer?.(evolveAt, index),
+            plaque: null,
+          };
+        })
+      : [];
   // Secret and timed cards: plaques once the card has landed face up; a timed
   // card stays on the table until its time is up.
   const actions = useCardActions(
@@ -380,6 +413,9 @@ export function Play({
                     shown={session.phase === "revealed" ? actions.shown : null}
                     party={session.quest?.party}
                     hits={hitsNeeded(session.quest, card)}
+                    target={
+                      session.quest?.party ? rollTarget(session, card) : null
+                    }
                     crawl={crawl}
                     matchup={cardMatchup(session.quest, card)}
                     strike={strikeOutcome(session.quest, card)}
@@ -438,7 +474,38 @@ export function Play({
               />
             </div>
           )}
-          {offers && (
+          {offers && fold && (
+            <div
+              ref={choiceRef}
+              className={`card-choice offers plaques-${offers.length}`}
+              role="group"
+              aria-label="Your choice"
+            >
+              {offers.map((offer, i) =>
+                offer.evolve ? (
+                  <FanPlaque
+                    key={i}
+                    name="Evolve"
+                    under={offer.label.split(" · ")[1] ?? offer.label}
+                    icon="adventurer"
+                    count={branchRows.length}
+                    onOpen={() => setFanning(session.discarded)}
+                    theme={crawl}
+                  />
+                ) : (
+                  <OfferPlaque
+                    key={i}
+                    offer={offer}
+                    index={i}
+                    can={canTakeOffer(session, i)}
+                    onTake={onOffer}
+                    theme={crawl}
+                  />
+                ),
+              )}
+            </div>
+          )}
+          {offers && !fold && (
             <div
               ref={choiceRef}
               className={`card-choice offers plaques-${plaques.length}`}
@@ -552,6 +619,23 @@ export function Play({
             />
           </Suspense>
         )}
+      {/* The ball throw, played big over the table (2026-10-31). */}
+      <BallThrowStage
+        ball={ball}
+        throwKey={ball ? `${card.id}-${session.discarded}` : null}
+        name={card.title}
+      />
+      {fanSheet && (
+        <ExtrasSheet
+          title="Evolve into"
+          extras={branchRows}
+          onTake={(row) => {
+            setFanning(null);
+            row.run();
+          }}
+          onClose={() => setFanning(null)}
+        />
+      )}
       {usingSheet && (
         <ExtrasSheet
           extras={extraList}

@@ -251,6 +251,21 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
         !currentCard(s).catchRate ||
         !whole(p.throw.face, 1) ||
         p.throw.face > 20)) ||
+    // The caught Pokémon sent into the d20 battle face up (2026-10-31): one
+    // on the team.
+    (p.assist !== undefined &&
+      (typeof p.assist !== "string" ||
+        s.phase !== "revealed" ||
+        !p.team?.includes(p.assist) ||
+        !currentCard(s).dice ||
+        !currentCard(s).battle)) ||
+    // The caught Pokémon that fainted on the card just put aside: dealt,
+    // typed, and off the team.
+    (p.fainted !== undefined &&
+      (typeof p.fainted !== "string" ||
+        !dealt.includes(p.fainted) ||
+        !!p.team?.includes(p.fainted) ||
+        !finaleCard(s.quest!, p.fainted)?.type)) ||
     // The beat of the phased boss put aside last.
     (p.beat !== undefined &&
       (!whole(p.beat, 1) ||

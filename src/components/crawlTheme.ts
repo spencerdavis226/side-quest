@@ -401,7 +401,7 @@ const league: CrawlTheme = {
       {
         icon: "heart",
         title: "Caught Pokémon",
-        line: "Beat a wild Pokémon and you can catch it for a drink. It waits in the bag (two at most). Use one on a battle its type beats and it wins it, then it's gone.",
+        line: "Beat a wild Pokémon and you can catch it for a drink. It waits in the bag (two at most). Send one into a d20 battle its type beats: it adds to the roll, more the harder it was to catch. Win and it stays; lose and it faints for good.",
       },
       {
         icon: "satchel",

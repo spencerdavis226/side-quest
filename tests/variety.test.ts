@@ -11,7 +11,28 @@ import type { CardDefinition, QuestStage } from "../src/game/types";
 // human still reads the cards. Every pool must hold the floor below; a pool
 // listed in REWORKED has had its variety pass and holds the higher bar.
 // Add a pool to REWORKED when its pass is done.
-const REWORKED = ["The Cellar", "Route 2"];
+// A Pub Crawl floor's higher bar is ten kinds of card; a League route's
+// eight (its strikes already read three ways, and it deals four cards, not
+// eight).
+const REWORKED: Readonly<Record<string, number>> = {
+  "The Cellar": 10,
+  "The Wine Cellar": 10,
+  "The Brewery": 10,
+  "The Catacombs": 10,
+  "The Sewers": 10,
+  "The Walk-in Freezer": 10,
+  "The Drowned Taproom": 10,
+  "The Kitchen": 10,
+  "The Rooftop Bar": 10,
+  "Route 1": 8,
+  "Route 2": 8,
+  "Route 3": 8,
+  "Route 4": 8,
+  "Route 5": 8,
+  "Route 6": 8,
+  "Route 7": 8,
+  "Route 8": 8,
+};
 
 /** What the table does with a card, by its fields. */
 export function kind(c: CardDefinition): string {
@@ -49,6 +70,7 @@ function flat(c: CardDefinition): boolean {
     return (
       setup &&
       !others.test(c.rules) &&
+      !others.test(c.dice.instruction ?? "") &&
       (c.dice.outcomes ?? []).every((o) => said(o.instruction))
     );
   }
@@ -92,7 +114,7 @@ const pools = [
 describe("variety in each floor and route", () => {
   it("finds every crawl pool, and every reworked one", () => {
     expect(pools.length).toBeGreaterThanOrEqual(17);
-    for (const label of REWORKED)
+    for (const label of Object.keys(REWORKED))
       expect(pools.map((p) => p.label)).toContain(label);
   });
   it.each(pools)("$label mixes its cards", (p) => {
@@ -101,9 +123,10 @@ describe("variety in each floor and route", () => {
     // rooms (32%) and Victory Road's five kinds.
     expect(p.kinds, "kinds of card").toBeGreaterThanOrEqual(5);
     expect(p.flat, "drawer-only bare pours").toBeLessThanOrEqual(0.35);
-    if (!REWORKED.includes(p.label)) return;
+    const kinds = REWORKED[p.label];
+    if (!kinds) return;
     expect(p.d20, "single-d20 share").toBeLessThanOrEqual(0.35);
-    expect(p.kinds, "kinds of card").toBeGreaterThanOrEqual(10);
+    expect(p.kinds, "kinds of card").toBeGreaterThanOrEqual(kinds);
     expect(p.flat, "drawer-only bare pours").toBeLessThanOrEqual(0.05);
     expect(p.involves, "cards where someone else acts").toBeGreaterThanOrEqual(
       0.4,

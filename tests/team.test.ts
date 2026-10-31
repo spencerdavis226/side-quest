@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   advance,
+  assistBonus,
   awaitingCatch,
   canSendIn,
   cardMatchup,
@@ -17,7 +18,7 @@ import {
   takeOffer,
   type Random,
 } from "../src/game/engine";
-import { returnToCard, rollDice } from "../src/game/dice";
+import { returnToCard, rollBonus, rollDice } from "../src/game/dice";
 import { parseSession } from "../src/app/persistence";
 import { cards, packs } from "../src/content/catalog";
 import { gymTiers } from "../src/content/pokemon-league";
@@ -25,8 +26,9 @@ import type { GameConfig, SessionState } from "../src/game/types";
 
 // The League's caught Pokémon (2026-10-25, bag items since 2026-10-26): a
 // beaten wild Pokémon can be caught, two at most, and one whose type beats
-// the foe can be used on that battle: it wins it and is spent. And gyms 5
-// to 8 send out an ace.
+// the foe can be sent into a d20 fight (2026-10-31, a Nuzlocke): it adds
+// +1 to +5 by how hard it was to catch, stays after a win and faints for
+// good after a loss. And gyms 5 to 8 send out an ace.
 const league: GameConfig = {
   version: 1,
   packIds: ["pokemon"],
@@ -56,7 +58,29 @@ function facing(starter: string, ...rooms: string[]) {
   s = advance(advance(s, zero), zero); // The starter, put aside.
   return advance(s, zero); // Reveal the first room.
 }
+/** Where each route's first card is dealt: the starter, then four cards
+ * and a gym a route. */
+const ROUTE_2 = 6;
+const ROUTE_3 = 11;
+/** `member` caught on Route 1, then `foe` revealed at `at`. */
+function onRoute(starter: string, member: string, foe: string, at: number) {
+  let s = facing(starter, member);
+  s = advance(caught(s), zero);
+  const finale = [...s.quest!.finale];
+  const was = finale.indexOf(foe);
+  if (was >= 0) finale[was] = finale[at];
+  finale[at] = foe;
+  s = {
+    ...s,
+    quest: { ...s.quest!, finale, step: at },
+    discarded: at,
+    previousId: finale[at - 1],
+    phase: "hidden",
+  };
+  return advance(s, zero);
+}
 const PIDGEY = "pokemon.route-pidgey"; // Flying strike, Route 1
+const MACHOP = "pokemon.route-machop"; // Fighting, rolled d20, Route 3
 const ODDISH = "pokemon.route-oddish"; // Grass strike, Route 1
 const ZIGZAGOON = "pokemon.route-zigzagoon"; // Normal, rolled
 
@@ -96,80 +120,91 @@ describe("the League's team", () => {
     expect(party(s).team).toEqual(["pokemon.route-diglett", PIDGEY]);
   });
 
-  it("uses a caught Pokémon on a foe its type beats: it wins and is spent", () => {
-    // Squirtle (Water) is weak to Oddish (Grass); Pidgey (Flying) beats it.
-    let s = facing("pikachu", PIDGEY, ODDISH);
-    s = advance(caught(s), zero);
-    s = {
-      ...s,
-      quest: {
-        ...s.quest!,
-        finale: s.quest!.finale.map((id, i) =>
-          i === 0 ? "pokemon.starter-squirtle" : id,
-        ),
-        party: { ...party(s), omen: "pokemon.starter-squirtle" },
-      },
-    };
-    expect(currentCard(s).id).toBe(ODDISH);
-    expect(cardMatchup(s.quest, currentCard(s))?.edge).toBe("disadvantage");
+  it("sends a caught Pokémon into a d20 fight its type beats: +N, and it stays after a win", () => {
+    // Pidgey (Flying, caught on a 5: +1) against Machop (Fighting), Route 3.
+    let s = onRoute("pikachu", PIDGEY, MACHOP, ROUTE_3);
+    expect(currentCard(s).id).toBe(MACHOP);
     expect(canSendIn(s, PIDGEY)).toBe(true);
-    const hearts = party(s).hearts;
-    const discarded = s.discarded;
+    const before = rollBonus(s, currentCard(s));
     s = sendIn(s, PIDGEY, zero);
-    // The strike is won, so nothing is lost; Pidgey is gone, and the card
-    // is put aside with nothing left to carry over.
-    expect(s.discarded).toBe(discarded + 1);
-    expect(party(s).hearts).toBe(hearts);
-    expect(party(s).team ?? []).toEqual([]);
+    expect(party(s).assist).toBe(PIDGEY);
+    expect(party(s).team).toEqual([PIDGEY]);
+    expect(rollBonus(s, currentCard(s))).toBe(before + 1);
+    // The starter's own edge is untouched: Electric is even on Fighting.
+    expect(cardMatchup(s.quest, currentCard(s))?.edge ?? null).toBe(null);
+    expect(canSendIn(s, PIDGEY)).toBe(false);
+    round(s);
+    s = rollDice(s, high);
+    expect(s.roll!.bonus).toBe(before + 1);
+    round(s);
+    s = advance(returnToCard(s), zero);
+    if (awaitingCatch(s)) s = letGo(s, zero);
+    expect(party(s).assist).toBeUndefined();
+    expect(party(s).fainted).toBeUndefined();
+    expect(party(s).team).toEqual([PIDGEY]);
     round(s);
   });
 
-  it("is offered only against a foe its type beats", () => {
-    // Pidgey (Flying) does not beat Pichu (Electric), nor Rattata (Normal).
+  it("faints for good when the fight it was sent into is lost", () => {
+    let s = onRoute("pikachu", PIDGEY, MACHOP, ROUTE_3);
+    s = sendIn(s, PIDGEY, zero);
+    s = rollDice(s, zero); // A natural 1.
+    s = advance(returnToCard(s), zero);
+    expect(party(s).team ?? []).toEqual([]);
+    expect(party(s).fainted).toBe(PIDGEY);
+    round(s);
+    // The news lasts one card: a table moment next, put aside.
+    const finale = [...s.quest!.finale];
+    const next = "pokemon.route-cool-contest";
+    const was = finale.indexOf(next);
+    if (was >= 0) finale[was] = finale[s.quest!.step];
+    finale[s.quest!.step] = next;
+    s = { ...s, quest: { ...s.quest!, finale } };
+    s = advance(advance(s, zero), zero);
+    expect(party(s).fainted).toBeUndefined();
+  });
+
+  it("is offered only on a d20 fight its type beats, never a strike or a 2d6", () => {
+    // Pidgey (Flying) does not beat Pichu (Electric).
     let s = facing("pikachu", PIDGEY, "pokemon.route-pichu");
     s = advance(caught(s), zero);
     expect(currentCard(s).id).toBe("pokemon.route-pichu");
     expect(canSendIn(s, PIDGEY)).toBe(false);
     expect(sendIn(s, PIDGEY, zero)).toBe(s);
+    // Flying beats Oddish (Grass), but a strike has no roll to add to.
+    s = facing("pikachu", PIDGEY, ODDISH);
+    s = advance(caught(s), zero);
+    expect(currentCard(s).id).toBe(ODDISH);
+    expect(canSendIn(s, PIDGEY)).toBe(false);
+    // Flying beats Wurmple (Bug), but it rolls 2d6.
+    s = onRoute("pikachu", PIDGEY, "pokemon.route-wurmple", ROUTE_2);
+    expect(canSendIn(s, PIDGEY)).toBe(false);
   });
 
-  it("is offered on a rolled battle the starter already beats too, and wins it for certain", () => {
-    // A rolled wild Grass or Bug fight: Charmander (Fire) has the edge, and
-    // so does Pidgey (Flying).
-    const foe = cards.find(
-      (c) =>
-        c.id.startsWith("pokemon.route-") &&
-        c.dice &&
-        c.battle &&
-        (c.type === "grass" || c.type === "bug"),
-    )!;
-    let s = facing("pikachu", PIDGEY, foe.id);
-    s = advance(caught(s), zero);
-    s = {
+  it("adds more the harder a Pokémon was to catch", () => {
+    const rated = cards.filter((c) => c.catchRate);
+    const bonus = (rate: number) =>
+      assistBonus(rated.find((c) => c.catchRate === rate));
+    expect(bonus(5)).toBe(1);
+    expect(bonus(10)).toBe(3);
+    expect(bonus(15)).toBe(4);
+    expect(assistBonus(undefined)).toBe(1);
+    for (const c of rated) {
+      expect(assistBonus(c)).toBeGreaterThanOrEqual(1);
+      expect(assistBonus(c)).toBeLessThanOrEqual(5);
+    }
+  });
+
+  it("refuses a save whose sent-in Pokémon is not on the team", () => {
+    const s = onRoute("pikachu", PIDGEY, MACHOP, ROUTE_3);
+    const bad = {
       ...s,
       quest: {
         ...s.quest!,
-        finale: s.quest!.finale.map((id, i) =>
-          i === 0 ? "pokemon.starter-charmander" : id,
-        ),
-        party: { ...party(s), omen: "pokemon.starter-charmander" },
+        party: { ...party(s), team: [], assist: PIDGEY },
       },
     };
-    expect(currentCard(s).id).toBe(foe.id);
-    expect(cardMatchup(s.quest, currentCard(s))?.edge).toBe("advantage");
-    expect(canSendIn(s, PIDGEY)).toBe(true);
-    const discarded = s.discarded;
-    s = sendIn(s, PIDGEY, zero);
-    expect(s.discarded).toBe(discarded + 1);
-    expect(party(s).team ?? []).toEqual([]);
-  });
-
-  it("is not offered on a strike the starter already wins", () => {
-    let s = facing("pikachu", PIDGEY, "pokemon.route-starly");
-    s = advance(caught(s), zero);
-    // Starly (Flying) is a strike Electric wins: nothing to add.
-    expect(strikeOutcome(s.quest, currentCard(s))).toBe("won");
-    expect(canSendIn(s, PIDGEY)).toBe(false);
+    expect(() => parseSession(JSON.stringify(bad))).toThrow();
   });
 
   it("throws an item out, or lets a caught Pokémon go, any time", () => {

@@ -179,7 +179,8 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
   const boons = party?.boons?.at(-1) ?? null;
   const jinx = party?.jinx;
   const passed = party?.passed;
-  const seen = useRef({ boons, jinx, passed });
+  const fainted = party?.fainted;
+  const seen = useRef({ boons, jinx, passed, fainted });
   const [shown, setShown] = useState<{
     key: string;
     kicker: string;
@@ -190,8 +191,22 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
   const words = crawlTheme(quest?.packId).words;
   useEffect(() => {
     const before = seen.current;
-    seen.current = { boons, jinx, passed };
+    seen.current = { boons, jinx, passed, fainted };
     if (!quest || !party) return;
+    // A caught Pokémon lost with (2026-10-31, a Nuzlocke): gone for good.
+    if (fainted && fainted !== before.fainted) {
+      const fallen = finaleCard(quest, fainted);
+      if (fallen) {
+        setShown({
+          key: `fainted-${fainted}-${session.discarded}`,
+          kicker: "Fainted",
+          title: fallen.title,
+          line: "Gone for good. The drawer drinks 2.",
+          tone: "crimson",
+        });
+        return;
+      }
+    }
     if (passed !== undefined && passed !== before.passed) {
       const item = crawlTheme(quest.packId).loot.round;
       setShown({
@@ -239,7 +254,7 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
         line: "",
         tone: "pearl",
       });
-  }, [boons, jinx, passed, quest, party, words]);
+  }, [boons, jinx, passed, fainted, quest, party, words, session.discarded]);
   const clear = useCallback(() => setShown(null), []);
   useBannerTimeout(shown?.key ?? null, clear);
   useAnnounce(
