@@ -2,14 +2,18 @@
 
 Updated 2026-10-31. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## In progress 2026-10-31: League card clarity pass (owner, on Mystery Egg: "Some of these cards make no sense ... reword some of the weird ones, and if they're too complicated to explain in a simple way ... just change the rule")
+## Shipped 2026-10-31: preview site removed (owner: "Merge to main. We can delete preview entirely")
 
-Branch `card-clarity`, draft PR; not merged or deployed. Text only: no card IDs, odds, needs, damage or offers changed, so saves and balance are untouched. Read every League card (459 plus the gyms' and bosses' beats) and rewrote about 55 lines where the table could not tell who acts, a line contradicted the mechanic, or the joke buried the rule:
+`preview.yml` deleted, the `preview` job and its `next/` artifact cut from `pages.yml`, the `preview` branch deleted on GitHub (it held nothing beyond `main`). Anything still published at `/side-quest/next/` disappears with the next deploy. The `VITE_CHANNEL` code stays, unused. A phone with "SQ Preview" on its Home Screen can delete that icon.
+
+## Shipped 2026-10-31: League card clarity pass (owner, on Mystery Egg: "Some of these cards make no sense ... reword some of the weird ones, and if they're too complicated to explain in a simple way ... just change the rule")
+
+Fast-forwarded to `main` on the owner's word (`f8a242e`; revert to `ae61de2` to undo). Text only: no card IDs, odds, needs, damage or offers changed, so saves and balance are untouched. Read every League card (459 plus the gyms' and bosses' beats) and rewrote about 55 lines where the table could not tell who acts, a line contradicted the mechanic, or the joke buried the rule:
 - **Unclear who acts:** Mystery Egg ("It hatches! Name the baby, do its cry, and give 2."), Youngster Joey, Ralts, Lillipup, Haunter and Mimikyu caught lines, Pep Talk, Dream Team, Hidden Machine, Trainer Card, Fisherman Ned, Safari Toss (now one flick into a cup).
 - **Contradicted the mechanic:** wins that said "caught" before the ball throw (Gyarados, Zoroark, Mewtwo's and Deoxys's natural 20s on beat one); Lapras and Gift Eevee were "gifts" with a Throw a ball plaque (now "yours if you can catch it"); Nickit ("It's gone. Finish whatever you have"); Volkner ("bore the table with a fun fact", win/beat 2 now plain).
 - **Rule changed because it could not be judged:** Sage Li's riddle (no answer on the card) is now a one-foot balance test; Weather Report (Pokémon that change with weather) is Rain Dance (Water types); Olympia's "who yawns first" is "who speaks next"; Ho-Oh's "drink 4, then 8 more" is one number (same totals).
 - **Rewording:** the three rods' push-your-luck rule ("Each bite wins a prize: reel in to keep them, or cast again and risk them all"), Rattata, Wurmple, Scyther, Hiker Dave, Agatha, Hassel, Malva, Blue, Leon, Celebi, Xerneas, Veteran Ada, Cave Echo, the Aqua Grunt and a few caught/fled lines.
-The 120 plain Pokémon board cards (source-faithful, `reference/`) were not touched. **Checks:** `npm test` (400), lint, typecheck, Prettier, `validate-content`, `npm run cards:review`, `BASE_PATH=/side-quest/ npm run build` (budgets pass). Not run: balance (text only), Playwright, device. **Next (owner):** read the PR's list, then merge to `preview` or `main` on your word.
+The 120 plain Pokémon board cards (source-faithful, `reference/`) were not touched. **Checks:** `npm test` (400), lint, typecheck, Prettier, `validate-content`, `npm run cards:review`, `BASE_PATH=/side-quest/ npm run build` (budgets pass). Not run: balance (text only), Playwright, device. **Next (owner):** play a League run and flag any card that still reads wrong.
 
 ## Shipped 2026-10-31: the bag rebuilt (owner: "This UI sucks and the tooltip is now inaccurate"; "just show the Pokémon's type and its modifier"; "make it much more elegant")
 
