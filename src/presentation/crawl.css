@@ -1997,8 +1997,9 @@
 }
 
 /* The ball throw, played big (2026-10-31, `BallThrow.tsx`): the table dims,
-   the ball spins and the reel runs, both land together, then confetti for a
-   catch or a burst for one that broke free. A tap anywhere skips it. */
+   the donut ball spins and its number counts with it, both land together,
+   then confetti for a catch or a burst for one that broke free. A tap
+   anywhere skips it. */
 .ball-stage {
   position: fixed;
   inset: 0;
@@ -2015,144 +2016,15 @@
   touch-action: manipulation;
   overflow: hidden;
 }
-.ball-stage-ball {
-  position: relative;
-  width: min(42vmin, 220px);
-  aspect-ratio: 1;
-  filter: drop-shadow(0 0 22px rgb(255 230 160 / 0.3));
-}
-.spinning .ball-stage-ball {
-  animation: ball-stage-spin 2600ms cubic-bezier(0.12, 0.55, 0.25, 1) both;
-}
-/* Two half-domes, each outlined, so the top can fly off on its own. */
-.ball-stage-top,
-.ball-stage-bottom {
-  position: absolute;
-  inset-inline: 0;
-  height: 50%;
-  box-sizing: border-box;
-  border: 5px solid #1d120a;
-}
-.ball-stage-top {
-  top: 0;
-  border-radius: 999px 999px 0 0;
-  border-bottom-width: 3px;
-  background: radial-gradient(circle at 35% 45%, #ff6b5c, #b8261d 70%);
-  transform-origin: 0% 100%;
-}
-.ball-stage-bottom {
-  bottom: 0;
-  border-radius: 0 0 999px 999px;
-  border-top-width: 3px;
-  background: radial-gradient(circle at 35% 10%, #ffffff, #d9d2c4 75%);
-}
-.ball-stage-button {
-  position: absolute;
-  inset: 50% auto auto 50%;
-  width: 26%;
-  aspect-ratio: 1;
-  translate: -50% -50%;
-  border: 5px solid #1d120a;
-  border-radius: 50%;
-  background: radial-gradient(circle at 40% 35%, #ffffff, #e8e0cf);
-}
-/* Caught: two shakes, then the button clicks gold. */
-.landed.caught .ball-stage-ball {
-  animation: ball-stage-shake 700ms ease-in-out both;
-}
-.landed.caught .ball-stage-button {
-  animation: ball-stage-click 300ms 700ms ease-out both;
-}
-/* Broke free: the top half flies off and the room flashes red. */
-.landed.fled .ball-stage-top {
-  animation: ball-stage-pop 600ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
-}
 .landed.fled {
   animation: ball-stage-flash 700ms ease-out both;
 }
 .ball-stage-reel {
-  --reel-ms: 2600ms;
-  --row: min(15vmin, 84px);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1.5vmin;
   color: #fff3d0;
-}
-/* The slot: three rows, the middle one under the payline, fading at the
-   edges. The strip scrolls once, to an offset that puts the committed face in
-   the middle row, and stays there (`both`), so the face on screen when it
-   stops is the face that was thrown. */
-.ball-reel-window {
-  position: relative;
-  width: calc(var(--row) * 2.4);
-  height: calc(var(--row) * 3);
-  overflow: hidden;
-  border: 3px solid #1d120a;
-  border-radius: 14px;
-  background: linear-gradient(#2a1c10, #120b06 50%, #2a1c10);
-  box-shadow:
-    inset 0 0 18px rgb(0 0 0 / 0.7),
-    0 0 0 2px rgb(246 211 101 / 0.35);
-}
-.ball-reel-strip {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  will-change: transform;
-  animation: ball-reel-run var(--reel-ms) both;
-}
-.ball-reel-strip li {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: var(--row);
-  font: 700 calc(var(--row) * 0.8) / 1 var(--font-card-title);
-  font-variant-numeric: lining-nums tabular-nums;
-  color: #fff3d0;
-  text-shadow: 0 3px 0 rgb(0 0 0 / 0.5);
-}
-.ball-reel-line {
-  position: absolute;
-  inset: var(--row) 0 auto;
-  height: var(--row);
-  box-sizing: border-box;
-  border-block: 3px solid rgb(246 211 101 / 0.8);
-  background: linear-gradient(
-    90deg,
-    rgb(246 211 101 / 0.12),
-    transparent 30%,
-    transparent 70%,
-    rgb(246 211 101 / 0.12)
-  );
-  pointer-events: none;
-}
-/* Shade the rows above and below the payline. */
-.ball-reel-window::before,
-.ball-reel-window::after {
-  content: "";
-  position: absolute;
-  inset-inline: 0;
-  height: var(--row);
-  z-index: 1;
-  pointer-events: none;
-}
-.ball-reel-window::before {
-  top: 0;
-  background: linear-gradient(rgb(8 5 3 / 0.85), rgb(8 5 3 / 0.35));
-}
-.ball-reel-window::after {
-  bottom: 0;
-  background: linear-gradient(rgb(8 5 3 / 0.35), rgb(8 5 3 / 0.85));
-}
-.landed.caught .ball-reel-face {
-  color: #f6d365;
-}
-.landed.fled .ball-reel-face {
-  color: #ff8a7a;
-}
-.landed .ball-reel-line {
-  animation: ball-reel-flash 500ms ease-out both;
 }
 .ball-stage-reel small {
   font: italic 600 min(5vmin, 22px) / 1 var(--font-tavern);
@@ -2187,17 +2059,6 @@
     opacity: 0;
   }
 }
-@keyframes ball-stage-spin {
-  from {
-    transform: rotate(0) scale(0.6);
-  }
-  12% {
-    transform: rotate(240deg) scale(1);
-  }
-  to {
-    transform: rotate(1800deg) scale(1);
-  }
-}
 @keyframes ball-stage-shake {
   0%,
   100% {
@@ -2211,16 +2072,6 @@
   }
   70% {
     transform: rotate(-6deg);
-  }
-}
-@keyframes ball-stage-click {
-  50% {
-    background: radial-gradient(circle at 40% 35%, #fff6c8, #f2c94c);
-    box-shadow: 0 0 30px 8px rgb(242 201 76 / 0.8);
-  }
-  to {
-    background: radial-gradient(circle at 40% 35%, #fff6c8, #f2c94c);
-    box-shadow: 0 0 14px 2px rgb(242 201 76 / 0.6);
   }
 }
 @keyframes ball-stage-pop {
@@ -2237,26 +2088,6 @@
   }
   to {
     background: rgb(8 5 3 / 0.82);
-  }
-}
-/* Fast and then slower to a stop just past the face, then a small settle back
-   onto it. Both ends are fixed by `--stop`, so the landing is exact. */
-@keyframes ball-reel-run {
-  from {
-    transform: translateY(0);
-    animation-timing-function: cubic-bezier(0.1, 0.55, 0.2, 1);
-  }
-  90% {
-    transform: translateY(calc(var(--row) * (var(--stop) - 1 + 0.16) * -1));
-    animation-timing-function: ease-in-out;
-  }
-  to {
-    transform: translateY(calc(var(--row) * (var(--stop) - 1) * -1));
-  }
-}
-@keyframes ball-reel-flash {
-  from {
-    background-color: rgb(246 211 101 / 0.55);
   }
 }
 @keyframes ball-reel-land {
@@ -2276,10 +2107,10 @@
   }
 }
 
-/* The donut variant (2026-10-31): a hollow ball turned by script, its one
-   number in the hole changing as fast as it turns (`DonutBall`). The same
-   landing as the slot ball: a shake and a gold glow for a catch, the top half
-   flying off and a red flash for one that broke free. */
+/* The donut ball (2026-10-31): a hollow ring turned by script, its one
+   number in the hole changing as fast as it turns (`DonutBall`). Landing: a
+   shake and a gold glow for a catch, the top half flying off and a red flash
+   for one that broke free. */
 .ball-donut {
   --d: min(58vmin, 300px);
   position: relative;
@@ -2346,19 +2177,19 @@
   color: #fff3d0;
   text-shadow: 0 3px 0 rgb(0 0 0 / 0.5);
 }
-.donut.landed.caught .ball-donut {
+.landed.caught .ball-donut {
   animation:
     ball-stage-shake 700ms ease-in-out both,
     ball-donut-glow 900ms 700ms ease-out both;
 }
-.donut.landed.caught .ball-donut-number {
+.landed.caught .ball-donut-number {
   color: #f6d365;
 }
-.donut.landed.fled .ball-donut-half.top {
+.landed.fled .ball-donut-half.top {
   animation: ball-stage-pop 600ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
   transform-origin: 0% 100%;
 }
-.donut.landed.fled .ball-donut-number {
+.landed.fled .ball-donut-number {
   color: #ff8a7a;
 }
 @keyframes ball-donut-glow {

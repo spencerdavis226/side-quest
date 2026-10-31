@@ -2,37 +2,28 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 // The ball throw, played big (2026-10-31, owner: "much more exciting to
-// watch"), rebuilt as a real slot reel the same day after the first version
-// seemed to stop on one number and then show another. The reel is ONE strip
-// of the faces 1 to 20 repeated, scrolled by ONE CSS animation to an offset
-// computed from the engine's committed face, so the number under the payline
-// when it stops is that face by construction: nothing is swapped, re-rolled
-// or re-keyed at the landing. The ball spins for the same time; the result
-// shows when the reel's animation ends (a timer is only the backstop). The
-// throw is snapshotted when it starts, so a parent re-render (the ball object
-// is new every render) can never restart it. Display only: a reload shows the
-// card's result and never plays it again, a tap skips it, and Reduced Motion
-// or a hidden tab skips it outright.
+// watch"), as a hollow donut ball with one number in its hole. One eased value
+// turns the ring (a whole number of turns, ending upright) and picks the
+// number from a shuffled strip, so the number changes exactly as fast as the
+// ball spins and the last number shown is the engine's committed face;
+// nothing is swapped at the landing. The strip's order is random every throw,
+// never sequential. The throw is snapshotted when it starts, so a parent
+// re-render (the ball object is new every render) can never restart it.
+// Display only: a reload shows the card's result and never plays it again, a
+// tap skips it, and Reduced Motion or a hidden tab skips it outright. Catch: a
+// shake, a gold glow and confetti. Break free: the top half flies off and the
+// room flashes red.
 
-/** How long the reel runs, in ms. Mirrors `--reel-ms` in crawl.css. */
+/** How long the ball spins and counts, in ms. */
 const SPIN_MS = 2600;
 /** How long the result shows before the table comes back. */
 const RESULT_MS = 1700;
-/** Full laps of 1 to 20 before the reel reaches its face. */
+/** Full laps of 1 to 20 shown before the face. */
 const LAPS = 4;
-/** Turns the donut ball makes while its number counts down to the face. */
-const DONUT_TURNS = 5;
+/** Turns the ball makes while its number counts to the face. */
+const TURNS = 5;
 
-/** The look of the throw: a three-row slot window under the spinning ball, or
- * the donut, a hollow ball whose one number changes as fast as it turns.
- * `?ball=donut` or `?ball=slot` overrides the default (dev and comparison). */
-export type BallStyle = "slot" | "donut";
-const DEFAULT_STYLE: BallStyle = "slot";
-const ballStyle = (): BallStyle => {
-  const asked = new URLSearchParams(window.location.search).get("ball");
-  return asked === "donut" || asked === "slot" ? asked : DEFAULT_STYLE;
-};
-/** Fast, then slower to a stop at exactly 1. Drives the donut's turn and its
+/** Fast, then slower to a stop at exactly 1. Drives the ball's turn and its
  * number from one value, so the count slows as the ball does. */
 const ease = (t: number) => 1 - Math.pow(1 - t, 2.8);
 
@@ -69,10 +60,10 @@ const lap = () => {
   return faces;
 };
 
-/** The strip: `LAPS` shuffled laps of 1 to 20, then a last lap with the face
- * at a random spot in its middle (so it has a neighbour either side, none of
- * them the face). Order is display only; `stop` is the face's index. */
-function buildReel(face: number) {
+/** The numbers shown, in order: `LAPS` shuffled laps of 1 to 20, then a last
+ * lap with the face at a random spot. Order is display only; `stop` is the
+ * face's index and the last number shown. */
+function buildCount(face: number) {
   const rows: number[] = [];
   for (let i = 0; i < LAPS + 1; i++) {
     const next = lap();
@@ -84,20 +75,20 @@ function buildReel(face: number) {
   const at = last + 2 + Math.floor(Math.random() * 16);
   const was = rows.indexOf(face, last);
   [rows[at], rows[was]] = [rows[was], rows[at]];
-  return { rows: rows.slice(0, at + 2), stop: at };
+  return { rows: rows.slice(0, at + 1), stop: at };
 }
 
-/** The donut: a hollow ball (red over white, a black band, a hole) turned by
- * one eased value that also picks its number from the shuffled strip, so the
- * number changes exactly as fast as the ball spins and the last number shown
- * is the face. It turns a whole number of times, ending upright for the
- * landing animations. Per-frame work touches the DOM directly, not React. */
+/** The ball: a hollow ring (red over white, a black band, a hole) turned by
+ * one eased value that also picks its number, so the number changes exactly
+ * as fast as the ball spins. It turns a whole number of times, ending upright
+ * for the landing animations. Per-frame work touches the DOM directly, not
+ * React. */
 function DonutBall({
-  reel,
+  count,
   landed,
   onLanded,
 }: {
-  reel: { rows: number[]; stop: number };
+  count: { rows: number[]; stop: number };
   landed: boolean;
   onLanded: () => void;
 }) {
@@ -112,11 +103,11 @@ function DonutBall({
     let frame = 0;
     const draw = (p: number) => {
       if (ring.current)
-        ring.current.style.transform = `rotate(${p * DONUT_TURNS * 360}deg)`;
-      const at = Math.min(reel.stop, Math.floor(p * reel.stop));
+        ring.current.style.transform = `rotate(${p * TURNS * 360}deg)`;
+      const at = Math.min(count.stop, Math.floor(p * count.stop));
       if (at !== shownAt && num.current) {
         shownAt = at;
-        num.current.textContent = String(reel.rows[at]);
+        num.current.textContent = String(count.rows[at]);
         num.current.animate?.(
           [{ transform: "scale(1.14)" }, { transform: "scale(1)" }],
           { duration: 80, easing: "ease-out" },
@@ -132,13 +123,13 @@ function DonutBall({
     draw(0);
     frame = requestAnimationFrame(step);
     return () => cancelAnimationFrame(frame);
-  }, [reel, landed]);
+  }, [count, landed]);
   // However it ended (the backstop included), rest upright on the face.
   useEffect(() => {
     if (!landed) return;
     if (ring.current) ring.current.style.transform = "rotate(0deg)";
-    if (num.current) num.current.textContent = String(reel.rows[reel.stop]);
-  }, [landed, reel]);
+    if (num.current) num.current.textContent = String(count.rows[count.stop]);
+  }, [landed, count]);
   return (
     <div className="ball-donut">
       <div className="ball-donut-ring" ref={ring}>
@@ -146,7 +137,7 @@ function DonutBall({
         <span className="ball-donut-half bottom" />
       </div>
       <b className="ball-donut-number" ref={num}>
-        {reel.rows[0]}
+        {count.rows[0]}
       </b>
     </div>
   );
@@ -169,14 +160,12 @@ export function BallThrowStage({
     null,
   );
   const [landed, setLanded] = useState(false);
-  const [style, setStyle] = useState<BallStyle>("slot");
   useEffect(() => {
     const was = seen.current;
     seen.current = throwKey;
     if (throwKey && throwKey !== was && ball && !quiet()) {
       // Snapshot: the throw plays from these values whatever re-renders follow.
       setLive({ key: throwKey, ball: { ...ball } });
-      setStyle(ballStyle());
       setLanded(false);
     }
     // `ball` is a new object every render; only a new throw key starts a throw.
@@ -186,7 +175,7 @@ export function BallThrowStage({
   useEffect(() => {
     if (!key) return;
     const timers = [
-      // Backstop if the reel's animationend never arrives.
+      // Backstop if the animation frames stop (a hidden tab).
       setTimeout(() => setLanded(true), SPIN_MS + 400),
     ];
     const away = () => document.hidden && setLive(null);
@@ -202,59 +191,30 @@ export function BallThrowStage({
     const t = setTimeout(() => setLive(null), RESULT_MS);
     return () => clearTimeout(t);
   }, [landed]);
-  const reel = useMemo(() => (live ? buildReel(live.ball.face) : null), [live]);
-  if (!live || !reel) return null;
+  const count = useMemo(
+    () => (live ? buildCount(live.ball.face) : null),
+    [live],
+  );
+  if (!live || !count) return null;
   const thrown = live.ball;
   const verdict = thrown.caught ? "caught" : "fled";
   return createPortal(
     <div
-      className={`ball-stage ${style === "donut" ? "donut " : ""}${landed ? `landed ${verdict}` : "spinning"}`}
+      className={`ball-stage ${landed ? `landed ${verdict}` : "spinning"}`}
       aria-hidden="true"
       onPointerDown={(event) => {
         event.stopPropagation();
         setLive(null);
       }}
     >
-      {style === "donut" ? (
-        <div className="ball-stage-reel">
-          <DonutBall
-            reel={reel}
-            landed={landed}
-            onLanded={() => setLanded(true)}
-          />
-          <small>needs {thrown.need}+</small>
-        </div>
-      ) : (
-        <>
-          <div className="ball-stage-ball">
-            <span className="ball-stage-top" />
-            <span className="ball-stage-bottom" />
-            <span className="ball-stage-button" />
-          </div>
-          <div className="ball-stage-reel">
-            <div className="ball-reel-window">
-              <ol
-                className="ball-reel-strip"
-                style={{ "--stop": reel.stop } as React.CSSProperties}
-                onAnimationEnd={(event) => {
-                  if (event.target === event.currentTarget) setLanded(true);
-                }}
-              >
-                {reel.rows.map((n, i) => (
-                  <li
-                    key={i}
-                    className={i === reel.stop ? "ball-reel-face" : ""}
-                  >
-                    {n}
-                  </li>
-                ))}
-              </ol>
-              <span className="ball-reel-line" />
-            </div>
-            <small>needs {thrown.need}+</small>
-          </div>
-        </>
-      )}
+      <div className="ball-stage-reel">
+        <DonutBall
+          count={count}
+          landed={landed}
+          onLanded={() => setLanded(true)}
+        />
+        <small>needs {thrown.need}+</small>
+      </div>
       {landed && (
         <p className="ball-stage-verdict">
           {thrown.caught
