@@ -19,8 +19,8 @@ on:
         default: 1
 permissions:
   contents: read
-# One run per PR, a newer push cancelling the older; main runs (push and the
-# preview dispatch) queue instead of cancelling. Keyed on the PR number, not
+# One run per PR, a newer push cancelling the older; main runs (pushes and
+# dispatches) queue instead of cancelling. Keyed on the PR number, not
 # github.ref: a pull_request run for a PR that is merged as it starts reports
 # the base branch as its ref, and on 2026-10-31 that cancelled the main push
 # run it shared a group with, so nothing deployed.
@@ -152,50 +152,9 @@ jobs:
       - if: steps.modules.outputs.cache-hit != 'true'
         run: npm ci
       - run: npx vitest run tests/${{ matrix.suite }}.balance.test.ts
-  # The preview site: the `preview` branch, built at <base>next/ with its own
-  # storage keys and Home Screen name (VITE_CHANNEL), published beside the
-  # live game. Pages deploys only from main, so a push to `preview` runs
-  # preview.yml, which checks it and then dispatches this workflow on main.
-  # No branch, no preview: the live site deploys alone.
-  preview:
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-    runs-on: ubuntu-latest
-    outputs:
-      built: ${{ steps.branch.outputs.exists }}
-    steps:
-      - id: branch
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          if gh api "repos/${{ github.repository }}/branches/preview" --silent 2>/dev/null; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
-          fi
-      - uses: actions/checkout@v4
-        if: steps.branch.outputs.exists == 'true'
-        with:
-          ref: preview
-      - uses: actions/setup-node@v4
-        if: steps.branch.outputs.exists == 'true'
-        with:
-          node-version: 22
-          cache: npm
-      - if: steps.branch.outputs.exists == 'true'
-        run: npm ci
-      - if: steps.branch.outputs.exists == 'true'
-        run: npm run build
-        env:
-          BASE_PATH: /${{ github.event.repository.name }}/next/
-          VITE_CHANNEL: preview
-      - uses: actions/upload-artifact@v4
-        if: steps.branch.outputs.exists == 'true'
-        with:
-          name: preview-dist
-          path: dist
   deploy:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-    needs: [build, checks, browser, balance, preview]
+    needs: [build, checks, browser, balance]
     runs-on: ubuntu-latest
     permissions:
       pages: write
@@ -208,11 +167,6 @@ jobs:
         with:
           name: dist
           path: site
-      - uses: actions/download-artifact@v4
-        if: needs.preview.outputs.built == 'true'
-        with:
-          name: preview-dist
-          path: site/next
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site

@@ -111,7 +111,7 @@ export const kalos: Region = {
       "malva",
       "Malva",
       "Fire",
-      "Malva reads the news. Break a player's scandal, anchor voice. Nobody laughs: drink 5.",
+      "Malva reads the news. Make up a scandal about a player, anchor voice. Nobody laughs: drink 5.",
     ),
     eliteFour(
       "siebold",
@@ -168,7 +168,7 @@ export const kalos: Region = {
     legendary(
       "xerneas",
       "Xerneas",
-      "Xerneas gives life. Give the sleepiest player a pep talk until they perk up, then roll d20.",
+      "Xerneas gives life. Give the sleepiest player a 10-second pep talk, then roll d20.",
       d20(
         LEGENDARY_NEED,
         "Geomancy. Drink 5, and the sleepy player drinks 2.",

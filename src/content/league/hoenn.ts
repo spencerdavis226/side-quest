@@ -252,7 +252,7 @@ export const hoenn: Region = {
         "Psycho Boost lands. Drink 6; anyone who uncovered their mouth drinks 2.",
         "A hit! Give 6.",
         {
-          crit: "Caught clean! Give 12.",
+          crit: "A clean hit! Give 12.",
         },
       ),
     ),

@@ -4,7 +4,7 @@ Updated 2026-10-31. **Single authoritative handoff.** Read `AGENTS.md` first. Ol
 
 ## In progress 2026-10-31: deterministic browser tests, faster CI (owner: "make Side Quest's test suites much faster and reliable, without losing the coverage that matters")
 
-Branch `faster-tests`, draft PR #58; not merged. No app code changed: tests, Playwright config, lint and the two workflows.
+Branch `faster-tests`, draft PR #58; not merged. No app code changed: tests, Playwright config, lint and `pages.yml`.
 
 **Tests.** Every browser spec imports `test` from `tests/browser/support.ts`: `Math.random` seeded from the test title (Node and page), Reduced Motion by default (motion specs opt in with `motion`/`withMotion`), and `seed`/`seedStorage` writing saves before the first load. Lint rejects `Math.random`, `waitForTimeout` and importing `test` from `@playwright/test` in a spec; all 8 sleeps became state waits. `leagueAt`/`crawlAt` live in `tests/browser/sessions.ts`. Retries are 0. Layout: `@release` is 13 smoke tests (the CI gate); `test:e2e` runs everything but `@sweep`; `test:sweep` runs the three every-card fit sweeps (`sweeps.spec.ts`, chunked). See `tests/CLAUDE.md`.
 
@@ -15,6 +15,19 @@ Branch `faster-tests`, draft PR #58; not merged. No app code changed: tests, Pla
 **Measured (local Chromium, 4 cores):** full browser suite 12 min 30 s (1 failure) → `test:e2e` 3 min 23 s + `test:sweep` 4 min 24 s (4 workers); `@release` 27 s, 65/65 over 5 repeats; `test:e2e` ×2 on 4 workers 307/308, the one race fixed and rerun 40/40. CI before (run #242): 6 min 52 s push to deploy. CI after: see PR #58.
 
 **Open (owner):** path-filter the balance jobs to content/engine changes (not done: needs your sign-off). WebKit is CI-only evidence (not installed here).
+
+## Shipped 2026-10-31: preview site removed (owner: "Merge to main. We can delete preview entirely")
+
+`preview.yml` deleted, the `preview` job and its `next/` artifact cut from `pages.yml`, the `preview` branch deleted on GitHub (it held nothing beyond `main`). Anything still published at `/side-quest/next/` disappears with the next deploy. The `VITE_CHANNEL` code stays, unused. A phone with "SQ Preview" on its Home Screen can delete that icon.
+
+## Shipped 2026-10-31: League card clarity pass (owner, on Mystery Egg: "Some of these cards make no sense ... reword some of the weird ones, and if they're too complicated to explain in a simple way ... just change the rule")
+
+Fast-forwarded to `main` on the owner's word (`f8a242e`; revert to `ae61de2` to undo). Text only: no card IDs, odds, needs, damage or offers changed, so saves and balance are untouched. Read every League card (459 plus the gyms' and bosses' beats) and rewrote about 55 lines where the table could not tell who acts, a line contradicted the mechanic, or the joke buried the rule:
+- **Unclear who acts:** Mystery Egg ("It hatches! Name the baby, do its cry, and give 2."), Youngster Joey, Ralts, Lillipup, Haunter and Mimikyu caught lines, Pep Talk, Dream Team, Hidden Machine, Trainer Card, Fisherman Ned, Safari Toss (now one flick into a cup).
+- **Contradicted the mechanic:** wins that said "caught" before the ball throw (Gyarados, Zoroark, Mewtwo's and Deoxys's natural 20s on beat one); Lapras and Gift Eevee were "gifts" with a Throw a ball plaque (now "yours if you can catch it"); Nickit ("It's gone. Finish whatever you have"); Volkner ("bore the table with a fun fact", win/beat 2 now plain).
+- **Rule changed because it could not be judged:** Sage Li's riddle (no answer on the card) is now a one-foot balance test; Weather Report (Pokémon that change with weather) is Rain Dance (Water types); Olympia's "who yawns first" is "who speaks next"; Ho-Oh's "drink 4, then 8 more" is one number (same totals).
+- **Rewording:** the three rods' push-your-luck rule ("Each bite wins a prize: reel in to keep them, or cast again and risk them all"), Rattata, Wurmple, Scyther, Hiker Dave, Agatha, Hassel, Malva, Blue, Leon, Celebi, Xerneas, Veteran Ada, Cave Echo, the Aqua Grunt and a few caught/fled lines.
+The 120 plain Pokémon board cards (source-faithful, `reference/`) were not touched. **Checks:** `npm test` (400), lint, typecheck, Prettier, `validate-content`, `npm run cards:review`, `BASE_PATH=/side-quest/ npm run build` (budgets pass). Not run: balance (text only), Playwright, device. **Next (owner):** play a League run and flag any card that still reads wrong.
 
 ## Shipped 2026-10-31: the bag rebuilt (owner: "This UI sucks and the tooltip is now inaccurate"; "just show the Pokémon's type and its modifier"; "make it much more elegant")
 

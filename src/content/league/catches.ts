@@ -87,7 +87,7 @@ export const catchSheet: Readonly<Record<string, [number, string, string]>> = {
   ],
   "route-yungoos": [
     6,
-    "Yungoos is caught, starving, and eats the ball's spare seam. Give 1.",
+    "Yungoos is caught, still chewing. Give 1.",
     "Yungoos swallows the bait and leaves. Drink 1.",
   ],
   "route-clefairy": [
@@ -144,7 +144,7 @@ export const catchSheet: Readonly<Record<string, [number, string, string]>> = {
   "route-abra": [
     12,
     "Abra is caught asleep. It never even woke up. Give 3.",
-    "Abra wakes and teleports. Look at someone; they drink 2.",
+    "Abra wakes and teleports away. Drink 2.",
   ],
   "route-voltorb": [
     8,
@@ -215,7 +215,7 @@ export const catchSheet: Readonly<Record<string, [number, string, string]>> = {
   // Route 5
   "route-haunter": [
     11,
-    "Haunter is caught and licks someone. The one on your right gives 2.",
+    "Haunter is caught and licks the player on your right. Give 2.",
     "The ball passes right through Haunter. Drink 2.",
   ],
   "route-scyther": [
@@ -235,7 +235,7 @@ export const catchSheet: Readonly<Record<string, [number, string, string]>> = {
   ],
   "route-mimikyu": [
     13,
-    "Mimikyu is caught. Don't lift the cloth. The one who peeks drinks 2. Give 2.",
+    "Mimikyu is caught. Nobody lift the cloth. Give 2.",
     "Mimikyu hides under its cloth and the ball bounces. Drink 2.",
   ],
   "route-toxtricity": [
@@ -281,7 +281,7 @@ export const catchSheet: Readonly<Record<string, [number, string, string]>> = {
   ],
   "route-tinkaton": [
     13,
-    "Tinkaton is caught and hammers the ball flat. It stays. Give 3.",
+    "Tinkaton is caught, hammer and all. Give 3.",
     "Tinkaton swings her hammer and the ball flies home. Drink 2.",
   ],
   "route-salandit": [
@@ -313,7 +313,7 @@ export const catchSheet: Readonly<Record<string, [number, string, string]>> = {
   "route-snorlax-awake": [
     15,
     "Angry Snorlax is caught, and still angry. Give 3.",
-    "Angry Snorlax sits on the ball. The last to laugh drinks 3.",
+    "Angry Snorlax sits on the ball. Drink 3.",
   ],
   "route-garchomp": [
     17,

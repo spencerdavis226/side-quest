@@ -163,7 +163,7 @@ export const galar: Region = {
       "leon",
       "Leon",
       "Galar",
-      "Leon is unbeaten and always lost. Everyone strikes the Charizard pose. Roll d20.",
+      "Leon has never lost a battle, only his way. Everyone strikes the Charizard pose. Roll d20.",
       d20(
         CHAMPION_NEED,
         "G-Max Wildfire. Everyone drinks 4, still holding the pose.",
