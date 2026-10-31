@@ -4,7 +4,7 @@ import {
   expect,
   rng,
   seed as seedSession,
-  layoutSettled,
+  resizeTo,
   withMotion,
 } from "./support";
 import sharp from "sharp";
@@ -322,9 +322,8 @@ test("@release the play screen fits a Safari tab at every phone height without s
     { width: 393, height: 852 },
     { width: 820, height: 1050 },
   ]) {
-    await page.setViewportSize(viewport);
-    // The card's size transitions to the new height; measure where it lands.
-    await layoutSettled(page, ".card-stage");
+    // Measure once the layout has taken the new height.
+    await resizeTo(page, viewport, ".card-stage");
     const fit = await page.evaluate(() => {
       const stage = document
         .querySelector(".card-stage")!
@@ -334,9 +333,11 @@ test("@release the play screen fits a Safari tab at every phone height without s
         clientHeight: document.documentElement.clientHeight,
         bottom: stage.bottom,
         ratio: stage.width / stage.height,
+        // For a failure message: what the layout measured.
+        layout: `stage ${Math.round(stage.width)}x${Math.round(stage.height)}, --app-height ${getComputedStyle(document.querySelector(".app")!).height}, inner ${innerWidth}x${innerHeight}`,
       };
     });
-    const at = `${viewport.width}x${viewport.height}`;
+    const at = `${viewport.width}x${viewport.height} (${fit.layout})`;
     expect(fit.scrollHeight, `no page scroll at ${at}`).toBeLessThanOrEqual(
       fit.clientHeight,
     );

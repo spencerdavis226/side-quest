@@ -133,6 +133,34 @@ export async function reseed(page: Page, session: object) {
   await page.reload({ waitUntil: "commit" });
 }
 
+/** Resize the page and wait until its layout has taken the new size: CSS
+ * viewport units (`svh`, which `--app-height` uses) can pick up a new size
+ * some frames after the resize in emulation, so wait for a 100svh probe to
+ * measure the new height, then for `selector`'s box to hold still. */
+export async function resizeTo(
+  page: Page,
+  size: { width: number; height: number },
+  selector: string,
+) {
+  await page.setViewportSize(size);
+  await page.waitForFunction(
+    ({ width, height }) => {
+      const probe = document.createElement("div");
+      probe.style.cssText =
+        "position:fixed;top:0;left:0;width:100svw;height:100svh;visibility:hidden";
+      document.body.append(probe);
+      const box = probe.getBoundingClientRect();
+      probe.remove();
+      return (
+        Math.round(box.height) === height && Math.round(box.width) === width
+      );
+    },
+    size,
+    { polling: "raf" },
+  );
+  await layoutSettled(page, selector);
+}
+
 /** Wait until `selector`'s box holds still across two rendered frames:
  * after a resize the card's size transitions (0.01 ms under Reduced Motion,
  * but it still lands on a later frame), so a measurement taken at once reads
