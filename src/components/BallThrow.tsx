@@ -44,16 +44,32 @@ const CONFETTI = Array.from({ length: 30 }, (_, i) => {
   };
 });
 
-/** The strip: every face in order, `LAPS` times round, ending a row past the
- * face so the payline has a neighbour below it. `stop` is the face's index. */
+/** A shuffled lap of the faces 1 to 20. */
+const lap = () => {
+  const faces = Array.from({ length: 20 }, (_, i) => i + 1);
+  for (let i = faces.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [faces[i], faces[j]] = [faces[j], faces[i]];
+  }
+  return faces;
+};
+
+/** The strip: `LAPS` shuffled laps of 1 to 20, then a last lap with the face
+ * at a random spot in its middle (so it has a neighbour either side, none of
+ * them the face). Order is display only; `stop` is the face's index. */
 function buildReel(face: number) {
-  const start = (face * 7) % 20;
-  const stop = LAPS * 20 + ((face - 1 - start + 40) % 20);
-  const rows = Array.from(
-    { length: stop + 2 },
-    (_, i) => ((start + i) % 20) + 1,
-  );
-  return { rows, stop };
+  const rows: number[] = [];
+  for (let i = 0; i < LAPS + 1; i++) {
+    const next = lap();
+    // No number twice in a row where two laps meet.
+    while (next[0] === rows[rows.length - 1]) next.push(next.shift()!);
+    rows.push(...next);
+  }
+  const last = rows.length - 20;
+  const at = last + 2 + Math.floor(Math.random() * 16);
+  const was = rows.indexOf(face, last);
+  [rows[at], rows[was]] = [rows[was], rows[at]];
+  return { rows: rows.slice(0, at + 2), stop: at };
 }
 
 export function BallThrowStage({
