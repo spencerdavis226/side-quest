@@ -2,9 +2,9 @@
 
 Updated 2026-10-31. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## In progress 2026-10-31: the full variety pass, caught Pokémon as a Nuzlocke, roll gems, the big ball throw (owner: "incorporate all the new cards and full revamp into the preview"; "power groups that add X to your roll"; "nuzlocke"; "a gemstone ... for the number you have to beat"; "only 3 buttons"; "make the catch screen ... more exciting")
+## Shipped 2026-10-31: the full variety pass, caught Pokémon as a Nuzlocke, roll gems, the big ball throw (owner: "incorporate all the new cards and full revamp into the preview"; "power groups that add X to your roll"; "nuzlocke"; "a gemstone ... for the number you have to beat"; "only 3 buttons"; "make the catch screen ... more exciting")
 
-On branch `preview` (published at `/side-quest/next/`), not on `main`.
+Merged to `main` on the owner's "Merge and deploy everything to main" (fast-forward to `a5f8e9c`, deployed by run #236, every job green including the WebKit shards; revert to `27ba239` to undo). `preview` is at the same commit.
 
 **Every floor and route.** `src/content/dungeon/variety.ts` rewrites the other eight Pub Crawl floors by card ID (the Cellar was rewritten in place): do-nothing rooms become pointing votes, reflex calls, hidden fuses, secrets on a clock, four-seat dice and auctions; 16 d20 monsters become table duels (Won and Lost); about 50 d20 rooms ask for something before the roll, many with natural 1 and 20 lines of their own; two bosses a floor open with side bets; one new table moment a floor. Every floor now has 11 or 12 kinds of card and passes the mix test's higher bar. The League gets 14 more route cards (Routes 1 and 3 to 8: Who's That Pokémon? quizzes, contests the table judges, votes, a Pokérap round, and the Good Rod and Super Rod, push-your-luck like Route 2's Old Rod). 1,851 cards.
 
@@ -20,7 +20,7 @@ On branch `preview` (published at `/side-quest/next/`), not on `main`.
 
 **Checks run:** `npm test` (400), typecheck, lint, Prettier, `npm run cards:review`, both builds (budgets pass), `npm run test:balance` at CI settings (League every band; Pub Crawl's joke test timed out under load, then passed alone with the Mimic change), the League at 400 runs a starter, and Chromium `crawl.spec.ts` and `quest.spec.ts` on the production build (52: 46 passed first; the six failures were tests of the old behavior, updated and rerun: 6 passed). Local Chromium looks at the preview build: every new card type dealt in a run, the gems (Machop 5+ then 4+ with Pidgey in, Wurmple 5+ 2d6), Eevee's fold and sheet, the ball throw caught and broken free. No WebKit locally (CI runs its smoke suite on `main` dispatches), no device.
 
-## In progress 2026-10-31: preview site and the variety pass (owner: "double down on what makes the game good, which is variety and interesting fun cards ... especially variety within cards"; then "Set up the preview site, then start steps 1 and 2")
+## Shipped 2026-10-31: preview site and the variety pass (owner: "double down on what makes the game good, which is variety and interesting fun cards ... especially variety within cards"; then "Set up the preview site, then start steps 1 and 2")
 
 **Preview site (on `main`, `27ba239`).** The `preview` branch publishes at `/side-quest/next/` beside the live game (see AGENTS.md): `preview.yml` checks a push (unit tests, lint, build, balance) and dispatches `pages.yml` on `main`, which builds both and deploys them together. `VITE_CHANNEL=preview` gives it `side-quest-preview.*` storage keys, a red Preview badge and the Home Screen name "SQ Preview"; the live worker's `navigateFallbackDenylist` leaves `next/` alone. Checked locally in Chromium with both builds served together: each page is controlled by its own worker, the right title and badge show, and going back to the live page keeps the live worker. Known wrinkle: the first visit to `next/` from a browser that has the live game shows "Update game" once (the preview worker takes over the page); tapping it reloads. No device look.
 
