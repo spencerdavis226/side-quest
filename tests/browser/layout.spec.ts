@@ -36,6 +36,21 @@ async function seed(page: Page, session: object) {
   await seedSession(page, session);
   await page.evaluate(() => document.fonts.ready);
 }
+// Browser emulation cannot produce env() insets; pose them through the
+// custom properties. Chromium can report the old layout for a frame or two
+// after they change (--top-safe reads 59px while a control still sits at
+// 16px), so wait until .app's padding has taken the inset before measuring.
+async function poseInsets(page: Page, top: number, bottom?: number) {
+  const rules = [`--top-safe: ${top}px`];
+  if (bottom !== undefined) rules.push(`--bottom-safe: ${bottom}px`);
+  await page.addStyleTag({ content: `:root { ${rules.join("; ")} }` });
+  const floor = page.viewportSize()!.width >= 700 ? 26 : 16;
+  await expect
+    .poll(() =>
+      page.locator(".app").evaluate((app) => getComputedStyle(app).paddingTop),
+    )
+    .toBe(`${Math.max(floor, top)}px`);
+}
 test("Core instructions fit at 390x844 with ratio, pack mark and no CTA occlusion", async ({
   page,
 }) => {
@@ -214,9 +229,7 @@ test("home fits Safari's visible height without moving Install into the status b
     // for the pack picker.
     await expect(page.locator(".crawl-brief")).toContainText("16 HP · 8 gyms");
     await page.evaluate(() => document.fonts.ready);
-    await page.addStyleTag({
-      content: `:root { --top-safe: ${top}px; --bottom-safe: ${bottom}px }`,
-    });
+    await poseInsets(page, top, bottom);
     const branding = await page
       .locator(".side-quest-title-crest")
       .evaluate((element) => {
@@ -365,7 +378,7 @@ test("an iOS top inset keeps topbar controls below the status-bar frost", async 
   await page.goto("./");
   // Browser emulation cannot produce env() insets; pose an iPhone 15 Pro
   // inset so the Home Screen layout is measurable.
-  await page.addStyleTag({ content: ":root { --top-safe: 59px }" });
+  await poseInsets(page, 59);
   const install = await page
     .getByRole("button", { name: "Add to Home Screen help" })
     .boundingBox();
@@ -420,7 +433,7 @@ test("an iOS top inset keeps topbar controls below the status-bar frost", async 
   }
 
   await seed(page, revealed(longestRule));
-  await page.addStyleTag({ content: ":root { --top-safe: 59px }" });
+  await poseInsets(page, 59);
   const menu = await page
     .getByRole("button", { name: "Open game menu" })
     .boundingBox();
@@ -528,14 +541,14 @@ test("@release the installed app lays out at the full screen height and never sc
       return sum / shot.info.width;
     };
   };
-  await page.addStyleTag({ content: ":root { --top-safe: 0px }" });
+  await poseInsets(page, 0);
   const fresh = await edgeOf(0);
   expect(fresh.box).toEqual({ x: 0, y: 0, width: fresh.viewport, height: 14 });
   expect(fresh.hit).toBe(true);
   const freshRow = await shotRows();
   expect(Math.abs(freshRow(12) - freshRow(16))).toBeLessThan(6);
 
-  await page.addStyleTag({ content: ":root { --top-safe: 59px }" });
+  await poseInsets(page, 59);
   const edge = await edgeOf(59);
   expect(edge.position).toBe("fixed");
   expect(edge.color).toBe("rgb(24, 17, 12)");

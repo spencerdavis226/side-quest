@@ -126,7 +126,7 @@ export const starters: CardDefinition[] = [
     [
       {
         title: "Grovyle",
-        omen: { hearts: 1, loot: ["smoke"], roll: { monster: 1 } },
+        omen: { hearts: 3, loot: ["smoke"], roll: { monster: 1 } },
       },
       {
         title: "Sceptile",
