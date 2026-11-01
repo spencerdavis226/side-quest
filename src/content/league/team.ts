@@ -20,7 +20,27 @@ const catchTypes: Readonly<Record<string, PokemonType>> = {
   "route-snorlax-catch": "normal",
 };
 
+/** The Legendaries whose last beat throws a ball and says it was caught
+ * (2026-11-01, owner: "add more"): felling one adds it to the team, with
+ * the strongest send-in there is (+5). The others end without a catch. */
+const caughtLegendaries = [
+  "legendary-zapdos",
+  "legendary-ho-oh",
+  "legendary-palkia",
+  "legendary-xerneas",
+  "legendary-eternatus",
+  "legendary-mew",
+  "legendary-arceus",
+  "legendary-miraidon",
+];
+export const LEGENDARY_RATE = 20;
+
 export function applyTeam(cards: CardDefinition[]) {
+  for (const id of caughtLegendaries) {
+    const c = cards.find((card) => card.id === `pokemon.${id}`);
+    if (!c?.type || !c.hits) throw new Error(`No typed Legendary: ${id}`);
+    c.joins = { rate: LEGENDARY_RATE };
+  }
   for (const c of cards) {
     if (!c.id.startsWith("pokemon.") || !c.ribbon?.endsWith(" · Wild"))
       continue;

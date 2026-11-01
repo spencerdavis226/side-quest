@@ -23,6 +23,7 @@ import {
   fellingVerdict,
   awaitingVerdict,
   canTakeOffer,
+  canThrowMaster,
   canSendIn,
   partyTeam,
   spoilsOnWin,
@@ -50,6 +51,7 @@ import {
   buildExtras,
   OfferPlaque,
   CatchPlaques,
+  MasterBallPlaque,
   PressPlaques,
   SpoilsButton,
   SpoilsSheet,
@@ -103,6 +105,7 @@ export function Play({
   onSpend = () => {},
   onOffer = () => {},
   onCatch = () => {},
+  onMaster = () => {},
   onRelease = () => {},
   onSend = () => {},
   onSpoils = () => {},
@@ -124,6 +127,7 @@ export function Play({
   onSpend?: (item: Loot) => void;
   onOffer?: (index: number, branch?: number) => void;
   onCatch?: () => void;
+  onMaster?: () => void;
   onRelease?: () => void;
   onSend?: (id: string) => void;
   onSpoils?: (index: number) => void;
@@ -193,6 +197,8 @@ export function Play({
   // The League's team (2026-10-25): a beaten wild Pokémon to catch, and
   // teammates who can be sent in for this battle.
   const catching = !motion && awaitingCatch(session);
+  // The bag's Master Ball joins either kind of catch (2026-11-01).
+  const master = !motion && canThrowMaster(session);
   const ball = thrownBall(session);
   const senders = motion
     ? []
@@ -230,6 +236,14 @@ export function Play({
   };
   const ask = asking === session.discarded && !motion;
   const crawl = crawlTheme(session.quest?.packId);
+  const masterPlaque = master ? (
+    <MasterBallPlaque
+      key="master"
+      name={card.title}
+      onThrow={onMaster}
+      theme={crawl}
+    />
+  ) : null;
   useAnnounce(
     felled ? `${card.title}: ${felledWord!.toLowerCase()}.` : "",
     felled ? `felled-${session.discarded}` : null,
@@ -536,7 +550,7 @@ export function Play({
           {catching && (
             <div
               ref={choiceRef}
-              className="card-choice offers catch plaques-2"
+              className={`card-choice offers catch plaques-${master ? 3 : 2}`}
               role="group"
               aria-label="Catch it"
             >
@@ -546,6 +560,7 @@ export function Play({
                 onRelease={onRelease}
                 theme={crawl}
               />
+              {masterPlaque}
             </div>
           )}
           {offers && fold && (
@@ -582,7 +597,7 @@ export function Play({
           {offers && !fold && (
             <div
               ref={choiceRef}
-              className={`card-choice offers plaques-${plaques.length}`}
+              className={`card-choice offers plaques-${plaques.length + (master ? 1 : 0)}`}
               role="group"
               aria-label="Your choice"
             >
@@ -597,6 +612,7 @@ export function Play({
                   branch={branch}
                 />
               ))}
+              {masterPlaque}
             </div>
           )}
           {spoils && (

@@ -9,7 +9,7 @@ import {
   assistBonus,
   cardEdge,
   currentCard,
-  finaleCard,
+  teamMember,
   omenEffect,
   PRESS_STEP,
   type Random,
@@ -167,7 +167,7 @@ export function rollBonus(session: SessionState, card: CardDefinition): number {
   const effect = omenEffect(session.quest) ?? {};
   // Each pull on a push-your-luck card rolls lower.
   const pulls = card.press ? (party.press ?? 0) : 0;
-  const sent = party.assist ? finaleCard(session.quest!, party.assist) : null;
+  const sent = party.assist ? teamMember(session.quest!, party.assist) : null;
   return (
     (effect.roll?.all ?? 0) +
     (card.encounter ? (effect.roll?.[card.encounter] ?? 0) : 0) -

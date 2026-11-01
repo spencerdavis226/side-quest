@@ -511,6 +511,11 @@
   width: max(16px, 3.5cqw);
   height: max(16px, 3.5cqw);
 }
+/* A Pokémon a win adds to the team (2026-11-01): its type's medallion. */
+.stake-joins .type-mark {
+  width: max(18px, 3.9cqw);
+  height: max(18px, 3.9cqw);
+}
 .stake-loss {
   background: radial-gradient(circle at 30% 25%, #a93a30, #7c1712 75%);
   color: #ffe2c9;
@@ -627,6 +632,12 @@
 .offer-plaque.offer-buy {
   color: #fbefff;
   background: linear-gradient(145deg, #6c4ea3, #35205e);
+}
+/* The Master Ball's plaque (2026-11-01): its own purple and pink. */
+.offer-plaque.master-plaque {
+  color: #fff0fb;
+  background: linear-gradient(145deg, #9a3fc4, #4b1470);
+  box-shadow: inset 0 0 0 2px rgb(255 140 214 / 0.55);
 }
 .offer-plaque.offer-loud {
   color: #ffe2c9;
@@ -2204,6 +2215,48 @@
 }
 .landed.fled .ball-donut-number {
   color: #ff8a7a;
+}
+/* The Master Ball (2026-11-01): a purple top with its two pink bumps, a
+   violet glow, and violet and pink confetti. */
+.ball-stage.master .ball-donut {
+  filter: drop-shadow(0 0 26px rgb(196 120 255 / 0.45));
+}
+.ball-stage.master .ball-donut-half.top {
+  background:
+    radial-gradient(
+      circle closest-side,
+      transparent 0 62%,
+      #1d120a 62% 67%,
+      transparent 67% 94%,
+      #1d120a 94% 100%
+    ),
+    linear-gradient(transparent 0 45%, #1d120a 45%),
+    radial-gradient(circle at 22% 30%, #ff7fc8 0 9%, transparent 9.5%),
+    radial-gradient(circle at 78% 30%, #ff7fc8 0 9%, transparent 9.5%),
+    radial-gradient(circle at 35% 25%, #c77bff, #5b1a8c 72%);
+}
+.ball-stage.master .ball-donut-number,
+.landed.caught.master .ball-donut-number {
+  color: #f3d4ff;
+}
+.landed.caught.master .ball-donut {
+  animation:
+    ball-stage-shake 700ms ease-in-out both,
+    ball-master-glow 900ms 700ms ease-out both;
+}
+.ball-stage.master .ball-stage-confetti i:nth-child(odd) {
+  background: #c77bff;
+}
+.ball-stage.master .ball-stage-confetti i:nth-child(3n) {
+  background: #ff7fc8;
+}
+@keyframes ball-master-glow {
+  50% {
+    filter: drop-shadow(0 0 44px rgb(199 123 255 / 0.95));
+  }
+  to {
+    filter: drop-shadow(0 0 22px rgb(199 123 255 / 0.6));
+  }
 }
 @keyframes ball-donut-glow {
   50% {

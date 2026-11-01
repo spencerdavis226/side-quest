@@ -7,6 +7,10 @@ import {
   cardMatchup,
   catchIt,
   caughtBy,
+  canThrowMaster,
+  canUseLoot,
+  partyTeam,
+  throwMaster,
   thrownBall,
   throwBall,
   createSession,
@@ -410,3 +414,91 @@ describe("the League's throws", () => {
     expect(party(win).team).toEqual(["pokemon.route-lapras"]);
   });
 });
+
+describe("Master Ball, the Togepi egg and caught Legendaries", () => {
+  const EGG = "pokemon.route-mystery-egg";
+  const ZAPDOS = "pokemon.legendary-zapdos";
+  const withBall = (s: SessionState): SessionState => ({
+    ...s,
+    quest: { ...s.quest!, party: { ...party(s), loot: ["master"] } },
+  });
+
+  it("the Master Ball lands a 20 at a beaten wild Pokémon, and is spent", () => {
+    const s = withBall(facing("pikachu", PIDGEY));
+    expect(canThrowMaster(facing("pikachu", PIDGEY))).toBe(false); // None.
+    expect(canThrowMaster(s)).toBe(true);
+    const thrown = throwMaster(s);
+    expect(party(thrown).loot).toEqual([]);
+    expect(party(thrown).throw).toEqual({ id: PIDGEY, face: 20, master: true });
+    expect(thrownBall(thrown)).toMatchObject({ caught: true, master: true });
+    expect(canThrowMaster(thrown)).toBe(false); // Once.
+    round(thrown);
+    expect(party(advance(thrown, zero)).team).toEqual([PIDGEY]);
+    // Never a bag Use: it is thrown from its own plaque.
+    expect(canUseLoot(s, "master")).toBe(false);
+  });
+
+  it("works on a catch card's offer too, heal and all", () => {
+    const start = withBall(facing("pikachu", "pokemon.route-lapras"));
+    const hurt = {
+      ...start,
+      quest: { ...start.quest!, party: { ...party(start), hearts: 3 } },
+    };
+    expect(canThrowMaster(hurt)).toBe(true);
+    const done = advance(throwMaster(hurt), zero);
+    expect(party(done).team).toEqual(["pokemon.route-lapras"]);
+    expect(party(done).hearts).toBeGreaterThan(3);
+  });
+
+  it("refuses a saved Master Ball throw that is not a 20", () => {
+    const s = throwMaster(withBall(facing("pikachu", PIDGEY)));
+    const bad = {
+      ...s,
+      quest: {
+        ...s.quest!,
+        party: { ...party(s), throw: { id: PIDGEY, face: 7, master: true } },
+      },
+    };
+    expect(() => parseSession(JSON.stringify(bad))).toThrow();
+  });
+
+  it("Silph Co. gives the Master Ball", () => {
+    const loot = (id: string) => cards.find((c) => c.id === id)!.reward?.loot;
+    expect(loot("pokemon.route-silph-gift")).toBe("master");
+    expect(loot("pokemon.route-silph-maze")).toBe("master");
+  });
+
+  it("the egg hatches a Togepi onto the team on a win, and nothing on a loss", () => {
+    const won = returnToCard(rollDice(facing("pikachu", EGG), high));
+    const after = advance(won, zero);
+    expect(party(after).team).toEqual([EGG]);
+    round(after);
+    const togepi = partyTeam(after.quest)[0];
+    expect(togepi).toMatchObject({ title: "Togepi", type: "fairy" });
+    expect(assistBonus(togepi)).toBe(2);
+    expect(rewardOf(EGG)).toBeUndefined(); // No X Attack now.
+    const lost = advance(
+      returnToCard(rollDice(facing("pikachu", EGG), zero)),
+      zero,
+    );
+    expect(party(lost).team).toBeUndefined();
+  });
+
+  it("a Legendary caught on its last beat joins the team at +5", () => {
+    let s = facing("pikachu", ZAPDOS);
+    s = { ...s, quest: { ...s.quest!, party: { ...party(s), hits: 1 } } };
+    s = advance(returnToCard(rollDice(s, high)), zero);
+    // (Dealt on Route 1 here, so no save round trip: a real save never is.)
+    expect(party(s).team).toEqual([ZAPDOS]);
+    const zapdos = partyTeam(s.quest)[0];
+    expect(zapdos.type).toBe("electric");
+    expect(assistBonus(zapdos)).toBe(5);
+    // A Legendary that never says it was caught stays off the team.
+    const lugia = cards.find((c) => c.id === "pokemon.legendary-lugia")!;
+    expect(lugia.joins).toBeUndefined();
+  });
+});
+
+function rewardOf(id: string) {
+  return cards.find((c) => c.id === id)!.reward;
+}

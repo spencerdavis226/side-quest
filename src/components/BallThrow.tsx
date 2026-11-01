@@ -12,7 +12,8 @@ import { createPortal } from "react-dom";
 // Display only: a reload shows the card's result and never plays it again, a
 // tap skips it, and Reduced Motion or a hidden tab skips it outright. Catch: a
 // shake, a gold glow and confetti. Break free: the top half flies off and the
-// room flashes red.
+// room flashes red. The Master Ball (2026-11-01) is the same throw in purple,
+// and its face is always 20.
 
 /** How long the ball spins and counts, in ms. */
 const SPIN_MS = 2600;
@@ -39,6 +40,8 @@ export interface ThrownBall {
   face: number;
   need: number;
   caught: boolean;
+  /** The Master Ball (2026-11-01): purple, and always a 20. */
+  master?: boolean;
 }
 
 const quiet = () =>
@@ -213,7 +216,7 @@ export function BallThrowStage({
   const verdict = thrown.caught ? "caught" : "fled";
   return createPortal(
     <div
-      className={`ball-stage ${landed ? `landed ${verdict}` : "spinning"}`}
+      className={`ball-stage ${landed ? `landed ${verdict}` : "spinning"}${thrown.master ? " master" : ""}`}
       aria-hidden="true"
       onPointerDown={(event) => {
         event.stopPropagation();
@@ -226,7 +229,7 @@ export function BallThrowStage({
           landed={landed}
           onLanded={() => setLanded(true)}
         />
-        <small>needs {thrown.need}+</small>
+        <small>{thrown.master ? "Master Ball" : `needs ${thrown.need}+`}</small>
       </div>
       {landed && (
         <p className="ball-stage-verdict">

@@ -57,7 +57,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
       pair(
         "It pops out laughing. Drink 4.",
         "Click. Mew is yours. Give 6.",
-        "It catches you, then lets you go. Everyone else drinks 3.",
+        "It hops into the ball on its own. Everyone else drinks 3.",
       ),
     ),
   ],

@@ -315,6 +315,20 @@
   border-radius: 50%;
   background: #f5e5bd;
 }
+/* The Master Ball (2026-11-01): purple over cream. */
+.ball-result.master .ball-face {
+  background: linear-gradient(
+    to bottom,
+    #7b2fb0 0 45%,
+    #2b1a0b 45% 55%,
+    #f5e5bd 55%
+  );
+}
+.ball-result.master .ball-need {
+  color: #6b2a8f;
+  font-style: normal;
+  font-weight: 700;
+}
 .ball-need {
   font: italic 600 clamp(13px, 3.8cqw, 17px) / 1 var(--font-tavern);
   color: #6b4a2a;

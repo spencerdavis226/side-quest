@@ -189,6 +189,8 @@ const dungeon: CrawlTheme = {
       name: "Bar Tab",
       does: "A lost fight's drinks go to someone else",
     },
+    // League only (2026-11-01); Pub Crawl never deals one.
+    master: { name: "Master Ball", does: "Always catches" },
   },
   flee: "Flee",
   reroll: "Reroll",
@@ -331,6 +333,10 @@ const league: CrawlTheme = {
       name: "Baton Pass",
       does: "A lost battle's drinks go to someone else",
     },
+    master: {
+      name: "Master Ball",
+      does: "Throw it at any catch: it always lands a 20",
+    },
   },
   flee: "Escape",
   reroll: "Reroll",
@@ -349,6 +355,7 @@ const league: CrawlTheme = {
       revive: "revive",
       candy: "rare-candy",
       round: "baton-pass",
+      master: "master-ball",
       boss: "badge",
       satchel: "bag",
       wiped: "whited-out",

@@ -15,6 +15,8 @@ import {
   canSendIn,
   catchIt,
   throwBall,
+  throwMaster,
+  canThrowMaster,
   letGo,
   partyTeam,
   sendIn,
@@ -63,6 +65,8 @@ export function nextMove(s: SessionState, random: Random): SessionState {
     );
   else if (card.dice && !s.roll) next = rollDice(s, random);
   else if (card.dice && !s.roll!.returned) next = returnToCard(s);
+  // The Master Ball (2026-11-01), when the bag has one, half the time.
+  else if (canThrowMaster(s) && random() < 0.5) next = throwMaster(s);
   // Catch a beaten wild Pokémon more often than not.
   else if (awaitingCatch(s))
     next =

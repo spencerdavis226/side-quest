@@ -249,6 +249,23 @@ const situations: [string, GameConfig, Find][] = [
       party(s).hits > 0 &&
       currentCard(s).id.startsWith("pokemon.gym-"),
   ],
+  // The Master Ball, the Togepi egg and caught Legendaries (2026-11-01).
+  [
+    "league-master-in-bag",
+    league,
+    (s) => party(s).loot.includes("master") && s.phase === "hidden",
+  ],
+  ["league-master-thrown", league, (s) => !!party(s).throw?.master],
+  [
+    "league-togepi-hatched",
+    league,
+    (s) => !!party(s).team?.includes("pokemon.route-mystery-egg"),
+  ],
+  [
+    "league-legendary-caught",
+    league,
+    (s) => !!party(s).team?.some((id) => id.startsWith("pokemon.legendary-")),
+  ],
   ["crawl-wiped", crawl, (s) => party(s).wiped],
   ["crawl-survived", crawl, (s) => s.phase === "complete" && !party(s).wiped],
 ];

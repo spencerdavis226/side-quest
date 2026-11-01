@@ -290,7 +290,7 @@ export const gamble = (
   lose: string,
   win: string,
   labels: [string, string],
-  loot: Loot,
+  loot?: Loot,
 ): CardDefinition => ({
   ...spot(
     leg,
@@ -304,7 +304,7 @@ export const gamble = (
   ribbonTone: "violet",
   battle: true,
   damage: 1,
-  reward: { loot },
+  ...(loot ? { reward: { loot } } : {}),
 });
 
 /** Push your luck (2026-10-31, the variety pass; Pub Crawl's `press`):

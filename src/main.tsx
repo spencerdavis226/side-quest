@@ -280,6 +280,7 @@ function App() {
               onSpend={(item) => controller.spend(item)}
               onOffer={(index, branch) => controller.offer(index, branch)}
               onCatch={() => controller.catch(true)}
+              onMaster={() => controller.master()}
               onRelease={() => controller.catch(false)}
               onSend={(id) => controller.send(id)}
               onSpoils={(index) => controller.spoils(index)}

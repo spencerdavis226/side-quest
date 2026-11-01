@@ -232,6 +232,7 @@ export const leagueOmenWords: OmenWords = {
     revive: ["Revive", "Revives", "a"],
     candy: ["Rare Candy", "Rare Candies", "a"],
     round: ["Baton Pass", "Baton Passes", "a"],
+    master: ["Master Ball", "Master Balls", "a"],
   },
   kinds: {
     monster: "route battles",
@@ -267,6 +268,8 @@ export const dungeonOmenWords: OmenWords = {
     revive: ["Second Wind", "Second Winds", "a"],
     candy: ["Dog-Eared Tome", "Dog-Eared Tomes", "a"],
     round: ["Bar Tab", "Bar Tabs", "a"],
+    // Never dealt in Pub Crawl; named for completeness.
+    master: ["Master Ball", "Master Balls", "a"],
   },
   kinds: {
     monster: "monsters",

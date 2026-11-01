@@ -25,6 +25,7 @@ import {
   assistBonus,
   cardMatchup,
   finaleCard,
+  teamMember,
   finaleStage,
   hitsNeeded,
   isBossCard,
@@ -292,7 +293,7 @@ export function CrawlStrip({
   // A caught Pokémon sent into this battle (2026-10-31): its bonus.
   const helper =
     session.phase === "revealed" && party.assist
-      ? finaleCard(quest, party.assist)
+      ? teamMember(quest, party.assist)
       : undefined;
   const chip = (
     className: string,
@@ -427,7 +428,23 @@ export function CardStakes({
       : undefined;
   const jinx = card.jinx;
   const prizes = card.press?.prizes;
-  if (!damage && !gain && !hits && !trinket && !jinx && !prizes && !target)
+  // A Pokémon a win adds to the team (2026-11-01): an egg, a Legendary.
+  const joins = card.joins
+    ? {
+        name: card.joins.name ?? card.title,
+        type: card.joins.type ?? card.type,
+      }
+    : null;
+  if (
+    !damage &&
+    !gain &&
+    !hits &&
+    !trinket &&
+    !jinx &&
+    !prizes &&
+    !target &&
+    !joins
+  )
     return null;
   const d20 = target?.count === 1 && target.sides === 20;
   const boss = isBossCard(card);
@@ -498,6 +515,15 @@ export function CardStakes({
                 className={i < (party.press ?? 0) ? "banked" : undefined}
               />
             ))}
+          </span>
+        )}
+        {joins?.type && (
+          <span
+            className="stake stake-loot stake-joins"
+            aria-label={`${hits > 1 ? "Felling it adds" : "Winning adds"} ${joins.name} to the team`}
+          >
+            <b>+</b>
+            <TypeMark type={joins.type} />
           </span>
         )}
         {trinket && (
@@ -696,6 +722,34 @@ export function CatchPlaques({
         </span>
       </button>
     </>
+  );
+}
+
+/** The bag's Master Ball (2026-11-01), offered beside the ball at any
+ * catch: it always lands a 20. */
+export function MasterBallPlaque({
+  name,
+  onThrow,
+  theme,
+}: {
+  name: string;
+  onThrow: () => void;
+  theme: CrawlTheme;
+}) {
+  return (
+    <button
+      className="card-choice-option offer-plaque offer-buy master-plaque"
+      aria-label={`Master Ball: catch ${name}, always`}
+      onClick={onThrow}
+    >
+      <span className="offer-goods" aria-hidden="true">
+        <CrawlIcon name="master" theme={theme} />
+      </span>
+      <span className="offer-label">
+        <span className="offer-name">{theme.loot.master.name}</span>
+        <small className="offer-price">always catches</small>
+      </span>
+    </button>
   );
 }
 

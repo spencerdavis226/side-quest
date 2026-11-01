@@ -165,17 +165,21 @@ const route1: CardDefinition[] = [
     "A Caterpie is just sitting there being a little guy. Will the table catch it?",
     1,
   ),
-  gamble(
-    0,
-    "route-mystery-egg",
-    "Mystery Egg",
-    "A stranger in a trench coat hands you an egg. It's warm. Too warm. Crack it?",
-    9,
-    "It hatches into a Togepi and pisses on you. Drink 3.",
-    "It hatches! Name the baby, do its cry, and give 2.",
-    ["Hand it back", "Crack it"],
-    "die",
-  ),
+  // A won roll hatches a Togepi onto the team (2026-11-01, owner: "yes to
+  // togepi"); it brought an X Attack before.
+  {
+    ...gamble(
+      0,
+      "route-mystery-egg",
+      "Mystery Egg",
+      "A stranger in a trench coat hands you an egg. It's warm. Too warm. Crack it?",
+      9,
+      "It's a Voltorb. It explodes in your hands. Drink 3.",
+      "A Togepi hatches and joins the team! Do its cry and give 2.",
+      ["Hand it back", "Crack it"],
+    ),
+    joins: { name: "Togepi", type: "fairy", rate: 8 },
+  },
   item(
     0,
     "route-potion-ground",
@@ -1070,24 +1074,29 @@ const route6: CardDefinition[] = [
     "Fisherman Ned",
     "Your left neighbor plays Fisherman Ned and tells a fish story. Top it. Ned wins the vote: drink 4.",
   ),
-  hazard(
-    5,
-    "route-silph-maze",
-    "Silph Co. Maze",
-    "Silph Co. Eleven floors of teleport pads. Spin in your chair twice, then roll d6.",
-    moves(
-      [
-        "Lost on floor 7. Drink 3.",
-        'Teleported into a meeting. Drink 2 and say "per my last email."',
-        "Back in the lobby. Drink 2 and swap seats with someone.",
-      ],
-      [
-        "Found the card key. Give 2.",
-        "Found the president. Give 3.",
-        "Found the Master Ball. Give 4.",
-      ],
+  // Every win finds the Master Ball (2026-11-01, owner: "add a master ball
+  // item").
+  {
+    ...hazard(
+      5,
+      "route-silph-maze",
+      "Silph Co. Maze",
+      "Silph Co. Eleven floors of teleport pads. Spin in your chair twice, then roll d6.",
+      moves(
+        [
+          "Lost on floor 7. Drink 3.",
+          'Teleported into a meeting. Drink 2 and say "per my last email."',
+          "Back in the lobby. Drink 2 and swap seats with someone.",
+        ],
+        [
+          "Card key, vault, Master Ball. Give 2.",
+          "The president hands you a Master Ball. Give 3.",
+          "Found the Master Ball first try. Give 4.",
+        ],
+      ),
     ),
-  ),
+    reward: { loot: "master" },
+  },
   catchable(
     5,
     "route-dratini",
@@ -1130,8 +1139,8 @@ const route6: CardDefinition[] = [
     5,
     "route-silph-gift",
     "Silph Gift",
-    "The Silph Co. president gives you a gift for saving the building. Give 2.",
-    "die",
+    "The Silph Co. president thanks you with a Master Ball. Give 2.",
+    "master",
   ),
 ];
 const route6Aces: CardDefinition[] = [

@@ -163,6 +163,12 @@ export interface CardDefinition {
    * have neither and are caught for a drink, with no throw. */
   catchRate?: number;
   catchLines?: { caught: string; fled: string };
+  /** Pokémon League (2026-11-01): a won battle (a boss's fall) adds this
+   * card's Pokémon to the team with no throw: an egg that hatches, a
+   * Legendary caught on its last beat. `name` and `type` default to the
+   * card's title and type; `rate` stands in for a catch number, which sets
+   * the send-in bonus (`assistBonus`). */
+  joins?: { name?: string; type?: PokemonType; rate: number };
 }
 /** One beat of a boss fight after its first (`CardDefinition.phases`). */
 export interface Phase {
@@ -297,7 +303,9 @@ export interface OmenEffect {
  * maximum instead, on its own. `candy` (2026-10-17): the starter evolves
  * now (never a branching one, which picks its form on an evolution card).
  * `round` (2026-10-17): on a lost roll, the drawer hands that fight's drinks
- * to someone else; the party still loses the hearts. */
+ * to someone else; the party still loses the hearts. `master`
+ * (2026-11-01, League only): a catch thrown with it is a 20, so it always
+ * catches; spent from the bag by its own plaque at a catch. */
 export const LOOT = [
   "draught",
   "shield",
@@ -307,6 +315,9 @@ export const LOOT = [
   "candy",
   // A lost fight's drinks go to someone else (2026-10-17).
   "round",
+  // The League's Master Ball (2026-11-01): thrown in place of a ball, it
+  // always lands a 20. Pub Crawl never deals one.
+  "master",
 ] as const;
 export type Loot = (typeof LOOT)[number];
 /** `fuse`: a hidden length between `min` and `max` seconds, picked when it is
@@ -426,7 +437,7 @@ export interface PartyState {
   /** The ball thrown at the Pokémon on the card in play (2026-10-27): its
    * card ID and the d20 face, kept until the card is put aside so a reload
    * never throws again. */
-  throw?: { id: string; face: number };
+  throw?: { id: string; face: number; master?: true };
   /** The caught Pokémon sent into the d20 battle face up (2026-10-31,
    * owner: "power groups", a Nuzlocke): its card ID, still on the team. Its
    * bonus (`assistBonus`) joins the roll; cleared when the card is put

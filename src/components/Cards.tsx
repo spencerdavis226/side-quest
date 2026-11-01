@@ -54,7 +54,14 @@ export function CardFace({
   strike?: "won" | "lost" | null;
   /** The ball thrown at this Pokémon (the engine's `thrownBall`): replaces
    * the rules with the throw and the line it read. */
-  ball?: { face: number; need: number; caught: boolean; line: string } | null;
+  ball?: {
+    face: number;
+    need: number;
+    caught: boolean;
+    line: string;
+    /** Thrown with the Master Ball (2026-11-01): a purple ball. */
+    master?: boolean;
+  } | null;
 }) {
   // A strike reads the line for its matchup (the engine's `strikeText`).
   const outcome =
@@ -282,16 +289,22 @@ export function CardFace({
           }}
         >
           {ball ? (
-            <div className={`ball-result ${ball.caught ? "caught" : "fled"}`}>
+            <div
+              className={`ball-result ${ball.caught ? "caught" : "fled"}${ball.master ? " master" : ""}`}
+            >
               <div
                 className="ball-throw"
-                aria-label={`Threw a ${ball.face}, needed ${ball.need}. ${ball.caught ? "Caught" : "It got away"}.`}
+                aria-label={
+                  ball.master
+                    ? "Threw the Master Ball. Caught."
+                    : `Threw a ${ball.face}, needed ${ball.need}. ${ball.caught ? "Caught" : "It got away"}.`
+                }
               >
                 <span className="ball-face" aria-hidden="true">
                   {ball.face}
                 </span>
                 <span className="ball-need" aria-hidden="true">
-                  needs {ball.need}+
+                  {ball.master ? "Master Ball" : `needs ${ball.need}+`}
                 </span>
               </div>
               <p className="ball-verdict">

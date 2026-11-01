@@ -1,6 +1,8 @@
 import {
   awaitingCatch,
   canSendIn,
+  canThrowMaster,
+  throwMaster,
   catchIt,
   throwBall,
   letGo,
@@ -16,6 +18,14 @@ import type { SessionState } from "../src/game/types";
  * Pokémon while the team has room, or when its type is new to the team;
  * and sends one into every fight its type beats (2026-10-31). */
 export function botTeam(s: SessionState, random: Random): SessionState {
+  // The Master Ball (2026-11-01) goes on a hard catch the team wants.
+  if (canThrowMaster(s)) {
+    const card = currentCard(s);
+    const team = partyTeam(s.quest);
+    const wanted =
+      team.length < TEAM_SIZE || !team.some((m) => m.type === card.type);
+    if (wanted && (card.catchRate ?? 0) >= 10) return throwMaster(s);
+  }
   if (awaitingCatch(s)) {
     const card = currentCard(s);
     const team = partyTeam(s.quest);

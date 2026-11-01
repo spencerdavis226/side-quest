@@ -560,9 +560,26 @@ export const TEAM_SIZE = 2;
 /** The caught Pokémon in the bag, as cards, oldest first. */
 export function partyTeam(quest: QuestState | undefined) {
   return (quest?.party?.team ?? []).flatMap((id) => {
-    const card = quest ? finaleCard(quest, id) : undefined;
+    const card = quest ? teamMember(quest, id) : undefined;
     return card?.type ? [card] : [];
   });
+}
+/** Team member `id` as the team sees it: its card, or for a card that
+ * `joins` (an egg, a Legendary; 2026-11-01) the Pokémon it brings, named,
+ * typed and with its catch number. */
+export function teamMember(
+  quest: QuestState,
+  id: string,
+): CardDefinition | undefined {
+  const card = finaleCard(quest, id);
+  if (!card?.joins) return card;
+  const { name, type, rate } = card.joins;
+  return {
+    ...card,
+    title: name ?? card.title,
+    type: type ?? card.type,
+    catchRate: rate,
+  };
 }
 /** A wild Pokémon just beaten that the table can catch: a won roll on the
  * card, or a strike the matchup wins, and not one already on the team. */
@@ -604,6 +621,40 @@ export function catchIt(
   const party = joinTeam(q.party!, currentCard(s).id);
   return discard({ ...s, quest: { ...q, party } }, random);
 }
+/** Whether a Master Ball can be thrown at the Pokémon face up (2026-11-01):
+ * one is in the bag and a ball could be thrown now, at a beaten wild
+ * Pokémon or a catch card's offer. */
+export function canThrowMaster(s: SessionState): boolean {
+  const party = s.quest?.party;
+  if (!party?.loot.includes("master") || party.throw) return false;
+  const card = currentCard(s);
+  if (!card.catchRate) return false;
+  if (awaitingCatch(s)) return true;
+  return (
+    awaitingOffer(s) &&
+    !!card.offers?.some((o, i) => o.catch && canTakeOffer(s, i))
+  );
+}
+/** Throw the bag's Master Ball (2026-11-01): it is spent and lands a 20,
+ * so the Pokémon is caught. A catch card's offer (its heal) comes with it,
+ * as with a ball. */
+export function throwMaster(s: SessionState): SessionState {
+  if (!canThrowMaster(s)) return s;
+  const q = s.quest!;
+  const loot = [...q.party!.loot];
+  loot.splice(loot.indexOf("master"), 1);
+  return {
+    ...s,
+    quest: {
+      ...q,
+      party: {
+        ...q.party!,
+        loot,
+        throw: { id: currentCard(s).id, face: 20, master: true },
+      },
+    },
+  };
+}
 /** Whether a d20 `face` catches a Pokémon that needs `need` (2026-10-27):
  * a natural 20 always does and a natural 1 never. */
 export const caughtBy = (face: number, need: number) =>
@@ -620,6 +671,7 @@ export function thrownBall(s: SessionState) {
     face: thrown.face,
     need: card.catchRate,
     caught,
+    master: !!thrown.master,
     line: caught ? card.catchLines.caught : card.catchLines.fled,
   };
 }
@@ -699,7 +751,7 @@ export function canSendIn(s: SessionState, id: string): boolean {
   if (!party || !s.quest?.due || s.phase !== "revealed") return false;
   if (!party.team?.includes(id) || party.throw || party.assist) return false;
   const card = currentCard(s);
-  const member = finaleCard(s.quest, id);
+  const member = teamMember(s.quest, id);
   if (!card.type || !member?.type || !card.battle) return false;
   if (card.dice?.count !== 1 || card.dice.sides !== 20) return false;
   if (s.roll || card.dice.choice || party.press) return false;
@@ -1099,6 +1151,8 @@ export function canUseLoot(s: SessionState, item: Loot): boolean {
     case "shield":
     case "revive":
       return false; // Each works on its own, when it is needed.
+    case "master":
+      return false; // Thrown from its own plaque at a catch (`throwMaster`).
     case "candy": {
       // A branching starter picks its form on an evolution card.
       const form = omenForm(s.quest);
@@ -1285,6 +1339,9 @@ function settleParty(
   // A boss's or an ambush's boon comes when it falls (`discard`).
   if (!card.hits && (outcome === null || outcome === "won"))
     next = gainBoon(next, card, quest, spoil);
+  // An egg hatches onto the team on a win (2026-11-01).
+  if (card.joins && !card.hits && outcome === "won")
+    next = joinTeam(next, card.id);
   return next;
 }
 /** Put the card aside. A caught Pokémon sent into it goes back to the
@@ -1407,6 +1464,8 @@ function discardCard(
       next = { ...next, hits: 0 };
       if (isBossCard(card)) delete next.jinx;
       next = gainBoon(next, card, q, spoil);
+      // A Legendary caught on its last beat joins the team (2026-11-01).
+      if (card.joins) next = joinTeam(next, card.id);
       // A badge restocks the starter's item, room permitting; in a crawl
       // without badges (Pub Crawl), any boss does.
       const restock = omenEffect(q)?.restock;

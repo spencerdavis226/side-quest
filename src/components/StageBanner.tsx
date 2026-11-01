@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import type { PokemonType, SessionState } from "../game/types";
 import {
   finaleCard,
+  teamMember,
   finaleStage,
   formEffect,
   omenForm,
@@ -273,7 +274,10 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
   const jinx = party?.jinx;
   const passed = party?.passed;
   const fainted = party?.fainted;
-  const seen = useRef({ boons, jinx, passed, fainted });
+  // The newest teammate: an egg hatched or a Legendary caught (2026-11-01)
+  // is news; a ball's catch has its own throw.
+  const newest = party?.team?.at(-1);
+  const seen = useRef({ boons, jinx, passed, fainted, newest });
   const [shown, setShown] = useState<{
     key: string;
     kicker: string;
@@ -284,11 +288,24 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
   const words = crawlTheme(quest?.packId).words;
   useEffect(() => {
     const before = seen.current;
-    seen.current = { boons, jinx, passed, fainted };
+    seen.current = { boons, jinx, passed, fainted, newest };
     if (!quest || !party) return;
+    if (newest && newest !== before.newest) {
+      const member = teamMember(quest, newest);
+      if (member?.joins) {
+        setShown({
+          key: `joined-${newest}`,
+          kicker: member.hits ? "Caught" : "Hatched",
+          title: member.title,
+          line: "Joined the team.",
+          tone: "violet",
+        });
+        return;
+      }
+    }
     // A caught Pokémon lost with (2026-10-31, a Nuzlocke): gone for good.
     if (fainted && fainted !== before.fainted) {
-      const fallen = finaleCard(quest, fainted);
+      const fallen = teamMember(quest, fainted);
       if (fallen) {
         setShown({
           key: `fainted-${fainted}-${session.discarded}`,
@@ -347,7 +364,17 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
         line: "",
         tone: "pearl",
       });
-  }, [boons, jinx, passed, fainted, quest, party, words, session.discarded]);
+  }, [
+    boons,
+    jinx,
+    passed,
+    fainted,
+    newest,
+    quest,
+    party,
+    words,
+    session.discarded,
+  ]);
   const clear = useCallback(() => setShown(null), []);
   useBannerTimeout(shown?.key ?? null, clear);
   useAnnounce(

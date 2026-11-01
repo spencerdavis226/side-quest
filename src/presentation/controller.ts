@@ -8,6 +8,7 @@ import {
   skipRoll,
   catchIt,
   throwBall,
+  throwMaster,
   letGo,
   sendIn,
   dropFromBag,
@@ -301,6 +302,17 @@ export class PresentationController {
     const next = throwBall(session, this.random);
     if (next === session) return;
     this.mark(null);
+    this.persist(next);
+    this.transition(next, "settle");
+    this.effect("press");
+  }
+  /** Throw the bag's Master Ball at the Pokémon face up (2026-11-01): it
+   * lands a 20, settled onto the card like a ball. */
+  master() {
+    const { session, motion } = this.state;
+    if (!session || motion) return;
+    const next = throwMaster(session);
+    if (next === session) return;
     this.persist(next);
     this.transition(next, "settle");
     this.effect("press");

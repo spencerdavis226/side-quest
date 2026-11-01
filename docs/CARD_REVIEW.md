@@ -1,6 +1,6 @@
 # Card review sheet
 
-Generated 2026-10-31 by `npm run cards:review`. Do not edit by hand — edit the
+Generated 2026-11-01 by `npm run cards:review`. Do not edit by hand — edit the
 source modules under `src/content` and regenerate. Each row is one card;
 the Review column is intentionally blank so you can mark it up.
 
@@ -359,7 +359,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Secret House | `pokemon.route-surf-hm` | sip | You find the Safari Zone's secret house. A man gives you something for no reason. |  |
 | ☐ | Dratini | `pokemon.route-dratini` | sip | A Dratini in the Safari Zone's deepest pond. It's worth every drink. |  |
 | ☐ | Saffron Mart | `pokemon.route-saffron-mart` | sip | A Mart in Silph's lobby, guarded by a Rocket who also works the register. |  |
-| ☐ | Silph Gift | `pokemon.route-silph-gift` | sip | The Silph Co. president gives you a gift for saving the building. Give 2. |  |
+| ☐ | Silph Gift | `pokemon.route-silph-gift` | sip | The Silph Co. president thanks you with a Master Ball. Give 2. |  |
 | ☐ | Gift Eevee | `pokemon.route-eevee-gift` | sip | A man in a mansion lets an Eevee loose and says it's yours if you can catch it. |  |
 | ☐ | Cinnabar Mart | `pokemon.route-cinnabar-mart` | sip | The last Mart before a burned-down mansion. Prices are scorched. |  |
 | ☐ | Trainer's Toast | `pokemon.route-last-toast` | sip | Toast your starter. Everyone drinks 1 and names one thing they'll miss about the road. |  |
@@ -669,7 +669,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Youngster Joey | `pokemon.route-youngster-joey` | challenge | Joey says his Rattata is in the top percentage of Rattata. Prove him wrong. Roll d20. | 1d20 — 1-1: Natural 1! It was. Drink 6 and apologize to Joey. 2-3: It was. Drink 3 and apologize to Joey. 4-19: His Rattata faints and Joey sobs. Give 2. 20-20: Natural 20! His Rattata faints and Joey sobs. Give 4. |
 | ☐ | Bug Catcher | `pokemon.route-bug-catcher` | challenge | A kid with a bug net bets you can't name five bug Pokémon in 10 seconds. Lose: drink 2. |  |
 | ☐ | One-Way Ledge | `pokemon.route-ledge` | challenge | You hop the ledge and can never go back up. Your ankle has opinions. Roll d20. | 1d20 — 1-1: Natural 1! Rolled it. Drink 4 standing on your good foot. 2-6: Rolled it. Drink 2 standing on your good foot. 7-19: Stuck the landing. Give 1 and take a bow. 20-20: Natural 20! Stuck the landing. Give 2 and take a bow. |
-| ☐ | Mystery Egg | `pokemon.route-mystery-egg` | challenge | A stranger in a trench coat hands you an egg. It's warm. Too warm. Crack it? | 1d20 — 1-1: Natural 1! It hatches into a Togepi and pisses on you. Drink 6. 2-8: It hatches into a Togepi and pisses on you. Drink 3. 9-19: It hatches! Name the baby, do its cry, and give 2. 20-20: Natural 20! It hatches! Name the baby, do its cry, and give 4. |
+| ☐ | Mystery Egg | `pokemon.route-mystery-egg` | challenge | A stranger in a trench coat hands you an egg. It's warm. Too warm. Crack it? | 1d20 — 1-1: Natural 1! It's a Voltorb. It explodes in your hands. Drink 6. 2-8: It's a Voltorb. It explodes in your hands. Drink 3. 9-19: A Togepi hatches and joins the team! Do its cry and give 2. 20-20: Natural 20! A Togepi hatches and joins the team! Do its cry and give 4. |
 | ☐ | Oddish | `pokemon.route-oddish` | challenge | Wild Oddish, a radish with legs, circles you and Absorbs your drink. Drink 2. |  |
 | ☐ | Diglett | `pokemon.route-diglett` | challenge | A Diglett pops up between your feet and you stomp the wrong hole. Drink 2. |  |
 | ☐ | Pichu | `pokemon.route-pichu` | challenge | Wild Pichu sparks and shocks itself harder than you. It faints. Give 2. |  |
@@ -750,7 +750,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Salandit | `pokemon.route-salandit` | challenge | Wild Salandit's toxic gas smells like your ex. Hold your breath. Drink 2. |  |
 | ☐ | Gentleman Alfred | `pokemon.route-gentleman` | challenge | Gentleman Alfred challenges you to a battle with his Growlithe and his monocle. Roll d20. | 1d20 — 1-1: Natural 1! Monocled. Drink 8 and speak posh until your next turn. 2-6: Monocled. Drink 4 and speak posh until your next turn. 7-19: He tips his hat. Give 3 in your poshest voice. 20-20: Natural 20! He tips his hat. Give 6 in your poshest voice. |
 | ☐ | Fisherman Ned | `pokemon.route-fisherman` | challenge | Your left neighbor plays Fisherman Ned and tells a fish story. Top it. Ned wins the vote: drink 4. |  |
-| ☐ | Silph Co. Maze | `pokemon.route-silph-maze` | challenge | Silph Co. Eleven floors of teleport pads. Spin in your chair twice, then roll d6. | 1d6 — 1-1: Lost on floor 7. Drink 3. 2-2: Teleported into a meeting. Drink 2 and say "per my last email." 3-3: Back in the lobby. Drink 2 and swap seats with someone. 4-4: Found the card key. Give 2. 5-5: Found the president. Give 3. 6-6: Found the Master Ball. Give 4. |
+| ☐ | Silph Co. Maze | `pokemon.route-silph-maze` | challenge | Silph Co. Eleven floors of teleport pads. Spin in your chair twice, then roll d6. | 1d6 — 1-1: Lost on floor 7. Drink 3. 2-2: Teleported into a meeting. Drink 2 and say "per my last email." 3-3: Back in the lobby. Drink 2 and swap seats with someone. 4-4: Card key, vault, Master Ball. Give 2. 5-5: The president hands you a Master Ball. Give 3. 6-6: Found the Master Ball first try. Give 4. |
 | ☐ | Sudowoodo | `pokemon.route-sudowoodo` | challenge | A tree blocks the road and won't make eye contact. Roll d20. | 1d20 — 1-1: Natural 1! It's Sudowoodo. Drink 6 and stand still like a tree. 2-6: It's Sudowoodo. Drink 3 and stand still like a tree. 7-19: You water it. It panics and runs. Everyone runs in place; the last to start drinks 3. 20-20: Natural 20! You water it. It panics and runs. Everyone runs in place; the last to start drinks 6. |
 | ☐ | Rotom | `pokemon.route-rotom` | challenge | A Rotom got into the phone. Don't drop it. It orders pizza. Drink 2. |  |
 | ☐ | Breloom | `pokemon.route-breloom` | challenge | Wild Breloom throws a mushroom haymaker. Duck. It grazes you. Drink 2. |  |

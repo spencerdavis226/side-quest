@@ -5,6 +5,7 @@ import {
   currentCard,
   findCard,
   finaleCard,
+  teamMember,
   formEffect,
   hitsNeeded,
   omenForm,
@@ -240,7 +241,7 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
           (id) =>
             typeof id !== "string" ||
             !dealt.includes(id) ||
-            !finaleCard(s.quest!, id)?.type,
+            !teamMember(s.quest!, id)?.type,
         ))) ||
     // The ball thrown at the Pokémon face up (2026-10-27), kept until its
     // card is put aside.
@@ -250,7 +251,10 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
         p.throw.id !== currentCard(s).id ||
         !currentCard(s).catchRate ||
         !whole(p.throw.face, 1) ||
-        p.throw.face > 20)) ||
+        p.throw.face > 20 ||
+        // A Master Ball (2026-11-01) always lands a 20.
+        (p.throw.master !== undefined &&
+          (p.throw.master !== true || p.throw.face !== 20)))) ||
     // The caught Pokémon sent into the d20 battle face up (2026-10-31): one
     // on the team.
     (p.assist !== undefined &&
@@ -265,7 +269,7 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
       (typeof p.fainted !== "string" ||
         !dealt.includes(p.fainted) ||
         !!p.team?.includes(p.fainted) ||
-        !finaleCard(s.quest!, p.fainted)?.type)) ||
+        !teamMember(s.quest!, p.fainted)?.type)) ||
     // The beat of the phased boss put aside last.
     (p.beat !== undefined &&
       (!whole(p.beat, 1) ||
