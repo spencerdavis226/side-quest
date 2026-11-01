@@ -22,8 +22,10 @@ test("@release the League's starter turns over with a ball; a tap skips it, a re
   const moment = page.locator(".moment-omen");
   await expect(moment).toBeVisible();
   await expect(moment.locator(".omen-name small")).toHaveText("Your starter");
-  // The tap that skips it never reaches the card.
-  await moment.click();
+  // The tap that skips it never reaches the card. Tap at once: waiting for
+  // the stage to read as "stable" can outlast a 2.6 s moment on a slow
+  // runner (WebKit in CI).
+  await moment.click({ force: true });
   await expect(moment).toHaveCount(0);
   const after = await saved(page);
   expect(after.phase).toBe("revealed");
