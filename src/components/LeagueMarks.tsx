@@ -151,7 +151,7 @@ export function TypeMark({
 
 /** The badge a gym pays, from its ribbon: "Gym Leader · Boulder Badge" is
  * the Boulder Badge, "Kahuna · Fightinium Z" the Fightinium Z. */
-const badgeName = (card: CardDefinition) =>
+export const badgeName = (card: CardDefinition) =>
   (card.ribbon?.split(" · ").pop() ?? card.title).replace(/ Badge$/, "");
 
 /** The badges earned so far, in the order they were won. */

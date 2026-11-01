@@ -51,6 +51,9 @@ export interface Presentation {
   finishingRoll: boolean;
   /** Whether `undo()` can take back the last decision. */
   undoable: boolean;
+  /** This snapshot is an undo's: the moments layer plays nothing for it
+   * (display only, 2026-11-01). */
+  undone?: boolean;
 }
 /** Durable actions happen on acceptance. Animation completion never advances a deck. */
 export class PresentationController {
@@ -98,6 +101,7 @@ export class PresentationController {
     session: SessionState | null,
     motion: Motion | null,
     outgoing: SessionState | null = null,
+    undone = false,
   ) {
     this.publish({
       session,
@@ -106,6 +110,7 @@ export class PresentationController {
       transition: this.state.transition + 1,
       finishingRoll: false,
       undoable: !!this.before,
+      ...(undone ? { undone } : {}),
     });
   }
   start(session: SessionState) {
@@ -360,7 +365,7 @@ export class PresentationController {
     if (motion || !before) return;
     this.mark(null);
     this.persist(before);
-    this.transition(before, null);
+    this.transition(before, null, null, true);
     this.effect("press");
   }
   finish(id: number) {

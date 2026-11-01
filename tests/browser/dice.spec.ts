@@ -262,6 +262,9 @@ test("Escape finishes the throw and reveals without changing the saved faces", a
   const committed = await saved(page);
   await page.keyboard.press("Escape");
   await expect(page.locator(".roll-layer")).toHaveCount(0);
+  // The layer is lazy: wait for the save, not just an absent layer (it is
+  // also absent before it first mounts).
+  await expect.poll(async () => (await saved(page)).roll.returned).toBe(true);
   expect((await saved(page)).roll).toEqual({
     ...committed.roll,
     returned: true,
@@ -544,6 +547,9 @@ test("a finish request during lazy loading survives startup without another roll
   expect((await saved(page)).roll).toEqual(committed.roll);
   release();
   await expect(page.locator(".roll-layer")).toHaveCount(0);
+  // The layer is lazy: wait for the save, not just an absent layer (it is
+  // also absent before it first mounts).
+  await expect.poll(async () => (await saved(page)).roll.returned).toBe(true);
   expect((await saved(page)).roll).toEqual({
     ...committed.roll,
     returned: true,

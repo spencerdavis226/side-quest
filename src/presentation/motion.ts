@@ -14,3 +14,19 @@ export function forceMotion(): boolean {
   }
   return new URLSearchParams(search).has("force-motion");
 }
+
+/** Whether motion is off: the OS asks for Reduced Motion (unless the dev
+ * override is on). The one place that reads the media query for moments,
+ * stamps and plaques (2026-11-01; six call sites read it themselves before). */
+export function reducedMotion(): boolean {
+  return (
+    !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches &&
+    !forceMotion()
+  );
+}
+
+/** Whether a moment should not play at all: motion is off, or nobody can
+ * see it (a hidden tab). */
+export function stillMotion(): boolean {
+  return document.hidden || reducedMotion();
+}

@@ -860,3 +860,325 @@
   filter: grayscale(1) brightness(0.8);
   transition: filter 400ms ease-out;
 }
+
+/* Foil (2026-11-01, `cardFinish`): a boss's frame catches the light. Gold for
+   the League's Legendary and Champion and Pub Crawl's last boss, silver for
+   the other bosses and a Standard deck's last card. The sheen is masked to
+   the frame (never over the rules), follows a finger dragged on the card
+   (`--fx`, `--fy`, read only) and sweeps by itself every few seconds. The
+   2:3 frame and its art are untouched. */
+.card-foil {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+      calc(105deg + (var(--fx, 0.5) - 0.5) * 50deg),
+      transparent 22%,
+      rgb(255 80 160 / 0.42) 32%,
+      rgb(255 220 90 / 0.42) 40%,
+      rgb(90 255 190 / 0.42) 48%,
+      rgb(80 170 255 / 0.42) 56%,
+      rgb(190 110 255 / 0.42) 64%,
+      transparent 76%
+    )
+    calc(var(--fx, 0.5) * 100%) calc(var(--fy, 0.3) * 100%) / 260% 260%
+    no-repeat;
+  mix-blend-mode: color-dodge;
+  opacity: 0.6;
+  /* The frame only: the parchment's rules area is cut out. */
+  -webkit-mask-image: linear-gradient(#000, #000), linear-gradient(#000, #000);
+  -webkit-mask-size:
+    100% 100%,
+    84% 63%;
+  -webkit-mask-position:
+    0 0,
+    50% 81%;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-composite: xor;
+  mask-image: linear-gradient(#000, #000), linear-gradient(#000, #000);
+  mask-size:
+    100% 100%,
+    84% 63%;
+  mask-position:
+    0 0,
+    50% 81%;
+  mask-repeat: no-repeat;
+  mask-composite: exclude;
+}
+.foil-gold .card-foil {
+  opacity: 0.75;
+  background-color: rgb(255 190 60 / 0.18);
+}
+.foil-silver .card-foil {
+  opacity: 0.45;
+}
+/* The light sweeping across by itself. */
+.card-foil::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+      115deg,
+      transparent 40%,
+      rgb(255 255 255 / 0.75) 50%,
+      transparent 60%
+    ) -100%
+    0 / 250% 100% no-repeat;
+  animation: foil-sweep 5.5s ease-in-out 0.8s infinite;
+}
+@keyframes foil-sweep {
+  0% {
+    background-position: 150% 0;
+  }
+  22%,
+  100% {
+    background-position: -100% 0;
+  }
+}
+/* Dealt face down, a boss's back gives one glint: something big. */
+.card-back.foil-teaser {
+  position: relative;
+  overflow: hidden;
+}
+.card-back.foil-teaser::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+      115deg,
+      transparent 38%,
+      rgb(255 255 255 / 0.7) 50%,
+      transparent 62%
+    )
+    150% 0 / 250% 100% no-repeat;
+  mix-blend-mode: screen;
+  animation: foil-teaser 1.1s ease-in-out 0.5s both;
+}
+.card-back.foil-gold::after {
+  background-image: linear-gradient(
+    115deg,
+    transparent 38%,
+    rgb(255 226 140 / 0.85) 50%,
+    transparent 62%
+  );
+}
+@keyframes foil-teaser {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+.suspended .card-foil::after {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .card-foil::after {
+    display: none;
+  }
+}
+
+/* --- Secrets and fuses, staged (2026-11-01) ------------------------------ */
+/* A lit fuse: a spark crawls round the card's edge at one steady pace (it
+   says nothing about when it goes off), sputtering, trailing smoke. */
+.fuse-border {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 2px rgb(255 140 60 / 0.25);
+}
+.fuse-border i {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    #fffbe0 0 22%,
+    #ffc85a 40%,
+    #ff6a1a 66%,
+    transparent 70%
+  );
+  box-shadow:
+    0 0 10px 4px #ff9a3c,
+    0 0 26px 10px rgb(255 120 40 / 0.35),
+    -6px -4px 14px 4px rgb(120 110 100 / 0.35);
+  animation:
+    fuse-lap 4.2s linear infinite,
+    fuse-sputter 0.37s steps(2) infinite;
+}
+@keyframes fuse-lap {
+  0% {
+    left: 4%;
+    top: 0%;
+  }
+  27% {
+    left: 96%;
+    top: 0%;
+  }
+  50% {
+    left: 100%;
+    top: 96%;
+  }
+  77% {
+    left: 4%;
+    top: 100%;
+  }
+  100% {
+    left: 0%;
+    top: 4%;
+  }
+}
+@keyframes fuse-sputter {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5) rotate(30deg);
+  }
+  100% {
+    transform: scale(0.8);
+  }
+}
+/* A blown fuse scorches the card's edges, then the soot clears. */
+.card-scorch {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow:
+    inset 0 0 6cqw 2cqw rgb(30 12 4 / 0.85),
+    inset 0 0 1.5cqw 0.5cqw rgb(255 120 30 / 0.6);
+  animation: card-scorch 2.6s ease-out both;
+}
+@keyframes card-scorch {
+  0% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+/* The secret unrolls as the seal breaks. */
+.card-secret {
+  animation: secret-unroll 240ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes secret-unroll {
+  from {
+    clip-path: inset(0 0 100% 0);
+    opacity: 0.4;
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+}
+/* The wax seal on the Hold to read plaque: two halves that part. */
+.card-hold {
+  position: relative;
+}
+.wax-seal {
+  position: absolute;
+  top: 50%;
+  left: clamp(8px, 3cqw, 14px);
+  width: clamp(26px, 8cqw, 36px);
+  aspect-ratio: 1;
+  margin-top: calc(clamp(26px, 8cqw, 36px) / -2);
+}
+.wax-seal i {
+  position: absolute;
+  inset: 0;
+  border-radius: 46% 54% 50% 50% / 52% 48% 52% 48%;
+  background: radial-gradient(circle at 38% 34%, #e2584a, #a81e18 55%, #6a0e0a);
+  box-shadow:
+    inset 0 0 0 3px rgb(0 0 0 / 0.18),
+    0 2px 3px #0008;
+  transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.wax-seal i:first-child {
+  clip-path: polygon(0 0, 54% 0, 44% 34%, 58% 62%, 46% 100%, 0 100%);
+}
+.wax-seal i:last-child {
+  clip-path: polygon(54% 0, 100% 0, 100% 100%, 46% 100%, 58% 62%, 44% 34%);
+}
+.wax-seal.broken i:first-child {
+  transform: translate(-4px, 1px) rotate(-14deg);
+}
+.wax-seal.broken i:last-child {
+  transform: translate(4px, 2px) rotate(12deg);
+}
+/* The last three seconds of a countdown, big over the table. */
+.countdown-tick {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-pulse);
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  color: rgb(255 230 210 / 0.9);
+  font: 800 clamp(160px, 60vw, 380px) / 1 var(--font-card-title);
+  text-shadow: 0 0 40px rgb(220 40 20 / 0.8);
+  box-shadow: inset 0 0 16vmin 3vmin rgb(200 30 16 / 0.55);
+  animation: countdown-tick 900ms ease-out both;
+}
+@keyframes countdown-tick {
+  0% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+  14% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+/* BOOM's shock ring. */
+.blast-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40vmin;
+  height: 40vmin;
+  margin: -20vmin 0 0 -20vmin;
+  border-radius: 50%;
+  border: 6px solid #fff3c4;
+  box-shadow: 0 0 30px #ffb347;
+  animation: blast-ring 700ms ease-out both;
+}
+@keyframes blast-ring {
+  from {
+    transform: scale(0.2);
+    opacity: 1;
+  }
+  to {
+    transform: scale(3.4);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fuse-border i {
+    left: 50%;
+    top: 0;
+  }
+  .countdown-tick {
+    animation-duration: 900ms !important;
+  }
+}
+/* Beside other plaques the hold plaque is narrow: the seal stays off it. */
+.card-actions:not(.plaques-1) .wax-seal {
+  display: none;
+}

@@ -34,6 +34,7 @@ export function CardFace({
   matchup = null,
   strike,
   ball = null,
+  finish = null,
 }: {
   card: CardDefinition;
   packIds?: readonly string[];
@@ -65,6 +66,8 @@ export function CardFace({
     /** The ball, when not a Poké Ball (2026-11-01). */
     ball?: "great" | "ultra" | "master";
   } | null;
+  /** A foil over the frame (2026-11-01): gold or silver for a boss. */
+  finish?: "gold" | "silver" | null;
 }) {
   // A strike reads the line for its matchup (the engine's `strikeText`).
   const outcome =
@@ -223,7 +226,7 @@ export function CardFace({
   }, [resolved, card.id, shown, thrown]);
   return (
     <div
-      className={`study-face${card.ribbon ? ` has-ribbon tone-${card.ribbonTone ?? "gold"}` : ""}${lost ? " battle-lost" : ""}`}
+      className={`study-face${card.ribbon ? ` has-ribbon tone-${card.ribbonTone ?? "gold"}` : ""}${lost ? " battle-lost" : ""}${finish ? ` foiled foil-${finish}` : ""}`}
       // A drag anywhere on the face (rules or an enlarged title) must scroll or
       // scrub, never activate the card action. A stationary tap still passes.
       onPointerDown={(event) => {
@@ -236,6 +239,18 @@ export function CardFace({
         };
       }}
       onPointerMove={(event) => {
+        // A foil follows the finger (read only: the drag rule below holds).
+        if (finish) {
+          const r = event.currentTarget.getBoundingClientRect();
+          event.currentTarget.style.setProperty(
+            "--fx",
+            String((event.clientX - r.left) / r.width),
+          );
+          event.currentTarget.style.setProperty(
+            "--fy",
+            String((event.clientY - r.top) / r.height),
+          );
+        }
         const active = gesture.current;
         if (
           active?.pointerId === event.pointerId &&
@@ -256,6 +271,7 @@ export function CardFace({
         }
       }}
     >
+      {finish && <span className="card-foil" aria-hidden="true" />}
       <div
         ref={titleRef}
         className="study-title"

@@ -26,3 +26,14 @@ export function useAnnounce(text: string, key: string | null) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
 }
+
+/** Read `text` out once, now (the moments layer, whose moments may be
+ * skipped or never play under Reduced Motion). */
+export function announce(text: string) {
+  const region = document.getElementById(ID);
+  if (!region || !text) return;
+  const line = document.createElement("p");
+  line.textContent = text;
+  region.append(line);
+  setTimeout(() => line.remove(), 12000);
+}

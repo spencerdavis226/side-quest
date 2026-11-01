@@ -26,6 +26,7 @@ export function QuestMeter({
       <div className="quest-meters">
         <button
           type="button"
+          data-fly="hearts"
           className={`quest-meter crawl-meter${quest.party.hearts <= 3 ? " low" : ""}`}
           aria-label={crawlMeterLabel(quest)}
           aria-haspopup="dialog"

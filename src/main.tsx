@@ -40,18 +40,16 @@ import { Completion } from "./screens/Completion";
 import { GameDialogs, type DialogName } from "./screens/GameDialogs";
 import { useWakeLock } from "./app/wakeLock";
 import { PortraitGate } from "./components/PortraitGate";
-import {
-  EvolutionBanner,
-  PartyNewsBanner,
-  StageBanner,
-} from "./components/StageBanner";
+import { PartyNewsBanner, StageBanner } from "./components/StageBanner";
 import { PartyPulse } from "./components/Crawl";
+import { MomentDirector } from "./components/moments/Director";
 import { Announcer } from "./components/Announcer";
 import { IS_PREVIEW } from "./app/channel";
 import "./style.css";
 import "./presentation/theme.css";
 import "./presentation/card-front.css";
 import "./presentation/crawl.css";
+import "./presentation/moments.css";
 migrateStorageKeys();
 // theme.motion's camelCase keys become kebab-case CSS variables
 // (dialogExit -> --motion-dialog-exit), set once on the app root.
@@ -81,6 +79,7 @@ function App() {
     transition,
     finishingRoll,
     undoable,
+    undone,
   } = usePresentation(
     () =>
       new PresentationController(loaded.session, (next) => {
@@ -172,7 +171,7 @@ function App() {
   };
   const finish = (id: number) => controller.finish(id);
   return (
-    <>
+    <MomentDirector session={session} motion={motion} undone={!!undone}>
       <Atmosphere hidden={hidden} scene={crawlScene(display)} />
       <Announcer />
       <PortraitGate />
@@ -291,7 +290,6 @@ function App() {
               onFinish={finish}
             />
             <StageBanner session={display} />
-            <EvolutionBanner session={display} />
             <PartyNewsBanner session={display} />
           </>
         )}
@@ -329,7 +327,7 @@ function App() {
           }}
         />
       </main>
-    </>
+    </MomentDirector>
   );
 }
 document.documentElement.dataset.release =
@@ -356,6 +354,14 @@ if (import.meta.env.DEV && params.get("preview") === "1") {
     root.render(
       <React.StrictMode>
         <CardReview />
+      </React.StrictMode>,
+    ),
+  );
+} else if (import.meta.env.DEV && params.get("moments") === "1") {
+  void import("./workshop/Moments").then(({ default: Moments }) =>
+    root.render(
+      <React.StrictMode>
+        <Moments />
       </React.StrictMode>,
     ),
   );

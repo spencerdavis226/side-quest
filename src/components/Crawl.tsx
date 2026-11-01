@@ -38,6 +38,10 @@ import {
   wantedBoss,
 } from "../game/engine";
 import { asset } from "../presentation/theme";
+import { stillMotion } from "../presentation/motion";
+import { burst } from "./moments/particles";
+import { flyTarget } from "./moments/fly";
+import { IDLE_MS, useIdle } from "./Atmosphere";
 import {
   crawlIconPath,
   crawlTheme,
@@ -118,6 +122,7 @@ export function CrawlMeterFace({ quest }: { quest: QuestState }) {
           {delta > 0 ? `+${delta}` : `−${-delta}`}
         </span>
       )}
+      <HpRing hearts={party.hearts} max={party.max} />
       <span
         className={`meter-heart ${pulse}${theme.icons.files.heart ? "" : " heart-shape"}`}
         key={`${party.hearts}-${pulse}`}
@@ -128,6 +133,41 @@ export function CrawlMeterFace({ quest }: { quest: QuestState }) {
         </strong>
       </span>
     </>
+  );
+}
+/** The share of hearts left as a ring round the stud (2026-11-01): green,
+ * amber, then red, draining in a chunk with a pale trail catching up a
+ * beat later, as a fighting game's bar does. The number in the stud is the
+ * truth; the ring only shows it. */
+const RING = 2 * Math.PI * 18;
+function HpRing({ hearts, max }: { hearts: number; max: number }) {
+  const share = Math.max(0, Math.min(1, max ? hearts / max : 0));
+  const tone = share > 0.5 ? "high" : share > 0.25 ? "mid" : "low";
+  const offset = RING * (1 - share);
+  return (
+    <svg
+      className={`hp-ring hp-${tone}`}
+      viewBox="0 0 40 40"
+      aria-hidden="true"
+    >
+      <circle className="hp-track" cx="20" cy="20" r="18" />
+      <circle
+        className="hp-trail"
+        cx="20"
+        cy="20"
+        r="18"
+        strokeDasharray={RING}
+        strokeDashoffset={offset}
+      />
+      <circle
+        className="hp-live"
+        cx="20"
+        cy="20"
+        r="18"
+        strokeDasharray={RING}
+        strokeDashoffset={offset}
+      />
+    </svg>
   );
 }
 export function crawlMeterLabel(quest: QuestState) {
@@ -305,6 +345,7 @@ export function CrawlStrip({
     <button
       type="button"
       className={`hud-chip ${className}`}
+      data-fly={dialog}
       aria-label={label}
       aria-haspopup="dialog"
       disabled={disabled || shut}
@@ -983,7 +1024,7 @@ const EQUIPMENT = {
 } as const;
 
 /** Tonight's omen, kept in the boons: an omen card's boon with no slot. */
-const isOmenBoon = (b: { card: CardDefinition; boon: Boon }) =>
+export const isOmenBoon = (b: { card: CardDefinition; boon: Boon }) =>
   b.card.encounter === "omen" && !b.boon.slot;
 /** What a worn piece does now: its power without the items it came with,
  * which were handed out when it was taken. */
@@ -992,7 +1033,7 @@ const wornRules = (boon: Boon) =>
 
 /** A piece of gear's mark: its slot's, a trinket's for a legacy piece, or
  * the satchel's for one that only brings items. */
-const gearIcon = (boon: Boon): CrawlIconName =>
+export const gearIcon = (boon: Boon): CrawlIconName =>
   boon.slot === "weapon"
     ? "weapon"
     : boon.slot === "armor"
@@ -1746,19 +1787,74 @@ export function PartyPulse({
       kind: party.wiped ? "wipe" : party.hearts < before ? "hurt" : "heal",
       at: Date.now(),
     });
+    if (stillMotion()) return;
+    // The table feels it (2026-11-01): a hit holds a beat, then the play
+    // area shakes by how hard it landed and the heart throws shards; a heal
+    // draws green motes up into the heart.
+    const lost = before - party.hearts;
+    const stud = flyTarget("hearts");
+    if (lost > 0) {
+      const id = setTimeout(() => {
+        const a = Math.min(6, 2 + lost * 1.4);
+        document
+          .querySelector("main.app")
+          ?.animate?.(
+            [
+              { transform: "none" },
+              { transform: `translate(${-a}px, ${a * 0.6}px)` },
+              { transform: `translate(${a * 0.8}px, ${-a * 0.5}px)` },
+              { transform: `translate(${-a * 0.5}px, ${a * 0.3}px)` },
+              { transform: `translate(${a * 0.25}px, 0)` },
+              { transform: "none" },
+            ],
+            { duration: 260, easing: "ease-out" },
+          );
+        if (stud)
+          burst("shards", {
+            ...stud,
+            count: Math.min(30, 6 + lost * 5),
+            power: 0.35,
+            colors: ["#ff6a52", "#d7382d", "#7d1410", "#ffd0c4"],
+          });
+      }, 70);
+      return () => clearTimeout(id);
+    }
+    if (stud) {
+      burst("motes", {
+        x: stud.x,
+        count: 22,
+        colors: ["#b8f5c4", "#7bd389", "#e8fff0"],
+      });
+      burst("sparks", {
+        ...stud,
+        count: 18,
+        power: 0.25,
+        colors: ["#b8f5c4", "#ffffff"],
+      });
+    }
   }, [party.hearts, party.wiped, hidden]);
   useEffect(() => {
     if (!flash) return;
     const id = setTimeout(() => setFlash(null), 1400);
     return () => clearTimeout(id);
   }, [flash]);
-  if (!flash) return null;
+  // Two hearts or fewer: a slow heartbeat at the screen's edge until healed,
+  // still while nobody touches the phone or the tab is away.
+  const idle = useIdle(IDLE_MS);
+  const low = party.hearts > 0 && party.hearts <= 2 && !party.wiped;
   return createPortal(
-    <div
-      key={flash.at}
-      className={`party-pulse pulse-${flash.kind}`}
-      aria-hidden="true"
-    />,
+    <>
+      {flash && (
+        <div
+          key={flash.at}
+          className={`party-pulse pulse-${flash.kind}`}
+          aria-hidden="true"
+        />
+      )}
+      {low && !hidden && !idle && (
+        <div className="low-hp-beat" aria-hidden="true" />
+      )}
+    </>,
     document.body,
   );
 }

@@ -303,7 +303,7 @@ test("a boss shows its wounds, its trinket, and comes back until it falls", asyn
   await expect(plaque).toHaveCount(1);
   await plaque.click();
   await rows.nth(0).click();
-  await expect(page.locator(".news-banner")).toHaveText(
+  await expect(page.locator(".still-plaque")).toHaveText(
     /Trinket found\s*Hydra Tooth\s*\+2 to boss d20s\./,
   );
   await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
@@ -423,7 +423,9 @@ test("a landing levels the adventurer up for drinks, or rests", async ({
   await expect(plaques.nth(1)).toHaveAccessibleName("Rest: 3 hearts back");
   await page.screenshot({ path: info.outputPath("landing.png") });
   await plaques.nth(0).click();
-  await expect(page.locator(".evolution-banner")).toHaveText(
+  // The level up is a moment (2026-11-01); under Reduced Motion its words
+  // sit on a still plaque.
+  await expect(page.locator(".still-plaque")).toHaveText(
     /Barbarian levels up!\s*Berserker\s*\+2 max hearts\. \+2 to elite and boss d20s\./,
   );
   // Two banners at once, the level-up and the hidden room: both are read.
@@ -490,7 +492,7 @@ test("a level up reads at 320px, then the line goes on", async ({
     "Warlord · drink 3: your adventurer levels up into Warlord",
   );
   await plaques.nth(0).click();
-  await expect(page.locator(".evolution-banner")).toHaveText(
+  await expect(page.locator(".still-plaque")).toHaveText(
     /Berserker levels up!\s*Warlord/,
   );
   expect((await saved(page)).quest.party).toMatchObject({ form: 2 });

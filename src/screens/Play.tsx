@@ -42,6 +42,7 @@ import { cardPacks } from "../presentation/packs";
 import { CardFace } from "../components/Cards";
 import {
   CardActions,
+  PointCountdown,
   TimerBlast,
   hasActions,
   useCardActions,
@@ -64,13 +65,11 @@ import { extrasLayout, foldBranches } from "../components/extras";
 import { TypeMark } from "../components/LeagueMarks";
 import { BallThrowStage } from "../components/BallThrow";
 import { CrawlIcon } from "../components/Crawl";
-import {
-  BossTally,
-  FelledStamp,
-  NaturalBurst,
-  useBossReturn,
-} from "../components/Flourish";
+import { BossTally, FelledStamp, useBossReturn } from "../components/Flourish";
+import { useMoments } from "../components/moments/Director";
+import { cardFinish } from "../components/moments/detect";
 import { useAnnounce } from "../components/Announcer";
+import { reducedMotion } from "../presentation/motion";
 // A dice overlay that can't be fetched (offline before it was cached) must
 // not strand a roll: the saved result goes straight to the card instead.
 type DiceProps = ComponentProps<
@@ -171,15 +170,20 @@ export function Play({
     (flourish.badge && card.quest && card.quest === session.quest?.packId
       ? flourish.badge
       : flourish.felled);
-  const felled =
-    !!felledWord && (fellingSwing(session) || stampingNow);
+  const fells = !!felledWord && (fellingSwing(session) || stampingNow);
+  // The stamp waits for a moment over the table (a natural 20) to finish,
+  // so it is seen landing (2026-11-01).
+  const { busy } = useMoments();
+  const felled = fells && !busy;
   // A boss dealt again after a landed hit jolts and shows its tally.
   const returning = useBossReturn(session, card, !motion);
+  // A boss's foil, and the glint its back gives as it is dealt.
+  const finish = cardFinish(session, card);
   useEffect(() => {
     if (!felled) return;
     const id = setTimeout(
       () => setStamped(session.discarded),
-      matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : STAMP_MS,
+      reducedMotion() ? 0 : STAMP_MS,
     );
     return () => clearTimeout(id);
   }, [felled, session.discarded]);
@@ -193,7 +197,7 @@ export function Play({
   const sheet =
     !!spoils &&
     sheetClosed !== session.discarded &&
-    (!felled || stamped === session.discarded);
+    (!fells || stamped === session.discarded);
   // A push-your-luck win: cash out or go again.
   const press = !motion && awaitingPress(session);
   // The League's team (2026-10-25): a beaten wild Pokémon to catch, and
@@ -221,7 +225,7 @@ export function Play({
         if (stamping.ask) setAsking(stamping.at);
         else settleRef.current(true);
       },
-      matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : STAMP_MS,
+      reducedMotion() ? 0 : STAMP_MS,
     );
     return () => clearTimeout(id);
   }, [stamping]);
@@ -355,6 +359,14 @@ export function Play({
   const acting =
     !motion && session.phase === "revealed" && hasActions(card, actions);
   const blocked = acting && actions.blocking;
+  // A lit fuse crawls round the card's edge; a blown one scorches it.
+  const fuseCard = card.timer?.kind === "fuse" && session.phase === "revealed";
+  const fuseLit = fuseCard && actions.timer.phase === "running";
+  const fuseBlown = fuseCard && actions.timer.phase === "done";
+  // Most Likely To: the table counts down and points together (2026-11-01).
+  const likely =
+    card.id.startsWith("likely.") && session.phase === "revealed" && !motion;
+  const [counting, setCounting] = useState<number | null>(null);
   // WebKit can paint the reverse of a nested, clipped 3D face despite
   // backface-visibility. Cull by the actual rendered angle, not a timer, so
   // interrupted/reduced-motion turns cannot expose mirrored card text.
@@ -456,7 +468,7 @@ export function Play({
                 blocked
               ) {
                 // Point at the plaques instead of acting on a stray tap.
-                if (!matchMedia("(prefers-reduced-motion: reduce)").matches)
+                if (!reducedMotion())
                   choiceRef.current?.animate(
                     [
                       { transform: "scale(1)" },
@@ -525,7 +537,10 @@ export function Play({
               // the face-up rotator would visibly turn it back over.
               key={session.discarded}
             >
-              <span className="card-surface card-back" aria-hidden="true" />
+              <span
+                className={`card-surface card-back${finish && session.phase === "hidden" ? ` foil-teaser foil-${finish}` : ""}`}
+                aria-hidden="true"
+              />
               <span
                 className="card-surface card-front"
                 aria-hidden={session.phase !== "revealed"}
@@ -547,13 +562,41 @@ export function Play({
                     matchup={cardMatchup(session.quest, card)}
                     strike={strikeOutcome(session.quest, card)}
                     ball={ball}
+                    finish={finish}
                   />
+                )}
+                {fuseLit && (
+                  <span className="fuse-border" aria-hidden="true">
+                    <i />
+                  </span>
+                )}
+                {fuseBlown && (
+                  <span className="card-scorch" aria-hidden="true" />
                 )}
                 {felled && <FelledStamp word={felledWord!} />}
                 {returning && <BossTally {...returning} />}
               </span>
             </span>
           </button>
+          {likely && !acting && (
+            <div
+              className="card-choice plaques-1 point-plaque"
+              role="group"
+              aria-label="Count it down"
+            >
+              <button
+                type="button"
+                className="card-choice-option roll"
+                onClick={() => setCounting(session.discarded)}
+              >
+                Count it down
+                <small>3, 2, 1, point</small>
+              </button>
+            </div>
+          )}
+          {counting === session.discarded && (
+            <PointCountdown onDone={() => setCounting(null)} />
+          )}
           {acting && (
             <CardActions
               card={card}
@@ -728,7 +771,6 @@ export function Play({
       {session.phase === "revealed" && (
         <TimerBlast card={card} actions={actions} />
       )}
-      <NaturalBurst session={session} card={card} />
       {overlay &&
         session.phase === "revealed" &&
         card.dice &&

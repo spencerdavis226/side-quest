@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { stillMotion } from "../presentation/motion";
+import { useMomentLock } from "./moments/Director";
+import { flyTo } from "./moments/fly";
 
 // The ball throw, played big (2026-10-31, owner: "much more exciting to
 // watch"), as a hollow donut ball with one number in its hole. One eased value
@@ -46,9 +49,7 @@ export interface ThrownBall {
   ball?: "great" | "ultra" | "master";
 }
 
-const quiet = () =>
-  document.hidden ||
-  window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+const quiet = stillMotion;
 
 /** Confetti, scattered once per catch. */
 const CONFETTI = Array.from({ length: 30 }, (_, i) => {
@@ -206,6 +207,9 @@ export function BallThrowStage({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [throwKey]);
   const key = live?.key;
+  // The moments queue waits while the ball is up (a send-in or a natural
+  // never lands on top of it).
+  useMomentLock("ball-throw", !!live);
   useEffect(() => {
     if (!key) return;
     const timers = [
@@ -220,11 +224,30 @@ export function BallThrowStage({
     };
   }, [key]);
   // The table comes back a beat after the result lands.
+  const caught = !!live?.ball.caught;
   useEffect(() => {
     if (!landed) return;
+    // A catch: the ball flies into the bag as the table comes back
+    // (2026-11-01).
+    const fly = caught
+      ? setTimeout(
+          () =>
+            void flyTo(
+              document.querySelector(".ball-stage .ball-donut"),
+              "satchel",
+              {
+                duration: 560,
+              },
+            ),
+          RESULT_MS - 520,
+        )
+      : 0;
     const t = setTimeout(() => setLive(null), RESULT_MS);
-    return () => clearTimeout(t);
-  }, [landed]);
+    return () => {
+      clearTimeout(t);
+      clearTimeout(fly);
+    };
+  }, [landed, caught]);
   const count = useMemo(
     () => (live ? buildCount(live.ball.face) : null),
     [live],

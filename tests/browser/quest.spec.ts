@@ -142,7 +142,7 @@ test("a starter evolves on a route, and the banner says what changed", async ({
   await expect(plaques(page).nth(1)).toHaveAccessibleName("Press B: 1 HP back");
   await page.screenshot({ path: info.outputPath("evolution-card.png") });
   await plaques(page).nth(0).click();
-  const banner = page.locator(".evolution-banner");
+  const banner = page.locator(".still-plaque");
   await expect(banner).toHaveText(
     /What\? Charmander is evolving!\s*Charmeleon\s*Max HP 16 → 17\.$/,
   );
@@ -176,9 +176,9 @@ test("a starter evolves on a route, and the banner says what changed", async ({
   await expect(guide.locator(".guide-rows")).not.toContainText("Quaff");
   await guide.screenshot({ path: info.outputPath("league-guide.png") });
   await page.keyboard.press("Escape");
-  // A reload keeps the form and does not replay the banner.
+  // A reload keeps the form and does not replay the evolution.
   await page.reload();
-  await expect(page.locator(".evolution-banner")).toHaveCount(0);
+  await expect(page.locator(".still-plaque")).toHaveCount(0);
 });
 
 test("Eevee's evolution lets the table pick its form", async ({
@@ -221,7 +221,7 @@ test("Eevee's evolution lets the table pick its form", async ({
   ]);
   await page.screenshot({ path: info.outputPath("eevee-forms-320.png") });
   await forms.locator(".extras-row").nth(1).click();
-  await expect(page.locator(".evolution-banner")).toHaveText(
+  await expect(page.locator(".still-plaque")).toHaveText(
     /What\? Eevee is evolving!\s*Jolteon/,
   );
   expect((await saved(page)).quest.party).toMatchObject({ form: 2 });

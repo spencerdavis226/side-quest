@@ -42,7 +42,7 @@ export function Atmosphere({
 /** True once `ms` pass without a tap or a key; the next one clears it. A
  * game left on the table for hours keeps the screen awake, so its backdrop
  * should not keep redrawing it. */
-function useIdle(ms: number) {
+export function useIdle(ms: number) {
   const [idle, setIdle] = useState(false);
   useEffect(() => {
     let id = window.setTimeout(() => setIdle(true), ms);

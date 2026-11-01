@@ -1,0 +1,3485 @@
+/* The moments layer (2026-11-01, `components/moments/`): one full-screen
+   moment at a time over the table, played by the director's queue. Every
+   moment reads `--m` (1, or 0.6 for "Big moments: Quick") to scale its
+   timing, plays on transforms and opacity, and is skipped by a tap. The
+   particles are one canvas (`particles.ts`) above the stage. */
+
+.moment {
+  --m: 1;
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-moment);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  contain: strict;
+}
+.moment.ambient,
+.moment.ambient.natural-burst {
+  pointer-events: none;
+}
+.moment.natural-burst {
+  z-index: var(--z-moment);
+}
+.moment-particles {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--z-particles);
+  pointer-events: none;
+}
+.moment-flier {
+  will-change: transform, opacity;
+}
+.moment .type-mark {
+  --mark-size: clamp(56px, 18vw, 120px);
+}
+
+/* Reduced Motion: a plaque with the moment's words fades in and out. */
+.moment-still {
+  place-items: center;
+}
+.still-plaque {
+  display: grid;
+  gap: 4px;
+  justify-items: center;
+  padding: 18px 28px;
+  border-radius: 14px;
+  background: #1a120cf0;
+  border: 1px solid #bd945799;
+  box-shadow: 0 10px 40px #000c;
+  color: #fff0cf;
+  text-align: center;
+  animation: still-fade var(--still, 1.6s) ease both;
+}
+.still-plaque small {
+  font: 600 0.95rem / 1.2 var(--font-tavern);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #e6c78e;
+}
+.still-plaque strong {
+  font: 700 clamp(28px, 8vw, 44px) / 1.05 var(--font-card-title);
+}
+.still-plaque span {
+  max-width: 30ch;
+  font: 500 1.05rem / 1.3 var(--font-tavern);
+  color: #f4e6c4;
+}
+@keyframes still-fade {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  18%,
+  80% {
+    opacity: 1;
+  }
+}
+
+/* --- Evolution (League) ---------------------------------------------------
+   0-0.5 s the table darkens round a light; 0.6-3.2 s the old and new glyphs
+   trade places (each change a 160 ms crossfade, at most three a second)
+   while the halo breathes faster; 3.25 s the light folds to a point; 3.5 s
+   one bloom (the only full-screen brightening); then the new form's
+   medallion and name land and hold. */
+.moment-evolution {
+  --len: calc(var(--m) * 5400ms);
+}
+.evo-backdrop {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      circle at 50% 44%,
+      transparent 0,
+      #05040acc 46%,
+      #020106f5 100%
+    ),
+    radial-gradient(circle at 50% 44%, var(--from-deep) 0, #0a0814 60%);
+  animation: evo-backdrop var(--len) ease both;
+}
+.evo-rays {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: 180vmax;
+  height: 180vmax;
+  margin: -90vmax 0 0 -90vmax;
+  background: repeating-conic-gradient(
+    from 0deg,
+    #ffffff14 0deg 6deg,
+    transparent 6deg 18deg
+  );
+  mask-image: radial-gradient(circle, #000 0, transparent 46%);
+  -webkit-mask-image: radial-gradient(circle, #000 0, transparent 46%);
+  opacity: 0;
+  animation:
+    evo-rays-in var(--len) ease both,
+    spin calc(var(--m) * 14s) linear infinite;
+}
+.evo-kicker {
+  position: absolute;
+  top: calc(16% + var(--top-safe, env(safe-area-inset-top)));
+  width: 90%;
+  margin: 0;
+  text-align: center;
+  color: #f4ecff;
+  font: 600 clamp(20px, 6vw, 30px) / 1.15 var(--font-tavern);
+  text-shadow: 0 2px 10px #000;
+  animation: evo-kicker var(--len) ease both;
+}
+.evo-orb {
+  position: absolute;
+  top: 44%;
+  left: 50%;
+  width: clamp(120px, 40vw, 230px);
+  height: clamp(120px, 40vw, 230px);
+  margin: calc(clamp(120px, 40vw, 230px) / -2) 0 0
+    calc(clamp(120px, 40vw, 230px) / -2);
+  display: grid;
+  place-items: center;
+  animation: evo-orb var(--len) cubic-bezier(0.3, 0, 0.2, 1) both;
+}
+.evo-halo {
+  position: absolute;
+  inset: -40%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    #ffffffcc 0,
+    var(--from) 26%,
+    transparent 64%
+  );
+  filter: blur(6px);
+  animation: evo-halo var(--len) ease-in-out both;
+}
+.evo-glyph {
+  position: absolute;
+  inset: 8%;
+  background: #fff;
+  mask: center / contain no-repeat;
+  -webkit-mask: center / contain no-repeat;
+  filter: drop-shadow(0 0 14px #fff);
+}
+.evo-glyph.old {
+  animation: evo-old var(--len) linear both;
+}
+.evo-glyph.new {
+  inset: 0;
+  animation: evo-new var(--len) linear both;
+}
+.moment-evolution .evo-medal {
+  --mark-size: 100%;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  animation: evo-medal var(--len) cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+.evo-bloom {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 44%,
+    #fff 0,
+    #fffbe8 30%,
+    #ffffff00 75%
+  );
+  opacity: 0;
+  animation: evo-bloom var(--len) ease-out both;
+}
+.evo-title {
+  position: absolute;
+  top: calc(44% + clamp(80px, 26vw, 150px));
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  width: 92%;
+  text-align: center;
+  animation: evo-title var(--len) cubic-bezier(0.2, 1.3, 0.4, 1) both;
+}
+.evo-title strong {
+  color: #fff3c4;
+  font: 700 clamp(40px, 13vw, 76px) / 1 var(--font-card-title);
+  text-shadow:
+    0 4px 0 var(--to-deep),
+    0 0 30px var(--to);
+}
+.evo-title span {
+  color: #f4ecff;
+  font: 500 clamp(17px, 4.6vw, 22px) / 1.25 var(--font-tavern);
+  text-shadow: 0 2px 8px #000;
+}
+@keyframes evo-backdrop {
+  0% {
+    opacity: 0;
+  }
+  8%,
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes evo-rays-in {
+  0%,
+  60% {
+    opacity: 0;
+  }
+  66%,
+  88% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes evo-kicker {
+  0%,
+  4% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  12%,
+  58% {
+    opacity: 1;
+    transform: none;
+  }
+  64%,
+  100% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+@keyframes evo-orb {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  10% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  58% {
+    transform: scale(1.06);
+  }
+  61% {
+    transform: scale(0.12);
+  }
+  65% {
+    transform: scale(1);
+  }
+  90% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.04);
+    opacity: 0;
+  }
+}
+/* The halo breathes slowly, then faster, then is spent in the bloom. */
+@keyframes evo-halo {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  10% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  20% {
+    transform: scale(0.82);
+  }
+  29% {
+    transform: scale(1.05);
+  }
+  37% {
+    transform: scale(0.84);
+  }
+  44% {
+    transform: scale(1.08);
+  }
+  50% {
+    transform: scale(0.86);
+  }
+  55% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+  61% {
+    transform: scale(0.2);
+    opacity: 1;
+  }
+  66%,
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+/* Old shows; the new takes over at 22%, 33%, 42%, 49.5%, 55%: gaps of
+   0.6 s, 0.49 s, 0.4 s, 0.3 s at 5.4 s, never quicker than 3 a second. */
+@keyframes evo-old {
+  0%,
+  19% {
+    opacity: 1;
+  }
+  22%,
+  27% {
+    opacity: 0;
+  }
+  30%,
+  33% {
+    opacity: 1;
+  }
+  36%,
+  39% {
+    opacity: 0;
+  }
+  42%,
+  44% {
+    opacity: 1;
+  }
+  47%,
+  49.5% {
+    opacity: 0;
+  }
+  52%,
+  53% {
+    opacity: 1;
+  }
+  56%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes evo-new {
+  0%,
+  19% {
+    opacity: 0;
+  }
+  22%,
+  27% {
+    opacity: 1;
+  }
+  30%,
+  33% {
+    opacity: 0;
+  }
+  36%,
+  39% {
+    opacity: 1;
+  }
+  42%,
+  44% {
+    opacity: 0;
+  }
+  47%,
+  49.5% {
+    opacity: 1;
+  }
+  52%,
+  53% {
+    opacity: 0;
+  }
+  56%,
+  60% {
+    opacity: 1;
+  }
+  64%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes evo-medal {
+  0%,
+  63% {
+    opacity: 0;
+    transform: scale(0.3) rotate(-120deg);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.08) rotate(6deg);
+  }
+  76%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes evo-bloom {
+  0%,
+  62% {
+    opacity: 0;
+  }
+  65% {
+    opacity: 0.92;
+  }
+  80%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes evo-title {
+  0%,
+  65% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+  71% {
+    opacity: 1;
+    transform: scale(0.96);
+  }
+  75%,
+  92% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+/* --- Pub Crawl's level up: the forge --------------------------------------
+   An iron plate heats from cold to white over three strikes (0.9, 1.4,
+   1.9 s); at 2.3 s the new level stamps over it in gold. */
+.moment-levelup {
+  --len: calc(var(--m) * 3900ms);
+}
+.forge-backdrop {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 62%, #ff7a1a55 0, transparent 46%),
+    radial-gradient(circle at 50% 50%, #1b0f08ee 0, #060302f8 70%);
+  animation: evo-backdrop var(--len) ease both;
+}
+.forge-kicker {
+  position: absolute;
+  top: calc(26% + var(--top-safe, env(safe-area-inset-top)));
+  margin: 0;
+  width: 90%;
+  text-align: center;
+  color: #ffd9a0;
+  font: 600 clamp(20px, 6vw, 30px) / 1.15 var(--font-tavern);
+  letter-spacing: 0.04em;
+  text-shadow: 0 2px 10px #000;
+  animation: forge-kicker var(--len) ease both;
+}
+.forge-plate {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: min(84vw, 460px);
+  padding: 26px 22px;
+  border-radius: 10px;
+  background:
+    linear-gradient(180deg, #ffffff12, transparent 40%),
+    linear-gradient(180deg, #3a3634, #1d1a19);
+  box-shadow:
+    inset 0 1px 0 #ffffff26,
+    inset 0 -3px 0 #0008,
+    0 14px 40px #000c;
+  animation: forge-plate var(--len) cubic-bezier(0.3, 0, 0.3, 1) both;
+}
+.forge-plate > span {
+  grid-area: 1 / 1;
+  font: 700 clamp(34px, 10.5vw, 60px) / 1 var(--font-card-title);
+  text-align: center;
+}
+.forge-old {
+  color: #6e6660;
+  animation: forge-heat var(--len) linear both;
+}
+.forge-new {
+  color: #fff1c2;
+  text-shadow:
+    0 3px 0 #8a5a10,
+    0 0 26px #ffb347;
+  animation: forge-stamp var(--len) cubic-bezier(0.2, 1.5, 0.4, 1) both;
+}
+.forge-change {
+  position: absolute;
+  top: calc(50% + clamp(70px, 18vw, 110px));
+  margin: 0;
+  width: 88%;
+  text-align: center;
+  color: #ffe8c4;
+  font: 500 clamp(17px, 4.6vw, 22px) / 1.25 var(--font-tavern);
+  text-shadow: 0 2px 8px #000;
+  animation: forge-change var(--len) ease both;
+}
+@keyframes forge-kicker {
+  0%,
+  5% {
+    opacity: 0;
+  }
+  14%,
+  88% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+/* Each strike drives the plate down a little. */
+@keyframes forge-plate {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.94);
+  }
+  12% {
+    opacity: 1;
+    transform: none;
+  }
+  22.5% {
+    transform: none;
+  }
+  23.5% {
+    transform: translateY(7px) scaleY(0.97);
+  }
+  27% {
+    transform: none;
+  }
+  35.5% {
+    transform: none;
+  }
+  36.5% {
+    transform: translateY(8px) scaleY(0.965);
+  }
+  40% {
+    transform: none;
+  }
+  48.5% {
+    transform: none;
+  }
+  49.5% {
+    transform: translateY(10px) scaleY(0.96);
+  }
+  54%,
+  90% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+@keyframes forge-heat {
+  0%,
+  22% {
+    color: #6e6660;
+    text-shadow: none;
+  }
+  24% {
+    color: #c2502a;
+    text-shadow: 0 0 12px #ff5a1a;
+  }
+  37% {
+    color: #ff8a2a;
+    text-shadow: 0 0 20px #ff7a1a;
+  }
+  50% {
+    color: #fff3d6;
+    text-shadow: 0 0 30px #ffd27a;
+    opacity: 1;
+  }
+  58%,
+  100% {
+    color: #fff3d6;
+    opacity: 0;
+  }
+}
+@keyframes forge-stamp {
+  0%,
+  57% {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+  62% {
+    opacity: 1;
+    transform: scale(0.94);
+  }
+  66%,
+  90% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes forge-change {
+  0%,
+  64% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  70%,
+  90% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* --- Entrances: VS (League) -----------------------------------------------
+   0-0.36 s two panels shear in from opposite corners; 0.43 s VS slams with
+   a jolt; hold; from 76% the panels shear away. */
+.moment-entrance.versus {
+  --len: calc(var(--m) * 2700ms);
+  background: #0b0810f2;
+  animation: vs-jolt var(--len) linear both;
+}
+.versus.vs-quick {
+  --len: calc(var(--m) * 1800ms);
+}
+.versus.vs-champion {
+  --len: calc(var(--m) * 3300ms);
+}
+.vs-panel {
+  position: absolute;
+  left: -12%;
+  right: -12%;
+  height: 50%;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  box-shadow: 0 0 40px #000c;
+}
+.vs-panel.hero {
+  top: 0;
+  clip-path: polygon(0 0, 100% 0, 100% 62%, 0 100%);
+  background:
+    linear-gradient(115deg, #000a, transparent 55%),
+    linear-gradient(160deg, var(--hero) 0, var(--hero-deep) 70%, #0d0a14 100%);
+  animation: vs-hero var(--len) cubic-bezier(0.2, 0.9, 0.2, 1.04) both;
+}
+.vs-panel.foe {
+  bottom: 0;
+  clip-path: polygon(0 38%, 100% 0, 100% 100%, 0 100%);
+  background:
+    linear-gradient(295deg, #000a, transparent 55%),
+    linear-gradient(340deg, var(--foe) 0, var(--foe-deep) 70%, #0d0a14 100%);
+  justify-content: flex-end;
+  animation: vs-foe var(--len) cubic-bezier(0.2, 0.9, 0.2, 1.04) both;
+}
+.vs-lines {
+  position: absolute;
+  inset: -20% 0;
+  background: repeating-linear-gradient(
+    -14deg,
+    transparent 0 22px,
+    #ffffff1a 22px 24px,
+    transparent 24px 58px
+  );
+  animation: vs-lines calc(var(--m) * 600ms) linear infinite;
+}
+.vs-panel.foe .vs-lines {
+  animation-direction: reverse;
+}
+.vs-who {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 3vw, 18px);
+  padding: 0 calc(12% + 22px);
+  color: #fff;
+}
+.vs-panel.hero .vs-who {
+  margin-top: -14%;
+}
+.vs-panel.foe .vs-who {
+  margin-top: 16%;
+  text-align: right;
+}
+.vs-who .type-mark {
+  --mark-size: clamp(48px, 13vw, 72px);
+  box-shadow:
+    0 0 0 3px #ffffffcc,
+    0 6px 16px #0009;
+}
+.vs-who > div {
+  display: grid;
+  gap: 2px;
+}
+.vs-who small {
+  font: 600 clamp(14px, 3.8vw, 18px) / 1.1 var(--font-tavern);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #ffffffcc;
+}
+.vs-who strong {
+  font: 700 clamp(30px, 9.5vw, 56px) / 1 var(--font-card-title);
+  text-shadow:
+    0 3px 0 #0007,
+    0 0 20px #0008;
+}
+.vs-hp,
+.vs-badge {
+  font: 600 clamp(14px, 3.8vw, 18px) / 1.2 var(--font-tavern);
+  color: #ffffffd9;
+}
+.vs-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+.vs-badge img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 2px #000a);
+}
+.vs-slash {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  top: 50%;
+  height: 6px;
+  margin-top: -3px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #fff 20%,
+    #fff 80%,
+    transparent
+  );
+  box-shadow: 0 0 22px #fff;
+  transform: rotate(-12deg) scaleX(0);
+  animation: vs-slash var(--len) ease-out both;
+}
+.vs-mark {
+  position: relative;
+  display: flex;
+  gap: 0.02em;
+  font: 900 clamp(84px, 30vw, 160px) / 1 var(--font-card-title);
+  font-style: italic;
+  color: #fff6d6;
+  text-shadow:
+    0 6px 0 #6a3c08,
+    0 0 40px #ffd27a;
+  animation: vs-mark var(--len) cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+.vs-champion .vs-mark {
+  color: #fff3c4;
+}
+.vs-mark i {
+  font-style: inherit;
+}
+.vs-mark i:last-child {
+  transform: translateY(0.12em);
+}
+@keyframes vs-hero {
+  0% {
+    transform: translateX(-110%);
+  }
+  13%,
+  76% {
+    transform: none;
+  }
+  92%,
+  100% {
+    transform: translateX(-115%);
+  }
+}
+@keyframes vs-foe {
+  0% {
+    transform: translateX(110%);
+  }
+  13%,
+  76% {
+    transform: none;
+  }
+  92%,
+  100% {
+    transform: translateX(115%);
+  }
+}
+@keyframes vs-lines {
+  to {
+    transform: translateX(-58px);
+  }
+}
+@keyframes vs-slash {
+  0%,
+  13% {
+    transform: rotate(-12deg) scaleX(0);
+    opacity: 1;
+  }
+  18% {
+    transform: rotate(-12deg) scaleX(1);
+    opacity: 1;
+  }
+  34%,
+  100% {
+    transform: rotate(-12deg) scaleX(1);
+    opacity: 0;
+  }
+}
+@keyframes vs-mark {
+  0%,
+  14% {
+    opacity: 0;
+    transform: scale(3) rotate(-8deg);
+  }
+  19% {
+    opacity: 1;
+    transform: scale(0.9) rotate(2deg);
+  }
+  24%,
+  74% {
+    opacity: 1;
+    transform: none;
+  }
+  86%,
+  100% {
+    opacity: 0;
+    transform: scale(1.3);
+  }
+}
+@keyframes vs-jolt {
+  0%,
+  16% {
+    transform: none;
+  }
+  17% {
+    transform: translate(-6px, 4px);
+  }
+  18% {
+    transform: translate(5px, -3px);
+  }
+  19% {
+    transform: translate(-3px, 2px);
+  }
+  20%,
+  100% {
+    transform: none;
+  }
+}
+
+/* --- A Legendary: darkness, two tremors, an aura, the name rises --------- */
+.moment-entrance.legendary {
+  --len: calc(var(--m) * 3500ms);
+  animation: legend-shake var(--len) linear both;
+}
+.legend-dark {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 52%, #0d0b16f0 0, #020104fa 70%);
+  animation: evo-backdrop var(--len) ease both;
+}
+.legend-aura {
+  position: absolute;
+  left: 50%;
+  bottom: -30%;
+  width: 150vmax;
+  height: 120vmax;
+  margin-left: -75vmax;
+  background: radial-gradient(
+    ellipse at 50% 70%,
+    var(--foe) 0,
+    var(--foe-deep) 26%,
+    transparent 58%
+  );
+  opacity: 0;
+  animation: legend-aura var(--len) ease both;
+}
+.legend-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 70vmin;
+  height: 70vmin;
+  margin: -35vmin 0 0 -35vmin;
+  border-radius: 50%;
+  border: 2px solid var(--foe);
+  box-shadow:
+    0 0 30px var(--foe),
+    inset 0 0 30px var(--foe);
+  opacity: 0;
+  animation: legend-ring var(--len) ease-out both;
+}
+.legend-kicker {
+  position: absolute;
+  top: 34%;
+  margin: 0;
+  color: #f4f0ff;
+  font: 600 clamp(16px, 4.6vw, 22px) / 1.1 var(--font-tavern);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  animation: legend-kicker var(--len) ease both;
+}
+.legend-name {
+  position: relative;
+  color: #fff;
+  font: 700 clamp(46px, 15vw, 92px) / 1 var(--font-card-title);
+  text-shadow:
+    0 0 24px var(--foe),
+    0 0 60px var(--foe-deep);
+  animation: legend-name var(--len) cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.moment .legend-type {
+  position: absolute;
+  top: calc(50% + clamp(50px, 14vw, 90px));
+  --mark-size: clamp(48px, 13vw, 74px);
+  animation: legend-kicker var(--len) ease both;
+}
+@keyframes legend-shake {
+  0%,
+  11% {
+    transform: none;
+  }
+  12% {
+    transform: translate(0, 7px);
+  }
+  13% {
+    transform: translate(-4px, -5px);
+  }
+  14% {
+    transform: translate(3px, 3px);
+  }
+  15%,
+  30% {
+    transform: none;
+  }
+  31% {
+    transform: translate(0, 9px);
+  }
+  32% {
+    transform: translate(5px, -6px);
+  }
+  33% {
+    transform: translate(-3px, 3px);
+  }
+  34%,
+  100% {
+    transform: none;
+  }
+}
+@keyframes legend-aura {
+  0%,
+  34% {
+    opacity: 0;
+    transform: translateY(20%);
+  }
+  56%,
+  86% {
+    opacity: 0.9;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes legend-ring {
+  0%,
+  50% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  56% {
+    opacity: 1;
+  }
+  80%,
+  100% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+@keyframes legend-kicker {
+  0%,
+  18% {
+    opacity: 0;
+  }
+  28%,
+  86% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes legend-name {
+  0%,
+  40% {
+    opacity: 0;
+    transform: translateY(40px);
+    letter-spacing: 0.3em;
+    filter: blur(8px);
+  }
+  58%,
+  86% {
+    opacity: 1;
+    transform: none;
+    letter-spacing: 0.02em;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+/* --- Pub Crawl's boss: the portcullis ------------------------------------- */
+.moment-entrance.gate {
+  --len: calc(var(--m) * 2900ms);
+  --gate-iron: #2a2420;
+  --gate-glow: #ff8a2a;
+  animation: gate-jolt var(--len) linear both;
+}
+.gate-final {
+  --gate-glow: #f2c94c;
+}
+.gate-shade {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 46%, #1b120bcc 0, #050302f2 75%);
+  animation: evo-backdrop var(--len) ease both;
+}
+.gate-bars {
+  position: absolute;
+  inset: 0 -4%;
+  background:
+    linear-gradient(180deg, #0000 0, #0006 100%),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 calc(11vw - 9px),
+      #4a403a calc(11vw - 9px) calc(11vw - 7px),
+      var(--gate-iron) calc(11vw - 7px) calc(11vw + 7px),
+      #120e0c calc(11vw + 7px) calc(11vw + 9px),
+      transparent calc(11vw + 9px) 22vw
+    ),
+    repeating-linear-gradient(
+      180deg,
+      transparent 0 calc(16vh - 8px),
+      #3a322c calc(16vh - 8px) calc(16vh + 8px),
+      transparent calc(16vh + 8px) 32vh
+    );
+  -webkit-mask-image: linear-gradient(180deg, #000 88%, transparent);
+  mask-image: linear-gradient(180deg, #000 88%, transparent);
+  filter: drop-shadow(0 8px 10px #000);
+  animation: gate-bars var(--len) cubic-bezier(0.55, 0, 1, 0.45) both;
+}
+.gate-sign {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  margin-top: -18vh;
+  transform-origin: 50% -30vh;
+  animation: gate-sign var(--len) ease both;
+}
+.gate-chain {
+  position: absolute;
+  bottom: 100%;
+  width: 4px;
+  height: 30vh;
+  background: repeating-linear-gradient(
+    180deg,
+    #8a7a66 0 8px,
+    #4a3e32 8px 12px
+  );
+}
+.gate-chain.left {
+  left: 18%;
+}
+.gate-chain.right {
+  right: 18%;
+}
+.gate-board {
+  display: grid;
+  gap: 4px;
+  justify-items: center;
+  min-width: min(80vw, 420px);
+  padding: 18px 26px 20px;
+  border-radius: 6px;
+  background:
+    repeating-linear-gradient(0deg, #0000 0 14px, #00000024 14px 16px),
+    linear-gradient(180deg, #6a4a2c, #3e2a18);
+  box-shadow:
+    inset 0 0 0 2px #2a1a0e,
+    inset 0 2px 0 #ffffff1c,
+    0 16px 40px #000d;
+  text-align: center;
+}
+.gate-board small {
+  font: 600 clamp(14px, 3.8vw, 18px) / 1.1 var(--font-tavern);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #e6c78e;
+}
+.gate-board strong {
+  font: 700 clamp(30px, 9.5vw, 54px) / 1.02 var(--font-card-title);
+  color: #1e0e04;
+  text-shadow:
+    0 1px 0 #ffffff22,
+    0 0 14px var(--gate-glow),
+    0 0 2px var(--gate-glow);
+  animation: gate-burn var(--len) ease both;
+}
+.gate-final .gate-board {
+  background:
+    linear-gradient(180deg, #ffffff1c, transparent 40%),
+    linear-gradient(180deg, #a8782a, #5a3c10);
+}
+@keyframes gate-bars {
+  0% {
+    transform: translateY(-105%);
+  }
+  15% {
+    transform: none;
+    animation-timing-function: cubic-bezier(0.2, 0, 0.2, 1);
+  }
+  17% {
+    transform: translateY(-1.6%);
+  }
+  19%,
+  70% {
+    transform: none;
+    animation-timing-function: cubic-bezier(0.6, 0, 0.8, 0.4);
+  }
+  92%,
+  100% {
+    transform: translateY(-105%);
+  }
+}
+@keyframes gate-jolt {
+  0%,
+  14% {
+    transform: none;
+  }
+  15% {
+    transform: translateY(8px);
+  }
+  16.5% {
+    transform: translateY(-4px);
+  }
+  18%,
+  100% {
+    transform: none;
+  }
+}
+/* The sign drops in on its chains and swings to rest. */
+@keyframes gate-sign {
+  0%,
+  16% {
+    opacity: 0;
+    transform: translateY(-40vh) rotate(0deg);
+  }
+  24% {
+    opacity: 1;
+    transform: rotate(5deg);
+  }
+  32% {
+    transform: rotate(-3.5deg);
+  }
+  40% {
+    transform: rotate(2deg);
+  }
+  48% {
+    transform: rotate(-1deg);
+  }
+  56%,
+  72% {
+    opacity: 1;
+    transform: none;
+  }
+  88%,
+  100% {
+    opacity: 0;
+    transform: translateY(-40vh);
+  }
+}
+@keyframes gate-burn {
+  0%,
+  24% {
+    color: #1e0e04;
+    text-shadow: none;
+  }
+  40%,
+  100% {
+    color: #2a1406;
+    text-shadow:
+      0 1px 0 #ffffff22,
+      0 0 16px var(--gate-glow),
+      0 0 3px var(--gate-glow);
+  }
+}
+
+/* --- An ambush: three claw slashes ---------------------------------------- */
+.moment-entrance.ambush {
+  --len: calc(var(--m) * 1300ms);
+  background: #1a0202aa;
+  animation: evo-backdrop var(--len) ease both;
+}
+.claw {
+  position: absolute;
+  left: -20%;
+  width: 140%;
+  height: 10px;
+  border-radius: 50%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #ff3a2a 30%,
+    #fff1e8 50%,
+    #ff3a2a 70%,
+    transparent
+  );
+  box-shadow: 0 0 18px #ff2a1a;
+  transform: rotate(-24deg) scaleX(0);
+  transform-origin: 0 50%;
+  animation: claw var(--len) cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.claw.c1 {
+  top: 36%;
+}
+.claw.c2 {
+  top: 47%;
+  animation-delay: calc(var(--m) * 60ms);
+}
+.claw.c3 {
+  top: 58%;
+  animation-delay: calc(var(--m) * 120ms);
+}
+.ambush-word {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  animation: vs-mark var(--len) cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+.ambush-word strong {
+  color: #fff1e8;
+  font: 900 clamp(56px, 18vw, 110px) / 1 var(--font-card-title);
+  text-transform: uppercase;
+  text-shadow:
+    0 5px 0 #6a0a04,
+    0 0 30px #ff2a1a;
+}
+.ambush-word small {
+  color: #ffd8cc;
+  font: 600 clamp(18px, 5vw, 26px) / 1.2 var(--font-tavern);
+  text-shadow: 0 2px 8px #000;
+}
+@keyframes claw {
+  0% {
+    transform: rotate(-24deg) scaleX(0);
+    opacity: 1;
+  }
+  22% {
+    transform: rotate(-24deg) scaleX(1);
+    opacity: 1;
+  }
+  60%,
+  100% {
+    transform: rotate(-24deg) scaleX(1);
+    opacity: 0;
+  }
+}
+
+/* --- Type clash (League) --------------------------------------------------
+   The medallions fly in and meet at 0.33 s; the winner swells as the loser
+   shatters; even: they rebound. */
+.moment-clash {
+  --len: calc(var(--m) * 1150ms);
+  background: radial-gradient(circle at 50% 46%, #0000 0, #0008 70%);
+  animation: evo-backdrop var(--len) ease both;
+}
+.clash-even {
+  --len: calc(var(--m) * 760ms);
+}
+.clash-side {
+  position: absolute;
+  top: 46%;
+  margin-top: calc(clamp(56px, 18vw, 120px) / -2);
+}
+.clash-side.mine {
+  right: 50%;
+  animation: clash-in-left var(--len) cubic-bezier(0.5, 0, 0.9, 0.6) both;
+}
+.clash-side.theirs {
+  left: 50%;
+  animation: clash-in-right var(--len) cubic-bezier(0.5, 0, 0.9, 0.6) both;
+}
+.clash-advantage .clash-side.theirs,
+.clash-disadvantage .clash-side.mine {
+  animation-name: clash-in-right, clash-break;
+}
+.clash-advantage .clash-side.mine {
+  animation-name: clash-in-left, clash-win;
+}
+.clash-disadvantage .clash-side.theirs {
+  animation-name: clash-in-right, clash-win;
+}
+.clash-disadvantage .clash-side.mine {
+  animation-name: clash-in-left, clash-break;
+}
+.clash-flash {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 46%, #fff 0, #ffffff00 34%);
+  opacity: 0;
+  animation: clash-flash var(--len) ease-out both;
+}
+.clash-word {
+  position: absolute;
+  top: calc(46% + clamp(56px, 18vw, 110px));
+  font: 800 clamp(30px, 9vw, 52px) / 1 var(--font-card-title);
+  animation: clash-word var(--len) cubic-bezier(0.2, 1.5, 0.4, 1) both;
+}
+.clash-advantage .clash-word {
+  color: #d8ffd0;
+  text-shadow:
+    0 3px 0 #1b5a14,
+    0 0 22px #4cd23c;
+}
+.clash-disadvantage .clash-word {
+  color: #ffe0d8;
+  text-shadow:
+    0 3px 0 #6a140a,
+    0 0 22px #ff4a2a;
+}
+@keyframes clash-in-left {
+  0% {
+    transform: translateX(-60vw) rotate(-200deg);
+  }
+  29% {
+    transform: translateX(4px);
+  }
+  36% {
+    transform: translateX(-14px);
+  }
+  44%,
+  84% {
+    transform: none;
+    opacity: 1;
+  }
+  100% {
+    transform: none;
+    opacity: 0;
+  }
+}
+@keyframes clash-in-right {
+  0% {
+    transform: translateX(60vw) rotate(200deg);
+  }
+  29% {
+    transform: translateX(-4px);
+  }
+  36% {
+    transform: translateX(14px);
+  }
+  44%,
+  84% {
+    transform: none;
+    opacity: 1;
+  }
+  100% {
+    transform: none;
+    opacity: 0;
+  }
+}
+@keyframes clash-break {
+  0%,
+  29% {
+    opacity: 1;
+    filter: none;
+  }
+  31% {
+    opacity: 1;
+    filter: brightness(2.4);
+  }
+  36%,
+  100% {
+    opacity: 0;
+    filter: brightness(2.4);
+  }
+}
+@keyframes clash-win {
+  0%,
+  29% {
+    scale: 1;
+  }
+  40% {
+    scale: 1.3;
+  }
+  52%,
+  64% {
+    scale: 1.1;
+  }
+  80%,
+  100% {
+    scale: 1.1;
+  }
+}
+@keyframes clash-flash {
+  0%,
+  27% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.85;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes clash-word {
+  0%,
+  33% {
+    opacity: 0;
+    transform: scale(1.8);
+  }
+  41% {
+    opacity: 1;
+    transform: scale(0.95);
+  }
+  46%,
+  84% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* --- A caught Pokémon sent in -------------------------------------------- */
+.moment-sendin {
+  --len: calc(var(--m) * 1350ms);
+  background: radial-gradient(circle at 50% 46%, #0000 0, #000a 75%);
+  animation: evo-backdrop var(--len) ease both;
+}
+.sendin-arc {
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  animation: sendin-arc var(--len) linear both;
+}
+.mini-ball {
+  --size: clamp(54px, 16vw, 84px);
+  position: relative;
+  width: var(--size);
+  height: var(--size);
+  margin: calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
+  border-radius: 50%;
+  overflow: visible;
+  animation: spin calc(var(--m) * 380ms) linear 2 both;
+}
+.mini-ball .top,
+.mini-ball .bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 50%;
+}
+.mini-ball .top {
+  top: 0;
+  border-radius: var(--size) var(--size) 0 0;
+  background: radial-gradient(circle at 34% 40%, #ff8a7a, #e2302a 40%, #8a0e0a);
+  border-bottom: 3px solid #141010;
+}
+.mini-ball .bottom {
+  bottom: 0;
+  border-radius: 0 0 var(--size) var(--size);
+  background: radial-gradient(circle at 40% 10%, #ffffff, #e8e2da 50%, #9a948c);
+  border-top: 3px solid #141010;
+}
+.mini-ball .button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 30%;
+  height: 30%;
+  margin: -15% 0 0 -15%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0 40%, #141010 42% 58%, #e8e2da 60%);
+}
+.sendin-arc .mini-ball .top {
+  animation: sendin-pop var(--len) ease-out both;
+}
+.sendin-light {
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  width: 70vmin;
+  height: 70vmin;
+  margin: -35vmin 0 0 -35vmin;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0, var(--c) 22%, transparent 62%);
+  opacity: 0;
+  animation: sendin-light var(--len) ease-out both;
+}
+.moment .sendin-mark {
+  position: absolute;
+  top: 46%;
+  margin-top: calc(clamp(56px, 18vw, 120px) / -2);
+  animation: evo-medal var(--len) cubic-bezier(0.2, 1.4, 0.4, 1) both;
+  animation-name: sendin-mark;
+}
+.sendin-word {
+  position: absolute;
+  top: calc(46% + clamp(60px, 18vw, 110px));
+  color: #fff;
+  font: 800 clamp(32px, 10vw, 58px) / 1 var(--font-card-title);
+  text-shadow:
+    0 3px 0 var(--c-deep),
+    0 0 22px var(--c);
+  animation: clash-word var(--len) cubic-bezier(0.2, 1.5, 0.4, 1) both;
+}
+@keyframes sendin-arc {
+  0% {
+    transform: translate(-46vw, 34vh) scale(0.6);
+  }
+  14% {
+    transform: translate(-30vw, -4vh) scale(0.8);
+  }
+  28% {
+    transform: translate(-14vw, -14vh) scale(0.95);
+  }
+  42% {
+    transform: none;
+    opacity: 1;
+  }
+  48%,
+  100% {
+    transform: none;
+    opacity: 0;
+  }
+}
+@keyframes sendin-pop {
+  0%,
+  40% {
+    transform: none;
+  }
+  48% {
+    transform: translateY(-60%) rotate(-30deg);
+  }
+}
+@keyframes sendin-light {
+  0%,
+  40% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  48% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.3);
+  }
+}
+@keyframes sendin-mark {
+  0%,
+  44% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  54% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  62%,
+  86% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* --- The run's first card ------------------------------------------------- */
+.moment-omen {
+  --len: calc(var(--m) * 2600ms);
+}
+.omen-tarot {
+  --len: calc(var(--m) * 2300ms);
+}
+/* Opaque from the first frame: the card turns over underneath. */
+.omen-shade {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 46%, #1a120cf5 0, #050302fb 75%);
+  animation: omen-shade var(--len) ease both;
+}
+.omen-roll {
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  animation: omen-roll var(--len) cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+.omen-ballbody {
+  --size: clamp(84px, 26vw, 140px);
+  position: relative;
+  width: var(--size);
+  height: var(--size);
+  margin: calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
+  transform-origin: 50% 90%;
+  animation: omen-wobble var(--len) ease-in-out both;
+}
+.omen-ballbody .top,
+.omen-ballbody .bottom,
+.omen-ballbody .button {
+  position: absolute;
+}
+.omen-ballbody .top {
+  inset: 0 0 50% 0;
+  border-radius: var(--size) var(--size) 0 0;
+  background: radial-gradient(circle at 34% 40%, #ff8a7a, #e2302a 40%, #8a0e0a);
+  border-bottom: 4px solid #141010;
+  transform-origin: 10% 100%;
+  animation: omen-open var(--len) cubic-bezier(0.2, 1.3, 0.4, 1) both;
+}
+.omen-ballbody .bottom {
+  inset: 50% 0 0 0;
+  border-radius: 0 0 var(--size) var(--size);
+  background: radial-gradient(circle at 40% 10%, #ffffff, #e8e2da 50%, #9a948c);
+  border-top: 4px solid #141010;
+}
+.omen-ballbody .button {
+  top: 50%;
+  left: 50%;
+  width: 30%;
+  height: 30%;
+  margin: -15% 0 0 -15%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0 40%, #141010 42% 58%, #e8e2da 60%);
+  animation: omen-button var(--len) ease both;
+}
+.omen-beam {
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  width: 90vmin;
+  height: 90vmin;
+  margin: -45vmin 0 0 -45vmin;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    #fff 0,
+    var(--c) 20%,
+    var(--c-deep) 40%,
+    transparent 64%
+  );
+  opacity: 0;
+  animation: omen-beam var(--len) ease-out both;
+}
+.omen-tarot .omen-beam {
+  background: radial-gradient(
+    circle,
+    #fff6d6 0,
+    #f2c94c 18%,
+    #f2c94c40 40%,
+    transparent 64%
+  );
+}
+.omen-name {
+  position: absolute;
+  top: calc(46% + clamp(70px, 22vw, 130px));
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  animation: omen-name var(--len) ease both;
+}
+.omen-name small {
+  color: #e6c78e;
+  font: 600 clamp(15px, 4vw, 19px) / 1.1 var(--font-tavern);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.omen-name strong {
+  color: #fff3c4;
+  font: 700 clamp(36px, 11vw, 64px) / 1 var(--font-card-title);
+  text-shadow:
+    0 3px 0 #0008,
+    0 0 26px var(--c);
+}
+.omen-tarot .omen-name strong {
+  text-shadow:
+    0 3px 0 #0008,
+    0 0 26px #f2c94c;
+}
+.tarot {
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  perspective: 900px;
+}
+.tarot-back {
+  --w: clamp(80px, 24vw, 130px);
+  position: absolute;
+  width: var(--w);
+  height: calc(var(--w) * 1.5);
+  margin: calc(var(--w) * -0.75) 0 0 calc(var(--w) / -2);
+  border-radius: 10px;
+  background:
+    linear-gradient(180deg, #ffffff1a, transparent 40%),
+    url("/art/card-back.webp") center / cover,
+    #2a1d12;
+  box-shadow:
+    0 0 0 2px #bd9457,
+    0 10px 24px #000c;
+}
+.tarot-back.fan {
+  transform-origin: 50% 160%;
+  animation: tarot-fan var(--len) ease both;
+}
+.tarot-back.rise {
+  animation: tarot-rise var(--len) cubic-bezier(0.3, 0, 0.2, 1) both;
+}
+@keyframes omen-shade {
+  0%,
+  78% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes omen-roll {
+  0% {
+    transform: translateX(-70vw) rotate(-720deg);
+  }
+  22%,
+  100% {
+    transform: none;
+  }
+}
+@keyframes omen-wobble {
+  0%,
+  24% {
+    transform: none;
+  }
+  28% {
+    transform: rotate(-16deg);
+  }
+  33% {
+    transform: rotate(10deg);
+  }
+  36%,
+  40% {
+    transform: none;
+  }
+  44% {
+    transform: rotate(16deg);
+  }
+  49% {
+    transform: rotate(-10deg);
+  }
+  52%,
+  56% {
+    transform: none;
+  }
+  60% {
+    transform: rotate(-18deg);
+  }
+  65% {
+    transform: rotate(12deg);
+  }
+  68%,
+  100% {
+    transform: none;
+  }
+}
+@keyframes omen-open {
+  0%,
+  67% {
+    transform: none;
+  }
+  72%,
+  100% {
+    transform: translateY(-30%) rotate(-62deg);
+  }
+}
+@keyframes omen-button {
+  0%,
+  24%,
+  30%,
+  44%,
+  48%,
+  60%,
+  64% {
+    filter: none;
+  }
+  26%,
+  46%,
+  62% {
+    filter: brightness(1.5) drop-shadow(0 0 6px #ff4a3a);
+  }
+}
+@keyframes omen-beam {
+  0%,
+  66% {
+    opacity: 0;
+    transform: scale(0.1);
+  }
+  72% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+@keyframes omen-name {
+  0%,
+  68% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  76%,
+  90% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes tarot-fan {
+  0% {
+    opacity: 0;
+    transform: rotate(0);
+  }
+  18%,
+  44% {
+    opacity: 1;
+    transform: rotate(calc(var(--i) * 12deg));
+  }
+  58%,
+  100% {
+    opacity: 0;
+    transform: rotate(calc(var(--i) * 18deg)) translateY(30px);
+  }
+}
+@keyframes tarot-rise {
+  0% {
+    opacity: 0;
+    transform: none;
+  }
+  18%,
+  30% {
+    opacity: 1;
+    transform: none;
+  }
+  46% {
+    transform: translateY(-14vh) scale(1.2);
+  }
+  64% {
+    opacity: 1;
+    transform: translateY(-14vh) scale(1.3) rotateY(540deg);
+    box-shadow:
+      0 0 0 3px #f2c94c,
+      0 0 40px #f2c94c;
+  }
+  76% {
+    opacity: 0;
+    transform: translateY(-14vh) scale(1.6) rotateY(540deg);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* --- A gym's badge -------------------------------------------------------- */
+.moment-badge {
+  --len: calc(var(--m) * 2100ms);
+}
+.badge-shade {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 44%, #1a120ccc 0, #050302ee 70%);
+  animation: badge-shade var(--len) ease both;
+}
+.badge-rays {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: 160vmax;
+  height: 160vmax;
+  margin: -80vmax 0 0 -80vmax;
+  background: repeating-conic-gradient(
+    from 0deg,
+    #f2c94c22 0deg 7deg,
+    transparent 7deg 20deg
+  );
+  mask-image: radial-gradient(circle, #000 0, transparent 40%);
+  -webkit-mask-image: radial-gradient(circle, #000 0, transparent 40%);
+  animation:
+    badge-shade var(--len) ease both,
+    spin calc(var(--m) * 9s) linear infinite;
+}
+.badge-coin {
+  position: absolute;
+  top: 44%;
+  left: 50%;
+  width: clamp(110px, 34vw, 180px);
+  height: clamp(110px, 34vw, 180px);
+  margin: calc(clamp(110px, 34vw, 180px) / -2) 0 0
+    calc(clamp(110px, 34vw, 180px) / -2);
+  display: grid;
+  place-items: center;
+  animation: badge-coin var(--len) cubic-bezier(0.2, 1, 0.3, 1) both;
+}
+.badge-coin.gone {
+  visibility: hidden;
+}
+.badge-coin img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 10px #000c) drop-shadow(0 0 16px #f2c94c88);
+}
+.badge-coin .type-mark {
+  --mark-size: 100%;
+  width: 100%;
+  height: 100%;
+}
+.badge-glint {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+      115deg,
+      transparent 30%,
+      #ffffffd0 46%,
+      transparent 62%
+    ) -150%
+    0 / 300% 100% no-repeat;
+  mask: center / contain no-repeat;
+  -webkit-mask: center / contain no-repeat;
+  mix-blend-mode: screen;
+  animation: badge-glint var(--len) ease-in-out both;
+}
+.badge-words {
+  position: absolute;
+  top: calc(44% + clamp(70px, 21vw, 110px));
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  margin: 0;
+  text-align: center;
+  animation: badge-words var(--len) ease both;
+}
+.badge-words strong {
+  color: #fff3c4;
+  font: 700 clamp(32px, 10vw, 56px) / 1 var(--font-card-title);
+  text-shadow:
+    0 3px 0 #6a4408,
+    0 0 22px #f2c94c;
+}
+.badge-words small {
+  color: #e6c78e;
+  font: 600 clamp(15px, 4vw, 19px) / 1.1 var(--font-tavern);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+@keyframes badge-shade {
+  0% {
+    opacity: 0;
+  }
+  10%,
+  62% {
+    opacity: 1;
+  }
+  86%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes badge-coin {
+  0% {
+    opacity: 0;
+    transform: translateY(30vh) scale(0.3) rotateY(0);
+  }
+  26% {
+    opacity: 1;
+    transform: scale(1.12) rotateY(720deg);
+  }
+  34%,
+  100% {
+    opacity: 1;
+    transform: rotateY(720deg);
+  }
+}
+@keyframes badge-glint {
+  0%,
+  34% {
+    background-position: -150% 0;
+  }
+  54%,
+  100% {
+    background-position: 150% 0;
+  }
+}
+@keyframes badge-words {
+  0%,
+  26% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  36%,
+  62% {
+    opacity: 1;
+    transform: none;
+  }
+  80%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* --- An item or a piece of gear ------------------------------------------- */
+.moment-loot {
+  --len: calc(var(--m) * 1500ms);
+  --tier: #d39b55;
+  --tier-light: #ffe2b8;
+}
+.moment-loot.tier-gold {
+  --tier: #f2c94c;
+  --tier-light: #fff3c8;
+}
+.moment-loot.tier-violet {
+  --tier: #a86bff;
+  --tier-light: #e9d6ff;
+}
+.loot-pillar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: clamp(110px, 34vw, 200px);
+  margin-left: calc(clamp(110px, 34vw, 200px) / -2);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--tier) 30%,
+    var(--tier-light) 50%,
+    var(--tier) 70%,
+    transparent
+  );
+  opacity: 0.7;
+  -webkit-mask-image: linear-gradient(
+    0deg,
+    transparent,
+    #000 30%,
+    #000 60%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    0deg,
+    transparent,
+    #000 30%,
+    #000 60%,
+    transparent
+  );
+  filter: blur(4px);
+  transform-origin: 50% 100%;
+  animation: loot-pillar var(--len) ease both;
+}
+.loot-item {
+  position: absolute;
+  top: 44%;
+  left: 50%;
+  width: clamp(72px, 22vw, 110px);
+  height: clamp(72px, 22vw, 110px);
+  margin: calc(clamp(72px, 22vw, 110px) / -2) 0 0
+    calc(clamp(72px, 22vw, 110px) / -2);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: radial-gradient(circle, #1a120c 0 56%, transparent 58%);
+  box-shadow:
+    0 0 0 3px var(--tier),
+    0 0 30px var(--tier);
+  animation: loot-item var(--len) cubic-bezier(0.2, 1.2, 0.4, 1) both;
+}
+.loot-item.gone {
+  visibility: hidden;
+}
+.loot-item .crawl-icon {
+  width: 62%;
+  height: 62%;
+  background: var(--tier-light);
+}
+.loot-words {
+  position: absolute;
+  top: calc(44% + clamp(50px, 15vw, 80px));
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  margin: 0;
+  text-align: center;
+  animation: loot-words var(--len) ease both;
+}
+.loot-words small {
+  color: var(--tier-light);
+  font: 600 clamp(14px, 3.8vw, 18px) / 1.1 var(--font-tavern);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.loot-words strong {
+  color: #fff;
+  font: 700 clamp(28px, 8.5vw, 46px) / 1.05 var(--font-card-title);
+  text-shadow:
+    0 3px 0 #0009,
+    0 0 20px var(--tier);
+}
+.loot-words em {
+  font-size: 0.6em;
+  font-style: normal;
+  opacity: 0.85;
+}
+@keyframes loot-pillar {
+  0% {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+  20% {
+    opacity: 1;
+    transform: none;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes loot-item {
+  0% {
+    opacity: 0;
+    transform: translateY(24vh) scale(0.4) rotateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1.12) rotateY(360deg);
+  }
+  40%,
+  100% {
+    opacity: 1;
+    transform: rotateY(360deg);
+  }
+}
+@keyframes loot-words {
+  0%,
+  22% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  32%,
+  70% {
+    opacity: 1;
+    transform: none;
+  }
+  90%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* --- The deck's milestones: a ribbon across the top ----------------------- */
+.moment-milestone {
+  --len: calc(var(--m) * 2400ms);
+  place-items: start center;
+  padding-top: calc(
+    var(--top-safe, env(safe-area-inset-top)) + var(--stud-size) + 18px
+  );
+}
+.milestone-cloth {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  min-width: min(84vw, 420px);
+  padding: 12px 34px 14px;
+  background:
+    linear-gradient(180deg, #ffffff22, transparent 50%),
+    linear-gradient(180deg, #d9b26a, #8a6026);
+  clip-path: polygon(0 0, 100% 0, 96% 50%, 100% 100%, 0 100%, 4% 50%);
+  box-shadow: 0 10px 30px #000a;
+  text-align: center;
+  animation: milestone var(--len) cubic-bezier(0.2, 1.1, 0.3, 1) both;
+}
+.milestone-cloth small {
+  color: #3a2208;
+  font: 600 clamp(13px, 3.6vw, 16px) / 1.1 var(--font-tavern);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.milestone-cloth strong {
+  color: #1e0e04;
+  font: 700 clamp(30px, 9vw, 48px) / 1 var(--font-card-title);
+  text-shadow: 0 1px 0 #ffffff44;
+}
+.milestone-cloth span {
+  color: #3a2208;
+  font: 500 clamp(15px, 4vw, 18px) / 1.2 var(--font-tavern);
+}
+@keyframes milestone {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px) scaleX(0.4);
+  }
+  14% {
+    opacity: 1;
+    transform: none;
+  }
+  82% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+}
+
+/* Reduced Motion: the global block ends every animation at once; the still
+   plaque keeps its gentle fade. */
+@media (prefers-reduced-motion: reduce) {
+  .still-plaque {
+    animation-duration: var(--still, 1.6s) !important;
+  }
+}
+/* The ball throw, played big (2026-10-31, `BallThrow.tsx`): the table dims,
+   the donut ball spins and its number counts with it, both land together,
+   then confetti for a catch or a burst for one that broke free. A tap
+   anywhere skips it. */
+.ball-stage {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-blast);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4vmin;
+  background: rgb(8 5 3 / 0.93);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  animation: ball-stage-in 220ms ease-out both;
+  touch-action: manipulation;
+  overflow: hidden;
+}
+.landed.fled {
+  animation: ball-stage-flash 700ms ease-out both;
+}
+.ball-stage-reel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5vmin;
+  color: #fff3d0;
+}
+.ball-stage-reel small {
+  font: italic 600 min(5vmin, 22px) / 1 var(--font-tavern);
+  color: #d8c6a4;
+}
+.ball-stage-verdict {
+  margin: 0;
+  padding: 0 6vmin;
+  text-align: center;
+  font: 700 min(7vmin, 34px) / 1.15 var(--font-card-title);
+  color: #fff3d0;
+  animation: ball-reel-land 420ms 120ms cubic-bezier(0.2, 1.6, 0.4, 1) both;
+}
+.ball-stage-confetti {
+  position: absolute;
+  top: 38%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+.ball-stage-confetti i {
+  position: absolute;
+  width: 3vmin;
+  height: 1.6vmin;
+  border-radius: 2px;
+  background: var(--c);
+  animation: ball-confetti 1400ms 650ms cubic-bezier(0.15, 0.7, 0.3, 1) both;
+}
+@keyframes ball-stage-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes ball-stage-shake {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  20% {
+    transform: rotate(-16deg);
+  }
+  45% {
+    transform: rotate(12deg);
+  }
+  70% {
+    transform: rotate(-6deg);
+  }
+}
+@keyframes ball-stage-pop {
+  to {
+    transform: translate(-12%, -70%) rotate(-40deg);
+  }
+}
+@keyframes ball-stage-flash {
+  0% {
+    background: rgb(8 5 3 / 0.82);
+  }
+  15% {
+    background: rgb(150 20 12 / 0.85);
+  }
+  to {
+    background: rgb(8 5 3 / 0.82);
+  }
+}
+@keyframes ball-reel-land {
+  from {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+@keyframes ball-confetti {
+  from {
+    transform: translate(0, 0) rotate(0);
+    opacity: 1;
+  }
+  to {
+    transform: translate(var(--x), var(--y)) rotate(var(--r));
+    opacity: 0;
+  }
+}
+
+/* The donut ball (2026-10-31): a hollow ring turned by script, its one
+   number in the hole changing as fast as it turns (`DonutBall`). Landing: a
+   shake and a gold glow for a catch, the top half flying off and a red flash
+   for one that broke free. */
+.ball-donut {
+  --d: min(58vmin, 300px);
+  position: relative;
+  width: var(--d);
+  height: var(--d);
+  filter: drop-shadow(0 0 22px rgb(255 230 160 / 0.3));
+}
+.ball-donut-ring {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+.ball-donut-half {
+  position: absolute;
+  inset: 0;
+  -webkit-mask-image: radial-gradient(
+    circle closest-side,
+    transparent 0 61.5%,
+    #000 62.5% 99%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    circle closest-side,
+    transparent 0 61.5%,
+    #000 62.5% 99%,
+    transparent 100%
+  );
+}
+/* Outline rings over the fill; the band is a dark stripe at the join. */
+.ball-donut-half.top {
+  clip-path: inset(0 0 50% 0);
+  background:
+    radial-gradient(
+      circle closest-side,
+      transparent 0 62%,
+      #1d120a 62% 67%,
+      transparent 67% 94%,
+      #1d120a 94% 100%
+    ),
+    linear-gradient(transparent 0 45%, #1d120a 45%),
+    radial-gradient(circle at 35% 25%, #ff6b5c, #b8261d 72%);
+}
+.ball-donut-half.bottom {
+  clip-path: inset(50% 0 0 0);
+  background:
+    radial-gradient(
+      circle closest-side,
+      transparent 0 62%,
+      #1d120a 62% 67%,
+      transparent 67% 94%,
+      #1d120a 94% 100%
+    ),
+    linear-gradient(#1d120a 0 55%, transparent 55%),
+    radial-gradient(circle at 35% 75%, #ffffff, #d9d2c4 75%);
+}
+.ball-donut-number {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 700 calc(var(--d) * 0.34) / 1 var(--font-card-title);
+  font-variant-numeric: lining-nums tabular-nums;
+  color: #fff3d0;
+  text-shadow: 0 3px 0 rgb(0 0 0 / 0.5);
+}
+.landed.caught .ball-donut {
+  animation:
+    ball-stage-shake 700ms ease-in-out both,
+    ball-donut-glow 900ms 700ms ease-out both;
+}
+.landed.caught .ball-donut-number {
+  color: #f6d365;
+}
+.landed.fled .ball-donut-half.top {
+  animation: ball-stage-pop 600ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  transform-origin: 0% 100%;
+}
+.landed.fled .ball-donut-number {
+  color: #ff8a7a;
+}
+/* The Master Ball (2026-11-01): a purple top with its two pink bumps, a
+   violet glow, and violet and pink confetti. */
+.ball-stage.ball-master .ball-donut {
+  filter: drop-shadow(0 0 26px rgb(196 120 255 / 0.45));
+}
+.ball-stage.ball-master .ball-donut-half.top {
+  background:
+    radial-gradient(
+      circle closest-side,
+      transparent 0 62%,
+      #1d120a 62% 67%,
+      transparent 67% 94%,
+      #1d120a 94% 100%
+    ),
+    linear-gradient(transparent 0 45%, #1d120a 45%),
+    radial-gradient(circle at 22% 30%, #ff7fc8 0 9%, transparent 9.5%),
+    radial-gradient(circle at 78% 30%, #ff7fc8 0 9%, transparent 9.5%),
+    radial-gradient(circle at 35% 25%, #c77bff, #5b1a8c 72%);
+}
+.ball-stage.ball-master .ball-donut-number,
+.landed.caught.ball-master .ball-donut-number {
+  color: #f3d4ff;
+}
+.landed.caught.ball-master .ball-donut {
+  animation:
+    ball-stage-shake 700ms ease-in-out both,
+    ball-master-glow 900ms 700ms ease-out both;
+}
+.ball-stage.ball-master .ball-stage-confetti i:nth-child(odd) {
+  background: #c77bff;
+}
+.ball-stage.ball-master .ball-stage-confetti i:nth-child(3n) {
+  background: #ff7fc8;
+}
+/* Great Ball (2026-11-01): a blue top with two red patches. */
+.ball-stage.ball-great .ball-donut-half.top {
+  background:
+    radial-gradient(
+      circle closest-side,
+      transparent 0 62%,
+      #1d120a 62% 67%,
+      transparent 67% 94%,
+      #1d120a 94% 100%
+    ),
+    linear-gradient(transparent 0 45%, #1d120a 45%),
+    radial-gradient(ellipse 16% 22% at 16% 34%, #e2483c 0 98%, transparent),
+    radial-gradient(ellipse 16% 22% at 84% 34%, #e2483c 0 98%, transparent),
+    radial-gradient(circle at 35% 25%, #6aa8ff, #1d4fa8 72%);
+}
+.ball-stage.ball-great .ball-donut {
+  filter: drop-shadow(0 0 24px rgb(106 168 255 / 0.4));
+}
+/* Ultra Ball (2026-11-01): a black top with a yellow H. */
+.ball-stage.ball-ultra .ball-donut-half.top {
+  background:
+    radial-gradient(
+      circle closest-side,
+      transparent 0 62%,
+      #1d120a 62% 67%,
+      transparent 67% 94%,
+      #1d120a 94% 100%
+    ),
+    linear-gradient(transparent 0 45%, #1d120a 45%),
+    linear-gradient(
+      90deg,
+      transparent 0 22%,
+      #f2c94c 22% 30%,
+      transparent 30% 70%,
+      #f2c94c 70% 78%,
+      transparent 78%
+    ),
+    radial-gradient(circle at 35% 25%, #4a4a52, #121216 72%);
+}
+.ball-stage.ball-ultra .ball-donut {
+  filter: drop-shadow(0 0 24px rgb(242 201 76 / 0.4));
+}
+@keyframes ball-master-glow {
+  50% {
+    filter: drop-shadow(0 0 44px rgb(199 123 255 / 0.95));
+  }
+  to {
+    filter: drop-shadow(0 0 22px rgb(199 123 255 / 0.6));
+  }
+}
+@keyframes ball-donut-glow {
+  50% {
+    filter: drop-shadow(0 0 40px rgb(242 201 76 / 0.95));
+  }
+  to {
+    filter: drop-shadow(0 0 20px rgb(242 201 76 / 0.6));
+  }
+}
+
+/* The natural 20 and 1 burst (Flourish.tsx; Pub Crawl's from 2026-10-31,
+   every mode since 2026-11-01). A natural 20 floods the table gold with
+   turning rays and a stamped 20. A natural 1 is its dark twin: the 1 drops
+   in, the screen jolts red and shakes, cracks run out to the edges like
+   broken glass, the dark closes in and the 1 splits in two and sags. Each
+   piece ends on a still worth seeing, since Reduced Motion jumps every
+   child animation to its end. Never takes a tap. */
+.natural-burst {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-blast);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  pointer-events: none;
+  animation: natural-flash 1.4s ease-out both;
+}
+.natural-burst.crit {
+  background: radial-gradient(
+    circle at 50% 44%,
+    #fff3c8 0,
+    #f2c45a 16%,
+    #8a5a14d9 46%,
+    #140c02f0 100%
+  );
+}
+.natural-burst.fumble {
+  background: radial-gradient(
+    circle at 50% 48%,
+    #8a1010e6 0,
+    #4a0606ee 22%,
+    #1a0202f4 56%,
+    #050000fa 100%
+  );
+  animation-duration: 1.6s;
+}
+/* The jolt of red on impact. */
+.natural-burst.fumble::before,
+.natural-burst.fumble::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+.natural-burst.fumble::before {
+  background: #ff2414;
+  opacity: 0;
+  animation: fumble-jolt 1.6s ease-out both;
+}
+/* The dark closing in from the edges. */
+.natural-burst.fumble::after {
+  background: radial-gradient(
+    circle at 50% 48%,
+    transparent 26%,
+    #000c 70%,
+    #000 100%
+  );
+  animation: fumble-close 1.6s ease-in both;
+}
+.natural-rays {
+  position: absolute;
+  width: 160vmax;
+  height: 160vmax;
+  left: 50%;
+  top: 46%;
+  margin: -80vmax 0 0 -80vmax;
+  background: repeating-conic-gradient(
+    from 0deg,
+    #fff2b833 0deg 7deg,
+    transparent 7deg 22deg
+  );
+  -webkit-mask-image: radial-gradient(circle, #000 12%, transparent 58%);
+  mask-image: radial-gradient(circle, #000 12%, transparent 58%);
+  animation: natural-rays 1.4s ease-out both;
+}
+.natural-cracks {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  animation: fumble-shake 1.6s linear both;
+}
+/* Drawn out from the 1 at one speed (every crack is under 80 units). */
+.natural-cracks path {
+  stroke-dasharray: 80;
+  stroke-dashoffset: 0;
+  animation: fumble-crack 1.6s ease-out both;
+}
+.natural-cracks .glow path {
+  stroke: #ff3a2a66;
+  stroke-width: 1;
+}
+.natural-cracks .line path {
+  stroke: #ffd9cc;
+  stroke-width: 0.3;
+}
+/* The branches split off once the main cracks have run. */
+.natural-cracks path:nth-child(n + 8) {
+  animation-name: fumble-branch;
+}
+.natural-word {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  justify-items: center;
+  margin-top: -8vh;
+  color: #fff8e4;
+  font-family: var(--font-card-title);
+  text-transform: uppercase;
+  text-align: center;
+}
+.natural-word small {
+  font-size: clamp(18px, 6vw, 40px);
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  margin-right: -0.32em;
+  text-shadow:
+    0 2px 0 #3a2205,
+    0 0 18px #000a;
+  animation: natural-kicker 1.4s ease-out both;
+}
+.natural-word strong {
+  font-size: clamp(120px, 44vw, 300px);
+  font-weight: 700;
+  line-height: 0.9;
+}
+.crit .natural-word strong {
+  color: #fff3c4;
+  text-shadow:
+    0 5px 0 #8a5a10,
+    0 10px 0 #3a2205,
+    0 0 48px #ffd36a;
+  animation: natural-slam 1.4s cubic-bezier(0.2, 1.5, 0.4, 1) both;
+}
+.fumble .natural-word {
+  color: #ffc8bc;
+  animation: fumble-shake 1.6s linear both;
+}
+.fumble .natural-word small {
+  text-shadow:
+    0 2px 0 #3a0404,
+    0 0 18px #000;
+  animation-duration: 1.6s;
+}
+.fumble .natural-word strong {
+  /* A lone 1 is narrow: set it larger so it carries the 20's weight. */
+  font-size: clamp(150px, 56vw, 380px);
+  color: #ffd0c4;
+  text-shadow:
+    0 5px 0 #5a0808,
+    0 10px 0 #1e0202,
+    0 0 40px #ff2a2a;
+  animation: natural-thud 1.6s ease-in both;
+}
+/* The 1 in two pieces along a jagged break, each clipped wide enough to
+   keep its glow. */
+.natural-split {
+  display: grid;
+}
+.natural-split .half {
+  grid-area: 1 / 1;
+}
+.natural-split .left {
+  clip-path: polygon(
+    -60% -60%,
+    56% -60%,
+    56% 0,
+    47% 33%,
+    56% 52%,
+    44% 100%,
+    44% 160%,
+    -60% 160%
+  );
+  animation: fumble-left 1.6s cubic-bezier(0.5, 0, 0.8, 0.6) both;
+}
+.natural-split .right {
+  clip-path: polygon(
+    56% -60%,
+    160% -60%,
+    160% 160%,
+    44% 160%,
+    44% 100%,
+    56% 52%,
+    47% 33%,
+    56% 0
+  );
+  animation: fumble-right 1.6s cubic-bezier(0.5, 0, 0.8, 0.6) both;
+}
+@keyframes natural-flash {
+  0% {
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  68% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes natural-rays {
+  from {
+    transform: rotate(0deg) scale(0.6);
+  }
+  to {
+    transform: rotate(40deg) scale(1.1);
+  }
+}
+@keyframes natural-slam {
+  0% {
+    transform: scale(2.6) rotate(-10deg);
+    opacity: 0;
+  }
+  18% {
+    transform: scale(0.94) rotate(2deg);
+    opacity: 1;
+  }
+  28%,
+  100% {
+    transform: scale(1) rotate(0);
+  }
+}
+/* The 1 falls in from above and lands hard. */
+@keyframes natural-thud {
+  0% {
+    transform: translateY(-60%) scale(1.25);
+    opacity: 0;
+  }
+  15% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  19% {
+    transform: translateY(0) scale(1.06, 0.92);
+  }
+  24%,
+  100% {
+    transform: none;
+  }
+}
+@keyframes natural-kicker {
+  0%,
+  12% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  30%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes fumble-jolt {
+  0%,
+  14% {
+    opacity: 0;
+  }
+  16% {
+    opacity: 0.55;
+  }
+  34%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes fumble-close {
+  0%,
+  14% {
+    opacity: 0;
+    transform: scale(1.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes fumble-shake {
+  0%,
+  15% {
+    transform: none;
+  }
+  18% {
+    transform: translate(-9px, 4px) rotate(-0.6deg);
+  }
+  21% {
+    transform: translate(8px, -5px) rotate(0.5deg);
+  }
+  24% {
+    transform: translate(-6px, -3px);
+  }
+  27% {
+    transform: translate(5px, 4px);
+  }
+  30% {
+    transform: translate(-3px, 1px);
+  }
+  34%,
+  100% {
+    transform: none;
+  }
+}
+@keyframes fumble-crack {
+  0%,
+  15% {
+    stroke-dashoffset: 80;
+  }
+  30%,
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes fumble-branch {
+  0%,
+  26% {
+    stroke-dashoffset: 80;
+  }
+  40%,
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+/* After the cracks, the 1 breaks and its halves sag apart. */
+@keyframes fumble-left {
+  0%,
+  38% {
+    transform: none;
+  }
+  100% {
+    transform: translate(-0.17em, 0.2em) rotate(-13deg);
+  }
+}
+@keyframes fumble-right {
+  0%,
+  38% {
+    transform: none;
+  }
+  100% {
+    transform: translate(0.13em, 0.32em) rotate(15deg);
+  }
+}
+
+/* --- Endings (2026-11-01, `moments/Ending.tsx`) ---------------------------
+   Played once over the end screen, then faded off it: the record waits
+   underneath. */
+.moment-ending {
+  --len: 6800ms;
+  background: #07050af2;
+  animation: ending-fade var(--len) ease both;
+}
+.ending-survived {
+  --len: 5200ms;
+  background: #0d0904f2;
+}
+.ending-whiteout,
+.ending-wiped {
+  --len: 4400ms;
+}
+.ending-toast {
+  --len: 2800ms;
+  background: transparent;
+}
+@keyframes ending-fade {
+  0% {
+    opacity: 0;
+  }
+  5%,
+  88% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+/* The Hall of Fame opens out of white. */
+.ending-whitein {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  animation: ending-whitein calc(var(--len) * 0.16) ease-out both;
+}
+@keyframes ending-whitein {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+.hall-light {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 70vmin;
+  height: 62%;
+  margin-left: -35vmin;
+  background: linear-gradient(180deg, transparent, var(--c) 70%, #fff 100%);
+  opacity: 0.32;
+  -webkit-mask-image: radial-gradient(
+    ellipse 50% 100% at 50% 100%,
+    #000 30%,
+    transparent 70%
+  );
+  mask-image: radial-gradient(
+    ellipse 50% 100% at 50% 100%,
+    #000 30%,
+    transparent 70%
+  );
+  animation: hall-light var(--len) ease both;
+}
+@keyframes hall-light {
+  0%,
+  6% {
+    transform: scaleX(0.2);
+    opacity: 0;
+  }
+  16%,
+  100% {
+    transform: none;
+    opacity: 0.32;
+  }
+}
+.hall-title,
+.hall-plinth,
+.hall-badges,
+.ending-stats {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: 0;
+  display: grid;
+  justify-items: center;
+}
+.hall-title {
+  top: calc(7% + var(--top-safe, env(safe-area-inset-top)));
+  gap: 2px;
+  animation: hall-rise var(--len) cubic-bezier(0.2, 1.2, 0.3, 1) both;
+  --at: 0.05;
+}
+.hall-title small {
+  color: #e6c78e;
+  font: 600 clamp(14px, 3.8vw, 18px) / 1.1 var(--font-tavern);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+.hall-title strong {
+  color: #fff3c4;
+  font: 700 clamp(46px, 14vw, 84px) / 1 var(--font-card-title);
+  text-shadow:
+    0 4px 0 #6a4408,
+    0 0 34px #f2c94c;
+}
+.hall-plinth {
+  top: 30%;
+  gap: 8px;
+  animation: hall-rise var(--len) cubic-bezier(0.2, 1.3, 0.3, 1) both;
+  --at: 0.09;
+}
+.hall-plinth .type-mark {
+  --mark-size: clamp(76px, 22vw, 120px);
+  box-shadow:
+    0 0 0 3px #fff3c4,
+    0 0 40px var(--c, #f2c94c);
+}
+.hall-plinth strong {
+  color: #fff;
+  font: 700 clamp(30px, 9vw, 52px) / 1 var(--font-card-title);
+  text-shadow: 0 3px 0 #0008;
+}
+.hall-badges {
+  top: 55%;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 16px;
+  list-style: none;
+}
+.hall-badge {
+  width: clamp(34px, 10vw, 52px);
+  height: clamp(34px, 10vw, 52px);
+  display: grid;
+  place-items: center;
+  animation: hall-badge var(--len) cubic-bezier(0.2, 1.5, 0.4, 1) both;
+  animation-delay: calc(var(--i) * 150ms);
+}
+.hall-badge img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 4px #000c);
+}
+.hall-badge .type-mark {
+  --mark-size: 100%;
+}
+@keyframes hall-badge {
+  0%,
+  21% {
+    opacity: 0;
+    transform: translateY(-40px) scale(0.4) rotate(-90deg);
+  }
+  26%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+.ending-stats {
+  top: 66%;
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+  gap: 10px 4px;
+  padding: 0 14px;
+}
+.ending-stats > div {
+  display: grid;
+  justify-items: center;
+  animation: hall-rise var(--len) ease both;
+  --at: calc(0.38 + var(--i) * 0.025);
+}
+.ending-stats dt {
+  color: #e6c78e;
+  font: 600 0.85rem / 1.1 var(--font-tavern);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.ending-stats dd {
+  margin: 0;
+  color: #fff3c4;
+  font: 700 clamp(30px, 9vw, 44px) / 1 var(--font-card-title);
+  font-variant-numeric: tabular-nums;
+}
+/* A rise that starts at `--at` of the show (keyframes can't take a
+   variable offset, so the delay carries it). */
+@keyframes hall-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.hall-title,
+.hall-plinth,
+.ending-stats > div {
+  animation-duration: 700ms;
+  animation-delay: calc(var(--len) * var(--at));
+}
+
+/* Pub Crawl survived. */
+.ending-gold {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 30%, #f2c94c40 0, transparent 60%);
+}
+.ending-words {
+  position: absolute;
+  top: calc(16% + var(--top-safe, env(safe-area-inset-top)));
+  display: grid;
+  justify-items: center;
+  margin: 0;
+  animation: hall-rise 800ms cubic-bezier(0.2, 1.2, 0.3, 1) both;
+  animation-delay: 300ms;
+}
+.ending-words strong,
+.ending-words em {
+  color: #fff3c4;
+  font: 700 clamp(44px, 13vw, 78px) / 1 var(--font-card-title);
+  text-shadow:
+    0 4px 0 #6a4408,
+    0 0 30px #f2c94c;
+}
+.ending-words em {
+  color: #f2c94c;
+}
+.ending-trophies {
+  position: absolute;
+  top: 52%;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 0 18px 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  list-style: none;
+  border-bottom: 6px solid #5a3c1e;
+  box-shadow: 0 6px 0 #2a1a0e;
+}
+.ending-trophy {
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #d9b26a, #8a6026);
+  box-shadow: 0 6px 12px #000a;
+  color: #1e0e04;
+  font: 700 clamp(15px, 4vw, 19px) / 1.1 var(--font-card-title);
+  animation: trophy-drop 520ms cubic-bezier(0.5, 0, 0.75, 0) both;
+  animation-delay: calc(1180ms + var(--i) * 280ms);
+}
+@keyframes trophy-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-50vh) rotate(-8deg);
+  }
+  80% {
+    opacity: 1;
+    transform: translateY(0) rotate(2deg);
+  }
+  90% {
+    transform: translateY(-6px);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The League's whiteout. */
+.whiteout-dark {
+  position: absolute;
+  inset: 0;
+  background: #0a0a12;
+}
+.whiteout-hp {
+  position: relative;
+  display: grid;
+  gap: 6px;
+  width: min(70vw, 320px);
+  color: #e6e6f0;
+  font: 600 1rem / 1 var(--font-tavern);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  animation: whiteout-hp 4400ms ease both;
+}
+.whiteout-bar {
+  display: block;
+  height: 14px;
+  border-radius: 7px;
+  background: #2a2a36;
+  box-shadow: inset 0 0 0 2px #46465a;
+  overflow: hidden;
+}
+.whiteout-bar i {
+  display: block;
+  height: 100%;
+  width: var(--from);
+  background: #e2442a;
+  animation: whiteout-drain 1100ms cubic-bezier(0.5, 0, 0.3, 1) 400ms both;
+}
+@keyframes whiteout-drain {
+  from {
+    width: var(--from);
+  }
+  to {
+    width: 0;
+  }
+}
+@keyframes whiteout-hp {
+  0%,
+  40% {
+    opacity: 1;
+  }
+  52%,
+  100% {
+    opacity: 0;
+  }
+}
+.whiteout-white {
+  position: absolute;
+  inset: 0;
+  background: #fbfbf6;
+  animation: whiteout-white 4400ms ease-in both;
+}
+@keyframes whiteout-white {
+  0%,
+  36% {
+    opacity: 0;
+  }
+  62%,
+  100% {
+    opacity: 1;
+  }
+}
+.whiteout-words {
+  position: absolute;
+  margin: 0;
+  color: #1a1a24;
+  font: 700 clamp(44px, 13vw, 76px) / 1 var(--font-card-title);
+  animation: whiteout-words 4400ms ease both;
+}
+.whiteout-words em {
+  color: #6a6a7a;
+}
+@keyframes whiteout-words {
+  0%,
+  60% {
+    opacity: 0;
+    letter-spacing: 0.3em;
+  }
+  74%,
+  100% {
+    opacity: 1;
+    letter-spacing: 0;
+  }
+}
+
+/* Pub Crawl wiped: the candles gutter, the dark closes in. */
+.wiped-dark {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 62%, transparent 0, #000 70%);
+  animation: wiped-close 4400ms ease-in both;
+}
+@keyframes wiped-close {
+  from {
+    transform: scale(2.4);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+.wiped-candles {
+  position: absolute;
+  top: 58%;
+  display: flex;
+  gap: 18vw;
+}
+.wiped-candle {
+  position: relative;
+  width: 14px;
+  height: 46px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #d8c8a8, #f4ead4, #b8a888);
+}
+.wiped-candle i {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  width: 14px;
+  height: 26px;
+  margin-left: -7px;
+  border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%;
+  background: radial-gradient(
+    ellipse at 50% 70%,
+    #fff6d6 0,
+    #ffb347 40%,
+    #ff6a1a 70%,
+    transparent 72%
+  );
+  box-shadow: 0 0 24px #ff9a3a;
+  transform-origin: 50% 100%;
+  animation: candle-gutter 4400ms ease-in both;
+  animation-delay: calc(var(--i) * 420ms);
+}
+@keyframes candle-gutter {
+  0%,
+  20% {
+    transform: none;
+    opacity: 1;
+  }
+  26% {
+    transform: scale(0.8, 1.2) skewX(6deg);
+  }
+  32% {
+    transform: scale(1.1, 0.8) skewX(-4deg);
+  }
+  40% {
+    transform: scale(0.5, 0.4);
+    opacity: 0.8;
+  }
+  46%,
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+.wiped-words {
+  top: 30%;
+  animation-delay: 1900ms;
+}
+.wiped-words strong,
+.wiped-words em {
+  color: #f0d8d0;
+  text-shadow:
+    0 4px 0 #3a0a06,
+    0 0 26px #8a1a10;
+}
+.wiped-words em {
+  color: #d27a6a;
+}
+
+/* A plain game's toast: two tankards clink. */
+.toast-shade {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 42%, #000a 0, transparent 70%);
+}
+.toast-mug {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  width: clamp(170px, 50vw, 260px);
+  margin: calc(clamp(170px, 50vw, 260px) * -0.5) 0 0
+    calc(clamp(170px, 50vw, 260px) * -0.5);
+  filter: drop-shadow(0 12px 20px #000c);
+  transform-origin: 50% 80%;
+  animation: toast-mug 2800ms cubic-bezier(0.3, 0, 0.2, 1) both;
+}
+/* Up from the table, a clink (a quick knock and shiver), then away. */
+@keyframes toast-mug {
+  0% {
+    opacity: 0;
+    transform: translateY(40vh) scale(0.6) rotate(-8deg);
+  }
+  18% {
+    opacity: 1;
+    transform: translateY(-8px) scale(1.04) rotate(2deg);
+  }
+  22% {
+    transform: scale(1.12) rotate(-4deg);
+  }
+  25% {
+    transform: scale(1.02) rotate(3deg);
+  }
+  28% {
+    transform: scale(1.06) rotate(-1.5deg);
+  }
+  32%,
+  82% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.96);
+  }
+}
+.toast-words {
+  position: absolute;
+  top: calc(42% + clamp(70px, 20vw, 110px));
+  margin: 0;
+  color: #fff3c4;
+  font: 700 clamp(44px, 13vw, 72px) / 1 var(--font-card-title);
+  text-shadow:
+    0 4px 0 #6a4408,
+    0 0 30px #f2c94c;
+  animation: clash-word 2800ms cubic-bezier(0.2, 1.5, 0.4, 1) both;
+}
+
+/* --- Most Likely To: 3, 2, 1, POINT! (2026-11-01) ------------------------ */
+.point-countdown {
+  background: radial-gradient(circle at 50% 46%, #1a120ccc 0, #050302ee 75%);
+  animation: point-shade 3200ms ease both;
+}
+@keyframes point-shade {
+  0% {
+    opacity: 0;
+  }
+  6%,
+  86% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.point-num,
+.point-word {
+  grid-area: 1 / 1;
+  color: #fff3c4;
+  font: 800 clamp(150px, 52vw, 320px) / 1 var(--font-card-title);
+  text-shadow:
+    0 6px 0 #6a4408,
+    0 0 40px #f2c94c;
+  opacity: 0;
+}
+.point-num {
+  animation: point-num 700ms cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+.point-num::after {
+  content: "";
+}
+.point-word {
+  font-size: clamp(80px, 26vw, 170px);
+  text-transform: uppercase;
+  animation: point-word 1050ms cubic-bezier(0.2, 1.5, 0.4, 1) 2100ms both;
+}
+@keyframes point-num {
+  0% {
+    opacity: 0;
+    transform: scale(2.4);
+  }
+  22% {
+    opacity: 1;
+    transform: scale(0.94);
+  }
+  34%,
+  76% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+}
+@keyframes point-word {
+  0% {
+    opacity: 0;
+    transform: scale(3) rotate(-6deg);
+  }
+  24% {
+    opacity: 1;
+    transform: scale(0.95) rotate(2deg);
+  }
+  34%,
+  82% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}

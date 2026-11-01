@@ -33,11 +33,15 @@
   --stud-size: 56px;
   /* The crawl's strip of chips under the header. */
   --strip-h: 34px;
-  /* Stacking above the table: banners, the dice, the party's flush, and the
-     timer's blast. */
+  /* Stacking above the table: banners, the dice, the party's flush, the
+     moments layer (one full-screen moment, its particles, a prize flying
+     into the strip) and the timer's blast. */
   --z-banner: 5;
   --z-dice: 40;
   --z-pulse: 41;
+  --z-moment: 52;
+  --z-particles: 56;
+  --z-flier: 58;
   --z-blast: 60;
 }
 @media (min-width: 700px) {

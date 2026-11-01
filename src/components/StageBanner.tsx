@@ -1,23 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
-import type { PokemonType, SessionState } from "../game/types";
+import type { SessionState } from "../game/types";
 import {
   finaleCard,
   teamMember,
   finaleStage,
-  formEffect,
-  omenForm,
-  partyBoons,
   questStages,
   wantedBoss,
 } from "../game/engine";
-import { describeChange } from "../game/omenText";
 import { crawlTheme } from "./crawlTheme";
 import { packs } from "../content/manifest.generated";
 import { stageArt } from "../presentation/league-art";
 import { useAnnounce } from "./Announcer";
-import { TypeMark } from "./LeagueMarks";
-import { asset } from "../presentation/theme";
+import { entranceFor } from "./moments/detect";
 
 /** The banner that sweeps across the table as each finale stage begins (the
  * Legendary, the Elite Four, the Champion; a crawl's floors and bosses):
@@ -69,6 +63,8 @@ function stageBanner(session: SessionState) {
   // lost Champion is replaced.
   const pool = quest.stages[stage.stage].cards;
   if (pool.some((c) => c.id === session.previousId)) return null;
+  // A boss's own entrance plays instead (the moments layer, 2026-11-01).
+  if (entranceFor(session)) return null;
   const rules = packs.find((p) => p.id === quest.packId)?.quest;
   const intro =
     (rules && questStages(rules).find((s) => s.label === stage.label)?.intro) ??
@@ -105,159 +101,6 @@ function useBannerTimeout(key: string | null, clear: () => void) {
     const id = setTimeout(clear, BANNER_MS);
     return () => clearTimeout(id);
   }, [key, clear]);
-}
-
-/** The banner when the starter evolves mid-run: "What? Charmander is
- * evolving!" over its new form's name. Shown once per evolution, never on a
- * resumed game; it sits high so a stage banner below it stays readable. */
-export function EvolutionBanner({ session }: { session: SessionState }) {
-  const quest = session.quest;
-  const form = quest?.party?.form ?? 0;
-  const seen = useRef(form);
-  const [shown, setShown] = useState<{
-    from: string;
-    to: string;
-    change: string;
-    /** The League's evolution plays first (2026-11-01): the old and new
-     * forms' type medallions as white silhouettes, flickering faster and
-     * faster, a flash, then the new form; the banner follows. */
-    morph: { from: PokemonType; to: PokemonType } | null;
-  } | null>(null);
-  useEffect(() => {
-    if (form > seen.current) {
-      const now = omenForm(quest);
-      // A branching starter (Eevee) evolves straight from its base form.
-      const before =
-        form === 1 || now?.card.branches
-          ? now?.card
-          : now?.card.evolves?.[form - 2];
-      const from = before?.title;
-      const fromType = before?.type ?? now?.card.type;
-      // What the evolution did, from the numbers: "Max HP 15 → 17." The
-      // form alone: boons a crawl keeps beside it didn't change.
-      const words = crawlTheme(quest?.packId).omenWords;
-      const after = formEffect(quest) ?? {};
-      const base = (quest?.party?.max ?? 0) - (after.hearts ?? 0);
-      const change =
-        words && now?.before
-          ? describeChange(now.before, after, words, base)
-          : "";
-      const still =
-        document.hidden ||
-        matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const morph =
-        !still && fromType && now?.type
-          ? { from: fromType, to: now.type }
-          : null;
-      if (now && from) setShown({ from, to: now.title, change, morph });
-    }
-    seen.current = form;
-  }, [form, quest]);
-  const evolving = crawlTheme(quest?.packId).words.evolving;
-  const clear = useCallback(() => setShown(null), []);
-  const morphed = useCallback(
-    () => setShown((s) => (s?.morph ? { ...s, morph: null } : s)),
-    [],
-  );
-  useBannerTimeout(
-    shown && !shown.morph ? `${shown.from}>${shown.to}` : null,
-    clear,
-  );
-  useEffect(() => {
-    if (!shown?.morph) return;
-    const id = setTimeout(morphed, MORPH_MS);
-    return () => clearTimeout(id);
-  }, [shown?.morph, morphed]);
-  useAnnounce(
-    shown && evolving
-      ? `${evolving(shown.from)} ${shown.to}. ${shown.change}`
-      : "",
-    shown && evolving ? `${shown.from}>${shown.to}` : null,
-  );
-  if (!shown || !evolving) return null;
-  if (shown.morph)
-    return (
-      <EvolutionMorph
-        from={shown.from}
-        to={shown.to}
-        types={shown.morph}
-        onDone={morphed}
-      />
-    );
-  return (
-    <div
-      key={shown.to}
-      className="stage-banner banner-pearl evolution-banner"
-      aria-hidden="true"
-    >
-      <div
-        className="stage-banner-cloth"
-        onAnimationEnd={(e) => {
-          if (e.target === e.currentTarget) clear();
-        }}
-      >
-        <small>{evolving(shown.from)}</small>
-        <strong>{shown.to}</strong>
-        {shown.change && <span>{shown.change}</span>}
-      </div>
-    </div>
-  );
-}
-
-/** How long the League's evolution plays before its banner (`evo-*` in
- * crawl.css: 2.0 s of flicker, the flash, the new form). */
-const MORPH_MS = 3000;
-
-/** The League's evolution, over a dimmed table (2026-11-01, owner): the
- * old form's type medallion as a white silhouette, swapping with the new
- * form's bigger one faster and faster, a white flash, then the new form in
- * colour with its name. A tap skips to the banner. Display only and
- * `aria-hidden` (the banner's words are announced). The app ships no
- * Pokémon art, so the medallions stand in for the sprites. */
-function EvolutionMorph({
-  from,
-  to,
-  types,
-  onDone,
-}: {
-  from: string;
-  to: string;
-  types: { from: PokemonType; to: PokemonType };
-  onDone: () => void;
-}) {
-  return createPortal(
-    <div className="evo-stage" aria-hidden="true" onClick={onDone}>
-      <div className="evo-figure">
-        <span className="evo-glow" />
-        <Silhouette type={types.from} className="evo-old" />
-        <Silhouette type={types.to} className="evo-new" />
-        <TypeMark type={types.to} className="evo-final" />
-      </div>
-      <div className="evo-names">
-        <span className="evo-old">{from}</span>
-        <span className="evo-new">{to}</span>
-      </div>
-      <span className="evo-flash" />
-    </div>,
-    document.body,
-  );
-}
-
-/** A form's type glyph alone, glowing white: the evolution's silhouette. */
-function Silhouette({
-  type,
-  className,
-}: {
-  type: PokemonType;
-  className: string;
-}) {
-  const src = `url("${asset(`art/league/types/${type}.svg`)}")`;
-  return (
-    <span
-      className={`evo-silhouette ${className}`}
-      style={{ maskImage: src, WebkitMaskImage: src }}
-    />
-  );
 }
 
 /** Pub Crawl's news, swept across the top third like an evolution: a
@@ -327,24 +170,6 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
         tone: "violet",
       });
       return;
-    }
-    if (boons && boons !== before.boons) {
-      const found = partyBoons(quest).at(-1);
-      const card = found?.card;
-      if (found && card?.encounter !== "omen" && words.trinketFound) {
-        // A boss that falls can lift a jinx in the same breath.
-        const lifted = before.jinx && !jinx && words.jinx;
-        setShown({
-          key: `boon-${found.key}`,
-          kicker: words.trinketFound,
-          title: found.boon.name,
-          line: [found.boon.rules, lifted ? `${words.jinx!.lifted}.` : ""]
-            .filter(Boolean)
-            .join(" "),
-          tone: "violet",
-        });
-        return;
-      }
     }
     if (jinx && jinx !== before.jinx && words.jinx) {
       const laid = finaleCard(quest, jinx)?.jinx;
