@@ -36,8 +36,14 @@ function NoView({ onDone }: ViewProps) {
   useEffect(() => onDone(), [onDone]);
   return null;
 }
-/** Starts the views' download early, once a game is under way. */
-export const warmMoments = () => void import("./views").catch(() => {});
+/** Starts the views' and the ending's downloads once a game is under way,
+ * so both are in memory before an update can replace this build's chunks
+ * (fetched late, a replaced chunk reloads the page: the end screen would
+ * reload instead of playing its ending). */
+export const warmMoments = () => {
+  void import("./views").catch(() => {});
+  void import("./Ending").catch(() => {});
+};
 
 /** The longest any moment may hold the table, whatever its view does. */
 const BACKSTOP_MS = 9000;

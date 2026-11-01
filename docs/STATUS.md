@@ -14,6 +14,8 @@ The plan below, built in its order (foundation, then the once-a-run moments, the
 
 **Checks run:** typecheck, lint, `npm test` (434: `tests/moments.test.ts` new, 9 tests), `BASE_PATH=/side-quest/ npm run build` (budgets pass: runtime 3,850 of 4,096 KiB, initial 137.3 KiB gzip), Chromium browser suite without sweeps (see the handoff message for the final count), new `tests/browser/moments.spec.ts` (one @release smoke: the starter's ball plays on a live flip, a tap skips it without advancing, a reload plays nothing; Most Likely To; the Reduced Motion plaque). Six existing specs were updated for the new behaviour (the evolution and trinket banners became moments: under Reduced Motion they read on `.still-plaque`), and `dice.spec.ts`'s Escape test now waits for the save instead of an absent lazy layer. Every moment and ending was looked at frame by frame in Chromium at 390x844 from the dev stage.
 
+**Update flow:** CI's `test:update` failed on the first push (`1712b60`, not deployed): the ending's lazy chunk was first fetched at the end of a game, so after a mid-game update the old chunk was gone and the missing-chunk reload fired on the end screen. `warmMoments` now fetches the ending with the views when a game starts; `npm run test:update` passes locally.
+
 **Not checked:** WebKit (CI only), a physical iPhone (frame rate, the blur plus canvas cost, `mix-blend-mode` foil, shake comfort, heartbeat strength; `docs/DEVICE_CHECKLIST.md` has the item). Runtime budget headroom is now 246 KiB.
 
 **Risks:** about 80 s of moments in a full League run at Full (all skippable). A boss entrance now holds the table about 2.7 s before its card can be turned. The low-HP heartbeat may nag; one variable softens it.
