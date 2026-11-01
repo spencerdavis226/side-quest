@@ -314,12 +314,17 @@ test("a boss shows its wounds, its trinket, and comes back until it falls", asyn
   expect((await saved(page)).quest.party.boons).toEqual([
     "dungeon.hangover-hydra#0",
   ]);
-  // The party dialog lists it under its slot.
-  await meter(page).click();
-  const party = page.getByRole("dialog", { name: "The party" });
-  await expect(party.locator(".boon-trinket strong")).toHaveText(
-    "WeaponHydra Tooth",
+  // The bag lists it as gear, with its slot.
+  await page.locator(".tag-satchel").click();
+  const bag = page.getByRole("dialog", { name: "Satchel" });
+  await expect(bag.locator(".crawl-gear .bag-name")).toHaveText(
+    "Hydra ToothWeapon",
   );
+  await page.keyboard.press("Escape");
+  await meter(page).click();
+  await expect(
+    page.getByRole("dialog", { name: "The party" }).locator(".crawl-gear"),
+  ).toHaveCount(0);
 });
 
 test("a lost fight can lay a jinx, shown on the meter and in a banner", async ({
