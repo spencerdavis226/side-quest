@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { CardDefinition, DicePalette, DiceRoll } from "../game/types";
-import { forceMotion } from "../presentation/motion";
+import { REDUCED_MOTION, reducedMotion } from "../presentation/motion";
 import "./fullscreen-dice.css";
 
 type Stage = Awaited<
@@ -104,8 +104,7 @@ export default function FullScreenDice({
   latestRoll.current = roll;
   useEffect(() => {
     stopped.current = false;
-    const reduced = () =>
-      matchMedia("(prefers-reduced-motion: reduce)").matches && !forceMotion();
+    const reduced = reducedMotion;
     if (initial.current.roll && !initial.current.rolling) return;
     if (!document.hidden && !reduced()) warm.current();
     // Back from the background before the roll: rebuild a stage that was
@@ -178,8 +177,8 @@ export default function FullScreenDice({
       setStopReason(reason);
       callbacks.current.onFinish();
     };
-    const reduced = matchMedia("(prefers-reduced-motion: reduce)");
-    if (document.hidden || (reduced.matches && !forceMotion())) {
+    const reduced = matchMedia(REDUCED_MOTION);
+    if (document.hidden || reducedMotion()) {
       stop(document.hidden ? "hidden" : "reduced");
       return;
     }
@@ -187,7 +186,7 @@ export default function FullScreenDice({
       if (document.hidden) stop("hidden");
     };
     const onReduced = () => {
-      if (reduced.matches && !forceMotion()) stop("reduced");
+      if (reducedMotion()) stop("reduced");
     };
     const width = window.innerWidth;
     const height = window.innerHeight;

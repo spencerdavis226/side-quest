@@ -334,6 +334,14 @@ export function PointCountdown({ onDone }: { onDone: () => void }) {
       }}
     >
       {[3, 2, 1].map((n, i) => (
+        <span
+          key={`ring-${n}`}
+          className="point-ring"
+          style={{ animationDelay: `${i * 700}ms` }}
+        />
+      ))}
+      <span className="point-rays" />
+      {[3, 2, 1].map((n, i) => (
         <b
           key={n}
           className="point-num"

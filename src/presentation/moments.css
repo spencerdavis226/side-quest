@@ -36,6 +36,25 @@
 .moment-flier {
   will-change: transform, opacity;
 }
+/* A tap that skips a boss entrance hides it on the press; the lift ends it
+   (and taps the card when it lands on it). */
+.moment.skipping {
+  opacity: 0 !important;
+}
+/* A stage's shade (2026-11-01 review): dark from the first frame, so the
+   table never shows through the opening frames, and gone with the moment. */
+@keyframes moment-shade {
+  0% {
+    opacity: 0.85;
+  }
+  5%,
+  88% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
 .moment .type-mark {
   --mark-size: clamp(56px, 18vw, 120px);
 }
@@ -882,9 +901,50 @@
 }
 .legend-dark {
   position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 52%, #0d0b16f0 0, #020104fa 70%);
-  animation: evo-backdrop var(--len) ease both;
+  inset: -4%;
+  background: radial-gradient(circle at 50% 52%, #0d0b16f4 0, #020104 70%);
+  animation: moment-shade var(--len) ease both;
+}
+/* Light breaking from behind the name in its type's colour, turning. */
+.legend-rays {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 180vmax;
+  height: 180vmax;
+  margin: -90vmax 0 0 -90vmax;
+  background: repeating-conic-gradient(
+    from 0deg,
+    var(--foe) 0deg 4deg,
+    transparent 4deg 13deg
+  );
+  -webkit-mask-image: radial-gradient(
+    circle,
+    #000 0,
+    #0006 14%,
+    transparent 34%
+  );
+  mask-image: radial-gradient(circle, #000 0, #0006 14%, transparent 34%);
+  opacity: 0;
+  animation:
+    legend-rays var(--len) ease both,
+    spin calc(var(--m) * 14s) linear infinite;
+}
+@keyframes legend-rays {
+  0%,
+  44% {
+    opacity: 0;
+    scale: 0.4;
+  }
+  60%,
+  86% {
+    opacity: 0.55;
+    scale: 1;
+  }
+  100% {
+    opacity: 0;
+    scale: 1.1;
+  }
 }
 .legend-aura {
   position: absolute;
@@ -893,12 +953,14 @@
   width: 150vmax;
   height: 120vmax;
   margin-left: -75vmax;
-  background: radial-gradient(
-    ellipse at 50% 70%,
-    var(--foe) 0,
-    var(--foe-deep) 26%,
-    transparent 58%
-  );
+  background:
+    radial-gradient(ellipse 30% 18% at 50% 70%, #fff8 0, transparent 70%),
+    radial-gradient(
+      ellipse at 50% 70%,
+      var(--foe) 0,
+      var(--foe-deep) 26%,
+      transparent 58%
+    );
   opacity: 0;
   animation: legend-aura var(--len) ease both;
 }
@@ -938,7 +1000,8 @@
 }
 .moment .legend-type {
   position: absolute;
-  top: calc(50% + clamp(50px, 14vw, 90px));
+  /* Clear of the name's descenders and glow (2026-11-01 review). */
+  top: calc(50% + clamp(66px, 19vw, 112px));
   --mark-size: clamp(48px, 13vw, 74px);
   animation: legend-kicker var(--len) ease both;
 }
@@ -982,7 +1045,7 @@
   }
   56%,
   86% {
-    opacity: 0.9;
+    opacity: 0.75;
     transform: none;
   }
   100% {
@@ -1051,8 +1114,8 @@
 .gate-shade {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 50% 46%, #1b120bcc 0, #050302f2 75%);
-  animation: evo-backdrop var(--len) ease both;
+  background: radial-gradient(circle at 50% 46%, #1b120be6 0, #050302f7 75%);
+  animation: moment-shade var(--len) ease both;
 }
 .gate-bars {
   position: absolute;
@@ -1299,8 +1362,12 @@
    shatters; even: they rebound. */
 .moment-clash {
   --len: calc(var(--m) * 1150ms);
-  background: radial-gradient(circle at 50% 46%, #0000 0, #0008 70%);
-  animation: evo-backdrop var(--len) ease both;
+  /* A dark band behind the medallions, so they read over the card's text
+     (2026-11-01 review: the table showed straight through). */
+  background:
+    radial-gradient(ellipse 90% 26% at 50% 50%, #000c 0, #0007 60%, #0000 100%),
+    radial-gradient(circle at 50% 46%, #0000 0, #0009 75%);
+  animation: moment-shade var(--len) ease both;
 }
 .clash-even {
   --len: calc(var(--m) * 760ms);
@@ -1341,7 +1408,9 @@
 .clash-word {
   position: absolute;
   top: calc(46% + clamp(56px, 18vw, 110px));
-  font: 800 clamp(30px, 9vw, 52px) / 1 var(--font-card-title);
+  max-width: 92vw;
+  text-align: center;
+  font: 800 clamp(24px, 7.4vw, 50px) / 1.05 var(--font-card-title);
   animation: clash-word var(--len) cubic-bezier(0.2, 1.5, 0.4, 1) both;
 }
 .clash-advantage .clash-word {
@@ -1465,8 +1534,10 @@
 /* --- A caught Pokémon sent in -------------------------------------------- */
 .moment-sendin {
   --len: calc(var(--m) * 1350ms);
-  background: radial-gradient(circle at 50% 46%, #0000 0, #000a 75%);
-  animation: evo-backdrop var(--len) ease both;
+  background:
+    radial-gradient(ellipse 80% 30% at 50% 50%, #000a 0, #0000 100%),
+    radial-gradient(circle at 50% 46%, #0004 0, #000c 75%);
+  animation: moment-shade var(--len) ease both;
 }
 .sendin-arc {
   position: absolute;
@@ -1964,11 +2035,13 @@
   inset: 0;
   background: linear-gradient(
       115deg,
-      transparent 30%,
-      #ffffffd0 46%,
+      transparent 34%,
+      #fff8 42%,
+      #fff 48%,
+      #fff8 54%,
       transparent 62%
-    ) -150%
-    0 / 300% 100% no-repeat;
+    )
+    5% 0 / 300% 100% no-repeat;
   mask: center / contain no-repeat;
   -webkit-mask: center / contain no-repeat;
   mix-blend-mode: screen;
@@ -2025,14 +2098,25 @@
     transform: rotateY(720deg);
   }
 }
+/* Two passes: one as it lands, one as its name sets. With the band three
+   times the badge's width, positions 5% to 85% carry it from just off the
+   right edge to just off the left (the old -150% to 150% left it on the
+   badge for about 40 ms, which read as no glint at all). */
 @keyframes badge-glint {
   0%,
-  34% {
-    background-position: -150% 0;
+  24% {
+    background-position: 5% 0;
   }
-  54%,
+  38% {
+    background-position: 85% 0;
+  }
+  38.01%,
+  46% {
+    background-position: 5% 0;
+  }
+  60%,
   100% {
-    background-position: 150% 0;
+    background-position: 85% 0;
   }
 }
 @keyframes badge-words {
@@ -2065,6 +2149,12 @@
 .moment-loot.tier-violet {
   --tier: #a86bff;
   --tier-light: #e9d6ff;
+}
+.loot-shade {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 44%, #1a120cd9 0, #050302f0 70%);
+  animation: moment-shade var(--len) ease both;
 }
 .loot-pillar {
   position: absolute;
@@ -2904,7 +2994,7 @@
    underneath. */
 .moment-ending {
   --len: 6800ms;
-  background: #07050af2;
+  background: #07050af7;
   animation: ending-fade var(--len) ease both;
 }
 .ending-survived {
@@ -2931,41 +3021,63 @@
     opacity: 0;
   }
 }
-/* The Hall of Fame opens out of white. */
+/* The Hall of Fame opens out of white: the white draws in to the plinth
+   and goes out there, so the middle frame is light falling onto the
+   starter, not a flat grey (2026-11-01 review; the same disc as the
+   whiteout, run the other way). */
 .ending-whitein {
   position: absolute;
-  inset: 0;
-  background: #fff;
-  animation: ending-whitein calc(var(--len) * 0.16) ease-out both;
+  left: 50%;
+  top: 36%;
+  width: 260vmax;
+  height: 260vmax;
+  margin: -130vmax 0 0 -130vmax;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0, #fff 34%, #fffc 40%, #fff0 50%);
+  animation: ending-whitein calc(var(--len) * 0.2)
+    cubic-bezier(0.5, 0, 0.8, 0.6) both;
 }
 @keyframes ending-whitein {
-  from {
+  0%,
+  10% {
     opacity: 1;
+    transform: none;
   }
-  to {
+  85% {
+    opacity: 1;
+    transform: scale(0.04);
+  }
+  100% {
     opacity: 0;
+    transform: scale(0.02);
   }
 }
+/* A soft cone of the starter's colour falling onto the plinth, and a pool
+   of light where it lands (2026-11-01 review: the old beam stopped in a
+   hard edge at 62% of the screen). */
 .hall-light {
   position: absolute;
   left: 50%;
-  top: 0;
-  width: 70vmin;
-  height: 62%;
-  margin-left: -35vmin;
-  background: linear-gradient(180deg, transparent, var(--c) 70%, #fff 100%);
-  opacity: 0.32;
-  -webkit-mask-image: radial-gradient(
-    ellipse 50% 100% at 50% 100%,
-    #000 30%,
-    transparent 70%
-  );
-  mask-image: radial-gradient(
-    ellipse 50% 100% at 50% 100%,
-    #000 30%,
-    transparent 70%
-  );
+  top: -6%;
+  width: 120vmin;
+  height: 66%;
+  margin-left: -60vmin;
+  background:
+    radial-gradient(ellipse 22% 10% at 50% 82%, #fffc 0, transparent 100%),
+    radial-gradient(ellipse 34% 16% at 50% 84%, var(--c) 0, transparent 100%);
+  opacity: 0.55;
   animation: hall-light var(--len) ease both;
+}
+.hall-light::before {
+  content: "";
+  position: absolute;
+  inset: 0 22% 14%;
+  background: linear-gradient(180deg, transparent, var(--c) 75%, #fff 100%);
+  clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 60%, #0008);
+  mask-image: linear-gradient(180deg, transparent, #000 60%, #0008);
+  filter: blur(10px);
+  opacity: 0.6;
 }
 @keyframes hall-light {
   0%,
@@ -2976,7 +3088,7 @@
   16%,
   100% {
     transform: none;
-    opacity: 0.32;
+    opacity: 0.55;
   }
 }
 .hall-title,
@@ -3010,8 +3122,8 @@
     0 0 34px #f2c94c;
 }
 .hall-plinth {
-  top: 30%;
-  gap: 8px;
+  top: 28%;
+  gap: clamp(10px, 3vw, 16px);
   animation: hall-rise var(--len) cubic-bezier(0.2, 1.3, 0.3, 1) both;
   --at: 0.09;
 }
@@ -3022,22 +3134,29 @@
     0 0 40px var(--c, #f2c94c);
 }
 .hall-plinth strong {
+  /* Its own layer above the medallion's glow, so the name never passes
+     under it as both rise. */
+  position: relative;
+  z-index: 1;
   color: #fff;
-  font: 700 clamp(30px, 9vw, 52px) / 1 var(--font-card-title);
-  text-shadow: 0 3px 0 #0008;
+  font: 700 clamp(30px, 9vw, 52px) / 1.1 var(--font-card-title);
+  text-shadow:
+    0 3px 0 #0008,
+    0 0 18px #000c;
 }
 .hall-badges {
   top: 55%;
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 6px;
-  padding: 0 16px;
+  /* Eight in one row at 320 px (they wrapped into the stats). */
+  gap: 5px;
+  padding: 0 12px;
   list-style: none;
 }
 .hall-badge {
-  width: clamp(34px, 10vw, 52px);
-  height: clamp(34px, 10vw, 52px);
+  width: clamp(30px, 9vw, 52px);
+  height: clamp(30px, 9vw, 52px);
   display: grid;
   place-items: center;
   animation: hall-badge var(--len) cubic-bezier(0.2, 1.5, 0.4, 1) both;
@@ -3185,18 +3304,18 @@
 .whiteout-hp {
   position: relative;
   display: grid;
-  gap: 6px;
-  width: min(70vw, 320px);
+  gap: 8px;
+  width: min(78vw, 360px);
   color: #e6e6f0;
-  font: 600 1rem / 1 var(--font-tavern);
+  font: 600 clamp(16px, 4.4vw, 20px) / 1 var(--font-tavern);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   animation: whiteout-hp 4400ms ease both;
 }
 .whiteout-bar {
   display: block;
-  height: 14px;
-  border-radius: 7px;
+  height: 18px;
+  border-radius: 9px;
   background: #2a2a36;
   box-shadow: inset 0 0 0 2px #46465a;
   overflow: hidden;
@@ -3205,7 +3324,8 @@
   display: block;
   height: 100%;
   width: var(--from);
-  background: #e2442a;
+  background: linear-gradient(180deg, #ff7a5a, #e2442a 55%, #a8200e);
+  box-shadow: 0 0 14px #ff4a2a;
   animation: whiteout-drain 1100ms cubic-bezier(0.5, 0, 0.3, 1) 400ms both;
 }
 @keyframes whiteout-drain {
@@ -3226,20 +3346,40 @@
     opacity: 0;
   }
 }
+/* The white breaks in from the middle, the old games' fade turned into
+   light (2026-11-01 review: an even fade read as a flat grey middle). A
+   disc with a solid core and a soft edge grows past the corners. */
 .whiteout-white {
   position: absolute;
-  inset: 0;
-  background: #fbfbf6;
-  animation: whiteout-white 4400ms ease-in both;
+  left: 50%;
+  top: 46%;
+  width: 260vmax;
+  height: 260vmax;
+  margin: -130vmax 0 0 -130vmax;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    #fbfbf6 0,
+    #fbfbf6 34%,
+    #fbfbf6cc 40%,
+    #fbfbf600 50%
+  );
+  animation: whiteout-white 4400ms cubic-bezier(0.55, 0, 0.6, 1) both;
 }
 @keyframes whiteout-white {
   0%,
-  36% {
+  34% {
     opacity: 0;
+    transform: scale(0.02);
   }
-  62%,
+  38% {
+    opacity: 1;
+    transform: scale(0.05);
+  }
+  64%,
   100% {
     opacity: 1;
+    transform: none;
   }
 }
 .whiteout-words {
@@ -3288,10 +3428,69 @@
 }
 .wiped-candle {
   position: relative;
-  width: 14px;
+  width: 16px;
+  height: 54px;
+  border-radius: 3px 3px 2px 2px;
+  background:
+    radial-gradient(ellipse 60% 14% at 50% 0, #fff6d6aa, transparent),
+    linear-gradient(90deg, #a89878, #f4ead4 40%, #d8c8a8 70%, #8a7a5a);
+  box-shadow: 0 10px 18px -6px #000;
+}
+/* Its pool of light on the table, dying with the flame. */
+.wiped-candle::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -14px;
+  width: 30vw;
+  height: 90px;
+  margin-left: -15vw;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, #ff9a3a55 0, transparent 70%);
+  animation: candle-pool 4400ms ease-in both;
+  animation-delay: calc(var(--i) * 420ms);
+}
+/* A curl of smoke from the wick once the flame is gone. */
+.wiped-candle::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  width: 10px;
   height: 46px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, #d8c8a8, #f4ead4, #b8a888);
+  margin-left: -5px;
+  border-radius: 50%;
+  background: linear-gradient(0deg, #9a948caa, #9a948c00);
+  filter: blur(3px);
+  transform-origin: 50% 100%;
+  opacity: 0;
+  animation: candle-smoke 4400ms ease-out both;
+  animation-delay: calc(var(--i) * 420ms);
+}
+@keyframes candle-pool {
+  0%,
+  22% {
+    opacity: 1;
+  }
+  44%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes candle-smoke {
+  0%,
+  40% {
+    opacity: 0;
+    transform: scale(0.6, 0.3);
+  }
+  48% {
+    opacity: 1;
+  }
+  80%,
+  100% {
+    opacity: 0;
+    transform: translate(6px, -30px) scale(1.6, 1.4) skewX(-10deg);
+  }
 }
 .wiped-candle i {
   position: absolute;
@@ -3410,7 +3609,9 @@
 
 /* --- Most Likely To: 3, 2, 1, POINT! (2026-11-01) ------------------------ */
 .point-countdown {
-  background: radial-gradient(circle at 50% 46%, #1a120ccc 0, #050302ee 75%);
+  /* Dark enough that the card's words sink behind the number (2026-11-01
+     review: they read through it). */
+  background: radial-gradient(circle at 50% 46%, #0d0906f0 0, #030201f7 75%);
   animation: point-shade 3200ms ease both;
 }
 @keyframes point-shade {
@@ -3438,11 +3639,68 @@
 .point-num {
   animation: point-num 700ms cubic-bezier(0.2, 1.4, 0.4, 1) both;
 }
-.point-num::after {
-  content: "";
+/* Each number lands with a ring thrown off it. */
+.point-ring {
+  grid-area: 1 / 1;
+  width: clamp(160px, 56vw, 340px);
+  height: clamp(160px, 56vw, 340px);
+  border-radius: 50%;
+  border: 3px solid #f2c94c;
+  box-shadow:
+    0 0 24px #f2c94c,
+    inset 0 0 24px #f2c94c88;
+  opacity: 0;
+  animation: point-ring 700ms cubic-bezier(0.1, 0.7, 0.3, 1) both;
+}
+@keyframes point-ring {
+  0%,
+  16% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  22% {
+    opacity: 1;
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+/* Rays behind POINT. */
+.point-rays {
+  grid-area: 1 / 1;
+  width: 160vmax;
+  height: 160vmax;
+  background: repeating-conic-gradient(
+    from 0deg,
+    #f2c94c33 0deg 6deg,
+    transparent 6deg 18deg
+  );
+  -webkit-mask-image: radial-gradient(circle, #000 0, transparent 42%);
+  mask-image: radial-gradient(circle, #000 0, transparent 42%);
+  opacity: 0;
+  animation:
+    point-rays 1100ms ease-out 2100ms both,
+    spin 8s linear infinite;
+}
+@keyframes point-rays {
+  0% {
+    opacity: 0;
+    scale: 0.3;
+  }
+  20%,
+  80% {
+    opacity: 1;
+    scale: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 .point-word {
-  font-size: clamp(80px, 26vw, 170px);
+  /* Fits 320 px with its overshoot (26vw ran off both edges). */
+  font-size: clamp(60px, 20vw, 170px);
   text-transform: uppercase;
   animation: point-word 1050ms cubic-bezier(0.2, 1.5, 0.4, 1) 2100ms both;
 }

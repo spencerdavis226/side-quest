@@ -456,22 +456,29 @@ function milestone(
 }
 
 /** A card's foil (2026-11-01, display only): gold for the League's
- * Legendary and Champion (their pearl and crimson ribbons) and Pub Crawl's
- * last boss, silver for every other boss and the last card of a Standard
- * deck. Read from the card and where it sits; nothing is saved. */
+ * Legendary and Champion and Pub Crawl's last boss, silver for every other
+ * boss and the last card of a Standard deck. Read from the stage the card
+ * belongs to; nothing is saved. (Until the 2026-11-01 review it read the
+ * ribbon's tone, and every pearl or crimson ribbon wore gold: each starter,
+ * adventurer and omen, every Pub Crawl boss, the rival and the queue.) */
 export function cardFinish(
   s: SessionState,
-  card: { ribbonTone?: string; encounter?: string; hits?: number },
+  card: { id: string; encounter?: string; hits?: number },
 ): "gold" | "silver" | null {
   const q = s.quest;
   if (q?.due && q.party) {
-    if (card.ribbonTone === "pearl" || card.ribbonTone === "crimson")
-      return "gold";
-    if (card.encounter === "boss" || (!card.encounter && card.hits)) {
-      const last = finaleStage(q).stage === q.stages.length - 1;
-      return last ? "gold" : "silver";
-    }
-    return null;
+    if (card.encounter !== "boss" && (card.encounter || !card.hits))
+      return null;
+    const stage = q.stages.findIndex((st) =>
+      st.cards.some((c) => c.id === card.id),
+    );
+    if (stage < 0) return "silver";
+    const label = q.stages[stage].label;
+    const top =
+      q.packId === "pokemon"
+        ? label === "Legendary" || label === "Champion"
+        : stage === q.stages.length - 1;
+    return top ? "gold" : "silver";
   }
   const limit = s.config.limit;
   return !q && limit && s.discarded === limit - 1 ? "silver" : null;

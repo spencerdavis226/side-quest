@@ -27,7 +27,12 @@ import {
 // card's own motion (deal, flip, discard) to finish, plays, and a tap skips
 // it. The views are a lazy chunk, warmed when a game starts. Display only.
 
-type ViewProps = { moment: Moment; scale: number; onDone: () => void };
+type ViewProps = {
+  moment: Moment;
+  scale: number;
+  onDone: () => void;
+  waiting?: number;
+};
 const MomentView = lazy((): Promise<{ default: ComponentType<ViewProps> }> =>
   import("./views").catch(() => ({ default: NoView })),
 );
@@ -204,6 +209,7 @@ export function MomentDirector({
             moment={active}
             scale={quick ? QUICK_SCALE : 1}
             onDone={done}
+            waiting={queue.length}
           />
         </Suspense>
       )}

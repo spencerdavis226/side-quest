@@ -171,8 +171,21 @@ describe("moments", () => {
     expect(finish("Legendary")).toBe("gold");
     expect(finish("Champion")).toBe("gold");
     expect(finish("Route 1")).toBeNull();
+    expect(finish("Elite Four")).toBe("silver");
+    // Pearl and crimson ribbons are not bosses: the starter and the rival
+    // (an ambush) wear none (the 2026-11-01 review: they wore gold).
+    expect(finish("Your starter")).toBeNull();
+    expect(finish("Pokémon League")).toBeNull();
     const c = createSession(crawl, cards, packs, seeded(5));
     const last = atStep(c, c.quest!.finale.length - 1);
     expect(cardFinish(last, currentCard(last))).toBe("gold");
+    const crawlFinish = (label: string) => {
+      const at = atStep(c, stepOf(c, label));
+      return cardFinish(at, currentCard(at));
+    };
+    const firstBoss = c.quest!.stages.find((st) => / boss$/.test(st.label))!;
+    expect(crawlFinish(firstBoss.label)).toBe("silver");
+    expect(crawlFinish("Your adventurer")).toBeNull();
+    expect(crawlFinish("The Queue")).toBeNull();
   });
 });

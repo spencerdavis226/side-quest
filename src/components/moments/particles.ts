@@ -13,6 +13,7 @@ export type Preset =
   | "shards"
   | "firework"
   | "dust"
+  | "streaks"
   | "motes";
 
 interface Particle {
@@ -27,7 +28,7 @@ interface Particle {
   rot: number;
   spin: number;
   color: string;
-  shape: "rect" | "glow" | "coin" | "shard" | "dot";
+  shape: "rect" | "glow" | "coin" | "shard" | "dot" | "streak";
   gravity: number;
   drag: number;
   /** Fade in over the first share of life (motes drawn inward). */
@@ -230,6 +231,21 @@ export function burst(preset: Preset, options: BurstOptions = {}) {
         };
         break;
       }
+      case "streaks": {
+        // Lines of light thrown off an impact, long while fast.
+        const v = rand(0.7, 1.4) * power;
+        p = {
+          ...base,
+          vx: Math.cos(a) * v,
+          vy: Math.sin(a) * v,
+          life: rand(0.28, 0.5),
+          size: rand(1.4, 2.4),
+          shape: "streak",
+          gravity: unit * 0.3,
+          drag: 4.5,
+        };
+        break;
+      }
       case "motes": {
         p = {
           ...base,
@@ -270,7 +286,12 @@ export function burst(preset: Preset, options: BurstOptions = {}) {
 }
 
 /** Fireworks: a few shells bursting in sequence over the top half. */
-export function fireworks(shells = 5, colors?: string[][]) {
+export function fireworks(
+  shells = 5,
+  colors?: string[][],
+  /** Keep the shells off the middle column (a name standing there). */
+  sides = false,
+) {
   const palettes = colors ?? [
     ["#ffe9a8", "#f2c94c"],
     ["#ff9fb2", "#ff5d7a"],
@@ -284,8 +305,18 @@ export function fireworks(shells = 5, colors?: string[][]) {
       window.setTimeout(
         () => {
           burst("firework", {
-            x: window.innerWidth * rand(0.18, 0.82),
-            y: window.innerHeight * rand(0.14, 0.42),
+            // A side shell is smaller, so it stays off the middle.
+            power: sides ? 0.7 : 1,
+            x:
+              window.innerWidth *
+              (sides
+                ? i % 2
+                  ? rand(0.8, 0.9)
+                  : rand(0.1, 0.2)
+                : rand(0.18, 0.82)),
+            y:
+              window.innerHeight *
+              (sides ? rand(0.18, 0.32) : rand(0.14, 0.42)),
             count: 46,
             colors: palettes[i % palettes.length],
           });
@@ -375,12 +406,35 @@ function draw(c: CanvasRenderingContext2D, p: Particle, alpha: number) {
       c.fill();
       c.restore();
       break;
-    case "dot":
-      c.globalAlpha = alpha * 0.35;
+    case "dot": {
+      // A soft puff that swells as it thins (a hard disc read as bubbles).
+      const r = p.size * (1 + (p.t / p.life) * 1.6);
+      const g = c.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
+      g.addColorStop(0, p.color);
+      g.addColorStop(1, `${p.color.slice(0, 7)}00`);
+      c.globalAlpha = alpha * 0.4;
+      c.fillStyle = g;
       c.beginPath();
-      c.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      c.arc(p.x, p.y, r, 0, Math.PI * 2);
       c.fill();
       break;
+    }
+    case "streak": {
+      // Drawn back along its flight, a tail the length of its speed.
+      const len = Math.min(60, Math.hypot(p.vx, p.vy) * 0.045);
+      const d = Math.hypot(p.vx, p.vy) || 1;
+      c.globalCompositeOperation = "lighter";
+      c.globalAlpha = alpha;
+      c.strokeStyle = p.color;
+      c.lineWidth = p.size;
+      c.lineCap = "round";
+      c.beginPath();
+      c.moveTo(p.x, p.y);
+      c.lineTo(p.x - (p.vx / d) * len, p.y - (p.vy / d) * len);
+      c.stroke();
+      c.globalCompositeOperation = "source-over";
+      break;
+    }
     default: {
       // A glowing point: a soft halo and a bright core.
       c.globalCompositeOperation = "lighter";

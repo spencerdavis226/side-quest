@@ -2,6 +2,34 @@
 
 Updated 2026-11-01. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Pushed 2026-11-01: the moments review (owner: "Review and improve the premium moments layer ... feel premium, exciting ... real eye candy, not cheap ... then build the fixes")
+
+Every moment and ending was looked at frame by frame at 0.25x in Chromium from the dev stage (`?moments=1`) at 390x844 and 320x568, and in the real app from seeded saves with motion on (foil, Most Likely, a Cellar boss's gate, Lt. Surge's clash, Byron's badge). **Display only:** no engine rule, card, save field or balance changed; no new save fixture.
+
+**Broken, now fixed**
+- **Banners landed on moments.** The next route's stage banner ("The badges get heavier") played on top of the badge moment, and a boss's "jinx lifted" news could land on its spoils. `StageBanner` and `PartyNewsBanner` now wait while the director is `busy`, then sweep.
+- **Foil on the wrong cards.** `cardFinish` read the ribbon tone, so every pearl or crimson ribbon wore gold: all 35 starters, 18 adventurers and 20 omens, every Pub Crawl boss, the rival and the queue's ambushes. It now reads the stage a boss belongs to (gold: Legendary, Champion, Pub Crawl's last stage; silver: other bosses; ambushes and omens none). Unit test extended.
+- **Foil mask.** Measured on both 768x1152 fronts (parchment x 12.9-87.4% teal, 11.5-88.2% League, y 30.9-89.1%; title plaque y 8.5-23%, x 19-81%). The old single hole lit the title and left the frame's inner rails and foot bare; the mask now has two holes (parchment, title plaque) and covers the painted frame only. Checked with the foil painted solid on both fronts.
+- **Badge glint invisible.** The band crossed the badge in about 40 ms (positions -150% to 150% on a 300% background). It now sweeps 5% to 85%, twice, brighter.
+- **Fly-to clones in WebKit.** `fly.ts` copied the `background` shorthand, which WebKit's computed style can serialise as empty; it now copies longhands, plus size and mask, so a medallion keeps its colour and size off the stage.
+- **Shades from 0.** The portcullis, Legendary, clash, loot and send-in now open on a shade at 85% (new `moment-shade`); clash, loot and send-in got real backdrops (a dark band behind the clash's medallions, a new `loot-shade`).
+- **Hall of Fame.** The name now sits on its own layer, clear of the medallion; fireworks burst off to the sides (smaller), never over the name; the beam is a soft cone with a pool of light instead of a box with a hard edge at 62%; the opening white draws in to the starter instead of fading through grey; the eight badges fit one row at 320 px (the eighth wrapped into the stats). Stats checked against `questRecord`: "Bosses beaten" counts boss-stage cards, 15 on a won League (8 gyms, the hideout boss, the Legendary, 4 Elite Four, the Champion; the rival is an ambush), "Team HP left" is `party.hearts`, "Caught" is `party.team.length`.
+- **Whiteout.** The light now grows from the middle as a disc with a solid core (no flat grey frame); the HP bar is bigger and glows.
+- **Text at 320.** "Super effective on you!" ran edge to edge (now 7.4vw, wraps within 92vw); "POINT!" ran off both edges (now 20vw).
+- **Most Likely To.** The card's face makes room for the "Count it down" plaque (`choosing`), so the rules never sit under it; all 250 cards checked at 320x568, none overflow or meet the plaque. The countdown's shade is near-opaque behind the numbers, each number throws a ring, and POINT gets turning rays.
+
+**Raised**
+- **A tap on a boss entrance also turns the card.** The stage hides on the press and ends on the lift; a lift over the card clicks it once, after the lift's own click is swallowed. The table's tap turns the card; the animation still never advances the deck. A tap off the card only skips.
+- New `streaks` particles (lines of light thrown off an impact: VS, the gate's slam, a decisive clash); dust is now a soft puff that swells (hard discs read as bubbles); the Legendary gets turning rays in its type's colour, grit shaken from above and its medallion moved clear of the name; Pub Crawl's wipe gets candle pools of light that die with the flames and smoke curling from each wick.
+- Under Reduced Motion a still plaque reads in 1.3 s while another waits (a badge, spoils and the next boss no longer take 6 s in a row).
+- `FullScreenDice.tsx` and `usePresentation.ts` now ask `reducedMotion()` for every point read and keep a `matchMedia(REDUCED_MOTION)` only for the change listener.
+
+**Tests:** `tests/browser/moments.spec.ts` adds four: a boss's entrance plays once and a tap on the card skips it and turns it; a boss dealt again after a lost swing has no entrance; a beaten gym's badge flies into the badges chip (held at 98% of its flight: within 12 px of the chip's centre, chip-sized, its face painted) and is announced; a tap during the type clash still rolls. `--repeat-each=3` green in Chromium.
+
+**Checks run:** typecheck, lint, `npm test` (434), `BASE_PATH=/side-quest/ npm run build` (budgets pass: runtime 3,856 of 4,096 KiB, initial 137.6 KiB gzip, largest lazy chunk 144.6 KiB), `test:release` Chromium (14 passed), Chromium moments, quest, crawl, secrets, motion, dice, dialogs, secondary and layout specs (125 passed, 1 failed: `layout.spec.ts` "home fits Safari's visible height without moving Install into the status bar", which fails the same way on unmodified `12ff55b` locally; not part of @release), `npm run test:update` (passed). WebKit runs in CI only.
+
+**Not checked:** a physical iPhone (`docs/DEVICE_CHECKLIST.md` has a new row: the tap that skips and turns, the foil in WebKit, fly-to colours, frame rate with streaks and puffs). The sweeps were not run (no layout change to crawl or League faces).
+
 ## Deployed 2026-11-01: premium moments, all eleven, and the review of the old effects (owner: "Everything main. Push ... review and overhaul anything that needs touching up or refactoring, including older animations/effects/moments ... then proceed and build in a logical order")
 
 **Deployed** by CI run #282 (`ab8b9ba`, every job green in Chromium and WebKit, deploy 13:55 UTC). Two earlier pushes did not deploy: #279 failed `test:update` (fixed in `990828b`, see Update flow below), #280 failed the new @release moments spec in WebKit (it waited for the 2.6 s stage to read stable; it now taps at once, `ab8b9ba`). Revert `1712b60`, `990828b` and `ab8b9ba` to undo.

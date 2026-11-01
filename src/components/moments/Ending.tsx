@@ -182,7 +182,8 @@ function Hall({
     [
       3100,
       () => {
-        fireworks(7);
+        // Off to the sides: the starter's name stands in the middle.
+        fireworks(7, undefined, true);
       },
     ],
     [
@@ -303,10 +304,14 @@ function Survived({
     [
       2600,
       () =>
-        fireworks(4, [
-          ["#ffe9a8", "#f2c94c"],
-          ["#ffd27a", "#ff9a3a"],
-        ]),
+        fireworks(
+          4,
+          [
+            ["#ffe9a8", "#f2c94c"],
+            ["#ffd27a", "#ff9a3a"],
+          ],
+          true,
+        ),
     ],
   ]);
   return (

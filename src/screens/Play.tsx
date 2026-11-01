@@ -364,8 +364,11 @@ export function Play({
   const fuseLit = fuseCard && actions.timer.phase === "running";
   const fuseBlown = fuseCard && actions.timer.phase === "done";
   // Most Likely To: the table counts down and points together (2026-11-01).
-  const likely =
-    card.id.startsWith("likely.") && session.phase === "revealed" && !motion;
+  // Its face makes room for the plaque from the start of the turn (not only
+  // once still), so the rules never sit under it or reflow as it lands.
+  const likelyFace =
+    card.id.startsWith("likely.") && session.phase === "revealed";
+  const likely = likelyFace && !motion;
   const [counting, setCounting] = useState<number | null>(null);
   // WebKit can paint the reverse of a nested, clipped 3D face despite
   // backface-visibility. Cull by the actual rendered angle, not a timer, so
@@ -446,7 +449,7 @@ export function Play({
             : ""}
         </span>
         <div
-          className={`card-stage ${motion ?? ""} ${returning ? "boss-return" : ""} ${choice || verdict || offers || spoils || press || catching || acting || extraList.length > 0 ? "choosing" : ""}`}
+          className={`card-stage ${motion ?? ""} ${returning ? "boss-return" : ""} ${choice || verdict || offers || spoils || press || catching || acting || likelyFace || extraList.length > 0 ? "choosing" : ""}`}
         >
           <div className="deck-under" aria-hidden="true" />
           <button

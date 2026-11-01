@@ -92,12 +92,34 @@ export function flyTarget(target: string) {
     : null;
 }
 
+// Longhands only: WebKit's computed style can serialise a shorthand
+// (`background`, `mask`) as an empty string, which dropped the clone's
+// colours. Sizes too: a medallion sized by `.moment .type-mark` keeps its
+// size once the clone leaves the stage.
 const FROZEN = [
-  "background",
+  "background-color",
+  "background-image",
+  "background-size",
+  "background-position",
+  "background-repeat",
   "box-shadow",
   "color",
   "filter",
   "border-radius",
+  "border-top-color",
+  "border-right-color",
+  "border-bottom-color",
+  "border-left-color",
+  "width",
+  "height",
+  "mask-image",
+  "-webkit-mask-image",
+  "mask-size",
+  "-webkit-mask-size",
+  "mask-position",
+  "-webkit-mask-position",
+  "mask-repeat",
+  "-webkit-mask-repeat",
   "opacity",
 ] as const;
 /** Copy each element's painted look onto its clone, pair by pair. */

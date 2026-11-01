@@ -887,23 +887,36 @@
     no-repeat;
   mix-blend-mode: color-dodge;
   opacity: 0.6;
-  /* The frame only: the parchment's rules area is cut out. */
-  -webkit-mask-image: linear-gradient(#000, #000), linear-gradient(#000, #000);
+  /* The painted frame only (2026-11-01 review, measured on both fronts,
+     768 x 1152): the parchment (x 12.9-87.4% on the teal front, 11.5-88.2% on
+     the League's; y 30.9-89.1%) and the title plaque the live title sits on
+     (y 8.5-23%, x 19-81%) are cut out, so the sheen never brightens the
+     rules or the title. The old single hole (8-92%, 30-93%) also lit the
+     title and left the frame's inner rails and its foot bare. */
+  -webkit-mask-image:
+    linear-gradient(#000, #000), linear-gradient(#000, #000),
+    linear-gradient(#000, #000);
   -webkit-mask-size:
     100% 100%,
-    84% 63%;
+    78% 59.2%,
+    62% 14.5%;
   -webkit-mask-position:
     0 0,
-    50% 81%;
+    50% 74.5%,
+    50% 9.94%;
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-composite: xor;
-  mask-image: linear-gradient(#000, #000), linear-gradient(#000, #000);
+  mask-image:
+    linear-gradient(#000, #000), linear-gradient(#000, #000),
+    linear-gradient(#000, #000);
   mask-size:
     100% 100%,
-    84% 63%;
+    78% 59.2%,
+    62% 14.5%;
   mask-position:
     0 0,
-    50% 81%;
+    50% 74.5%,
+    50% 9.94%;
   mask-repeat: no-repeat;
   mask-composite: exclude;
 }

@@ -15,14 +15,17 @@ export function forceMotion(): boolean {
   return new URLSearchParams(search).has("force-motion");
 }
 
+/** The Reduced Motion media query, for the two places that listen for it
+ * changing mid-motion (the dice overlay and `usePresentation`); everything
+ * else asks `reducedMotion()`. */
+export const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
+
 /** Whether motion is off: the OS asks for Reduced Motion (unless the dev
- * override is on). The one place that reads the media query for moments,
- * stamps and plaques (2026-11-01; six call sites read it themselves before). */
+ * override is on). The one place that decides it (2026-11-01; the dice
+ * overlay and `usePresentation` read the query themselves until the
+ * moments review). */
 export function reducedMotion(): boolean {
-  return (
-    !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches &&
-    !forceMotion()
-  );
+  return !!window.matchMedia?.(REDUCED_MOTION).matches && !forceMotion();
 }
 
 /** Whether a moment should not play at all: motion is off, or nobody can

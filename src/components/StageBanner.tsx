@@ -12,6 +12,7 @@ import { packs } from "../content/manifest.generated";
 import { stageArt } from "../presentation/league-art";
 import { useAnnounce } from "./Announcer";
 import { entranceFor } from "./moments/detect";
+import { useMoments } from "./moments/Director";
 
 /** The banner that sweeps across the table as each finale stage begins (the
  * Legendary, the Elite Four, the Champion; a crawl's floors and bosses):
@@ -19,6 +20,8 @@ import { entranceFor } from "./moments/detect";
  * underneath stays playable. */
 export function StageBanner({ session }: { session: SessionState }) {
   const banner = stageBanner(session);
+  // A moment (a badge, the spoils) plays first; the sweep follows it.
+  const { busy } = useMoments();
   useAnnounce(
     banner
       ? [
@@ -31,7 +34,7 @@ export function StageBanner({ session }: { session: SessionState }) {
       : "",
     banner?.key ?? null,
   );
-  if (!banner) return null;
+  if (!banner || busy) return null;
   const { tone, art, mode, intro, wanted, wantedWord } = banner;
   return (
     <div
@@ -201,14 +204,17 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
     session.discarded,
   ]);
   const clear = useCallback(() => setShown(null), []);
-  useBannerTimeout(shown?.key ?? null, clear);
+  // Held while a moment plays (a boss's spoils and its jinx lifted land
+  // together): the banner sweeps once the moment is done.
+  const { busy } = useMoments();
+  useBannerTimeout(busy ? null : (shown?.key ?? null), clear);
   useAnnounce(
     shown
       ? [shown.kicker, shown.title, shown.line].filter(Boolean).join(". ")
       : "",
     shown?.key ?? null,
   );
-  if (!shown) return null;
+  if (!shown || busy) return null;
   return (
     <div
       key={shown.key}

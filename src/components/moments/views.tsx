@@ -31,7 +31,13 @@ import { crawlTheme } from "../crawlTheme";
 // stage ends it (or a tap does). Reduced Motion shows a still caption that
 // fades instead. Every view is `aria-hidden`; the director reads its words.
 
-type Props = { moment: Moment; scale: number; onDone: () => void };
+type Props = {
+  moment: Moment;
+  scale: number;
+  onDone: () => void;
+  /** Moments queued behind this one (a still plaque shortens for them). */
+  waiting?: number;
+};
 
 /** Each moment's length at full speed, in ms. */
 const LENGTH: Record<Moment["kind"], number> = {
@@ -46,9 +52,15 @@ const LENGTH: Record<Moment["kind"], number> = {
   milestone: 2400,
 };
 
-export default function MomentView({ moment, scale, onDone }: Props) {
+export default function MomentView({
+  moment,
+  scale,
+  onDone,
+  waiting = 0,
+}: Props) {
   const [still] = useState(reducedMotion);
-  if (still) return <Still moment={moment} onDone={onDone} />;
+  if (still)
+    return <Still moment={moment} onDone={onDone} hurry={waiting > 0} />;
   switch (moment.kind) {
     case "natural":
       return <Natural m={moment} scale={scale} onDone={onDone} />;
@@ -110,9 +122,26 @@ function at(
   });
 }
 
+/** The click that follows a skipping tap must not land on whatever is
+ * under the stage: swallowed once, for a moment. Returns the remover. */
+function swallowClick() {
+  const swallow = (e: Event) => {
+    e.stopPropagation();
+    e.preventDefault();
+  };
+  const stop = () =>
+    window.removeEventListener("click", swallow, { capture: true });
+  window.addEventListener("click", swallow, { capture: true, once: true });
+  setTimeout(stop, 700);
+  return stop;
+}
+
 /** The full-screen stage every moment plays on: it ends itself after
  * `length` (scaled), and a tap skips it without the tap reaching the card
- * underneath. An ambient stage takes no taps at all. */
+ * underneath. An ambient stage takes no taps at all. With `passTo`, a tap
+ * that lands on that element (the card a boss entrance stands over) skips
+ * the moment and then taps it, once, as the table meant: the stage hides on
+ * the press and goes on the lift, so the press and the lift are both its. */
 function Stage({
   kind,
   className = "",
@@ -120,6 +149,7 @@ function Stage({
   scale,
   onDone,
   ambient = false,
+  passTo,
   style,
   children,
 }: {
@@ -129,11 +159,21 @@ function Stage({
   scale: number;
   onDone: () => void;
   ambient?: boolean;
+  passTo?: string;
   style?: Record<string, string | number>;
   children: ReactNode;
 }) {
-  const done = useRef(onDone);
-  done.current = onDone;
+  const onDoneRef = useRef(onDone);
+  onDoneRef.current = onDone;
+  // Once only: a late timer must never end the moment after this one.
+  const ended = useRef(false);
+  const done = useRef(() => {
+    if (ended.current) return;
+    ended.current = true;
+    onDoneRef.current();
+  });
+  const [skipping, setSkipping] = useState(false);
+  const pressed = useRef(false);
   useEffect(() => {
     const id = setTimeout(() => done.current(), length * scale);
     return () => clearTimeout(id);
@@ -141,25 +181,48 @@ function Stage({
   const skip = (event: React.PointerEvent) => {
     event.stopPropagation();
     event.preventDefault();
-    // The click that follows this tap must not land on the card underneath.
-    const swallow = (e: Event) => {
-      e.stopPropagation();
-      e.preventDefault();
-    };
-    window.addEventListener("click", swallow, { capture: true, once: true });
-    setTimeout(
-      () => window.removeEventListener("click", swallow, { capture: true }),
-      700,
-    );
     clearParticles();
+    if (passTo) {
+      pressed.current = true;
+      setSkipping(true);
+      // A press whose lift never arrives still ends the moment.
+      setTimeout(() => done.current(), 1500);
+      return;
+    }
+    swallowClick();
     done.current();
+  };
+  const lift = (event: React.PointerEvent, cancelled = false) => {
+    if (!pressed.current) return;
+    pressed.current = false;
+    event.stopPropagation();
+    event.preventDefault();
+    const stop = swallowClick();
+    const target = passTo ? document.querySelector<HTMLElement>(passTo) : null;
+    const r = target?.getBoundingClientRect();
+    const over =
+      !cancelled &&
+      !!r &&
+      event.clientX >= r.left &&
+      event.clientX <= r.right &&
+      event.clientY >= r.top &&
+      event.clientY <= r.bottom;
+    done.current();
+    if (over && target)
+      // After this lift's own click (swallowed above) has gone by.
+      setTimeout(() => {
+        stop();
+        target.click();
+      }, 0);
   };
   return createPortal(
     <div
-      className={`moment moment-${kind} ${ambient ? "ambient" : ""} ${className}`}
+      className={`moment moment-${kind} ${ambient ? "ambient" : ""} ${skipping ? "skipping" : ""} ${className}`}
       style={{ "--m": scale, ...style } as CSSProperties}
       aria-hidden="true"
       onPointerDown={ambient ? undefined : skip}
+      onPointerUp={ambient ? undefined : (e) => lift(e)}
+      onPointerCancel={ambient ? undefined : (e) => lift(e, true)}
     >
       {children}
     </div>,
@@ -169,8 +232,19 @@ function Stage({
 
 /** Reduced Motion: the moment's words on a plaque that fades in and out,
  * nothing moving. */
-function Still({ moment, onDone }: { moment: Moment; onDone: () => void }) {
+function Still({
+  moment,
+  onDone,
+  hurry,
+}: {
+  moment: Moment;
+  onDone: () => void;
+  /** Another plaque waits: this one reads quicker, so a run of them (a
+   * boss's badge, its spoils, the next boss) never holds the table long. */
+  hurry: boolean;
+}) {
   const [kicker, title, line] = caption(moment);
+  const [length] = useState(() => (hurry ? 1300 : line ? 2600 : 1600));
   // Nothing worth a plaque (a clash, a natural the card already shows).
   useEffect(() => {
     if (!title) onDone();
@@ -179,11 +253,11 @@ function Still({ moment, onDone }: { moment: Moment; onDone: () => void }) {
   return (
     <Stage
       kind="still"
-      length={line ? 2600 : 1600}
+      length={length}
       scale={1}
       onDone={onDone}
       ambient
-      style={{ "--still": line ? "2.6s" : "1.6s" }}
+      style={{ "--still": `${length}ms` }}
     >
       <div className="still-plaque">
         {kicker && <small>{kicker}</small>}
@@ -438,7 +512,12 @@ function Versus({ m, scale, onDone }: ViewProps<"entrance">) {
     [
       [
         repeat ? 260 : 430,
-        () =>
+        () => {
+          at(mark.current, "streaks", {
+            count: champion ? 46 : 30,
+            power: 1.5,
+            colors: ["#ffffff", champion ? "#ffe39a" : "#fff3c8"],
+          });
           at(mark.current, "sparks", {
             count: champion ? 110 : 70,
             power: 1.15,
@@ -449,7 +528,8 @@ function Versus({ m, scale, onDone }: ViewProps<"entrance">) {
                   "#ffe9a8",
                   pokemonTypes[m.foe.type ?? "normal"].light,
                 ],
-          }),
+          });
+        },
       ],
       ...(champion
         ? ([
@@ -462,6 +542,7 @@ function Versus({ m, scale, onDone }: ViewProps<"entrance">) {
   return (
     <Stage
       kind="entrance"
+      passTo=".game-card"
       className={`versus vs-${m.style}${repeat ? " vs-quick" : ""}`}
       length={length}
       scale={scale}
@@ -517,33 +598,32 @@ function Versus({ m, scale, onDone }: ViewProps<"entrance">) {
 
 /** A Legendary: the table goes still and dark, the ground shakes twice, an
  * aura in its type's colour rises, and its name lifts out of the dark. */
+/** The ground shaking: dust lifting off the floor and grit shaken down. */
+function tremor() {
+  burst("dust", {
+    y: window.innerHeight,
+    count: 22,
+    colors: ["#6a6280", "#8c84a6"],
+    angle: -Math.PI / 2,
+    spread: 1,
+  });
+  burst("shards", {
+    y: -10,
+    count: 14,
+    power: 0.25,
+    colors: ["#4a4458", "#6a6280"],
+    angle: Math.PI / 2,
+    spread: 0.6,
+  });
+}
+
 function Legendary({ m, scale, onDone }: ViewProps<"entrance">) {
   const name = useRef<HTMLElement>(null);
   const color = pokemonTypes[m.foe.type ?? "psychic"].light;
   useTimeline(
     [
-      [
-        400,
-        () =>
-          burst("dust", {
-            y: window.innerHeight,
-            count: 30,
-            colors: ["#3a3446", "#56506a"],
-            angle: -Math.PI / 2,
-            spread: 1,
-          }),
-      ],
-      [
-        1100,
-        () =>
-          burst("dust", {
-            y: window.innerHeight,
-            count: 30,
-            colors: ["#3a3446", "#56506a"],
-            angle: -Math.PI / 2,
-            spread: 1,
-          }),
-      ],
+      [400, tremor],
+      [1100, tremor],
       [1500, () => burst("motes", { count: 50, colors: [color, "#ffffff"] })],
       [
         1900,
@@ -556,6 +636,7 @@ function Legendary({ m, scale, onDone }: ViewProps<"entrance">) {
   return (
     <Stage
       kind="entrance"
+      passTo=".game-card"
       className="legendary"
       length={3500}
       scale={scale}
@@ -563,6 +644,7 @@ function Legendary({ m, scale, onDone }: ViewProps<"entrance">) {
       style={typeVars("foe", m.foe.type, "psychic")}
     >
       <span className="legend-dark" />
+      <span className="legend-rays" />
       <span className="legend-aura" />
       <span className="legend-ring" />
       <p className="legend-kicker">{m.kicker}</p>
@@ -586,7 +668,7 @@ function Gate({ m, scale, onDone }: ViewProps<"entrance">) {
           burst("dust", {
             y: window.innerHeight * 0.98,
             count: 44,
-            colors: ["#6b5a44", "#8a7558", "#3e3326"],
+            colors: ["#b49a74", "#8a7558", "#d8c4a0"],
             angle: -Math.PI / 2,
             spread: 2.4,
             power: 0.9,
@@ -594,14 +676,23 @@ function Gate({ m, scale, onDone }: ViewProps<"entrance">) {
       ],
       [
         470,
-        () =>
+        () => {
+          burst("streaks", {
+            y: window.innerHeight * 0.97,
+            count: 22,
+            power: 1.1,
+            colors: ["#ffd27a", "#fff1c2", "#ff8a2a"],
+            angle: -Math.PI / 2,
+            spread: 2.4,
+          });
           burst("sparks", {
             y: window.innerHeight * 0.97,
             count: 26,
             colors: ["#ffd27a", "#ff8a2a"],
             angle: -Math.PI / 2,
             spread: 2.6,
-          }),
+          });
+        },
       ],
     ],
     scale,
@@ -609,6 +700,7 @@ function Gate({ m, scale, onDone }: ViewProps<"entrance">) {
   return (
     <Stage
       kind="entrance"
+      passTo=".game-card"
       className={`gate gate-${m.style}`}
       length={LENGTH.entrance + 200}
       scale={scale}
@@ -633,6 +725,7 @@ function Ambush({ m, scale, onDone }: ViewProps<"entrance">) {
   return (
     <Stage
       kind="entrance"
+      passTo=".game-card"
       className="ambush"
       length={1300}
       scale={scale}
@@ -675,6 +768,7 @@ function Clash({ m, scale, onDone }: ViewProps<"clash">) {
             count: even ? 30 : 56,
             power: even ? 0.6 : 1,
           });
+          if (!even) burst("streaks", { x, y, count: 24, power: 1.2 });
           if (!even)
             at(loser.current, "shards", {
               count: 22,
@@ -947,6 +1041,7 @@ function LootFound({ m, scale, onDone }: ViewProps<"loot">) {
       scale={scale}
       onDone={onDone}
     >
+      <span className="loot-shade" />
       <span className="loot-pillar" />
       <div className={`loot-item${gone ? " gone" : ""}`} ref={item}>
         <CrawlIcon name={m.icon} theme={crawlTheme(m.packId)} />
