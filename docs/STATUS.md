@@ -2,7 +2,9 @@
 
 Updated 2026-11-01. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Built 2026-11-01, not committed: eight more moments, the gym stamp gone, the clash explained, whole-card foil
+## Deployed 2026-11-01: eight more moments, the gym stamp gone, the clash explained, whole-card foil
+
+**Deployed** by CI run #284 (`64e111c`, every job green: build, checks, both balance jobs, Chromium and WebKit, deploy). Revert `64e111c` to undo; it also holds the faint, hatch and jinx moments below.
 
 Second batch (owner: "Continue", then three follow-ups). **Display only:** no engine rule, card, save field or balance changed; no new save fixture.
 
@@ -23,7 +25,7 @@ Second batch (owner: "Continue", then three follow-ups). **Display only:** no en
 
 **Next (owner to pick):** polish from the ideas list: shorter early-gym entrances, Quick dropping the mid-size moments.
 
-## Built 2026-11-01, not committed: faint, hatch and jinx moments (owner: "Faint, hatch, jinx first", from the moments ideas list)
+## Deployed 2026-11-01 (in `64e111c`): faint, hatch and jinx moments (owner: "Faint, hatch, jinx first", from the moments ideas list)
 
 The last plain banners on big beats became moments. **Display only:** no engine rule, card, save field or balance changed; no new save fixture.
 
