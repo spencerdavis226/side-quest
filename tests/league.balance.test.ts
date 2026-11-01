@@ -31,7 +31,8 @@ import { cards, packs } from "../src/content/catalog";
 import type { GameConfig, Loot, SessionState } from "../src/game/types";
 
 // The League's balance (`npm run test:balance`, run by CI beside `npm test`):
-// 4,200 seeded runs (120 per starter) played by a sensible table. Kept out of `npm test` so
+// 4,200 seeded runs (120 per starter, and 180 more counted per starter for
+// the per-starter check) played by a sensible table. Kept out of `npm test` so
 // the everyday check stays quick; run it after changing League cards or rules.
 // Pokémon League as a crawl (owner, 2026-10-16): a starter, eight routes
 // each closed by a gym, a villain hideout after the fourth badge, Victory
@@ -204,7 +205,25 @@ const runs = byStarter.flatMap(([, group]) => group);
 const rate = (group: SessionState[]) =>
   group.filter((s) => questRecord(s)!.won).length / group.length;
 const pct = (n: number) => (n * 100).toFixed(0) + "%";
-const starterRates = byStarter.map(([id, group]) => [id, rate(group)] as const);
+// A starter's win rate is read over 300 runs (2026-11-01): the 120 kept above
+// plus EXTRA more that are only counted and dropped, so memory stays where it
+// was. 120 alone carries about +-3.4 points of noise, and a starter really at
+// 17% landed at exactly the 10% floor (Charmander, 12 of 120) and failed CI.
+const EXTRA = Number(process.env.LEAGUE_EXTRA ?? 180);
+const extraWins = starterIds.map((id, k) => {
+  let won = 0;
+  for (let i = 0; i < EXTRA; i++)
+    if (questRecord(playRun(100_000 + k * EXTRA + i + 1, id))!.won) won++;
+  return won;
+});
+const starterRates = byStarter.map(
+  ([id, group], k) =>
+    [
+      id,
+      (group.filter((s) => questRecord(s)!.won).length + extraWins[k]) /
+        (group.length + EXTRA),
+    ] as const,
+);
 const by = (key: (s: SessionState) => string) => {
   const groups = new Map<string, SessionState[]>();
   for (const s of runs) groups.set(key(s), [...(groups.get(key(s)) ?? []), s]);
