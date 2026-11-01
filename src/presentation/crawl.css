@@ -2560,50 +2560,198 @@
   }
 }
 
-/* A boss's felling swing: a red rubber stamp slams across the card. It
-   multiplies into the parchment, so the result under it stays readable. */
+/* A boss's felling swing: a red rubber stamp slams over the card's whole
+   text area (2026-11-01, owner: "stamp the whole card text area"), from
+   under the title to above the seals. It multiplies into the parchment,
+   so the result under it stays readable through the ink. */
 .felled-stamp {
   position: absolute;
-  left: 50%;
-  top: 34%;
+  inset: 33% 12% 22.5%;
   z-index: 3;
-  padding: 0.08em 0.42em 0.02em;
-  border: 0.12em solid currentColor;
-  border-radius: 0.14em;
+  display: grid;
+  place-items: center;
+  padding: 4cqw;
+  border: max(5px, 1.5cqw) solid currentColor;
+  border-radius: 3cqw;
+  /* The inner rule of a double-ruled stamp. */
+  box-shadow:
+    inset 0 0 0 max(2px, 0.6cqw) #fff0,
+    inset 0 0 0 max(4px, 1.2cqw) currentColor;
   color: #a8141e;
-  font: 700 clamp(28px, 11cqw, 56px) / 1 var(--font-card-title);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  white-space: nowrap;
   mix-blend-mode: multiply;
-  opacity: 0.82;
+  opacity: 0.78;
   pointer-events: none;
-  transform: translate(-50%, -50%) rotate(-14deg);
-  /* A worn stamp: ink missing in flecks. */
-  -webkit-mask-image: radial-gradient(
-    circle at 30% 60%,
-    transparent 0 1.5px,
-    #000 2px
-  );
-  -webkit-mask-size: 9px 7px;
-  mask-image: radial-gradient(circle at 30% 60%, transparent 0 1.5px, #000 2px);
-  mask-size: 9px 7px;
+  transform: rotate(-5deg);
+  /* A worn stamp: ink missing in flecks. Two grids of pinholes at
+     unrelated sizes, so a fleck shows only where both have a hole and the
+     wear never reads as a regular dot pattern. */
+  -webkit-mask-image:
+    radial-gradient(circle at 30% 60%, #0000 0 1.6px, #000 2.2px),
+    radial-gradient(circle at 70% 20%, #0000 0 2.4px, #000 3px);
+  -webkit-mask-size:
+    11px 9px,
+    17px 23px;
+  -webkit-mask-composite: source-over;
+  mask-image:
+    radial-gradient(circle at 30% 60%, #0000 0 1.6px, #000 2.2px),
+    radial-gradient(circle at 70% 20%, #0000 0 2.4px, #000 3px);
+  mask-size:
+    11px 9px,
+    17px 23px;
+  mask-composite: add;
   animation: felled-slam 520ms cubic-bezier(0.3, 1.6, 0.5, 1) 120ms both;
+}
+.felled-word {
+  font: 700 clamp(30px, 14cqw, 92px) / 0.92 var(--font-card-title);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+  text-wrap: balance;
+  overflow-wrap: normal;
 }
 @keyframes felled-slam {
   0% {
     opacity: 0;
-    transform: translate(-50%, -50%) rotate(-24deg) scale(2.4);
+    transform: rotate(-14deg) scale(1.9);
   }
   60% {
-    opacity: 0.9;
-    transform: translate(-50%, -50%) rotate(-12deg) scale(0.94);
+    opacity: 0.88;
+    transform: rotate(-4deg) scale(0.96);
   }
   100% {
-    opacity: 0.82;
-    transform: translate(-50%, -50%) rotate(-14deg) scale(1);
+    opacity: 0.78;
+    transform: rotate(-5deg) scale(1);
   }
 }
+/* A boss or ambush dealt again after a landed hit (2026-11-01): the card
+   jolts as if struck, and a tally sweeps across the top of its text area,
+   the swings landed struck through, the newest one breaking. */
+.card-stage.boss-return .game-card {
+  animation: boss-jolt 560ms cubic-bezier(0.3, 0.7, 0.4, 1) 60ms;
+}
+@keyframes boss-jolt {
+  0%,
+  100% {
+    transform: none;
+  }
+  15% {
+    transform: translate(-7px, 2px) rotate(-1.6deg);
+  }
+  32% {
+    transform: translate(6px, -2px) rotate(1.2deg);
+  }
+  50% {
+    transform: translate(-4px, 1px) rotate(-0.7deg);
+  }
+  70% {
+    transform: translate(2px, 0) rotate(0.3deg);
+  }
+}
+.boss-tally {
+  position: absolute;
+  left: 9%;
+  right: 9%;
+  top: 31%;
+  z-index: 4;
+  display: grid;
+  justify-items: center;
+  gap: 1.2cqw;
+  padding: 2.6cqw 3cqw 3cqw;
+  border-radius: 2.4cqw;
+  background: linear-gradient(#213b39, #142725);
+  box-shadow:
+    0 0 0 max(2px, 0.5cqw) #c9a45c,
+    0 2cqw 5cqw #0009;
+  color: #f4dfb4;
+  pointer-events: none;
+  animation: boss-tally 1.8s ease both;
+}
+.boss-tally small {
+  font: 600 max(12px, 3.6cqw) / 1 var(--font-card-title);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #c9a45c;
+}
+.boss-tally strong {
+  font: 700 max(20px, 7.4cqw) / 1 var(--font-card-title);
+}
+.boss-tally-pips {
+  display: flex;
+  gap: 2.2cqw;
+}
+.boss-pip {
+  position: relative;
+  width: max(14px, 5.2cqw);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffe9a8, #c9a45c 60%, #7a5a22);
+  box-shadow: inset 0 0 0 1px #0006;
+}
+.boss-pip.landed {
+  background: radial-gradient(circle at 35% 30%, #b8323a, #6a0f15 70%);
+  opacity: 0.85;
+}
+/* The strike through a landed swing. */
+.boss-pip.landed::after {
+  content: "";
+  position: absolute;
+  left: -18%;
+  right: -18%;
+  top: 50%;
+  height: max(3px, 0.9cqw);
+  margin-top: max(-1.5px, -0.45cqw);
+  border-radius: 9px;
+  background: #f4dfb4;
+  transform: rotate(-38deg);
+}
+/* The swing just landed: gold until it is struck, then it breaks. */
+.boss-pip.newest {
+  animation: boss-pip-break 700ms cubic-bezier(0.3, 1.6, 0.5, 1) 380ms both;
+}
+.boss-pip.newest::after {
+  animation: boss-pip-strike 260ms ease-out 420ms both;
+}
+@keyframes boss-tally {
+  0% {
+    opacity: 0;
+    transform: translateY(-3cqw) scale(0.86);
+  }
+  14%,
+  80% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-1.5cqw);
+  }
+}
+@keyframes boss-pip-break {
+  0% {
+    background: radial-gradient(
+      circle at 35% 30%,
+      #ffe9a8,
+      #c9a45c 60%,
+      #7a5a22
+    );
+    transform: none;
+  }
+  40% {
+    transform: scale(1.35);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes boss-pip-strike {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   /* The flash still fades in and out (opacity only); nothing moves. */
   .natural-burst {
@@ -2614,5 +2762,310 @@
   }
   .natural-rays {
     display: none;
+  }
+  /* A returning boss's tally fades in and out; the card holds still. */
+  .boss-tally {
+    animation-name: boss-tally-fade !important;
+    animation-duration: 1.8s !important;
+  }
+}
+@keyframes boss-tally-fade {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  14%,
+  80% {
+    opacity: 1;
+  }
+}
+
+/* The League's evolution (2026-11-01, `EvolutionMorph` in StageBanner.tsx):
+   3 s over a dimmed table. The old form's type medallion glows white and
+   swaps with the new form's bigger one, faster and faster (step-end, so each
+   swap is a hard cut, like the games), a white flash at 2.0 s, then the new
+   form in colour with a gold glow. Reduced Motion and a hidden tab never
+   play it (the banner shows alone). */
+.evo-stage {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-blast);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5vmin;
+  background: radial-gradient(circle at 50% 45%, #1b2a3a 0, #05070c 70%);
+  animation: evo-stage 3s ease both;
+  touch-action: manipulation;
+  overflow: hidden;
+}
+.evo-figure {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(56vmin, 300px);
+  aspect-ratio: 1;
+}
+.evo-silhouette {
+  grid-area: 1 / 1;
+  width: min(30vmin, 160px);
+  aspect-ratio: 1;
+  background: #fff;
+  mask: center / contain no-repeat;
+  -webkit-mask: center / contain no-repeat;
+}
+/* The mask clips a filter's glow, so the glow sits on a wrapper-less
+   drop shadow of the figure instead. */
+.evo-figure {
+  filter: drop-shadow(0 0 10px #fff) drop-shadow(0 0 28px #bfe7ff);
+}
+.evo-silhouette.evo-old {
+  transform: scale(0.7);
+  animation: evo-swap-old 3s step-end both;
+}
+.evo-silhouette.evo-new {
+  animation: evo-swap-sil 3s step-end both;
+}
+.evo-figure .evo-final {
+  grid-area: 1 / 1;
+  --mark-size: min(40vmin, 216px);
+  animation: evo-final 3s ease both;
+}
+.evo-glow {
+  grid-area: 1 / 1;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffffffb0 0, #bfe7ff40 40%, #0000 70%);
+  animation: evo-glow 3s ease both;
+}
+.evo-names {
+  display: grid;
+  font: 700 min(9vmin, 44px) / 1 var(--font-card-title);
+  color: #fff;
+  text-shadow: 0 0 12px #bfe7ff;
+}
+.evo-names span {
+  grid-area: 1 / 1;
+  text-align: center;
+}
+.evo-names .evo-old {
+  animation: evo-swap-old 3s step-end both;
+}
+.evo-names .evo-new {
+  animation:
+    evo-swap-new 3s step-end both,
+    evo-name 3s ease both;
+}
+.evo-flash {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  pointer-events: none;
+  animation: evo-flash 3s ease both;
+}
+@keyframes evo-stage {
+  0% {
+    opacity: 0;
+  }
+  7%,
+  92% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes evo-swap-old {
+  0% {
+    opacity: 1;
+  }
+  22% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  38% {
+    opacity: 0;
+  }
+  44% {
+    opacity: 1;
+  }
+  49% {
+    opacity: 0;
+  }
+  53% {
+    opacity: 1;
+  }
+  57% {
+    opacity: 0;
+  }
+  60% {
+    opacity: 1;
+  }
+  62.5% {
+    opacity: 0;
+  }
+  64.5% {
+    opacity: 1;
+  }
+  66% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes evo-swap-new {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 0;
+  }
+  38% {
+    opacity: 1;
+  }
+  44% {
+    opacity: 0;
+  }
+  49% {
+    opacity: 1;
+  }
+  53% {
+    opacity: 0;
+  }
+  57% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 0;
+  }
+  62.5% {
+    opacity: 1;
+  }
+  64.5% {
+    opacity: 0;
+  }
+  66% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes evo-swap-sil {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 0;
+  }
+  38% {
+    opacity: 1;
+  }
+  44% {
+    opacity: 0;
+  }
+  49% {
+    opacity: 1;
+  }
+  53% {
+    opacity: 0;
+  }
+  57% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 0;
+  }
+  62.5% {
+    opacity: 1;
+  }
+  64.5% {
+    opacity: 0;
+  }
+  66% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes evo-final {
+  0%,
+  68% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  76% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes evo-name {
+  0%,
+  68% {
+    color: #fff;
+    text-shadow: 0 0 12px #bfe7ff;
+  }
+  76%,
+  100% {
+    color: #ffe9a8;
+    text-shadow: 0 0 16px #c9a45c;
+  }
+}
+/* A gradient can't be eased, so the glow's white is pinned until the
+   flash and turns gold behind it. */
+@keyframes evo-glow {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.5;
+    background: radial-gradient(circle, #ffffffb0 0, #bfe7ff40 40%, #0000 70%);
+  }
+  64% {
+    transform: scale(1);
+    opacity: 1;
+    background: radial-gradient(circle, #ffffffb0 0, #bfe7ff40 40%, #0000 70%);
+  }
+  68%,
+  72% {
+    transform: scale(1.5);
+    opacity: 1;
+    background: radial-gradient(circle, #fff6d0 0, #ffd76a66 40%, #0000 70%);
+  }
+  100% {
+    transform: scale(1.15);
+    opacity: 0.8;
+    background: radial-gradient(circle, #fff6d0aa 0, #ffd76a44 40%, #0000 70%);
+  }
+}
+@keyframes evo-flash {
+  0%,
+  62% {
+    opacity: 0;
+  }
+  69% {
+    opacity: 1;
+  }
+  84%,
+  100% {
+    opacity: 0;
   }
 }

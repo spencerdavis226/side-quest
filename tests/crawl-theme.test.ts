@@ -117,7 +117,7 @@ describe("how to play", () => {
 
 describe("Pub Crawl's lit scenes (2026-10-31)", () => {
   const rules = packs.find((p) => p.id === "dungeon")!.quest!;
-  const scene = crawlTheme("dungeon").flourish!.scene;
+  const scene = crawlTheme("dungeon").flourish!.scene!;
   it("lights every stage after the omen with its own scene", () => {
     for (const stage of questStages(rules)) {
       if (["Your adventurer", "Tonight's omen"].includes(stage.label)) continue;
@@ -128,8 +128,11 @@ describe("Pub Crawl's lit scenes (2026-10-31)", () => {
     expect(scene("Cellar boss")).toBe("cellar");
     expect(scene("The Walk-in Freezer")).toBe("freezer");
   });
-  it("the League has no flourishes", () => {
-    expect(crawlTheme("pokemon").flourish).toBeUndefined();
+  it("the League stamps its bosses but lights no scenes (2026-11-01)", () => {
+    const league = crawlTheme("pokemon").flourish!;
+    expect(league.felled).toBe("Defeated");
+    expect(league.badge).toBe("Badge won");
+    expect(league.scene).toBeUndefined();
   });
 });
 

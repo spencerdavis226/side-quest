@@ -47,6 +47,8 @@ export interface Presentation {
   motion: Motion | null;
   transition: number;
   finishingRoll: boolean;
+  /** Whether `undo()` can take back the last decision. */
+  undoable: boolean;
 }
 /** Durable actions happen on acceptance. Animation completion never advances a deck. */
 export class PresentationController {
@@ -65,7 +67,19 @@ export class PresentationController {
       motion: null,
       transition: 0,
       finishingRoll: false,
+      undoable: false,
     };
+  }
+  /** The game as it stood before the last decision (a card put aside, a
+   * Won or Lost, an offer, an item), for one level of undo (2026-11-01,
+   * owner). Memory only: never saved, so a reload forgets it. A dice roll
+   * or a ball throw clears it, so undo can never buy a second roll. Turning
+   * the next card over keeps it: the table can still take back the card
+   * just put aside. */
+  private before: SessionState | null = null;
+  /** Remember `session` as the state undo returns to. */
+  private mark(session: SessionState | null) {
+    this.before = session;
   }
   getSnapshot = () => this.state;
   subscribe = (fn: () => void) => {
@@ -89,16 +103,19 @@ export class PresentationController {
       outgoing,
       transition: this.state.transition + 1,
       finishingRoll: false,
+      undoable: !!this.before,
     });
   }
   start(session: SessionState) {
     if (this.state.motion) return;
+    this.mark(null);
     this.persist(session);
     this.transition(session, "deal");
     this.effect("deal");
   }
   clear() {
     if (this.state.motion) return;
+    this.mark(null);
     this.persist(null);
     this.transition(null, null);
   }
@@ -131,8 +148,9 @@ export class PresentationController {
     }
     const next = advance(session, this.random);
     if (next === session) return;
-    this.persist(next);
     const revealing = session.phase === "hidden";
+    if (!revealing) this.mark(session);
+    this.persist(next);
     this.transition(
       next,
       revealing ? "flip" : "discard",
@@ -142,6 +160,7 @@ export class PresentationController {
   }
   private roll(session: SessionState) {
     const next = rollDice(session, this.diceRandom);
+    this.mark(null);
     this.persist(next);
     this.transition(next, "roll");
     this.effect("roll");
@@ -152,6 +171,7 @@ export class PresentationController {
     if (!session || motion || !awaitingChoice(session)) return;
     if (option === "roll") return this.roll(session);
     const next = skipRoll(session, this.random);
+    this.mark(session);
     this.persist(next);
     this.transition(next, "discard", session);
     this.effect("discard");
@@ -161,6 +181,7 @@ export class PresentationController {
     const { session, motion } = this.state;
     if (!session || motion || !awaitingVerdict(session)) return;
     const next = settleBattle(session, won, this.random, spoil);
+    this.mark(session);
     this.persist(next);
     this.transition(next, "discard", session);
     this.effect("discard");
@@ -172,10 +193,13 @@ export class PresentationController {
     if (!session || motion || !awaitingOffer(session)) return;
     const next = takeOffer(session, index, this.random, branch);
     if (next === session) return;
+    this.mark(session);
     this.persist(next);
     // A catch card's ball is thrown and read on the card; any other offer
     // puts it aside.
     if (next.discarded === session.discarded) {
+      // A ball thrown is a roll: undo must not buy a second throw.
+      this.mark(null);
       this.transition(next, "settle");
       this.effect("press");
       return;
@@ -190,6 +214,7 @@ export class PresentationController {
     if (!session || motion) return;
     const next = spendLoot(session, item, this.random);
     if (next === session) return;
+    this.mark(session);
     this.persist(next);
     if (item === "smoke") {
       this.transition(next, "discard", session);
@@ -205,6 +230,7 @@ export class PresentationController {
     if (!session || motion) return;
     const next = dropFromBag(session, drop);
     if (next === session) return;
+    this.mark(session);
     this.persist(next);
     this.transition(next, null);
   }
@@ -213,6 +239,7 @@ export class PresentationController {
     const { session, motion } = this.state;
     if (!session || motion || !awaitingPress(session)) return;
     const next = pressOn(session);
+    this.mark(session);
     this.persist(next);
     this.transition(next, null);
     this.effect("press");
@@ -222,6 +249,7 @@ export class PresentationController {
     const { session, motion } = this.state;
     if (!session || motion || !awaitingPress(session)) return;
     const next = cashOut(session, this.random);
+    this.mark(session);
     this.persist(next);
     this.transition(next, "discard", session);
     this.effect("discard");
@@ -232,6 +260,7 @@ export class PresentationController {
     if (!session || motion || !awaitingSpoils(session)) return;
     const next = takeSpoils(session, index, this.random);
     if (next === session) return;
+    this.mark(session);
     this.persist(next);
     this.transition(next, "discard", session);
     this.effect("discard");
@@ -243,6 +272,7 @@ export class PresentationController {
     if (!session || motion || !awaitingSpoils(session)) return;
     const next = skipSpoils(session, this.random);
     if (next === session) return;
+    this.mark(session);
     this.persist(next);
     this.transition(next, "discard", session);
     this.effect("discard");
@@ -258,6 +288,7 @@ export class PresentationController {
       ? catchIt(session, this.random)
       : letGo(session, this.random);
     if (next === session) return;
+    this.mark(session);
     this.persist(next);
     this.transition(next, "discard", session);
     this.effect("discard");
@@ -269,6 +300,7 @@ export class PresentationController {
     if (!session || motion) return;
     const next = throwBall(session, this.random);
     if (next === session) return;
+    this.mark(null);
     this.persist(next);
     this.transition(next, "settle");
     this.effect("press");
@@ -281,6 +313,7 @@ export class PresentationController {
     if (!session || motion) return;
     const next = sendIn(session, id, this.random);
     if (next === session) return;
+    this.mark(session);
     this.persist(next);
     this.transition(next, null);
     this.effect("press");
@@ -301,6 +334,17 @@ export class PresentationController {
     // The short settle introduces the resolved layout and prevents the same
     // physical tap from immediately discarding the card.
     this.transition(next, "settle");
+    this.effect("press");
+  }
+  /** Take back the last decision (2026-11-01, owner): the game returns to
+   * the state saved just before it, one level deep. */
+  undo() {
+    const { motion } = this.state;
+    const before = this.before;
+    if (motion || !before) return;
+    this.mark(null);
+    this.persist(before);
+    this.transition(before, null);
     this.effect("press");
   }
   finish(id: number) {

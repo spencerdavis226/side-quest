@@ -99,6 +99,84 @@ describe("presentation transactions", () => {
     expect(c.getSnapshot().session).toBeNull();
   });
 });
+describe("undo (2026-11-01)", () => {
+  const rolled = () => {
+    const dice = cards.find(
+      (c) => core.cardIds.includes(c.id) && c.dice && !c.dice.choice,
+    )!;
+    return createSession(
+      { version: 1, packIds: ["core"], limit: 1 },
+      [dice],
+      [{ ...core, cardIds: [dice.id] }],
+      () => 0,
+    );
+  };
+  it("takes back the card just put aside, even after the next is turned", () => {
+    const persist = vi.fn(),
+      c = new PresentationController(initial(), persist);
+    expect(c.getSnapshot().undoable).toBe(false);
+    c.tap();
+    settle(c);
+    // Turning a card over is not a decision to take back.
+    expect(c.getSnapshot().undoable).toBe(false);
+    const revealed = c.getSnapshot().session!;
+    c.tap();
+    settle(c);
+    c.tap();
+    settle(c);
+    expect(c.getSnapshot().session?.phase).toBe("revealed");
+    expect(c.getSnapshot().undoable).toBe(true);
+    c.undo();
+    expect(c.getSnapshot().session).toBe(revealed);
+    expect(persist.mock.calls.at(-1)![0]).toBe(revealed);
+    // One level only.
+    expect(c.getSnapshot().undoable).toBe(false);
+    const calls = persist.mock.calls.length;
+    c.undo();
+    expect(persist).toHaveBeenCalledTimes(calls);
+  });
+  it("takes back the card that ended the game", () => {
+    const c = new PresentationController(initial(1), vi.fn());
+    c.tap();
+    settle(c);
+    c.tap();
+    settle(c);
+    expect(c.getSnapshot().session?.phase).toBe("complete");
+    c.undo();
+    expect(c.getSnapshot().session?.phase).toBe("revealed");
+  });
+  it("never buys a second roll", () => {
+    const c = new PresentationController(rolled(), vi.fn());
+    c.tap();
+    settle(c);
+    expect(c.getSnapshot().session?.phase).toBe("revealed");
+    c.tap();
+    expect(c.getSnapshot().session?.roll).toBeTruthy();
+    expect(c.getSnapshot().undoable).toBe(false);
+    settle(c);
+    c.revealRoll();
+    settle(c);
+    expect(c.getSnapshot().undoable).toBe(false);
+    const roll = c.getSnapshot().session!.roll;
+    // Putting the rolled card aside can be taken back, to the same roll.
+    c.tap();
+    settle(c);
+    c.undo();
+    expect(c.getSnapshot().session?.roll).toEqual(roll);
+    expect(c.getSnapshot().undoable).toBe(false);
+  });
+  it("is forgotten by a new game or the end of one", () => {
+    const c = new PresentationController(initial(), vi.fn());
+    c.tap();
+    settle(c);
+    c.tap();
+    settle(c);
+    expect(c.getSnapshot().undoable).toBe(true);
+    c.start(initial());
+    settle(c);
+    expect(c.getSnapshot().undoable).toBe(false);
+  });
+});
 describe("preferences compatibility", () => {
   it("maps legacy finite choices to Standard and keeps selected packs selectable", () => {
     const old = {

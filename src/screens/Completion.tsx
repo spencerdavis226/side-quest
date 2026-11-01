@@ -18,6 +18,7 @@ export function Completion({
   onReplay,
   onSetup,
   onFinish,
+  onUndo,
 }: {
   count: number;
   record: ReturnType<typeof questRecord>;
@@ -32,6 +33,9 @@ export function Completion({
   onReplay: () => void;
   onSetup: () => void;
   onFinish: () => void;
+  /** Take back the move that ended the game (a mis-tapped Lost that wiped
+   * the party); absent when there is nothing to take back. */
+  onUndo?: () => void;
 }) {
   const crawl = record?.party;
   const wiped = !!crawl?.wiped;
@@ -94,6 +98,16 @@ export function Completion({
       >
         Change deck
       </Button>
+      {onUndo && (
+        <Button
+          variant="text-button"
+          className="undo-end"
+          disabled={celebrate || starting}
+          onClick={onUndo}
+        >
+          Undo last move
+        </Button>
+      )}
     </section>
   );
 }

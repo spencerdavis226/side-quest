@@ -133,6 +133,10 @@ jobs:
           path: test-results/
   # The crawl and League balance simulations (4,000 seeded runs each), one
   # job per file so the two run at once; a deploy still waits for both.
+  # Since 2026-11-01 (owner) they run only when what they play changed: the
+  # cards, the engine, save parsing, the simulations themselves, or the
+  # toolchain. A dispatch, a new branch or an unreadable base always runs
+  # them. The job still passes when skipped, so a deploy is never held up.
   balance:
     runs-on: ubuntu-latest
     strategy:
@@ -140,18 +144,38 @@ jobs:
         suite: [dungeon, league]
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - id: scope
+        name: Did cards or rules change?
+        env:
+          BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          run=true
+          if [ "$GITHUB_EVENT_NAME" != workflow_dispatch ] &&
+            [ -n "$BASE" ] && [ "$BASE" != 0000000000000000000000000000000000000000 ] &&
+            git fetch --quiet --depth=1 origin "$BASE"; then
+            changed=$(git diff --name-only "$BASE" HEAD)
+            echo "$changed"
+            if ! echo "$changed" | grep -qE '^(src/content/|src/game/|src/app/persistence\.ts$|tests/[^/]*balance[^/]*\.ts$|tests/bot\.ts$|package-lock\.json$|vite(st)?\.config\.ts$|\.github/workflows/pages\.yml$)'; then
+              run=false
+            fi
+          fi
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+          echo "Balance simulations: run=$run"
+      - if: steps.scope.outputs.run == 'true'
+        uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
       - id: modules
+        if: steps.scope.outputs.run == 'true'
         uses: actions/cache@v4
         with:
           path: node_modules
           key: modules-${{ runner.os }}-node22-${{ hashFiles('package-lock.json') }}
-      - if: steps.modules.outputs.cache-hit != 'true'
+      - if: steps.scope.outputs.run == 'true' && steps.modules.outputs.cache-hit != 'true'
         run: npm ci
-      - run: npx vitest run tests/${{ matrix.suite }}.balance.test.ts
+      - if: steps.scope.outputs.run == 'true'
+        run: npx vitest run tests/${{ matrix.suite }}.balance.test.ts
   deploy:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: [build, checks, browser, balance]

@@ -854,6 +854,13 @@ export function fellingSwing(s: SessionState): boolean {
   if (!rollWins(card.dice, s.roll.values, s.roll)) return false;
   return fells(s, natural(card, s.roll));
 }
+/** A boss's felling beat face up as Won and Lost plaques: a Won would
+ * land its last hit. Display only (the stamp `Play.tsx` slams before the
+ * win is settled, 2026-11-01); nothing is saved. */
+export function fellingVerdict(s: SessionState): boolean {
+  if (!s.quest?.party || !awaitingVerdict(s)) return false;
+  return isBossCard(currentCard(s)) && fells(s, null);
+}
 /** A plaque fight face up whose win would bring its spoils (a boss's
  * felling beat, 2026-10-25): Won asks which trinket first. */
 export function spoilsOnWin(s: SessionState): boolean {

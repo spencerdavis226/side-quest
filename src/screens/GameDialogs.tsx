@@ -47,6 +47,7 @@ export function GameDialogs({
   onEnd,
   onSpend = () => {},
   onDrop = () => {},
+  onUndo,
 }: {
   modal: DialogName;
   setModal: (modal: DialogName) => void;
@@ -59,6 +60,9 @@ export function GameDialogs({
   onSpend?: (item: Loot, branch?: number) => void;
   /** Throw an item out, or let a caught Pokémon go. */
   onDrop?: (drop: BagDrop) => void;
+  /** Take back the last move (one level, memory only); absent when there
+   * is nothing to take back. */
+  onUndo?: () => void;
 }) {
   // Keep the last dialog mounted while it animates out, so pause states do not
   // pop away instantly.
@@ -116,6 +120,17 @@ export function GameDialogs({
         {session?.previousId && (
           <Button variant="menu-row" onClick={() => setModal("previous")}>
             Previous card
+          </Button>
+        )}
+        {onUndo && (
+          <Button
+            variant="menu-row"
+            onClick={() => {
+              onUndo();
+              setModal(null);
+            }}
+          >
+            Undo last move
           </Button>
         )}
         {session && (

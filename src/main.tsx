@@ -73,17 +73,32 @@ function App() {
     [hidden, setHidden] = useState(document.hidden),
     [starting, setStarting] = useState(false),
     [loadFailed, setLoadFailed] = useState(false);
-  const { controller, session, outgoing, motion, transition, finishingRoll } =
-    usePresentation(
-      () =>
-        new PresentationController(loaded.session, (next) => {
-          if (!save(SAVE_KEY, next)) setNotice(true);
-        }),
-    );
+  const {
+    controller,
+    session,
+    outgoing,
+    motion,
+    transition,
+    finishingRoll,
+    undoable,
+  } = usePresentation(
+    () =>
+      new PresentationController(loaded.session, (next) => {
+        if (!save(SAVE_KEY, next)) setNotice(true);
+      }),
+  );
   const display = outgoing ?? session;
   const active = !!display && display.phase !== "complete";
   useWakeLock(active);
   useEffect(requestPersistence, []);
+  // An evolution (a Rare Candy from the bag, 2026-11-01) plays over the
+  // table, so the dialog it was used from steps aside for it.
+  const form = display?.quest?.party?.form ?? 0;
+  const [lastForm, setLastForm] = useState(form);
+  if (form !== lastForm) {
+    setLastForm(form);
+    if (form > lastForm) setModal(null);
+  }
   const { offlineReady, updateReady } = useAppUpdate();
   const standalone = useStandalone();
   useEffect(() => {
@@ -250,6 +265,7 @@ function App() {
             onReplay={() => replay(display)}
             onSetup={() => controller.clear()}
             onFinish={() => finish(transition)}
+            onUndo={undoable ? () => controller.undo() : undefined}
           />
         ) : (
           <>
@@ -293,6 +309,7 @@ function App() {
         <GameDialogs
           onSpend={(item) => controller.spend(item)}
           onDrop={(drop) => controller.drop(drop)}
+          onUndo={undoable ? () => controller.undo() : undefined}
           modal={modal}
           setModal={setModal}
           session={session}
