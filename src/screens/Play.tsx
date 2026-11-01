@@ -630,9 +630,7 @@ export function Play({
       {session.phase === "revealed" && (
         <TimerBlast card={card} actions={actions} />
       )}
-      {session.quest?.party && (
-        <NaturalBurst session={session} card={card} theme={crawl} />
-      )}
+      <NaturalBurst session={session} card={card} />
       {overlay &&
         session.phase === "revealed" &&
         card.dice &&

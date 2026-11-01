@@ -2214,9 +2214,13 @@
   }
 }
 
-/* Pub Crawl's flourishes (2026-10-31, Flourish.tsx). A natural 20 floods
-   the table gold with turning rays and a stamped 20; a natural 1 drains it
-   red and the 1 lands cracked and shaking. Never takes a tap. */
+/* The natural 20 and 1 burst (Flourish.tsx; Pub Crawl's from 2026-10-31,
+   every mode since 2026-11-01). A natural 20 floods the table gold with
+   turning rays and a stamped 20. A natural 1 is its dark twin: the 1 drops
+   in, the screen jolts red and shakes, cracks run out to the edges like
+   broken glass, the dark closes in and the 1 splits in two and sags. Each
+   piece ends on a still worth seeing, since Reduced Motion jumps every
+   child animation to its end. Never takes a tap. */
 .natural-burst {
   position: fixed;
   inset: 0;
@@ -2238,11 +2242,35 @@
 }
 .natural-burst.fumble {
   background: radial-gradient(
-    circle at 50% 44%,
-    #5a0a0ae6 0,
-    #2a0404f0 50%,
-    #0c0101f7 100%
+    circle at 50% 48%,
+    #8a1010e6 0,
+    #4a0606ee 22%,
+    #1a0202f4 56%,
+    #050000fa 100%
   );
+  animation-duration: 1.6s;
+}
+/* The jolt of red on impact. */
+.natural-burst.fumble::before,
+.natural-burst.fumble::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+.natural-burst.fumble::before {
+  background: #ff2414;
+  opacity: 0;
+  animation: fumble-jolt 1.6s ease-out both;
+}
+/* The dark closing in from the edges. */
+.natural-burst.fumble::after {
+  background: radial-gradient(
+    circle at 50% 48%,
+    transparent 26%,
+    #000c 70%,
+    #000 100%
+  );
+  animation: fumble-close 1.6s ease-in both;
 }
 .natural-rays {
   position: absolute;
@@ -2260,8 +2288,38 @@
   mask-image: radial-gradient(circle, #000 12%, transparent 58%);
   animation: natural-rays 1.4s ease-out both;
 }
+.natural-cracks {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  animation: fumble-shake 1.6s linear both;
+}
+/* Drawn out from the 1 at one speed (every crack is under 80 units). */
+.natural-cracks path {
+  stroke-dasharray: 80;
+  stroke-dashoffset: 0;
+  animation: fumble-crack 1.6s ease-out both;
+}
+.natural-cracks .glow path {
+  stroke: #ff3a2a66;
+  stroke-width: 1;
+}
+.natural-cracks .line path {
+  stroke: #ffd9cc;
+  stroke-width: 0.3;
+}
+/* The branches split off once the main cracks have run. */
+.natural-cracks path:nth-child(n + 8) {
+  animation-name: fumble-branch;
+}
 .natural-word {
   position: relative;
+  z-index: 2;
   display: grid;
   justify-items: center;
   margin-top: -8vh;
@@ -2278,6 +2336,7 @@
   text-shadow:
     0 2px 0 #3a2205,
     0 0 18px #000a;
+  animation: natural-kicker 1.4s ease-out both;
 }
 .natural-word strong {
   font-size: clamp(120px, 44vw, 300px);
@@ -2293,30 +2352,58 @@
   animation: natural-slam 1.4s cubic-bezier(0.2, 1.5, 0.4, 1) both;
 }
 .fumble .natural-word {
-  color: #ffd8d0;
+  color: #ffc8bc;
+  animation: fumble-shake 1.6s linear both;
+}
+.fumble .natural-word small {
+  text-shadow:
+    0 2px 0 #3a0404,
+    0 0 18px #000;
+  animation-duration: 1.6s;
 }
 .fumble .natural-word strong {
+  /* A lone 1 is narrow: set it larger so it carries the 20's weight. */
+  font-size: clamp(150px, 56vw, 380px);
   color: #ffd0c4;
   text-shadow:
     0 5px 0 #5a0808,
+    0 10px 0 #1e0202,
     0 0 40px #ff2a2a;
-  /* The crack: a jagged line through the 1. */
-  -webkit-mask-image: linear-gradient(
-    104deg,
-    #000 47%,
-    transparent 47.5% 49%,
-    #000 49.5%
-  );
-  mask-image: linear-gradient(
-    104deg,
-    #000 47%,
-    transparent 47.5% 49%,
-    #000 49.5%
-  );
-  animation: natural-thud 1.4s ease-out both;
+  animation: natural-thud 1.6s ease-in both;
 }
-.natural-word small {
-  animation: natural-kicker 1.4s ease-out both;
+/* The 1 in two pieces along a jagged break, each clipped wide enough to
+   keep its glow. */
+.natural-split {
+  display: grid;
+}
+.natural-split .half {
+  grid-area: 1 / 1;
+}
+.natural-split .left {
+  clip-path: polygon(
+    -60% -60%,
+    56% -60%,
+    56% 0,
+    47% 33%,
+    56% 52%,
+    44% 100%,
+    44% 160%,
+    -60% 160%
+  );
+  animation: fumble-left 1.6s cubic-bezier(0.5, 0, 0.8, 0.6) both;
+}
+.natural-split .right {
+  clip-path: polygon(
+    56% -60%,
+    160% -60%,
+    160% 160%,
+    44% 160%,
+    44% 100%,
+    56% 52%,
+    47% 33%,
+    56% 0
+  );
+  animation: fumble-right 1.6s cubic-bezier(0.5, 0, 0.8, 0.6) both;
 }
 @keyframes natural-flash {
   0% {
@@ -2354,25 +2441,20 @@
     transform: scale(1) rotate(0);
   }
 }
+/* The 1 falls in from above and lands hard. */
 @keyframes natural-thud {
   0% {
-    transform: translateY(-40%) scale(1.2);
+    transform: translateY(-60%) scale(1.25);
     opacity: 0;
   }
-  16% {
+  15% {
     transform: translateY(0) scale(1);
     opacity: 1;
   }
-  22% {
-    transform: translateX(-6px) rotate(-2deg);
+  19% {
+    transform: translateY(0) scale(1.06, 0.92);
   }
-  28% {
-    transform: translateX(5px) rotate(1.5deg);
-  }
-  34% {
-    transform: translateX(-3px);
-  }
-  40%,
+  24%,
   100% {
     transform: none;
   }
@@ -2387,6 +2469,94 @@
   100% {
     opacity: 1;
     transform: none;
+  }
+}
+@keyframes fumble-jolt {
+  0%,
+  14% {
+    opacity: 0;
+  }
+  16% {
+    opacity: 0.55;
+  }
+  34%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes fumble-close {
+  0%,
+  14% {
+    opacity: 0;
+    transform: scale(1.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes fumble-shake {
+  0%,
+  15% {
+    transform: none;
+  }
+  18% {
+    transform: translate(-9px, 4px) rotate(-0.6deg);
+  }
+  21% {
+    transform: translate(8px, -5px) rotate(0.5deg);
+  }
+  24% {
+    transform: translate(-6px, -3px);
+  }
+  27% {
+    transform: translate(5px, 4px);
+  }
+  30% {
+    transform: translate(-3px, 1px);
+  }
+  34%,
+  100% {
+    transform: none;
+  }
+}
+@keyframes fumble-crack {
+  0%,
+  15% {
+    stroke-dashoffset: 80;
+  }
+  30%,
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes fumble-branch {
+  0%,
+  26% {
+    stroke-dashoffset: 80;
+  }
+  40%,
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+/* After the cracks, the 1 breaks and its halves sag apart. */
+@keyframes fumble-left {
+  0%,
+  38% {
+    transform: none;
+  }
+  100% {
+    transform: translate(-0.17em, 0.2em) rotate(-13deg);
+  }
+}
+@keyframes fumble-right {
+  0%,
+  38% {
+    transform: none;
+  }
+  100% {
+    transform: translate(0.13em, 0.32em) rotate(15deg);
   }
 }
 
@@ -2438,6 +2608,9 @@
   /* The flash still fades in and out (opacity only); nothing moves. */
   .natural-burst {
     animation-duration: 1.4s !important;
+  }
+  .natural-burst.fumble {
+    animation-duration: 1.6s !important;
   }
   .natural-rays {
     display: none;

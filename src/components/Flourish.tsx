@@ -2,33 +2,47 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { CardDefinition, SessionState } from "../game/types";
 import { natural } from "../game/engine";
-import type { CrawlTheme } from "./crawlTheme";
 
-// Pub Crawl's flourishes (2026-10-31, owner: "make this mode feel premium
-// and unique ... excitement and variety", no new systems). Display only:
-// nothing here is saved, and a resumed game never replays one.
+// Display-only flourishes (Pub Crawl's since 2026-10-31; the natural burst
+// in every mode since 2026-11-01, owner). Nothing here is saved, and a
+// resumed game never replays one.
 
 /** How long the natural 20 or 1 flash stays up (`natural-burst` in
  * crawl.css), plus a little. */
-const BURST_MS = 1500;
+const BURST_MS = 1700;
+
+/** The cracks a natural 1 splits the screen with, in a 100 x 100 box
+ * centred on the number (50, 49): jagged lines run out to every edge. */
+const CRACKS = [
+  "M50 49 L46 41 L48 34 L42 25 L44 16 L37 0",
+  "M50 49 L57 43 L62 44 L68 35 L77 32 L84 21 L100 13",
+  "M50 49 L58 52 L66 50 L74 56 L86 55 L100 62",
+  "M50 49 L55 58 L53 66 L60 75 L58 87 L64 105",
+  "M50 49 L44 57 L38 58 L34 68 L26 75 L22 89 L12 105",
+  "M50 49 L41 50 L33 45 L24 48 L14 42 L0 45",
+  "M50 49 L43 45 L37 36 L28 33 L20 22 L8 17 L0 9",
+  "M62 44 L66 51",
+  "M53 66 L47 71 L44 79",
+  "M33 45 L31 38 L24 35",
+  "M74 56 L77 65 L84 70",
+];
 
 /** A natural 20 or 1, flashed over the table the moment the dice land on
- * one: gold rays and the word for a 20, a red crack for a 1. Fires once per
- * roll, only for a roll made while the table watched (a reload shows the
- * result on the card and nothing else). The card's own result line already
- * says "Natural 20!", so this is `aria-hidden`. */
+ * one, in every mode: gold rays and a stamped 20 for a 20; for a 1 the
+ * table cracks like glass, the screen shakes and the 1 splits in two and
+ * falls. Fires once per roll, only for a roll made while the table watched
+ * (a reload shows the result on the card and nothing else). A crawl's card
+ * already says "Natural 20!", and the dice say it elsewhere, so this is
+ * `aria-hidden`. */
 export function NaturalBurst({
   session,
   card,
-  theme,
 }: {
   session: SessionState;
   card: CardDefinition;
-  theme: CrawlTheme;
 }) {
-  const words = theme.flourish?.naturals;
   const nat =
-    words && session.phase === "revealed" && session.roll?.returned
+    session.phase === "revealed" && session.roll?.returned
       ? natural(card, session.roll)
       : null;
   const party = session.quest?.party;
@@ -48,7 +62,7 @@ export function NaturalBurst({
     const id = setTimeout(() => setShown(null), BURST_MS);
     return () => clearTimeout(id);
   }, [shown]);
-  if (!shown || !words) return null;
+  if (!shown) return null;
   const crit = shown.nat === 20;
   return createPortal(
     <div
@@ -56,10 +70,33 @@ export function NaturalBurst({
       className={`natural-burst ${crit ? "crit" : "fumble"}`}
       aria-hidden="true"
     >
-      {crit && <span className="natural-rays" />}
+      {crit ? (
+        <span className="natural-rays" />
+      ) : (
+        <svg
+          className="natural-cracks"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="xMidYMid slice"
+        >
+          {["glow", "line"].map((layer) => (
+            <g key={layer} className={layer}>
+              {CRACKS.map((d, i) => (
+                <path key={i} d={d} />
+              ))}
+            </g>
+          ))}
+        </svg>
+      )}
       <span className="natural-word">
-        <small>{(crit ? words[0] : words[1]).replace(/\s*\d+$/, "")}</small>
-        <strong>{shown.nat}</strong>
+        <small>Natural</small>
+        {crit ? (
+          <strong>20</strong>
+        ) : (
+          <strong className="natural-split">
+            <span className="half left">1</span>
+            <span className="half right">1</span>
+          </strong>
+        )}
       </span>
     </div>,
     document.body,

@@ -1,6 +1,12 @@
 # Current state and implementation plan
 
-Updated 2026-10-31. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
+Updated 2026-11-01. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
+
+## Shipped 2026-11-01: natural 20 and 1 burst in every mode (owner: "make that happen all the time ... nat 1 ... an equivalent screen effect, but obviously bad")
+
+Pushed to `main` on the owner's "Merge" (revert that one commit to undo). Display only; no engine, save or card change. `NaturalBurst` (`components/Flourish.tsx`) now renders for every game (Standard, Infinite, League, Pub Crawl), not only crawls: any single-d20 card whose roll is a natural (`natural()` in `engine.ts`, so omen-widened ranges count) fires it once, never on a resumed game. It no longer takes the theme; the kicker is always "Natural" and `flourish.naturals` is gone from `CrawlTheme`. The natural 1 was rebuilt as the 20's dark twin (1.6 s, `crawl.css`): the 1 drops in and lands, the screen jolts red and shakes, glowing cracks (an inline SVG of 11 paths, drawn by `stroke-dashoffset`) run out to the edges, the dark closes in from the edges, and the 1 splits along a jagged break into two clipped halves that sag apart. Every piece ends on a readable still, since Reduced Motion jumps child animations to their end. The 20 is unchanged.
+
+**Checks run:** typecheck, lint, `npm test` (407 pass), `BASE_PATH=/side-quest/ npm run build` (budgets pass), `test:release` Chromium 13/13 (WebKit not installed here; CI-only). Frames checked in Chromium screenshots of a throwaway harness (removed). **Not checked:** WebKit/iPhone rendering of the SVG cracks and `clip-path` halves, and frame rate on a phone (`docs/DEVICE_CHECKLIST.md`).
 
 ## In progress 2026-11-01: one bag for gear, items and Pokémon (owner: "Can we just adopt the pokemon bag UI and function? It holds both pokemon and items")
 

@@ -132,12 +132,11 @@ export interface CrawlTheme {
     rows: (n: { hearts: number }) => GuideRow[];
   };
   /** Pub Crawl's flourishes (2026-10-31, display only): the stamp on a
-   * boss's felling swing, the words of a natural 20 or 1 flash, and the
-   * table's light for each place in the run (`crawlScene`). A theme
-   * without them shows none. */
+   * boss's felling swing and the table's light for each place in the run
+   * (`crawlScene`). A theme without them shows none. The natural 20 and 1
+   * burst plays in every mode (`NaturalBurst`). */
   flourish?: {
     felled: string;
-    naturals: [string, string];
     scene: (stageLabel: string) => string | undefined;
   };
   /** The end screens: two title lines (the second in italics) and the
@@ -243,7 +242,6 @@ const dungeon: CrawlTheme = {
   },
   flourish: {
     felled: "Felled",
-    naturals: ["Natural 20", "Natural 1"],
     scene: dungeonScene,
   },
   legend: [
