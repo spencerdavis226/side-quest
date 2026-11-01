@@ -315,6 +315,8 @@ export class PresentationController {
     if (!session || motion) return;
     const next = throwWith(session, ball, this.random);
     if (next === session) return;
+    // A thrown ball is a roll (and spends the ball): no undo past it.
+    this.mark(null);
     this.persist(next);
     this.transition(next, "settle");
     this.effect("press");

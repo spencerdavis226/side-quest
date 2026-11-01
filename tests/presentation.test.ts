@@ -165,6 +165,37 @@ describe("undo (2026-11-01)", () => {
     expect(c.getSnapshot().session?.roll).toEqual(roll);
     expect(c.getSnapshot().undoable).toBe(false);
   });
+  it("never buys a second ball throw (Great, Ultra or Master)", () => {
+    let s = createSession(
+      { version: 1, packIds: ["pokemon"], limit: null, quest: "pokemon" },
+      cards,
+      packs,
+      () => 0.5,
+    );
+    const finale = [...s.quest!.finale];
+    const lapras = "pokemon.route-lapras";
+    finale[finale.indexOf(lapras)] = finale[1];
+    finale[1] = lapras;
+    s = {
+      ...s,
+      quest: {
+        ...s.quest!,
+        finale,
+        party: { ...s.quest!.party!, loot: ["master"] },
+      },
+    };
+    const c = new PresentationController(s, vi.fn());
+    c.tap(); // The starter, face up.
+    settle(c);
+    c.tap(); // Put aside: a decision undo can take back.
+    settle(c);
+    c.tap(); // Lapras, face up.
+    settle(c);
+    expect(c.getSnapshot().undoable).toBe(true);
+    c.ball("master");
+    expect(c.getSnapshot().session?.quest?.party?.throw?.master).toBe(true);
+    expect(c.getSnapshot().undoable).toBe(false);
+  });
   it("is forgotten by a new game or the end of one", () => {
     const c = new PresentationController(initial(), vi.fn());
     c.tap();
