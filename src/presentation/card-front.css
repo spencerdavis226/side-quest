@@ -316,7 +316,7 @@
   background: #f5e5bd;
 }
 /* The Master Ball (2026-11-01): purple over cream. */
-.ball-result.master .ball-face {
+.ball-result.ball-master .ball-face {
   background: linear-gradient(
     to bottom,
     #7b2fb0 0 45%,
@@ -324,7 +324,24 @@
     #f5e5bd 55%
   );
 }
-.ball-result.master .ball-need {
+.ball-result.ball-master /* Great (blue) and Ultra (black and yellow) Balls (2026-11-01). */
+.ball-result.ball-great .ball-face {
+  background: linear-gradient(
+    to bottom,
+    #2f63c4 0 45%,
+    #2b1a0b 45% 55%,
+    #f5e5bd 55%
+  );
+}
+.ball-result.ball-ultra .ball-face {
+  background: linear-gradient(
+    to bottom,
+    #26262c 0 45%,
+    #2b1a0b 45% 55%,
+    #f5e5bd 55%
+  );
+}
+.ball-need {
   color: #6b2a8f;
   font-style: normal;
   font-weight: 700;

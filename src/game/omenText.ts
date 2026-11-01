@@ -233,6 +233,8 @@ export const leagueOmenWords: OmenWords = {
     candy: ["Rare Candy", "Rare Candies", "a"],
     round: ["Baton Pass", "Baton Passes", "a"],
     master: ["Master Ball", "Master Balls", "a"],
+    great: ["Great Ball", "Great Balls", "a"],
+    ultra: ["Ultra Ball", "Ultra Balls", "an"],
   },
   kinds: {
     monster: "route battles",
@@ -270,6 +272,8 @@ export const dungeonOmenWords: OmenWords = {
     round: ["Bar Tab", "Bar Tabs", "a"],
     // Never dealt in Pub Crawl; named for completeness.
     master: ["Master Ball", "Master Balls", "a"],
+    great: ["Great Ball", "Great Balls", "a"],
+    ultra: ["Ultra Ball", "Ultra Balls", "an"],
   },
   kinds: {
     monster: "monsters",

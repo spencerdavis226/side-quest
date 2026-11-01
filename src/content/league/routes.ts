@@ -407,6 +407,15 @@ const route2: CardDefinition[] = [
     "You find a shiny rock and decide it's a weapon now. Give 1.",
     "die",
   ),
+  // Great and Ultra Balls (2026-11-01, owner: "add great balls and ultra
+  // balls"): +3 and +6 to a catch.
+  item(
+    1,
+    "route-great-ball",
+    "Free Sample",
+    "A Poké Mart rep hands you a Great Ball. Everyone thanks him in a salesman voice. Give 1.",
+    "great",
+  ),
 ];
 const route2Aces: CardDefinition[] = [
   ace(
@@ -576,6 +585,13 @@ const route3: CardDefinition[] = [
     "Hidden Item",
     "The Itemfinder beeps at a bush. You kick it and something falls out. Give 1.",
     "shield",
+  ),
+  item(
+    2,
+    "route-great-ball-grass",
+    "Ball in the Grass",
+    "A Great Ball is sitting in the tall grass. Pocket it and give 1.",
+    "great",
   ),
 ];
 const route3Aces: CardDefinition[] = [
@@ -955,6 +971,13 @@ const route5: CardDefinition[] = [
     "Secret House",
     "You find the Safari Zone's secret house. A man gives you something for no reason.",
     "smoke",
+  ),
+  item(
+    4,
+    "route-ultra-ball",
+    "Ranger's Spare",
+    "A Safari ranger lends you an Ultra Ball and never asks for it back. Give 2.",
+    "ultra",
   ),
 ];
 const route5Aces: CardDefinition[] = [
@@ -1341,6 +1364,13 @@ const route7: CardDefinition[] = [
     "Infinite items. Give 5.",
     ["Walk away", "Surf the shore"],
     "die",
+  ),
+  item(
+    6,
+    "route-ultra-ball-ledge",
+    "Ultra Ball",
+    "An Ultra Ball sits on a ledge only you can reach. Grab it and give 2.",
+    "ultra",
   ),
 ];
 const route7Aces: CardDefinition[] = [

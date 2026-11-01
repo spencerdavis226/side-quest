@@ -42,6 +42,8 @@ export interface ThrownBall {
   caught: boolean;
   /** The Master Ball (2026-11-01): purple, and always a 20. */
   master?: boolean;
+  /** The ball thrown, when not a Poké Ball (2026-11-01): its colours. */
+  ball?: "great" | "ultra" | "master";
 }
 
 const quiet = () =>
@@ -159,6 +161,22 @@ function DonutBall({
   );
 }
 
+const BALL_NAMES = {
+  great: "Great Ball",
+  ultra: "Ultra Ball",
+  master: "Master Ball",
+} as const;
+/** The line under the ball: what it needs, and which ball it is. */
+export const ballWords = (b: {
+  need: number;
+  ball?: "great" | "ultra" | "master";
+}) =>
+  b.ball === "master"
+    ? "Master Ball"
+    : b.ball
+      ? `${BALL_NAMES[b.ball]} · needs ${b.need}+`
+      : `needs ${b.need}+`;
+
 export function BallThrowStage({
   ball,
   throwKey,
@@ -216,7 +234,7 @@ export function BallThrowStage({
   const verdict = thrown.caught ? "caught" : "fled";
   return createPortal(
     <div
-      className={`ball-stage ${landed ? `landed ${verdict}` : "spinning"}${thrown.master ? " master" : ""}`}
+      className={`ball-stage ${landed ? `landed ${verdict}` : "spinning"}${thrown.ball ? ` ball-${thrown.ball}` : ""}`}
       aria-hidden="true"
       onPointerDown={(event) => {
         event.stopPropagation();
@@ -229,7 +247,7 @@ export function BallThrowStage({
           landed={landed}
           onLanded={() => setLanded(true)}
         />
-        <small>{thrown.master ? "Master Ball" : `needs ${thrown.need}+`}</small>
+        <small>{ballWords(thrown)}</small>
       </div>
       {landed && (
         <p className="ball-stage-verdict">

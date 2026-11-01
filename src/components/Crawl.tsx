@@ -674,11 +674,15 @@ export function CatchPlaques({
   onCatch,
   onRelease,
   theme,
+  picker,
 }: {
   session: SessionState;
   onCatch: () => void;
   onRelease: () => void;
   theme: CrawlTheme;
+  /** With a better ball in the bag (2026-11-01): the plaque that opens the
+   * sheet of balls, in place of the Poké Ball's. */
+  picker?: ReactNode;
 }) {
   const card = currentCardOf(session);
   const old = catchReplaces(session.quest);
@@ -687,28 +691,30 @@ export function CatchPlaques({
   const need = card.catchRate;
   return (
     <>
-      <button
-        className="card-choice-option offer-plaque offer-buy catch-plaque"
-        aria-label={
-          need
-            ? `Throw a ball at ${card.title}: roll d20, ${need} or more catches it${old ? `, and ${old.title} goes` : ""}`
-            : `Catch ${card.title}: drink 1${old ? `, and ${old.title} goes` : ""}`
-        }
-        onClick={onCatch}
-      >
-        <span className="offer-goods" aria-hidden="true">
-          <CrawlIcon name="heart" theme={theme} />
-        </span>
-        <span className="offer-label">
-          <span className="offer-name">
-            {need ? "Throw a ball" : "Catch it"}
+      {picker ?? (
+        <button
+          className="card-choice-option offer-plaque offer-buy catch-plaque"
+          aria-label={
+            need
+              ? `Throw a ball at ${card.title}: roll d20, ${need} or more catches it${old ? `, and ${old.title} goes` : ""}`
+              : `Catch ${card.title}: drink 1${old ? `, and ${old.title} goes` : ""}`
+          }
+          onClick={onCatch}
+        >
+          <span className="offer-goods" aria-hidden="true">
+            <CrawlIcon name="heart" theme={theme} />
           </span>
-          <small className="offer-price">
-            {need ? `d20 · ${need}+` : "drink 1"}
-            {old ? ` · ${old.title} goes` : ""}
-          </small>
-        </span>
-      </button>
+          <span className="offer-label">
+            <span className="offer-name">
+              {need ? "Throw a ball" : "Catch it"}
+            </span>
+            <small className="offer-price">
+              {need ? `d20 · ${need}+` : "drink 1"}
+              {old ? ` · ${old.title} goes` : ""}
+            </small>
+          </span>
+        </button>
+      )}
       <button
         className="card-choice-option offer-plaque offer-pass"
         aria-label={`Let ${card.title} go`}
@@ -722,34 +728,6 @@ export function CatchPlaques({
         </span>
       </button>
     </>
-  );
-}
-
-/** The bag's Master Ball (2026-11-01), offered beside the ball at any
- * catch: it always lands a 20. */
-export function MasterBallPlaque({
-  name,
-  onThrow,
-  theme,
-}: {
-  name: string;
-  onThrow: () => void;
-  theme: CrawlTheme;
-}) {
-  return (
-    <button
-      className="card-choice-option offer-plaque offer-buy master-plaque"
-      aria-label={`Master Ball: catch ${name}, always`}
-      onClick={onThrow}
-    >
-      <span className="offer-goods" aria-hidden="true">
-        <CrawlIcon name="master" theme={theme} />
-      </span>
-      <span className="offer-label">
-        <span className="offer-name">{theme.loot.master.name}</span>
-        <small className="offer-price">always catches</small>
-      </span>
-    </button>
   );
 }
 

@@ -621,12 +621,26 @@ export function catchIt(
   const party = joinTeam(q.party!, currentCard(s).id);
   return discard({ ...s, quest: { ...q, party } }, random);
 }
-/** Whether a Master Ball can be thrown at the Pokémon face up (2026-11-01):
- * one is in the bag and a ball could be thrown now, at a beaten wild
- * Pokémon or a catch card's offer. */
-export function canThrowMaster(s: SessionState): boolean {
+/** The balls a bag can hold (2026-11-01): a Great Ball adds 3 to the throw
+ * and an Ultra Ball 6 (on a hard catch, needing 15, that is 30% to 45% and
+ * 60%: the games' 1.5x and 2x); a Master Ball always lands a 20. */
+export type SpecialBall = "great" | "ultra" | "master";
+export const SPECIAL_BALLS: readonly SpecialBall[] = [
+  "great",
+  "ultra",
+  "master",
+];
+export const BALL_BONUS = { great: 3, ultra: 6 } as const;
+/** The number a throw with `ball` must reach to catch a Pokémon that needs
+ * `need`: lowered by the ball's bonus, never below 2 (a natural 1 never
+ * catches). */
+export const ballNeed = (need: number, ball?: "great" | "ultra") =>
+  Math.max(2, need - (ball ? BALL_BONUS[ball] : 0));
+/** Whether a ball can be thrown at the Pokémon face up now: at a beaten
+ * wild Pokémon or a catch card's offer. */
+function canThrowAt(s: SessionState): boolean {
   const party = s.quest?.party;
-  if (!party?.loot.includes("master") || party.throw) return false;
+  if (!party || party.throw) return false;
   const card = currentCard(s);
   if (!card.catchRate) return false;
   if (awaitingCatch(s)) return true;
@@ -635,26 +649,49 @@ export function canThrowMaster(s: SessionState): boolean {
     !!card.offers?.some((o, i) => o.catch && canTakeOffer(s, i))
   );
 }
-/** Throw the bag's Master Ball (2026-11-01): it is spent and lands a 20,
- * so the Pokémon is caught. A catch card's offer (its heal) comes with it,
- * as with a ball. */
-export function throwMaster(s: SessionState): SessionState {
-  if (!canThrowMaster(s)) return s;
+/** Whether the bag's `ball` can be thrown now. */
+export const canThrowWith = (s: SessionState, ball: SpecialBall) =>
+  !!s.quest?.party?.loot.includes(ball) && canThrowAt(s);
+/** The bag's balls that can be thrown now, best last. */
+export const ballsReady = (s: SessionState) =>
+  canThrowAt(s)
+    ? SPECIAL_BALLS.filter((b) => s.quest!.party!.loot.includes(b))
+    : [];
+/** Throw one of the bag's balls (2026-11-01): it is spent. A Great or Ultra
+ * Ball rolls the d20 with its bonus; a Master Ball lands a 20. A catch
+ * card's offer (its heal) comes with a catch, as with a Poké Ball. */
+export function throwWith(
+  s: SessionState,
+  ball: SpecialBall,
+  random: Random = Math.random,
+): SessionState {
+  if (!canThrowWith(s, ball)) return s;
   const q = s.quest!;
   const loot = [...q.party!.loot];
-  loot.splice(loot.indexOf("master"), 1);
-  return {
-    ...s,
-    quest: {
-      ...q,
-      party: {
-        ...q.party!,
-        loot,
-        throw: { id: currentCard(s).id, face: 20, master: true },
+  loot.splice(loot.indexOf(ball), 1);
+  const id = currentCard(s).id;
+  if (ball === "master")
+    return {
+      ...s,
+      quest: {
+        ...q,
+        party: { ...q.party!, loot, throw: { id, face: 20, master: true } },
       },
-    },
+    };
+  const thrown = throwAt(
+    { ...s, quest: { ...q, party: { ...q.party!, loot } } },
+    random,
+  );
+  const p = thrown.quest!.party!;
+  return {
+    ...thrown,
+    quest: { ...thrown.quest!, party: { ...p, throw: { ...p.throw!, ball } } },
   };
 }
+/** Whether a Master Ball can be thrown now. */
+export const canThrowMaster = (s: SessionState) => canThrowWith(s, "master");
+/** Throw the bag's Master Ball: it lands a 20. */
+export const throwMaster = (s: SessionState) => throwWith(s, "master");
 /** Whether a d20 `face` catches a Pokémon that needs `need` (2026-10-27):
  * a natural 20 always does and a natural 1 never. */
 export const caughtBy = (face: number, need: number) =>
@@ -666,12 +703,14 @@ export function thrownBall(s: SessionState) {
   if (!thrown || s.phase === "complete") return null;
   const card = currentCard(s);
   if (card.id !== thrown.id || !card.catchRate || !card.catchLines) return null;
-  const caught = caughtBy(thrown.face, card.catchRate);
+  const need = ballNeed(card.catchRate, thrown.ball);
+  const caught = caughtBy(thrown.face, need);
   return {
     face: thrown.face,
-    need: card.catchRate,
+    need,
     caught,
     master: !!thrown.master,
+    ball: thrown.master ? ("master" as const) : thrown.ball,
     line: caught ? card.catchLines.caught : card.catchLines.fled,
   };
 }
@@ -1152,7 +1191,9 @@ export function canUseLoot(s: SessionState, item: Loot): boolean {
     case "revive":
       return false; // Each works on its own, when it is needed.
     case "master":
-      return false; // Thrown from its own plaque at a catch (`throwMaster`).
+    case "great":
+    case "ultra":
+      return false; // Thrown at a catch (`throwWith`).
     case "candy": {
       // A branching starter picks its form on an evolution card.
       const form = omenForm(s.quest);

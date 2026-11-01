@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { ballWords } from "./BallThrow";
 import type { CardDefinition, DiceRoll, PartyState } from "../game/types";
 import { CardStakes } from "./Crawl";
 import type { CrawlTheme } from "./crawlTheme";
@@ -61,6 +62,8 @@ export function CardFace({
     line: string;
     /** Thrown with the Master Ball (2026-11-01): a purple ball. */
     master?: boolean;
+    /** The ball, when not a Poké Ball (2026-11-01). */
+    ball?: "great" | "ultra" | "master";
   } | null;
 }) {
   // A strike reads the line for its matchup (the engine's `strikeText`).
@@ -290,21 +293,21 @@ export function CardFace({
         >
           {ball ? (
             <div
-              className={`ball-result ${ball.caught ? "caught" : "fled"}${ball.master ? " master" : ""}`}
+              className={`ball-result ${ball.caught ? "caught" : "fled"}${ball.ball ? ` ball-${ball.ball}` : ""}`}
             >
               <div
                 className="ball-throw"
                 aria-label={
                   ball.master
                     ? "Threw the Master Ball. Caught."
-                    : `Threw a ${ball.face}, needed ${ball.need}. ${ball.caught ? "Caught" : "It got away"}.`
+                    : `${ballWords(ball)}: threw a ${ball.face}. ${ball.caught ? "Caught" : "It got away"}.`
                 }
               >
                 <span className="ball-face" aria-hidden="true">
                   {ball.face}
                 </span>
                 <span className="ball-need" aria-hidden="true">
-                  {ball.master ? "Master Ball" : `needs ${ball.need}+`}
+                  {ballWords(ball)}
                 </span>
               </div>
               <p className="ball-verdict">

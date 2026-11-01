@@ -7,7 +7,9 @@ import {
   cardMatchup,
   catchIt,
   caughtBy,
+  ballsReady,
   canThrowMaster,
+  throwWith,
   canUseLoot,
   partyTeam,
   throwMaster,
@@ -460,6 +462,55 @@ describe("Master Ball, the Togepi egg and caught Legendaries", () => {
       },
     };
     expect(() => parseSession(JSON.stringify(bad))).toThrow();
+  });
+
+  it("a Great Ball adds 3 and an Ultra Ball 6 to the throw, and each is spent", () => {
+    const base = facing("pikachu", "pokemon.route-lapras");
+    const need = currentCard(base).catchRate!;
+    const bag = (s: SessionState, loot: ("great" | "ultra" | "master")[]) => ({
+      ...s,
+      quest: { ...s.quest!, party: { ...party(s), loot } },
+    });
+    const s = bag(base, ["great", "ultra", "master"]);
+    expect(ballsReady(s)).toEqual(["great", "ultra", "master"]);
+    // A face of need - 3 misses with a Poké Ball and catches with a Great Ball.
+    const face = need - 3;
+    const r: Random = () => (face - 1 + 0.5) / 20;
+    const great = throwWith(s, "great", r);
+    expect(party(great).throw).toEqual({
+      id: "pokemon.route-lapras",
+      face,
+      ball: "great",
+    });
+    expect(party(great).loot).toEqual(["ultra", "master"]);
+    expect(thrownBall(great)).toMatchObject({
+      need: need - 3,
+      caught: true,
+      ball: "great",
+    });
+    // Lapras needs 7: an Ultra Ball takes it to the floor of 2.
+    expect(need).toBe(7);
+    const ultra = throwWith(s, "ultra", () => 0.06); // A 2.
+    expect(thrownBall(ultra)).toMatchObject({ face: 2, need: 2, caught: true });
+    // Never below 2: a natural 1 still misses.
+    const one = throwWith(s, "ultra", () => 0);
+    expect(thrownBall(one)).toMatchObject({ face: 1, caught: false });
+    // Not without one in the bag.
+    expect(throwWith(base, "great", r)).toBe(base);
+  });
+
+  it("refuses a saved throw with a ball that does not exist or beside a Master Ball", () => {
+    const s = throwMaster(withBall(facing("pikachu", PIDGEY)));
+    for (const thrown of [
+      { id: PIDGEY, face: 20, master: true, ball: "great" },
+      { id: PIDGEY, face: 9, ball: "hyper" },
+    ]) {
+      const bad = {
+        ...s,
+        quest: { ...s.quest!, party: { ...party(s), throw: thrown } },
+      };
+      expect(() => parseSession(JSON.stringify(bad))).toThrow();
+    }
   });
 
   it("Silph Co. gives the Master Ball", () => {

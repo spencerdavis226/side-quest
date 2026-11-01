@@ -318,6 +318,9 @@ export const LOOT = [
   // The League's Master Ball (2026-11-01): thrown in place of a ball, it
   // always lands a 20. Pub Crawl never deals one.
   "master",
+  // The League's Great and Ultra Balls (2026-11-01): +3 and +6 to a throw.
+  "great",
+  "ultra",
 ] as const;
 export type Loot = (typeof LOOT)[number];
 /** `fuse`: a hidden length between `min` and `max` seconds, picked when it is
@@ -437,7 +440,13 @@ export interface PartyState {
   /** The ball thrown at the Pokémon on the card in play (2026-10-27): its
    * card ID and the d20 face, kept until the card is put aside so a reload
    * never throws again. */
-  throw?: { id: string; face: number; master?: true };
+  throw?: {
+    id: string;
+    face: number;
+    master?: true;
+    /** A Great or Ultra Ball (2026-11-01): its bonus lowers the need. */
+    ball?: "great" | "ultra";
+  };
   /** The caught Pokémon sent into the d20 battle face up (2026-10-31,
    * owner: "power groups", a Nuzlocke): its card ID, still on the team. Its
    * bonus (`assistBonus`) joins the roll; cleared when the card is put

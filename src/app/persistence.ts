@@ -254,7 +254,11 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
         p.throw.face > 20 ||
         // A Master Ball (2026-11-01) always lands a 20.
         (p.throw.master !== undefined &&
-          (p.throw.master !== true || p.throw.face !== 20)))) ||
+          (p.throw.master !== true || p.throw.face !== 20)) ||
+        // A Great or Ultra Ball (2026-11-01), never with a Master Ball.
+        (p.throw.ball !== undefined &&
+          ((p.throw.ball !== "great" && p.throw.ball !== "ultra") ||
+            p.throw.master !== undefined)))) ||
     // The caught Pokémon sent into the d20 battle face up (2026-10-31): one
     // on the team.
     (p.assist !== undefined &&

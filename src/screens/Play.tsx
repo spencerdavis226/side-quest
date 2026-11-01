@@ -23,7 +23,9 @@ import {
   fellingVerdict,
   awaitingVerdict,
   canTakeOffer,
-  canThrowMaster,
+  ballNeed,
+  ballsReady,
+  type SpecialBall,
   canSendIn,
   partyTeam,
   spoilsOnWin,
@@ -47,11 +49,11 @@ import {
 import {
   ExtrasSheet,
   FanPlaque,
+  type Extra,
   UsePlaque,
   buildExtras,
   OfferPlaque,
   CatchPlaques,
-  MasterBallPlaque,
   PressPlaques,
   SpoilsButton,
   SpoilsSheet,
@@ -105,7 +107,7 @@ export function Play({
   onSpend = () => {},
   onOffer = () => {},
   onCatch = () => {},
-  onMaster = () => {},
+  onBall = () => {},
   onRelease = () => {},
   onSend = () => {},
   onSpoils = () => {},
@@ -127,7 +129,7 @@ export function Play({
   onSpend?: (item: Loot) => void;
   onOffer?: (index: number, branch?: number) => void;
   onCatch?: () => void;
-  onMaster?: () => void;
+  onBall?: (ball: SpecialBall) => void;
   onRelease?: () => void;
   onSend?: (id: string) => void;
   onSpoils?: (index: number) => void;
@@ -197,8 +199,9 @@ export function Play({
   // The League's team (2026-10-25): a beaten wild Pokémon to catch, and
   // teammates who can be sent in for this battle.
   const catching = !motion && awaitingCatch(session);
-  // The bag's Master Ball joins either kind of catch (2026-11-01).
-  const master = !motion && canThrowMaster(session);
+  // The bag's Great, Ultra and Master Balls (2026-11-01): with any, "Throw
+  // a ball" opens a sheet to pick one, the Poké Ball first.
+  const balls = motion ? [] : ballsReady(session);
   const ball = thrownBall(session);
   const senders = motion
     ? []
@@ -236,14 +239,45 @@ export function Play({
   };
   const ask = asking === session.discarded && !motion;
   const crawl = crawlTheme(session.quest?.packId);
-  const masterPlaque = master ? (
-    <MasterBallPlaque
-      key="master"
-      name={card.title}
-      onThrow={onMaster}
+  const catchOffer = card.offers?.findIndex((o) => o.catch) ?? -1;
+  const [picking, setPicking] = useState<number | null>(null);
+  const ballSheet = balls.length > 0 && picking === session.discarded;
+  const ballRows: Extra[] = balls.length
+    ? [
+        {
+          key: "poke",
+          name: "Poké Ball",
+          does: `needs ${card.catchRate}+`,
+          mark: <CrawlIcon name="heart" theme={crawl} />,
+          run: catchOffer >= 0 ? () => onOffer(catchOffer) : onCatch,
+          plaque: null,
+          long: false,
+        },
+        ...balls.map((b): Extra => ({
+          key: b,
+          name: crawl.loot[b].name,
+          does:
+            b === "master"
+              ? "always catches"
+              : `needs ${ballNeed(card.catchRate ?? 20, b)}+`,
+          mark: <CrawlIcon name={b} theme={crawl} />,
+          run: () => onBall(b),
+          plaque: null,
+          long: false,
+        })),
+      ]
+    : [];
+  const ballPicker = (
+    <FanPlaque
+      key="pick-ball"
+      name="Throw a ball"
+      under="pick a ball"
+      icon="heart"
+      count={ballRows.length}
+      onOpen={() => setPicking(session.discarded)}
       theme={crawl}
     />
-  ) : null;
+  );
   useAnnounce(
     felled ? `${card.title}: ${felledWord!.toLowerCase()}.` : "",
     felled ? `felled-${session.discarded}` : null,
@@ -550,7 +584,7 @@ export function Play({
           {catching && (
             <div
               ref={choiceRef}
-              className={`card-choice offers catch plaques-${master ? 3 : 2}`}
+              className="card-choice offers catch plaques-2"
               role="group"
               aria-label="Catch it"
             >
@@ -559,8 +593,8 @@ export function Play({
                 onCatch={onCatch}
                 onRelease={onRelease}
                 theme={crawl}
+                picker={balls.length ? ballPicker : undefined}
               />
-              {masterPlaque}
             </div>
           )}
           {offers && fold && (
@@ -597,22 +631,25 @@ export function Play({
           {offers && !fold && (
             <div
               ref={choiceRef}
-              className={`card-choice offers plaques-${plaques.length + (master ? 1 : 0)}`}
+              className={`card-choice offers plaques-${plaques.length}`}
               role="group"
               aria-label="Your choice"
             >
-              {plaques.map(({ offer, i, branch }) => (
-                <OfferPlaque
-                  key={`${i}-${branch?.index ?? ""}`}
-                  offer={offer}
-                  index={i}
-                  can={canTakeOffer(session, i)}
-                  onTake={onOffer}
-                  theme={crawl}
-                  branch={branch}
-                />
-              ))}
-              {masterPlaque}
+              {plaques.map(({ offer, i, branch }) =>
+                offer.catch && balls.length ? (
+                  ballPicker
+                ) : (
+                  <OfferPlaque
+                    key={`${i}-${branch?.index ?? ""}`}
+                    offer={offer}
+                    index={i}
+                    can={canTakeOffer(session, i)}
+                    onTake={onOffer}
+                    theme={crawl}
+                    branch={branch}
+                  />
+                ),
+              )}
             </div>
           )}
           {spoils && (
@@ -716,6 +753,17 @@ export function Play({
         throwKey={ball ? `${card.id}-${session.discarded}` : null}
         name={card.title}
       />
+      {ballSheet && (
+        <ExtrasSheet
+          title="Throw which ball?"
+          extras={ballRows}
+          onTake={(row) => {
+            setPicking(null);
+            row.run();
+          }}
+          onClose={() => setPicking(null)}
+        />
+      )}
       {fanSheet && (
         <ExtrasSheet
           title="Evolve into"

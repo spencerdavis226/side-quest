@@ -256,6 +256,7 @@ const situations: [string, GameConfig, Find][] = [
     (s) => party(s).loot.includes("master") && s.phase === "hidden",
   ],
   ["league-master-thrown", league, (s) => !!party(s).throw?.master],
+  ["league-great-ball-thrown", league, (s) => !!party(s).throw?.ball],
   [
     "league-togepi-hatched",
     league,

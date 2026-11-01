@@ -311,7 +311,7 @@ the Review column is intentionally blank so you can mark it up.
 
 ## Pokémon night (`pokemon`)
 
-577 cards · 52 sip · 75 group · 18 category · 383 challenge · 49 rule · 212 dice
+581 cards · 56 sip · 75 group · 18 category · 383 challenge · 49 rule · 212 dice
 
 | Review | Title | ID | Cat | Rules | Dice, secret or timer |
 | --- | --- | --- | --- | --- | --- |
@@ -348,20 +348,24 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Clefairy | `pokemon.route-clefairy` | sip | A Clefairy is dancing under the moon. It's beautiful. Wipe a tear and decide. |  |
 | ☐ | Pewter Mart | `pokemon.route-pewter-mart` | sip | The Pewter Mart sells mostly rocks. The clerk is also mostly rock. |  |
 | ☐ | Shiny Rock | `pokemon.route-moon-stone` | sip | You find a shiny rock and decide it's a weapon now. Give 1. |  |
+| ☐ | Free Sample | `pokemon.route-great-ball` | sip | A Poké Mart rep hands you a Great Ball. Everyone thanks him in a salesman voice. Give 1. |  |
 | ☐ | Abra | `pokemon.route-abra` | sip | An Abra is asleep. It will teleport the second you move. Throw now? |  |
 | ☐ | Cerulean Mart | `pokemon.route-cerulean-mart` | sip | The bike shop wants a million for a bike. The Mart next door is reasonable. |  |
 | ☐ | Hidden Item | `pokemon.route-hidden-item` | sip | The Itemfinder beeps at a bush. You kick it and something falls out. Give 1. |  |
+| ☐ | Ball in the Grass | `pokemon.route-great-ball-grass` | sip | A Great Ball is sitting in the tall grass. Pocket it and give 1. |  |
 | ☐ | Name Rater | `pokemon.route-name-rater` | sip | The Name Rater loves the name of the player on your right. Everyone toasts them and drinks 1. |  |
 | ☐ | Lapras | `pokemon.route-lapras` | sip | A man in Silph Co. says the Lapras in the tank is yours if you can catch it. |  |
 | ☐ | Celadon Department | `pokemon.route-celadon-dept` | sip | Five floors of shopping and a rooftop vending machine. The clerk is drunk. |  |
 | ☐ | Chansey | `pokemon.route-chansey` | sip | A Chansey in the Safari Zone. It's carrying an egg. It runs if you breathe. |  |
 | ☐ | Fuchsia Mart | `pokemon.route-fuchsia-mart` | sip | A Mart near the Safari Zone. Everything costs more because tourists. |  |
 | ☐ | Secret House | `pokemon.route-surf-hm` | sip | You find the Safari Zone's secret house. A man gives you something for no reason. |  |
+| ☐ | Ranger's Spare | `pokemon.route-ultra-ball` | sip | A Safari ranger lends you an Ultra Ball and never asks for it back. Give 2. |  |
 | ☐ | Dratini | `pokemon.route-dratini` | sip | A Dratini in the Safari Zone's deepest pond. It's worth every drink. |  |
 | ☐ | Saffron Mart | `pokemon.route-saffron-mart` | sip | A Mart in Silph's lobby, guarded by a Rocket who also works the register. |  |
 | ☐ | Silph Gift | `pokemon.route-silph-gift` | sip | The Silph Co. president thanks you with a Master Ball. Give 2. |  |
 | ☐ | Gift Eevee | `pokemon.route-eevee-gift` | sip | A man in a mansion lets an Eevee loose and says it's yours if you can catch it. |  |
 | ☐ | Cinnabar Mart | `pokemon.route-cinnabar-mart` | sip | The last Mart before a burned-down mansion. Prices are scorched. |  |
+| ☐ | Ultra Ball | `pokemon.route-ultra-ball-ledge` | sip | An Ultra Ball sits on a ledge only you can reach. Grab it and give 2. |  |
 | ☐ | Trainer's Toast | `pokemon.route-last-toast` | sip | Toast your starter. Everyone drinks 1 and names one thing they'll miss about the road. |  |
 | ☐ | Sleeping Snorlax | `pokemon.route-snorlax-catch` | sip | A Snorlax asleep on the road. It's huge. It's yours if you can carry it. |  |
 | ☐ | Last Mart | `pokemon.route-last-mart` | sip | The last Mart before the League. Everything is Full Restores and despair. |  |

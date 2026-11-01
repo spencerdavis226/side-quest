@@ -633,12 +633,6 @@
   color: #fbefff;
   background: linear-gradient(145deg, #6c4ea3, #35205e);
 }
-/* The Master Ball's plaque (2026-11-01): its own purple and pink. */
-.offer-plaque.master-plaque {
-  color: #fff0fb;
-  background: linear-gradient(145deg, #9a3fc4, #4b1470);
-  box-shadow: inset 0 0 0 2px rgb(255 140 214 / 0.55);
-}
 .offer-plaque.offer-loud {
   color: #ffe2c9;
   background: linear-gradient(145deg, #8a2e26, #4a1714);
@@ -2218,10 +2212,10 @@
 }
 /* The Master Ball (2026-11-01): a purple top with its two pink bumps, a
    violet glow, and violet and pink confetti. */
-.ball-stage.master .ball-donut {
+.ball-stage.ball-master .ball-donut {
   filter: drop-shadow(0 0 26px rgb(196 120 255 / 0.45));
 }
-.ball-stage.master .ball-donut-half.top {
+.ball-stage.ball-master .ball-donut-half.top {
   background:
     radial-gradient(
       circle closest-side,
@@ -2235,20 +2229,62 @@
     radial-gradient(circle at 78% 30%, #ff7fc8 0 9%, transparent 9.5%),
     radial-gradient(circle at 35% 25%, #c77bff, #5b1a8c 72%);
 }
-.ball-stage.master .ball-donut-number,
-.landed.caught.master .ball-donut-number {
+.ball-stage.ball-master .ball-donut-number,
+.landed.caught.ball-master .ball-donut-number {
   color: #f3d4ff;
 }
-.landed.caught.master .ball-donut {
+.landed.caught.ball-master .ball-donut {
   animation:
     ball-stage-shake 700ms ease-in-out both,
     ball-master-glow 900ms 700ms ease-out both;
 }
-.ball-stage.master .ball-stage-confetti i:nth-child(odd) {
+.ball-stage.ball-master .ball-stage-confetti i:nth-child(odd) {
   background: #c77bff;
 }
-.ball-stage.master .ball-stage-confetti i:nth-child(3n) {
+.ball-stage.ball-master .ball-stage-confetti i:nth-child(3n) {
   background: #ff7fc8;
+}
+/* Great Ball (2026-11-01): a blue top with two red patches. */
+.ball-stage.ball-great .ball-donut-half.top {
+  background:
+    radial-gradient(
+      circle closest-side,
+      transparent 0 62%,
+      #1d120a 62% 67%,
+      transparent 67% 94%,
+      #1d120a 94% 100%
+    ),
+    linear-gradient(transparent 0 45%, #1d120a 45%),
+    radial-gradient(ellipse 16% 22% at 16% 34%, #e2483c 0 98%, transparent),
+    radial-gradient(ellipse 16% 22% at 84% 34%, #e2483c 0 98%, transparent),
+    radial-gradient(circle at 35% 25%, #6aa8ff, #1d4fa8 72%);
+}
+.ball-stage.ball-great .ball-donut {
+  filter: drop-shadow(0 0 24px rgb(106 168 255 / 0.4));
+}
+/* Ultra Ball (2026-11-01): a black top with a yellow H. */
+.ball-stage.ball-ultra .ball-donut-half.top {
+  background:
+    radial-gradient(
+      circle closest-side,
+      transparent 0 62%,
+      #1d120a 62% 67%,
+      transparent 67% 94%,
+      #1d120a 94% 100%
+    ),
+    linear-gradient(transparent 0 45%, #1d120a 45%),
+    linear-gradient(
+      90deg,
+      transparent 0 22%,
+      #f2c94c 22% 30%,
+      transparent 30% 70%,
+      #f2c94c 70% 78%,
+      transparent 78%
+    ),
+    radial-gradient(circle at 35% 25%, #4a4a52, #121216 72%);
+}
+.ball-stage.ball-ultra .ball-donut {
+  filter: drop-shadow(0 0 24px rgb(242 201 76 / 0.4));
 }
 @keyframes ball-master-glow {
   50% {
