@@ -2,6 +2,16 @@
 
 Updated 2026-11-01. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Local, not yet committed (2026-11-01): Most Likely's countdown fixed, Paranoia costs 5
+
+Owner: the 3-2-1 "didn't show a 3-2-1. It just dimmed the screen ... then I saw fireworks"; Paranoia's reveal "2 is easy ... make it 5".
+
+- **Countdown off-screen (bug, since the moments review added rays).** `.point-rays` (160vmax) was a grid item in `.point-countdown`, so the one grid track grew past the screen and the numbers and POINT! were centred at about 80vmax from the left: x=675 on a 390-wide phone, behind `overflow: hidden`. The shade and the JS confetti/sparks still showed. The rays are now `position: absolute` (centred by `calc(50% - 80vmax)`) and the stage is `grid-template: 100% / 100%`. `moments.spec.ts`'s Most Likely test now measures that the number and POINT! sit at the screen's centre (it failed on the old CSS, 336 px off; `toBeVisible` had passed).
+- **Countdown under Reduce Motion.** The global block cut each number's animation to 0.01 ms but kept its delay, so nothing showed. Under Reduce Motion the numbers and POINT! now fade in and out in place at the countdown's pace (opacity only, longhands so the inline delays survive); rings and rays are hidden. The particle burst still fires (`burst` does not read Reduced Motion; unchanged).
+- **Paranoia** (`secrets.ts`, all 30 cards): "who can drink 5 to see the question" (was 2). Saves in progress keep their snapshot's text. `docs/CARD_REVIEW.md` and `card-review.csv` regenerated.
+
+**Checked (Chromium only; WebKit's download is blocked by this container's network policy):** in-page frame sampling at 390x844, 320x568 and 1024x1366, motion on and Reduce Motion: 3, 2, 1, POINT! about 700 ms apart, each centred. `npm test` 442, lint, typecheck, build (budgets pass), `moments.spec.ts` 11 passed, its Most Likely test `--repeat-each=5`, `test:release` Chromium 14 passed. **Not checked:** WebKit (CI runs it), a physical iPhone.
+
 ## Deployed 2026-11-01: eight more moments, the gym stamp gone, the clash explained, whole-card foil
 
 **Deployed** by CI run #284 (`64e111c`, every job green: build, checks, both balance jobs, Chromium and WebKit, deploy). Revert `64e111c` to undo; it also holds the faint, hatch and jinx moments below.

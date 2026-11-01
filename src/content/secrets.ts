@@ -154,7 +154,7 @@ const secretCards: CardDefinition[] = [
         id("paranoia", i),
         "Paranoia",
         "group",
-        "Left neighbor reads alone, then names someone, who can drink 2 to see the question.",
+        "Left neighbor reads alone, then names someone, who can drink 5 to see the question.",
       ),
       question,
     ),

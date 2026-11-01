@@ -58,6 +58,17 @@ test("Most Likely To counts down to POINT, and the card still puts aside", async
   const stage = page.locator(".point-countdown");
   await expect(stage).toBeVisible();
   await expect(stage.locator(".point-word")).toHaveText("Point!");
+  // Centred on the screen (owner, 2026-11-01: the 160vmax rays sat in the
+  // grid and pushed the numbers off a phone's right edge; toBeVisible still
+  // passed, so measure).
+  const view = page.viewportSize()!;
+  for (const el of [".point-num", ".point-word"]) {
+    const box = (await stage.locator(el).first().boundingBox())!;
+    expect(Math.abs(box.x + box.width / 2 - view.width / 2)).toBeLessThan(4);
+    expect(Math.abs(box.y + box.height / 2 - view.height / 2)).toBeLessThan(
+      view.height * 0.1,
+    );
+  }
   await expect(stage).toHaveCount(0, { timeout: 6000 });
   await page.locator(".game-card").click();
   await expect.poll(async () => (await saved(page)).discarded).toBe(1);

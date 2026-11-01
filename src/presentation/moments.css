@@ -5081,6 +5081,8 @@
 
 /* --- Most Likely To: 3, 2, 1, POINT! (2026-11-01) ------------------------ */
 .point-countdown {
+  /* One cell the size of the screen, so nothing inside can widen it. */
+  grid-template: 100% / 100%;
   /* Dark enough that the card's words sink behind the number (2026-11-01
      review: they read through it). */
   background: radial-gradient(circle at 50% 46%, #0d0906f0 0, #030201f7 75%);
@@ -5139,9 +5141,13 @@
     transform: scale(1.5);
   }
 }
-/* Rays behind POINT. */
+/* Rays behind POINT. Out of the grid's flow: as a 160vmax grid item they
+   widened the one track past the screen and pushed the numbers off its right
+   edge on a phone (owner, 2026-11-01: "didn't show a 3-2-1"). */
 .point-rays {
-  grid-area: 1 / 1;
+  position: absolute;
+  left: calc(50% - 80vmax);
+  top: calc(50% - 80vmax);
   width: 160vmax;
   height: 160vmax;
   background: repeating-conic-gradient(
@@ -5208,6 +5214,39 @@
   82% {
     opacity: 1;
     transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+/* Reduce Motion: the global block cuts every animation to 0.01ms but keeps
+   the delays, so the numbers would never show. They fade in and out in place
+   at the countdown's own pace instead; no rings, rays or zoom. */
+@media (prefers-reduced-motion: reduce) {
+  .point-countdown {
+    animation-duration: 3200ms !important;
+  }
+  /* Longhands: a shorthand would reset each number's inline delay. */
+  .point-num {
+    animation-name: point-still !important;
+    animation-duration: 700ms !important;
+    animation-timing-function: linear !important;
+  }
+  .point-word {
+    animation: point-still 1050ms linear 2100ms both !important;
+  }
+  .point-ring,
+  .point-rays {
+    display: none;
+  }
+}
+@keyframes point-still {
+  0% {
+    opacity: 0;
+  }
+  10%,
+  85% {
+    opacity: 1;
   }
   100% {
     opacity: 0;

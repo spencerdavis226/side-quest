@@ -1162,36 +1162,36 @@ the Review column is intentionally blank so you can mark it up.
 | --- | --- | --- | --- | --- | --- |
 | ☐ | Timed Waterfall | `secrets.clock-waterfall` | sip | Start the clock. Everyone drinks until time's up; anyone who stops early drinks 2 more. | Clock 5 s: Time. Everyone stops drinking. |
 | ☐ | Toll Bomb | `secrets.fuse-toll` | sip | Light the fuse. Drink 1, then pass a beer left. Everyone pays every time. | Fuse 15–45 s: Boom. Whoever's holding the beer drinks 3 more. |
-| ☐ | Paranoia | `secrets.paranoia-01` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here would you least trust with your unlocked phone? |
-| ☐ | Paranoia | `secrets.paranoia-02` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here is most likely to have a secret account? |
-| ☐ | Paranoia | `secrets.paranoia-03` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here would you call to help hide a body? |
-| ☐ | Paranoia | `secrets.paranoia-04` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here has the worst taste in partners? |
-| ☐ | Paranoia | `secrets.paranoia-05` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here would last longest in a zombie apocalypse? |
-| ☐ | Paranoia | `secrets.paranoia-06` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here talks about you behind your back? |
-| ☐ | Paranoia | `secrets.paranoia-07` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here would you want to be stuck in an elevator with? |
-| ☐ | Paranoia | `secrets.paranoia-08` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here is the worst kisser, judging by vibes alone? |
-| ☐ | Paranoia | `secrets.paranoia-09` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here would sell out the whole group for $10,000? |
-| ☐ | Paranoia | `secrets.paranoia-10` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here has the most embarrassing search history? |
-| ☐ | Paranoia | `secrets.paranoia-11` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here is secretly the most competitive? |
-| ☐ | Paranoia | `secrets.paranoia-12` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here would you trust to dress you for a wedding? |
-| ☐ | Paranoia | `secrets.paranoia-13` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here would you eat first after a plane crash? |
-| ☐ | Paranoia | `secrets.paranoia-14` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here has the highest body count? |
-| ☐ | Paranoia | `secrets.paranoia-15` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here would you least want to share a bed with? |
-| ☐ | Paranoia | `secrets.paranoia-16` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here is most likely to have a dark side nobody's seen? |
-| ☐ | Paranoia | `secrets.paranoia-17` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here gives the worst advice? |
-| ☐ | Paranoia | `secrets.paranoia-18` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here would you call at 3 a.m. in a real crisis? |
-| ☐ | Paranoia | `secrets.paranoia-19` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here should never be allowed to plan a trip? |
-| ☐ | Paranoia | `secrets.paranoia-20` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here is most likely to get arrested this year? |
-| ☐ | Paranoia | `secrets.paranoia-21` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who is the best-looking person at this table? |
-| ☐ | Paranoia | `secrets.paranoia-22` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here would you swap lives with for a week? |
-| ☐ | Paranoia | `secrets.paranoia-23` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here is faking having their life together? |
-| ☐ | Paranoia | `secrets.paranoia-24` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here would cry first in an argument? |
-| ☐ | Paranoia | `secrets.paranoia-25` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here has the most annoying laugh? |
-| ☐ | Paranoia | `secrets.paranoia-26` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here would you pick as your wingman tonight? |
-| ☐ | Paranoia | `secrets.paranoia-27` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here is the worst driver? |
-| ☐ | Paranoia | `secrets.paranoia-28` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here wins a fistfight against everyone else? |
-| ☐ | Paranoia | `secrets.paranoia-29` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here is most likely to ghost someone? |
-| ☐ | Paranoia | `secrets.paranoia-30` | group | Left neighbor reads alone, then names someone, who can drink 2 to see the question. | Secret: Who here owes someone at this table an apology? |
+| ☐ | Paranoia | `secrets.paranoia-01` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here would you least trust with your unlocked phone? |
+| ☐ | Paranoia | `secrets.paranoia-02` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here is most likely to have a secret account? |
+| ☐ | Paranoia | `secrets.paranoia-03` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here would you call to help hide a body? |
+| ☐ | Paranoia | `secrets.paranoia-04` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here has the worst taste in partners? |
+| ☐ | Paranoia | `secrets.paranoia-05` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here would last longest in a zombie apocalypse? |
+| ☐ | Paranoia | `secrets.paranoia-06` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here talks about you behind your back? |
+| ☐ | Paranoia | `secrets.paranoia-07` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here would you want to be stuck in an elevator with? |
+| ☐ | Paranoia | `secrets.paranoia-08` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here is the worst kisser, judging by vibes alone? |
+| ☐ | Paranoia | `secrets.paranoia-09` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here would sell out the whole group for $10,000? |
+| ☐ | Paranoia | `secrets.paranoia-10` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here has the most embarrassing search history? |
+| ☐ | Paranoia | `secrets.paranoia-11` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here is secretly the most competitive? |
+| ☐ | Paranoia | `secrets.paranoia-12` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here would you trust to dress you for a wedding? |
+| ☐ | Paranoia | `secrets.paranoia-13` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here would you eat first after a plane crash? |
+| ☐ | Paranoia | `secrets.paranoia-14` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here has the highest body count? |
+| ☐ | Paranoia | `secrets.paranoia-15` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here would you least want to share a bed with? |
+| ☐ | Paranoia | `secrets.paranoia-16` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here is most likely to have a dark side nobody's seen? |
+| ☐ | Paranoia | `secrets.paranoia-17` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here gives the worst advice? |
+| ☐ | Paranoia | `secrets.paranoia-18` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here would you call at 3 a.m. in a real crisis? |
+| ☐ | Paranoia | `secrets.paranoia-19` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here should never be allowed to plan a trip? |
+| ☐ | Paranoia | `secrets.paranoia-20` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here is most likely to get arrested this year? |
+| ☐ | Paranoia | `secrets.paranoia-21` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who is the best-looking person at this table? |
+| ☐ | Paranoia | `secrets.paranoia-22` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here would you swap lives with for a week? |
+| ☐ | Paranoia | `secrets.paranoia-23` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here is faking having their life together? |
+| ☐ | Paranoia | `secrets.paranoia-24` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here would cry first in an argument? |
+| ☐ | Paranoia | `secrets.paranoia-25` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here has the most annoying laugh? |
+| ☐ | Paranoia | `secrets.paranoia-26` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here would you pick as your wingman tonight? |
+| ☐ | Paranoia | `secrets.paranoia-27` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here is the worst driver? |
+| ☐ | Paranoia | `secrets.paranoia-28` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here wins a fistfight against everyone else? |
+| ☐ | Paranoia | `secrets.paranoia-29` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here is most likely to ghost someone? |
+| ☐ | Paranoia | `secrets.paranoia-30` | group | Left neighbor reads alone, then names someone, who can drink 5 to see the question. | Secret: Who here owes someone at this table an apology? |
 | ☐ | Fact or Cap | `secrets.fact-01` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: FACT: Octopuses have three hearts. |
 | ☐ | Fact or Cap | `secrets.fact-02` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: CAP: Goldfish only have a three-second memory. |
 | ☐ | Fact or Cap | `secrets.fact-03` | group | Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2. | Secret: FACT: Honey found in ancient Egyptian tombs was still edible. |
