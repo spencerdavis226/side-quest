@@ -2,6 +2,113 @@
 
 Updated 2026-11-01. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Planned 2026-11-01: premium moments (owner: "Let's make a plan for literally all of these except for sound ... No cheap builds. I want this game to feel premium")
+
+In progress (owner, 2026-11-01: "Everything main. Push ... review and overhaul anything that needs touching up or refactoring, including older animations/effects/moments ... then proceed and build in a logical order"). Eleven display-only moments plus the shared layer they stand on. **No engine, save, card ID or balance change anywhere in this plan**; every trigger is read from state the game already keeps. Sound is out of scope (owner). Build in the four phases below, one phase per push, each played on a phone by the owner before the next starts.
+
+### Bar for "premium" (applies to every moment)
+
+- **Choreographed, not decorated.** Every moment has anticipation, impact and settle beats with named timings and its own easing (no `ease` defaults). Built on transforms and opacity only; WAAPI for one-shot motion, a shared canvas for particles, CSS for loops.
+- **One visual language.** Gilt, parchment and the teal frame for the house; the League's pearl, violet and crimson ribbon tones and the 18 type colours (`presentation/pokemon-types.ts`); Pub Crawl's scene colours (`data-scene`). Existing fonts. No emoji, no stock icons, no Pokémon sprites or game art: names, type medallions (`TypeMark`), badge art already in `public/art/badges`, and light.
+- **The table is in charge.** Every moment: a tap skips to its end state and never reaches the card underneath; never replays on a resumed game; Reduced Motion gets a still frame that fades (about 600 ms); a hidden tab ends it; `aria-hidden` with its words through `useAnnounce`.
+- **Length follows frequency.** Several times a floor: under 1 s. A few times a run: 1.5 to 2.5 s. Once a run: up to 6 s, skippable.
+- **Photosensitivity.** No more than three full-screen flashes in any second (WCAG 2.3.1); pulses change scale and glow, not whole-screen luminance.
+- **Performance.** 60 fps target on an iPhone 12-class device; one particle canvas, DPR capped at 2, a hard particle cap; `backdrop-filter` on at most one layer at a time; nothing animates under a scrolling rules panel.
+
+### Review of the effects already shipped (folded into Phase 0)
+
+Read on `cea47aa`. What needs touching up:
+
+- **R1. Seven bespoke "live once" implementations.** `NaturalBurst`, `BallThrowStage`, `useBossReturn`, `EvolutionBanner`, `PartyNewsBanner`, `PartyPulse` and `TimerBlast` each keep their own seen-ref, timer backstop and quiet check; six call sites read `matchMedia("(prefers-reduced-motion…)")` directly (`Play.tsx` twice for `STAMP_MS`, `StageBanner.tsx`, `BallThrow.tsx`, `GameDialogs.tsx`, `FullScreenDice.tsx`). One `stillMotion()` helper in `presentation/motion.ts` (honouring the dev `forceMotion`) and one `useLiveKey` hook replace them.
+- **R2. Nothing coordinates overlays.** A natural 20 on a felling swing plays the burst, the stamp and then the spoils; an evolution can land on a stage banner; the ball throw, the natural burst and the evolution all sit on `--z-blast`. The director orders them and gives each layer its own `--z-*` token.
+- **R3. Evolution morph flickers at about 10 Hz.** Its last hard cuts are 45 to 60 ms apart (white glyph on dark), past the three-flashes-a-second line. Rebuilt as item 1 with scale-and-glow pulses that never exceed 3 Hz, and a tap that skips on pointer down like every other moment.
+- **R4. Every-mode moment CSS lives in `crawl.css`.** The natural burst, ball throw and evolution styles (about 900 of its 3,160 lines) move to a new `presentation/moments.css`, so `crawl.css` holds the crawl's furniture only.
+- **R5. `PartyPulse` is a full-screen flush on every heart change.** Becomes the edge vignette and HP ring of item 4; the floating −N/+N on the stud stays.
+- **R6. `TimerBlast`** (a word on a flash) is rebuilt as item 10. **The stage banner** stays for floors, routes and Victory Road; boss stages get item 2 instead.
+
+Kept as they are (they work and the owner approved them): the donut ball throw's reel and timing, the natural 20/1 visuals, the stamp, the boss-return tally, the scene lights.
+
+### Phase 0: the moments layer (foundation, size M)
+
+What `BallThrow.tsx`, `Flourish.tsx` and the banners each reimplement today, done once:
+
+- `src/presentation/moments.ts` (pure, unit-tested): `momentsBetween(before, after)` turns a session change into moment descriptors (`{ kind, key, priority, data }`): evolution, boss entrance, badge, loot, hit, heal, clash, omen reveal, milestone, ending. Keys use the same once-only rule the banners use (stage, `discarded`, hits, beat), so a resume yields nothing.
+- `src/components/moments/Director.tsx`: one queue in `main.tsx`. One full-screen moment at a time, in priority order (ending > evolution > boss entrance > omen reveal > natural > ball throw > clash > badge > loot); ambient ones (HP drain, heal motes, card foil) run beside it. Drops stale entries when the card moves on. `NaturalBurst` and `BallThrowStage` move under it so nothing can overlap.
+- `MomentStage`: the portal, dim and blur, skip on pointer down (stopPropagation as `BallThrowStage` does), the timer backstop, visibility cancel, the Reduced Motion still.
+- `Particles`: one lazily created full-viewport 2D canvas with presets (confetti, sparks, embers, coins, motes, debris, fireworks), driven by one rAF that stops when empty. About 4 KB; no library.
+- `flyTo(fromRect, toSelector)`: a curved arc into a strip chip (bag, badges, hearts stud) with a landing pulse on the chip.
+- **Lazy chunk** for everything above except the trigger logic, warmed when a game starts (as the dice are); `check-budget.ts` must still pass (each lazy chunk at most 200 KiB gzip, runtime at most 4 MiB). Measure, don't guess.
+- **Workshop stage** `?workshop=1&moments`: a button per moment and variant, fed by fixture sessions, with a slow-motion (0.25x) toggle and a frame-step. This is how each moment is reviewed and screenshotted; it never ships.
+- **Setting:** "Big moments: Full / Quick" in the pause menu, stored in `Preferences` (not the session; no migration). Quick halves every once-a-run moment and drops the clash to its chip pulse.
+- Tests: units for `momentsBetween` (fires on a live change, not on resume, not twice for a re-dealt boss); a Playwright @release smoke (`withMotion`) that a moment appears, a tap skips it without advancing the card, and a reload shows none.
+
+### Phase 1: the once-a-run moments (biggest payoff)
+
+**1. Evolution and level up (size L).** Replaces `EvolutionBanner`'s render; its trigger (`party.form` rising) stays.
+- League, about 5 s: table dims to near-black with a radial glow in the old form's dice palette (`form.palette`); the old name sits on a light-plate that breathes, then pulses faster (scale and glow, never full-screen strobe) while white light threads in from the edges; at 3.2 s the plate collapses to a point, one bloom, and the new name slams in on the new palette with its type medallion turning in and a ring of type-coloured particles; the stat change ("Max HP 15 → 17") writes on underneath; settle and fade. "What? X is evolving!" kicker. Branching Eevee plays after the sheet's choice.
+- Pub Crawl level up, about 3.5 s: a forge variant: the class name heats from iron to white on an anvil plate, sparks on each of three strikes, the new level stamps in gold.
+- Announcer text unchanged.
+
+**2. Boss entrance (size L).** Replaces `StageBanner` for boss stages only (floors and routes keep the banner). Plays while the boss is dealt face down, once per boss (never for a later swing or a replaced Champion), then the table taps to flip as usual. No controller change.
+- League gyms, rival, hideout boss, Elite Four, Champion, about 2.4 s: two diagonal panels shear in from opposite corners with speed lines. Left: the starter's current form, its type medallion and Team HP. Right: the opponent's title, type, kicker ("Gym 6", "Elite Four 3 of 4", "Champion") and, for gyms, the badge at stake (from `public/art/badges`). "VS" drops between them with a shake and a spark ring, holds, then the panels shear out. Elite Four members after the first get a 1.4 s version; the Champion gets the gold version with a longer hold.
+- Legendary, about 3 s, not a VS: the table goes still and dark, the ground shakes twice, an aura in the Legendary's type colour rises behind its name as it lifts out of the dark.
+- Pub Crawl floor bosses and the final boss, about 2.4 s: an iron portcullis slams down from the top, dust bursts along its foot, the boss's name is burned onto a hanging sign in the floor's scene colour, the portcullis lifts on the card.
+- Ambush (elite with `hits: 2`), about 1 s: a red claw slash across the screen and "AMBUSH!".
+- **Boss beats** (`phases`; gym aces): when `party.beat` advances, a 1.2 s slide-in: "Clair sends out her ace!" or the beat's title, under the boss's ribbon colour.
+
+**3. Endings (size XL).** A layer over `Completion.tsx` that plays only when `celebrate` is true (a live ending, never a resumed one). The controller's `complete` motion and its `finish` call stay exactly as they are. The sequence runs on top, a tap jumps to the final state, and the buttons are live from 1.5 s.
+- **League Hall of Fame, about 6 s:** fade from white; the starter's final form rises on a plinth of light with its type; caught teammates slide in beside it; the eight badges drop into the case one at a time (badge art, a glint on each); the run's numbers count up (draws, Team HP left, badges, catches, bosses beaten, all from `questRecord`); fireworks on the canvas; "Hall of Fame" stamps in and the record panel settles below.
+- **Pub Crawl survived, about 5 s:** a coin shower pours in; `TrophyWall` items drop onto the shelf one by one with a thud and dust; "Last call, survived." writes in gilt.
+- **League whited out, about 4 s:** the HP ring drains its last, the screen whites out slowly, "You whited out!" types on, then the record.
+- **Pub Crawl wiped, about 4 s:** the candles gutter one by one, darkness closes to a vignette, the crack lines from the natural 1 spread slowly, "Party wiped." settles.
+- **Plain games:** two tankards clink in the centre with a foam splash (particles), then "To good company."
+
+### Phase 2: the moments of every fight
+
+**4. Damage and healing (size M).** Upgrades `PartyPulse` and the hearts stud.
+- A hit: 70 ms hold, then a shake of the play area scaled by damage (2 to 6 px, 260 ms, capped), a red edge vignette, and on the stud each lost heart cracks and drops shards.
+- **The HP ring:** a thin ring around the hearts stud (green, amber, red by share left; Pub Crawl in its gilt-to-crimson ramp) that drains in a chunk with a pale trailing segment catching up 400 ms later, as fighting games do. Display only; the number in the stud stays the source of truth.
+- Heal: green motes rise from the bottom edge into the stud; the ring refills with a bright leading edge.
+- Low HP (2 hearts or fewer): a slow 1 Hz heartbeat in the edge vignette at low strength, stopping on heal, on idle (`IDLE_MS`) and when hidden. Owner to judge on device; one CSS variable sets the strength (lesson from the Blood Moon omen: nothing that nags).
+
+**5. Type clash (size M), League.** On the reveal of a strike or a dice fight with a matchup (`cardMatchup`), about 0.9 s: the two type medallions fly in from the sides and meet over the card. Edge: yours shatters theirs, "Super effective!" punches in green. Disadvantage: the reverse, in red. Even: they clink, sparks, no words, 0.5 s. Ends by flying the result into the strip's edge chip, which pulses. **Send-in** (`sendIn`): "Go, Vulpix!": a donut ball (reused from `BallThrow`) arcs onto the card and opens in the Pokémon's type colour, 1 s.
+
+**6. Run opening (size M).** Once a game, on the flip of the omen card.
+- League: one ball rolls in, wobbles three times and bursts open in the starter's type colour, light spills out, and the card flips up in that light. About 2.5 s. One ball, not three, so it never looks like a choice the table didn't make.
+- Pub Crawl: tarot draw: the card lifts from a fanned spread, turns over once with a gilt edge glint and candle flare, and lands as the omen. About 2 s.
+
+**7. Badges and loot (size M).**
+- Badge: on the put-aside of a beaten gym (badges earned rises): the badge art pops from the card, spins on its axis with an edge highlight and a glint sweep, "Earned the Cascade Badge!", then arcs into the strip's badges chip, which pulses and ticks. 1.8 s.
+- Loot: when an item, trinket or gear lands (bag or boons grow): the item's mark bursts from a light pillar coloured by tier (boss trinket and gear gold, elite violet, items bronze), turns once, and arcs into the bag chip. 1.2 s. This replaces `PartyNewsBanner` for trinkets only; jinx, fainted and passed-drink banners stay.
+- Catch: after "Gotcha!", the Pokémon's type medallion arcs from the ball into the bag chip.
+
+### Phase 3: rarity, and the plain modes
+
+**8. Foil cards (size M).** Derived at runtime, no content field: gold foil for the Champion, Legendaries and Pub Crawl's last boss; silver for gyms, the Elite Four, the rival and floor bosses. A layer masked to the frame border (never over the rules text): a rainbow-and-noise sheen in `color-dodge`, an idle sweep every few seconds, and touch-drag moves the light (reads pointer position only; the 8 px drag-cancel rule is untouched). The card's back glints once when such a card is dealt face down, as a teaser. Previous Card shows the same foil; the 2:3 frame and the art are unchanged. One small noise texture (under 30 KB). No gyroscope (iOS asks permission). Pauses when idle or hidden.
+
+**9. Most Likely To countdown (size S).** A "Count it down" plaque on `likely.*` cards (the card still taps through as now; no blocking): full-screen 3, 2, 1, each slamming with a shock ring, then "POINT!" with radial lines. 2.6 s, readable from across the table.
+
+**10. Secrets and fuses (size M).** Upgrades `CardActions.tsx` and `TimerBlast`.
+- Fuse: a spark crawls around the card's border with smoke wisps and random sputters, at a constant pace that reveals nothing about the time left (the fuse's suspense stays). BOOM: one white flash, a shock ring, debris on the canvas, a hard shake, and scorch on the card's edges that fades over 2 s.
+- Countdown: the last three seconds are huge numbers behind the card with a ticking ring; TIME slams in like a buzzer.
+- Secret: holding breaks a wax seal (two halves part, 220 ms) and the text unrolls; on release the seal closes again. Never slower to read than now.
+
+**11. Milestones in Standard and Infinite (size S).** Standard: "Halfway" ribbon at card 25, "Last orders" at 10 left, and the last card dealt with a silver foil and a bell glint. Infinite: a "Round N" banner every 50. Ribbon style shared with `StageBanner`.
+
+### Order, cost and risk
+
+| Phase | Contents | Size |
+| --- | --- | --- |
+| 0 | Moments layer, director, particles, flyTo, workshop stage, setting, tests | M |
+| 1 | Evolution, boss entrance and beats, endings | L, L, XL |
+| 2 | Damage/heal and HP ring, type clash and send-in, run opening, badges and loot | M each |
+| 3 | Foil, Most Likely countdown, secrets and fuses, milestones | M, S, M, S |
+
+- **Time added to a League run** (estimate, Full setting): about 13 boss entrances (~30 s), 2 evolutions (~10 s), 8 badges (~15 s), ~20 clashes (~18 s), opening and ending (~9 s): about 80 s over a 1.5 to 2 h run, all skippable. Quick halves it.
+- **Device-only unknowns:** frame rate of blur plus canvas on older iPhones, `mix-blend-mode` foil in WebKit, shake comfort, heartbeat strength. Each phase adds its rows to `docs/DEVICE_CHECKLIST.md`; nothing is called done on emulation alone.
+- **Collisions:** the director is the only defence against a boss entrance, a stage banner, a natural and a badge landing in the same second; its ordering gets unit tests.
+- **Per phase checks:** typecheck, lint, `npm test`, build with budgets, `test:release` Chromium (WebKit in CI), the crawl, quest and secrets specs with motion on, workshop screenshots of every moment for the owner.
+
 ## Pushed 2026-11-01: Great and Ultra Balls (owner: "add great balls and ultra balls ... +1 and +3 ... What's the best number here? Also change the color of the pokeball spinning")
 
 Pushed straight to `main` on the owner's word with the Master Ball commit below. **CI's League balance job is expected to fail, so this does not deploy** (owner chose "push as-is"): `tests/league.balance.test.ts` gives Charmander 12/120 = 10.0% against its `> 0.1` floor. Its real rate is about 17% (3,000 runs each: `main` before 17.5%, with the Master Ball 16.1%, with Great/Ultra 16.7%), so it is the fixed 120-run sample landing two standard errors low, not a balance change. **Next:** the owner picks how to make the per-starter check robust (300 runs a starter, or a noise-aware floor); until then `main` is red and the site stays on the last deploy.
