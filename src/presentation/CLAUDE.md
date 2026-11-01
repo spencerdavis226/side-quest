@@ -1,6 +1,6 @@
 # src/presentation — look, motion, and the card state machine
 
-- `controller.ts`: `PresentationController` is the only thing that advances a game from a tap. It persists first, then animates; animation completion never advances the deck. `finish(id)` ignores stale transition ids. Taps are ignored during motion except the dice "finish" tap.
+- `controller.ts`: `PresentationController` is the only thing that advances a game from a tap. It persists first, then animates; animation completion never advances the deck. `finish(id)` ignores stale transition ids. Taps are ignored during motion except the dice "finish" tap. `undo()` (2026-11-01) returns to the state before the last decision, one level, memory only (`undoable` on the snapshot); `roll`, `throw` and a ball-throwing offer clear it so a roll is never redone.
 - `usePresentation.ts`: timers and Reduced Motion/hidden-tab handling; backgrounding or Reduced Motion settles any motion immediately.
 - `theme.ts`: motion durations and asset paths. They become `--motion-*` CSS variables in `main.tsx`; keep names in sync with the CSS fallbacks.
 - `theme.css`, `card-front.css`, `../style.css`: the three main stylesheets (`crawl.css` adds Pub Crawl's furniture). `style.css` owns layout, safe areas, and the table backdrop; `theme.css` owns dialogs, atmosphere (fire, embers, dust, candle), and button chrome; `card-front.css` owns card text fitting.

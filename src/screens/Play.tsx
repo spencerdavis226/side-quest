@@ -20,6 +20,7 @@ import {
   awaitingPress,
   awaitingSpoils,
   fellingSwing,
+  fellingVerdict,
   awaitingVerdict,
   canTakeOffer,
   canSendIn,
@@ -59,7 +60,12 @@ import { extrasLayout, foldBranches } from "../components/extras";
 import { TypeMark } from "../components/LeagueMarks";
 import { BallThrowStage } from "../components/BallThrow";
 import { CrawlIcon } from "../components/Crawl";
-import { FelledStamp, NaturalBurst } from "../components/Flourish";
+import {
+  BossTally,
+  FelledStamp,
+  NaturalBurst,
+  useBossReturn,
+} from "../components/Flourish";
 import { useAnnounce } from "../components/Announcer";
 // A dice overlay that can't be fetched (offline before it was cached) must
 // not strand a roll: the saved result goes straight to the card instead.
@@ -132,20 +138,37 @@ export function Play({
   const card = currentCard(session),
     ref = useRef<HTMLButtonElement>(null),
     choiceRef = useRef<HTMLDivElement>(null);
+  // A felling Won on a plaque beat (2026-11-01): the stamp lands first,
+  // then the win is settled (or its trinket asked for).
+  const [stamping, setStamping] = useState<{
+    at: number;
+    ask: boolean;
+  } | null>(null);
+  const stampingNow = stamping?.at === session.discarded;
   // The plaques arrive once the card has landed face up and leave with the
   // decision; the card itself takes no action while they are up.
   const choice = !motion && awaitingChoice(session) ? card.dice!.choice! : null;
-  // A battle without dice: the table says whether it won.
-  const verdict = !motion && awaitingVerdict(session);
+  // A battle without dice: the table says whether it won. The plaques
+  // leave while a felling Won's stamp lands.
+  const verdict = !motion && awaitingVerdict(session) && !stampingNow;
   // A crawl's merchant or fork: one of its offers puts it aside.
   const offers = !motion && awaitingOffer(session) ? card.offers! : null;
   // A crawl's items that work on this card: a smoke bomb before a room fight,
   // a loaded die after a lost roll. They join the card's own plaques.
   const items =
     !motion && session.phase === "revealed" ? usableItems(session) : [];
-  // Pub Crawl's stamp on a boss's felling swing (display only).
-  const felledWord = crawlTheme(session.quest?.packId).flourish?.felled;
-  const felled = !!felledWord && fellingSwing(session);
+  // A crawl's stamp on a boss's felling swing (display only): Felled in
+  // Pub Crawl; in the League, Badge won on a gym leader, else Defeated.
+  const flourish = crawlTheme(session.quest?.packId).flourish;
+  const felledWord =
+    flourish &&
+    (flourish.badge && card.quest && card.quest === session.quest?.packId
+      ? flourish.badge
+      : flourish.felled);
+  const felled =
+    !!felledWord && (fellingSwing(session) || stampingNow);
+  // A boss dealt again after a landed hit jolts and shows its tally.
+  const returning = useBossReturn(session, card, !motion);
   useEffect(() => {
     if (!felled) return;
     const id = setTimeout(
@@ -177,6 +200,34 @@ export function Play({
   // A win that fells a boss with spoils asks for the trinket first (Won on
   // a plaque beat): the draw it was asked on.
   const [asking, setAsking] = useState<number | null>(null);
+  const settleRef = useRef(onSettle);
+  useEffect(() => {
+    settleRef.current = onSettle;
+  });
+  useEffect(() => {
+    if (!stamping) return;
+    const id = setTimeout(
+      () => {
+        // The stamp stays on the card and leaves with it.
+        if (stamping.ask) setAsking(stamping.at);
+        else settleRef.current(true);
+      },
+      matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : STAMP_MS,
+    );
+    return () => clearTimeout(id);
+  }, [stamping]);
+  // Once that card is gone the stamp is done with (an undo back onto it
+  // shows the plaques again).
+  useEffect(() => {
+    if (stamping && stamping.at !== session.discarded) setStamping(null);
+  }, [stamping, session.discarded]);
+  const won = () => {
+    const ask = spoilsOnWin(session);
+    if (felledWord && fellingVerdict(session))
+      setStamping({ at: session.discarded, ask });
+    else if (ask) setAsking(session.discarded);
+    else onSettle(true);
+  };
   const ask = asking === session.discarded && !motion;
   const crawl = crawlTheme(session.quest?.packId);
   useAnnounce(
@@ -335,7 +386,7 @@ export function Play({
             : ""}
         </span>
         <div
-          className={`card-stage ${motion ?? ""} ${choice || verdict || offers || spoils || press || catching || acting || extraList.length > 0 ? "choosing" : ""}`}
+          className={`card-stage ${motion ?? ""} ${returning ? "boss-return" : ""} ${choice || verdict || offers || spoils || press || catching || acting || extraList.length > 0 ? "choosing" : ""}`}
         >
           <div className="deck-under" aria-hidden="true" />
           <button
@@ -451,6 +502,7 @@ export function Play({
                   />
                 )}
                 {felled && <FelledStamp word={felledWord!} />}
+                {returning && <BossTally {...returning} />}
               </span>
             </span>
           </button>
@@ -469,14 +521,7 @@ export function Play({
               role="group"
               aria-label="Did you win?"
             >
-              <button
-                className="card-choice-option won"
-                onClick={() =>
-                  spoilsOnWin(session)
-                    ? setAsking(session.discarded)
-                    : onSettle(true)
-                }
-              >
+              <button className="card-choice-option won" onClick={won}>
                 Won
               </button>
               <button
@@ -689,7 +734,11 @@ export function Play({
             setAsking(null);
             onSettle(true);
           }}
-          onClose={() => setAsking(null)}
+          onClose={() => {
+            // Not won after all: the stamp lifts with the question.
+            setAsking(null);
+            setStamping(null);
+          }}
         />
       )}
       {spoils && sheet && (

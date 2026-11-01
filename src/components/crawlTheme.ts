@@ -131,13 +131,16 @@ export interface CrawlTheme {
     goal: string;
     rows: (n: { hearts: number }) => GuideRow[];
   };
-  /** Pub Crawl's flourishes (2026-10-31, display only): the stamp on a
-   * boss's felling swing and the table's light for each place in the run
-   * (`crawlScene`). A theme without them shows none. The natural 20 and 1
-   * burst plays in every mode (`NaturalBurst`). */
+  /** A crawl's flourishes (display only): the stamp on a boss's felling
+   * swing (Pub Crawl 2026-10-31, the League 2026-11-01) and the table's
+   * light for each place in the run (`crawlScene`, Pub Crawl only). A
+   * theme without them shows none. The natural 20 and 1 burst plays in
+   * every mode (`NaturalBurst`). */
   flourish?: {
     felled: string;
-    scene: (stageLabel: string) => string | undefined;
+    /** The stamp on a badge's boss instead (the League's gym leaders). */
+    badge?: string;
+    scene?: (stageLabel: string) => string | undefined;
   };
   /** The end screens: two title lines (the second in italics) and the
    * verdict. */
@@ -388,6 +391,10 @@ const league: CrawlTheme = {
     },
   },
   lengthOf: (stages) => stages.filter((st) => /^Gym \d/.test(st.label)).length,
+  flourish: {
+    felled: "Defeated",
+    badge: "Badge won",
+  },
   badgeLock: {
     cards: ["pokemon.route-veteran-victory"],
     why: "locked, name them from memory",
