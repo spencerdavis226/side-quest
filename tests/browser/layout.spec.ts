@@ -322,30 +322,38 @@ test("@release the play screen fits a Safari tab at every phone height without s
     { width: 393, height: 852 },
     { width: 820, height: 1050 },
   ]) {
-    // Measure once the layout has taken the new height.
+    // Measure once the layout has taken the new height. WebKit can keep the
+    // old size for the card past the viewport units and a still box (CI runs
+    // 273 and 274 read the 664px layout at 548: the stage 324x482, its bottom
+    // at 591), so the whole fit check retries until the layout satisfies it.
+    // The assertions are unchanged, and a layout that never fits still fails
+    // when the 5 s run out.
     await resizeTo(page, viewport, ".card-stage");
-    const fit = await page.evaluate(() => {
-      const stage = document
-        .querySelector(".card-stage")!
-        .getBoundingClientRect();
-      return {
-        scrollHeight: document.documentElement.scrollHeight,
-        clientHeight: document.documentElement.clientHeight,
-        bottom: stage.bottom,
-        ratio: stage.width / stage.height,
-        // For a failure message: what the layout measured.
-        layout: `stage ${Math.round(stage.width)}x${Math.round(stage.height)}, --app-height ${getComputedStyle(document.querySelector(".app")!).height}, inner ${innerWidth}x${innerHeight}`,
-      };
-    });
-    const at = `${viewport.width}x${viewport.height} (${fit.layout})`;
-    expect(fit.scrollHeight, `no page scroll at ${at}`).toBeLessThanOrEqual(
-      fit.clientHeight,
-    );
-    expect(fit.bottom, `card ends above the fold at ${at}`).toBeLessThanOrEqual(
-      viewport.height - 24,
-    );
-    // The stage is tilted 0.65deg, so its bounding box is a touch off 2:3.
-    expect(fit.ratio, `card keeps 2:3 at ${at}`).toBeCloseTo(2 / 3, 1);
+    await expect(async () => {
+      const fit = await page.evaluate(() => {
+        const stage = document
+          .querySelector(".card-stage")!
+          .getBoundingClientRect();
+        return {
+          scrollHeight: document.documentElement.scrollHeight,
+          clientHeight: document.documentElement.clientHeight,
+          bottom: stage.bottom,
+          ratio: stage.width / stage.height,
+          // For a failure message: what the layout measured.
+          layout: `stage ${Math.round(stage.width)}x${Math.round(stage.height)}, --app-height ${getComputedStyle(document.querySelector(".app")!).height}, inner ${innerWidth}x${innerHeight}`,
+        };
+      });
+      const at = `${viewport.width}x${viewport.height} (${fit.layout})`;
+      expect(fit.scrollHeight, `no page scroll at ${at}`).toBeLessThanOrEqual(
+        fit.clientHeight,
+      );
+      expect(
+        fit.bottom,
+        `card ends above the fold at ${at}`,
+      ).toBeLessThanOrEqual(viewport.height - 24);
+      // The stage is tilted 0.65deg, so its bounding box is a touch off 2:3.
+      expect(fit.ratio, `card keeps 2:3 at ${at}`).toBeCloseTo(2 / 3, 1);
+    }).toPass({ timeout: 5_000 });
   }
 });
 test("an iOS top inset keeps topbar controls below the status-bar frost", async ({
