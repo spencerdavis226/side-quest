@@ -2,7 +2,9 @@
 
 Updated 2026-11-01. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Built 2026-11-01: premium moments, all eleven, and the review of the old effects (owner: "Everything main. Push ... review and overhaul anything that needs touching up or refactoring, including older animations/effects/moments ... then proceed and build in a logical order")
+## Deployed 2026-11-01: premium moments, all eleven, and the review of the old effects (owner: "Everything main. Push ... review and overhaul anything that needs touching up or refactoring, including older animations/effects/moments ... then proceed and build in a logical order")
+
+**Deployed** by CI run #282 (`ab8b9ba`, every job green in Chromium and WebKit, deploy 13:55 UTC). Two earlier pushes did not deploy: #279 failed `test:update` (fixed in `990828b`, see Update flow below), #280 failed the new @release moments spec in WebKit (it waited for the 2.6 s stage to read stable; it now taps at once, `ab8b9ba`). Revert `1712b60`, `990828b` and `ab8b9ba` to undo.
 
 The plan below, built in its order (foundation, then the once-a-run moments, then the fight moments, then rarity and the plain modes). **Display only:** no engine rule, odds, card, save field or migration changed (the one controller change is a display flag, `undone`, on an undo's snapshot), so no new save fixture.
 
