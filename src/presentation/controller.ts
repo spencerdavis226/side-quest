@@ -273,16 +273,17 @@ export class PresentationController {
     this.transition(next, "settle");
     this.effect("press");
   }
-  /** Use a caught Pokémon on the battle face up: it wins it and the card
-   * is put aside. */
+  /** Send a caught Pokémon into the battle face up: its bonus joins the
+   * roll. The card stays in play (`sendIn` only sets `party.assist`), so
+   * there is no discard animation, like a loaded die. */
   send(id: string) {
     const { session, motion } = this.state;
     if (!session || motion) return;
     const next = sendIn(session, id, this.random);
     if (next === session) return;
     this.persist(next);
-    this.transition(next, "discard", session);
-    this.effect("discard");
+    this.transition(next, null);
+    this.effect("press");
   }
   revealRoll() {
     const { session, motion } = this.state;
