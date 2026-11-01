@@ -281,7 +281,8 @@ export function CrawlStrip({
   const jinx = party.jinx ? finaleCard(quest, party.jinx)?.jinx : undefined;
   const locked = badgesLocked(session, theme);
   const caught = partyTeam(quest);
-  const bagEmpty = !party.loot.length && !caught.length;
+  const gear = record.boons.filter((b) => !isOmenBoon(b));
+  const bagEmpty = !party.loot.length && !caught.length && !gear.length;
   // The League's type edge on the battle face up (2026-10-25): a mark
   // only; the dialog says what it does.
   const matchup =
@@ -341,7 +342,7 @@ export function CrawlStrip({
         )}
       {chip(
         `tag-satchel${bagEmpty ? " empty" : ""}`,
-        `${words.Satchel}: ${[...party.loot.map((l) => theme.loot[l].name), ...caught.map((m) => m.title)].join(", ") || "empty"}`,
+        `${words.Satchel}: ${[...party.loot.map((l) => theme.loot[l].name), ...caught.map((m) => m.title), ...gear.map((b) => b.boon.name)].join(", ") || "empty"}`,
         "satchel",
         // The items show for themselves; an empty bag is one dim bag, so the
         // chip keeps its place (2026-10-27, owner).
@@ -353,6 +354,9 @@ export function CrawlStrip({
               <CrawlIcon key={i} name={item} theme={theme} />
             ))}
             {caught.map((m) => m.type && <TypeMark key={m.id} type={m.type} />)}
+            {gear.map((b) => (
+              <CrawlIcon key={b.key} name={gearIcon(b.boon)} theme={theme} />
+            ))}
           </>
         ),
       )}
@@ -1224,6 +1228,11 @@ export function CrawlRecord({
   // Pub Crawl's end screens (2026-10-25): the trophy wall and the tab stand
   // in for the adventurer's and trinkets' panels.
   const ending = !session && !!words.trophies && !!words.tab;
+  // Gear (weapon, armor, trinkets) lives in the bag beside the items and
+  // caught Pokémon; tonight's omen stays with the party (2026-11-01, owner).
+  const omens = record.boons.filter((b) => isOmenBoon(b));
+  const gear = record.boons.filter((b) => !isOmenBoon(b));
+  const kinds = (team.length > 0 ? 1 : 0) + (gear.length > 0 ? 1 : 0);
   return (
     <div className="crawl-record">
       {show("party") && (
@@ -1275,25 +1284,12 @@ export function CrawlRecord({
       {show("party") && !ending && record.form && (
         <FormPanel form={record.form} theme={theme} />
       )}
-      {show("party") && !ending && record.boons.length > 0 && (
+      {show("party") && !ending && omens.length > 0 && (
         <ul className="crawl-boons" aria-label={words.trinkets}>
-          {record.boons.map((b) => (
-            <li
-              key={b.key}
-              className={`crawl-omen ${isOmenBoon(b) ? "boon-omen" : "boon-trinket"}`}
-            >
-              <CrawlIcon
-                name={isOmenBoon(b) ? "omen" : gearIcon(b.boon)}
-                theme={theme}
-              />
-              <strong>
-                {b.boon.slot && (
-                  <small className="gear-slot">
-                    {(theme.equipment ?? EQUIPMENT).slots[b.boon.slot]}
-                  </small>
-                )}
-                {b.boon.name}
-              </strong>
+          {omens.map((b) => (
+            <li key={b.key} className="crawl-omen boon-omen">
+              <CrawlIcon name="omen" theme={theme} />
+              <strong>{b.boon.name}</strong>
               <span>{b.boon.rules}</span>
             </li>
           ))}
@@ -1371,8 +1367,32 @@ export function CrawlRecord({
               </ul>
             </section>
           )}
+          {gear.length > 0 && (
+            <section className="bag-section">
+              <h3 className="bag-heading">
+                Gear <small>{gear.length}</small>
+              </h3>
+              <ul className="bag-list crawl-gear" aria-label="Gear">
+                {gear.map((b) => (
+                  <BagRow
+                    key={b.key}
+                    mark={<CrawlIcon name={gearIcon(b.boon)} theme={theme} />}
+                    name={b.boon.name}
+                    badge={
+                      b.boon.slot ? (
+                        <span className="bag-slot">
+                          {(theme.equipment ?? EQUIPMENT).slots[b.boon.slot]}
+                        </span>
+                      ) : undefined
+                    }
+                    detail={wornRules(b.boon)}
+                  />
+                ))}
+              </ul>
+            </section>
+          )}
           <section className="bag-section">
-            {team.length > 0 && (
+            {kinds > 0 && (
               <h3 className="bag-heading">
                 Items{" "}
                 <small>

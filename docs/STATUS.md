@@ -2,6 +2,10 @@
 
 Updated 2026-10-31. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## In progress 2026-11-01: one bag for gear, items and Pokémon (owner: "Can we just adopt the pokemon bag UI and function? It holds both pokemon and items")
+
+Uncommitted. The bag dialog (`CrawlRecord` part `satchel`) now has up to three sections in the same `BagRow` panels: Team (League), Gear (weapon, armor, trinkets; name, slot label, what it does now; no Use or drop, since gear is only replaced at a boss's spoils) and Items. Headings show whenever more than one kind is present. The party dialog keeps only tonight's omen. The strip's bag chip shows gear marks too and is "empty" only with no items, team or gear. Display only: no save, engine or card change. **Checks:** `npm test` (407), typecheck, lint, build (budgets pass), Chromium `crawl.spec.ts` + `quest.spec.ts` (49 passed; the trinket test now reads the gear from the bag). Not run: screenshots of the new section, WebKit, device. **Open:** gear cannot be dropped (matches the old party panel); say if you want that.
+
 ## Shipped 2026-10-31: Pub Crawl polish and card clarity (owner: "pub crawl has taken the backseat ... animations or polish ... make this mode feel premium and unique ... I don't want to add more systems ... make sure cards are logical and not confusing")
 
 Pushed to `main` on the owner's "Commit and push to main" (rebased onto `49ffb74`, revert that one commit to undo). No engine state, save field, odds, damage or card ID changed.
