@@ -327,7 +327,7 @@ test("a boss shows its wounds, its trinket, and comes back until it falls", asyn
   ).toHaveCount(0);
 });
 
-test("a lost fight can lay a jinx, shown on the meter and in a banner", async ({
+test("a lost fight can lay a jinx, shown on the meter and as a moment", async ({
   page,
 }, info) => {
   await seed(
@@ -338,7 +338,9 @@ test("a lost fight can lay a jinx, shown on the meter and in a banner", async ({
     "Losing lays a jinx: Goblin Tongue",
   );
   await page.locator(".game-card").click();
-  await expect(page.locator(".news-banner")).toHaveText(
+  // The jinx's moment (2026-11-01; a banner before), read under Reduced
+  // Motion on its still plaque.
+  await expect(page.locator(".still-plaque")).toHaveText(
     /Jinxed!\s*Goblin Tongue\s*The jinxed player speaks of themself/,
   );
   await expect(page.locator(".tag-jinx")).toBeVisible();
@@ -346,7 +348,7 @@ test("a lost fight can lay a jinx, shown on the meter and in a banner", async ({
   await page.screenshot({ path: info.outputPath("jinx.png") });
 });
 
-test("with Reduce Motion a banner fades and goes, and the splat stays centred", async ({
+test("with Reduce Motion a moment's plaque fades and goes, and the splat stays centred", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -355,9 +357,9 @@ test("with Reduce Motion a banner fades and goes, and the splat stays centred", 
     rolled(reveal(crawlAt("dungeon.goblin-shaman", STEP.floor1)), 2),
   );
   await page.locator(".game-card").click();
-  const banner = page.locator(".news-banner");
+  const banner = page.locator(".still-plaque");
   await expect(banner).toHaveText(/Jinxed!\s*Goblin Tongue/);
-  // The banner fades rather than vanishing at once: still shown a moment
+  // The plaque fades rather than vanishing at once: still shown a moment
   // in. Every running animation is held at 400 ms in (rather than sleeping
   // 400 ms, which a slow runner can overshoot), then let go.
   const held = await page.evaluate(() => {
@@ -376,10 +378,7 @@ test("with Reduce Motion a banner fades and goes, and the splat stays centred", 
     return running.length;
   });
   expect(held).toBeGreaterThan(0);
-  await expect(banner.locator(".stage-banner-cloth")).not.toHaveCSS(
-    "opacity",
-    "0",
-  );
+  await expect(banner).not.toHaveCSS("opacity", "0");
   // The lost hearts float off the heart, centred on it.
   const [splat, heart] = await Promise.all([
     page.locator(".heart-splat").boundingBox(),
@@ -395,7 +394,7 @@ test("with Reduce Motion a banner fades and goes, and the splat stays centred", 
   expect(
     Math.abs(splat!.y + splat!.height / 2 - (heart!.y + heart!.height / 2)),
   ).toBeLessThanOrEqual(1);
-  // Before 2026-10-18 no animation ran at all, so the banner never left.
+  // Before 2026-10-18 no animation ran at all, so a banner never left.
   await expect(banner).toHaveCount(0, { timeout: 8000 });
   await expect(page.locator(".tag-jinx")).toBeVisible();
 });
@@ -428,20 +427,24 @@ test("a landing levels the adventurer up for drinks, or rests", async ({
   await expect(page.locator(".still-plaque")).toHaveText(
     /Barbarian levels up!\s*Berserker\s*\+2 max hearts\. \+2 to elite and boss d20s\./,
   );
-  // Two banners at once, the level-up and the hidden room: both are read.
+  // Two moments at once, the level-up and the hidden room: both are read.
   const spoken = page.locator("#banner-announcer");
   await expect(spoken).toContainText(
     "Barbarian levels up! Berserker. +2 max hearts. +2 to elite and boss d20s.",
   );
   await expect(spoken).toContainText(
-    "Behind the bookcase. Wanted: The Proprietor",
+    "Behind the bookcase: The Speakeasy. Wanted: The Proprietor.",
   );
-  // Next comes the hidden room behind the bookcase; its banner names the
-  // keeper waiting inside.
+  // Next comes the hidden room behind the bookcase: its moment (the
+  // bookcase swinging open, 2026-11-01; a stage banner before) names the
+  // keeper waiting inside, and no stage banner sweeps as well.
   const s = await saved(page);
-  await expect(page.locator(".stage-banner:not(.evolution-banner)")).toHaveText(
-    /Behind the bookcase\s*Wanted: The Proprietor/,
+  await expect(page.locator(".still-plaque")).toHaveText(
+    /Behind the bookcase\s*The Speakeasy\s*Wanted: The Proprietor/,
   );
+  await expect(
+    page.locator(".stage-banner:not(.evolution-banner)"),
+  ).toHaveCount(0);
   await page.screenshot({ path: info.outputPath("level-up.png") });
   expect(s.quest.party).toMatchObject({ form: 1, max: H + 2 });
 });

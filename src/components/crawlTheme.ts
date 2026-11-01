@@ -137,9 +137,9 @@ export interface CrawlTheme {
    * theme without them shows none. The natural 20 and 1 burst plays in
    * every mode (`NaturalBurst`). */
   flourish?: {
+    /** Never on a badge's boss (a League gym leader): its badge moment
+     * says it (2026-11-01). */
     felled: string;
-    /** The stamp on a badge's boss instead (the League's gym leaders). */
-    badge?: string;
     scene?: (stageLabel: string) => string | undefined;
   };
   /** The end screens: two title lines (the second in italics) and the
@@ -406,7 +406,6 @@ const league: CrawlTheme = {
   lengthOf: (stages) => stages.filter((st) => /^Gym \d/.test(st.label)).length,
   flourish: {
     felled: "Defeated",
-    badge: "Badge won",
   },
   badgeLock: {
     cards: ["pokemon.route-veteran-victory"],

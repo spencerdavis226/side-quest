@@ -1362,15 +1362,19 @@
    shatters; even: they rebound. */
 .moment-clash {
   --len: calc(var(--m) * 1150ms);
+  /* The words (and the band behind them) hold longer than the impact, so
+     the line under the shout can be read (2026-11-01). */
+  --hold: calc(var(--m) * 1600ms);
   /* A dark band behind the medallions, so they read over the card's text
      (2026-11-01 review: the table showed straight through). */
   background:
     radial-gradient(ellipse 90% 26% at 50% 50%, #000c 0, #0007 60%, #0000 100%),
     radial-gradient(circle at 50% 46%, #0000 0, #0009 75%);
-  animation: moment-shade var(--len) ease both;
+  animation: moment-shade var(--hold) ease both;
 }
 .clash-even {
   --len: calc(var(--m) * 760ms);
+  --hold: var(--len);
 }
 .clash-side {
   position: absolute;
@@ -1408,10 +1412,22 @@
 .clash-word {
   position: absolute;
   top: calc(46% + clamp(56px, 18vw, 110px));
+  display: grid;
+  justify-items: center;
+  gap: 6px;
   max-width: 92vw;
+  margin: 0;
   text-align: center;
+  animation: clash-hold var(--hold) cubic-bezier(0.2, 1.5, 0.4, 1) both;
+}
+.clash-word strong {
   font: 800 clamp(24px, 7.4vw, 50px) / 1.05 var(--font-card-title);
-  animation: clash-word var(--len) cubic-bezier(0.2, 1.5, 0.4, 1) both;
+}
+/* What the edge does: read, so plain and steady under the shout. */
+.clash-word small {
+  color: #fff6e6;
+  font: 600 clamp(15px, 4.2vw, 20px) / 1.2 var(--font-tavern);
+  text-shadow: 0 2px 8px #000;
 }
 .clash-advantage .clash-word {
   color: #d8ffd0;
@@ -1523,6 +1539,27 @@
   }
   46%,
   84% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* `clash-word` stretched over `--hold`: in at the same 0.38 s, held to 90%. */
+@keyframes clash-hold {
+  0%,
+  24% {
+    opacity: 0;
+    transform: scale(1.8);
+  }
+  29% {
+    opacity: 1;
+    transform: scale(0.95);
+  }
+  33%,
+  90% {
     opacity: 1;
     transform: none;
   }
@@ -2286,6 +2323,1441 @@
     transform: none;
   }
   90%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* --- The team (League): a faint, a hatch, a Legendary caught --------------
+   2026-11-01: these were the news banner's. A faint is the quiet one (no
+   burst, the colour drains away); a join is the loud one (three wobbles,
+   then light in the newcomer's type). */
+.moment-faint {
+  --len: calc(var(--m) * 3000ms);
+}
+.faint-shade {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 42%, #1a1c22d9 0, #050608f5 70%);
+  animation: moment-shade var(--len) ease both;
+}
+.faint-halo {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  width: 70vmin;
+  height: 70vmin;
+  margin: -35vmin 0 0 -35vmin;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--c) 0, transparent 58%);
+  opacity: 0;
+  animation: faint-halo var(--len) ease both;
+}
+.faint-mark {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  margin: calc(clamp(56px, 18vw, 120px) / -2) 0 0
+    calc(clamp(56px, 18vw, 120px) / -2);
+  animation: faint-mark var(--len) cubic-bezier(0.3, 0, 0.3, 1) both;
+}
+.faint-words {
+  position: absolute;
+  top: calc(42% + clamp(48px, 14vw, 84px));
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  width: 92vw;
+  margin: 0;
+  text-align: center;
+  animation: faint-words var(--len) ease both;
+}
+.faint-words small {
+  color: #c98a84;
+  font: 600 clamp(14px, 3.8vw, 18px) / 1.1 var(--font-tavern);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.faint-words strong {
+  color: #e9e4dc;
+  font: 700 clamp(30px, 9vw, 50px) / 1.05 var(--font-card-title);
+  text-shadow: 0 3px 0 #000a;
+}
+/* A hairline drawn under the name, like a plaque's rule. */
+.faint-words strong::after {
+  content: "";
+  display: block;
+  height: 1px;
+  margin: 8px auto 0;
+  background: linear-gradient(90deg, transparent, #c9c2b8, transparent);
+  animation: faint-rule var(--len) ease both;
+}
+.faint-words span {
+  max-width: 30ch;
+  color: #b8b1a7;
+  font: 500 clamp(15px, 4vw, 19px) / 1.3 var(--font-tavern);
+}
+@keyframes faint-halo {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  14%,
+  26% {
+    opacity: 0.85;
+    transform: none;
+  }
+  52%,
+  100% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+}
+@keyframes faint-mark {
+  0% {
+    opacity: 0;
+    transform: scale(0.86);
+    filter: none;
+  }
+  14%,
+  28% {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  54% {
+    opacity: 0.9;
+    transform: translateY(6px);
+    filter: grayscale(1) brightness(0.7);
+  }
+  84% {
+    opacity: 0.45;
+    transform: translateY(16px) scale(0.94);
+    filter: grayscale(1) brightness(0.55);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.92);
+    filter: grayscale(1) brightness(0.5);
+  }
+}
+@keyframes faint-words {
+  0%,
+  22% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  34%,
+  86% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes faint-rule {
+  0%,
+  36% {
+    transform: scaleX(0);
+  }
+  58%,
+  100% {
+    transform: none;
+  }
+}
+
+.moment-join {
+  --len: calc(var(--m) * 2900ms);
+}
+.join-shade {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 44%, #1a120cd9 0, #050302f2 70%);
+  animation: moment-shade var(--len) ease both;
+}
+.join-light {
+  position: absolute;
+  top: 44%;
+  left: 50%;
+  width: 66vmin;
+  height: 66vmin;
+  margin: -33vmin 0 0 -33vmin;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0, var(--c) 24%, transparent 62%);
+  opacity: 0;
+  animation: join-light var(--len) ease-out both;
+}
+.moment-join.caught .join-light {
+  background: radial-gradient(circle, #fff 0, #f2c94c 22%, transparent 62%);
+}
+.join-vessel {
+  --w: clamp(84px, 26vw, 128px);
+  position: absolute;
+  top: 44%;
+  left: 50%;
+  width: var(--w);
+  height: calc(var(--w) * 1.26);
+  margin: calc(var(--w) * -0.63) 0 0 calc(var(--w) / -2);
+  transform-origin: 50% 100%;
+  animation: join-vessel var(--len) linear both;
+}
+.moment-join.caught .join-vessel {
+  height: var(--w);
+  margin-top: calc(var(--w) / -2);
+}
+.join-vessel .mini-ball {
+  --size: var(--w);
+  margin: 0;
+  animation: join-click var(--len) ease both;
+}
+.egg,
+.egg-top,
+.egg-bottom {
+  position: absolute;
+  inset: 0;
+}
+.egg-top,
+.egg-bottom {
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  background:
+    radial-gradient(circle at 30% 30%, var(--c) 0 9%, transparent 10%),
+    radial-gradient(circle at 70% 24%, var(--c) 0 7%, transparent 8%),
+    radial-gradient(circle at 62% 66%, var(--c) 0 10%, transparent 11%),
+    radial-gradient(circle at 26% 74%, var(--c) 0 7%, transparent 8%),
+    radial-gradient(circle at 36% 30%, #fffdf6, #efe2c4 55%, #b8a888);
+  box-shadow: inset -6px -8px 16px #0003;
+}
+.egg-top {
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% 51%,
+    96% 51%,
+    86% 43%,
+    74% 53%,
+    62% 41%,
+    50% 54%,
+    38% 42%,
+    26% 55%,
+    16% 44%,
+    4% 52%,
+    0 52%
+  );
+  animation: egg-top var(--len) cubic-bezier(0.2, 0.8, 0.4, 1) both;
+}
+.egg-bottom {
+  clip-path: polygon(
+    0 52%,
+    4% 52%,
+    16% 44%,
+    26% 55%,
+    38% 42%,
+    50% 54%,
+    62% 41%,
+    74% 53%,
+    86% 43%,
+    96% 51%,
+    100% 51%,
+    100% 100%,
+    0 100%
+  );
+  animation: egg-bottom var(--len) ease-in both;
+}
+.egg svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.egg path {
+  fill: none;
+  stroke: #4a3826;
+  stroke-width: 2.2;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: egg-crack var(--len) linear both;
+}
+.join-mark {
+  position: absolute;
+  top: 44%;
+  left: 50%;
+  margin: calc(clamp(56px, 18vw, 120px) / -2) 0 0
+    calc(clamp(56px, 18vw, 120px) / -2);
+  animation: join-mark var(--len) cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+.join-mark.gone {
+  visibility: hidden;
+}
+.join-words {
+  position: absolute;
+  top: calc(44% + clamp(48px, 14vw, 84px));
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  width: 92vw;
+  margin: 0;
+  text-align: center;
+  text-shadow: 0 1px 8px #000;
+  animation: join-words var(--len) ease both;
+}
+.join-words small {
+  color: #f6dc8f;
+  font: 600 clamp(14px, 3.8vw, 18px) / 1.1 var(--font-tavern);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.join-words strong {
+  color: #fff;
+  font: 800 clamp(32px, 10vw, 56px) / 1 var(--font-card-title);
+  text-shadow:
+    0 3px 0 var(--c-deep),
+    0 0 22px var(--c);
+}
+.join-words span {
+  color: #f4e6c4;
+  font: 500 clamp(15px, 4vw, 19px) / 1.3 var(--font-tavern);
+}
+/* Drops in, then three wobbles about its foot, each a little harder, with
+   a still beat between (the games' rhythm), then holds as it opens. */
+@keyframes join-vessel {
+  0% {
+    opacity: 0;
+    transform: translateY(-40vh);
+  }
+  10% {
+    opacity: 1;
+    transform: none;
+  }
+  13% {
+    transform: scaleY(0.92);
+  }
+  16%,
+  20% {
+    transform: none;
+  }
+  23% {
+    transform: rotate(-10deg);
+  }
+  26% {
+    transform: rotate(8deg);
+  }
+  29%,
+  33% {
+    transform: none;
+  }
+  36% {
+    transform: rotate(-13deg);
+  }
+  39% {
+    transform: rotate(11deg);
+  }
+  42%,
+  45% {
+    transform: none;
+  }
+  47% {
+    transform: rotate(-16deg);
+  }
+  49% {
+    transform: rotate(14deg);
+  }
+  51% {
+    transform: none;
+  }
+  100% {
+    transform: none;
+  }
+}
+@keyframes egg-crack {
+  0%,
+  34% {
+    stroke-dashoffset: 1;
+  }
+  38% {
+    stroke-dashoffset: 0.55;
+  }
+  46%,
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes egg-top {
+  0%,
+  51% {
+    opacity: 1;
+    transform: none;
+  }
+  64% {
+    opacity: 0.9;
+    transform: translate(18%, -70%) rotate(38deg);
+  }
+  76%,
+  100% {
+    opacity: 0;
+    transform: translate(26%, -96%) rotate(54deg);
+  }
+}
+@keyframes egg-bottom {
+  0%,
+  51% {
+    opacity: 1;
+    transform: none;
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: translateY(30%) scale(0.9);
+  }
+}
+/* The ball clicks shut: a press, a gold flash round it, then it gives way
+   to the light. */
+@keyframes join-click {
+  0%,
+  50% {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  53% {
+    transform: scale(0.94);
+    filter: drop-shadow(0 0 18px #f2c94c);
+  }
+  57% {
+    opacity: 1;
+    transform: scale(1.06);
+    filter: drop-shadow(0 0 26px #fff3c4);
+  }
+  68%,
+  100% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+@keyframes join-light {
+  0%,
+  49% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  56% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.3);
+  }
+}
+@keyframes join-mark {
+  0%,
+  53% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  62% {
+    opacity: 1;
+    transform: scale(1.14);
+  }
+  68%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes join-words {
+  0%,
+  56% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  64%,
+  88% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* --- A jinx (both crawls) --------------------------------------------------
+   Laid: a scroll unrolls, a crimson seal stamps on it, it holds to be read
+   across the table and rolls up into the strip's jinx chip. Lifted: the
+   seal cracks in two and the scroll burns away from its foot. */
+.moment-jinx {
+  --len: calc(var(--m) * 3600ms);
+}
+.moment-jinx.lifted {
+  --len: calc(var(--m) * 2000ms);
+}
+.jinx-shade {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 46%, #2a0a06d9 0, #060202f5 70%);
+  animation: moment-shade var(--len) ease both;
+}
+.moment-jinx.lifted .jinx-shade {
+  background: radial-gradient(circle at 50% 46%, #2a1608cc 0, #060302f0 70%);
+}
+.jinx-scroll {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  width: min(84vw, 360px);
+  box-sizing: border-box;
+  padding: 26px 22px 24px;
+  border-radius: 4px;
+  background:
+    linear-gradient(180deg, #0000 0 calc(100% - 10px), #6a4a2a55 100%),
+    linear-gradient(0deg, #0000 0 calc(100% - 10px), #6a4a2a55 100%),
+    radial-gradient(ellipse at 50% 40%, #f7ecd2, #e8d4a8 70%, #cdb27e);
+  box-shadow:
+    0 14px 40px #000c,
+    inset 0 0 22px #8a6a3a55;
+  text-align: center;
+  transform-origin: 50% 50%;
+  animation: jinx-unroll var(--len) cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+/* The rollers: dark wood bars at the head and foot. */
+.jinx-scroll::before,
+.jinx-scroll::after {
+  content: "";
+  position: absolute;
+  left: -8px;
+  right: -8px;
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #7a5230, #3a2412);
+  box-shadow: 0 2px 6px #0008;
+}
+.jinx-scroll::before {
+  top: -6px;
+}
+.jinx-scroll::after {
+  bottom: -6px;
+}
+.jinx-scroll small {
+  color: #9a1e14;
+  font: 700 clamp(14px, 3.8vw, 17px) / 1.1 var(--font-tavern);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.jinx-scroll strong {
+  color: #2a1006;
+  font: 700 clamp(26px, 8vw, 38px) / 1.05 var(--font-card-title);
+}
+.jinx-scroll > span:not(.jinx-seal) {
+  color: #3a2a1c;
+  font: 500 clamp(16px, 4.4vw, 20px) / 1.35 var(--font-tavern);
+}
+.jinx-scroll > small,
+.jinx-scroll > strong,
+.jinx-scroll > span:not(.jinx-seal) {
+  animation: jinx-text var(--len) ease both;
+}
+.jinx-scroll.rolled {
+  animation: jinx-roll calc(var(--m) * 320ms) cubic-bezier(0.5, 0, 0.8, 0.4)
+    both;
+}
+.jinx-seal {
+  --s: clamp(52px, 15vw, 66px);
+  position: absolute;
+  top: calc(var(--s) / -2.4);
+  right: calc(var(--s) / -3);
+  display: grid;
+  place-items: center;
+  width: var(--s);
+  height: var(--s);
+  border-radius: 50%;
+  background: radial-gradient(circle at 36% 30%, #e0483a, #9a1a10 60%, #5a0a06);
+  box-shadow:
+    0 4px 10px #000a,
+    inset 0 -3px 6px #0006,
+    inset 0 2px 4px #ff9a8a66;
+  animation: jinx-seal var(--len) cubic-bezier(0.5, 0, 0.6, 1.4) both;
+}
+.jinx-seal.gone {
+  visibility: hidden;
+}
+.jinx-seal .crawl-icon {
+  width: 56%;
+  height: 56%;
+  background: #ffd9cf;
+}
+@keyframes jinx-unroll {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.04);
+  }
+  4% {
+    opacity: 1;
+    transform: scaleY(0.04);
+  }
+  16%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes jinx-text {
+  0%,
+  12% {
+    opacity: 0;
+  }
+  20%,
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes jinx-seal {
+  0%,
+  12% {
+    opacity: 0;
+    transform: scale(2.6) rotate(-18deg);
+  }
+  18% {
+    opacity: 1;
+    transform: scale(0.9) rotate(4deg);
+  }
+  21%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes jinx-roll {
+  to {
+    opacity: 0;
+    transform: scaleY(0.04);
+  }
+}
+
+/* Lifted: the scroll shows (no unroll), the seal splits, and a mask three
+   times the scroll's height slides up so the paper burns from the foot. */
+.moment-jinx.lifted .jinx-scroll {
+  -webkit-mask: linear-gradient(180deg, #000 0 46%, transparent 48% 100%) 0 0 /
+    100% 300% no-repeat;
+  mask: linear-gradient(180deg, #000 0 46%, transparent 48% 100%) 0 0 / 100%
+    300% no-repeat;
+  animation: jinx-burn var(--len) linear both;
+}
+/* The burning edge: a line of fire as tall as the wrap, moved up from the
+   foot in step with the mask's edge (32% to 62% of the moment). */
+.jinx-burnline {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  animation: jinx-burnline var(--len) linear both;
+}
+.jinx-burnline::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  right: -10px;
+  top: -8px;
+  height: 16px;
+  border-radius: 8px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    #ffd27a 35%,
+    #ff6a1a 60%,
+    transparent
+  );
+  filter: blur(3px);
+  box-shadow: 0 0 22px #ff8a2a;
+}
+.jinx-wrap {
+  position: relative;
+  animation: jinx-show var(--len) ease both;
+}
+.moment-jinx.lifted .jinx-scroll > small,
+.moment-jinx.lifted .jinx-scroll > strong {
+  animation: none;
+}
+.moment-jinx.lifted .jinx-seal {
+  background: none;
+  box-shadow: none;
+  animation: none;
+}
+.jinx-seal .half {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: radial-gradient(circle at 36% 30%, #e0483a, #9a1a10 60%, #5a0a06);
+  box-shadow: 0 4px 10px #000a;
+}
+.jinx-seal .half.left {
+  clip-path: polygon(0 0, 54% 0, 44% 34%, 56% 60%, 46% 100%, 0 100%);
+  animation: seal-left var(--len) cubic-bezier(0.3, 0, 0.6, 1) both;
+}
+.jinx-seal .half.right {
+  clip-path: polygon(54% 0, 100% 0, 100% 100%, 46% 100%, 56% 60%, 44% 34%);
+  animation: seal-right var(--len) cubic-bezier(0.3, 0, 0.6, 1) both;
+}
+.jinx-lifts {
+  position: absolute;
+  top: calc(50% + clamp(70px, 20vw, 110px));
+  margin: 0;
+  color: #fff0cf;
+  font: 700 clamp(28px, 8.5vw, 44px) / 1.05 var(--font-card-title);
+  text-align: center;
+  text-shadow:
+    0 3px 0 #0009,
+    0 0 20px #ffb347;
+  animation: jinx-lifts var(--len) ease both;
+}
+@keyframes jinx-show {
+  0% {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  12%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+/* The mask is three scroll-heights tall and opaque for its first 1.38, so
+   its edge is at the scroll's foot at 19% of its travel and its head at
+   69%: those land at 32% and 62% of the moment, with the burn line. */
+@keyframes jinx-burn {
+  0%,
+  32% {
+    -webkit-mask-position: 0 19%;
+    mask-position: 0 19%;
+  }
+  62% {
+    -webkit-mask-position: 0 69%;
+    mask-position: 0 69%;
+  }
+  100% {
+    -webkit-mask-position: 0 100%;
+    mask-position: 0 100%;
+  }
+}
+@keyframes jinx-burnline {
+  0%,
+  28% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  32% {
+    opacity: 1;
+    transform: translateY(100%);
+  }
+  62% {
+    opacity: 1;
+    transform: none;
+  }
+  68%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+@keyframes seal-left {
+  0%,
+  22% {
+    opacity: 1;
+    transform: none;
+  }
+  26% {
+    transform: translate(-4px, 0) rotate(-6deg);
+  }
+  60%,
+  100% {
+    opacity: 0;
+    transform: translate(-22px, 26px) rotate(-34deg);
+  }
+}
+@keyframes seal-right {
+  0%,
+  22% {
+    opacity: 1;
+    transform: none;
+  }
+  26% {
+    transform: translate(4px, 0) rotate(6deg);
+  }
+  60%,
+  100% {
+    opacity: 0;
+    transform: translate(22px, 30px) rotate(30deg);
+  }
+}
+@keyframes jinx-lifts {
+  0%,
+  30% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  42%,
+  86% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* --- Doubles (every mode): two matching faces clack together ------------- */
+.moment-doubles {
+  --len: calc(var(--m) * 1300ms);
+  --die: clamp(64px, 19vw, 96px);
+}
+.pair-dice {
+  position: absolute;
+  top: 38%;
+  left: 50%;
+}
+.pair-left,
+.pair-right {
+  position: absolute;
+  top: calc(var(--die) / -2);
+  left: calc(var(--die) / -2);
+}
+.pair-left {
+  animation: pair-left var(--len) cubic-bezier(0.3, 0, 0.2, 1) both;
+}
+.pair-right {
+  animation: pair-right var(--len) cubic-bezier(0.3, 0, 0.2, 1) both;
+}
+.pair-die {
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  place-items: center;
+  box-sizing: border-box;
+  width: var(--die);
+  height: var(--die);
+  padding: 14%;
+  border-radius: 20%;
+  background: radial-gradient(circle at 32% 26%, #ffffff, #efe6d4 60%, #c9bba0);
+  box-shadow:
+    0 6px 0 #9a8a6c,
+    0 12px 24px #000a,
+    inset 0 -3px 6px #0002;
+}
+.moment-doubles.win .pair-die {
+  background: radial-gradient(circle at 32% 26%, #fffbe8, #f6dc8f 60%, #c9962e);
+  box-shadow:
+    0 6px 0 #8a6026,
+    0 12px 24px #000a,
+    0 0 26px #f2c94c99;
+}
+.pair-die i {
+  width: 72%;
+  height: 72%;
+  border-radius: 50%;
+}
+.pair-die i.pip {
+  background: radial-gradient(circle at 40% 35%, #5a4630, #1e140c);
+}
+.pair-die b {
+  grid-area: 1 / 1 / 4 / 4;
+  color: #1e140c;
+  font: 800 calc(var(--die) * 0.5) / 1 var(--font-card-title);
+}
+.pair-word {
+  position: absolute;
+  top: calc(38% + var(--die) * 0.75);
+  color: #fff3c4;
+  font: 800 clamp(40px, 13vw, 72px) / 1 var(--font-card-title);
+  letter-spacing: 0.02em;
+  text-shadow:
+    0 4px 0 #6a4408,
+    0 0 26px #f2c94c;
+  animation: pair-word var(--len) cubic-bezier(0.2, 1.5, 0.4, 1) both;
+}
+/* They spin in from either side, meet with a clack at 28%, spring a hair
+   apart and sit side by side. */
+@keyframes pair-left {
+  0% {
+    opacity: 0;
+    transform: translateX(-60vw) rotate(-260deg);
+  }
+  28% {
+    opacity: 1;
+    transform: translateX(calc(var(--die) * -0.52)) rotate(0);
+  }
+  36% {
+    transform: translateX(calc(var(--die) * -0.62)) rotate(-4deg);
+  }
+  46%,
+  84% {
+    opacity: 1;
+    transform: translateX(calc(var(--die) * -0.58));
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(calc(var(--die) * -0.58)) translateY(-12px);
+  }
+}
+@keyframes pair-right {
+  0% {
+    opacity: 0;
+    transform: translateX(60vw) rotate(260deg);
+  }
+  28% {
+    opacity: 1;
+    transform: translateX(calc(var(--die) * 0.52)) rotate(0);
+  }
+  36% {
+    transform: translateX(calc(var(--die) * 0.62)) rotate(4deg);
+  }
+  46%,
+  84% {
+    opacity: 1;
+    transform: translateX(calc(var(--die) * 0.58));
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(calc(var(--die) * 0.58)) translateY(-12px);
+  }
+}
+@keyframes pair-word {
+  0%,
+  26% {
+    opacity: 0;
+    transform: scale(2.4);
+  }
+  36% {
+    opacity: 1;
+    transform: scale(0.94);
+  }
+  44%,
+  84% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* --- A plain game's first card: the milestone ribbon, gilt ---------------- */
+.moment-milestone.opening .milestone-cloth {
+  background:
+    linear-gradient(180deg, #ffffff44, transparent 50%),
+    linear-gradient(180deg, #f2d48a, #a8782e);
+  box-shadow:
+    0 10px 30px #000a,
+    0 0 30px #f2c94c66;
+}
+
+/* --- Behind the bookcase (Pub Crawl's hidden room) ------------------------
+   0-12% the table darkens and a bookcase fills it; 22-32% it shudders and
+   a book tips (the catch); 38-70% it swings open on its left hinge into
+   warm light, the room's name in the doorway; then it all fades. */
+.moment-door {
+  --len: calc(var(--m) * 2600ms);
+  --case-w: min(88vw, 420px);
+  --case-h: min(70vh, 600px);
+  perspective: 1400px;
+  background: #050302;
+  animation: moment-shade var(--len) ease both;
+}
+.door-light {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--case-w);
+  height: var(--case-h);
+  margin: calc(var(--case-h) / -2) 0 0 calc(var(--case-w) / -2);
+  background:
+    radial-gradient(
+      ellipse 60% 50% at 50% 55%,
+      #fff3c4 0,
+      #f2b04c 40%,
+      transparent 80%
+    ),
+    #2a1408;
+  box-shadow: 0 0 80px #f2b04c66;
+  opacity: 0;
+  animation: door-light var(--len) ease both;
+}
+.door-room {
+  position: absolute;
+  top: 50%;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  width: var(--case-w);
+  transform: translateY(-50%);
+  text-align: center;
+  animation: door-room var(--len) ease both;
+}
+.door-room small {
+  color: #5a2a08;
+  font: 700 clamp(14px, 3.8vw, 17px) / 1.1 var(--font-tavern);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.door-room span {
+  color: #5a2a08;
+  font: 600 clamp(15px, 4.2vw, 19px) / 1.2 var(--font-tavern);
+}
+.door-room strong {
+  color: #2a1006;
+  font: 800 clamp(34px, 11vw, 60px) / 1 var(--font-card-title);
+  text-shadow: 0 0 18px #fff3c4;
+}
+.bookcase {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+  gap: 3%;
+  box-sizing: border-box;
+  width: var(--case-w);
+  height: var(--case-h);
+  margin: calc(var(--case-h) / -2) 0 0 calc(var(--case-w) / -2);
+  padding: 6% 6% 5%;
+  border-radius: 6px;
+  background:
+    linear-gradient(90deg, #0006, transparent 6%, transparent 94%, #0006),
+    linear-gradient(180deg, #5a361a, #3a200c);
+  box-shadow:
+    inset 0 0 0 6px #2a1608,
+    inset 0 0 24px #0009,
+    0 20px 50px #000c;
+  transform-origin: 0 50%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  animation: bookcase var(--len) cubic-bezier(0.55, 0, 0.35, 1) both;
+}
+.bookcase::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: #000;
+  opacity: 0;
+  animation: bookcase-dark var(--len) ease-in both;
+}
+.shelf {
+  display: flex;
+  align-items: flex-end;
+  gap: 2%;
+  padding: 0 2%;
+  border-bottom: 8px solid #2a1608;
+  box-shadow: 0 6px 6px -4px #0008;
+}
+.book {
+  flex: 1;
+  border-radius: 2px 2px 0 0;
+  background: linear-gradient(90deg, #0004, transparent 30%, #fff2 50%, #0004);
+  box-shadow:
+    inset 0 6px 0 -3px #e6c78e55,
+    inset 0 -8px 0 -5px #e6c78e55;
+}
+.book.tone-0 {
+  background-color: #6a1a14;
+}
+.book.tone-1 {
+  background-color: #1e3a2a;
+}
+.book.tone-2 {
+  background-color: #2a2a4a;
+}
+.book.tone-3 {
+  background-color: #7a5a24;
+}
+.book.tone-4 {
+  background-color: #4a2a1a;
+}
+.book.lean {
+  transform-origin: 0 100%;
+  animation: book-lean var(--len) ease-in-out both;
+}
+@keyframes bookcase {
+  0% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  10%,
+  21% {
+    opacity: 1;
+    transform: none;
+  }
+  23% {
+    transform: translateX(-3px);
+  }
+  25% {
+    transform: translateX(3px);
+  }
+  27% {
+    transform: translateX(-2px);
+  }
+  29%,
+  38% {
+    transform: none;
+  }
+  70%,
+  100% {
+    opacity: 1;
+    transform: rotateY(-80deg);
+  }
+}
+@keyframes bookcase-dark {
+  0%,
+  40% {
+    opacity: 0;
+  }
+  70%,
+  100% {
+    opacity: 0.55;
+  }
+}
+@keyframes book-lean {
+  0%,
+  30% {
+    transform: none;
+  }
+  35%,
+  100% {
+    transform: rotate(-14deg);
+  }
+}
+@keyframes door-light {
+  0%,
+  36% {
+    opacity: 0;
+  }
+  58%,
+  88% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes door-room {
+  0%,
+  44% {
+    opacity: 0;
+    transform: translateY(-46%) scale(0.96);
+  }
+  60%,
+  88% {
+    opacity: 1;
+    transform: translateY(-50%);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-50%);
+  }
+}
+
+/* --- Push your luck: the bank's coin stack ------------------------------- */
+.moment-press {
+  --len: calc(var(--m) * 1300ms);
+  --coin: clamp(56px, 16vw, 80px);
+}
+/* Ambient (the table's taps pass through), so no full shade: a soft pool of
+   dark behind the words keeps them readable over the card. */
+.moment-press::before,
+.moment-doubles::before {
+  content: "";
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  width: 120vw;
+  height: 60vh;
+  margin: -30vh 0 0 -60vw;
+  background: radial-gradient(closest-side, #000a, transparent);
+  animation: badge-shade var(--len) ease both;
+}
+.press-stack {
+  position: absolute;
+  top: 34%;
+  left: 50%;
+  width: var(--coin);
+  height: 0;
+  margin-left: calc(var(--coin) / -2);
+}
+.moment-press.bust .press-stack {
+  transform-origin: 50% 0;
+  animation: press-topple var(--len) cubic-bezier(0.5, 0, 0.8, 0.5) both;
+}
+.press-coin {
+  position: absolute;
+  left: 0;
+  bottom: calc(var(--i) * var(--coin) * 0.18);
+  width: var(--coin);
+  height: calc(var(--coin) * 0.34);
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at 40% 35%,
+    #fff3c4,
+    #f2c94c 50%,
+    #b8862a
+  );
+  box-shadow:
+    0 calc(var(--coin) * 0.08) 0 #8a6026,
+    0 6px 10px #0008;
+  animation: press-coin var(--len) ease both;
+}
+.press-coin.new {
+  animation: press-drop var(--len) cubic-bezier(0.3, 0, 0.4, 1.4) both;
+}
+.press-words {
+  position: absolute;
+  top: calc(34% + var(--coin) * 0.5);
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  width: 92vw;
+  margin: 0;
+  text-align: center;
+  text-shadow: 0 2px 10px #000;
+  animation: press-words var(--len) cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+.press-words strong {
+  color: #fff3c4;
+  font: 800 clamp(34px, 11vw, 58px) / 1 var(--font-card-title);
+  text-shadow:
+    0 3px 0 #6a4408,
+    0 0 22px #f2c94c;
+}
+.moment-press.bust .press-words strong {
+  color: #ffd2c4;
+  text-shadow:
+    0 3px 0 #5a0a06,
+    0 0 22px #e0483a;
+}
+.press-words small {
+  color: #f4e6c4;
+  font: 600 clamp(14px, 3.8vw, 18px) / 1.2 var(--font-tavern);
+}
+@keyframes press-coin {
+  0% {
+    opacity: 0;
+  }
+  10%,
+  84% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes press-drop {
+  0%,
+  8% {
+    opacity: 0;
+    transform: translateY(-30vh);
+  }
+  30% {
+    opacity: 1;
+    transform: none;
+  }
+  34% {
+    transform: translateY(3px) scaleY(0.9);
+  }
+  40%,
+  84% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes press-topple {
+  0%,
+  10% {
+    opacity: 1;
+    transform: none;
+  }
+  20% {
+    opacity: 1;
+    transform: rotate(-10deg);
+  }
+  40%,
+  100% {
+    opacity: 0;
+    transform: translate(24vw, 10vh) rotate(80deg);
+  }
+}
+@keyframes press-words {
+  0%,
+  22% {
+    opacity: 0;
+    transform: scale(1.8);
+  }
+  34% {
+    opacity: 1;
+    transform: none;
+  }
+  84% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* --- By a thread: the last heart ------------------------------------------
+   The trace draws from 8% to 78%; its beats pass at about 22% and 61%, and
+   the heart beats with them. Between, it dims while the line runs flat. */
+.moment-thread {
+  --len: calc(var(--m) * 2100ms);
+}
+.thread-shade {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 42%, #2a0604cc 0, #050101f7 66%);
+  animation: moment-shade var(--len) ease both;
+}
+.thread-heart {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  width: clamp(80px, 24vw, 120px);
+  height: clamp(80px, 24vw, 120px);
+  margin: calc(clamp(80px, 24vw, 120px) / -2) 0 0
+    calc(clamp(80px, 24vw, 120px) / -2);
+  filter: drop-shadow(0 0 18px #e0483a);
+  animation: thread-heart var(--len) ease both;
+}
+.thread-heart .crawl-icon {
+  width: 100%;
+  height: 100%;
+  background: #e0483a;
+}
+.thread-trace {
+  position: absolute;
+  top: calc(42% + clamp(54px, 16vw, 80px));
+  left: 50%;
+  width: min(80vw, 360px);
+  height: clamp(36px, 10vw, 56px);
+  margin-left: calc(min(80vw, 360px) / -2);
+  overflow: visible;
+}
+.thread-trace path {
+  fill: none;
+  stroke: #ff6a5a;
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+  /* No non-scaling stroke: it measures dashes on screen, where
+     `pathLength` no longer reaches the end of the line. */
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  filter: drop-shadow(0 0 4px #ff6a5a);
+  animation: thread-trace var(--len) linear both;
+}
+.thread-words {
+  position: absolute;
+  top: calc(42% + clamp(104px, 30vw, 150px));
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  width: 92vw;
+  margin: 0;
+  text-align: center;
+  animation: thread-words var(--len) ease both;
+}
+.thread-words strong {
+  color: #ffe2da;
+  font: 800 clamp(34px, 11vw, 58px) / 1 var(--font-card-title);
+  text-shadow:
+    0 3px 0 #5a0a06,
+    0 0 22px #e0483a;
+}
+.thread-words span {
+  color: #f4d6cc;
+  font: 600 clamp(15px, 4vw, 19px) / 1.2 var(--font-tavern);
+  letter-spacing: 0.08em;
+}
+@keyframes thread-heart {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  10% {
+    opacity: 1;
+    transform: none;
+  }
+  /* The first beat, lub-dub. */
+  21% {
+    transform: scale(1.18);
+  }
+  24% {
+    transform: none;
+  }
+  26% {
+    transform: scale(1.08);
+  }
+  29% {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  /* The flat line: it fades and greys. */
+  52%,
+  58% {
+    opacity: 0.4;
+    transform: scale(0.94);
+    filter: grayscale(0.8);
+  }
+  /* It comes back. */
+  62% {
+    opacity: 1;
+    transform: scale(1.26);
+    filter: none;
+  }
+  66% {
+    transform: none;
+  }
+  69% {
+    transform: scale(1.1);
+  }
+  73%,
+  88% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes thread-trace {
+  0%,
+  8% {
+    stroke-dashoffset: 1;
+    opacity: 1;
+  }
+  78%,
+  88% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+@keyframes thread-words {
+  0%,
+  60% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  70%,
+  88% {
+    opacity: 1;
+    transform: none;
+  }
   100% {
     opacity: 0;
   }

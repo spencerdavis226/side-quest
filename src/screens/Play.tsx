@@ -163,13 +163,16 @@ export function Play({
   const items =
     !motion && session.phase === "revealed" ? usableItems(session) : [];
   // A crawl's stamp on a boss's felling swing (display only): Felled in
-  // Pub Crawl; in the League, Badge won on a gym leader, else Defeated.
-  const flourish = crawlTheme(session.quest?.packId).flourish;
-  const felledWord =
-    flourish &&
-    (flourish.badge && card.quest && card.quest === session.quest?.packId
-      ? flourish.badge
-      : flourish.felled);
+  // Pub Crawl, Defeated in the League. A gym leader gets none: its badge
+  // moment says it, louder (2026-11-01, owner: the stamp then the badge
+  // "feels redundant. The stamp feels weaker so remove that").
+  const theme = crawlTheme(session.quest?.packId);
+  const flourish = theme.flourish;
+  const badgeBoss =
+    !!theme.words.badges &&
+    !!card.quest &&
+    card.quest === session.quest?.packId;
+  const felledWord = flourish && !badgeBoss ? flourish.felled : undefined;
   const fells = !!felledWord && (fellingSwing(session) || stampingNow);
   // The stamp waits for a moment over the table (a natural 20) to finish,
   // so it is seen landing (2026-11-01).

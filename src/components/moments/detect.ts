@@ -3,6 +3,7 @@ import {
   cardMatchup,
   currentCard,
   findCard,
+  finaleCard,
   finaleStage,
   formEffect,
   isBossCard,
@@ -12,7 +13,9 @@ import {
   partyType,
   questRecord,
   teamMember,
+  wantedBoss,
 } from "../../game/engine";
+import { rollWins } from "../../game/dice";
 import { describeChange } from "../../game/omenText";
 import { badgeArt } from "../../presentation/league-art";
 import { badgeType } from "../../presentation/pokemon-types";
@@ -78,6 +81,8 @@ export type Moment = {
       mine: PokemonType;
       theirs: PokemonType;
       edge: "advantage" | "disadvantage" | "even";
+      /** A strike, settled by the matchup alone (no roll). */
+      strike: boolean;
     }
   | { kind: "sendin"; name: string; type?: PokemonType; bonus?: string }
   | { kind: "omen"; league: boolean; title: string; type?: PokemonType }
@@ -100,7 +105,42 @@ export type Moment = {
       /** What a piece of gear or a trinket does. */
       rules?: string;
     }
-  | { kind: "milestone"; kicker: string; title: string; line: string }
+  | {
+      kind: "milestone";
+      kicker: string;
+      title: string;
+      line: string;
+      /** A plain game's first card: sparks round the card as well. */
+      opening?: boolean;
+    }
+  /** Matching dice on a card that reads them (`dice.doubles`). */
+  | { kind: "doubles"; faces: number[]; sides: number; win: boolean }
+  /** The bookcase swings open on a hidden room (Pub Crawl). */
+  | {
+      kind: "door";
+      kicker: string;
+      title: string;
+      /** The keeper waiting inside, as the stage banner named it. */
+      wanted?: string;
+    }
+  /** Push your luck: a pull banked (`ride`) or the bank lost (`bust`). */
+  | { kind: "press"; bust: boolean; banked: number }
+  /** The party is down to its last heart and still standing. */
+  | { kind: "thread"; league: boolean; line: string }
+  /** A caught Pokémon lost with in a fight: off the team for good. */
+  | { kind: "faint"; name: string; type?: PokemonType; line: string }
+  /** A Pokémon joins with no ball: an egg hatched, a Legendary caught on
+   * its last beat. */
+  | { kind: "join"; name: string; type?: PokemonType; hatched: boolean }
+  /** A jinx laid (its name and rule) or lifted (the boss fell). */
+  | {
+      kind: "jinx";
+      lifted: boolean;
+      packId: string;
+      kicker: string;
+      name: string;
+      rule: string;
+    }
 );
 export type MomentKind = Moment["kind"];
 
@@ -111,9 +151,15 @@ export const AMBIENT: ReadonlySet<MomentKind> = new Set([
   "milestone",
   "natural",
   "clash",
+  "doubles",
+  "press",
 ]);
-/** Moments cut short when the card moves (a roll starts under a clash). */
-export const CUT_ON_MOTION: ReadonlySet<MomentKind> = new Set(["clash"]);
+/** Moments cut short when the card moves (a roll starts under a clash, or
+ * under a banked pull's coins). */
+export const CUT_ON_MOTION: ReadonlySet<MomentKind> = new Set([
+  "clash",
+  "press",
+]);
 /** Moments that play over a motion already under way (the omen's reveal
  * covers the card turning; a natural lands as the dice settle). */
 export const OVER_MOTION: ReadonlySet<MomentKind> = new Set(["omen"]);
@@ -128,6 +174,45 @@ function naturalKey(s: SessionState | null) {
     nat,
     key: `${nat}:${s.discarded}:${party?.hits ?? 0}:${party?.press ?? 0}`,
   };
+}
+
+/** Matching dice face up on a returned roll whose card reads doubles. */
+function doublesKey(s: SessionState | null) {
+  if (!s || s.phase !== "revealed" || !s.roll?.returned) return null;
+  const dice = currentCard(s).dice;
+  const faces = s.roll.values;
+  if (!dice?.doubles || faces.length < 2) return null;
+  if (!faces.every((f) => f === faces[0])) return null;
+  const party = s.quest?.party;
+  return {
+    faces,
+    sides: dice.sides,
+    win: !!dice.doublesWin,
+    key: `${s.discarded}:${party?.hits ?? 0}:${party?.press ?? 0}:${faces.join("-")}`,
+  };
+}
+
+/** Whether the push-your-luck card just put aside was won (cashed out):
+ * read from its roll, since a full bag can take none of the prizes. */
+function pressWon(s: SessionState) {
+  const card = findCard(s, s.previousId);
+  const roll = s.previousRoll;
+  return !!card?.dice && !!roll && rollWins(card.dice, roll.values, roll);
+}
+
+/** A hidden room's first guard dealt face down (Pub Crawl): the bookcase
+ * swings open. Read from the guards' ribbon (`Room · Guard`, `bookcase.ts`);
+ * shared with `StageBanner`, which steps aside for it. */
+export function hiddenRoomFor(s: SessionState) {
+  const q = s.quest;
+  if (!q?.due || !q.party || s.phase !== "hidden") return null;
+  const at = finaleStage(q);
+  if (at.index !== 0) return null;
+  const pool = q.stages[at.stage].cards;
+  if (!pool.length || !pool.every((c) => / · Guard$/.test(c.ribbon ?? "")))
+    return null;
+  if (pool.some((c) => c.id === s.previousId)) return null;
+  return { key: `door:${at.label}`, title: at.label };
 }
 
 /** The boss, ambush or League ace being dealt face down for the first time,
@@ -363,7 +448,115 @@ export function momentsBetween(
           say: `Go, ${member.title}!`,
         });
     }
+
+    // A Pokémon joins with no throw (2026-11-01): the egg, a Legendary
+    // caught on its last beat. A ball's catch has its own throw.
+    const newest = party.team?.at(-1);
+    if (newest && newest !== was.team?.at(-1)) {
+      const member = teamMember(q, newest);
+      if (member?.joins) {
+        const hatched = !member.hits;
+        out.push({
+          kind: "join",
+          key: `join:${newest}`,
+          name: member.title,
+          type: member.type,
+          hatched,
+          say: `${member.title} ${hatched ? "hatched" : "was caught"}. Joined the team.`,
+        });
+      }
+    }
+
+    // A caught Pokémon lost with (a Nuzlocke, 2026-10-31): gone for good.
+    if (party.fainted && party.fainted !== was.fainted) {
+      const fallen = teamMember(q, party.fainted);
+      if (fallen) {
+        const line = "Gone for good. The drawer drinks 2.";
+        out.push({
+          kind: "faint",
+          key: `faint:${party.fainted}:${after.discarded}`,
+          name: fallen.title,
+          type: fallen.type,
+          line,
+          say: `${fallen.title} fainted. ${line}`,
+        });
+      }
+    }
+
+    // A jinx laid on a loss, or lifted as the boss falls.
+    const words = theme.words.jinx;
+    if (words && party.jinx && party.jinx !== was.jinx) {
+      const laid = finaleCard(q, party.jinx)?.jinx;
+      if (laid)
+        out.push({
+          kind: "jinx",
+          key: `jinx:${party.jinx}:${after.discarded}`,
+          lifted: false,
+          packId: q.packId,
+          kicker: words.landed,
+          name: laid.name,
+          rule: laid.rule,
+          say: `${words.landed} ${laid.name}. ${laid.rule}`,
+        });
+    } else if (words && was.jinx && !party.jinx) {
+      const gone = finaleCard(q, was.jinx)?.jinx;
+      out.push({
+        kind: "jinx",
+        key: `lifted:${was.jinx}:${after.discarded}`,
+        lifted: true,
+        packId: q.packId,
+        kicker: words.name,
+        name: gone?.name ?? words.name,
+        rule: words.lifted,
+        say: `${words.lifted}: ${gone?.name ?? words.name}.`,
+      });
+    }
+
+    // Push your luck: a pull banked, or the bank lost on a loss (a cash-out's
+    // prizes are the loot moment's).
+    const pressed = party.press ?? 0;
+    const pressedBefore = was.press ?? 0;
+    if (pressed > pressedBefore)
+      out.push({
+        kind: "press",
+        key: `ride:${after.discarded}:${pressed}`,
+        bust: false,
+        banked: pressed,
+        say: `Let it ride. ${pressed} banked.`,
+      });
+    else if (
+      pressedBefore > 0 &&
+      !pressed &&
+      after.discarded > before.discarded &&
+      !pressWon(after)
+    )
+      out.push({
+        kind: "press",
+        key: `bust:${before.discarded}`,
+        bust: true,
+        banked: pressedBefore,
+        say: "Bust. The prizes are gone.",
+      });
+
+    // Down to the last heart, and still standing.
+    if (party.hearts === 1 && was.hearts > 1 && !party.wiped) {
+      const league = q.packId === "pokemon";
+      out.push({
+        kind: "thread",
+        key: `thread:${after.discarded}:${party.hits}`,
+        league,
+        line: league ? "1 HP left." : "One heart left.",
+        say: `By a thread. ${league ? "1 HP left." : "One heart left."}`,
+      });
+    }
   }
+
+  // A plain game's first card turned over.
+  if (!q && turned && after.discarded === 0 && after.cycle === 0)
+    out.push({
+      ...milestone("opening", "Raise your glasses", "Game on", ""),
+      opening: true,
+    } as Moment);
 
   // Standard and Infinite: the deck's milestones.
   if (!q && after.phase === "hidden" && after.discarded > before.discarded) {
@@ -416,6 +609,23 @@ export function momentsBetween(
     });
   }
 
+  // The bookcase swings open on a hidden room.
+  const door = hiddenRoomFor(after);
+  if (door && door.key !== (hiddenRoomFor(before)?.key ?? null)) {
+    const kicker = "Behind the bookcase";
+    const word = theme.words.wanted;
+    const boss = q && word ? wantedBoss(q)?.title : undefined;
+    const wanted = boss ? `${word}: ${boss}` : undefined;
+    out.push({
+      kind: "door",
+      key: door.key,
+      kicker,
+      title: door.title,
+      wanted,
+      say: `${kicker}: ${door.title}.${wanted ? ` ${wanted}.` : ""}`,
+    });
+  }
+
   // A League fight turned over: the type matchup.
   if (turned && q?.party) {
     const m = cardMatchup(q, card);
@@ -427,6 +637,7 @@ export function momentsBetween(
         mine,
         theirs: card.type,
         edge: m.edge ?? "even",
+        strike: !!card.strike,
         say: "",
       });
   }
@@ -435,6 +646,18 @@ export function momentsBetween(
   const nat = naturalKey(after);
   if (nat && nat.key !== naturalKey(before)?.key)
     out.push({ kind: "natural", key: `nat:${nat.key}`, nat: nat.nat, say: "" });
+
+  // Matching dice on a card that reads them.
+  const pair = doublesKey(after);
+  if (pair && pair.key !== doublesKey(before)?.key)
+    out.push({
+      kind: "doubles",
+      key: `pair:${pair.key}`,
+      faces: pair.faces,
+      sides: pair.sides,
+      win: pair.win,
+      say: "",
+    });
 
   return out;
 }

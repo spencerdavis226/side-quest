@@ -2,7 +2,11 @@ import { test, expect, seed, saved, withMotion, rng, frames } from "./support";
 import { advance, createSession, currentCard } from "../../src/game/engine";
 import { returnToCard, rollDice } from "../../src/game/dice";
 import { cards, packs } from "../../src/content/catalog";
+import type { SessionState } from "../../src/game/types";
 import { STEP, crawlAt, league, leagueAt } from "./sessions";
+
+const rolled = (s: SessionState, face: number) =>
+  returnToCard(rollDice(s, () => (face - 0.5) / currentCard(s).dice!.sides));
 
 // The moments layer (2026-11-01): full-screen moments play only on what the
 // table just did, a tap skips one without reaching the card underneath,
@@ -137,6 +141,8 @@ test("a beaten gym's badge flies into the badges chip", async ({ page }) => {
   await seed(page, advance(leagueAt("pokemon.gym-byron", { hits: 1 })));
   await page.getByRole("button", { name: "Won", exact: true }).click();
   await expect(page.locator(".moment-badge")).toBeVisible();
+  // No stamp first: the badge says it (2026-11-01, owner).
+  await expect(page.locator(".felled-stamp")).toHaveCount(0);
   const flier = page.locator(".moment-flier");
   await expect(flier).toHaveCount(1, { timeout: 5000 });
   // Held at the end of its flight: over the chip, still painted.
@@ -187,4 +193,124 @@ test("a tap during the type clash still rolls", async ({ page }) => {
   await page.locator(".game-card").click();
   await expect(page.locator(".moment-clash")).toHaveCount(0);
   await expect.poll(async () => (await saved(page)).roll).not.toBeNull();
+});
+
+test("a jinx is laid on a scroll that rolls up into the jinx chip", async ({
+  page,
+}) => {
+  await withMotion(page);
+  // The Goblin Shaman lost on a 2: Goblin Tongue is laid.
+  await seed(
+    page,
+    rolled(advance(crawlAt("dungeon.goblin-shaman", STEP.floor1)), 2),
+  );
+  await page.locator(".game-card").click();
+  const scroll = page.locator(".moment-jinx .jinx-scroll");
+  await expect(scroll).toBeVisible();
+  await expect(scroll).toContainText("Goblin Tongue");
+  await expect(scroll).toContainText("The jinxed player speaks of themself");
+  // Its seal flies into the strip's jinx chip, then the moment ends.
+  await expect(page.locator(".moment-flier")).toHaveCount(1, {
+    timeout: 6000,
+  });
+  await expect(page.locator(".moment-jinx")).toHaveCount(0, { timeout: 6000 });
+  await expect(page.locator(".tag-jinx")).toBeVisible();
+  await expect(
+    page.getByRole("status").and(page.locator("#banner-announcer")),
+  ).toContainText("Jinxed! Goblin Tongue.");
+});
+
+test("a teammate lost with in a fight faints, quietly, once", async ({
+  page,
+}) => {
+  await withMotion(page);
+  // Pidgey sent into Machop's fight (Route 3) and the roll lost on a 2.
+  const PIDGEY = "pokemon.route-pidgey";
+  const s = leagueAt("pokemon.route-machop", {}, 0, "pokemon.starter-pikachu");
+  const q = s.quest!;
+  const finale = [...q.finale];
+  const was = finale.indexOf(PIDGEY);
+  if (was >= 0) finale[was] = finale[1];
+  finale[1] = PIDGEY;
+  const up = advance({
+    ...s,
+    previousId: finale[q.step - 1],
+    quest: {
+      ...q,
+      finale,
+      party: { ...q.party!, team: [PIDGEY], assist: PIDGEY },
+    },
+  });
+  await seed(page, rolled(up, 2));
+  await page.locator(".game-card").click();
+  const moment = page.locator(".moment-faint");
+  await expect(moment).toBeVisible();
+  await expect(moment.locator(".faint-words strong")).toHaveText("Pidgey");
+  await expect
+    .poll(async () => (await saved(page)).quest.party.fainted)
+    .toBe(PIDGEY);
+  await moment.click({ force: true });
+  await expect(moment).toHaveCount(0);
+  await page.reload();
+  await expect(page.locator(".game-card")).toBeVisible();
+  await expect(page.locator(".moment")).toHaveCount(0);
+});
+
+test("a hidden room's bookcase swings open; a tap on the card skips it and turns it", async ({
+  page,
+}) => {
+  await withMotion(page);
+  // The first landing, resting: next is the Speakeasy's first guard.
+  await seed(
+    page,
+    advance(
+      crawlAt(
+        "dungeon.landing-stairwell",
+        STEP.landing1,
+        {},
+        {
+          adventurer: "barbarian",
+        },
+      ),
+    ),
+  );
+  await page.getByRole("button", { name: /^Rest/ }).click();
+  const door = page.locator(".moment-door");
+  await expect(door).toBeVisible();
+  await expect(door.locator(".door-room")).toContainText("The Speakeasy");
+  await expect(door.locator(".door-room")).toContainText(
+    "Wanted: The Proprietor",
+  );
+  await expect(page.locator(".stage-banner")).toHaveCount(0);
+  await page.locator(".game-card").click({ force: true });
+  await expect(door).toHaveCount(0);
+  await expect.poll(async () => (await saved(page)).phase).toBe("revealed");
+  await page.reload();
+  await expect(page.locator(".game-card")).toBeVisible();
+  await expect(page.locator(".moment")).toHaveCount(0);
+});
+
+test("a boss's foil is one sheet over the whole card, under its text", async ({
+  page,
+}) => {
+  await seed(page, advance(leagueAt("pokemon.gym-byron")));
+  const foil = page.locator(".game-card .card-foil");
+  await expect(foil).toHaveCount(1);
+  // No cut-outs (2026-11-01, owner: they looked janky), and the title and
+  // rules sit above it.
+  const look = await foil.evaluate((el) => {
+    const face = el.parentElement!;
+    const z = (sel: string) =>
+      Number(getComputedStyle(face.querySelector(sel)!).zIndex);
+    const f = el.getBoundingClientRect();
+    const r = face.getBoundingClientRect();
+    return {
+      mask: getComputedStyle(el).maskImage,
+      covers: f.width === r.width && f.height === r.height,
+      under:
+        Number(getComputedStyle(el).zIndex) < z(".study-title") &&
+        Number(getComputedStyle(el).zIndex) < z(".study-body"),
+    };
+  });
+  expect(look).toEqual({ mask: "none", covers: true, under: true });
 });

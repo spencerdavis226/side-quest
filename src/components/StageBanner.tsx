@@ -1,17 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { SessionState } from "../game/types";
-import {
-  finaleCard,
-  teamMember,
-  finaleStage,
-  questStages,
-  wantedBoss,
-} from "../game/engine";
+import { finaleStage, questStages, wantedBoss } from "../game/engine";
 import { crawlTheme } from "./crawlTheme";
 import { packs } from "../content/manifest.generated";
 import { stageArt } from "../presentation/league-art";
 import { useAnnounce } from "./Announcer";
-import { entranceFor } from "./moments/detect";
+import { entranceFor, hiddenRoomFor } from "./moments/detect";
 import { useMoments } from "./moments/Director";
 
 /** The banner that sweeps across the table as each finale stage begins (the
@@ -68,6 +62,8 @@ function stageBanner(session: SessionState) {
   if (pool.some((c) => c.id === session.previousId)) return null;
   // A boss's own entrance plays instead (the moments layer, 2026-11-01).
   if (entranceFor(session)) return null;
+  // So does a hidden room's bookcase.
+  if (hiddenRoomFor(session)) return null;
   const rules = packs.find((p) => p.id === quest.packId)?.quest;
   const intro =
     (rules && questStages(rules).find((s) => s.label === stage.label)?.intro) ??
@@ -106,24 +102,15 @@ function useBannerTimeout(key: string | null, clear: () => void) {
   }, [key, clear]);
 }
 
-/** Pub Crawl's news, swept across the top third like an evolution: a
- * trinket found (its name and power), a jinx laid (its rule) or lifted, a
- * lost fight's drinks passed on.
- * Shown once per change, never on a resumed game. Tonight's omen is a
- * boon too, but its own card has just said so. */
+/** A lost fight's drinks passed on (the round item), swept across the top
+ * third. Shown once per change, never on a resumed game. A jinx laid or
+ * lifted, a hatch, a Legendary caught and a faint became moments
+ * (2026-11-01, `moments/`); a trinket became the loot moment before that. */
 export function PartyNewsBanner({ session }: { session: SessionState }) {
   const quest = session.quest;
   const party = quest?.party;
-  // The newest piece kept: a swap (2026-10-25) changes it without adding
-  // to the count.
-  const boons = party?.boons?.at(-1) ?? null;
-  const jinx = party?.jinx;
   const passed = party?.passed;
-  const fainted = party?.fainted;
-  // The newest teammate: an egg hatched or a Legendary caught (2026-11-01)
-  // is news; a ball's catch has its own throw.
-  const newest = party?.team?.at(-1);
-  const seen = useRef({ boons, jinx, passed, fainted, newest });
+  const seen = useRef(passed);
   const [shown, setShown] = useState<{
     key: string;
     kicker: string;
@@ -131,39 +118,11 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
     line: string;
     tone: string;
   } | null>(null);
-  const words = crawlTheme(quest?.packId).words;
   useEffect(() => {
     const before = seen.current;
-    seen.current = { boons, jinx, passed, fainted, newest };
+    seen.current = passed;
     if (!quest || !party) return;
-    if (newest && newest !== before.newest) {
-      const member = teamMember(quest, newest);
-      if (member?.joins) {
-        setShown({
-          key: `joined-${newest}`,
-          kicker: member.hits ? "Caught" : "Hatched",
-          title: member.title,
-          line: "Joined the team.",
-          tone: "violet",
-        });
-        return;
-      }
-    }
-    // A caught Pokémon lost with (2026-10-31, a Nuzlocke): gone for good.
-    if (fainted && fainted !== before.fainted) {
-      const fallen = teamMember(quest, fainted);
-      if (fallen) {
-        setShown({
-          key: `fainted-${fainted}-${session.discarded}`,
-          kicker: "Fainted",
-          title: fallen.title,
-          line: "Gone for good. The drawer drinks 2.",
-          tone: "crimson",
-        });
-        return;
-      }
-    }
-    if (passed !== undefined && passed !== before.passed) {
+    if (passed !== undefined && passed !== before) {
       const item = crawlTheme(quest.packId).loot.round;
       setShown({
         key: `passed-${passed}`,
@@ -172,37 +131,8 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
         line: "This fight's drinks are theirs.",
         tone: "violet",
       });
-      return;
     }
-    if (jinx && jinx !== before.jinx && words.jinx) {
-      const laid = finaleCard(quest, jinx)?.jinx;
-      if (laid)
-        setShown({
-          key: `jinx-${jinx}`,
-          kicker: words.jinx.landed,
-          title: laid.name,
-          line: laid.rule,
-          tone: "crimson",
-        });
-    } else if (before.jinx && !jinx && words.jinx)
-      setShown({
-        key: `lifted-${before.jinx}`,
-        kicker: words.jinx.name,
-        title: words.jinx.lifted,
-        line: "",
-        tone: "pearl",
-      });
-  }, [
-    boons,
-    jinx,
-    passed,
-    fainted,
-    newest,
-    quest,
-    party,
-    words,
-    session.discarded,
-  ]);
+  }, [passed, quest, party]);
   const clear = useCallback(() => setShown(null), []);
   // Held while a moment plays (a boss's spoils and its jinx lifted land
   // together): the banner sweeps once the moment is done.

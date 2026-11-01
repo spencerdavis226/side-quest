@@ -8,9 +8,9 @@ import { bossBeat, hitsNeeded } from "../game/engine";
 // moments layer (`moments/views.tsx`, 2026-11-01).
 
 /** The rubber stamp slammed over a boss's card on the swing that fells it
- * ("Felled"; the League's "Defeated" or "Badge won"), covering the card's
- * whole text area. It sits on the face, so it turns and leaves with the
- * card. */
+ * ("Felled"; the League's "Defeated", never on a gym leader, whose badge
+ * moment says it), covering the card's whole text area. It sits on the
+ * face, so it turns and leaves with the card. */
 export function FelledStamp({ word }: { word: string }) {
   return (
     <span className="felled-stamp" aria-hidden="true">

@@ -547,9 +547,14 @@ test("Veteran Ada shuts the badge case until her card is put aside", async ({
   // The team dialog still opens, and shows no badges.
   await meter(page).click();
   const team = page.getByRole("dialog", { name: "The team" });
+  // Open first: a count of 0 below passes before the dialog exists, and an
+  // Escape sent then is lost, leaving it to open over the Won plaque.
+  await expect(team).toBeVisible();
   await expect(team.locator(".crawl-badges")).toHaveCount(0);
   await page.keyboard.press("Escape");
-  await expect(page.getByRole("dialog")).toHaveCount(0);
+  // Closed, not just closing: the dialog keeps `open` (and takes taps)
+  // through its exit animation.
+  await expect(page.locator("dialog[open]")).toHaveCount(0);
   // Settling her battle opens the case again.
   await page.getByRole("button", { name: "Won", exact: true }).click();
   await expect(chip).toBeEnabled();
