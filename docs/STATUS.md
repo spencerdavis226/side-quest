@@ -2,14 +2,18 @@
 
 Updated 2026-11-02. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Local 2026-11-02: a second game in a sitting plays its moments again (bug hunt)
+## Bug hunt 2026-11-02 (owner: "Bug hunt in code", then "Keep hunting")
+
+Read with no further bug found: `moments/detect.ts` (every trigger; `sameGame` already blocks moments across games, so the `seen` fix below was the missing half), `moments/Director.tsx`, the `Stage` timer and skip in `views.tsx`, and `app/persistence.ts`'s load, save, corrupt backup and preferences. Save size is fine: the largest fixtures are about 390 KB (Pub Crawl) and 320 KB (League), well under Safari's roughly 5 MB per site. Not read yet: `src/game/engine.ts` (1,660 lines; covered by the balance runs and save fixtures), `Play.tsx`, `CardActions.tsx`.
+
+## Pushed 2026-11-02 (`7367256`): a second game in a sitting plays its moments again (bug hunt)
 
 - **Bug:** `MomentDirector` lives for the whole app session and its played-once set (`seen`) was never cleared, while many keys carry no game identity (`milestone:opening`, `milestone:halfway`, `omen:<starter>`, `badge:<gym>`, `evo:<from>><to>`, `door:<room>`, `nat:20:<card count>`). So a second game without a reload lost "Game on", Halfway, Last orders, Last card, a repeated starter's ball, a repeated gym's badge, and a natural on the same card count. `seen` now clears when the session goes away (back to setup) or `discarded` drops without an undo (only `createSession`/`replaySession` set it to 0).
 - New spec in `moments.spec.ts` ("a new game in the same sitting plays its moments"): failed on the old build (no "Game on" in game 2), passes 3 of 3 now.
 - **Test race fixed:** `game.spec.ts` "offline reload keeps the same revealed card" read the title before it had text (1 in 5 runs got "", then failed after the reload); it now waits for a non-empty title. 15 of 15 after.
 - **Checked:** typecheck, lint, `npm test` 442, build (budgets pass), Chromium `test:e2e` 166 passed + that race (fixed above). **Not run:** WebKit (CI).
 
-## Local 2026-11-02: no particles under Reduce Motion
+## Pushed 2026-11-02 (`2da271b`): no particles under Reduce Motion
 
 - `burst` in `moments/particles.ts` now returns under `stillMotion()` (Reduced Motion or a hidden tab) instead of trusting every caller to ask; the Most Likely countdown, the dice-card fuse/BOOM, Pub Crawl's hit shards and the endings all threw particles under Reduce Motion before. New spec in `moments.spec.ts` ("Reduced Motion counts down with no particle burst"): failed on the old build (canvas present), passes now.
 - **Checked:** typecheck, lint, `npm test` 442, build (budgets pass), Chromium `moments`, `motion`, `crawl`, `secrets` specs 59 passed. **Not run:** WebKit (CI).
@@ -18,7 +22,7 @@ Updated 2026-11-02. **Single authoritative handoff.** Read `AGENTS.md` first. Ol
 
 - **Owner decisions (2026-11-02):** every moment plays at full length; do not shorten moments (the "shorter early-gym entrances", "the clash only on an edge" and "Quick dropping the mid-size moments" items were Claude's suggestions, not the owner's, and are dropped). The owner has played the game on an iPhone and reports bugs as they find them; no full device pass is pending on their side. The runtime budget may be raised when a feature needs it (ask, then change `scripts/check-budget.ts`).
 - **Removed:** the pause menu's "Big moments: Full / Quick" row (`MomentsToggle` in `GameDialogs.tsx`) and `useQuickMoments`, `setQuickMoments`, `QUICK_SCALE` in `Director.tsx`. The type clash always plays. `MomentView` still takes `scale` (always 1 in the app) because the dev stage (`?moments=1`) slows moments down with it. A stored `side-quest.moments.v1` value is now ignored (harmless; no save touched, no fixture).
-- **Bisect branches** `bisect/master-ball` and `bisect/great-ultra` are still on GitHub: deleting them from this session was blocked by the permission classifier again. Delete them from GitHub's branches page.
+- **Bisect branches** `bisect/master-ball` and `bisect/great-ultra` stay on GitHub (owner, 2026-11-02: keep them; this session's GitHub access cannot delete branches, HTTP 403).
 
 **Checked:** typecheck, lint, `npm test` (442), `BASE_PATH=/side-quest/ npm run build` (budgets pass, runtime 3,886 of 4,096 KiB), Chromium `dialogs.spec.ts` + `moments.spec.ts` (21 passed). **Not run:** WebKit (CI runs it), a phone. 
 
