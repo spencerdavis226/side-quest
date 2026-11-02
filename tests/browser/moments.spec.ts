@@ -74,6 +74,24 @@ test("Most Likely To counts down to POINT, and the card still puts aside", async
   await expect.poll(async () => (await saved(page)).discarded).toBe(1);
 });
 
+// Reduced Motion throws no particles (2026-11-02): the countdown's burst
+// used to fire under it.
+test("Reduced Motion counts down with no particle burst", async ({ page }) => {
+  const s = createSession(
+    { version: 1, packIds: ["likely"], limit: 50 },
+    cards,
+    packs,
+    rng("moments likely still"),
+  );
+  await seed(page, s);
+  await page.locator(".game-card").click();
+  await page.getByRole("button", { name: /Count it down/ }).click();
+  const stage = page.locator(".point-countdown");
+  await expect(stage).toBeVisible();
+  await expect(stage).toHaveCount(0, { timeout: 6000 });
+  await expect(page.locator(".moment-particles")).toHaveCount(0);
+});
+
 test("Reduced Motion reads a moment's words on a still plaque", async ({
   page,
 }) => {

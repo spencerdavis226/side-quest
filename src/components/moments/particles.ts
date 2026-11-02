@@ -4,6 +4,8 @@
 // stops when the last particle dies, capped so a busy second never drops
 // frames on a phone. Display only; nothing here is saved or announced.
 
+import { stillMotion } from "../../presentation/motion";
+
 export type Preset =
   | "confetti"
   | "sparks"
@@ -85,10 +87,10 @@ function resize() {
 const rand = (a: number, b: number) => a + Math.random() * (b - a);
 const pick = <T>(list: T[]) => list[Math.floor(Math.random() * list.length)];
 
-/** Scatter a preset's particles. A hidden tab or Reduced Motion should not
- * call this (the moment that would has not played). */
+/** Scatter a preset's particles. Nothing under Reduced Motion or in a
+ * hidden tab (2026-11-02: checked here, since callers did not all ask). */
 export function burst(preset: Preset, options: BurstOptions = {}) {
-  if (document.hidden || !ensure()) return;
+  if (stillMotion() || !ensure()) return;
   const w = window.innerWidth;
   const h = window.innerHeight;
   const x = options.x ?? w / 2;

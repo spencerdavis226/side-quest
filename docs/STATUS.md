@@ -2,13 +2,18 @@
 
 Updated 2026-11-02. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Local 2026-11-02: the Big moments setting removed (owner: "remove the setting to make it fast to simplify and streamline")
+## Local 2026-11-02: no particles under Reduce Motion
+
+- `burst` in `moments/particles.ts` now returns under `stillMotion()` (Reduced Motion or a hidden tab) instead of trusting every caller to ask; the Most Likely countdown, the dice-card fuse/BOOM, Pub Crawl's hit shards and the endings all threw particles under Reduce Motion before. New spec in `moments.spec.ts` ("Reduced Motion counts down with no particle burst"): failed on the old build (canvas present), passes now.
+- **Checked:** typecheck, lint, `npm test` 442, build (budgets pass), Chromium `moments`, `motion`, `crawl`, `secrets` specs 59 passed. **Not run:** WebKit (CI).
+
+## Pushed 2026-11-02 (`82a001b`): the Big moments setting removed (owner: "remove the setting to make it fast to simplify and streamline")
 
 - **Owner decisions (2026-11-02):** every moment plays at full length; do not shorten moments (the "shorter early-gym entrances", "the clash only on an edge" and "Quick dropping the mid-size moments" items were Claude's suggestions, not the owner's, and are dropped). The owner has played the game on an iPhone and reports bugs as they find them; no full device pass is pending on their side. The runtime budget may be raised when a feature needs it (ask, then change `scripts/check-budget.ts`).
 - **Removed:** the pause menu's "Big moments: Full / Quick" row (`MomentsToggle` in `GameDialogs.tsx`) and `useQuickMoments`, `setQuickMoments`, `QUICK_SCALE` in `Director.tsx`. The type clash always plays. `MomentView` still takes `scale` (always 1 in the app) because the dev stage (`?moments=1`) slows moments down with it. A stored `side-quest.moments.v1` value is now ignored (harmless; no save touched, no fixture).
 - **Bisect branches** `bisect/master-ball` and `bisect/great-ultra` are still on GitHub: deleting them from this session was blocked by the permission classifier again. Delete them from GitHub's branches page.
 
-**Checked:** typecheck, lint, `npm test` (442), `BASE_PATH=/side-quest/ npm run build` (budgets pass, runtime 3,886 of 4,096 KiB), Chromium `dialogs.spec.ts` + `moments.spec.ts` (21 passed). **Not run:** WebKit (CI runs it), a phone. **Not pushed:** pushing deploys; waiting on the owner.
+**Checked:** typecheck, lint, `npm test` (442), `BASE_PATH=/side-quest/ npm run build` (budgets pass, runtime 3,886 of 4,096 KiB), Chromium `dialogs.spec.ts` + `moments.spec.ts` (21 passed). **Not run:** WebKit (CI runs it), a phone. 
 
 ## Deployed 2026-11-01: health fixes (owner: "Lets do the 4 bugs and health fixes", then "Commit and push")
 
