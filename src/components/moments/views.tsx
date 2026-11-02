@@ -531,7 +531,7 @@ function LevelUp({ m, scale, onDone }: ViewProps<"evolution">) {
     scale,
   );
   return (
-    <Stage kind="levelup" length={3900} scale={scale} onDone={onDone}>
+    <Stage kind="levelup" length={3900} scale={scale} onDone={onDone} hold>
       <span className="forge-backdrop" />
       <p className="forge-kicker">{m.kicker}</p>
       <div className="forge-plate" ref={plate}>
@@ -539,6 +539,7 @@ function LevelUp({ m, scale, onDone }: ViewProps<"evolution">) {
         <span className="forge-new">{m.to}</span>
       </div>
       {m.change && <p className="forge-change">{m.change}</p>}
+      <p className="evo-hint">Tap to continue</p>
     </Stage>
   );
 }

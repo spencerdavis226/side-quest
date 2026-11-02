@@ -392,3 +392,34 @@ test("a League evolution holds on its new form until the table taps", async ({
   await moment.click({ force: true });
   await expect(moment).toHaveCount(0);
 });
+
+test("a Pub Crawl level up holds on the new level until the table taps", async ({
+  page,
+}) => {
+  await withMotion(page);
+  await seed(
+    page,
+    advance(
+      crawlAt(
+        "dungeon.landing-stairwell",
+        STEP.landing1,
+        {},
+        { adventurer: "barbarian" },
+      ),
+    ),
+  );
+  await page
+    .locator(".card-choice.offers .card-choice-option")
+    .first()
+    .click();
+  const moment = page.locator(".moment-levelup");
+  await expect(moment).toBeVisible();
+  const hint = moment.locator(".evo-hint");
+  await expect(hint).toHaveCSS("opacity", "1", { timeout: 8000 });
+  // Cross the director's 9 s backstop (a real wait: the hold is the point).
+  await page.evaluate(() => new Promise((r) => setTimeout(r, 6000)));
+  await expect(moment).toBeVisible();
+  await expect(moment.locator(".forge-new")).toHaveCSS("opacity", "1");
+  await moment.click({ force: true });
+  await expect(moment).toHaveCount(0);
+});
