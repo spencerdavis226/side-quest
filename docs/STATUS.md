@@ -4,7 +4,7 @@ Updated 2026-11-02. **Single authoritative handoff.** Read `AGENTS.md` first. Ol
 
 ## Bug hunt 2026-11-02 (owner: "Bug hunt in code", then "Keep hunting")
 
-Read with no further bug found: `moments/detect.ts` (every trigger; `sameGame` already blocks moments across games, so the `seen` fix below was the missing half), `moments/Director.tsx`, the `Stage` timer and skip in `views.tsx`, and `app/persistence.ts`'s load, save, corrupt backup and preferences. Save size is fine: the largest fixtures are about 390 KB (Pub Crawl) and 320 KB (League), well under Safari's roughly 5 MB per site. Not read yet: `src/game/engine.ts` (1,660 lines; covered by the balance runs and save fixtures), `Play.tsx`, `CardActions.tsx`.
+Read with no further bug found: `moments/detect.ts` (every trigger; `sameGame` already blocks moments across games, so the `seen` fix below was the missing half), `moments/Director.tsx`, the `Stage` timer and skip in `views.tsx`, and `app/persistence.ts`'s load, save, corrupt backup and preferences. Save size is fine: the largest fixtures are about 390 KB (Pub Crawl) and 320 KB (League), well under Safari's roughly 5 MB per site. Then `Play.tsx` (the card tap's blocking, the face/back culling, the Most Likely plaque and countdown) and `CardActions.tsx` (fuse and countdown timing on wall-clock time, the secret's hold and hide on blur, Skip, the BOOM/TIME blast): no bug found. Not read yet: `src/game/engine.ts` (1,660 lines; covered by the balance runs and save fixtures).
 
 ## Pushed 2026-11-02 (`7367256`): a second game in a sitting plays its moments again (bug hunt)
 
