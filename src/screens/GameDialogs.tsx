@@ -19,26 +19,6 @@ import { crawlTheme } from "../components/crawlTheme";
 import { CardFrame } from "../components/Cards";
 import { theme } from "../presentation/theme";
 import { reducedMotion } from "../presentation/motion";
-import {
-  setQuickMoments,
-  useQuickMoments,
-} from "../components/moments/Director";
-
-/** "Big moments: Full / Quick" (2026-11-01): Quick plays every moment at
- * 0.6 of its length and skips the type clash. Kept on this device. */
-function MomentsToggle() {
-  const quick = useQuickMoments();
-  return (
-    <Button
-      variant="menu-row"
-      className="moments-toggle"
-      aria-pressed={quick}
-      onClick={() => setQuickMoments(!quick)}
-    >
-      Big moments: {quick ? "Quick" : "Full"}
-    </Button>
-  );
-}
 export type DialogName =
   | "menu"
   | "previous"
@@ -169,7 +149,6 @@ export function GameDialogs({
         <Button variant="menu-row" onClick={() => setModal("guide")}>
           How to play
         </Button>
-        <MomentsToggle />
         <Button
           variant="menu-row"
           className="danger"

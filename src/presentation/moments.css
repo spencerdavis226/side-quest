@@ -1,6 +1,6 @@
 /* The moments layer (2026-11-01, `components/moments/`): one full-screen
    moment at a time over the table, played by the director's queue. Every
-   moment reads `--m` (1, or 0.6 for "Big moments: Quick") to scale its
+   moment reads `--m` (1 in the app; the dev stage slows it) to scale its
    timing, plays on transforms and opacity, and is skipped by a tap. The
    particles are one canvas (`particles.ts`) above the stage. */
 

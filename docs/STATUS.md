@@ -1,16 +1,28 @@
 # Current state and implementation plan
 
-Updated 2026-11-01. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
+Updated 2026-11-02. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Pushed 2026-11-01: health fixes (owner: "Lets do the 4 bugs and health fixes", then "Commit and push")
+## Local 2026-11-02: the Big moments setting removed (owner: "remove the setting to make it fast to simplify and streamline")
+
+- **Owner decisions (2026-11-02):** every moment plays at full length; do not shorten moments (the "shorter early-gym entrances", "the clash only on an edge" and "Quick dropping the mid-size moments" items were Claude's suggestions, not the owner's, and are dropped). The owner has played the game on an iPhone and reports bugs as they find them; no full device pass is pending on their side. The runtime budget may be raised when a feature needs it (ask, then change `scripts/check-budget.ts`).
+- **Removed:** the pause menu's "Big moments: Full / Quick" row (`MomentsToggle` in `GameDialogs.tsx`) and `useQuickMoments`, `setQuickMoments`, `QUICK_SCALE` in `Director.tsx`. The type clash always plays. `MomentView` still takes `scale` (always 1 in the app) because the dev stage (`?moments=1`) slows moments down with it. A stored `side-quest.moments.v1` value is now ignored (harmless; no save touched, no fixture).
+- **Bisect branches** `bisect/master-ball` and `bisect/great-ultra` are still on GitHub: deleting them from this session was blocked by the permission classifier again. Delete them from GitHub's branches page.
+
+**Checked:** typecheck, lint, `npm test` (442), `BASE_PATH=/side-quest/ npm run build` (budgets pass, runtime 3,886 of 4,096 KiB), Chromium `dialogs.spec.ts` + `moments.spec.ts` (21 passed). **Not run:** WebKit (CI runs it), a phone. **Not pushed:** pushing deploys; waiting on the owner.
+
+## Deployed 2026-11-01: health fixes (owner: "Lets do the 4 bugs and health fixes", then "Commit and push")
+
+**Deployed** by CI run #286 (`c57ec3e`, green).
 
 - **"home fits Safari's visible height" (`layout.spec.ts`) was a test race, not a layout bug.** Right after `addStyleTag` poses `--top-safe: 59px`, Chromium can return the old layout for a frame or two: `--top-safe` reads 59px while `.app`'s padding and the Install control still resolve as if it were 0 (16px), and two frames later both read right. It hit at whichever viewport came first, so it looked size-specific. A new `poseInsets(page, top, bottom?)` helper in the spec adds the style, then polls until `.app`'s `padding-top` equals `max(16px, top)` (26px floor at 700px and wider) before anything is measured. All five inset poses in the file use it (the home loop, the topbar-frost test, the play screen's menu, and both poses in the @release installed-app test). Assertions unchanged. Tried first and dropped: posing the inset from an init script before load, because the element appended to `documentElement` did not survive parsing.
 - **Treecko headroom.** Grovyle gave +1 HP, one less than Treecko's +2, so evolving cost a heart. Grovyle is now +3 (`league/starters.ts`). League balance (300 runs per starter): Treecko 11% to 13%, League won 21.8% to 21.9%, evolution 73% / 48% unchanged. Lowest now: Bidoof 4% (by design), Charmander 13%, Treecko 13%, Froakie 14%. Saves keep their own snapshot, so a Grovyle already on the table stays +1. No new fixture (no save-shape change).
-- **Bisect branches:** deleting `bisect/master-ball` and `bisect/great-ultra` from this machine was blocked by the permission classifier; they are still on GitHub. Delete them from the branches page or with `git push origin --delete`.
+- **Bisect branches:** see 2026-11-02 above.
 
 **Checked:** layout spec 78 of 78 (13 tests x 3 repeats, Chromium and WebKit); the home test 20 of 20 (10 repeats each browser), failing every time in Chromium before. `npm test` 442, lint, typecheck, `tests/league.balance.test.ts` passed. **Not run:** the full release suite on a rebuilt `dist` (the starter change doesn't touch layout), a physical iPhone.
 
-## Local, not yet committed (2026-11-01): Most Likely's countdown fixed, Paranoia costs 5
+## Deployed 2026-11-01: Most Likely's countdown fixed, Paranoia costs 5
+
+**Deployed** by CI run #285 (`afdc75e`, green, WebKit included). The owner believes the countdown is fixed on their phone (2026-11-02).
 
 Owner: the 3-2-1 "didn't show a 3-2-1. It just dimmed the screen ... then I saw fireworks"; Paranoia's reveal "2 is easy ... make it 5".
 
@@ -41,7 +53,7 @@ Second batch (owner: "Continue", then three follow-ups). **Display only:** no en
 
 **Not checked:** a physical iPhone (rows in `docs/DEVICE_CHECKLIST.md`); doubles, ride, bust and the last heart in a live browser game (unit-tested triggers and the dev stage only).
 
-**Next (owner to pick):** polish from the ideas list: shorter early-gym entrances, Quick dropping the mid-size moments.
+**Next:** superseded 2026-11-02 (moments stay full length; the Quick setting is gone).
 
 ## Deployed 2026-11-01 (in `64e111c`): faint, hatch and jinx moments (owner: "Faint, hatch, jinx first", from the moments ideas list)
 

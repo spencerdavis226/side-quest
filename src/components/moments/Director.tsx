@@ -8,7 +8,6 @@ import {
   useMemo,
   useRef,
   useState,
-  useSyncExternalStore,
   type ComponentType,
   type ReactNode,
 } from "react";
@@ -53,43 +52,6 @@ export const warmMoments = () => {
 /** The longest any moment may hold the table, whatever its view does. */
 const BACKSTOP_MS = 9000;
 
-// "Big moments: Full / Quick" (pause menu). Kept beside the preferences,
-// not in them or the session, so no save changes.
-const SETTING_KEY = "side-quest.moments.v1";
-const listeners = new Set<() => void>();
-let quickCache: boolean | null = null;
-function readQuick() {
-  if (quickCache === null) {
-    try {
-      quickCache = localStorage.getItem(SETTING_KEY) === "quick";
-    } catch {
-      quickCache = false;
-    }
-  }
-  return quickCache;
-}
-export function setQuickMoments(quick: boolean) {
-  quickCache = quick;
-  try {
-    localStorage.setItem(SETTING_KEY, quick ? "quick" : "full");
-  } catch {
-    /* private mode: the choice lasts this visit */
-  }
-  listeners.forEach((fn) => fn());
-}
-export function useQuickMoments() {
-  return useSyncExternalStore(
-    (fn) => {
-      listeners.add(fn);
-      return () => listeners.delete(fn);
-    },
-    readQuick,
-    () => false,
-  );
-}
-/** Quick plays every moment at this share of its length. */
-export const QUICK_SCALE = 0.6;
-
 interface Director {
   /** A moment is playing or waiting: hold anything that would be lost
    * under it (the Felled stamp). */
@@ -122,7 +84,6 @@ export function MomentDirector({
   undone: boolean;
   children: ReactNode;
 }) {
-  const quick = useQuickMoments();
   const prev = useRef(session);
   const seen = useRef(new Set<string>());
   const [queue, setQueue] = useState<Moment[]>([]);
@@ -157,10 +118,8 @@ export function MomentDirector({
     // Nobody is watching. (Reduced Motion still queues: each view shows a
     // still plaque instead.)
     if (document.hidden) return;
-    // Quick drops the type clash (its chip still pulses) and keeps the rest.
-    const play = quick ? found.filter((m) => m.kind !== "clash") : found;
-    if (play.length) setQueue((q) => [...q, ...play]);
-  }, [session, undone, quick]);
+    setQueue((q) => [...q, ...found]);
+  }, [session, undone]);
   // Next in line, once the card has stopped moving and no other stage is up.
   useEffect(() => {
     if (active || !queue.length || locks.size) return;
@@ -207,7 +166,7 @@ export function MomentDirector({
           <MomentView
             key={active.key}
             moment={active}
-            scale={quick ? QUICK_SCALE : 1}
+            scale={1}
             onDone={done}
             waiting={queue.length}
           />
