@@ -140,8 +140,8 @@ export function MomentDirector({
   }, [motion, active, done]);
   useEffect(() => {
     if (!active) return;
-    // A held moment (the animated evolution) waits for the table's tap.
-    const held = active.kind === "evolution" && !!active.league;
+    // A held moment (an evolution or a level up) waits for the table's tap.
+    const held = active.kind === "evolution";
     const id = held ? undefined : setTimeout(done, BACKSTOP_MS);
     const away = () => {
       if (document.hidden) {

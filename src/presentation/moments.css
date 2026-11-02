@@ -558,7 +558,7 @@
   background:
     radial-gradient(ellipse at 50% 62%, #ff7a1a55 0, transparent 46%),
     radial-gradient(circle at 50% 50%, #1b0f08ee 0, #060302f8 70%);
-  animation: evo-backdrop var(--len) ease both;
+  animation: evo-backdrop-hold var(--len) ease both;
 }
 .forge-kicker {
   position: absolute;
@@ -570,7 +570,7 @@
   font: 600 clamp(20px, 6vw, 30px) / 1.15 var(--font-tavern);
   letter-spacing: 0.04em;
   text-shadow: 0 2px 10px #000;
-  animation: forge-kicker var(--len) ease both;
+  animation: forge-kicker-hold var(--len) ease both;
 }
 .forge-plate {
   position: relative;
@@ -586,7 +586,7 @@
     inset 0 1px 0 #ffffff26,
     inset 0 -3px 0 #0008,
     0 14px 40px #000c;
-  animation: forge-plate var(--len) cubic-bezier(0.3, 0, 0.3, 1) both;
+  animation: forge-plate-hold var(--len) cubic-bezier(0.3, 0, 0.3, 1) both;
 }
 .forge-plate > span {
   grid-area: 1 / 1;
@@ -602,7 +602,7 @@
   text-shadow:
     0 3px 0 #8a5a10,
     0 0 26px #ffb347;
-  animation: forge-stamp var(--len) cubic-bezier(0.2, 1.5, 0.4, 1) both;
+  animation: forge-stamp-hold var(--len) cubic-bezier(0.2, 1.5, 0.4, 1) both;
 }
 .forge-change {
   position: absolute;
@@ -613,7 +613,80 @@
   color: #ffe8c4;
   font: 500 clamp(17px, 4.6vw, 22px) / 1.25 var(--font-tavern);
   text-shadow: 0 2px 8px #000;
-  animation: forge-change var(--len) ease both;
+  animation: forge-change-hold var(--len) ease both;
+}
+/* Held until a tap (2026-11-02): these rest on the last frame, where the
+   ones below fade out. */
+@keyframes forge-kicker-hold {
+  0%,
+  5% {
+    opacity: 0;
+  }
+  14%,
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes forge-plate-hold {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.94);
+  }
+  12%,
+  22.5% {
+    opacity: 1;
+    transform: none;
+  }
+  23.5% {
+    transform: translateY(7px) scaleY(0.97);
+  }
+  27%,
+  35.5% {
+    transform: none;
+  }
+  36.5% {
+    transform: translateY(8px) scaleY(0.965);
+  }
+  40%,
+  48.5% {
+    transform: none;
+  }
+  49.5% {
+    transform: translateY(10px) scaleY(0.96);
+  }
+  54%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes forge-stamp-hold {
+  0%,
+  57% {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+  62% {
+    opacity: 1;
+    transform: scale(0.94);
+  }
+  66%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes forge-change-hold {
+  0%,
+  64% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  70%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
 }
 @keyframes forge-kicker {
   0%,
