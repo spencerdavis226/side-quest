@@ -2,7 +2,9 @@
 
 Updated 2026-11-02. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Pushed 2026-11-02: card fixes for a shared screen, and every Legendary can be caught
+## Deployed 2026-11-02: card fixes for a shared screen, and every Legendary can be caught
+
+**Deployed** by CI run #290 (`ee45aac`, every job green: build, checks, both balance jobs, Chromium and WebKit release, update, deploy).
 
 Owner: a card asked for a drink to be swapped "without noticing" when everyone reads the screen ("Any other non-sensical cards like this?", then "Apply them all"); then "make many more of them catchable when relevant. And yes push to main".
 
