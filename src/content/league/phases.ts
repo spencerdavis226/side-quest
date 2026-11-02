@@ -93,7 +93,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "legendary-deoxys": [
     duel(
-      "It changes forme mid-throw. Hold a pose while the table counts to 15 and it's caught. Break: drink 4.",
+      "It changes forme mid-throw. Hold a pose while the table counts to 15 to catch it. Break: drink 4.",
     ),
   ],
   "legendary-groudon": [
@@ -109,7 +109,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "legendary-rayquaza": [
     duel(
-      "Ride it down to the ball: balance a coaster on your head while the table counts to 15. Drop it: drink 4.",
+      "Ride it to the ball: balance a coaster on your head for a count of 15. Drop it: drink 4.",
     ),
   ],
   "legendary-regi-trio": [
@@ -187,7 +187,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "legendary-zacian": [
     duel(
-      "Fetch for the ball: the table hides a coaster while you look away. Find it in 30 seconds. Fail: drink 4.",
+      "Fetch to catch it: find a coaster the table hid while you looked away. 30 seconds. Fail: drink 4.",
     ),
   ],
   "legendary-eternatus": [
