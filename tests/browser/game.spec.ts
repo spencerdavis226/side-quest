@@ -264,6 +264,9 @@ test("offline reload keeps the same revealed card", async ({
   await ready(page);
   // The front is shown once the turn has ended; read the title from it then.
   await expect(page.locator(".card-front")).toHaveCSS("visibility", "visible");
+  // The title fits itself after the face shows and can read empty for a
+  // frame (2026-11-02: 1 in 5 runs read "", then failed after the reload).
+  await expect(page.locator(".study-title h2")).toHaveText(/\S/);
   const title = await page.locator(".study-title h2").innerText();
   await context.setOffline(true);
   await page.reload();

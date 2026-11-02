@@ -74,6 +74,30 @@ test("Most Likely To counts down to POINT, and the card still puts aside", async
   await expect.poll(async () => (await saved(page)).discarded).toBe(1);
 });
 
+// A second game in the same sitting plays its moments again (2026-11-02:
+// the director's played-once keys outlived the game, so Play again had no
+// "Game on", no halfway, and a repeated gym or starter lost its moment).
+// End game returns to setup; Play starts the next game without a reload.
+test("a new game in the same sitting plays its moments", async ({ page }) => {
+  const s = createSession(
+    { version: 1, packIds: ["core"], limit: 50 },
+    cards,
+    packs,
+    rng("moments again"),
+  );
+  await seed(page, s);
+  const card = page.locator(".game-card");
+  await card.click();
+  await expect(page.locator(".still-plaque")).toContainText("Game on");
+  await expect(page.locator(".still-plaque")).toHaveCount(0);
+  await page.getByRole("button", { name: /menu/i }).click();
+  await page.getByRole("button", { name: "End game" }).click();
+  await page.getByRole("button", { name: "End game" }).click();
+  await page.getByRole("button", { name: "Play", exact: true }).click();
+  await card.click();
+  await expect(page.locator(".still-plaque")).toContainText("Game on");
+});
+
 // Reduced Motion throws no particles (2026-11-02): the countdown's burst
 // used to fire under it.
 test("Reduced Motion counts down with no particle burst", async ({ page }) => {

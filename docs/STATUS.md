@@ -2,6 +2,13 @@
 
 Updated 2026-11-02. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Local 2026-11-02: a second game in a sitting plays its moments again (bug hunt)
+
+- **Bug:** `MomentDirector` lives for the whole app session and its played-once set (`seen`) was never cleared, while many keys carry no game identity (`milestone:opening`, `milestone:halfway`, `omen:<starter>`, `badge:<gym>`, `evo:<from>><to>`, `door:<room>`, `nat:20:<card count>`). So a second game without a reload lost "Game on", Halfway, Last orders, Last card, a repeated starter's ball, a repeated gym's badge, and a natural on the same card count. `seen` now clears when the session goes away (back to setup) or `discarded` drops without an undo (only `createSession`/`replaySession` set it to 0).
+- New spec in `moments.spec.ts` ("a new game in the same sitting plays its moments"): failed on the old build (no "Game on" in game 2), passes 3 of 3 now.
+- **Test race fixed:** `game.spec.ts` "offline reload keeps the same revealed card" read the title before it had text (1 in 5 runs got "", then failed after the reload); it now waits for a non-empty title. 15 of 15 after.
+- **Checked:** typecheck, lint, `npm test` 442, build (budgets pass), Chromium `test:e2e` 166 passed + that race (fixed above). **Not run:** WebKit (CI).
+
 ## Local 2026-11-02: no particles under Reduce Motion
 
 - `burst` in `moments/particles.ts` now returns under `stillMotion()` (Reduced Motion or a hidden tab) instead of trusting every caller to ask; the Most Likely countdown, the dice-card fuse/BOOM, Pub Crawl's hit shards and the endings all threw particles under Reduce Motion before. New spec in `moments.spec.ts` ("Reduced Motion counts down with no particle burst"): failed on the old build (canvas present), passes now.

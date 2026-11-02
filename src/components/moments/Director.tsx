@@ -105,10 +105,15 @@ export function MomentDirector({
     const before = prev.current;
     prev.current = session;
     if (!session || undone) {
+      if (!session) seen.current.clear();
       setQueue([]);
       setActive(null);
       return;
     }
+    // A new game (only createSession and replaySession set `discarded` to
+    // 0; an undo is flagged and returned above): its moments play again.
+    // Keys like `milestone:halfway` or `badge:<gym>` say nothing of the game.
+    if (before && session.discarded < before.discarded) seen.current.clear();
     const found = momentsBetween(before, session, undone).filter(
       (m) => !seen.current.has(m.key),
     );
