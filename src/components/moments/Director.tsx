@@ -140,7 +140,9 @@ export function MomentDirector({
   }, [motion, active, done]);
   useEffect(() => {
     if (!active) return;
-    const id = setTimeout(done, BACKSTOP_MS);
+    // A held moment (the animated evolution) waits for the table's tap.
+    const held = active.kind === "evolution" && !!active.league;
+    const id = held ? undefined : setTimeout(done, BACKSTOP_MS);
     const away = () => {
       if (document.hidden) {
         setQueue([]);
@@ -149,7 +151,7 @@ export function MomentDirector({
     };
     document.addEventListener("visibilitychange", away);
     return () => {
-      clearTimeout(id);
+      if (id !== undefined) clearTimeout(id);
       document.removeEventListener("visibilitychange", away);
     };
   }, [active, done]);

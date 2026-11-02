@@ -168,7 +168,9 @@ function swallowClick() {
  * underneath. An ambient stage takes no taps at all. With `passTo`, a tap
  * that lands on that element (the card a boss entrance stands over) skips
  * the moment and then taps it, once, as the table meant: the stage hides on
- * the press and goes on the lift, so the press and the lift are both its. */
+ * the press and goes on the lift, so the press and the lift are both its.
+ * A `hold` stage never ends on its own: its animation rests on the last
+ * frame and a tap fades it out (the Pokémon evolution). */
 function Stage({
   kind,
   className = "",
@@ -176,6 +178,7 @@ function Stage({
   scale,
   onDone,
   ambient = false,
+  hold = false,
   passTo,
   style,
   children,
@@ -186,6 +189,7 @@ function Stage({
   scale: number;
   onDone: () => void;
   ambient?: boolean;
+  hold?: boolean;
   passTo?: string;
   style?: Record<string, string | number>;
   children: ReactNode;
@@ -200,15 +204,24 @@ function Stage({
     onDoneRef.current();
   });
   const [skipping, setSkipping] = useState(false);
+  const [leaving, setLeaving] = useState(false);
   const pressed = useRef(false);
   useEffect(() => {
+    // A held stage stays up on its last frame until the table taps it.
+    if (hold) return;
     const id = setTimeout(() => done.current(), length * scale);
     return () => clearTimeout(id);
-  }, [length, scale]);
+  }, [length, scale, hold]);
   const skip = (event: React.PointerEvent) => {
     event.stopPropagation();
     event.preventDefault();
     clearParticles();
+    if (hold) {
+      swallowClick();
+      setLeaving(true);
+      setTimeout(() => done.current(), 300);
+      return;
+    }
     if (passTo) {
       pressed.current = true;
       setSkipping(true);
@@ -244,7 +257,7 @@ function Stage({
   };
   return createPortal(
     <div
-      className={`moment moment-${kind} ${ambient ? "ambient" : ""} ${skipping ? "skipping" : ""} ${className}`}
+      className={`moment moment-${kind} ${ambient ? "ambient" : ""} ${skipping ? "skipping" : ""} ${leaving ? "leaving" : ""} ${className}`}
       style={{ "--m": scale, ...style } as CSSProperties}
       aria-hidden="true"
       onPointerDown={ambient ? undefined : skip}
@@ -466,6 +479,7 @@ function Evolution({ m, scale, onDone }: ViewProps<"evolution">) {
       length={LENGTH.evolution}
       scale={scale}
       onDone={onDone}
+      hold
       style={{ ...typeVars("from", from), ...typeVars("to", to) }}
     >
       <span className="evo-backdrop" />
@@ -482,6 +496,7 @@ function Evolution({ m, scale, onDone }: ViewProps<"evolution">) {
         <strong>{m.to}</strong>
         {m.change && <span>{m.change}</span>}
       </div>
+      <p className="evo-hint">Tap to continue</p>
     </Stage>
   );
 }

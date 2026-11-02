@@ -367,3 +367,28 @@ test("a boss's foil is one sheet over the whole card, under its text", async ({
   });
   expect(look).toEqual({ mask: "none", covers: true, under: true });
 });
+
+test("a League evolution holds on its new form until the table taps", async ({
+  page,
+}) => {
+  await withMotion(page);
+  await seed(
+    page,
+    advance(leagueAt("pokemon.route-rare-candy-1", { hearts: 9 })),
+  );
+  await page
+    .locator(".card-choice.offers .card-choice-option")
+    .first()
+    .click();
+  const moment = page.locator(".moment-evolution");
+  await expect(moment).toBeVisible();
+  const hint = moment.locator(".evo-hint");
+  // Past the animation (5.4 s) and the director's 9 s backstop.
+  await expect(hint).toHaveCSS("opacity", "1", { timeout: 8000 });
+  // Cross the director's 9 s backstop (a real wait: the hold is the point).
+  await page.evaluate(() => new Promise((r) => setTimeout(r, 4500)));
+  await expect(moment).toBeVisible();
+  await expect(moment.locator(".evo-title strong")).toHaveCSS("opacity", "1");
+  await moment.click({ force: true });
+  await expect(moment).toHaveCount(0);
+});

@@ -2,6 +2,10 @@
 
 Updated 2026-11-02. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Pushed 2026-11-02: the League evolution holds until a tap, and Gym Hype fixed (owner)
+
+- `Stage` takes `hold`: no end timer, a tap fades it out over 300 ms. The League `Evolution` view uses it; its CSS has `evo-*-hold` keyframes that rest on the new form (backdrop, orb, title) plus an "Tap to continue" hint (`.evo-hint`) near the bottom. `MomentDirector` skips its 9 s backstop for that moment. Reduced Motion's still plaque and Pub Crawl's `LevelUp` are unchanged (timed). New spec in `moments.spec.ts` (held past 9 s, a tap ends it). Checked: typecheck, lint, build (budgets pass), Chromium: that spec and the starter spec. Also `npm test` 443. **Gym Hype** (`league/moments.ts`) chanted "the next Gym Leader's name", which nobody can know; it now chants "Gym! Gym! Gym!" (saves keep their snapshot; `CARD_REVIEW` regenerated). **Not run:** WebKit (CI), a phone.
+
 ## Deployed 2026-11-02: card fixes for a shared screen, and every Legendary can be caught
 
 **Deployed** by CI run #290 (`ee45aac`, every job green: build, checks, both balance jobs, Chromium and WebKit release, update, deploy).

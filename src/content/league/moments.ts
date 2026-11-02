@@ -231,7 +231,7 @@ export const moments: CardDefinition[][] = [
       "Gym Hype",
       "Hype",
       "group",
-      "Everyone chants the next Gym Leader's name, louder each time. The quietest drinks 2.",
+      "Everyone chants \"Gym! Gym! Gym!\", louder each time. The quietest drinks 2.",
     ),
     moment(
       5,

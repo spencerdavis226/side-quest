@@ -405,7 +405,7 @@ pack,id,title,category,rules,dice,review
 "pokemon","pokemon.route-rare-candy-2","Rare Candy Stash","group","You find a Rare Candy behind a vending machine. Your starter is drooling.","",""
 "pokemon","pokemon.route-saffron-center","Saffron Center","group","A Psychic heals you with her mind. Everyone thinks a nice thought and drinks 1.","",""
 "pokemon","pokemon.route-dojo","The Fighting Dojo","group","Walk past the Fighting Dojo, or kick the door in and fight whoever's training.","",""
-"pokemon","pokemon.route-hype-chant","Gym Hype","group","Everyone chants the next Gym Leader's name, louder each time. The quietest drinks 2.","",""
+"pokemon","pokemon.route-hype-chant","Gym Hype","group","Everyone chants ""Gym! Gym! Gym!"", louder each time. The quietest drinks 2.","",""
 "pokemon","pokemon.route-memory-lane","Memory Lane","group","Share your most embarrassing Pokémon moment. Everyone else drinks 1 in sympathy.","",""
 "pokemon","pokemon.route-cheer-squad","Cheer Squad","group","The table chants your starter's cry. Everyone drinks 1.","",""
 "pokemon","pokemon.route-group-selfie","Starter Selfie","group","Everyone makes their starter's face for a group selfie. The worst face drinks 2.","",""

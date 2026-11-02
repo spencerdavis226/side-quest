@@ -430,7 +430,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Rare Candy Stash | `pokemon.route-rare-candy-2` | group | You find a Rare Candy behind a vending machine. Your starter is drooling. |  |
 | ☐ | Saffron Center | `pokemon.route-saffron-center` | group | A Psychic heals you with her mind. Everyone thinks a nice thought and drinks 1. |  |
 | ☐ | The Fighting Dojo | `pokemon.route-dojo` | group | Walk past the Fighting Dojo, or kick the door in and fight whoever's training. |  |
-| ☐ | Gym Hype | `pokemon.route-hype-chant` | group | Everyone chants the next Gym Leader's name, louder each time. The quietest drinks 2. |  |
+| ☐ | Gym Hype | `pokemon.route-hype-chant` | group | Everyone chants "Gym! Gym! Gym!", louder each time. The quietest drinks 2. |  |
 | ☐ | Memory Lane | `pokemon.route-memory-lane` | group | Share your most embarrassing Pokémon moment. Everyone else drinks 1 in sympathy. |  |
 | ☐ | Cheer Squad | `pokemon.route-cheer-squad` | group | The table chants your starter's cry. Everyone drinks 1. |  |
 | ☐ | Starter Selfie | `pokemon.route-group-selfie` | group | Everyone makes their starter's face for a group selfie. The worst face drinks 2. |  |
