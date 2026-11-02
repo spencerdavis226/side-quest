@@ -110,7 +110,7 @@ export const johto: Region = {
       "will",
       "Will",
       "Psychic",
-      "The table secretly picks a number from 1 to 10. Guess it in three; each miss: drink 2.",
+      "Your right neighbor thinks of a number from 1 to 10. Guess it in three; each miss: drink 2.",
     ),
     eliteFour(
       "karen",

@@ -203,7 +203,7 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
   },
   "ex-wraith": {
     rules:
-      "A wraith with your ex's face reads your old texts aloud. Put your phone face down, then roll d20.",
+      "A wraith with your ex's face reads your old texts aloud. Roll d20.",
   },
   "hex-witch": {
     rules:
@@ -365,7 +365,7 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
   },
   "text-them-eel": {
     rules:
-      "An eel whispers: text them. Hand your phone to the left, then roll d20.",
+      "An eel whispers: text them. Sit on your hands, then roll d20.",
     crit: "You text the eel instead. It leaves you on read. Give 10.",
   },
   "rip-current": {

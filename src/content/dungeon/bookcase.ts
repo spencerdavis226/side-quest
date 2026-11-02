@@ -155,7 +155,7 @@ export const hiddenRooms: HiddenRoom[] = [
         office,
         "the-safe",
         "The Safe",
-        "The combination is somebody's birthday. Guess whose and roll d6.",
+        "The combination is somebody's birthday. Roll d6 to crack it.",
         moves(
           ["The alarm goes off. Drink 3.", "A dye pack. Drink 3, blue."],
           [

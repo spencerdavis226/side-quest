@@ -129,7 +129,7 @@ export const wine: FloorCards = {
       3,
       "blind-tasting",
       "Blind Tasting",
-      "Eyes shut. Your left neighbor hands you a drink. Name whose it is. Wrong: drink 3.",
+      "Eyes shut. The table hands you someone's drink. Name whose it is. Wrong: drink 3.",
     ),
     trial(
       3,
@@ -244,7 +244,7 @@ export const wine: FloorCards = {
       3,
       "gender-reveal",
       "The Gender Reveal",
-      "A lost gender reveal party wants you to guess. They have a smoke cannon. Roll d20.",
+      "A lost gender reveal party. Call it out loud, then roll d20 to see if you're right.",
       "Wrong guess, and the cannon goes off. Drink 2.",
       "You leave before the smoke. Give 2.",
     ),

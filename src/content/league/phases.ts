@@ -26,7 +26,7 @@ const atTier =
     beat(GYM_NEED[tier]);
 
 const beats: Readonly<Record<string, Beat[]>> = {
-  // Legendaries: the catch.
+  // Legendaries: the catch (every last beat since 2026-11-02).
   "legendary-articuno": [
     duel(
       "It's weakened. Throw a ball: toss a coaster into an empty cup, three tries. All miss: drink 4.",
@@ -48,7 +48,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "legendary-mewtwo": [
     duel(
-      "It's tired. Staring contest with your left neighbor, playing Mewtwo. Look away first: drink 4.",
+      "It's tired. Out-stare your left neighbor and the ball holds. Look away first: drink 4.",
     ),
   ],
   "legendary-mew": [
@@ -77,7 +77,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "legendary-beasts": [
     duel(
-      "One stops to drink. Swap drinks with your left neighbor unnoticed in 30 seconds. Caught: drink 4.",
+      "Suicune stops to drink, and a ball's in one of your left neighbor's hands. Pick it. Wrong: drink 4.",
     ),
   ],
   "legendary-celebi": [
@@ -93,7 +93,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "legendary-deoxys": [
     duel(
-      "It changes forme. Strike a pose and hold it while the table counts to 15. Break: drink 4.",
+      "It changes forme mid-throw. Hold a pose while the table counts to 15 and it's caught. Break: drink 4.",
     ),
   ],
   "legendary-groudon": [
@@ -104,22 +104,22 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "legendary-kyogre": [
     duel(
-      "Drain the sea: chug while the table counts to five. Stop early: drink 4.",
+      "Drain the sea and it's yours: chug while the table counts to five. Stop early: drink 4.",
     ),
   ],
   "legendary-rayquaza": [
     duel(
-      "Ride it down: balance a coaster on your head while the table counts to 15. Drop it: drink 4.",
+      "Ride it down to the ball: balance a coaster on your head while the table counts to 15. Drop it: drink 4.",
     ),
   ],
   "legendary-regi-trio": [
     duel(
-      "Solve it without a guide: spell 'Registeel' backwards in ten seconds. Fail: drink 4.",
+      "Registeel wakes. Spell its name backwards in ten seconds to catch it. Fail: drink 4.",
     ),
   ],
   "legendary-dialga": [
     duel(
-      "Stop time: freeze mid-sip while the table counts to ten. Move: drink 4.",
+      "Stop time and throw: freeze mid-sip while the table counts to ten. Move: drink 4.",
     ),
   ],
   "legendary-palkia": [
@@ -138,7 +138,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "legendary-darkrai": [
     duel(
-      "It hides in your dream. Eyes shut, name every player in order around the table. Miss one: drink 4.",
+      "Catch it in your dream: eyes shut, name every player in order around the table. Miss one: drink 4.",
     ),
   ],
   "legendary-arceus": [
@@ -158,7 +158,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "legendary-zekrom": [
     duel(
-      "Pitch why you deserve Zekrom, ten seconds. The table votes. No: drink 4.",
+      "Pitch why Zekrom should join you, ten seconds. The table votes. No: drink 4.",
     ),
   ],
   "legendary-xerneas": [
@@ -172,22 +172,22 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "legendary-yveltal": [
     duel(
-      "Play dead until it lands: stay still while the table counts to 15. Move: drink 4.",
+      "Play dead until it lands by the ball: stay still while the table counts to 15. Move: drink 4.",
     ),
   ],
   "legendary-tapu-koko": [
     duel(
-      "Earn its respect: ten push-ups or ten squats, your pick, now. Quit: drink 4.",
+      "Earn its respect and it joins you: ten push-ups or ten squats, your pick, now. Quit: drink 4.",
     ),
   ],
   "legendary-necrozma": [
     duel(
-      "Eyes still shut, clink glasses with your left neighbor on the first try. Miss: drink 4.",
+      "Eyes still shut, throw true: clink glasses with your left neighbor on the first try. Miss: drink 4.",
     ),
   ],
   "legendary-zacian": [
     duel(
-      "Fetch: the table hides a coaster while you look away. Find it in 30 seconds. Fail: drink 4.",
+      "Fetch for the ball: the table hides a coaster while you look away. Find it in 30 seconds. Fail: drink 4.",
     ),
   ],
   "legendary-eternatus": [
@@ -198,7 +198,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "legendary-koraidon": [
     duel(
-      "Hold the wheelie: lean back, arms out, while the table counts to ten. Fall: drink 4.",
+      "Hold the wheelie and it's yours: lean back, arms out, while the table counts to ten. Fall: drink 4.",
     ),
   ],
   "legendary-miraidon": [

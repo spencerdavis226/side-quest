@@ -23,6 +23,7 @@ import {
   strikeOutcome,
   takeOffer,
   type Random,
+  settleBattle,
 } from "../src/game/engine";
 import { returnToCard, rollBonus, rollDice } from "../src/game/dice";
 import { parseSession } from "../src/app/persistence";
@@ -544,9 +545,25 @@ describe("Master Ball, the Togepi egg and caught Legendaries", () => {
     const zapdos = partyTeam(s.quest)[0];
     expect(zapdos.type).toBe("electric");
     expect(assistBonus(zapdos)).toBe(5);
-    // A Legendary that never says it was caught stays off the team.
-    const lugia = cards.find((c) => c.id === "pokemon.legendary-lugia")!;
-    expect(lugia.joins).toBeUndefined();
+    // Every Legendary can be caught (2026-11-02), typed, at +5.
+    const legends = cards.filter((c) => c.id.startsWith("pokemon.legendary-"));
+    expect(legends).toHaveLength(30);
+    for (const c of legends) {
+      expect(c.joins?.rate, c.id).toBe(20);
+      expect(c.joins?.type ?? c.type, c.id).toBeTruthy();
+    }
+  });
+
+  it("a trio card brings the one member its last beat names", () => {
+    const BEASTS = "pokemon.legendary-beasts";
+    let s = facing("pikachu", BEASTS);
+    s = { ...s, quest: { ...s.quest!, party: { ...party(s), hits: 1 } } };
+    s = settleBattle(s, true, zero); // Its last beat is a Won/Lost duel.
+    expect(party(s).team).toEqual([BEASTS]);
+    expect(partyTeam(s.quest)[0]).toMatchObject({
+      title: "Suicune",
+      type: "water",
+    });
   });
 });
 
