@@ -22,6 +22,10 @@ const boldNumbers = (text: string) =>
       /^\d+$/.test(part) ? <strong key={index}>{part}</strong> : part,
     );
 
+// How far a finger may drift and still count as a tap. A real thumb rolls
+// well past 8px on a press, so a tighter limit made ordinary taps fail.
+const TAP_SLOP = 16;
+
 export function CardFace({
   card,
   packIds,
@@ -257,7 +261,7 @@ export function CardFace({
           Math.hypot(
             event.clientX - active.startX,
             event.clientY - active.startY,
-          ) > 8
+          ) > TAP_SLOP
         )
           active.cancelClick = true;
       }}
