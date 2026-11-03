@@ -33,18 +33,6 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
   "loose-floorboard": {
     win: "You step over it like a cat. Meow, then give 2.",
   },
-  // The Wine Cellar.
-  "decanter-ghost": {
-    lose: "It breathes on you. Drink 3 and say 'notes of ghost'.",
-    win: "You jam the stopper in. Give 3 to the snobbiest drinker here.",
-    doubles: "You decant it into someone else's glass. Everyone else drinks 3.",
-  },
-  "falling-rack": {
-    win: "You catch the last one. Give 2, and hand someone your 'bottle'.",
-  },
-  "tannin-troll": {
-    lose: "Your tongue sticks. Drink 3, then say 'tannin' five times fast.",
-  },
   // The Catacombs.
   "bone-sommelier": {
     win: "You pour his on the floor. Rate someone's drink out of ten; they drink 4.",
@@ -123,43 +111,6 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
   "celebrity-chef": {
     win: "You make his dish better. Call someone a donkey; they drink 6.",
   },
-  // The Brewery.
-  "mash-tun-monster": {
-    win: "You stir it to death. Stir someone's drink; they drink 3.",
-  },
-  "brewers-ghost": {
-    win: "You lie beautifully. Give 3, then lie to someone about their drink.",
-  },
-  "keg-ninja": {
-    lose: "Tapped. Drink 3.",
-    win: "You disarm him. Karate-chop the air, then give 2.",
-    doubles: "You become the ninja. Everyone else drinks 3, silently.",
-  },
-  "bottle-cap-crab": {
-    win: "You collect the caps. Pinch someone, gently; they drink 3.",
-  },
-  "bottle-bombs": {
-    win: "You dive behind a vat. Give 2 to whoever got splashed.",
-  },
-  "grain-chute": {
-    win: "You surf it out. Give 2 to whoever would have panicked.",
-  },
-  "hot-wort": {
-    win: "You moonwalk across. Moonwalk to your seat, then give 2.",
-  },
-  "hazy-wraith": {
-    win: "You hold it to the light. Give 3 to whoever's hazy right now.",
-  },
-  "loose-hose": { win: "You stamp it flat. Give 2 to whoever jumped." },
-  "barrel-aged-horror": {
-    win: "You cork it back in. Give 4 to the oldest player here.",
-  },
-  "hostile-brewer": {
-    win: "You take their tap. Take someone's drink for a sip; they drink 4.",
-  },
-  "head-brewer": {
-    win: "She asks for the recipe. Make one up out loud, then give 4.",
-  },
   // The Walk-in Freezer.
   "ice-wraith": {
     win: "You breathe back, harder. Breathe on someone's neck; they drink 4.",
@@ -234,9 +185,6 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
   "mimic-cooler": {
     win: "Gold, and something useful. Flip someone a coin; give 3.",
   },
-  "locked-reserve": {
-    win: "You liberate a bottle. Pour someone the good stuff; they drink 3.",
-  },
   "bone-vending": { win: "Clunk. Give 3 to whoever heard it." },
   sarcophagus: {
     win: "Just a very nice shield. Give 4, then knock on the table twice.",
@@ -253,10 +201,6 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
   },
   "back-burner": {
     win: "Best soup of your life. Give 5 to whoever cooks the worst.",
-  },
-  "experimental-batch": { win: "It's incredible. Name batch 13, then give 3." },
-  "cold-room": {
-    win: "Kegs, and a coaster shield. Give 3 to whoever's coldest.",
   },
   "frozen-in-the-ice": {
     win: "Something old and good. Give 4 to the oldest player here.",

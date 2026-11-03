@@ -15,16 +15,16 @@ const jinxes: Readonly<Record<string, Jinx>> = {
     rule: "The jinxed player screams whenever anyone says 'head'. Misses one: drink 1.",
   },
   "vinegar-vampire": {
-    name: "Sour Face",
-    rule: "The jinxed player pulls a sour face before every sip. Forgets: drink 1.",
+    name: "Thorny",
+    rule: "The jinxed player says 'ouch' before every sip. Forgets: drink 1.",
   },
   "count-corkula": {
-    name: "The Count",
-    rule: "The jinxed player counts their sips out loud, with a cackle. Forgets: drink 1.",
+    name: "Howler",
+    rule: "The jinxed player howls after every sip. Forgets: drink 1.",
   },
   "the-barrel-room": {
-    name: "Barrel Roll",
-    rule: "The jinxed player says 'barrel roll!' whenever anyone rolls. Misses one: drink 1.",
+    name: "Root-Bound",
+    rule: "The jinxed player keeps both feet flat on the floor. Lifts one: drink 1.",
   },
   "leech-swarm": {
     name: "Leeched",
@@ -71,16 +71,16 @@ const jinxes: Readonly<Record<string, Jinx>> = {
     rule: "The jinxed player covers their mouth to talk. Forgets: drink 1.",
   },
   "sour-mash-witch": {
-    name: "Sour Mash",
-    rule: "The jinxed player rates every sip out of ten, out loud. Forgets: drink 1.",
+    name: "Hag-Ridden",
+    rule: "The jinxed player cackles before every sip. Forgets: drink 1.",
   },
   "bottle-cap-crab": {
     name: "Sideways",
     rule: "The jinxed player looks at people only sideways, like a crab. Caught looking straight: drink 1.",
   },
   "brewery-owner": {
-    name: "Artisanal",
-    rule: "The jinxed player says 'artisanal' before every sip. Forgets: drink 1.",
+    name: "Lordly",
+    rule: "The jinxed player says 'my good fellow' before every sip. Forgets: drink 1.",
   },
   "freezer-burn": {
     name: "Freezer Burn",
@@ -127,8 +127,8 @@ const jinxes: Readonly<Record<string, Jinx>> = {
     rule: "The jinxed player calls every drink 'the meat'. Slip: drink 1.",
   },
   "cold-room": {
-    name: "Cold Shoulder",
-    rule: "The jinxed player turns away from whoever is talking. Caught facing them: drink 1.",
+    name: "Mud in the Ears",
+    rule: "The jinxed player says 'what?' before answering anyone. Forgets: drink 1.",
   },
   "the-chest-freezer": {
     name: "Ice Pack",

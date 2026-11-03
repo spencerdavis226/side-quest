@@ -68,15 +68,15 @@ export const classes: CardDefinition[] = [
   adventurer("cleric", "Cleric", "Blesses every drink, loudly.", { heal: 1 }, [
     {
       title: "Priest",
-      omen: { hearts: 1, heal: 1, loot: ["revive"] },
+      omen: { hearts: 1, heal: 1 },
     },
     {
       title: "High Priest",
-      omen: { hearts: 2, heal: 2 },
+      omen: { hearts: 1, heal: 2 },
     },
     {
       title: "Saint",
-      omen: { hearts: 3, heal: 2, restock: "draught" },
+      omen: { hearts: 2, heal: 2, loot: ["revive"] },
     },
   ]),
   // Lucky Coins, then one back whenever a boss falls.
@@ -134,16 +134,12 @@ export const classes: CardDefinition[] = [
       },
       {
         title: "Templar",
-        omen: {
-          hearts: 2,
-          hurt: { boss: -1, ambush: -1 },
-          restock: "shield",
-        },
+        omen: { hearts: 1, hurt: { boss: -1 }, restock: "shield" },
       },
       {
         title: "Lightbringer",
         omen: {
-          hearts: 3,
+          hearts: 2,
           hurt: { boss: -1, ambush: -1 },
           restock: "shield",
         },
@@ -205,11 +201,11 @@ export const classes: CardDefinition[] = [
       },
       {
         title: "Lich",
-        omen: { hearts: -2, roll: { boss: 2 }, loot: ["revive"] },
+        omen: { hearts: -3, roll: { boss: 2 } },
       },
       {
         title: "Lord of Bones",
-        omen: { hearts: -1, roll: { boss: 3 }, loot: ["revive"] },
+        omen: { hearts: -2, roll: { boss: 2, elite: 1 }, loot: ["revive"] },
       },
     ],
   ),
@@ -226,11 +222,11 @@ export const classes: CardDefinition[] = [
       },
       {
         title: "Master Alchemist",
-        omen: { hearts: 2, satchel: 5, heal: 1, restock: "draught" },
+        omen: { hearts: 1, satchel: 5, heal: 1, restock: "draught" },
       },
       {
         title: "Philosopher",
-        omen: { hearts: 3, satchel: 5, heal: 2, restock: "draught" },
+        omen: { hearts: 2, satchel: 5, heal: 1, restock: "draught" },
       },
     ],
   ),
@@ -268,11 +264,11 @@ export const classes: CardDefinition[] = [
       },
       {
         title: "Knight Commander",
-        omen: { hearts: 3, hurt: { ambush: -1 }, roll: { ambush: 2, boss: 1 } },
+        omen: { hearts: 2, hurt: { ambush: -1 }, roll: { ambush: 2 } },
       },
       {
         title: "Lord Protector",
-        omen: { hearts: 4, hurt: { ambush: -1 }, roll: { ambush: 2, boss: 1 } },
+        omen: { hearts: 3, hurt: { ambush: -1 }, roll: { ambush: 2, boss: 1 } },
       },
     ],
   ),

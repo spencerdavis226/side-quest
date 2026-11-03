@@ -65,10 +65,10 @@ const beats: Readonly<Record<string, Beat[]>> = {
       "He rides back. Left neighbor plays him: rock, paper, scissors, best of three. Lose: drink 3.",
     ),
   ],
-  // The Wine Cellar.
+  // The Old Forest (was the Wine Cellar).
   "count-corkula": [
     duel(
-      "Fangs out. Staring contest with your left neighbor, playing the Count. Blink first: drink 3.",
+      "He circles you. Staring contest with your left neighbor, playing the wolf. Blink first: drink 3.",
     ),
   ],
   "cask-queen": [
@@ -78,65 +78,65 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "chateau-ghoul": [
     roll(
-      "He sniffs your glass with contempt. Roll 2d6 to prove your taste.",
-      pair("Corked. Drink 4.", "Notes of oak and victory. Give 4."),
+      "He sniffs you for honey. Roll 2d6 to prove you have none.",
+      pair("You have honey on you. Drink 4.", "Empty-handed. Give 4."),
     ),
   ],
   "the-sommelier": [
     duel(
-      "Blind tasting: eyes shut, sip a drink the table hands you. Name it wrong: drink 3.",
+      "His game: you strike, then he does. Arm-wrestle your left neighbor, playing him. Lose: drink 3.",
     ),
   ],
   "the-barrel-room": [
     roll(
-      "The live barrel charges. Roll d6.",
+      "The roots grab for you. Roll d6.",
       moves(
-        ["It rolls over you. Drink 4.", "It rolls over your foot. Drink 3."],
+        ["They drag you under. Drink 4.", "They grab your foot. Drink 3."],
         [
-          "You jump it. Give 3.",
-          "You stop it with one hand. Give 3.",
-          "It rolls into the others. Give 4.",
-          "You ride it out. Everyone else drinks 2.",
+          "You jump them. Give 3.",
+          "You stamp on one. Give 3.",
+          "They tangle each other up. Give 4.",
+          "You ride a root out. Everyone else drinks 2.",
         ],
       ),
     ),
   ],
-  // The Brewery.
+  // The Marsh (was the Brewery).
   "the-fermenter": [
     duel(
-      "The pressure's building. Hold one note while the table counts to ten. Run out of air: drink 3.",
+      "The heads argue over you. Hold one note while the table counts to ten. Run out of air: drink 3.",
     ),
   ],
   "king-hop": [
     duel(
-      "Describe your drink like a beer snob for 15 seconds. Laugh or stall: drink 3.",
+      "He wants his court flattered. Croak his praises for 15 seconds. Laugh or stall: drink 3.",
     ),
   ],
   "beer-snob-lich": [
     duel(
-      "Name beers back and forth with your left neighbor, playing the Lich. Stall or repeat first: drink 3.",
+      "Name swamp creatures back and forth with your left neighbor. Stall or repeat first: drink 3.",
     ),
   ],
   "keg-kraken": [
     roll(
-      "All eight taps open at once. Roll 2d6 to shut them.",
+      "It thrashes, coils everywhere. Roll 2d6 to break free.",
       pair(
-        "Soaked. Drink 4.",
-        "You close the main valve. Give 4.",
-        "You pour it a drink. It cries. Give 6.",
+        "Squeezed. Drink 4.",
+        "You slip loose. Give 4.",
+        "You tie it to a tree. Give 6.",
       ),
     ),
   ],
   "brewery-owner": [
     roll(
-      "He offers you a job at the brewery. Roll d6 to negotiate.",
+      "He offers you a job at the manor. Roll d6 to negotiate.",
       moves(
-        ["Unpaid internship. Drink 4.", "Paid in exposure. Drink 3."],
+        ["Stable hand. Drink 4.", "Paid in turnips. Drink 3."],
         [
-          "Free beer for life. Give 3.",
-          "Equity. Give 3.",
-          "You buy the brewery. Give 4.",
-          "You fire him. Everyone else drinks 2.",
+          "A room and a horse. Give 3.",
+          "A title. Give 3.",
+          "You buy the manor. Give 4.",
+          "You flood it. Everyone else drinks 2.",
         ],
       ),
     ),

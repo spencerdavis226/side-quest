@@ -85,9 +85,10 @@ const deal = (s: SessionState, id: string): SessionState => {
 // it can, relics opened above 4 hearts, trials won a little over half the
 // time, a merchant's drink-priced ware whenever the satchel has room (a
 // price in hearts only above 8), the loud door above 6 hearts, a Tome read
-// at once, and at a landing a level up unless the hearts are low (6 or
-// fewer) or the adventurer is a joke class (the Plus-One, the Intern, the
-// Mimic), who rests. Real cards, real engine, so a change to either shows up here.
+// at once (never by a joke class: the Peasant, the Squire, the Mimic), at
+// an inn (Realms, 2026-11-03) a rest when three or more hearts are gone,
+// else its item when the satchel has room, and a side quest taken above 6
+// hearts. Real cards, real engine, so a change to either shows up here.
 function playRun(seed: number, adventurer?: string) {
   const random = seeded(seed);
   let s = createSession(crawl, cards, packs, random);
@@ -106,8 +107,12 @@ function playRun(seed: number, adventurer?: string) {
       const p = party(s);
       let pick: number;
       if (card.encounter === "fork") pick = p.hearts > 6 ? 1 : 0;
+      else if (offers.some((o) => o.skip)) pick = p.hearts > 6 ? 0 : 1;
       else if (card.encounter === "rest")
-        pick = p.hearts > 6 && !joke() && canTakeOffer(s, 0) ? 0 : 1;
+        pick =
+          p.max - p.hearts >= 3 || p.loot.length >= satchelSize(s.quest)
+            ? 0
+            : 1;
       else
         pick = Math.max(
           0,
@@ -213,15 +218,15 @@ it("a crawl is hard: the party wins about a quarter of its runs", () => {
   const wipes = new Map<string, number>();
   for (const s of runs.filter((s) => party(s).wiped)) {
     const label = finaleStage(s.quest!)
-      .label.replace(/^The (King's Road|Wine Cellar|Brewery)$/, "Floor 1")
-      .replace(/^The (Catacombs|Sewers|Walk-in Freezer)$/, "Floor 2")
-      .replace(/^The (Drowned Taproom|Kitchen|Rooftop Bar)$/, "Floor 3")
+      .label.replace(/^The (King's Road|Old Forest|Marsh)$/, "Region 1")
+      .replace(/^The (Haunted Crypt|Goblin Mines|Wizard's Tower)$/, "Region 2")
+      .replace(/^The (Sunken Coast|Fire Caverns|Frozen Pass)$/, "Region 3")
       .replace(/^.* boss$/, (l) =>
-        /King's Road|Cellar|Brewery/.test(l)
-          ? "Floor 1 boss"
-          : /Catacombs|Sewers|Freezer/.test(l)
-            ? "Floor 2 boss"
-            : "Hidden room boss",
+        /King's Road|Old Forest|Marsh/.test(l)
+          ? "Region 1 boss"
+          : /Haunted Crypt|Goblin Mines|Wizard's Tower/.test(l)
+            ? "Region 2 boss"
+            : "Side quest boss",
       );
     wipes.set(label, (wipes.get(label) ?? 0) + 1);
   }
@@ -236,8 +241,8 @@ it("a crawl is hard: the party wins about a quarter of its runs", () => {
   expect(won).toBeLessThan(0.4);
   expect(mean).toBeGreaterThan(38);
   expect(mean).toBeLessThan(55);
-  // Nearly every run gets through the door and the first floor.
-  const early = ["The Queue", "Floor 1"].reduce(
+  // Nearly every run gets through the gate and the first region.
+  const early = ["The City Gate", "Region 1"].reduce(
     (n, l) => n + (wipes.get(l) ?? 0),
     0,
   );
@@ -245,18 +250,21 @@ it("a crawl is hard: the party wins about a quarter of its runs", () => {
   for (const s of full) roundTrip(s);
 }, 30_000);
 
-it("adventurers level up often, but not always all the way", () => {
+it("adventurers rank up often, but not always all the way", () => {
   const levelling = runs.filter(
     (s) => !JOKE_CLASSES.includes(party(s).omen ?? ""),
   );
   const once = levelling.filter((s) => (party(s).form ?? 0) >= 1).length;
   const full = levelling.filter((s) => !omenForm(s.quest)!.canEvolve).length;
   console.log(
-    `levels: ${pct(once / levelling.length)} level up at least once, ${pct(full / levelling.length)} reach level 3`,
+    `ranks: ${pct(once / levelling.length)} rank up at least once, ${pct(full / levelling.length)} reach rank 3`,
   );
   expect(once / levelling.length).toBeGreaterThan(0.6);
+  // Realms (2026-11-03): ranks come free from the two region bosses and the
+  // side quest's keeper, so most tables that get that far reach rank 3; a
+  // walked-past side quest or an early wipe still stops short.
   expect(full / levelling.length).toBeGreaterThan(0.2);
-  expect(full / levelling.length).toBeLessThan(0.6);
+  expect(full / levelling.length).toBeLessThan(0.9);
 }, 30_000);
 
 it("no adventurer, omen or dungeon makes a crawl a walkover or hopeless", () => {
@@ -266,15 +274,28 @@ it("no adventurer, omen or dungeon makes a crawl a walkover or hopeless", () => 
   const omens = by((s) =>
     s.quest!.finale[STEP.omen].replace("dungeon.omen-", ""),
   );
-  const rooms = by((s) => s.quest!.stages[6].label);
-  // Each floor on its own (27 whole routes are too thin to measure).
-  const dungeons = [3, 8, 12].flatMap((i) =>
-    by((s) => s.quest!.stages[i].label.replace("The ", "")),
+  // A side quest's dungeon is the stage after its plea (Realms,
+  // 2026-11-03); a run that walked on is measured as "walked on".
+  const room = (s: SessionState) => {
+    const stages = s.quest!.stages;
+    const at = stages.findIndex((st) => st.label === "A Side Quest");
+    return stages[at + 1].cards.some((c) => / · Guard$/.test(c.ribbon ?? ""))
+      ? stages[at + 1].label
+      : "walked on";
+  };
+  const rooms = by(room).filter(([n]) => n !== "walked on");
+  const walked = runs.filter((s) => room(s) === "walked on").length / RUNS;
+  // Each region on its own (27 whole routes are too thin to measure), by
+  // its eight-encounter stage at each depth.
+  const regions = (s: SessionState) =>
+    s.quest!.stages.filter((st) => st.pick === 8);
+  const dungeons = [0, 1, 2].flatMap((i) =>
+    by((s) => regions(s)[i].label.replace("The ", "")),
   );
   console.log(
     `adventurers: ${adventurers.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}\n` +
       `omens: ${omens.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}\n` +
-      `hidden rooms: ${rooms.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}\n` +
+      `side quests (${pct(walked)} walked on): ${rooms.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}\n` +
       `floors: ${dungeons.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}`,
   );
   expect(adventurers).toHaveLength(18);

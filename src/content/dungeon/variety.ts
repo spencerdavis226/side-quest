@@ -3,7 +3,7 @@ import type {
   DiceDefinition,
   TimerDefinition,
 } from "../../game/types";
-import { d20 } from "./shared";
+import { clock, d20, fuse, GUESSED, seats, SIDE_BETS } from "./shared";
 
 // The variety pass (2026-10-31, owner: "double down on ... variety and
 // interesting fun cards ... especially variety within cards"), floor by
@@ -33,140 +33,7 @@ type Rewrite = {
   dice?: DiceDefinition;
 };
 
-const fuse = (end: string, min = 12, max = 40): TimerDefinition => ({
-  version: 1,
-  kind: "fuse",
-  min,
-  max,
-  end,
-});
-const clock = (end: string, seconds = 45): TimerDefinition => ({
-  version: 1,
-  kind: "countdown",
-  seconds,
-  end,
-});
-const GUESSED = "Time. Someone guessed it? Give 3. Nobody did? Drink 3.";
-/** Four seats, four dice: the drawer and the next three clockwise. */
-const seats = (line: string): DiceDefinition => ({
-  version: 1,
-  count: 4,
-  sides: 6,
-  instruction: `${line} You drink {first}; the next three clockwise drink {second}, {third} and {fourth}.`,
-});
-const SIDE_BETS = "Side bets: thumbs up or down; wrong bets drink 1.";
-
 const rewrites: Readonly<Record<string, Rewrite>> = {
-  // The Wine Cellar.
-  "zombie-sommelier": {
-    rules:
-      "Read alone what he poured, start the clock, then describe it like a wine snob. The table guesses.",
-    secret: "A BOX OF FRANZIA.",
-    timer: clock(GUESSED),
-  },
-  "barrel-mimic": {
-    rules:
-      "On three, everyone points at who'd faint first if a barrel grew teeth. Most fingers: drink 2.",
-  },
-  "corkscrew-crab": {
-    rules:
-      "A corkscrew crab scuttles under the table, pinching. Last to lift both feet drinks 2.",
-  },
-  "sulfite-cloud": {
-    rules:
-      "Light the fuse. Pass a beer clockwise, naming a wine. The headache hits whoever holds it.",
-    timer: fuse("The headache hits. Whoever is holding the beer drinks 3."),
-  },
-  "rose-elemental": {
-    rules:
-      "Everyone says 'rosé all day' as a threat. The table picks the scariest; they give 3.",
-  },
-  "wine-mom-banshee": {
-    duel: true,
-    rules:
-      "Scream 'FIVE O'CLOCK SOMEWHERE!' against your left neighbor. The table calls the quieter: drink 3.",
-  },
-  "sangria-sprite": {
-    duel: true,
-    rules:
-      "Your right neighbor throws a mimed orange slice. Catch it in your mouth. Booed: drink 3.",
-  },
-  "boxed-wine-golem": {
-    rules:
-      "A golem of boxed wine, slapping its own bag. Name a boxed wine, then roll d20.",
-    crit: "You find the spout and the golem deflates with a sigh. Give 6.",
-  },
-  "rose-slime": {
-    rules:
-      "Pink, sticky, and it says it's not like other slimes. Say something basic, then roll d20.",
-    fumble: "It's exactly like other slimes, and so are you. Drink 6.",
-  },
-  "merlot-stairs": {
-    rules: "The stairs are slick with spilled merlot. Stand up, then roll d20.",
-    crit: "You slide down the rail like it's 1999. Give 4.",
-  },
-  "count-corkula": {
-    rules: `He drinks pinot. Yours. ${SIDE_BETS} Roll d20.`,
-  },
-  "the-sommelier": {
-    rules: `Ten feet tall and never wrong. ${SIDE_BETS} Roll d20.`,
-  },
-
-  // The Brewery.
-  "hop-goblin": {
-    rules:
-      "Read alone his lecture topic, start the clock, and explain it like a beer bro. The table guesses.",
-    secret: "A HAZY TRIPLE IPA.",
-    timer: clock(GUESSED),
-  },
-  "yeast-beast": {
-    rules:
-      "The yeast beast bubbles toward the table. Everyone puffs their cheeks; first to laugh drinks 2.",
-  },
-  "foam-ferrets": {
-    rules: "The foam ferrets scatter. Roll four dice.",
-    dice: seats("They nip four seats."),
-  },
-  "gruit-druid": {
-    rules:
-      "The druid auctions a cup of 1300s beer. Bid sips clockwise until everyone passes. Top bid drinks it.",
-  },
-  "co2-leak": {
-    rules:
-      "Light the fuse. Pass a beer clockwise, all talking in deep voices. The leak hits whoever holds it.",
-    timer: fuse("The tank blows. Whoever is holding the beer drinks 3."),
-  },
-  "mash-tun-monster": {
-    duel: true,
-    rules:
-      "Thumb war with your left neighbor, who plays the mash tun monster. Best of three. Lose: drink 3.",
-  },
-  "bottle-cap-crab": {
-    duel: true,
-    rules:
-      "Flick a coaster to the far edge of the table without it falling off. Two tries. Miss: drink 3.",
-  },
-  "brewers-ghost": {
-    rules:
-      "He died tasting batch one, and wants your opinion on batch two. Sip, nod slowly, then roll d20.",
-    crit: "You call it a masterpiece and he finally moves on. Give 6.",
-  },
-  "sour-mash-witch": {
-    rules:
-      "She brews sours, and her mood went sour years ago. Make your sourest face, then roll d20.",
-    fumble:
-      "Your face stays like that. Drink 6, puckered, while the table watches.",
-  },
-  "grain-chute": {
-    rules: "The grain chute opens right above you. Duck, then roll d20.",
-  },
-  "king-hop": {
-    rules: `A hop cone the size of a car. ${SIDE_BETS} Roll d20.`,
-  },
-  "keg-kraken": {
-    rules: `Eight arms, each one a tap. ${SIDE_BETS} Roll d20.`,
-  },
-
   // The Catacombs.
   "hungover-mummy": {
     rules:
@@ -468,26 +335,6 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
   "falling-taps": {
     rules:
       "An acorn bonks you on the head, and you're Thumb Master now. Drink 1, then use it.",
-  },
-  "book-club": {
-    rules:
-      "Four women with one unread book. Name a book you pretended to read, then roll d20.",
-  },
-  "cork-goblin": {
-    rules:
-      "A corkscrew goblin opens a twist-off. Everyone mimes popping a cork; the worst pop drinks 2.",
-  },
-  "brewery-tour": {
-    rules:
-      "A tour group in hairnets wants a photo. Strike a pose, then roll d20.",
-  },
-  "bottle-gnomes": {
-    rules:
-      "Two gnomes stealing bottles saw you see them. Whistle innocently, then roll d20.",
-  },
-  "spent-grain-golem": {
-    rules:
-      "A grain golem wants a bakery. On three, point at who'd bake for it. Most fingers: give 2.",
   },
   "vampire-bro": {
     rules:

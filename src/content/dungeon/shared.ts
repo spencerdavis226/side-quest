@@ -8,6 +8,7 @@ import type {
   Offer,
   OmenEffect,
   Slot,
+  TimerDefinition,
 } from "../../game/types";
 import { cardFactory, choice, rollTable } from "../author";
 import { describeOmen, dungeonOmenWords } from "../../game/omenText";
@@ -84,6 +85,33 @@ export const LANDING_HEAL = 3;
 export const LEVEL_DRINK = 3;
 /** The party's shared hearts before the adventurer. */
 export const PARTY_HEARTS = 12;
+
+/** The variety pass's helpers (2026-10-31; shared since Realms, 2026-11-03,
+ * when each region's file took its rooms' final text): a hidden fuse, a
+ * clock, a guessed-it ending, four seats and four dice, and a boss's side
+ * bets. */
+export const fuse = (end: string, min = 12, max = 40): TimerDefinition => ({
+  version: 1,
+  kind: "fuse",
+  min,
+  max,
+  end,
+});
+export const clock = (end: string, seconds = 45): TimerDefinition => ({
+  version: 1,
+  kind: "countdown",
+  seconds,
+  end,
+});
+export const GUESSED = "Time. Someone guessed it? Give 3. Nobody did? Drink 3.";
+/** Four seats, four dice: the drawer and the next three clockwise. */
+export const seats = (line: string): DiceDefinition => ({
+  version: 1,
+  count: 4,
+  sides: 6,
+  instruction: `${line} You drink {first}; the next three clockwise drink {second}, {third} and {fourth}.`,
+});
+export const SIDE_BETS = "Side bets: thumbs up or down; wrong bets drink 1.";
 
 /** A d20 table: below `need` loses, `need` and up wins. A `crit` replaces
  * the win on a natural 20, a `fumble` the loss on a natural 1. */
