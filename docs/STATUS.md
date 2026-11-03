@@ -1,6 +1,16 @@
 # Current state and implementation plan
 
-Updated 2026-11-02. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
+Updated 2026-11-03. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
+
+## In progress 2026-11-03 (branch `realms`, not pushed): Pub Crawl reskinned as classic fantasy
+
+Owner decisions (2026-11-03, after rejecting pub, planes, fey, heist and play-the-monsters directions): reskin Pub Crawl to classic fantasy (a dragon has woken; the party travels region to region to its lair); pack "Realms", mode "The Quest"; humor like the other packs (world straight, about 1 card in 4 has a joke, mostly in outcome lines); regions stay random (no crossroads); pub content replaced entirely. A pure reskin: every card keeps its ID, kind, numbers and rolls, so saves, balance and fixtures are untouched.
+
+Region map (planned): depth 1 King's Road / Old Forest / Marsh (were Cellar / Wine Cellar / Brewery); depth 2 Goblin Mines / Haunted Crypt / Wizard's Tower (Catacombs / Sewers / Freezer); depth 3 Frozen Pass / Fire Caverns / Sunken Coast (Taproom / Kitchen / Rooftop); landings become inns and campfires, the hidden rooms secret dungeons, the Quarter-Zips a rival adventuring party, Last Call the Dragon's Lair; pub classes and bar item names go.
+
+- **Done (sample for owner review):** the King's Road, all 54 Cellar cards rewritten in place (`dungeon/cellar.ts` plus their lines in `outcomes.ts`, `variety.ts`, `phases.ts`, `jinxes.ts`, `moments.ts`); `FLOORS[0]`, the stage labels and the scene regex renamed. Files and variables keep the old floor names for now. Tests updated for the new names (no fixture touched).
+- **Checked:** `validate-content`, `npm test` 443, lint, typecheck, build (budgets pass), Chromium `crawl.spec.ts` + `moments.spec.ts` 44 passed, `tests/dungeon.balance.test.ts` 4 passed. `docs/CARD_REVIEW.md` regenerated.
+- **Next:** owner reviews the King's Road voice; then the other eight regions, the framework words (`crawlTheme.ts` items, setup copy, end screens, mode and pack names, which touch Playwright specs), classes, omens, landings, hidden rooms, rival and finale; then `npm run test:balance`, the sweep, and a push only on the owner's word.
 
 ## Pushed 2026-11-02: the League evolution holds until a tap, and Gym Hype fixed (owner)
 

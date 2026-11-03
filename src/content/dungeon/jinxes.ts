@@ -7,12 +7,12 @@ import type { CardDefinition, Jinx } from "../../game/types";
 // statuses went too (2026-10-31).
 const jinxes: Readonly<Record<string, Jinx>> = {
   "the-landlord": {
-    name: "Rent Due",
-    rule: "The jinxed player asks the table's permission before every sip. Forgets: drink 1.",
+    name: "Ogre Talk",
+    rule: "The jinxed player speaks only in one-word grunts. Uses two words: drink 1.",
   },
   "the-pipe-organ": {
-    name: "Organ Voice",
-    rule: "The jinxed player sings everything they say. Speaks normally: drink 1.",
+    name: "Spooked",
+    rule: "The jinxed player screams whenever anyone says 'head'. Misses one: drink 1.",
   },
   "vinegar-vampire": {
     name: "Sour Face",

@@ -252,7 +252,7 @@ test("a jinx is laid on a scroll that rolls up into the jinx chip", async ({
   page,
 }) => {
   await withMotion(page);
-  // The Goblin Shaman lost on a 2: Goblin Tongue is laid.
+  // The Hedge Witch lost on a 2: Toad Voice is laid.
   await seed(
     page,
     rolled(advance(crawlAt("dungeon.goblin-shaman", STEP.floor1)), 2),
@@ -260,8 +260,8 @@ test("a jinx is laid on a scroll that rolls up into the jinx chip", async ({
   await page.locator(".game-card").click();
   const scroll = page.locator(".moment-jinx .jinx-scroll");
   await expect(scroll).toBeVisible();
-  await expect(scroll).toContainText("Goblin Tongue");
-  await expect(scroll).toContainText("The jinxed player speaks of themself");
+  await expect(scroll).toContainText("Toad Voice");
+  await expect(scroll).toContainText("The jinxed player croaks after every sentence");
   // Its seal flies into the strip's jinx chip, then the moment ends.
   await expect(page.locator(".moment-flier")).toHaveCount(1, {
     timeout: 6000,
@@ -270,7 +270,7 @@ test("a jinx is laid on a scroll that rolls up into the jinx chip", async ({
   await expect(page.locator(".tag-jinx")).toBeVisible();
   await expect(
     page.getByRole("status").and(page.locator("#banner-announcer")),
-  ).toContainText("Jinxed! Goblin Tongue.");
+  ).toContainText("Jinxed! Toad Voice.");
 });
 
 test("a teammate lost with in a fight faints, quietly, once", async ({

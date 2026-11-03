@@ -15,7 +15,7 @@ import type { CardDefinition, QuestStage } from "../src/game/types";
 // eight (its strikes already read three ways, and it deals four cards, not
 // eight).
 const REWORKED: Readonly<Record<string, number>> = {
-  "The Cellar": 10,
+  "The King's Road": 10,
   "The Wine Cellar": 10,
   "The Brewery": 10,
   "The Catacombs": 10,

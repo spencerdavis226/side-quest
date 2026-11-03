@@ -27,7 +27,7 @@ export const card = cardFactory("dungeon");
  * (0 to 2), which sets the odds. */
 export type Floor = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 export const FLOORS = [
-  "Cellar",
+  "King's Road",
   "Catacombs",
   "Taproom",
   "Wine Cellar",

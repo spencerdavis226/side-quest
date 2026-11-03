@@ -125,7 +125,7 @@ describe("Pub Crawl's lit scenes (2026-10-31)", () => {
     }
     expect(scene("The Wine Cellar")).toBe("wine");
     expect(scene("Wine Cellar boss")).toBe("wine");
-    expect(scene("Cellar boss")).toBe("cellar");
+    expect(scene("King's Road boss")).toBe("cellar");
     expect(scene("The Walk-in Freezer")).toBe("freezer");
   });
   it("the League stamps its bosses but lights no scenes (2026-11-01)", () => {

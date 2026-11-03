@@ -211,11 +211,11 @@ it("a crawl is hard: the party wins about a quarter of its runs", () => {
   const wipes = new Map<string, number>();
   for (const s of runs.filter((s) => party(s).wiped)) {
     const label = finaleStage(s.quest!)
-      .label.replace(/^The (Cellar|Wine Cellar|Brewery)$/, "Floor 1")
+      .label.replace(/^The (King's Road|Wine Cellar|Brewery)$/, "Floor 1")
       .replace(/^The (Catacombs|Sewers|Walk-in Freezer)$/, "Floor 2")
       .replace(/^The (Drowned Taproom|Kitchen|Rooftop Bar)$/, "Floor 3")
       .replace(/^.* boss$/, (l) =>
-        /Cellar|Brewery/.test(l)
+        /King's Road|Cellar|Brewery/.test(l)
           ? "Floor 1 boss"
           : /Catacombs|Sewers|Freezer/.test(l)
             ? "Floor 2 boss"

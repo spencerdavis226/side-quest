@@ -258,7 +258,7 @@ test("a boss shows its wounds, its trinket, and comes back until it falls", asyn
   );
   await page.screenshot({ path: info.outputPath("boss.png") });
   // The last swing lands: the spoils sheet opens by itself (2026-10-25).
-  // The party wears Royal Jelly Shot, a weapon from the Cellar's Keg Mimic
+  // The party wears the Queen's Dagger, a weapon from the King's Road's Bandit
   // Queen, dealt on the first floor.
   const finale = [...s.quest!.finale];
   const queen = "dungeon.keg-mimic-queen";
@@ -281,12 +281,12 @@ test("a boss shows its wounds, its trinket, and comes back until it falls", asyn
   const rows = sheet.locator(".spoils-row");
   await expect(rows).toHaveCount(2);
   await expect(rows.nth(0)).toHaveAccessibleName(
-    "Take the Hydra Tooth, Weapon: +2 to boss d20s. Replaces Royal Jelly Shot: +1 to monster d20s.",
+    "Take the Hydra Tooth, Weapon: +2 to boss d20s. Replaces Queen's Dagger: +1 to monster d20s.",
   );
   // What it would replace shows as its own small card: its name and what
   // it does now (its Healing Draught was handed out when it was taken).
   await expect(rows.nth(0).locator(".spoils-worn")).toHaveText(
-    "ReplacesRoyal Jelly Shot+1 to monster d20s.",
+    "ReplacesQueen's Dagger+1 to monster d20s.",
   );
   await expect(rows.nth(1).locator(".spoils-worn")).toHaveCount(0);
   await expect(rows.nth(1)).toHaveAccessibleName(
@@ -335,16 +335,16 @@ test("a lost fight can lay a jinx, shown on the meter and as a moment", async ({
     rolled(reveal(crawlAt("dungeon.goblin-shaman", STEP.floor1)), 2),
   );
   await expect(page.locator(".game-card .stake-jinx")).toHaveAccessibleName(
-    "Losing lays a jinx: Goblin Tongue",
+    "Losing lays a jinx: Toad Voice",
   );
   await page.locator(".game-card").click();
   // The jinx's moment (2026-11-01; a banner before), read under Reduced
   // Motion on its still plaque.
   await expect(page.locator(".still-plaque")).toHaveText(
-    /Jinxed!\s*Goblin Tongue\s*The jinxed player speaks of themself/,
+    /Jinxed!\s*Toad Voice\s*The jinxed player croaks after every sentence/,
   );
   await expect(page.locator(".tag-jinx")).toBeVisible();
-  await expect(meter(page)).toHaveAccessibleName(/Jinx: Goblin Tongue/);
+  await expect(meter(page)).toHaveAccessibleName(/Jinx: Toad Voice/);
   await page.screenshot({ path: info.outputPath("jinx.png") });
 });
 
@@ -358,7 +358,7 @@ test("with Reduce Motion a moment's plaque fades and goes, and the splat stays c
   );
   await page.locator(".game-card").click();
   const banner = page.locator(".still-plaque");
-  await expect(banner).toHaveText(/Jinxed!\s*Goblin Tongue/);
+  await expect(banner).toHaveText(/Jinxed!\s*Toad Voice/);
   // The plaque fades rather than vanishing at once: still shown a moment
   // in. Every running animation is held at 400 ms in (rather than sleeping
   // 400 ms, which a slow runner can overshoot), then let go.
@@ -596,7 +596,7 @@ test("the party dialog lays out the run: adventurer, boons and jinx", async ({
   await page.locator(".tag-jinx").click();
   const one = page.getByRole("dialog", { name: "Jinx" });
   await expect(one.locator(".crawl-curse")).toHaveCount(1);
-  await expect(one.locator(".crawl-curse")).toContainText("Goblin Tongue");
+  await expect(one.locator(".crawl-curse")).toContainText("Toad Voice");
   await page.screenshot({ path: info.outputPath("jinx.png") });
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).toHaveCount(0);
@@ -632,7 +632,7 @@ test("losing the last heart wipes the party", async ({ page }, info) => {
   await seed(
     page,
     rolled(
-      // Keg Spider, a d20 fight (the Tab Goblin is a table duel since
+      // The Giant Spider, a d20 fight (the Tax Collector is a table duel since
       // 2026-10-31).
       reveal(crawlAt("dungeon.keg-spider", STEP.floor1 + 2, { hearts: 1 })),
       1,
@@ -651,7 +651,7 @@ test("losing the last heart wipes the party", async ({ page }, info) => {
     "The Queue",
   );
   await expect(page.locator(".crawl-floors li").nth(1)).toContainText(
-    "The Cellar",
+    "The King's Road",
   );
   await expect(page.locator(".crawl-floors li")).toHaveCount(8);
   await page.screenshot({ path: info.outputPath("wiped.png") });
@@ -721,12 +721,12 @@ for (const width of [320, 390])
     const wall = page.locator(".trophy-wall");
     await expect(wall).toHaveAccessibleName("Trophy wall: 5 of 5");
     await expect(wall.locator("li.won")).toHaveCount(5);
-    await expect(wall.locator("li").first()).toContainText("Keg Golem");
+    await expect(wall.locator("li").first()).toContainText("The Bridge Troll");
     await expect(wall.locator("li").last()).toContainText("The Last Call Lich");
     const tab = page.locator(".run-tab");
     await expect(tab).toContainText("Barbarian → Berserker → Warlord");
     await expect(tab).toContainText("Happy Hour");
-    await expect(tab).toContainText("Golem's Spigot");
+    await expect(tab).toContainText("Troll Hide");
     // No trophy's name breaks inside a word.
     const broken = await wall
       .locator(".trophy-name")
@@ -951,7 +951,7 @@ test("a boss's next beat is a duel, and its felling win brings spoils", async ({
   // The Golem gets back up: a chug race, settled by the table.
   await page.locator(".game-card").click();
   await expect(page.locator(".game-card")).toHaveAccessibleName(
-    /Chug race.*Choose Won or Lost/,
+    /Arm-wrestle.*Choose Won or Lost/,
   );
   await page.screenshot({ path: info.outputPath("duel-beat.png") });
   await page.getByRole("button", { name: "Won", exact: true }).click();

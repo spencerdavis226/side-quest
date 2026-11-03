@@ -25,44 +25,44 @@ const d20At =
     d20(need, lose, win, extra);
 
 const beats: Readonly<Record<string, Beat[]>> = {
-  // The Cellar.
+  // The King's Road (was the Cellar).
   "keg-golem": [
     duel(
-      "It gets back up, foaming. Chug race with your left neighbor, playing the Golem. Lose: drink 3.",
+      "He climbs back up, dripping. Arm-wrestle your left neighbor, playing the troll. Lose: drink 3.",
     ),
   ],
   "rat-king": [
     duel(
-      "The court is in session. Plead your case to the table for 20 seconds; they vote. Guilty: drink 3.",
+      "His court is in session. Plead your case to the table for 20 seconds; they vote. Guilty: drink 3.",
     ),
   ],
   "the-landlord": [
     roll(
-      "He's back with a clipboard for the inspection. Roll 2d6.",
+      "He gets up and swings a tree at you. Roll 2d6.",
       pair(
-        "He finds the mold. Drink 4.",
-        "He finds nothing. Give 4.",
-        "You find his own code violation. Give 6.",
+        "The tree connects. Drink 4.",
+        "You duck it. Give 4.",
+        "He hits himself with it. Give 6.",
       ),
     ),
   ],
   "big-cheese": [
     roll(
-      "It rolls at you, cheese first. Roll d6.",
+      "It turns and charges again, tusks first. Roll d6.",
       moves(
-        ["Flattened. Drink 4.", "Cheese in your hair. Drink 3."],
+        ["Trampled. Drink 4.", "Tusked. Drink 3."],
         [
           "You dodge. Give 3.",
-          "You take a bite out of it. Give 3.",
-          "It rolls into the wall. Give 4.",
-          "You grate it. Everyone else drinks 2.",
+          "You grab a tusk and hang on. Give 3.",
+          "It runs into a tree. Give 4.",
+          "You ride it. Everyone else drinks 2.",
         ],
       ),
     ),
   ],
   "the-pipe-organ": [
     duel(
-      "It plays your song. Hum any song; the table has 15 seconds to name it. Nobody does: drink 3.",
+      "He rides back. Left neighbor plays him: rock, paper, scissors, best of three. Lose: drink 3.",
     ),
   ],
   // The Wine Cellar.

@@ -17,19 +17,18 @@ type Rewrite = {
 };
 
 const rewrites: Readonly<Record<string, Rewrite>> = {
-  // The Cellar.
+  // The King's Road (was the Cellar).
   "goblin-shaman": {
-    win: "You blow out the sage. Give 3 to whoever smells most like it.",
+    win: "You knock her hat off. Give 3 to whoever looks most cursed.",
   },
   "rolling-kegs": {
     lose: "Flattened. Drink 3, lying down if you can.",
     win: "You dive clear. Give 2 to whoever didn't flinch.",
   },
   "barback-poltergeist": {
-    lose: "The tower falls. Drink 3.",
-    win: "You tip him a coin. Stack two empty glasses on someone's head, then give 3.",
-    doubles:
-      "He stacks glasses on everyone else instead. Everyone else drinks 3.",
+    lose: "He's gone, and so is your purse. Drink 3.",
+    win: "You catch him by the collar. Make someone turn out their pockets, then give 3.",
+    doubles: "He robs everyone else instead. Everyone else drinks 3.",
   },
   "loose-floorboard": {
     win: "You step over it like a cat. Meow, then give 2.",
@@ -233,7 +232,7 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
   "helicopter-pilot": { win: "Free ride. Pick a co-pilot; you both give 6." },
   // Relics.
   "mimic-cooler": {
-    win: "Cold ones, and something useful. Hand someone a cold one; give 3.",
+    win: "Gold, and something useful. Flip someone a coin; give 3.",
   },
   "locked-reserve": {
     win: "You liberate a bottle. Pour someone the good stuff; they drink 3.",

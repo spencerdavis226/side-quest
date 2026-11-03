@@ -59,7 +59,7 @@ const seeded = (seed: number): Random => {
 };
 // The first four draws pick the route, in run order (floor 1, the hidden
 // room, floor 2, floor 3). Each depth has three floors: ORIGINAL takes the
-// first (the Cellar, the Catacombs, the Drowned Taproom) and the first room
+// first (the King's Road, the Catacombs, the Drowned Taproom) and the first room
 // (the Speakeasy), OTHER the second floors and the last room (the
 // Basement), NEW the third floors (the Brewery, the Walk-in Freezer, the
 // Rooftop Bar) and the middle room (the Back Office).
@@ -93,7 +93,7 @@ const STEP = {
   closing: 35,
   lastCall: 36,
 };
-// The run past the door, with no adventurer or omen: the Cellar's first
+// The run past the door, with no adventurer or omen: the King's Road's first
 // room.
 const start = (seed = 1) => fromStep(make(ORIGINAL, seed), STEP.floor1);
 const roundTrip = (s: SessionState) =>
@@ -150,8 +150,8 @@ describe("Pub Crawl", () => {
       ["Your adventurer", 1],
       ["Tonight's omen", 1],
       ["The Queue", 1],
-      ["The Cellar", 8],
-      ["Cellar boss", 1],
+      ["The King's Road", 8],
+      ["King's Road boss", 1],
       ["The Landing", 1],
       ["The Speakeasy", 2],
       ["Speakeasy boss", 1],
@@ -202,7 +202,7 @@ describe("Pub Crawl", () => {
         .stages.filter((st) => st.trophy)
         .map((st) => st.label),
     ).toEqual([
-      "Cellar boss",
+      "King's Road boss",
       "Speakeasy boss",
       "Catacombs boss",
       "Closing Time",
@@ -482,7 +482,7 @@ describe("Pub Crawl", () => {
   it("a jinx lands on a loss and holds until the floor's boss falls", () => {
     let s = fight(deal(start(), "dungeon.goblin-shaman"), 2);
     expect(party(s).jinx).toBe("dungeon.goblin-shaman");
-    expect(questRecord(s)!.jinx?.jinx?.name).toBe("Goblin Tongue");
+    expect(questRecord(s)!.jinx?.jinx?.name).toBe("Toad Voice");
     roundTrip(s);
     // A win lays nothing.
     expect(
@@ -1070,8 +1070,8 @@ describe("Pub Crawl", () => {
   });
 
   it("a new piece replaces the one in its slot, and the table can keep its gear", () => {
-    // Wearing Greasy Knuckles (a weapon), the Keg Mimic Queen offers Royal
-    // Jelly Shot (a weapon too) and Queen's Tap (a trinket).
+    // Wearing the Black Gauntlet (a weapon), the Bandit Queen offers the
+    // Queen's Dagger (a weapon too) and her crown (a trinket).
     // (Worn without its card dealt, so only the swap, whose gear is all
     // dealt, round-trips as a save; `crawl-gear-*` fixtures cover the rest.)
     let s = deal(fromStep(start(), STEP.floor1 + 1), "dungeon.keg-mimic-queen");
@@ -1082,7 +1082,7 @@ describe("Pub Crawl", () => {
     expect(jelly.slot).toBe("weapon");
     expect(replaces(s.quest, tap)).toHaveLength(0);
     expect(replaces(s.quest, jelly).map((b) => b.boon.name)).toEqual([
-      "Greasy Knuckles",
+      "Black Gauntlet",
     ]);
     // Taking the weapon swaps it in.
     const swapped = takeSpoils(s, 1);
@@ -1101,8 +1101,8 @@ describe("Pub Crawl", () => {
   });
 
   it("swapping armor takes its hearts with it", () => {
-    // Wearing the Hairnet (+1 heart), the Grease Trap Horror offers the
-    // Grease-Proof Apron, armor that adds none.
+    // Wearing the Padded Gambeson (+1 heart), the Black Knight offers
+    // Traveler's Boots, armor that adds none.
     let s = deal(
       fromStep(start(), STEP.floor1 + 1),
       "dungeon.grease-trap-horror",

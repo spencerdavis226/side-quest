@@ -153,8 +153,8 @@ export const dungeonPack: PackDefinition = {
       {
         oneOf: [
           [
-            floor("The Cellar", "Down into the Cellar", cellar),
-            one("Cellar boss", "Something blocks the stairs", cellar.bosses),
+            floor("The King's Road", "Out through the city gate", cellar),
+            one("King's Road boss", "Something blocks the road", cellar.bosses),
           ],
           [
             floor("The Wine Cellar", "Down into the Wine Cellar", wine),

@@ -202,8 +202,7 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
       "The lich's accountant audits you: your left neighbor asks three trivia questions. Miss two: drink 4.",
   },
   "ex-wraith": {
-    rules:
-      "A wraith with your ex's face reads your old texts aloud. Roll d20.",
+    rules: "A wraith with your ex's face reads your old texts aloud. Roll d20.",
   },
   "hex-witch": {
     rules:
@@ -364,8 +363,7 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
       "A siren sings one more drink, and it's beautiful. Cover your ears, then roll d20 to resist.",
   },
   "text-them-eel": {
-    rules:
-      "An eel whispers: text them. Sit on your hands, then roll d20.",
+    rules: "An eel whispers: text them. Sit on your hands, then roll d20.",
     crit: "You text the eel instead. It leaves you on read. Give 10.",
   },
   "rip-current": {
@@ -469,7 +467,7 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
   // Ambushes and the last plain rooms (2026-10-31): each asks something.
   "falling-taps": {
     rules:
-      "A foam tap handle bonks you, and you're Thumb Master now. Drink 1, then use it.",
+      "An acorn bonks you on the head, and you're Thumb Master now. Drink 1, then use it.",
   },
   "book-club": {
     rules:

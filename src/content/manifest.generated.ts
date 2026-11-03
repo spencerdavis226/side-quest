@@ -2016,8 +2016,8 @@ export const packs: PackDefinition[] = [
           oneOf: [
             [
               {
-                label: "The Cellar",
-                intro: "Down into the Cellar",
+                label: "The King's Road",
+                intro: "Out through the city gate",
                 pick: 8,
                 cardIds: [
                   "dungeon.gelatinous-shot",
@@ -2074,8 +2074,8 @@ export const packs: PackDefinition[] = [
                 ],
               },
               {
-                label: "Cellar boss",
-                intro: "Something blocks the stairs",
+                label: "King's Road boss",
+                intro: "Something blocks the road",
                 pick: 1,
                 cardIds: [
                   "dungeon.keg-golem",

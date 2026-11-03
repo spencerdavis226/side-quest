@@ -153,7 +153,7 @@ export interface CrawlTheme {
  * reads as a descent. Wine Cellar is tested before Cellar. */
 const SCENES: [RegExp, string][] = [
   [/Wine Cellar/, "wine"],
-  [/Cellar/, "cellar"],
+  [/Cellar|King.s Road/, "cellar"],
   [/Brewery/, "brewery"],
   [/Catacombs/, "catacombs"],
   [/Sewers/, "sewers"],
