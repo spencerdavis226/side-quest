@@ -263,14 +263,15 @@ export const dungeonOmenWords: OmenWords = {
   bag: "The satchel",
   relative: { maxOne: "max heart", slot: ["satchel slot", "satchel slots"] },
   items: {
-    draught: ["Healing Draught", "Healing Draughts", "a"],
-    shield: ["Coaster Shield", "Coaster Shields", "a"],
-    die: ["Loaded Die", "Loaded Dice", "a"],
+    // Realms (2026-11-03): the names in `crawlTheme.ts`.
+    draught: ["Healing Potion", "Healing Potions", "a"],
+    shield: ["Tower Shield", "Tower Shields", "a"],
+    die: ["Lucky Coin", "Lucky Coins", "a"],
     smoke: ["Smoke Bomb", "Smoke Bombs", "a"],
-    revive: ["Second Wind", "Second Winds", "a"],
-    candy: ["Dog-Eared Tome", "Dog-Eared Tomes", "a"],
-    round: ["Bar Tab", "Bar Tabs", "a"],
-    // Never dealt in Pub Crawl; named for completeness.
+    revive: ["Phoenix Feather", "Phoenix Feathers", "a"],
+    candy: ["Tome of Training", "Tomes of Training", "a"],
+    round: ["Hired Sword", "Hired Swords", "a"],
+    // Never dealt in the Quest; named for completeness.
     master: ["Master Ball", "Master Balls", "a"],
     great: ["Great Ball", "Great Balls", "a"],
     ultra: ["Ultra Ball", "Ultra Balls", "an"],

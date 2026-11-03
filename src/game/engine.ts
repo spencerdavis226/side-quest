@@ -887,10 +887,21 @@ export function currentCard(s: SessionState) {
     );
   const card = finaleCard(s.quest, s.quest.finale[s.quest.step])!;
   // A boss with phases reads the beat its hits have reached.
-  return withSecret(
+  return withNames(
     s,
-    card.phases ? atBeat(card, bossBeat(s.quest, card)) : card,
+    withSecret(s, card.phases ? atBeat(card, bossBeat(s.quest, card)) : card),
   );
+}
+/** `{dragon}` in a card's rules names the run's last card (Realms,
+ * 2026-11-03): the dragon is picked when the game starts, so the King's
+ * Summons can name it and the roads can follow its trail. */
+export const DRAGON = "{dragon}";
+function withNames(s: SessionState, card: CardDefinition): CardDefinition {
+  if (!card.rules.includes(DRAGON) || !s.quest) return card;
+  const last = finaleCard(s.quest, s.quest.finale[s.quest.finale.length - 1]);
+  return last
+    ? { ...card, rules: card.rules.split(DRAGON).join(last.title) }
+    : card;
 }
 /** A card with a `secretPool` holds one of them for the whole game: picked by
  * hashing the game's shuffle and the card's id, so it is stable across
@@ -908,14 +919,14 @@ function withSecret(s: SessionState, card: CardDefinition): CardDefinition {
 export function previousCard(s: SessionState) {
   const card = findCard(s, s.previousId);
   const beat = s.quest?.party?.beat;
-  return card?.phases && beat ? atBeat(card, beat) : card;
+  return card?.phases && beat ? withNames(s, atBeat(card, beat)) : card;
 }
 /** A deck card or a finale card, for history such as the previous card. */
 export function findCard(s: SessionState, id: string | null) {
-  return (
+  const card =
     s.cards.find((c) => c.id === id) ??
-    (s.quest && id !== null ? finaleCard(s.quest, id) : undefined)
-  );
+    (s.quest && id !== null ? finaleCard(s.quest, id) : undefined);
+  return card && withNames(s, card);
 }
 /** A crawl fight just won whose spoils wait to be picked: an elite's win,
  * or a boss's felling swing. Picking one puts the card aside. */
@@ -1106,7 +1117,19 @@ export function takeOffer(
       finale[q.step + 1] = fresh[Math.floor(random() * fresh.length)].id;
     }
   }
-  return discard({ ...s, quest: { ...q, finale, party } }, random);
+  // Declining a side quest (2026-11-03): its later stages leave the run,
+  // with their picks, so every count still adds up.
+  let stages = q.stages;
+  if (offer.skip) {
+    const { stage } = finaleStage(q);
+    const from = stage + 1;
+    const to = Math.min(q.stages.length - 1, stage + offer.skip);
+    const start = q.stages.slice(0, from).reduce((n, st) => n + st.pick, 0);
+    const drop = q.stages.slice(from, to + 1).reduce((n, st) => n + st.pick, 0);
+    stages = [...q.stages.slice(0, from), ...q.stages.slice(to + 1)];
+    finale = [...finale.slice(0, start), ...finale.slice(start + drop)];
+  }
+  return discard({ ...s, quest: { ...q, stages, finale, party } }, random);
 }
 /** Take the no-roll option of a choice card: it is put aside unrolled (a
  * battle walked away from is neither won nor lost). */
@@ -1505,6 +1528,8 @@ function discardCard(
       next = { ...next, hits: 0 };
       if (isBossCard(card)) delete next.jinx;
       next = gainBoon(next, card, q, spoil);
+      // Realms (2026-11-03): a lieutenant's fall levels the adventurer up.
+      if (card.levelUp) next = evolve(next, { ...q, party: next });
       // A Legendary caught on its last beat joins the team (2026-11-01).
       if (card.joins) next = joinTeam(next, card.id);
       // A badge restocks the starter's item, room permitting; in a crawl

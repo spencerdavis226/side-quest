@@ -612,7 +612,7 @@ export function momentsBetween(
   // The bookcase swings open on a hidden room.
   const door = hiddenRoomFor(after);
   if (door && door.key !== (hiddenRoomFor(before)?.key ?? null)) {
-    const kicker = "Behind the bookcase";
+    const kicker = "A secret way in";
     const word = theme.words.wanted;
     const boss = q && word ? wantedBoss(q)?.title : undefined;
     const wanted = boss ? `${word}: ${boss}` : undefined;

@@ -27,16 +27,17 @@ export const card = cardFactory("dungeon");
  * (0 to 2), which sets the odds. */
 export type Floor = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 export const FLOORS = [
+  // Realms (2026-11-03): the regions, in the old floors' slots (depth is
+  // the index mod 3).
   "King's Road",
-  "Catacombs",
-  "Taproom",
-  "Wine Cellar",
-  "Sewers",
-  "Kitchen",
-  // The third way down at each depth (2026-10-17).
-  "Brewery",
-  "Freezer",
-  "Rooftop",
+  "Haunted Crypt",
+  "Sunken Coast",
+  "Old Forest",
+  "Goblin Mines",
+  "Fire Caverns",
+  "Marsh",
+  "Wizard's Tower",
+  "Frozen Pass",
 ] as const;
 export const tier = (floor: Floor) => (floor % 3) as 0 | 1 | 2;
 
@@ -78,7 +79,7 @@ export const GUARD_NEED = 8;
 export const GUARD_HURT = 2;
 export const KEEPER_NEED = 10;
 export const KEEPER_HURT = 2;
-/** A landing between floors: level up for drinks, or rest for hearts. */
+/** An inn between regions: rest for hearts, or stock up for drinks. */
 export const LANDING_HEAL = 3;
 export const LEVEL_DRINK = 3;
 /** The party's shared hearts before the adventurer. */
@@ -411,12 +412,17 @@ export const boss = (
   more: { jinx?: Jinx; drops?: Spoils } = {},
 ): CardDefinition => ({
   ...card(id, title, "challenge", rules, dice),
-  ribbon: tier(floor) === 2 ? "Last Call · Boss" : `${FLOORS[floor]} · Boss`,
+  ribbon:
+    tier(floor) === 2
+      ? "The Dragon's Lair · Dragon"
+      : `${FLOORS[floor]} · Boss`,
   ribbonTone: "crimson",
   encounter: "boss",
   battle: true,
   hits: BOSS_HITS[tier(floor)],
   damage: BOSS_HURT[tier(floor)],
+  // Realms (2026-11-03): a region's boss is a rank; the dragon ends it all.
+  ...(tier(floor) < 2 ? { levelUp: true as const } : {}),
   ...(more.jinx ? { jinx: more.jinx } : {}),
   ...(more.drops ? { spoils: more.drops } : {}),
 });
@@ -520,7 +526,7 @@ export const omen = (
   spoken?: string,
 ): CardDefinition => ({
   ...card(`omen-${id}`, title, "rule", rules),
-  ribbon: "Tonight's omen",
+  ribbon: "The omen",
   ribbonTone: "pearl",
   encounter: "omen",
   // A table rule's power is its rule.
@@ -566,21 +572,23 @@ export const adventurer = (
   })),
 });
 
-/** A landing between floors: level up for drinks, or rest. A fully
- * levelled adventurer can only rest. Pub Crawl only. */
+/** An inn between regions (Realms, 2026-11-03; was a landing): rest for
+ * hearts, or stock up on the inn's item for drinks. Ranks come from bosses
+ * now, not inns. The Quest only. */
 export const landing = (
   id: string,
   title: string,
   rules: string,
   rest = "Rest",
+  stock: Loot = "draught",
 ): CardDefinition => ({
   ...card(`landing-${id}`, title, "group", rules),
-  ribbon: "Landing · Rest",
+  ribbon: "Inn · Rest",
   ribbonTone: "violet",
   encounter: "rest",
   offers: [
-    { label: `Level up · drink ${LEVEL_DRINK}`, evolve: true },
     { label: rest, heal: LANDING_HEAL },
+    { label: `Stock up · drink ${LEVEL_DRINK}`, loot: stock },
   ],
 });
 
@@ -600,7 +608,7 @@ export const queue = (
     rules,
     fight ? fight(QUEUE_NEED) : undefined,
   ),
-  ribbon: "The Queue · Rival",
+  ribbon: "The City Gate · Rival",
   ribbonTone: "crimson",
   encounter: "ambush",
   battle: true,
@@ -625,7 +633,7 @@ export const stairs = (
     rules,
     fight ? fight(STAIRS_NEED) : undefined,
   ),
-  ribbon: "The Stairs · Rival",
+  ribbon: "The Crossroads · Rival",
   ribbonTone: "crimson",
   encounter: "ambush",
   battle: true,
@@ -642,7 +650,7 @@ export const closing = (
   more: { jinx?: Jinx } = {},
 ): CardDefinition => ({
   ...card(`closing-${id}`, title, "challenge", rules, fight(CLOSING_NEED)),
-  ribbon: "Closing Time · Rival",
+  ribbon: "The Lair's Door · Rival",
   ribbonTone: "crimson",
   encounter: "ambush",
   battle: true,
@@ -696,8 +704,25 @@ export const keeper = (
   battle: true,
   hits: 2,
   damage: KEEPER_HURT,
+  // Realms (2026-11-03): a side quest's keeper is a rank, like a boss.
+  levelUp: true,
   ...(more.jinx ? { jinx: more.jinx } : {}),
   spoils: more.drops,
+});
+
+/** A side quest's plea (Realms, 2026-11-03): someone begs for help. Take
+ * it and its dungeon is dealt (two guards and a keeper); walk on and the
+ * two stages leave the run (`skip`). The Quest only. */
+export const plea = (
+  id: string,
+  title: string,
+  rules: string,
+): CardDefinition => ({
+  ...card(`quest-${id}`, title, "group", rules),
+  ribbon: "Side Quest",
+  ribbonTone: "violet",
+  encounter: "rest",
+  offers: [{ label: "Take the quest" }, { label: "Walk on", skip: 2 }],
 });
 
 /** One floor's cards: its rooms (fights and finds), the elites behind its

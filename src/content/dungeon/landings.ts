@@ -1,110 +1,123 @@
 import type { CardDefinition } from "../../game/types";
 import { landing } from "./shared";
 
-// The landings between floors (2026-10-17): the crawl's campfires. Level the
-// adventurer up for drinks, or rest for hearts; never both. Each landing has
-// its own pool (eight since 2026-10-25), so the two in a run are never the
-// same card. Pub Crawl only.
+// The inns between regions (2026-10-17 as landings; Realms, 2026-11-03):
+// the quest's campfires. Rest for hearts, or stock up on what the inn has
+// for drinks; never both. Each inn has its own pool (eight), so the two in
+// a run are never the same card. The Quest only.
 
-/** After the first floor's boss. */
+/** After the first region's boss. */
 export const upperLandings: CardDefinition[] = [
   landing(
     "stairwell",
-    "The Stairwell",
-    "A cold stairwell and one flickering bulb. Everyone stretches. Level up, or sit down.",
+    "The Sleeping Goat",
+    "A fat cat on every chair. Everyone gives the cat on their left a noble name.",
+    "Take a room",
   ),
   landing(
     "smoking-area",
-    "The Smoking Area",
-    "Fresh air, a dead heater, somebody's vape. Everyone names their best moment so far.",
-    "Breathe",
+    "The Crooked Lantern",
+    "A crooked inn with a straight fire. Everyone names their best moment of the quest so far.",
+    "Rest",
+    "shield",
   ),
   landing(
     "coat-check",
-    "The Coat Check",
-    "An empty coat check. Everyone names the coat they'd steal. Level up, or nap on the pile.",
-    "Nap",
+    "A Hayloft",
+    "A barn's hayloft, warm and itchy. Everyone names the animal they'd ride into battle.",
+    "Nap in the hay",
+    "die",
   ),
   landing(
     "bathroom-line",
-    "The Bathroom Line",
-    "Twelve deep, and everyone's best friends now. Everyone hypes their left neighbor.",
-    "Wait it out",
+    "The Ferry House",
+    "The ferryman's inn, and everyone's soaked. Everyone hypes their left neighbor like a herald.",
+    "Dry off",
+    "smoke",
   ),
-  // Four more (2026-10-25).
   landing(
     "loading-dock",
-    "The Loading Dock",
-    "Pallets, a puddle, one working vending machine. Everyone names the snack they'd get.",
-    "Sit on a pallet",
+    "A Shepherd's Hut",
+    "A shepherd shares his bread and his opinions. Everyone names a snack worth fighting for.",
+    "Sit by the fire",
   ),
   landing(
     "phone-booth",
-    "The Phone Booth",
-    "An old phone booth, and the phone works. Everyone says who they'd call right now.",
-    "Lean on it",
+    "The Pilgrims' Rest",
+    "A shrine by the door and a bell that rings itself. Everyone says one thing they'd pray for.",
+    "Pray",
+    "shield",
   ),
   landing(
     "mop-closet",
-    "The Mop Closet",
-    "Mops, buckets, one comfy bucket. Everyone gives their left neighbor a wrestling name.",
-    "Sit on a bucket",
+    "The Drunken Dwarf",
+    "The dwarf who runs it arm-wrestles every guest. Everyone gives their left neighbor a dwarf name.",
+    "Rest",
+    "die",
   ),
   landing(
     "photo-booth",
-    "The Photo Booth",
-    "A broken photo booth that still flashes. Everyone pulls their best face on three.",
+    "A Painted Wagon",
+    "Traveling players let you sleep in their wagon. Everyone strikes a heroic pose on three.",
+    "Sleep",
+    "smoke",
   ),
 ];
 
-/** After the second floor's boss. */
+/** After the second region's boss. */
 export const lowerLandings: CardDefinition[] = [
   landing(
     "boiler-room",
-    "The Boiler Room",
-    "Warm pipes and somebody's cot. Everyone warms their hands. Level up, or lie down.",
+    "The Last Warm Fire",
+    "Past here, no more inns. Everyone warms their hands and names one thing they'll miss.",
     "Lie down",
   ),
   landing(
     "campfire",
     "A Campfire",
-    "Someone lit a fire in a keg. Everyone tells the scariest thing that's happened tonight.",
+    "A fire under the stars. Everyone tells the scariest thing that's happened on the road.",
+    "Rest",
+    "shield",
   ),
   landing(
     "staff-room",
-    "The Staff Room",
-    "A kettle and a sign: WASH YOUR OWN MUG. Everyone mimes washing one.",
-    "Kettle on",
+    "The Monastery",
+    "Silent monks pour you soup. Everyone stays silent for one minute. First to make a sound drinks 2.",
+    "Meditate",
+    "die",
   ),
   landing(
     "fire-escape",
-    "The Fire Escape",
-    "Stars, a city, and the street far below. Everyone toasts how far you've come.",
+    "The Watchtower",
+    "A ruined tower, and below it the whole road you walked. Everyone toasts how far you've come.",
     "Take it in",
+    "smoke",
   ),
-  // Four more (2026-10-25).
   landing(
     "service-stairs",
-    "The Service Stairs",
-    "Halfway down, a step wide enough to sit on. Everyone says what they'd order right now.",
+    "The Hermit's Cave",
+    "A hermit with soup and no news since the old king. Everyone tells him one piece of gossip.",
     "Sit",
   ),
   landing(
     "the-bunker",
-    "The Bunker",
-    "An old bomb shelter with canned beans. Everyone names who they'd want down here.",
+    "The Empty Fort",
+    "An empty fort with full barrels. Everyone names who they'd want on these walls.",
     "Bunk down",
+    "shield",
   ),
   landing(
     "laundry-room",
-    "The Laundry Room",
-    "Warm dryers humming. Everyone confesses their worst laundry crime.",
-    "Lean on a dryer",
+    "The Hot Springs",
+    "Steam in the rocks. Everyone confesses one thing they've never told the party.",
+    "Soak",
+    "die",
   ),
   landing(
     "stuck-elevator",
-    "The Stuck Elevator",
-    "An elevator stuck between floors, the music still playing. Everyone hums along on three.",
-    "Wait for it",
+    "The Haunted Inn",
+    "The innkeeper is a ghost, and very polite about it. Everyone hums his song on three.",
+    "Sleep, nervously",
+    "smoke",
   ),
 ];

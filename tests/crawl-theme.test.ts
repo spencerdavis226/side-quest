@@ -45,15 +45,17 @@ describe("crawl themes", () => {
         ).toBe(true);
   });
 
-  it("keeps Dungeon night's words and marks", () => {
+  it("keeps the Quest's words and marks (Realms, 2026-11-03)", () => {
     const dungeon = crawlTheme("dungeon");
     expect(crawlTheme(undefined)).toBe(dungeon);
     expect(crawlIconPath(dungeon, "heart")).toBe("art/crawl/heart.svg");
     expect(dungeon.loot.smoke.name).toBe("Smoke Bomb");
     expect(heartCount(dungeon, 1)).toBe("1 heart");
     expect(heartCount(dungeon, 2)).toBe("2 hearts");
-    expect(dungeon.loot.candy.name).toBe("Dog-Eared Tome");
-    expect(dungeon.words.evolving!("Bard")).toBe("Bard levels up!");
+    expect(dungeon.loot.candy.name).toBe("Tome of Training");
+    expect(dungeon.loot.round.name).toBe("Hired Sword");
+    expect(dungeon.words.evolving!("Bard")).toBe("Bard ranks up!");
+    expect(dungeon.won.title.join(" ")).toBe("The dragon is slain.");
   });
 
   it("names the League's journey", () => {
@@ -70,24 +72,26 @@ describe("crawl themes", () => {
 });
 
 describe("how to play", () => {
-  it("states Pub Crawl's numbers as the content tunes them", () => {
+  it("states the Quest's numbers as the content tunes them", () => {
     const quest = packs.find((p) => p.id === "dungeon")!.quest!;
     const rows = crawlTheme("dungeon").guide.rows({
       hearts: quest.party!.hearts,
     });
     const line = (title: string) => rows.find((r) => r.title === title)!.line;
     expect(line("Hearts")).toContain(`shares ${PARTY_HEARTS}.`);
-    expect(line("Landings")).toContain(
-      `for ${LEVEL_DRINK} drinks, or rest for ${LANDING_HEAL} hearts`,
+    expect(line("Inns and side quests")).toContain(
+      `rest for ${LANDING_HEAL} hearts, or stock up for drinks`,
     );
-    // One row a system, and nothing cut on 2026-10-31.
+    expect(LEVEL_DRINK).toBe(3);
+    // One row a system, and nothing cut on 2026-10-31; ranks since Realms.
     expect(rows.map((r) => r.title)).toEqual([
       "Hearts",
       "Fights",
       "Bosses",
-      "Landings",
+      "Ranks",
+      "Inns and side quests",
       "Satchel and gear",
-      "Jinxes",
+      "Curses",
     ]);
     // Every row's mark exists.
     for (const row of rows)
@@ -115,18 +119,23 @@ describe("how to play", () => {
   });
 });
 
-describe("Pub Crawl's lit scenes (2026-10-31)", () => {
+describe("the Quest's lit scenes (2026-10-31; regions since Realms)", () => {
   const rules = packs.find((p) => p.id === "dungeon")!.quest!;
   const scene = crawlTheme("dungeon").flourish!.scene!;
   it("lights every stage after the omen with its own scene", () => {
     for (const stage of questStages(rules)) {
-      if (["Your adventurer", "Tonight's omen"].includes(stage.label)) continue;
+      if (["Your adventurer", "The omen"].includes(stage.label)) continue;
       expect(scene(stage.label), stage.label).toBeTruthy();
     }
-    expect(scene("The Wine Cellar")).toBe("wine");
-    expect(scene("Wine Cellar boss")).toBe("wine");
-    expect(scene("King's Road boss")).toBe("cellar");
-    expect(scene("The Walk-in Freezer")).toBe("freezer");
+    expect(scene("The Old Forest")).toBe("forest");
+    expect(scene("Old Forest boss")).toBe("forest");
+    expect(scene("King's Road boss")).toBe("road");
+    expect(scene("The Frozen Pass")).toBe("frost");
+    // The rivals at the lair's door, not the dragon's own light.
+    expect(scene("The Lair's Door")).toBe("rival");
+    expect(scene("The Dragon's Lair")).toBe("lair");
+    expect(scene("The Last Inn")).toBe("inn");
+    expect(scene("A Side Quest")).toBe("hidden");
   });
   it("the League stamps its bosses but lights no scenes (2026-11-01)", () => {
     const league = crawlTheme("pokemon").flourish!;

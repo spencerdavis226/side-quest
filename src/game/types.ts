@@ -96,6 +96,9 @@ export interface CardDefinition {
   /** A boss: the battle has to be won this many times. Each swing is one
    * deal, and the boss is dealt again, win or lose, until it falls. */
   hits?: number;
+  /** Realms (2026-11-03): felling this boss levels the adventurer up, as
+   * a landing's level up did. A boss only (`hits`). */
+  levelUp?: true;
   /** Pub Crawl: what the card brings the party when it is put aside (a
    * battle only on a win): an item for the satchel, or hearts back. */
   reward?: { loot?: Loot; heal?: number };
@@ -268,6 +271,9 @@ export interface Offer {
   /** The starter evolves into its next form; never taken once it is fully
    * evolved. */
   evolve?: true;
+  /** Realms (2026-11-03): taking it drops this many stages after the
+   * card's own from the run (declining a side quest skips its dungeon). */
+  skip?: number;
   /** Pokémon League (2026-10-25): the card's Pokémon joins the team. */
   catch?: true;
 }

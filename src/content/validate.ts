@@ -161,6 +161,9 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
       fail(`Invalid damage: ${c.id}`);
     if (c.hits !== undefined && (!c.battle || !count(c.hits, 5)))
       fail(`Invalid boss hits: ${c.id}`);
+    // A lieutenant that levels the adventurer up when it falls (2026-11-03).
+    if (c.levelUp !== undefined && (c.levelUp !== true || !c.hits))
+      fail(`Invalid level up: ${c.id}`);
     if (
       c.reward !== undefined &&
       (!c.reward ||
@@ -193,17 +196,20 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
             (o.heal !== undefined && !count(o.heal, 5)) ||
             (o.loot !== undefined && !LOOT.includes(o.loot)) ||
             (o.elite !== undefined && o.elite !== true) ||
-            (o.evolve !== undefined && o.evolve !== true),
+            (o.evolve !== undefined && o.evolve !== true) ||
+            (o.skip !== undefined &&
+              (!Number.isSafeInteger(o.skip) || o.skip < 1 || o.skip > 3)),
         ))
     )
       fail(`Invalid offers: ${c.id}`);
-    // A starter's later forms: one or two, each with its own omen effect.
+    // A starter's later forms: one to three, each with its own omen effect.
     if (
       c.evolves !== undefined &&
       (c.omen === undefined ||
         !Array.isArray(c.evolves) ||
         c.evolves.length < 1 ||
-        c.evolves.length > (c.branches ? 3 : 2) ||
+        // Three in a line since Realms (2026-11-03).
+        c.evolves.length > 3 ||
         c.evolves.some(
           (e) =>
             !e ||

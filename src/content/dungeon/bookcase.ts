@@ -1,292 +1,326 @@
 import type { CardDefinition } from "../../game/types";
-import { guard, keeper, moves, pair, trinket, vs } from "./shared";
+import { guard, keeper, moves, pair, plea, trinket, vs } from "./shared";
 
-// Behind the bookcase (2026-10-17, the League's villain hideouts done as a
-// bar): between the first landing and the second floor, the party finds one
-// of five hidden rooms. Two of its three guards, then its keeper, beaten
-// twice, who offers spoils and lays a jinx on a missed swing that holds only
-// while the fight lasts. Pub Crawl only.
+// The side quests (2026-10-17 as the hidden rooms behind the bookcase, the
+// League's villain hideouts done as a bar; Realms, 2026-11-03): between
+// the first inn and the second region, someone begs the party for help.
+// Take the quest and its dungeon is dealt: two of its three guards, then
+// its keeper, beaten twice, who offers spoils, ranks the adventurer up and
+// lays a curse on a missed swing that holds only while the fight lasts.
+// Walk on and the dungeon leaves the run. Card IDs are the hidden rooms'.
+// The Quest only.
 
 export interface HiddenRoom {
   label: string;
   intro: string;
+  plea: CardDefinition;
   guards: CardDefinition[];
   keeper: CardDefinition;
 }
 
-const speakeasy = "Speakeasy";
-const vip = "VIP Room";
-const office = "Back Office";
-const poker = "Poker Night";
-const basement = "Basement";
+const cottage = "Witch's Cottage";
+const fort = "Bandit Fort";
+const barrow = "Old Barrow";
+const shrine = "Drowned Shrine";
+const vault = "Sunless Vault";
 
 export const hiddenRooms: HiddenRoom[] = [
   {
-    label: "The Speakeasy",
-    intro: "Behind the bookcase",
+    label: "The Witch's Cottage",
+    intro: "Smoke from a crooked chimney",
+    plea: plea(
+      "goat",
+      "The Miller's Plea",
+      "A miller begs: a witch took his goat, and the goat is his best friend. Everyone says 'baa' once.",
+    ),
     guards: [
       guard(
-        speakeasy,
+        cottage,
         "peephole",
-        "The Peephole",
-        "A slot opens. Invent a password in 5 seconds and sell it. Table says no: drink 3.",
+        "The Gingerbread Door",
+        "A gingerbread door wants a password. Invent one in 5 seconds and sell it. Table says no: drink 3.",
         null,
       ),
       guard(
-        speakeasy,
+        cottage,
         "flapper-fran",
-        "Flapper Fran",
-        "Fran challenges you to a Charleston. Do 5 seconds of it, then roll d20.",
-        vs("Two left feet. Drink 3.", "The room applauds. Give 3."),
+        "The Witch's Cat",
+        "A black cat blocks the path and judges you. Do your best cat for 5 seconds, then roll d20.",
+        vs("It's not impressed. Drink 3.", "It purrs and lets you by. Give 3."),
       ),
       guard(
-        speakeasy,
+        cottage,
         "bathtub-gin",
-        "Bathtub Gin",
-        "A bathtub full of homemade gin, and a ladle. Roll d6.",
+        "The Cauldron",
+        "A cauldron of something green, and a ladle. Roll d6.",
         moves(
           [
-            "It tastes like a radiator. Drink 3.",
-            "You go blind for a minute. Drink 3.",
+            "It tastes like feet. Drink 3.",
+            "You turn green for a minute. Drink 3.",
           ],
           [
             "Smooth, somehow. Give 2.",
             "You ladle out a round. Give 3.",
-            "You find the still's off switch. Give 3.",
+            "You find the witch's recipe book. Give 3.",
             "You bottle it and sell it. Everyone else drinks 1.",
           ],
         ),
       ),
     ],
     keeper: keeper(
-      speakeasy,
+      cottage,
       "the-proprietor",
-      "The Proprietor",
-      "A bootlegger, dead since Prohibition, still running the room. Roll d20.",
+      "Granny Hex",
+      "Three hundred years old, and she has never lost a staring contest. Roll d20.",
       vs(
-        "He pours you the bathtub special. Drink 4.",
-        "You tip off the feds. Give 4.",
-        { crit: "You buy the place. Everyone else drinks 3." },
+        "She turns you into a toad, briefly. Drink 4.",
+        "You knock the broom out of her hand. Give 4.",
+        { crit: "You steal the broom and the goat. Everyone else drinks 3." },
       ),
       {
         jinx: {
-          name: "Prohibition",
-          rule: "Nobody says the word 'drink'. Slip: drink 1.",
+          name: "Ribbit",
+          rule: "The jinxed player says 'ribbit' after every sip. Forgets: drink 1.",
         },
         drops: [
-          trinket("Bootlegger's Flask", { loot: ["draught", "draught"] }),
-          trinket("The Password", { roll: { elite: 2, ambush: 1 } }),
+          trinket("Witch's Flask", { loot: ["draught", "draught"] }),
+          trinket("Broomstick", { roll: { elite: 2, ambush: 1 } }),
         ],
       },
     ),
   },
   {
-    label: "The VIP Room",
-    intro: "Past the velvet rope",
+    label: "The Bandit Fort",
+    intro: "Torches on a wooden wall",
+    plea: plea(
+      "strongbox",
+      "The Merchant's Plea",
+      "A merchant, robbed blind, wants his strongbox back. Everyone checks their own pockets, loudly.",
+    ),
     guards: [
       guard(
-        vip,
+        fort,
         "bottle-service",
-        "Bottle Service",
-        "A server brings a sparkler bottle and a bill for $900. Roll 2d6.",
+        "The Toll Booth",
+        "The bandits charge a toll to get in, and another to get out. Roll 2d6.",
         pair(
-          "You sign it. Drink 3.",
-          "It was for the next table. Give 3.",
-          "A pair! It's on the house. Everyone else drinks 2.",
+          "You pay both. Drink 3.",
+          "You pay in fake coins. Give 3.",
+          "A pair! They pay you. Everyone else drinks 2.",
         ),
       ),
       guard(
-        vip,
+        fort,
         "the-influencer",
-        "The Influencer",
-        "Take the most flattering photo of the table in 10 seconds. They hate it: drink 3.",
+        "The Bandit Bard",
+        "Sing the bandits a song about how great they are, 10 seconds. They hate it: drink 3.",
         null,
       ),
       guard(
-        vip,
+        fort,
         "the-bodyguard",
-        "The Bodyguard",
-        "Six-five, an earpiece, no neck. He wants to see your wristband. Roll d20.",
-        vs("No wristband. Drink 3.", "You walk in like you own it. Give 3."),
+        "The Gatekeeper",
+        "Seven feet tall, one eye, and he wants the password. Roll d20.",
+        vs("Wrong password. Drink 3.", "You walk in like you own it. Give 3."),
       ),
     ],
     keeper: keeper(
-      vip,
+      fort,
       "the-promoter",
-      "The Promoter",
-      "He's put your name on a list. You don't know which list. Roll d20.",
-      vs("The bad list. Drink 4.", "You're on the good list. Give 4.", {
-        fumble: "You're the promoter now. Finish your drink.",
+      "One-Eyed Mag",
+      "The bandit chief. The strongbox is under her chair, and she's sitting on it. Roll d20.",
+      vs("She robs you too. Drink 4.", "You take the strongbox. Give 4.", {
+        fumble: "She recruits you. Finish your drink.",
       }),
       {
         jinx: {
-          name: "Talk to My Agent",
+          name: "Bandit's Honor",
           rule: "Nobody speaks to the jinxed player except through someone else. Slip: drink 1.",
         },
         drops: [
-          trinket("Velvet Rope", { hurt: { monster: -1 } }),
-          trinket("The Guest List", { roll: { ambush: 1, boss: 1 } }),
+          trinket("Mag's Eyepatch", { hurt: { monster: -1 } }),
+          trinket("Stolen Map", { roll: { ambush: 1, boss: 1 } }),
         ],
       },
     ),
   },
   {
-    label: "The Back Office",
-    intro: "A door marked PRIVATE",
+    label: "The Old Barrow",
+    intro: "A hill with a door in it",
+    plea: plea(
+      "barrow",
+      "The Gravedigger's Plea",
+      "The gravedigger says the dead won't stay down. Everyone shows their best zombie face on three.",
+    ),
     guards: [
       guard(
-        office,
+        barrow,
         "the-accountant",
-        "The Accountant",
-        "He's found a discrepancy in the books, and it's you. Roll d20.",
-        vs(
-          "You're the discrepancy. Drink 3.",
-          "You find his discrepancy. Give 3.",
-        ),
+        "The Barrow Wight",
+        "A dead lord in rusted armor, counting his coins, and you. Roll d20.",
+        vs("You're counted. Drink 3.", "You knock his helmet off. Give 3."),
       ),
       guard(
-        office,
+        barrow,
         "security-camera",
-        "The Security Camera",
+        "The Stone Watcher",
         "Freeze like a statue for 15 seconds while the table tries to crack you. Move: drink 3.",
         null,
       ),
       guard(
-        office,
+        barrow,
         "the-safe",
-        "The Safe",
-        "The combination is somebody's birthday. Roll d6 to crack it.",
+        "The Sealed Tomb",
+        "The seal is a riddle nobody remembers. Roll d6 to crack it.",
         moves(
-          ["The alarm goes off. Drink 3.", "A dye pack. Drink 3, blue."],
+          ["The curse goes off. Drink 3.", "Dust in your eyes. Drink 3."],
           [
-            "Cracked it. Empty, but you look cool. Give 2.",
-            "Petty cash. Give 3.",
-            "Petty cash and a bottle. Give 3.",
-            "It was the owner's birthday. Everyone else drinks 1.",
+            "Empty, but you look brave. Give 2.",
+            "A few old coins. Give 3.",
+            "Coins, and a jeweled cup. Give 3.",
+            "It was a king's tomb. Everyone else drinks 1.",
           ],
         ),
       ),
     ],
     keeper: keeper(
-      office,
+      barrow,
       "the-manager",
-      "The Manager",
-      "He needs you to come in on Saturday. He's not asking. Roll d20.",
-      vs("You're working Saturday. Drink 4.", "You quit, loudly. Give 4.", {
-        crit: "You get his job. Everyone else drinks 3.",
-      }),
+      "The Barrow King",
+      "A crown, a sword, and no patience for visitors. Roll d20.",
+      vs(
+        "He buries you, a little. Drink 4.",
+        "You knock his crown off. Give 4.",
+        {
+          crit: "You take the crown. Everyone else drinks 3.",
+        },
+      ),
       {
         jinx: {
-          name: "Per My Last Email",
-          rule: "The jinxed player starts every sentence with 'Per my last email'. Forgets: drink 1.",
+          name: "Grave Manners",
+          rule: "The jinxed player bows before every sentence. Forgets: drink 1.",
         },
         drops: [
-          trinket("Petty Cash", { loot: ["round", "shield"] }),
-          trinket("Employee of the Month", { roll: { boss: 1, monster: 1 } }),
+          trinket("Grave Gold", { loot: ["round", "shield"] }),
+          trinket("Barrow Blade", { roll: { boss: 1, monster: 1 } }),
         ],
       },
     ),
   },
   {
-    label: "Poker Night",
-    intro: "A card game in the back",
+    label: "The Drowned Shrine",
+    intro: "Bells ringing underwater",
+    plea: plea(
+      "nets",
+      "The Fisherman's Plea",
+      "A fisherman says the old shrine sings at night and his nets come up empty. Everyone hums low.",
+    ),
     guards: [
       guard(
-        poker,
+        shrine,
         "card-sharp",
-        "The Card Sharp",
-        "He deals you in with a smile you don't like. Roll 2d6 for your hand.",
+        "The Merfolk Gambler",
+        "He deals you a hand of wet cards and smiles too wide. Roll 2d6 for your hand.",
         pair(
-          "Two pair. His is better. Drink 3.",
+          "His hand is better. Drink 3.",
           "Full house. Give 3.",
           "A pair! Four of a kind. Everyone else drinks 2.",
         ),
       ),
       guard(
-        poker,
+        shrine,
         "the-tell",
-        "The Tell",
-        "Tell two truths and a lie. Anyone spots the lie: you drink 3.",
+        "The Siren",
+        "The siren only trusts liars. Tell two truths and a lie. Anyone spots the lie: you drink 3.",
         null,
       ),
       guard(
-        poker,
+        shrine,
         "the-dealer",
-        "The Dealer",
-        "She's dealing from the bottom of the deck and smiling about it. Roll d20.",
-        vs("Busted. Drink 3.", "You catch her. Give 3."),
+        "The Drowned Priest",
+        "He has prayed underwater for a hundred years and wants you to join him. Roll d20.",
+        vs("He blesses you, wetly. Drink 3.", "You ring his bell. Give 3."),
       ),
     ],
     keeper: keeper(
-      poker,
+      shrine,
       "big-mike",
-      "Big Mike",
-      "He has never lost a hand, and he plays with real money and fake teeth. Roll d20.",
-      vs("Big Mike takes the pot. Drink 4.", "You call his bluff. Give 4.", {
-        crit: "You take the pot and his teeth. Everyone else drinks 3.",
+      "The Sea Witch",
+      "She trades in voices and has never lost a bargain. Roll d20.",
+      vs("She takes your voice. Drink 4.", "You crack her shell. Give 4.", {
+        crit: "You take her voice instead. Everyone else drinks 3.",
       }),
       {
         jinx: {
-          name: "Poker Face",
-          rule: "The jinxed player may not smile. Caught: drink 1.",
+          name: "Voiceless",
+          rule: "The jinxed player may only whisper. Speaks up: drink 1.",
         },
         drops: [
-          trinket("Ace Up the Sleeve", { crit: 19 }),
-          trinket("Big Mike's Pot", { hearts: 1, loot: ["die"] }),
+          trinket("Siren's Scale", { crit: 19 }),
+          trinket("Pearl Purse", { hearts: 1, loot: ["die"] }),
         ],
       },
     ),
   },
   {
-    label: "The Basement",
-    intro: "Down the stairs nobody uses",
+    label: "The Sunless Vault",
+    intro: "Stairs into the mountain",
+    plea: plea(
+      "vault",
+      "The Dwarf's Plea",
+      "A dwarf says something big took his family's vault. Everyone strokes an imaginary beard.",
+    ),
     guards: [
       guard(
-        basement,
+        vault,
         "arm-wrestle",
-        "The Arm Wrestle",
-        "Arm-wrestle your right neighbor, best of one. Lose: drink 3.",
+        "The Last Guard",
+        "The vault's last guard wants a test of strength. Arm-wrestle your right neighbor. Lose: drink 3.",
         null,
       ),
       guard(
-        basement,
+        vault,
         "the-ref",
-        "The Ref",
-        "A ref with one rule: there are no rules. Roll d20.",
-        vs("He calls it on you. Drink 3.", "He raises your hand. Give 3."),
+        "The Rune Door",
+        "A door covered in runes that change when you look away. Roll d20.",
+        vs("The runes bite. Drink 3.", "It swings open. Give 3."),
       ),
       guard(
-        basement,
+        vault,
         "the-undercard",
-        "The Undercard",
-        "The undercard fighter is warming up, on you. Roll d6.",
+        "The Cave Troll",
+        "A young cave troll, warming up on you. Roll d6.",
         moves(
-          ["Jab, jab, hook. Drink 3.", "Headlock. Drink 3."],
+          ["Club, club, club. Drink 3.", "Headlock. Drink 3."],
           [
-            "You slip the jab. Give 2.",
+            "You slip the club. Give 2.",
             "You counter. Give 3.",
-            "You knock him out of the ring. Give 3.",
-            "The crowd lifts you up. Everyone else drinks 1.",
+            "You knock it down the stairs. Give 3.",
+            "The dwarves cheer. Everyone else drinks 1.",
           ],
         ),
       ),
     ],
     keeper: keeper(
-      basement,
+      vault,
       "the-undefeated",
-      "The Undefeated",
-      "He has a belt, a mouthguard and a grudge he can't remember starting. Roll d20.",
-      vs("Down for the count. Drink 4.", "You take the belt. Give 4.", {
-        fumble: "You go through a table. Finish your drink.",
-      }),
+      "The Deep Worm",
+      "A worm the size of a hall, coiled around the dwarf's gold. Roll d20.",
+      vs(
+        "It flattens you. Drink 4.",
+        "You hit it with a dwarf's hammer. Give 4.",
+        {
+          fumble: "It swallows you and spits you out. Finish your drink.",
+        },
+      ),
       {
         jinx: {
-          name: "First Rule",
-          rule: "Nobody talks about the basement. Mention it: drink 1.",
+          name: "Deep Silence",
+          rule: "Nobody says the word 'gold'. Slip: drink 1.",
         },
         drops: [
-          trinket("The Belt", { roll: { boss: 2 } }),
-          trinket("Mouthguard", { hurt: { boss: -1 } }),
+          trinket("Dwarven Hammer", { roll: { boss: 2 } }),
+          trinket("Deepsteel Shirt", { hurt: { boss: -1 } }),
         ],
       },
     ),
@@ -294,6 +328,7 @@ export const hiddenRooms: HiddenRoom[] = [
 ];
 
 export const hiddenRoomCards: CardDefinition[] = hiddenRooms.flatMap((r) => [
+  r.plea,
   ...r.guards,
   r.keeper,
 ]);

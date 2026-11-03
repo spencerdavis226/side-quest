@@ -681,27 +681,28 @@ dialog.closing {
     transform: none;
   }
 }
-/* Pub Crawl's places (2026-10-31, `crawlScene` in crawlTheme.ts): the same
-   glow, embers and motes, recoloured, so each floor of the run has its own
-   light. Display only; Reduced Motion hides the whole backdrop. */
-.atmosphere[data-scene="wine"] {
-  --glow-a: #a3264a51;
-  --glow-b: #c8436840;
-  --glow-top: #c8436833;
-  --candle: #b8325a4e;
-  --ember: #f0a0b4;
-  --ember-glow: #d64a72;
-  --mote: #f4c0cc;
-  --mote-glow: #e0607f55;
+/* The Quest's places (Pub Crawl's since 2026-10-31, regions since Realms,
+   2026-11-03; `crawlScene` in crawlTheme.ts): the same glow, embers and
+   motes, recoloured, so each region of the run has its own light. Display only; Reduced Motion hides the whole backdrop. */
+.atmosphere[data-scene="forest"] {
+  --glow-a: #3f8a3a4a;
+  --glow-b: #6aa84a36;
+  --glow-top: #6aa84a2a;
+  --candle: #7ab04a3d;
+  --ember: #e4f0b0;
+  --ember-glow: #9ac850;
+  --ember-time: 14s;
+  --mote: #d8eca0;
+  --mote-glow: #b0d86055;
 }
-.atmosphere[data-scene="brewery"] {
+.atmosphere[data-scene="mines"] {
   --glow-a: #e0a03047;
   --glow-b: #f0c04c33;
   --glow-top: #f0c04c28;
   --candle: #e8b0404e;
   --mote: #f5d27a;
 }
-.atmosphere[data-scene="catacombs"] {
+.atmosphere[data-scene="crypt"] {
   --glow-a: #7fae8a3d;
   --glow-b: #b4d0a42f;
   --glow-top: #b4d0a425;
@@ -712,7 +713,7 @@ dialog.closing {
   --mote: #e4f2d8;
   --mote-glow: #a8e0a855;
 }
-.atmosphere[data-scene="sewers"] {
+.atmosphere[data-scene="marsh"] {
   --glow-a: #6a9a2a4a;
   --glow-b: #8aae3a33;
   --glow-top: #8aae3a28;
@@ -722,7 +723,7 @@ dialog.closing {
   --mote: #b8d870;
   --mote-glow: transparent;
 }
-.atmosphere[data-scene="freezer"] {
+.atmosphere[data-scene="frost"] {
   --glow-a: #5aa8e051;
   --glow-b: #9ad0ff3d;
   --glow-top: #9ad0ff30;
@@ -733,7 +734,7 @@ dialog.closing {
   --mote: #f4fbff;
   --mote-glow: #bfe4ff88;
 }
-.atmosphere[data-scene="taproom"] {
+.atmosphere[data-scene="coast"] {
   --glow-a: #1f9a9a51;
   --glow-b: #3cb8b039;
   --glow-top: #3cb8b02d;
@@ -743,7 +744,7 @@ dialog.closing {
   --mote: #aee8e2;
   --mote-glow: transparent;
 }
-.atmosphere[data-scene="kitchen"] {
+.atmosphere[data-scene="fire"] {
   --glow-a: #ff5a1f58;
   --glow-b: #ff8a3a3d;
   --glow-top: #ff8a3a30;
@@ -752,7 +753,7 @@ dialog.closing {
   --ember-glow: #ff6a1a;
   --ember-time: 7s;
 }
-.atmosphere[data-scene="rooftop"] {
+.atmosphere[data-scene="tower"] {
   --glow-a: #3d5ab047;
   --glow-b: #7a5ac033;
   --glow-top: #7a5ac028;
@@ -761,7 +762,7 @@ dialog.closing {
   --mote: #fff8e4;
   --mote-glow: #fff0c088;
 }
-.atmosphere[data-scene="lastcall"] {
+.atmosphere[data-scene="lair"] {
   --glow-a: #c0283a58;
   --glow-b: #e0405040;
   --glow-top: #e0405033;
@@ -791,18 +792,17 @@ dialog.closing {
   --ember-glow: #b080ff;
   --mote: #e8d8ff;
 }
-.atmosphere[data-scene="landing"] {
+.atmosphere[data-scene="inn"] {
   --glow-a: #d98b241e;
   --glow-b: #e8a44914;
   --glow-top: #e8a44910;
   --candle: #e8a44922;
   --ember-time: 18s;
 }
-/* Bubbles, not dust, in the wet places and the brewery's vats. */
+/* Bubbles, not dust, in the marsh and the drowned coast. */
 .atmosphere:is(
-    [data-scene="sewers"],
-    [data-scene="taproom"],
-    [data-scene="brewery"]
+    [data-scene="marsh"],
+    [data-scene="coast"]
   )
   .dust
   i {
@@ -811,41 +811,41 @@ dialog.closing {
   background: transparent;
   border: 1px solid var(--mote);
 }
-/* Snow falls in the Freezer: the same drift, played backwards. */
-.atmosphere[data-scene="freezer"] .dust i {
+/* Snow falls on the Frozen Pass: the same drift, played backwards. */
+.atmosphere[data-scene="frost"] .dust i {
   width: 3px;
   height: 3px;
   animation-direction: reverse;
 }
-/* Stars over the Rooftop: the motes hold still high up and twinkle. */
-.atmosphere[data-scene="rooftop"] .dust i {
+/* Stars over the Wizard's Tower: the motes hold still high up and twinkle. */
+.atmosphere[data-scene="tower"] .dust i {
   bottom: auto;
   animation-name: star-twinkle;
   animation-duration: 4.5s;
   animation-timing-function: ease-in-out;
 }
-.atmosphere[data-scene="rooftop"] .dust-0 {
+.atmosphere[data-scene="tower"] .dust-0 {
   top: 6%;
 }
-.atmosphere[data-scene="rooftop"] .dust-1 {
+.atmosphere[data-scene="tower"] .dust-1 {
   top: 14%;
 }
-.atmosphere[data-scene="rooftop"] .dust-2 {
+.atmosphere[data-scene="tower"] .dust-2 {
   top: 4%;
 }
-.atmosphere[data-scene="rooftop"] .dust-3 {
+.atmosphere[data-scene="tower"] .dust-3 {
   top: 19%;
 }
-.atmosphere[data-scene="rooftop"] .dust-4 {
+.atmosphere[data-scene="tower"] .dust-4 {
   top: 9%;
 }
-.atmosphere[data-scene="rooftop"] .dust-5 {
+.atmosphere[data-scene="tower"] .dust-5 {
   top: 24%;
 }
-.atmosphere[data-scene="rooftop"] .dust-6 {
+.atmosphere[data-scene="tower"] .dust-6 {
   top: 28%;
 }
-.atmosphere[data-scene="rooftop"] .dust-7 {
+.atmosphere[data-scene="tower"] .dust-7 {
   top: 2%;
 }
 @keyframes star-twinkle {

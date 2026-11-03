@@ -21,6 +21,7 @@ import {
 } from "./dungeon/lastcall";
 import { lowerLandings, upperLandings } from "./dungeon/landings";
 import { omens } from "./dungeon/omens";
+import { summonsCards } from "./dungeon/summons";
 import { rooftop } from "./dungeon/rooftop";
 import { sewers } from "./dungeon/sewers";
 import { PARTY_HEARTS, type FloorCards } from "./dungeon/shared";
@@ -94,6 +95,7 @@ export const dungeonCards: CardDefinition[] = applyPhases(
       ...deck,
       ...Object.values(floors).flatMap((f) => f.finds),
       ...omens,
+      ...summonsCards,
       ...classes,
       ...upperLandings,
       ...lowerLandings,
@@ -130,26 +132,31 @@ export const dungeonPack: PackDefinition = {
   version: 1,
   id: "dungeon",
   logo: "art/packs/dungeon.svg",
-  title: "Dungeon night",
+  title: "Realms",
   description:
-    "The bar has a cellar, and the cellar goes down forever. Monsters, traps and bosses, with drinks for damage.",
+    "A dragon has woken, and the king wants it dead. Monsters, traps and bosses on the road to its lair, with drinks for damage.",
   cardIds: ids(deck),
   quest: {
-    mode: "Pub Crawl",
-    summary: "Survive 3 floors",
+    mode: "The Quest",
+    summary: "Slay the dragon",
     label: "Hearts",
     mark: "art/packs/pub-crawl.svg",
     goal: 0,
     length: 1,
     cardIds: [],
     party: { hearts: PARTY_HEARTS },
-    // The adventurer and tonight's omen, the queue, then one of three floors
-    // at each depth (eight rooms, and a boss on the first two) with a
-    // landing after each boss, then closing time and Last Call.
+    // Realms (2026-11-03): the adventurer, the omen and the King's Summons
+    // (which names the run's dragon), the Gilded Company at the city gate,
+    // then one of three regions at each depth (eight encounters, and a boss
+    // on the first two) with an inn after each boss, a side quest the table
+    // may take or walk past, the Company at the crossroads and at the
+    // lair's door, and the dragon. File and variable names are the old
+    // floors' (cellar is the King's Road, and so on).
     finale: [
-      one("Your adventurer", "Who's going down tonight?", classes),
-      one("Tonight's omen", "Something in the air", omens),
-      one("The Queue", "The Quarter-Zips cut in", queueCards),
+      one("Your adventurer", "Who answers the call?", classes),
+      one("The omen", "A sign in the sky", omens),
+      one("The King's Summons", "The king needs a hero", summonsCards),
+      one("The City Gate", "The Company pushes past", queueCards),
       {
         oneOf: [
           [
@@ -157,20 +164,21 @@ export const dungeonPack: PackDefinition = {
             one("King's Road boss", "Something blocks the road", cellar.bosses),
           ],
           [
-            floor("The Wine Cellar", "Down into the Wine Cellar", wine),
-            one("Wine Cellar boss", "Something uncorks itself", wine.bosses),
+            floor("The Old Forest", "Into the Old Forest", wine),
+            one("Old Forest boss", "The trees go quiet", wine.bosses),
           ],
           [
-            floor("The Brewery", "Down into the Brewery", brewery),
-            one("Brewery boss", "Something is fermenting", brewery.bosses),
+            floor("The Marsh", "Down into the Marsh", brewery),
+            one("Marsh boss", "Something stirs in the reeds", brewery.bosses),
           ],
         ],
       },
-      one("The Landing", "A breather on the stairs", upperLandings),
-      // Behind the bookcase: one of five hidden rooms, two guards and a
-      // keeper (2026-10-17).
+      one("The Inn", "A warm fire and a bad bed", upperLandings),
+      // A side quest: one of five pleas, its dungeon's two guards and its
+      // keeper (2026-10-17 as the hidden rooms). Walking on skips both.
       {
         oneOf: hiddenRooms.map((r) => [
+          one("A Side Quest", "Someone needs help", [r.plea]),
           { label: r.label, intro: r.intro, pick: 2, cardIds: ids(r.guards) },
           one(`${r.label.replace(/^The /, "")} boss`, "Someone is waiting", [
             r.keeper,
@@ -180,31 +188,34 @@ export const dungeonPack: PackDefinition = {
       {
         oneOf: [
           [
-            floor("The Catacombs", "Down into the Catacombs", catacombs),
-            one("Catacombs boss", "The bones stand up", catacombs.bosses),
+            floor(
+              "The Haunted Crypt",
+              "Down into the Haunted Crypt",
+              catacombs,
+            ),
+            one("Haunted Crypt boss", "The dead stand up", catacombs.bosses),
           ],
           [
-            floor("The Sewers", "Down into the Sewers", sewers),
-            one("Sewers boss", "Something big in the pipes", sewers.bosses),
+            floor("The Goblin Mines", "Down into the Goblin Mines", sewers),
+            one("Goblin Mines boss", "Drums in the deep", sewers.bosses),
           ],
           [
-            floor("The Walk-in Freezer", "Into the Walk-in Freezer", freezer),
-            one("Freezer boss", "The light goes out", freezer.bosses),
+            floor("The Wizard's Tower", "Up the Wizard's Tower", freezer),
+            one("Wizard's Tower boss", "The lights go out", freezer.bosses),
           ],
         ],
       },
-      one("The Lower Landing", "One last breather", lowerLandings),
-      // The Quarter-Zips again, a floor ahead (2026-10-25).
-      one("The Stairs", "The Quarter-Zips are ahead", stairsCards),
+      one("The Last Inn", "One last night's sleep", lowerLandings),
+      one("The Crossroads", "The Gilded Company is ahead", stairsCards),
       {
         oneOf: [
-          [floor("The Drowned Taproom", "The taps never stopped", taproom)],
-          [floor("The Kitchen", "Through the swinging door", kitchen)],
-          [floor("The Rooftop Bar", "Out onto the roof", rooftop)],
+          [floor("The Sunken Coast", "Down to the Sunken Coast", taproom)],
+          [floor("The Fire Caverns", "Into the Fire Caverns", kitchen)],
+          [floor("The Frozen Pass", "Up into the Frozen Pass", rooftop)],
         ],
       },
-      one("Closing Time", "The Quarter-Zips are back", closingCards),
-      one("Last Call", "Last call. Last fight", lastCallBosses),
+      one("The Lair's Door", "The Company got here first", closingCards),
+      one("The Dragon's Lair", "It's awake", lastCallBosses),
     ],
   },
 };

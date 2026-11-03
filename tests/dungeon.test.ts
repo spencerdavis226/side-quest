@@ -79,19 +79,21 @@ const make = (floors = ORIGINAL, seed = 1) => {
 const STEP = {
   adventurer: 0,
   omen: 1,
-  queue: 2,
-  floor1: 3,
-  boss1: 11,
-  landing1: 12,
-  hidden: 13,
-  keeper: 15,
-  floor2: 16,
-  boss2: 24,
-  landing2: 25,
-  stairs: 26,
-  floor3: 27,
-  closing: 35,
-  lastCall: 36,
+  summons: 2,
+  queue: 3,
+  floor1: 4,
+  boss1: 12,
+  landing1: 13,
+  plea: 14,
+  hidden: 15,
+  keeper: 17,
+  floor2: 18,
+  boss2: 26,
+  landing2: 27,
+  stairs: 28,
+  floor3: 29,
+  closing: 37,
+  lastCall: 38,
 };
 // The run past the door, with no adventurer or omen: the King's Road's first
 // room.
@@ -148,25 +150,36 @@ describe("Pub Crawl", () => {
     });
     expect(s.quest!.stages.map((st) => [st.label, st.pick])).toEqual([
       ["Your adventurer", 1],
-      ["Tonight's omen", 1],
-      ["The Queue", 1],
+      ["The omen", 1],
+      ["The King's Summons", 1],
+      ["The City Gate", 1],
       ["The King's Road", 8],
       ["King's Road boss", 1],
-      ["The Landing", 1],
-      ["The Speakeasy", 2],
-      ["Speakeasy boss", 1],
-      ["The Catacombs", 8],
-      ["Catacombs boss", 1],
-      ["The Lower Landing", 1],
-      ["The Stairs", 1],
-      ["The Drowned Taproom", 8],
-      ["Closing Time", 1],
-      ["Last Call", 1],
+      ["The Inn", 1],
+      ["A Side Quest", 1],
+      ["The Witch's Cottage", 2],
+      ["Witch's Cottage boss", 1],
+      ["The Haunted Crypt", 8],
+      ["Haunted Crypt boss", 1],
+      ["The Last Inn", 1],
+      ["The Crossroads", 1],
+      ["The Sunken Coast", 8],
+      ["The Lair's Door", 1],
+      ["The Dragon's Lair", 1],
     ]);
-    expect(s.quest!.finale).toHaveLength(37);
+    expect(s.quest!.finale).toHaveLength(39);
     expect(currentCard(s).omen).toBeDefined();
     const at = (step: number) => findCard(s, s.quest!.finale[step])!;
-    expect(at(STEP.hidden).ribbon).toBe("Speakeasy · Guard");
+    expect(at(STEP.hidden).ribbon).toBe("Witch's Cottage · Guard");
+    // Realms (2026-11-03): the summons names the dragon; the plea can skip
+    // its dungeon; region bosses and the keeper rank the adventurer up.
+    expect(
+      currentCard({ ...s, quest: { ...s.quest!, step: STEP.summons } }).rules,
+    ).toContain(at(STEP.lastCall).title);
+    expect(at(STEP.plea).offers![1]).toMatchObject({ skip: 2 });
+    for (const step of [STEP.boss1, STEP.keeper, STEP.boss2])
+      expect(at(step).levelUp).toBe(true);
+    expect(at(STEP.lastCall).levelUp).toBeUndefined();
     expect(at(STEP.keeper)).toMatchObject({ encounter: "boss", hits: 2 });
     expect(at(STEP.keeper).spoils).toHaveLength(2);
     expect(at(STEP.omen).boon).toBeDefined();
@@ -203,47 +216,51 @@ describe("Pub Crawl", () => {
         .map((st) => st.label),
     ).toEqual([
       "King's Road boss",
-      "Speakeasy boss",
-      "Catacombs boss",
-      "Closing Time",
-      "Last Call",
+      "Witch's Cottage boss",
+      "Haunted Crypt boss",
+      "The Lair's Door",
+      "The Dragon's Lair",
     ]);
     roundTrip(s);
     expect(make(OTHER).quest!.stages.map((st) => st.label)).toEqual([
       "Your adventurer",
-      "Tonight's omen",
-      "The Queue",
-      "The Wine Cellar",
-      "Wine Cellar boss",
-      "The Landing",
-      "The Basement",
-      "Basement boss",
-      "The Sewers",
-      "Sewers boss",
-      "The Lower Landing",
-      "The Stairs",
-      "The Kitchen",
-      "Closing Time",
-      "Last Call",
+      "The omen",
+      "The King's Summons",
+      "The City Gate",
+      "The Old Forest",
+      "Old Forest boss",
+      "The Inn",
+      "A Side Quest",
+      "The Sunless Vault",
+      "Sunless Vault boss",
+      "The Goblin Mines",
+      "Goblin Mines boss",
+      "The Last Inn",
+      "The Crossroads",
+      "The Fire Caverns",
+      "The Lair's Door",
+      "The Dragon's Lair",
     ]);
     roundTrip(make(OTHER));
     const fresh = make(NEW);
     expect(fresh.quest!.stages.map((st) => st.label)).toEqual([
       "Your adventurer",
-      "Tonight's omen",
-      "The Queue",
-      "The Brewery",
-      "Brewery boss",
-      "The Landing",
-      "The Back Office",
-      "Back Office boss",
-      "The Walk-in Freezer",
-      "Freezer boss",
-      "The Lower Landing",
-      "The Stairs",
-      "The Rooftop Bar",
-      "Closing Time",
-      "Last Call",
+      "The omen",
+      "The King's Summons",
+      "The City Gate",
+      "The Marsh",
+      "Marsh boss",
+      "The Inn",
+      "A Side Quest",
+      "The Old Barrow",
+      "Old Barrow boss",
+      "The Wizard's Tower",
+      "Wizard's Tower boss",
+      "The Last Inn",
+      "The Crossroads",
+      "The Frozen Pass",
+      "The Lair's Door",
+      "The Dragon's Lair",
     ]);
     roundTrip(fresh);
   });
@@ -256,8 +273,8 @@ describe("Pub Crawl", () => {
     for (let seed = 1; seed <= 400; seed++) {
       const s = createSession(crawl, cards, packs, seeded(seed));
       const labels = s.quest!.stages.map((st) => st.label);
-      [labels[3], labels[8], labels[12]].forEach((l, i) => floors[i].add(l));
-      rooms.add(labels[6]);
+      [labels[4], labels[10], labels[14]].forEach((l, i) => floors[i].add(l));
+      rooms.add(labels[8]);
       adventurers.add(s.quest!.finale[STEP.adventurer]);
       omens.add(s.quest!.finale[STEP.omen]);
     }
@@ -361,7 +378,7 @@ describe("Pub Crawl", () => {
     roundTrip(s);
     s = takeSpoils(s, 0);
     expect(s.quest!.step).toBe(STEP.landing2);
-    expect(finaleStage(s.quest!).label).toBe("The Lower Landing");
+    expect(finaleStage(s.quest!).label).toBe("The Last Inn");
     expect(party(s)).toMatchObject({
       hits: 0,
       rounds: 1,
@@ -405,7 +422,7 @@ describe("Pub Crawl", () => {
     s = fight(s, 15);
     expect(currentCard(advance(s)).dice).toBeUndefined();
     s = settleBattle(advance(s), true);
-    expect(currentCard(advance(s)).rules).toMatch(/One bony hand/);
+    expect(currentCard(advance(s)).rules).toMatch(/One last breath of fire/);
     s = fight(s, 15);
     expect(s.phase).toBe("complete");
     expect(questRecord(s)!.won).toBe(true);
@@ -512,7 +529,7 @@ describe("Pub Crawl", () => {
       title: "Paladin",
       next: "Crusader",
       branches: null,
-      line: ["Paladin", "Crusader", "Templar"],
+      line: ["Paladin", "Crusader", "Templar", "Lightbringer"],
       palette: { primary: "#2f5a8c" },
     });
     roundTrip(s);
@@ -523,42 +540,50 @@ describe("Pub Crawl", () => {
     expect(rollWins(currentCard(s).dice!, s.roll!.values, s.roll!)).toBe(true);
   });
 
-  it("a landing levels the adventurer up for drinks, or rests", () => {
+  it("an inn rests or stocks up; a region's boss ranks the adventurer up", () => {
     const at = (id: string) =>
       advance(
         deal(
           adventure(id, undefined, STEP.landing1),
-          "dungeon.landing-stairwell",
+          "dungeon.landing-smoking-area",
         ),
       );
     const s = at("barbarian");
     expect(awaitingOffer(s)).toBe(true);
     expect(currentCard(s).offers!.map((o) => o.label)).toEqual([
-      "Level up · drink 3",
       "Rest",
+      "Stock up · drink 3",
     ]);
-    const up = takeOffer(s, 0);
-    expect(party(up)).toMatchObject({ form: 1, max: H + 2, hearts: H + 2 });
-    expect(omenForm(up.quest)).toMatchObject({
+    s.quest!.party!.hearts = H - 4;
+    const rested = takeOffer(s, 0);
+    expect(party(rested)).toMatchObject({ hearts: H - 1 });
+    expect(party(rested).form ?? 0).toBe(0);
+    expect(rested.quest!.step).toBe(STEP.plea);
+    roundTrip(rested);
+    // This inn stocks a Tower Shield.
+    expect(party(takeOffer(s, 1)).loot).toEqual(["shield"]);
+    // Ranks come from the region's boss (Realms, 2026-11-03).
+    let b = adventure("barbarian", undefined, STEP.boss1);
+    b = deal(b, "dungeon.keg-golem");
+    b = fight(b, 18);
+    b = settleBattle(advance(b), true, Math.random, 1);
+    expect(party(b)).toMatchObject({ form: 1, max: H + 2 });
+    expect(omenForm(b.quest)).toMatchObject({
       title: "Berserker",
       next: "Warlord",
     });
-    expect(up.quest!.step).toBe(STEP.hidden);
-    roundTrip(up);
-    s.quest!.party!.hearts = H - 4;
-    expect(party(takeOffer(s, 1))).toMatchObject({ hearts: H - 1 });
-    // A fully levelled adventurer can only rest.
-    s.quest!.party!.form = 2;
-    expect(canTakeOffer(s, 0)).toBe(false);
-    expect(canTakeOffer(s, 1)).toBe(true);
-    // The Plus-One levels up into something worse.
-    const plus = takeOffer(at("plus-one"), 0);
-    expect(party(plus)).toMatchObject({ max: H - 4, form: 1 });
-    expect(satchelSize(plus.quest)).toBe(2);
-    expect(omenForm(plus.quest)!.title).toBe("The Plus-Two");
+    expect(b.quest!.step).toBe(STEP.landing1);
+    roundTrip(b);
+    // The Peasant ranks up into nothing better.
+    let p = adventure("plus-one", undefined, STEP.boss1);
+    p = deal(p, "dungeon.keg-golem");
+    p = settleBattle(advance(fight(p, 18)), true, Math.random, 1);
+    expect(party(p)).toMatchObject({ max: H - 3, form: 1 });
+    expect(satchelSize(p.quest)).toBe(2);
+    expect(omenForm(p.quest)!.title).toBe("The Angry Peasant");
   });
 
-  it("a Dog-Eared Tome levels the adventurer up on the spot", () => {
+  it("a Tome of Training ranks the adventurer up on the spot", () => {
     const s = adventure("wizard");
     s.quest!.party!.loot = [...party(s).loot, "candy"];
     expect(canUseLoot(s, "candy")).toBe(true);
@@ -567,10 +592,13 @@ describe("Pub Crawl", () => {
     expect(party(read)).toMatchObject({ form: 1, max: H });
     expect(party(read).loot).toEqual(["die", "die", "die"]);
     roundTrip(read);
-    // The second Tome reaches the line's end.
+    // The third Tome reaches the line's end (three ranks since Realms).
     read.quest!.party!.loot = [...party(read).loot.slice(0, 2), "candy"];
-    const grand = spendLoot(read, "candy");
-    expect(omenForm(grand.quest)!.title).toBe("Archmage");
+    const arch = spendLoot(read, "candy");
+    expect(omenForm(arch.quest)!.title).toBe("Archmage");
+    arch.quest!.party!.loot = [...party(arch).loot.slice(0, 2), "candy"];
+    const grand = spendLoot(arch, "candy");
+    expect(omenForm(grand.quest)!.title).toBe("Grand Magus");
     expect(
       canUseLoot(
         {
@@ -597,7 +625,7 @@ describe("Pub Crawl", () => {
       boons: ["dungeon.omen-running-a-tab"],
     });
     expect(party(s).omen).toBeUndefined();
-    expect(s.quest!.step).toBe(STEP.queue);
+    expect(s.quest!.step).toBe(STEP.summons);
     roundTrip(s);
     // A bigger satchel.
     s = tonight("cargo-shorts");
@@ -633,16 +661,12 @@ describe("Pub Crawl", () => {
     // Paladin with the regulars has fifteen hearts.
     expect(satchelSize(adventure("rogue", "cargo-shorts").quest)).toBe(5);
     expect(party(adventure("paladin", "the-regulars")).max).toBe(H + 3);
-    // Levelling up keeps the omen's hearts.
-    const up = takeOffer(
-      advance(
-        deal(
-          adventure("paladin", "the-regulars", STEP.landing1),
-          "dungeon.landing-stairwell",
-        ),
-      ),
-      0,
+    // Ranking up keeps the omen's hearts.
+    let up = deal(
+      adventure("paladin", "the-regulars", STEP.boss1),
+      "dungeon.keg-golem",
     );
+    up = settleBattle(advance(fight(up, 18)), true, Math.random, 1);
     // The Crusader drops the Paladin's extra heart (2026-10-25), and keeps
     // the omen's two.
     expect(party(up).max).toBe(H + 2);
@@ -1039,7 +1063,7 @@ describe("Pub Crawl", () => {
     });
     expect(party(s).boons).toBeUndefined();
     roundTrip(s);
-    s = fight(deal(fromStep(s, 2), "dungeon.gelatinous-shot"), 2);
+    s = fight(deal(fromStep(s, 3), "dungeon.gelatinous-shot"), 2);
     roundTrip(s);
     // A tampered omen is rejected.
     const forged = structuredClone(start());

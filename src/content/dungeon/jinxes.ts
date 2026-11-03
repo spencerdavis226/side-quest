@@ -107,12 +107,12 @@ const jinxes: Readonly<Record<string, Jinx>> = {
     rule: "The jinxed player sits perfectly still while anyone else rolls. Moves: drink 1.",
   },
   "house-lights": {
-    name: "Lit Up",
-    rule: "The jinxed player squints at everyone. Caught with their eyes wide open: drink 1.",
+    name: "Dazzled",
+    rule: "The jinxed player compliments the dragon before every sip. Forgets: drink 1.",
   },
   "surge-pricing": {
-    name: "Surge",
-    rule: "The jinxed player adds 'plus tax' to every drink they're given. Forgets: drink 1.",
+    name: "Thunderstruck",
+    rule: "The jinxed player shouts 'boom' after every drink. Forgets: drink 1.",
   },
   "cursed-idol": {
     name: "Idol Worship",

@@ -148,23 +148,24 @@ export interface CrawlTheme {
   won: { title: [string, string]; verdict: string };
 }
 
-/** The table's light for a Pub Crawl stage, from its label ("The Cellar",
- * "Cellar boss", "The Queue"): each floor glows its own colour, so a run
- * reads as a descent. Wine Cellar is tested before Cellar. */
+/** The table's light for a Quest stage, from its label ("The Old Forest",
+ * "Old Forest boss", "The City Gate"): each region glows its own colour, so
+ * a run reads as a journey. The rivals' Lair's Door is tested before the
+ * Dragon's Lair. The King's Road keeps the hearth's own light. */
 const SCENES: [RegExp, string][] = [
-  [/Wine Cellar/, "wine"],
-  [/Cellar|King.s Road/, "cellar"],
-  [/Brewery/, "brewery"],
-  [/Catacombs/, "catacombs"],
-  [/Sewers/, "sewers"],
-  [/Freezer/, "freezer"],
-  [/Taproom/, "taproom"],
-  [/Kitchen/, "kitchen"],
-  [/Rooftop/, "rooftop"],
-  [/Last Call/, "lastcall"],
-  [/Queue|Stairs|Closing Time/, "rival"],
-  [/Landing/, "landing"],
-  [/Speakeasy|VIP|Back Office|Poker|Basement/, "hidden"],
+  [/King.s Road|Summons/, "road"],
+  [/Old Forest/, "forest"],
+  [/Marsh/, "marsh"],
+  [/Goblin Mines/, "mines"],
+  [/Haunted Crypt/, "crypt"],
+  [/Wizard.s Tower/, "tower"],
+  [/Frozen Pass/, "frost"],
+  [/Fire Caverns/, "fire"],
+  [/Sunken Coast/, "coast"],
+  [/City Gate|Crossroads|Lair.s Door/, "rival"],
+  [/Dragon.s Lair/, "lair"],
+  [/Inn\b/, "inn"],
+  [/Side Quest|Barrow|Bandit Fort|Witch.s Cottage|Drowned Shrine|Sunless Vault/, "hidden"],
 ];
 function dungeonScene(label: string) {
   return SCENES.find(([test]) => test.test(label))?.[1];
@@ -172,21 +173,22 @@ function dungeonScene(label: string) {
 
 const dungeon: CrawlTheme = {
   loot: {
+    // Realms (2026-11-03): the fantasy crawl's kit, same powers.
     draught: {
-      name: "Healing Draught",
+      name: "Healing Potion",
       does: `Drink ${DRAUGHT_DRINKS}: +${DRAUGHT_HEAL} hearts`,
     },
-    shield: { name: "Coaster Shield", does: "Blocks the next heart loss" },
-    die: { name: "Loaded Die", does: "Roll a lost fight again" },
-    smoke: { name: "Smoke Bomb", does: "Escape a room fight" },
+    shield: { name: "Tower Shield", does: "Blocks the next heart loss" },
+    die: { name: "Lucky Coin", does: "Roll a lost fight again" },
+    smoke: { name: "Smoke Bomb", does: "Escape a fight, never a boss" },
     // Adventurers, merchants and trinkets bring these (2026-10-17).
     revive: {
-      name: "Second Wind",
+      name: "Phoenix Feather",
       does: "When the hearts run out: back to half",
     },
-    candy: { name: "Dog-Eared Tome", does: "Your adventurer levels up now" },
+    candy: { name: "Tome of Training", does: "Your adventurer ranks up now" },
     round: {
-      name: "Bar Tab",
+      name: "Hired Sword",
       does: "A lost fight's drinks go to someone else",
     },
     // League only (2026-11-01); Pub Crawl never deals one.
@@ -214,36 +216,36 @@ const dungeon: CrawlTheme = {
     Hearts: "Hearts",
     Satchel: "Satchel",
     party: "The party",
-    Room: "Room",
-    rooms: "rooms",
-    floors: "floors",
+    Room: "Encounter",
+    rooms: "encounters",
+    floors: "regions",
     Boss: "Boss",
     Ambush: "Ambush",
     aBoss: "A boss",
     anAmbush: "An ambush",
-    omen: "Tonight's omen",
-    elite: "the next room is an elite: harder, and it drops a trinket",
-    setupTitle: "The crawl",
+    omen: "The omen",
+    elite: "the next fight is an elite: harder, and it drops gear",
+    setupTitle: "The quest",
     setupBrief: (hearts, floors) =>
-      `${hearts} shared hearts, ${floors} floors, an adventurer who levels up, and gear from bosses`,
+      `${hearts} shared hearts, ${floors} regions, an adventurer who ranks up, gear from bosses, and a dragon at the end`,
     setupHearts: "hearts",
-    setupFloors: "floors",
-    evolving: (from) => `${from} levels up!`,
-    trophies: "Trophy wall",
-    tab: "The tab",
+    setupFloors: "regions",
+    evolving: (from) => `${from} ranks up!`,
+    trophies: "Trophies",
+    tab: "The ballad",
     adventurer: "Your adventurer",
     grows: {
       who: "your adventurer",
-      verb: "levels up",
-      done: "fully levelled",
+      verb: "ranks up",
+      done: "at the highest rank",
     },
-    trinkets: "Kept for the run",
-    trinketFound: "Trinket found",
+    trinkets: "Kept for the quest",
+    trinketFound: "Gear found",
     jinx: {
-      name: "Jinx",
-      landed: "Jinxed!",
-      lifted: "The jinx lifts",
-      lasts: "until the floor's boss falls",
+      name: "Curse",
+      landed: "Cursed!",
+      lifted: "The curse lifts",
+      lasts: "until the region's boss falls",
     },
     wanted: "Wanted",
   },
@@ -264,11 +266,11 @@ const dungeon: CrawlTheme = {
   // not a floor.
   lengthOf: (stages) => stages.filter((st) => st.pick >= 4).length,
   legendMore: {
-    trinket: "A trinket on a win: it holds the rest of the run",
-    jinx: "A jinx on a loss: a table rule until the boss falls",
+    trinket: "Gear on a win: it holds the rest of the quest",
+    jinx: "A curse on a loss: a table rule until the boss falls",
   },
   guide: {
-    goal: "Beat Last Call before the party's hearts run out.",
+    goal: "Slay the dragon before the party's hearts run out.",
     rows: ({ hearts }) => [
       {
         icon: "heart",
@@ -283,12 +285,17 @@ const dungeon: CrawlTheme = {
       {
         icon: "boss",
         title: "Bosses",
-        line: "One ends each floor. Its pips are the wins it takes; each drawer gets one swing.",
+        line: "One ends each of the first two regions. Its pips are the wins it takes; each drawer gets one swing.",
+      },
+      {
+        icon: "adventurer",
+        title: "Ranks",
+        line: "Your adventurer has three ranks to earn: the two region bosses and the side quest's keeper each give one. A Tome of Training gives one too.",
       },
       {
         icon: "rest",
-        title: "Landings",
-        line: "After a boss: level up your adventurer for 3 drinks, or rest for 3 hearts.",
+        title: "Inns and side quests",
+        line: "After a boss, an inn: rest for 3 hearts, or stock up for drinks. Once, someone begs for help: take the side quest for gear and a rank, or walk on.",
       },
       {
         icon: "satchel",
@@ -297,18 +304,18 @@ const dungeon: CrawlTheme = {
       },
       {
         icon: "jinx",
-        title: "Jinxes",
-        line: "A lost fight can jinx a player with a table rule. It lifts when the floor's boss falls.",
+        title: "Curses",
+        line: "A lost fight can curse a player with a table rule. It lifts when the region's boss falls.",
       },
     ],
   },
   wiped: {
-    title: ["Party", "wiped."],
+    title: ["The party", "has fallen."],
     verdict: "Everyone finishes their drink.",
   },
   won: {
-    title: ["Last call,", "survived."],
-    verdict: "Make a rule for the rest of the night.",
+    title: ["The dragon", "is slain."],
+    verdict: "Half the kingdom is yours: make a rule for the rest of the night.",
   },
 };
 

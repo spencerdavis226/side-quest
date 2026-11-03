@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 /** After this long without a tap the table goes still (owner, 2026-10-18). */
 export const IDLE_MS = 60_000;
 
-/** The table's backdrop. `scene` (Pub Crawl, 2026-10-31) recolours the
+/** The table's backdrop. `scene` (The Quest, 2026-10-31) recolours the
  * same glow and motes for the place the run has reached (theme.css,
- * `[data-scene]`): snow in the Freezer, bubbles in the Sewers, stars on the
- * Rooftop. Its glow fades in when the scene changes. */
+ * `[data-scene]`): snow on the Frozen Pass, bubbles in the Marsh, stars
+ * over the Wizard's Tower. Its glow fades in when the scene changes. */
 export function Atmosphere({
   hidden,
   scene,

@@ -7,12 +7,13 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 
 const picks: Record<string, string> = {
-  "packs/dungeon": "delapouite/dungeon-gate",
-  "packs/pub-crawl": "lorc/lantern-flame",
+  // Realms (2026-11-03): a castle for the pack, a dragon for The Quest.
+  "packs/dungeon": "lorc/castle",
+  "packs/pub-crawl": "lorc/dragon-head",
   "crawl/heart": "skoll/hearts",
   "crawl/draught": "delapouite/health-potion",
   "crawl/shield": "delapouite/heart-shield",
-  "crawl/die": "delapouite/dice-six-faces-five",
+  "crawl/die": "delapouite/two-coins",
   "crawl/smoke": "darkzaitzev/smoke-bomb",
   "crawl/boss": "lorc/crowned-skull",
   "crawl/satchel": "lorc/knapsack",
@@ -30,9 +31,9 @@ const picks: Record<string, string> = {
   "crawl/weapon": "lorc/broadsword",
   "crawl/armor": "lorc/breastplate",
   "crawl/rest": "lorc/campfire",
-  "crawl/jinx": "delapouite/tongue",
-  // A Bar Tab, and the League's Baton Pass.
-  "crawl/round": "delapouite/beer-bottle",
+  "crawl/jinx": "lorc/cursed-star",
+  // The Hired Sword, and the League's Baton Pass.
+  "crawl/round": "delapouite/sword-brandish",
   "league/baton-pass": "skoll/baton",
   // Pokémon League (src/components/crawlTheme.ts maps them to the crawl's
   // marks).

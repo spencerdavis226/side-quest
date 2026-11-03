@@ -1622,9 +1622,9 @@ export const packs: PackDefinition[] = [
     version: 1,
     id: "dungeon",
     logo: "art/packs/dungeon.svg",
-    title: "Dungeon night",
+    title: "Realms",
     description:
-      "The bar has a cellar, and the cellar goes down forever. Monsters, traps and bosses, with drinks for damage.",
+      "A dragon has woken, and the king wants it dead. Monsters, traps and bosses on the road to its lair, with drinks for damage.",
     cardIds: [
       "dungeon.gelatinous-shot",
       "dungeon.rat-trench-coat",
@@ -1936,8 +1936,8 @@ export const packs: PackDefinition[] = [
       "dungeon.the-morning-after",
     ],
     quest: {
-      mode: "Pub Crawl",
-      summary: "Survive 3 floors",
+      mode: "The Quest",
+      summary: "Slay the dragon",
       label: "Hearts",
       mark: "art/packs/pub-crawl.svg",
       goal: 0,
@@ -1947,7 +1947,7 @@ export const packs: PackDefinition[] = [
       finale: [
         {
           label: "Your adventurer",
-          intro: "Who's going down tonight?",
+          intro: "Who answers the call?",
           pick: 1,
           cardIds: [
             "dungeon.class-barbarian",
@@ -1971,8 +1971,8 @@ export const packs: PackDefinition[] = [
           ],
         },
         {
-          label: "Tonight's omen",
-          intro: "Something in the air",
+          label: "The omen",
+          intro: "A sign in the sky",
           pick: 1,
           cardIds: [
             "dungeon.omen-flooded-stairs",
@@ -1998,8 +1998,21 @@ export const packs: PackDefinition[] = [
           ],
         },
         {
-          label: "The Queue",
-          intro: "The Quarter-Zips cut in",
+          label: "The King's Summons",
+          intro: "The king needs a hero",
+          pick: 1,
+          cardIds: [
+            "dungeon.summons-proclamation",
+            "dungeon.summons-burned-village",
+            "dungeon.summons-wanted-poster",
+            "dungeon.summons-prophecy",
+            "dungeon.summons-princess",
+            "dungeon.summons-survivor",
+          ],
+        },
+        {
+          label: "The City Gate",
+          intro: "The Company pushes past",
           pick: 1,
           cardIds: [
             "dungeon.queue-knows-the-owner",
@@ -2088,8 +2101,8 @@ export const packs: PackDefinition[] = [
             ],
             [
               {
-                label: "The Wine Cellar",
-                intro: "Down into the Wine Cellar",
+                label: "The Old Forest",
+                intro: "Into the Old Forest",
                 pick: 8,
                 cardIds: [
                   "dungeon.boxed-wine-golem",
@@ -2146,8 +2159,8 @@ export const packs: PackDefinition[] = [
                 ],
               },
               {
-                label: "Wine Cellar boss",
-                intro: "Something uncorks itself",
+                label: "Old Forest boss",
+                intro: "The trees go quiet",
                 pick: 1,
                 cardIds: [
                   "dungeon.count-corkula",
@@ -2160,8 +2173,8 @@ export const packs: PackDefinition[] = [
             ],
             [
               {
-                label: "The Brewery",
-                intro: "Down into the Brewery",
+                label: "The Marsh",
+                intro: "Down into the Marsh",
                 pick: 8,
                 cardIds: [
                   "dungeon.hop-goblin",
@@ -2218,8 +2231,8 @@ export const packs: PackDefinition[] = [
                 ],
               },
               {
-                label: "Brewery boss",
-                intro: "Something is fermenting",
+                label: "Marsh boss",
+                intro: "Something stirs in the reeds",
                 pick: 1,
                 cardIds: [
                   "dungeon.the-fermenter",
@@ -2233,8 +2246,8 @@ export const packs: PackDefinition[] = [
           ],
         },
         {
-          label: "The Landing",
-          intro: "A breather on the stairs",
+          label: "The Inn",
+          intro: "A warm fire and a bad bed",
           pick: 1,
           cardIds: [
             "dungeon.landing-stairwell",
@@ -2251,8 +2264,14 @@ export const packs: PackDefinition[] = [
           oneOf: [
             [
               {
-                label: "The Speakeasy",
-                intro: "Behind the bookcase",
+                label: "A Side Quest",
+                intro: "Someone needs help",
+                pick: 1,
+                cardIds: ["dungeon.quest-goat"],
+              },
+              {
+                label: "The Witch's Cottage",
+                intro: "Smoke from a crooked chimney",
                 pick: 2,
                 cardIds: [
                   "dungeon.peephole",
@@ -2261,7 +2280,7 @@ export const packs: PackDefinition[] = [
                 ],
               },
               {
-                label: "Speakeasy boss",
+                label: "Witch's Cottage boss",
                 intro: "Someone is waiting",
                 pick: 1,
                 cardIds: ["dungeon.the-proprietor"],
@@ -2269,8 +2288,14 @@ export const packs: PackDefinition[] = [
             ],
             [
               {
-                label: "The VIP Room",
-                intro: "Past the velvet rope",
+                label: "A Side Quest",
+                intro: "Someone needs help",
+                pick: 1,
+                cardIds: ["dungeon.quest-strongbox"],
+              },
+              {
+                label: "The Bandit Fort",
+                intro: "Torches on a wooden wall",
                 pick: 2,
                 cardIds: [
                   "dungeon.bottle-service",
@@ -2279,7 +2304,7 @@ export const packs: PackDefinition[] = [
                 ],
               },
               {
-                label: "VIP Room boss",
+                label: "Bandit Fort boss",
                 intro: "Someone is waiting",
                 pick: 1,
                 cardIds: ["dungeon.the-promoter"],
@@ -2287,8 +2312,14 @@ export const packs: PackDefinition[] = [
             ],
             [
               {
-                label: "The Back Office",
-                intro: "A door marked PRIVATE",
+                label: "A Side Quest",
+                intro: "Someone needs help",
+                pick: 1,
+                cardIds: ["dungeon.quest-barrow"],
+              },
+              {
+                label: "The Old Barrow",
+                intro: "A hill with a door in it",
                 pick: 2,
                 cardIds: [
                   "dungeon.the-accountant",
@@ -2297,7 +2328,7 @@ export const packs: PackDefinition[] = [
                 ],
               },
               {
-                label: "Back Office boss",
+                label: "Old Barrow boss",
                 intro: "Someone is waiting",
                 pick: 1,
                 cardIds: ["dungeon.the-manager"],
@@ -2305,8 +2336,14 @@ export const packs: PackDefinition[] = [
             ],
             [
               {
-                label: "Poker Night",
-                intro: "A card game in the back",
+                label: "A Side Quest",
+                intro: "Someone needs help",
+                pick: 1,
+                cardIds: ["dungeon.quest-nets"],
+              },
+              {
+                label: "The Drowned Shrine",
+                intro: "Bells ringing underwater",
                 pick: 2,
                 cardIds: [
                   "dungeon.card-sharp",
@@ -2315,7 +2352,7 @@ export const packs: PackDefinition[] = [
                 ],
               },
               {
-                label: "Poker Night boss",
+                label: "Drowned Shrine boss",
                 intro: "Someone is waiting",
                 pick: 1,
                 cardIds: ["dungeon.big-mike"],
@@ -2323,8 +2360,14 @@ export const packs: PackDefinition[] = [
             ],
             [
               {
-                label: "The Basement",
-                intro: "Down the stairs nobody uses",
+                label: "A Side Quest",
+                intro: "Someone needs help",
+                pick: 1,
+                cardIds: ["dungeon.quest-vault"],
+              },
+              {
+                label: "The Sunless Vault",
+                intro: "Stairs into the mountain",
                 pick: 2,
                 cardIds: [
                   "dungeon.arm-wrestle",
@@ -2333,7 +2376,7 @@ export const packs: PackDefinition[] = [
                 ],
               },
               {
-                label: "Basement boss",
+                label: "Sunless Vault boss",
                 intro: "Someone is waiting",
                 pick: 1,
                 cardIds: ["dungeon.the-undefeated"],
@@ -2345,8 +2388,8 @@ export const packs: PackDefinition[] = [
           oneOf: [
             [
               {
-                label: "The Catacombs",
-                intro: "Down into the Catacombs",
+                label: "The Haunted Crypt",
+                intro: "Down into the Haunted Crypt",
                 pick: 8,
                 cardIds: [
                   "dungeon.bachelor-ghosts",
@@ -2404,8 +2447,8 @@ export const packs: PackDefinition[] = [
                 ],
               },
               {
-                label: "Catacombs boss",
-                intro: "The bones stand up",
+                label: "Haunted Crypt boss",
+                intro: "The dead stand up",
                 pick: 1,
                 cardIds: [
                   "dungeon.hangover-hydra",
@@ -2418,8 +2461,8 @@ export const packs: PackDefinition[] = [
             ],
             [
               {
-                label: "The Sewers",
-                intro: "Down into the Sewers",
+                label: "The Goblin Mines",
+                intro: "Down into the Goblin Mines",
                 pick: 8,
                 cardIds: [
                   "dungeon.gator-junior",
@@ -2476,8 +2519,8 @@ export const packs: PackDefinition[] = [
                 ],
               },
               {
-                label: "Sewers boss",
-                intro: "Something big in the pipes",
+                label: "Goblin Mines boss",
+                intro: "Drums in the deep",
                 pick: 1,
                 cardIds: [
                   "dungeon.the-fatberg",
@@ -2490,8 +2533,8 @@ export const packs: PackDefinition[] = [
             ],
             [
               {
-                label: "The Walk-in Freezer",
-                intro: "Into the Walk-in Freezer",
+                label: "The Wizard's Tower",
+                intro: "Up the Wizard's Tower",
                 pick: 8,
                 cardIds: [
                   "dungeon.freezer-burn",
@@ -2548,8 +2591,8 @@ export const packs: PackDefinition[] = [
                 ],
               },
               {
-                label: "Freezer boss",
-                intro: "The light goes out",
+                label: "Wizard's Tower boss",
+                intro: "The lights go out",
                 pick: 1,
                 cardIds: [
                   "dungeon.the-walk-in",
@@ -2563,8 +2606,8 @@ export const packs: PackDefinition[] = [
           ],
         },
         {
-          label: "The Lower Landing",
-          intro: "One last breather",
+          label: "The Last Inn",
+          intro: "One last night's sleep",
           pick: 1,
           cardIds: [
             "dungeon.landing-boiler-room",
@@ -2578,8 +2621,8 @@ export const packs: PackDefinition[] = [
           ],
         },
         {
-          label: "The Stairs",
-          intro: "The Quarter-Zips are ahead",
+          label: "The Crossroads",
+          intro: "The Gilded Company is ahead",
           pick: 1,
           cardIds: [
             "dungeon.stairs-service-elevator",
@@ -2593,8 +2636,8 @@ export const packs: PackDefinition[] = [
           oneOf: [
             [
               {
-                label: "The Drowned Taproom",
-                intro: "The taps never stopped",
+                label: "The Sunken Coast",
+                intro: "Down to the Sunken Coast",
                 pick: 8,
                 cardIds: [
                   "dungeon.sommelier-kraken",
@@ -2653,8 +2696,8 @@ export const packs: PackDefinition[] = [
             ],
             [
               {
-                label: "The Kitchen",
-                intro: "Through the swinging door",
+                label: "The Fire Caverns",
+                intro: "Into the Fire Caverns",
                 pick: 8,
                 cardIds: [
                   "dungeon.deep-fryer-demon",
@@ -2713,8 +2756,8 @@ export const packs: PackDefinition[] = [
             ],
             [
               {
-                label: "The Rooftop Bar",
-                intro: "Out onto the roof",
+                label: "The Frozen Pass",
+                intro: "Up into the Frozen Pass",
                 pick: 8,
                 cardIds: [
                   "dungeon.pigeon-king",
@@ -2774,8 +2817,8 @@ export const packs: PackDefinition[] = [
           ],
         },
         {
-          label: "Closing Time",
-          intro: "The Quarter-Zips are back",
+          label: "The Lair's Door",
+          intro: "The Company got here first",
           pick: 1,
           cardIds: [
             "dungeon.closing-last-table",
@@ -2789,8 +2832,8 @@ export const packs: PackDefinition[] = [
           ],
         },
         {
-          label: "Last Call",
-          intro: "Last call. Last fight",
+          label: "The Dragon's Lair",
+          intro: "It's awake",
           pick: 1,
           cardIds: [
             "dungeon.last-call-lich",

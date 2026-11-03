@@ -11,136 +11,140 @@ import {
   BOSS_NEED,
 } from "./shared";
 
-// The run's ends: the rival party, the Quarter-Zips (Brad, Chad and Thad,
-// doing the same crawl in matching quarter-zips), who cut the queue at the
-// door and come back for your table at closing time; and Last Call, whose
-// bosses close both third floors.
+// The run's ends (Realms, 2026-11-03; card IDs from Pub Crawl): the rival
+// party, the Gilded Company (Sir Bradley, Chadwick and Thaddeus, matching
+// gold capes and a bard writing songs about them), who push past you at
+// the city gate, hold the crossroads, and are waiting at the dragon's door;
+// and the dragons, one of eight, waiting at the end of the third region.
+// The King's Summons names it from the start (`{dragon}`).
 
-/** The queue at the door, before the first floor. One fight; the winner
- * goes in first with whatever the loser dropped. Pub Crawl only. */
+/** The city gate, before the first region. One fight; the winner goes out
+ * first with whatever the loser dropped. The Quest only. */
 export const queueCards: CardDefinition[] = [
   queue(
     "knows-the-owner",
-    "Brad Knows the Owner",
-    "Brad's cousin knows the owner, so the Quarter-Zips cut in. Drop a bigger name. Roll d20.",
+    "Sir Bradley's Charter",
+    "Sir Bradley has a charter from the king's cousin. Name a bigger patron, then roll d20.",
     vs(
-      "His cousin really does know the owner. Drink 3.",
-      "The owner has never heard of Brad. Give 3.",
+      "The cousin really is important. Drink 3.",
+      "Nobody has heard of the cousin. Give 3.",
     ),
     { loot: "draught" },
   ),
   queue(
     "fake-id",
-    "Chad's Fake ID",
-    "Chad's fake ID is Canadian. You and Chad (left neighbor) each talk Canadian. Chad's better: drink 3.",
+    "Chadwick's Accent",
+    "Chadwick says he's a foreign prince. You and he (left neighbor) do the accent. His wins: drink 3.",
     null,
     { loot: "smoke" },
   ),
   queue(
     "were-together",
     "We're Together",
-    "Thad cuts in, telling the bouncer 'we're together'. You're not. Roll 2d6 to argue.",
+    "Thaddeus tells the gate guard you're his squires. You're not. Roll 2d6 to argue.",
     pair(
-      "The bouncer believes him. Drink 3.",
-      "The bouncer believes you. Give 3.",
-      "A pair! The bouncer sends them to the back. Everyone else drinks 2.",
+      "The guard believes him. Carry his bags and drink 3.",
+      "The guard believes you. Give 3.",
+      "A pair! The guard sends them to the back. Everyone else drinks 2.",
     ),
     { loot: "shield" },
   ),
   queue(
     "group-name",
-    "The Group Name",
-    "The Quarter-Zips have a group name, a hashtag and matching vests. Roll d20.",
+    "The Company Banner",
+    "The Gilded Company has a banner, a motto and matching capes. Roll d20.",
     vs(
-      "They look cooler than you. Drink 3.",
-      "You have a jacket. It beats a vest. Give 3.",
+      "Their capes are better. Drink 3.",
+      "You have a cape. It's a blanket, but still. Give 3.",
     ),
     {
       loot: "die",
       jinx: {
-        name: "Champ",
-        rule: "Everyone calls the jinxed player 'Champ', like Brad does. Slip: drink 1.",
+        name: "Champion",
+        rule: "Everyone calls the jinxed player 'Champion', like Sir Bradley does. Slip: drink 1.",
       },
     },
   ),
   queue(
     "the-list",
-    "The Guest List",
-    "Brad is on the list. You're on a napkin the bouncer is holding. Roll d6.",
+    "The Roll of Heroes",
+    "Sir Bradley is on the roll of heroes. You're on a napkin the clerk is holding. Roll d6.",
     moves(
-      [
-        "The napkin blows away. Drink 3.",
-        "The bouncer blows his nose on the napkin. Drink 3.",
-      ],
+      ["The napkin blows away. Drink 3.", "The clerk sneezes on it. Drink 3."],
       [
         "The napkin holds up. Give 2.",
-        "You're on the list, and Brad's spelled wrong. Give 3.",
-        "You're on the list twice. Give 3.",
-        "Brad's off the list. Everyone else drinks 1.",
+        "You're on the roll, and Bradley's spelled wrong. Give 3.",
+        "You're on it twice. Give 3.",
+        "Bradley's off the roll. Everyone else drinks 1.",
       ],
     ),
     { loot: "draught" },
   ),
-  // Three more at the door (2026-10-25).
   queue(
     "cover-charge",
-    "The Cover Charge",
-    "Chad tells the bouncer you're paying for all the Quarter-Zips. Roll d20.",
+    "The Gate Toll",
+    "Chadwick tells the guard you're paying the toll for the whole Company. Roll d20.",
     vs(
-      "The bouncer believes him. Drink 3.",
-      "The bouncer charges Chad double. Give 3.",
+      "The guard believes him. Drink 3.",
+      "The guard charges Chadwick double. Give 3.",
     ),
     { loot: "draught" },
   ),
   queue(
     "hand-stamp",
-    "The Hand Stamp",
-    "Thad licked his hand stamp onto Brad's hand, and they want to try it on you. Roll d20.",
-    vs("It works on you. Drink 3.", "You wash it off in a puddle. Give 3."),
+    "The Royal Seal",
+    "Thaddeus forged a royal seal out of a potato, and he's pressing it on you. Roll d20.",
+    vs(
+      "It works on you. Drink 3.",
+      "You wash it off in a horse trough. Give 3.",
+    ),
     { loot: "shield" },
   ),
   queue(
     "rock-paper-brad",
-    "Rock, Paper, Brad",
-    "Rock, paper, scissors with your left neighbor (Brad), best of three. Lose: drink 3.",
+    "Rock, Paper, Bradley",
+    "Rock, paper, scissors with your left neighbor (Sir Bradley), best of three. Lose: drink 3.",
     null,
     { loot: "smoke" },
   ),
 ];
 
-/** The stairs, between the second landing and the third floor
- * (2026-10-25): the Quarter-Zips are a floor ahead and making sure you
- * know it. One fight; the winner takes what they dropped. Pub Crawl only. */
+/** The crossroads, between the second inn and the third region: the
+ * Company is a region ahead and making sure you know it. One fight; the
+ * winner takes what they dropped. The Quest only. */
 export const stairsCards: CardDefinition[] = [
   stairs(
     "service-elevator",
-    "Chad's Shortcut",
-    "Chad found a service elevator and is holding the door shut on you. Roll d20.",
-    vs("He wins. Take the stairs and drink 4.", "You squeeze in. Give 4."),
+    "Chadwick's Shortcut",
+    "Chadwick found a shortcut and is holding the gate shut behind him. Roll d20.",
+    vs(
+      "He wins. Take the long way and drink 4.",
+      "You squeeze through. Give 4.",
+    ),
     { loot: "die" },
   ),
   stairs(
     "group-photo",
-    "Brad's Group Photo",
-    "Brad stops the whole staircase for a group photo, and you're in the way. Roll 2d6.",
+    "The Company Portrait",
+    "A painter is doing the Company's portrait across the whole road, and you're in it. Roll 2d6.",
     pair(
-      "You're cropped out. Drink 4.",
-      "You photobomb it. Give 4.",
-      "A pair! It's your photo now. Everyone else drinks 2.",
+      "You're painted out. Drink 4.",
+      "You pull a face in the background. Give 4.",
+      "A pair! It's your portrait now. Everyone else drinks 2.",
     ),
     { loot: "shield" },
   ),
   stairs(
     "pep-talk",
-    "Thad's Pep Talk",
-    "Thad pep-talks the boys. Give your table a better one in 10 seconds. Worse: drink 4.",
+    "Thaddeus's Speech",
+    "Thaddeus gives a battle speech. Give your table a better one in 10 seconds. Worse: drink 4.",
     null,
     { loot: "draught" },
   ),
   stairs(
     "leaderboard",
-    "Brad's Leaderboard",
-    "Brad keeps a leaderboard of who's had the most tonight, and you're second. Roll d20.",
+    "The Kill Count",
+    "Sir Bradley keeps a tally of monsters slain, and you're second. Roll d20.",
     vs("He pulls ahead. Drink 4.", "You overtake him. Give 4.", {
       crit: "You lap him twice. Everyone else drinks 3.",
     }),
@@ -149,33 +153,33 @@ export const stairsCards: CardDefinition[] = [
   stairs(
     "recruitment",
     "The Recruitment",
-    "The Quarter-Zips want you in. Thad is holding out a quarter-zip. Roll d20 to say no.",
+    "The Company wants you. Thaddeus is holding out a gold cape. Roll d20 to say no.",
     vs("You say yes. Drink 4.", "You say no and mean it. Give 4."),
     {
       loot: "round",
       jinx: {
-        name: "One of the Boys",
-        rule: "The jinxed player ends every sentence with 'bro'. Slip: drink 1.",
+        name: "Company Man",
+        rule: "The jinxed player ends every sentence with 'huzzah'. Slip: drink 1.",
       },
     },
   ),
 ];
 
-/** Closing time, after the third floor: the Quarter-Zips are back for your
- * table, dealt again until beaten twice. Pub Crawl only. */
+/** The lair's door, after the third region: the Company got here first
+ * and wants the kill, dealt again until beaten twice. The Quest only. */
 export const closingCards: CardDefinition[] = [
   closing(
     "last-table",
-    "The Last Table",
-    "The Quarter-Zips want your table. Brad is already sitting on it. Roll d20.",
-    vs("Brad sits on you. Drink 4.", "You tip the table, gently. Give 4.", {
-      crit: "You tip Brad off it. Everyone else drinks 3.",
+    "First Through the Door",
+    "The Company wants the dragon first. Sir Bradley is already in the doorway. Roll d20.",
+    vs("He elbows you aside. Drink 4.", "You trip him, gently. Give 4.", {
+      crit: "You trip him into the moat. Everyone else drinks 3.",
     }),
   ),
   closing(
     "the-boys-toast",
-    "A Toast to the Boys",
-    "Thad is giving a toast about 'the boys', eleven minutes in. Roll d20 to cut him off.",
+    "A Toast to the Company",
+    "Thaddeus is toasting 'the Company', eleven minutes in. Roll d20 to cut him off.",
     vs(
       "It's moving, somehow. Raise a glass and drink 4.",
       "You raise a glass mid-sentence, and it's over. Give 4.",
@@ -184,164 +188,156 @@ export const closingCards: CardDefinition[] = [
   ),
   closing(
     "last-round",
-    "Chad's Last Round",
-    "Chad ordered the last round, for the boys only. Intercept it. Roll d20.",
+    "Chadwick's Potions",
+    "Chadwick bought the last healing potions, for the Company only. Steal one. Roll d20.",
     vs(
       "He drinks yours in front of you. Drink 4.",
-      "You carry the tray to your own table. Give 4.",
-      {
-        crit: "You carry the tray, and Chad tips you. Everyone else drinks 3.",
-      },
+      "You swap his for pond water. Give 4.",
+      { crit: "You swap them all. Everyone else drinks 3." },
     ),
     {
       jinx: {
-        name: "For the Boys",
-        rule: "The jinxed player says 'for the boys' before every drink. Forgets: drink 1.",
+        name: "For the Company",
+        rule: "The jinxed player says 'for the Company' before every drink. Forgets: drink 1.",
       },
     },
   ),
   closing(
     "venmo-request",
-    "Brad's Venmo Request",
-    "Brad has Venmo-requested everyone here $14.50 for 'vibes'. Roll d20.",
-    vs(
-      "You accidentally pay it. Drink 4.",
-      "You request $15 back for 'better vibes'. Give 4.",
-    ),
+    "Sir Bradley's Invoice",
+    "Sir Bradley sends everyone here an invoice for 'inspiration'. Roll d20.",
+    vs("You pay it. Drink 4.", "You invoice him back, double. Give 4."),
   ),
   closing(
     "dance-off",
-    "The Dance-Off",
-    "The Quarter-Zips call a dance-off. The whole bar is watching. Roll d6.",
+    "The Victory Dance",
+    "The Company starts its victory dance before the fight. Out-dance them. Roll d6.",
     moves(
       [
-        "Brad does the worm. You can't follow that. Drink 4.",
+        "Bradley does the worm in full plate. Drink 4.",
         "You pull something. Drink 4.",
-        "Thad dips you. You let him. Drink 4.",
+        "Thaddeus dips you. You let him. Drink 4.",
       ],
       [
-        "You do the robot, and mean it. Give 4.",
-        "You moonwalk out the door and back. Give 4.",
-        "Everyone in the bar joins your dance. Everyone else drinks 2.",
+        "You do a sword dance, and mean it. Give 4.",
+        "You moonwalk past the dragon's door and back. Give 4.",
+        "The dragon taps a claw along. Everyone else drinks 2.",
       ],
     ),
   ),
-  // Three more at closing time (2026-10-25).
   closing(
     "boys-tab",
-    "The Boys' Tab",
-    "Brad closes his tab and puts it on yours. Roll d20.",
-    vs("Signed. Drink 4.", "You sign it 'Brad'. Give 4."),
+    "The Company's Debts",
+    "Sir Bradley signs the Company's debts over to you. Roll d20.",
+    vs("Signed. Drink 4.", "You sign it 'Bradley'. Give 4."),
   ),
   closing(
     "thads-uber",
-    "Thad's Uber",
-    "Thad ordered one ride for everyone, and it's a Prius. Roll 2d6 for a seat.",
+    "Thaddeus's Horse",
+    "Thaddeus brought one horse for everyone, and it's a donkey. Roll 2d6 for a seat.",
     pair(
-      "You're in the trunk. Drink 4.",
-      "Front seat. Give 4.",
-      "A pair! Thad's in the trunk. Everyone else drinks 2.",
+      "You're behind the donkey. Drink 4.",
+      "In the saddle. Give 4.",
+      "A pair! Thaddeus walks. Everyone else drinks 2.",
     ),
   ),
   closing(
     "the-rematch",
     "The Rematch",
-    "Chad wants a rematch for the queue. He's been stretching since the door. Roll d20.",
-    vs("He's been training. Drink 4.", "Same result as the door. Give 4.", {
-      crit: "Chad is so impressed he buys your table a round. Everyone else drinks 3.",
+    "Chadwick wants a rematch for the city gate. He's been stretching since. Roll d20.",
+    vs("He's been training. Drink 4.", "Same result as the gate. Give 4.", {
+      crit: "Chadwick is so impressed he knights you. Everyone else drinks 3.",
     }),
   ),
 ];
 
-/** Last Call: one boss of eight, three swings, to win the crawl. They play
- * as ordinary bosses in the plain modes. */
+/** The dragons: one of eight, three swings, to win the quest. The King's
+ * Summons names the run's dragon from the first card. They play as ordinary
+ * bosses in the plain modes. */
 export const lastCallBosses: CardDefinition[] = [
   boss(
     2,
     "last-call-lich",
-    "The Last Call Lich",
-    "A bony hand rings the bell. It's last call forever unless you kill it. Roll d20.",
+    "Emberfang",
+    "A red dragon uncoils from a hill of gold, and the air catches fire. Roll d20.",
     d20(
       BOSS_NEED[2],
-      "Closing time. Everyone drinks 4.",
-      "It flickers. Give 5.",
-      { crit: "The music comes back on. Everyone else drinks 4." },
+      "Fire, everywhere. Everyone drinks 4.",
+      "Your blade finds a loose scale. Give 5.",
+      { crit: "You cut a wing. Everyone else drinks 4." },
     ),
   ),
   boss(
     2,
     "bartender-below",
-    "The Bartender Below",
-    "It knows your usual. It knows what you did. Roll d20.",
-    d20(
-      BOSS_NEED[2],
-      "It cuts you off. Drink 6.",
-      "You tip it. It staggers. Give 5.",
-      { crit: "You rob the tip jar. Everyone else drinks 4." },
-    ),
-  ),
-  boss(
-    2,
-    "final-tab",
-    "The Final Tab",
-    "Every drink you've ever ordered, itemized, four feet long, and it has teeth. Roll d20.",
-    d20(BOSS_NEED[2], "Itemized. Drink 5.", "You dispute a charge. Give 5.", {
-      crit: "Comped. Everyone else drinks 4.",
+    "Rimeclaw",
+    "A white dragon in the frozen dark, with eyes like old ice. Roll d20.",
+    d20(BOSS_NEED[2], "Frostbite. Drink 6.", "You chip a claw. Give 5.", {
+      crit: "Its breath freezes its own jaw shut. Everyone else drinks 4.",
     }),
   ),
   boss(
     2,
-    "house-lights",
-    "The House Lights",
-    "The lights come up, and everyone looks like that. Roll d20.",
+    "final-tab",
+    "Old Mother Mire",
+    "Older than the marsh and twice as wet. She has eaten heroes for lunch. Roll d20.",
     d20(
       BOSS_NEED[2],
-      "You saw yourself. Drink 6.",
-      "You smash a bulb. Give 5.",
-      { crit: "Darkness again. Everyone else drinks 4." },
+      "Swallowed, then spat out. Drink 5.",
+      "You tangle her in the reeds. Give 5.",
+      { crit: "She chokes on your boot. Everyone else drinks 4." },
+    ),
+  ),
+  boss(
+    2,
+    "house-lights",
+    "Glimmerwing",
+    "A golden dragon who wants to be admired first and fought second. Roll d20.",
+    d20(
+      BOSS_NEED[2],
+      "Blinded by the shine. Drink 6.",
+      "You call it ugly. It staggers. Give 5.",
+      { crit: "You show it a mirror. Everyone else drinks 4." },
     ),
   ),
   boss(
     2,
     "two-am-kebab",
-    "The 2 a.m. Kebab",
-    "It's been turning since 8 p.m. It knew you'd come. It's the size of a door. Roll d20.",
+    "Gorgrath the Hungry",
+    "It has eaten three knights today, and it's still hungry. It's looking at you. Roll d20.",
     d20(
       BOSS_NEED[2],
-      "Garlic sauce, everywhere. Drink 5.",
-      "You carve it down to the spit. Give 5.",
+      "A bite. Drink 5.",
+      "You jam a spear in its jaw. Give 5.",
       {
-        crit: "You eat the whole thing, standing. Everyone else drinks 4.",
-        fumble: "You drop it on the floor and eat it anyway. Drink 10.",
+        crit: "It chokes on the spear. Everyone else drinks 4.",
+        fumble: "It swallows you whole, then spits you out. Drink 10.",
       },
     ),
   ),
   boss(
     2,
     "surge-pricing",
-    "Surge Pricing",
-    "The ride home costs $94 and it's sentient. It's circling the block, laughing. Roll d20.",
+    "Stormcrown",
+    "A blue dragon riding its own storm, crackling with every breath. Roll d20.",
     d20(
       BOSS_NEED[2],
-      "Surge goes up again. Drink 5.",
-      "You find a driver who's going your way. Give 5.",
-      { crit: "Free ride. Everyone else drinks 4." },
+      "Struck by lightning. Drink 5.",
+      "You ground it with your sword. Give 5.",
+      { crit: "Its own lightning finds it. Everyone else drinks 4." },
     ),
   ),
   boss(
     2,
     "the-group-chat",
-    "The Group Chat",
-    "Tomorrow's group chat, awake early, reading tonight back to you. Roll d20.",
-    d20(
-      BOSS_NEED[2],
-      "Someone posts the video. Drink 6.",
-      "You leave the chat. It can't follow. Give 5.",
-      { crit: "You mute it forever. Everyone else drinks 4." },
-    ),
+    "The Whispering Wyrm",
+    "A dragon that speaks in your own voice and tells your secrets. Roll d20.",
+    d20(BOSS_NEED[2], "It tells one. Drink 6.", "You talk louder. Give 5.", {
+      crit: "You tell its secrets. Everyone else drinks 4.",
+    }),
     {
       jinx: {
-        name: "Muted",
+        name: "Tongue-Tied",
         rule: "The jinxed player can only mime. Say a word: drink 1.",
       },
     },
@@ -349,15 +345,13 @@ export const lastCallBosses: CardDefinition[] = [
   boss(
     2,
     "the-morning-after",
-    "The Morning After",
-    "Your hangover from tomorrow came back in time to stop you. It's enormous. Roll d20.",
+    "Ashmaw the Ancient",
+    "The oldest dragon there is, and it has been waiting for you in particular. Roll d20.",
     d20(
       BOSS_NEED[2],
-      "It lands a preview. Drink 5 and a glass of water.",
-      "You promise it a greasy breakfast. It backs off. Give 5.",
-      {
-        crit: "You were never going to have a hangover. Everyone else drinks 4.",
-      },
+      "It remembers you. Drink 5 and a glass of water.",
+      "You surprise it, and nothing surprises it. Give 5.",
+      { crit: "It laughs, and you strike its throat. Everyone else drinks 4." },
     ),
   ),
 ];

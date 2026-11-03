@@ -262,12 +262,12 @@ describe("moments", () => {
     expect(hiddenRoomFor(door)).toMatchObject({ title: room.label });
     expect(
       momentsBetween(atStep(c, step - 1), door).find((m) => m.kind === "door"),
-    ).toMatchObject({ title: room.label, kicker: "Behind the bookcase" });
+    ).toMatchObject({ title: room.label, kicker: "A secret way in" });
     // Its second guard: no door.
     expect(hiddenRoomFor(atStep(c, step + 1))).toBeNull();
     // A floor's first room: no door.
     expect(
-      hiddenRoomFor(atStep(c, stepOf(c, c.quest!.stages[3].label))),
+      hiddenRoomFor(atStep(c, stepOf(c, c.quest!.stages[4].label))),
     ).toBeNull();
   });
 
@@ -361,6 +361,6 @@ describe("moments", () => {
     const firstBoss = c.quest!.stages.find((st) => / boss$/.test(st.label))!;
     expect(crawlFinish(firstBoss.label)).toBe("silver");
     expect(crawlFinish("Your adventurer")).toBeNull();
-    expect(crawlFinish("The Queue")).toBeNull();
+    expect(crawlFinish("The City Gate")).toBeNull();
   });
 });

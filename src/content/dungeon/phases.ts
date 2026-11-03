@@ -246,164 +246,176 @@ const beats: Readonly<Record<string, Beat[]>> = {
       "They want closure. Say three nice things about an ex in ten seconds. Fall short: drink 4.",
     ),
   ],
-  // Last Call: three beats.
+  // The dragons: three beats (Realms, 2026-11-03; were Last Call's).
   "last-call-lich": [
     duel(
-      "It rings the bell. Out-shout your left neighbor: 'One more!' The table judges. Lose: drink 4.",
+      "Emberfang roars. Out-roar your left neighbor; the table judges. Lose: drink 4.",
     ),
     roll(
-      "One bony hand left on the bell. Everyone raises a glass. Roll d20.",
+      "One last breath of fire, held in its throat. Everyone raises a shield. Roll d20.",
       d20At(
-        "The bell rings. Everyone drinks 4.",
-        "You take the bell. Everyone else drinks 4.",
+        "It breathes. Everyone drinks 4.",
+        "You strike first, and Emberfang falls. Everyone else drinks 4.",
       ),
     ),
   ],
   "bartender-below": [
     duel(
-      "It wants your order in three seconds, with a straight face. The table judges. Fail: drink 4.",
+      "The air freezes. Hold your breath longer than your left neighbor. Breathe first: drink 4.",
     ),
     roll(
-      "It reaches for the cut-off bell. Roll d20.",
-      d20At("Cut off. Finish your drink.", "You tip big. It weeps. Give 5."),
+      "It rears up, its chest glowing blue. Roll d20.",
+      d20At(
+        "Frozen solid. Finish your drink.",
+        "You shatter its crown of ice. Give 5.",
+      ),
     ),
   ],
   "final-tab": [
     duel(
-      "Split the bill: say what everyone at the table drank tonight, in ten seconds. Miss one: drink 4.",
+      "She hisses a riddle. Your left neighbor asks one for her; answer in ten seconds. Fail: drink 4.",
     ),
     roll(
-      "The total comes in. It's a lot. Roll d20.",
-      d20At("You pay. Everyone drinks 4.", "You dine and dash. Give 6."),
+      "The marsh boils around her. Roll d20.",
+      d20At(
+        "You sink to your waist. Everyone drinks 4.",
+        "You hold her under. Give 6.",
+      ),
     ),
   ],
   "house-lights": [
     duel(
-      "Everyone looks at you. Strike a pose and hold it while the table counts to ten. Break: drink 4.",
+      "It demands praise. Compliment it for ten seconds straight; the table judges. Stall: drink 4.",
     ),
     roll(
-      "The last bulb flickers. Roll d20.",
+      "It spreads its wings, every scale a mirror. Roll d20.",
       d20At(
-        "Full brightness. Everyone drinks 4.",
-        "Darkness. Everyone else drinks 4.",
+        "You see yourself in every one. Everyone drinks 4.",
+        "You hide under its wing and strike. Everyone else drinks 4.",
       ),
     ),
   ],
   "two-am-kebab": [
     duel(
-      "Order for the table in one breath: what everyone wants on theirs. Stumble: drink 4.",
+      "It sniffs for the tastiest hero. Staring contest with your left neighbor. Blink first: drink 4.",
     ),
     roll(
-      "It's down to the spit, and it's still turning. Roll d20.",
-      d20At(
-        "Garlic sauce in your eye. Drink 5.",
-        "You eat the last bite. Give 6.",
-      ),
+      "Its jaws open wide enough to walk into. Roll d20.",
+      d20At("In you go. Drink 5.", "You walk in, and stab upward. Give 6."),
     ),
   ],
   "surge-pricing": [
     duel(
-      "Haggle a fare with your left neighbor, playing the driver, for ten seconds. They refuse: drink 4.",
+      "Thunder! On three, you and your left neighbor clap; the table says who was first. Late: drink 4.",
     ),
     roll(
-      "It's three minutes away, forever. Roll d20.",
-      d20At("Ride cancelled. Everyone drinks 4.", "Five stars. Give 6."),
+      "The storm gathers in its jaws. Roll d20.",
+      d20At(
+        "Lightning. Everyone drinks 4.",
+        "It strikes the sword you planted. Give 6.",
+      ),
     ),
   ],
   "the-group-chat": [
-    duel("Read your last sent text out loud to the table. Refuse: drink 4."),
+    duel(
+      "It tells the table your worst secret, unless you tell one first. Refuse: drink 4.",
+    ),
     roll(
-      "Someone's typing. Roll d20.",
+      "It whispers your name. Roll d20.",
       d20At(
-        "It's the video. Everyone drinks 4.",
-        "It's a meme. You're safe. Give 6.",
+        "Everyone hears it. Everyone drinks 4.",
+        "You shout its name back. Give 6.",
       ),
     ),
   ],
   "the-morning-after": [
-    duel("Drink a full glass of water without stopping. Stop: drink 4."),
+    duel(
+      "It asks why you came. Tell it in ten seconds, no ums; the table judges. Fail: drink 4.",
+    ),
     roll(
-      "It rises with the sun. Roll d20.",
-      d20At("Sunrise. Everyone drinks 4.", "Blackout curtains. Give 6."),
+      "It rises, and the sun goes out. Roll d20.",
+      d20At("Darkness. Everyone drinks 4.", "You strike in the dark. Give 6."),
     ),
   ],
-  // Closing time: the Quarter-Zips again.
+  // The lair's door: the Gilded Company again.
   "closing-last-table": [
     duel(
-      "Brad wants the seat. On go, you and Brad (left neighbor) stand, spin and sit. Last down: drink 4.",
+      "Bradley wants the doorway. On go, you and he (left neighbor) stand, spin, sit. Last down: drink 4.",
     ),
   ],
   "closing-the-boys-toast": [
     duel(
-      "Your turn: toast the Quarter-Zips, sincerely, for ten seconds. Laugh: drink 4.",
+      "Your turn: toast the Gilded Company, sincerely, for ten seconds. Laugh: drink 4.",
     ),
   ],
   "closing-last-round": [
     roll(
-      "Chad grabs the tray back. Roll 2d6.",
+      "Chadwick grabs the potion back. Roll 2d6.",
       pair("He spills it on you. Drink 4.", "It's yours. Give 4."),
     ),
   ],
   "closing-venmo-request": [
     duel(
-      "Pay Brad (your left neighbor) back in compliments: three in ten seconds. Fall short: drink 4.",
+      "Pay Bradley (your left neighbor) back in compliments: three in ten seconds. Fall short: drink 4.",
     ),
   ],
   "closing-dance-off": [
     duel(
-      "Round two: you and Thad (your left neighbor) dance, no music. The table votes. Thad wins: drink 4.",
+      "Round two: you and Thaddeus (left neighbor) dance, no music. The table votes. He wins: drink 4.",
     ),
   ],
   "closing-boys-tab": [
     roll(
-      "The bartender wants a signature. Roll d6.",
+      "The moneylender wants a signature. Roll d6.",
       moves(
         [
           "You sign it. Drink 4.",
           "You sign it twice. Drink 4.",
-          "You tip 30% on it. Drink 3.",
+          "You tip him too. Drink 3.",
         ],
         [
-          "You sign it 'Brad'. Give 3.",
-          "You sign it 'Chad'. Give 4.",
-          "You sign it 'The Boys'. Everyone else drinks 2.",
+          "You sign it 'Bradley'. Give 3.",
+          "You sign it 'Chadwick'. Give 4.",
+          "You sign it 'The Company'. Everyone else drinks 2.",
         ],
       ),
     ),
   ],
   "closing-thads-uber": [
     duel(
-      "Shotgun: you and Thad (left neighbor) call it. The table says who was first. Thad: drink 4.",
+      "Dibs on the saddle: you and Thaddeus (left neighbor) call it. Table judges. He's first: drink 4.",
     ),
   ],
   "closing-the-rematch": [
     duel(
-      "Thumb war with Chad (your left neighbor), best of three. Lose: drink 4.",
+      "Thumb war with Chadwick (your left neighbor), best of three. Lose: drink 4.",
     ),
   ],
-  // The hidden room's keepers.
+  // The side quests' keepers (Realms, 2026-11-03).
   "the-proprietor": [
     duel(
-      "He wants the password. Make one up and say it like you mean it; the table votes. No: drink 4.",
+      "She wants the goat back. Haggle with your left neighbor for ten seconds. Table says no: drink 4.",
     ),
   ],
   "the-promoter": [
     duel(
-      "Get on the list: spell your full name backwards in ten seconds. Fail: drink 4.",
+      "She wants a duel of insults. Trade three with your left neighbor; the table judges. Lose: drink 4.",
     ),
   ],
   "the-manager": [
     duel(
-      "Performance review: name three of your strengths in ten seconds, no laughing. Fail: drink 4.",
+      "He demands your lineage: name four ancestors, real or not, in ten seconds. Fail: drink 4.",
     ),
   ],
   "big-mike": [
     duel(
-      "Poker face: the table has ten seconds to make you laugh. Laugh: drink 4.",
+      "She sings. The table has ten seconds to make you laugh. Laugh: drink 4.",
     ),
   ],
   "the-undefeated": [
-    duel("Round two: arm wrestle your left neighbor. Lose: drink 4."),
+    duel(
+      "It coils for another strike. Arm-wrestle your left neighbor. Lose: drink 4.",
+    ),
   ],
 };
 
