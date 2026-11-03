@@ -31,16 +31,16 @@ const jinxes: Readonly<Record<string, Jinx>> = {
     rule: "Whenever the jinxed player sips, their left neighbor sips too. Neighbor forgets: drink 1.",
   },
   "hex-witch": {
-    name: "Witch's Cackle",
-    rule: "The jinxed player cackles before speaking. Forgets: drink 1.",
+    name: "Ill-Fated",
+    rule: "The jinxed player says 'I foresaw this' before every sip. Forgets: drink 1.",
   },
   "the-lich-lord": {
     name: "Undead",
     rule: "The jinxed player groans like a zombie before every sip. Forgets: drink 1.",
   },
   "the-ghost-of-closing": {
-    name: "Last Orders",
-    rule: "The jinxed player shouts 'Last orders!' whenever a card is put aside. Misses one: drink 1.",
+    name: "Last Rites",
+    rule: "The jinxed player says 'rest in peace' whenever a card is put aside. Misses one: drink 1.",
   },
   "drain-witch": {
     name: "Drained",

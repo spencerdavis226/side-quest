@@ -372,8 +372,8 @@ describe("Pub Crawl", () => {
     expect(awaitingSpoils(s)).toBe(true);
     expect(advance(s)).toBe(s);
     expect(currentCard(s).spoils!.map((b) => b.name)).toEqual([
-      "Hydra Tooth",
-      "Hydra Scale",
+      "Golem's Knuckle",
+      "Bone Plate",
     ]);
     roundTrip(s);
     s = takeSpoils(s, 0);
@@ -385,7 +385,7 @@ describe("Pub Crawl", () => {
       boons: ["dungeon.hangover-hydra#0"],
     });
     expect(party(s).jinx).toBeUndefined();
-    // The Hydra Tooth: +2 to boss rolls from now on.
+    // The Golem's Knuckle: +2 to boss rolls from now on.
     expect(omenEffect(s.quest)).toMatchObject({ roll: { boss: 2 } });
     roundTrip(s);
   });

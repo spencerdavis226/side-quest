@@ -33,20 +33,6 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
   "loose-floorboard": {
     win: "You step over it like a cat. Meow, then give 2.",
   },
-  // The Catacombs.
-  "bone-sommelier": {
-    win: "You pour his on the floor. Rate someone's drink out of ten; they drink 4.",
-  },
-  "leech-swarm": { win: "You salt them. Give 4 to the saltiest player here." },
-  "lich-intern": {
-    win: "You find an error in his math. Give 4, then explain it badly.",
-  },
-  "gym-ghoul": {
-    lose: "He drops the bar on you. Drink 4.",
-    win: "You out-lift a corpse. Flex, then give 4.",
-    doubles:
-      "You spot him, and he thanks you. Everyone else does a squat or drinks 4.",
-  },
   // The Sewers.
   "pizza-rat-prime": {
     win: "You take the slice. Give 4 to whoever wants a bite.",
@@ -184,10 +170,6 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
   // Relics.
   "mimic-cooler": {
     win: "Gold, and something useful. Flip someone a coin; give 3.",
-  },
-  "bone-vending": { win: "Clunk. Give 3 to whoever heard it." },
-  sarcophagus: {
-    win: "Just a very nice shield. Give 4, then knock on the table twice.",
   },
   "glint-in-the-drain": {
     win: "A ring, and a draught still sealed. Propose to someone; they drink 4.",

@@ -34,59 +34,6 @@ type Rewrite = {
 };
 
 const rewrites: Readonly<Record<string, Rewrite>> = {
-  // The Catacombs.
-  "hungover-mummy": {
-    rules:
-      "On three, everyone points at who'd still be hungover in three thousand years. Most fingers: drink 3.",
-  },
-  "banshee-karaoke": {
-    rules:
-      "Read alone the banshee's song, start the clock, and hum it. The table guesses the song.",
-    secret: "MR. BRIGHTSIDE.",
-    timer: clock(GUESSED, 30),
-  },
-  "collapsing-floor": {
-    rules:
-      "The floor gives way. Last to grab the edge of the table with both hands drinks 2.",
-  },
-  "zombie-roommate": {
-    rules:
-      "Light the fuse. Pass a beer clockwise, naming a chore you skipped. Rent's due on whoever holds it.",
-    timer: fuse("Rent's due. Whoever is holding the beer drinks 3."),
-  },
-  "grabbing-hand": {
-    rules: "Hands grab from every coffin. Roll four dice.",
-    dice: seats("Four ankles grabbed."),
-  },
-  "leech-swarm": {
-    duel: true,
-    rules:
-      "Staring contest with your right neighbor, who plays the leech. Blink or laugh first: drink 3.",
-  },
-  "lich-intern": {
-    duel: true,
-    rules:
-      "The lich's accountant audits you: your left neighbor asks three trivia questions. Miss two: drink 4.",
-  },
-  "ex-wraith": {
-    rules: "A wraith with your ex's face reads your old texts aloud. Roll d20.",
-  },
-  "hex-witch": {
-    rules:
-      "A witch who reads tarot and your browser history. Cross your fingers, then roll d20.",
-    crit: "You read her history back to her. She vanishes in shame. Give 8.",
-  },
-  "rolling-skull": {
-    rules:
-      "A giant stone skull rolls down the corridor. Everyone hums the theme while you roll d20.",
-  },
-  "the-bouncer": {
-    rules: `Seven feet of door guy. ${SIDE_BETS} Roll d20.`,
-  },
-  "the-lich-lord": {
-    rules: `His soul's in a shot glass. ${SIDE_BETS} Roll d20.`,
-  },
-
   // The Sewers.
   "toilet-mimic": {
     rules:
@@ -335,18 +282,6 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
   "falling-taps": {
     rules:
       "An acorn bonks you on the head, and you're Thumb Master now. Drink 1, then use it.",
-  },
-  "vampire-bro": {
-    rules:
-      "A vampire in a backwards cap who only drinks from frat boys. Say 'bro' twice, then roll d20.",
-  },
-  "skeleton-crew": {
-    rules:
-      "A skeleton bachelorette party wants a shot off a femur. Rattle your bones, then roll d20.",
-  },
-  "ghoul-choir": {
-    rules:
-      "Twelve ghouls singing your name, off key. Hum one note with them, then roll d20.",
   },
   "alligator-gang": {
     rules:

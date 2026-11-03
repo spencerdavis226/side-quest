@@ -141,24 +141,29 @@ const beats: Readonly<Record<string, Beat[]>> = {
       ),
     ),
   ],
-  // The Catacombs.
+  // The Haunted Crypt (was the Catacombs).
   "hangover-hydra": [
     roll(
-      "One head left, and it's the one with the migraine. Roll d20.",
-      d20At("It groans at you. Drink 5.", "The last head comes off. Give 4."),
+      "It pulls itself back together, mostly. Roll d20.",
+      d20At(
+        "It groans and falls on you. Drink 5.",
+        "The last bone comes loose. Give 4.",
+      ),
     ),
   ],
   "the-bouncer": [
-    duel("Arm wrestle your left neighbor, playing the Bouncer. Lose: drink 4."),
+    duel(
+      "Arm-wrestle your left neighbor, playing the guardian. Lose: drink 4.",
+    ),
   ],
   "dj-ossuary": [
     duel(
-      "He drops the beat. Freestyle four lines about the table. Stop or stall: drink 4.",
+      "He plays faster. Freestyle four lines about the table, in rhyme. Stop or stall: drink 4.",
     ),
   ],
   "the-lich-lord": [
     roll(
-      "He pours his soul into a second shot glass. Roll d6.",
+      "He pours his soul into a second cup. Roll d6.",
       moves(
         [
           "You drink the wrong one. Drink 5.",
@@ -175,7 +180,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "the-ghost-of-closing": [
     duel(
-      "Name five bars that ever closed on you, in ten seconds. Fall short: drink 4.",
+      "Name five things buried with a king, in ten seconds. Fall short: drink 4.",
     ),
   ],
   // The Sewers.
