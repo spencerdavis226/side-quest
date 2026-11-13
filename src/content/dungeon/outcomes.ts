@@ -33,22 +33,6 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
   "loose-floorboard": {
     win: "You step over it like a cat. Meow, then give 2.",
   },
-  // The Sewers.
-  "pizza-rat-prime": {
-    win: "You take the slice. Give 4 to whoever wants a bite.",
-  },
-  "drain-witch": { lose: "You sip. Drink 3 and say it tasted fine." },
-  "fatberg-spawn": { win: "You flush it. Give 4, and make the noise." },
-  "slime-slide": { win: "You surf it. Give 2 to the worst surfer here." },
-  "rat-don": {
-    lose: "Something happens to it. Drink 4.",
-    win: "You make him an offer. Pick someone to kiss your ring or drink 4.",
-    doubles:
-      "He makes you the don. Everyone else kisses your ring or drinks 4.",
-  },
-  "manhole-cover": {
-    win: "You catch it like a frisbee. Throw a coaster to someone; they drink 3.",
-  },
   // The Drowned Taproom.
   "merfolk-ex": {
     win: "You're doing amazing too. Toast yourself, then give 5.",
@@ -170,12 +154,6 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
   // Relics.
   "mimic-cooler": {
     win: "Gold, and something useful. Flip someone a coin; give 3.",
-  },
-  "glint-in-the-drain": {
-    win: "A ring, and a draught still sealed. Propose to someone; they drink 4.",
-  },
-  "the-floater": {
-    win: "Cash, and a smoke bomb. Make it rain on someone; they drink 4.",
   },
   "sunken-chest": { win: "Bone dry, and worth it. Give 5, pirate voice." },
   "the-cash-register": {

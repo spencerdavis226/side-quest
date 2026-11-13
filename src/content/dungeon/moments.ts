@@ -155,28 +155,28 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
     moment(
       4,
       "sewers-rubber-duck",
-      "Rubber Duck",
-      "A rubber duck floats by. Everyone quacks; the worst quack drinks 2.",
+      "The Canary",
+      "A canary flies by. Everyone tweets; the worst tweet drinks 2.",
     ),
     moment(
       4,
       "sewers-gator-chomp",
-      "Gator Chomp",
-      "On three, everyone does the gator chomp with both arms. The last one drinks 2.",
+      "Pickaxes",
+      "On three, everyone swings a mime pickaxe with both arms. The last one drinks 2.",
     ),
     moment(
       4,
       "sewers-clean-water",
       "Clean Water",
-      "A clean pipe. Everyone takes a sip of water and says something nice about the person to their right.",
+      "A clean spring. Everyone sips water and says something nice about the person to their right.",
       1,
     ),
     // The variety pass (2026-10-31).
     moment(
       4,
       "sewers-down-the-drain",
-      "Down the Drain",
-      "Everyone says the worst thing they ever lost down a drain. The table picks the worst; they drink 2.",
+      "Down the Shaft",
+      "Everyone says the worst thing they ever lost down a hole. The table picks the worst; they drink 2.",
     ),
   ],
   freezer: [

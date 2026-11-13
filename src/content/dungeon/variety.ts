@@ -34,57 +34,6 @@ type Rewrite = {
 };
 
 const rewrites: Readonly<Record<string, Rewrite>> = {
-  // The Sewers.
-  "toilet-mimic": {
-    rules:
-      "On three, everyone points at who'd use a toilet that licks its lips. Most fingers: drink 3.",
-  },
-  "sludge-bro": {
-    rules:
-      "The sludge bro wants a flex-off. Everyone flexes; the table picks the weakest flex. They drink 3.",
-  },
-  "sewer-mutant": {
-    rules:
-      "The three-armed mutant arm-wrestles the table, clockwise. Roll four dice.",
-    dice: seats("Four arms pinned."),
-  },
-  "flushed-goldfish": {
-    rules:
-      "Read alone what else got flushed, start the clock, then mime it. The table guesses.",
-    secret: "AN ENGAGEMENT RING.",
-    timer: clock(GUESSED),
-  },
-  "big-flush": {
-    rules:
-      "Light the fuse. Pass a beer clockwise, naming something to flush. The flush gets whoever holds it.",
-    timer: fuse("Flush. Whoever is holding the beer drinks 3."),
-  },
-  "pizza-rat-prime": {
-    duel: true,
-    rules:
-      "Slice-off: you and your left neighbor mime eating a slice. Slower, by the table's call: drink 4.",
-  },
-  "echo-bat": {
-    duel: true,
-    rules:
-      "Your right neighbor echoes everything you say for 20 seconds. You laugh first: drink 4.",
-  },
-  "drain-witch": {
-    rules:
-      "She brews in the runoff and offers you a sip. Hold your nose, then roll d20.",
-    fumble: "You sip, and ask for seconds. Drink 6 and say it was lovely.",
-  },
-  "slime-slide": {
-    rules:
-      "The floor tilts, and it's greased. Lean back in your chair, then roll d20.",
-  },
-  "the-fatberg": {
-    rules: `A hundred tons of grease and wipes. ${SIDE_BETS} Roll d20.`,
-  },
-  "alligator-al": {
-    rules: `A twelve-foot gator in a bowling shirt. ${SIDE_BETS} Roll d20.`,
-  },
-
   // The Walk-in Freezer.
   "brain-freeze": {
     rules:
@@ -282,15 +231,6 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
   "falling-taps": {
     rules:
       "An acorn bonks you on the head, and you're Thumb Master now. Drink 1, then use it.",
-  },
-  "alligator-gang": {
-    rules:
-      "Three gators in leather jackets, one with a switchblade. Snap your fingers, then roll d20.",
-  },
-  "pipe-octopus": {
-    rules:
-      "Eight arms out of eight pipes, reaching for drinks. Roll four dice.",
-    dice: seats("It steals from four glasses."),
   },
   "margarita-elemental": {
     rules:

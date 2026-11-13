@@ -183,21 +183,21 @@ const beats: Readonly<Record<string, Beat[]>> = {
       "Name five things buried with a king, in ten seconds. Fall short: drink 4.",
     ),
   ],
-  // The Sewers.
+  // The Goblin Mines (was the Sewers).
   "the-fatberg": [
     roll(
-      "It rolls back together, bigger. Roll 2d6.",
-      pair("It absorbs your shoe. Drink 5.", "You flush it. Give 4."),
+      "His goblins rush back in. Roll 2d6.",
+      pair("They pile on you. Drink 5.", "You scatter them. Give 4."),
     ),
   ],
   "alligator-al": [
     duel(
-      "Al wants your bowling stance. Hold it on one leg while the table counts to 15. Wobble down: drink 4.",
+      "He wants your miner's stance. Hold it on one leg while the table counts to 15. Wobble: drink 4.",
     ),
   ],
   "plumber-king": [
     duel(
-      "Kneel and swear fealty to the Plumber King, in one breath, in rhyme. Stumble: drink 4.",
+      "Kneel and swear fealty to the Mine Lord, in one breath, in rhyme. Stumble: drink 4.",
     ),
   ],
   "the-crocodile-mom": [
@@ -207,7 +207,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "the-pipe-worm": [
     roll(
-      "It comes up through the drain behind you. Roll d6.",
+      "It comes up through the floor behind you. Roll d6.",
       moves(
         [
           "It swallows your arm. Drink 5.",
@@ -215,9 +215,9 @@ const beats: Readonly<Record<string, Beat[]>> = {
           "It hisses. Drink 3.",
         ],
         [
-          "You plug it. Give 3.",
-          "You snake it. Give 4.",
-          "You tie it to a pipe. Everyone else drinks 2.",
+          "You block the hole. Give 3.",
+          "You spear it. Give 4.",
+          "You tie it to a beam. Everyone else drinks 2.",
         ],
       ),
     ),

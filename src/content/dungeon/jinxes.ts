@@ -43,19 +43,19 @@ const jinxes: Readonly<Record<string, Jinx>> = {
     rule: "The jinxed player says 'rest in peace' whenever a card is put aside. Misses one: drink 1.",
   },
   "drain-witch": {
-    name: "Drained",
+    name: "Fumes",
     rule: "The jinxed player can only whisper. Too loud: drink 1.",
   },
   "fatberg-spawn": {
-    name: "Greasy Fingers",
+    name: "Slimy Fingers",
     rule: "The jinxed player holds their drink with two fingers only. Caught: drink 1.",
   },
   "the-fatberg": {
-    name: "Clogged",
+    name: "The Royal We",
     rule: "The jinxed player can't say 'I' or 'me'. Slip: drink 1.",
   },
   "the-pipe-worm": {
-    name: "Pipe Down",
+    name: "Cave-In",
     rule: "Nobody talks to the jinxed player, and they talk to nobody. Slip: drink 1.",
   },
   "merfolk-ex": {
