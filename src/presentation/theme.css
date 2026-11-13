@@ -800,12 +800,7 @@ dialog.closing {
   --ember-time: 18s;
 }
 /* Bubbles, not dust, in the marsh and the drowned coast. */
-.atmosphere:is(
-    [data-scene="marsh"],
-    [data-scene="coast"]
-  )
-  .dust
-  i {
+.atmosphere:is([data-scene="marsh"], [data-scene="coast"]) .dust i {
   width: 6px;
   height: 6px;
   background: transparent;

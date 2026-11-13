@@ -51,7 +51,7 @@ Read with no further bug found: `moments/detect.ts` (every trigger; `sameGame` a
 - **Removed:** the pause menu's "Big moments: Full / Quick" row (`MomentsToggle` in `GameDialogs.tsx`) and `useQuickMoments`, `setQuickMoments`, `QUICK_SCALE` in `Director.tsx`. The type clash always plays. `MomentView` still takes `scale` (always 1 in the app) because the dev stage (`?moments=1`) slows moments down with it. A stored `side-quest.moments.v1` value is now ignored (harmless; no save touched, no fixture).
 - **Bisect branches** `bisect/master-ball` and `bisect/great-ultra` stay on GitHub (owner, 2026-11-02: keep them; this session's GitHub access cannot delete branches, HTTP 403).
 
-**Checked:** typecheck, lint, `npm test` (442), `BASE_PATH=/side-quest/ npm run build` (budgets pass, runtime 3,886 of 4,096 KiB), Chromium `dialogs.spec.ts` + `moments.spec.ts` (21 passed). **Not run:** WebKit (CI runs it), a phone. 
+**Checked:** typecheck, lint, `npm test` (442), `BASE_PATH=/side-quest/ npm run build` (budgets pass, runtime 3,886 of 4,096 KiB), Chromium `dialogs.spec.ts` + `moments.spec.ts` (21 passed). **Not run:** WebKit (CI runs it), a phone.
 
 ## Deployed 2026-11-01: health fixes (owner: "Lets do the 4 bugs and health fixes", then "Commit and push")
 
@@ -118,6 +118,7 @@ The last plain banners on big beats became moments. **Display only:** no engine 
 Every moment and ending was looked at frame by frame at 0.25x in Chromium from the dev stage (`?moments=1`) at 390x844 and 320x568, and in the real app from seeded saves with motion on (foil, Most Likely, a Cellar boss's gate, Lt. Surge's clash, Byron's badge). **Display only:** no engine rule, card, save field or balance changed; no new save fixture.
 
 **Broken, now fixed**
+
 - **Banners landed on moments.** The next route's stage banner ("The badges get heavier") played on top of the badge moment, and a boss's "jinx lifted" news could land on its spoils. `StageBanner` and `PartyNewsBanner` now wait while the director is `busy`, then sweep.
 - **Foil on the wrong cards.** `cardFinish` read the ribbon tone, so every pearl or crimson ribbon wore gold: all 35 starters, 18 adventurers and 20 omens, every Pub Crawl boss, the rival and the queue's ambushes. It now reads the stage a boss belongs to (gold: Legendary, Champion, Pub Crawl's last stage; silver: other bosses; ambushes and omens none). Unit test extended.
 - **Foil mask.** Measured on both 768x1152 fronts (parchment x 12.9-87.4% teal, 11.5-88.2% League, y 30.9-89.1%; title plaque y 8.5-23%, x 19-81%). The old single hole lit the title and left the frame's inner rails and foot bare; the mask now has two holes (parchment, title plaque) and covers the painted frame only. Checked with the foil painted solid on both fronts.
@@ -130,6 +131,7 @@ Every moment and ending was looked at frame by frame at 0.25x in Chromium from t
 - **Most Likely To.** The card's face makes room for the "Count it down" plaque (`choosing`), so the rules never sit under it; all 250 cards checked at 320x568, none overflow or meet the plaque. The countdown's shade is near-opaque behind the numbers, each number throws a ring, and POINT gets turning rays.
 
 **Raised**
+
 - **A tap on a boss entrance also turns the card.** The stage hides on the press and ends on the lift; a lift over the card clicks it once, after the lift's own click is swallowed. The table's tap turns the card; the animation still never advances the deck. A tap off the card only skips.
 - New `streaks` particles (lines of light thrown off an impact: VS, the gate's slam, a decisive clash); dust is now a soft puff that swells (hard discs read as bubbles); the Legendary gets turning rays in its type's colour, grit shaken from above and its medallion moved clear of the name; Pub Crawl's wipe gets candle pools of light that die with the flames and smoke curling from each wick.
 - Under Reduced Motion a still plaque reads in 1.3 s while another waits (a badge, spoils and the next boss no longer take 6 s in a row).
@@ -204,11 +206,13 @@ What `BallThrow.tsx`, `Flourish.tsx` and the banners each reimplement today, don
 ### Phase 1: the once-a-run moments (biggest payoff)
 
 **1. Evolution and level up (size L).** Replaces `EvolutionBanner`'s render; its trigger (`party.form` rising) stays.
+
 - League, about 5 s: table dims to near-black with a radial glow in the old form's dice palette (`form.palette`); the old name sits on a light-plate that breathes, then pulses faster (scale and glow, never full-screen strobe) while white light threads in from the edges; at 3.2 s the plate collapses to a point, one bloom, and the new name slams in on the new palette with its type medallion turning in and a ring of type-coloured particles; the stat change ("Max HP 15 → 17") writes on underneath; settle and fade. "What? X is evolving!" kicker. Branching Eevee plays after the sheet's choice.
 - Pub Crawl level up, about 3.5 s: a forge variant: the class name heats from iron to white on an anvil plate, sparks on each of three strikes, the new level stamps in gold.
 - Announcer text unchanged.
 
 **2. Boss entrance (size L).** Replaces `StageBanner` for boss stages only (floors and routes keep the banner). Plays while the boss is dealt face down, once per boss (never for a later swing or a replaced Champion), then the table taps to flip as usual. No controller change.
+
 - League gyms, rival, hideout boss, Elite Four, Champion, about 2.4 s: two diagonal panels shear in from opposite corners with speed lines. Left: the starter's current form, its type medallion and Team HP. Right: the opponent's title, type, kicker ("Gym 6", "Elite Four 3 of 4", "Champion") and, for gyms, the badge at stake (from `public/art/badges`). "VS" drops between them with a shake and a spark ring, holds, then the panels shear out. Elite Four members after the first get a 1.4 s version; the Champion gets the gold version with a longer hold.
 - Legendary, about 3 s, not a VS: the table goes still and dark, the ground shakes twice, an aura in the Legendary's type colour rises behind its name as it lifts out of the dark.
 - Pub Crawl floor bosses and the final boss, about 2.4 s: an iron portcullis slams down from the top, dust bursts along its foot, the boss's name is burned onto a hanging sign in the floor's scene colour, the portcullis lifts on the card.
@@ -216,6 +220,7 @@ What `BallThrow.tsx`, `Flourish.tsx` and the banners each reimplement today, don
 - **Boss beats** (`phases`; gym aces): when `party.beat` advances, a 1.2 s slide-in: "Clair sends out her ace!" or the beat's title, under the boss's ribbon colour.
 
 **3. Endings (size XL).** A layer over `Completion.tsx` that plays only when `celebrate` is true (a live ending, never a resumed one). The controller's `complete` motion and its `finish` call stay exactly as they are. The sequence runs on top, a tap jumps to the final state, and the buttons are live from 1.5 s.
+
 - **League Hall of Fame, about 6 s:** fade from white; the starter's final form rises on a plinth of light with its type; caught teammates slide in beside it; the eight badges drop into the case one at a time (badge art, a glint on each); the run's numbers count up (draws, Team HP left, badges, catches, bosses beaten, all from `questRecord`); fireworks on the canvas; "Hall of Fame" stamps in and the record panel settles below.
 - **Pub Crawl survived, about 5 s:** a coin shower pours in; `TrophyWall` items drop onto the shelf one by one with a thud and dust; "Last call, survived." writes in gilt.
 - **League whited out, about 4 s:** the HP ring drains its last, the screen whites out slowly, "You whited out!" types on, then the record.
@@ -225,6 +230,7 @@ What `BallThrow.tsx`, `Flourish.tsx` and the banners each reimplement today, don
 ### Phase 2: the moments of every fight
 
 **4. Damage and healing (size M).** Upgrades `PartyPulse` and the hearts stud.
+
 - A hit: 70 ms hold, then a shake of the play area scaled by damage (2 to 6 px, 260 ms, capped), a red edge vignette, and on the stud each lost heart cracks and drops shards.
 - **The HP ring:** a thin ring around the hearts stud (green, amber, red by share left; Pub Crawl in its gilt-to-crimson ramp) that drains in a chunk with a pale trailing segment catching up 400 ms later, as fighting games do. Display only; the number in the stud stays the source of truth.
 - Heal: green motes rise from the bottom edge into the stud; the ring refills with a bright leading edge.
@@ -233,10 +239,12 @@ What `BallThrow.tsx`, `Flourish.tsx` and the banners each reimplement today, don
 **5. Type clash (size M), League.** On the reveal of a strike or a dice fight with a matchup (`cardMatchup`), about 0.9 s: the two type medallions fly in from the sides and meet over the card. Edge: yours shatters theirs, "Super effective!" punches in green. Disadvantage: the reverse, in red. Even: they clink, sparks, no words, 0.5 s. Ends by flying the result into the strip's edge chip, which pulses. **Send-in** (`sendIn`): "Go, Vulpix!": a donut ball (reused from `BallThrow`) arcs onto the card and opens in the Pokémon's type colour, 1 s.
 
 **6. Run opening (size M).** Once a game, on the flip of the omen card.
+
 - League: one ball rolls in, wobbles three times and bursts open in the starter's type colour, light spills out, and the card flips up in that light. About 2.5 s. One ball, not three, so it never looks like a choice the table didn't make.
 - Pub Crawl: tarot draw: the card lifts from a fanned spread, turns over once with a gilt edge glint and candle flare, and lands as the omen. About 2 s.
 
 **7. Badges and loot (size M).**
+
 - Badge: on the put-aside of a beaten gym (badges earned rises): the badge art pops from the card, spins on its axis with an edge highlight and a glint sweep, "Earned the Cascade Badge!", then arcs into the strip's badges chip, which pulses and ticks. 1.8 s.
 - Loot: when an item, trinket or gear lands (bag or boons grow): the item's mark bursts from a light pillar coloured by tier (boss trinket and gear gold, elite violet, items bronze), turns once, and arcs into the bag chip. 1.2 s. This replaces `PartyNewsBanner` for trinkets only; jinx, fainted and passed-drink banners stay.
 - Catch: after "Gotcha!", the Pokémon's type medallion arcs from the ball into the bag chip.
@@ -248,6 +256,7 @@ What `BallThrow.tsx`, `Flourish.tsx` and the banners each reimplement today, don
 **9. Most Likely To countdown (size S).** A "Count it down" plaque on `likely.*` cards (the card still taps through as now; no blocking): full-screen 3, 2, 1, each slamming with a shock ring, then "POINT!" with radial lines. 2.6 s, readable from across the table.
 
 **10. Secrets and fuses (size M).** Upgrades `CardActions.tsx` and `TimerBlast`.
+
 - Fuse: a spark crawls around the card's border with smoke wisps and random sputters, at a constant pace that reveals nothing about the time left (the fuse's suspense stays). BOOM: one white flash, a shock ring, debris on the canvas, a hard shake, and scorch on the card's edges that fades over 2 s.
 - Countdown: the last three seconds are huge numbers behind the card with a ticking ring; TIME slams in like a buzzer.
 - Secret: holding breaks a wax seal (two halves part, 220 ms) and the text unrolls; on release the seal closes again. Never slower to read than now.
@@ -256,12 +265,12 @@ What `BallThrow.tsx`, `Flourish.tsx` and the banners each reimplement today, don
 
 ### Order, cost and risk
 
-| Phase | Contents | Size |
-| --- | --- | --- |
-| 0 | Moments layer, director, particles, flyTo, workshop stage, setting, tests | M |
-| 1 | Evolution, boss entrance and beats, endings | L, L, XL |
-| 2 | Damage/heal and HP ring, type clash and send-in, run opening, badges and loot | M each |
-| 3 | Foil, Most Likely countdown, secrets and fuses, milestones | M, S, M, S |
+| Phase | Contents                                                                      | Size       |
+| ----- | ----------------------------------------------------------------------------- | ---------- |
+| 0     | Moments layer, director, particles, flyTo, workshop stage, setting, tests     | M          |
+| 1     | Evolution, boss entrance and beats, endings                                   | L, L, XL   |
+| 2     | Damage/heal and HP ring, type clash and send-in, run opening, badges and loot | M each     |
+| 3     | Foil, Most Likely countdown, secrets and fuses, milestones                    | M, S, M, S |
 
 - **Time added to a League run** (estimate, Full setting): about 13 boss entrances (~30 s), 2 evolutions (~10 s), 8 badges (~15 s), ~20 clashes (~18 s), opening and ending (~9 s): about 80 s over a 1.5 to 2 h run, all skippable. Quick halves it.
 - **Device-only unknowns:** frame rate of blur plus canvas on older iPhones, `mix-blend-mode` foil in WebKit, shake comfort, heartbeat strength. Each phase adds its rows to `docs/DEVICE_CHECKLIST.md`; nothing is called done on emulation alone.
@@ -273,6 +282,7 @@ What `BallThrow.tsx`, `Flourish.tsx` and the banners each reimplement today, don
 **CI follow-up (owner: "Do your recommendations"), resolved 2026-11-01 13:23 UTC: the site is live.** `main` failed CI twice (runs #273 and #274) for two different reasons, and the pipeline only deploys when every job passes. (1) The League balance job: Charmander 12/120 = 10.0% against the `> 0.1` floor (real rate about 17%, 3,000 runs each: `main` before 17.5%, Master Ball 16.1%, Great/Ultra 16.7%). Fixed in `c3852b0`: `tests/league.balance.test.ts` reads each starter's rate over 300 runs, the 120 kept plus 180 only counted and dropped (`LEAGUE_EXTRA`), memory unchanged; about 4.5 min in CI. Treecko (11%) is the next starter near the floor. (2) The WebKit `@release` layout test (`layout.spec.ts:308`, "card ends above the fold at 375x548 (stage 324x482, .app 664px, inner 375x548)") failed on #273 and #274 with identical numbers, which first looked deterministic. **It is an intermittent test race, not a bug in the game:** a bisect in CI (throwaway branches at the Master Ball and Great/Ultra commits) passed WebKit on both, and re-running only the failed jobs of #274 on the same `dist` build passed WebKit and deployed. The race is the one #250 described: `resizeTo` waits for a `100svh` probe and for the card's box to hold still across two frames, but WebKit can hold the old 664px layout for both, so the stage is read at its pre-resize size (the same stale numbers every time it hits). It failed 2 of the last 3 `main` runs, so it will recur. **Next:** harden that wait (for example, wait until `.card-stage`'s bottom fits the new viewport, never loosen the assertion) and re-run the release suite with `repeat_each`. Never skip the test. Two throwaway branches, `bisect/master-ball` and `bisect/great-ultra`, remain on GitHub (deleting them from this container failed with a dropped connection); delete them from the GitHub branches page.
 
 Pushed straight to `main` on the owner's word with the Master Ball commit below. **CI failed on it twice, so it deployed only after the follow-up below** (owner chose "push as-is"): `tests/league.balance.test.ts` gives Charmander 12/120 = 10.0% against its `> 0.1` floor. Its real rate is about 17% (3,000 runs each: `main` before 17.5%, with the Master Ball 16.1%, with Great/Ultra 16.7%), so it is the fixed 120-run sample landing two standard errors low, not a balance change. **Next:** the owner picks how to make the per-starter check robust (300 runs a starter, or a noise-aware floor); until then `main` is red and the site stays on the last deploy.
+
 - Numbers (owner asked for the best): **Great Ball +3, Ultra Ball +6** to the d20 throw (`BALL_BONUS`, `ballNeed` in `engine.ts`, never below 2). On a hard catch (needs 15) that is 30% to 45% and 60%, the games' 1.5x and 2x; catch numbers in the League run 4 to 17.
 - With any Great, Ultra or Master Ball in the bag, "Throw a ball" becomes a picker plaque opening "Throw which ball?" (`ExtrasSheet`): Poké, Great, Ultra, Master, each with the number it needs. The Master Ball's own plaque is gone. `throwWith(s, ball)`; `party.throw.ball` (`"great" | "ultra"`, rejected beside `master`).
 - Colours: Great blue with red patches, Ultra black with yellow bars, Master purple (`crawl.css`, `card-front.css`, `ball-<kind>` classes); icons `art/league/{great,ultra}-ball.svg`.
@@ -282,12 +292,14 @@ Pushed straight to `main` on the owner's word with the Master Ball commit below.
 ## Pushed 2026-11-01: Master Ball, Togepi egg, Legendaries join the team (owner: "add a master ball item that is an instant catch ... makes the pokeball spin animation for catching purple, and always rolls 20 ... yes to togepi ... I'd prefer to 'add more' to the game")
 
 Pushed to `main` with the Great and Ultra Balls above (see the CI note there). League only; all new state optional, so older saves load and play on.
+
 - **Master Ball** (`LOOT` `master`): a bag item. At any catch (a beaten wild Pokémon or a catch card's offer) a third plaque, "Master Ball · always catches", appears beside the ball when one is in the bag (`canThrowMaster`/`throwMaster`, `controller.master()`); it is spent and lands a 20 (`party.throw.master`, `persistence.ts` rejects a master throw that is not 20). It is a choice, not automatic, so it is not wasted on a Caterpie. The throw plays purple with pink bumps and violet confetti (`BallThrow.tsx`, `crawl.css`); the card shows a purple 20 and "Master Ball" (`card-front.css`). Never a bag Use. Sources: **Silph Gift** (Route 6 item, was an X Attack; in the games the Silph president gives it) and every win of **Silph Co. Maze** (Route 6 hazard, which named the Master Ball and gave nothing). Icon `public/art/league/master-ball.svg` (and `art/crawl/master.svg`, never dealt in Pub Crawl).
 - **Mystery Egg**: a won roll hatches a **Togepi** (Fairy, +2 send-in) onto the team; it no longer gives an X Attack, and the loss is now a Voltorb (it said Togepi on the loss before). `CardDefinition.joins` (`{ name?, type?, rate }`): a won battle, or a boss's fall, adds the card to `party.team`; `teamMember` (engine) reads it as the Pokémon it brings, used by `partyTeam`, `canSendIn`, `rollBonus`, save checks and the fainted banner. The card's foot shows `+` and the type medallion; a "Hatched"/"Caught" banner says it joined.
 - **Legendaries**: the 8 whose last beat throws a ball and says caught (Zapdos, Ho-Oh, Palkia, Xerneas, Eternatus, Mew, Arceus, Miraidon; `team.ts`) join the team when felled, at +5 (`LEGENDARY_RATE` 20). A full team lets the oldest go, as a catch does. Mew's doubles line now says it hops into the ball (it said it let you go).
 - Bots: the balance bot throws the Master Ball at a catch of 10+ the team wants; `table-play.ts` half the time.
 
 **Checks run:** typecheck, lint, `npm test` (417, 6 new in `team.test.ts`), `npm run cards:review`, `BASE_PATH=/side-quest/ npm run build` (budgets pass; an aria label first tripped the card-text-in-initial-chunk check by matching the "Pokémon Master" card, reworded), League balance (4/4, run with `NODE_OPTIONS=--max-old-space-size=8192`: in this container the file runs out of heap at the default size on unchanged `main` too), Chromium `quest.spec.ts` + `crawl.spec.ts` (49) and `@release` (13), four new fixtures `2026-11-01-league-*`, screenshots of the plaque, purple throw, card result and egg seal (throwaway spec, removed). **Not run:** Pub Crawl balance (no crawl card or rule changed), WebKit, device, fit sweeps.
+
 ## In progress 2026-11-01: undo, stamps on every boss, boss returns, League evolution (owner: "Let's do the top 5 easy fixes ... felled stamp on league ... stamp the whole card text area ... card to card continuity ... animated evolution sprite")
 
 Uncommitted, not pushed. Display and controller only: no engine rule, odds, card, save field or migration changed, so no new save fixture.
@@ -318,11 +330,13 @@ On `main` as `3b37ded` (#65). The bag dialog (`CrawlRecord` part `satchel`) now 
 Pushed to `main` on the owner's "Commit and push to main" (rebased onto `49ffb74`, revert that one commit to undo). No engine state, save field, odds, damage or card ID changed.
 
 **Polish (display only, Pub Crawl only; the League's theme has no `flourish`, so it is untouched):**
+
 - **Each place has its own light.** `crawlScene` (`components/crawlTheme.ts`) names the stage in play and `Atmosphere` sets `data-scene`; `theme.css` recolours the existing glow, embers and motes through CSS variables (no new looping elements): burgundy Wine Cellar, amber Brewery with bubbles, pale-green Catacombs, green Sewers with bubbles, falling snow in the Freezer (the dust drift played backwards), teal drowned Taproom with bubbles, hot fast sparks in the Kitchen, twinkling stars over the Rooftop, red Last Call, neon violet for the Quarter-Zips (queue, stairs, closing time), violet and gold for the hidden rooms, a dim warm landing. The light fades in over 1.8 s when the stage changes. The adventurer and omen keep the plain table. Reduced Motion still hides the backdrop; idle and hidden-tab pausing are unchanged.
 - **Natural 20 and natural 1** (`NaturalBurst`, `components/Flourish.tsx`): when a d20 lands on a natural while the table watches, a 1.4 s flash over everything: gold rays and a slammed 20, or a dark red table and a cracked, shaking 1. Never on a resumed game that already showed the result; `aria-hidden` (the card's result already says "Natural 20!"). Reduced Motion keeps the fade, nothing moves.
 - **Felled stamp** (`FelledStamp`, `fellingSwing` in `engine.ts`, a read-only helper): a boss's felling roll slams a red rubber stamp across the card face; it is read once through the announcer. The spoils sheet now waits 1.1 s on that swing (`STAMP_MS` in `Play.tsx`) so the stamp is seen; immediate under Reduced Motion. Dice bosses only (a Won/Lost beat puts the card aside on Won).
 
 **Card read (all 575 Pub Crawl cards, beats, jinxes, offers):** about 45 text edits, `dungeon/*.ts`:
+
 - Same card twice on one floor, replaced: Catacombs Epitaph/Epitaphs (now Play Dead), Freezer Cold Take/Cold Takes (Snowball Fight), Hot Chocolate/Hot Cocoa (Pins and Needles), Kitchen Yes, Chef ×2 (moment is now 86'd), Staff Meal ×2 (Bread Basket), three repeat-the-order cards (The Order is now The Specials; Order Up is a delayed slap), Taproom three sea shanties (Bottoms Up or Hold, The Fish Tale), Message in a Bottle ×2 (SOS), two dry booths (Land Ho), Brewery Quality Control ×2 (Inspection) and Name That Brand/Name a Beer (Glasses Down), Sewers The Echo/The Echo Bat (Spell the Sewer), Rooftop's two pigeon coo-offs (Group Selfie), Wine Cellar titles Vintage and Swirl and Sniff (Best Year, The Snob Stare). A unit test now fails if a title repeats on a floor.
 - Jinx clashes: the Freezer had three chattering-teeth rules (Hal is now Not Even Cold, Absolute Zero counts down before sips), a jinx and a trial both named Frozen Solid (Ice Pack), Brain Freeze jinx vs card (Freezer Burn); the Kitchen's Behind! jinx duplicated The Swinging Door (now Hands!, a reflex); Pipe Down said "only the drawer may talk", which changes every card (now nobody talks to them); Artisanal's "misses a chance the table spots" could not be judged. "Forget: drink 1" → "Forgets" in nine jinxes.
 - Unclear or wrong: The Bottling Line (why would anyone laugh? now balance a bottle), The Lich's Accountant read "intern", Skeleton Mariachi (who dances?), Ghost of Closings Past's "every bar the table has been to together" (now five bars), Chad's Fake ID ("do 10 seconds of Canadian"), the Last Table beat (sit on what?), Tap Mimic never mentioned the mimic, Brad's Birthday omen named the Quarter-Zips before the table meets them, Mimic Fridge lacked "Cash out", The Snow Bartender's clumsy line, a grammar fix on Skeleton Barback.
@@ -332,6 +346,7 @@ Pushed to `main` on the owner's "Commit and push to main" (rebased onto `49ffb74
 **Checks run:** `npm test` (403, 3 new: the felling check in `dungeon.test.ts`, every stage after the omen has a scene and no floor repeats a title in `crawl-theme.test.ts`), typecheck, lint, Prettier, `validate-content`, `npm run cards:review`, `BASE_PATH=/side-quest/ npm run build` (budgets pass), Chromium `crawl.spec.ts` + `quest.spec.ts` (49 passed), the Dungeon fit sweeps (6 passed), `@release` (13 passed). The Regulars omen says "Miss it" (its subject is everyone). Looked at Chromium screenshots of all ten scenes, both natural bursts and the stamp (with motion on). Not run: balance (no odds changed), WebKit (not installed here), device.
 
 **Risks / next (owner):** the scene colours are tuned on a desktop screenshot; on an iPhone in a dim room they may want more or less strength (one block of CSS variables in `theme.css`). The 1.1 s hold before a boss's spoils is new friction on purpose. Natural bursts could also go to the League (one line in its theme) if wanted. Play a run on the phone and say which floors feel flat.
+
 ## Shipped 2026-10-31: Who's That Pokémon? (owner: "drastically more options ... a group of Pokemon experts has made this card trivial")
 
 On `main` as `1a95b12`. Five fixed 45 s quiz cards became three (Routes 2, 5 and 8) on a 20 s timer, each holding a share of 264 answers (every Gen 1 and 2 Pokémon plus 15 favorites, four banned words each, `src/content/league/whosthat.ts`). `CardDefinition.secretPool` (optional, no migration) is resolved in `currentCard` by hashing the shuffle and card id: stable on reload, different each game, nothing saved. Old saves keep their snapshot cards. Cards 1851 to 1849. **Checks:** `npm test` (403, new `tests/whos-that.test.ts`), lint, typecheck, `cards:review`, build (budgets pass), `league.balance` at 120 runs a starter (4/4; an earlier 6-extra-card version failed Gible at 7.5%). Not run: Playwright, device. **Open:** banned words are unreviewed by a Pokémon expert; the 20 s fit on the card face is unchecked in a browser.
@@ -357,11 +372,12 @@ PR #58, fast-forwarded to `main` on the owner's "Merge to main" (`c26ae20`; reve
 ## Shipped 2026-10-31: League card clarity pass (owner, on Mystery Egg: "Some of these cards make no sense ... reword some of the weird ones, and if they're too complicated to explain in a simple way ... just change the rule")
 
 Fast-forwarded to `main` on the owner's word (`f8a242e`; revert to `ae61de2` to undo). Text only: no card IDs, odds, needs, damage or offers changed, so saves and balance are untouched. Read every League card (459 plus the gyms' and bosses' beats) and rewrote about 55 lines where the table could not tell who acts, a line contradicted the mechanic, or the joke buried the rule:
+
 - **Unclear who acts:** Mystery Egg ("It hatches! Name the baby, do its cry, and give 2."), Youngster Joey, Ralts, Lillipup, Haunter and Mimikyu caught lines, Pep Talk, Dream Team, Hidden Machine, Trainer Card, Fisherman Ned, Safari Toss (now one flick into a cup).
 - **Contradicted the mechanic:** wins that said "caught" before the ball throw (Gyarados, Zoroark, Mewtwo's and Deoxys's natural 20s on beat one); Lapras and Gift Eevee were "gifts" with a Throw a ball plaque (now "yours if you can catch it"); Nickit ("It's gone. Finish whatever you have"); Volkner ("bore the table with a fun fact", win/beat 2 now plain).
 - **Rule changed because it could not be judged:** Sage Li's riddle (no answer on the card) is now a one-foot balance test; Weather Report (Pokémon that change with weather) is Rain Dance (Water types); Olympia's "who yawns first" is "who speaks next"; Ho-Oh's "drink 4, then 8 more" is one number (same totals).
 - **Rewording:** the three rods' push-your-luck rule ("Each bite wins a prize: reel in to keep them, or cast again and risk them all"), Rattata, Wurmple, Scyther, Hiker Dave, Agatha, Hassel, Malva, Blue, Leon, Celebi, Xerneas, Veteran Ada, Cave Echo, the Aqua Grunt and a few caught/fled lines.
-The 120 plain Pokémon board cards (source-faithful, `reference/`) were not touched. **Checks:** `npm test` (400), lint, typecheck, Prettier, `validate-content`, `npm run cards:review`, `BASE_PATH=/side-quest/ npm run build` (budgets pass). Not run: balance (text only), Playwright, device. **Next (owner):** play a League run and flag any card that still reads wrong.
+  The 120 plain Pokémon board cards (source-faithful, `reference/`) were not touched. **Checks:** `npm test` (400), lint, typecheck, Prettier, `validate-content`, `npm run cards:review`, `BASE_PATH=/side-quest/ npm run build` (budgets pass). Not run: balance (text only), Playwright, device. **Next (owner):** play a League run and flag any card that still reads wrong.
 
 ## Shipped 2026-10-31: the bag rebuilt (owner: "This UI sucks and the tooltip is now inaccurate"; "just show the Pokémon's type and its modifier"; "make it much more elegant")
 
@@ -396,6 +412,7 @@ Merged to `main` on the owner's "Merge and deploy everything to main" (fast-forw
 **Step 2, the Cellar sample (on `preview`).** Five do-nothing mishaps became: a pointing vote (Skeleton Barback), a reflex (Possessed Mop), a hidden fuse (Cask Bat), a secret on a 45 s clock (Cobweb Bartender: mime a pickleback) and four seats, four dice (Fryer Oil Ooze, `{first}`..`{fourth}`). Two d20 monsters became table duels (Rats in a Coat: talk past the left neighbor as bouncer; Tab Goblin: thumb war). Five d20 rooms got a setup that asks something and natural 1/20 lines of their own; three bosses open with side bets (thumbs up or down on the drawer, wrong bets drink 1); one new auction moment (`dungeon.cellar-last-glass`, 1,826 cards). The Cellar now measures 11 kinds, d20 31%, flat about 4%, others acting 62% (was 8 kinds, 36%, 18%, 50%). Tests that used Tab Goblin as a d20 monster use Keg Spider; the boss-jinx test now deals its jinx card explicitly (it relied on the seeded shuffle).
 
 **League sample and retune (owner: "Retune").** Route 2 gets Old Rod (the League's first push-your-luck: `press` builder in `journey.ts`, prizes Potion, Protect, X Attack; a natural 1 hooks a Gyarados), Who's That Pokémon? (secret on a 45 s clock) and a Cuteness Contest (the table votes thumbs); Route 2 joins `REWORKED` in the mix test. The League balance bot now plays each starter on its own seeds (`k * 120 + i + 1`): with seeds 1 to 120 shared, all 35 starters met the same 120 shuffles, so one new route card swung final-form evolution from 48% to 63%. On independent seeds the live League missed two bands (55% final form, Treecko 6%), so it was retuned, measured at 400 runs a starter (14,000 runs; `LEAGUE_RUNS=400 LEAGUE_LOG=<file>`), four tries:
+
 - Evolution: Route 6's second evolution card (Friendship Glow) is gone, and It's Evolving Again! moved from Route 7 to Route 8 (a later chance). Evolution cards now: Routes 2 and 4 two each, Routes 3, 5, 6 and 8 one each. Removing Route 4's Sun Stone instead overshot (69% evolved at least once, under the 70% floor).
 - Starters: Treecko +2 HP, Drowzee +2 HP and Hypno +1 HP, both +1 to every heal (an evolved form replaces the base perks, so a base-only buff barely moved Drowzee), Torchic and Gible +1 HP (their base forms), Sunkern and Sunflora +1 HP; Bidoof −1 HP (it had crept to the edge of its 8% cap).
 - Measured at 400 a starter (before the last Sunkern and Drowzee changes): won 23.5%, a won run 68.9 draws, 74% evolve at least once, 48% reach the final form, starters 14% (Treecko) to 44% (Mudkip), hideouts 22% to 25%, Bidoof 4% (600 runs). 1,828 cards (Friendship Glow retired).
@@ -414,6 +431,7 @@ Branch `streamline-systems`, draft PR; not merged or deployed.
 **Why.** Each crawl stacked about 14 systems. Powers were 7 generic effects under 53 names, each duplicating an item; knacks, floor rules and the plaque-fight HP shift were hidden numbers; the Cup, the Quaff, curses and the Tera Orb were bookkeeping beside jinxes, items and the type chart. Cards were being written to feed systems (126 knack tags, 54 three-line knack strikes, 72 path levels with taglines).
 
 **Cut (engine, content, UI, tests):**
+
 - Signature powers, both crawls (`content/powers.ts`, `dungeon/powers.ts`, `league/powers.ts`, `PowerPlaque`, the party dialog's power, "New move" on the banner, the guide rows).
 - Pub Crawl: knacks (`dungeon/knacks.ts`, the strip chip and dialog, the party dialog's chips), floor rules (`dungeon/rules.ts`, `QuestStage.rule`, `stageRule`), the Cup and the Quaff (state, strip, banners, end screens), and the two-path levels: each class keeps its original line (path A) of two levels. The 54 knack strikes became one-line `mishap` rooms (their `even` line, nothing at stake; `mishap()` in `dungeon/shared.ts`).
 - League: the Tera Orb (Eevee now starts with an X Attack, Zorua and Zoroark with an Escape Rope; the two Marts sell a Potion and an X Attack; the Tera Raid Den card is gone, 1,825 cards), Poisoned and Confused (no `curse` anywhere now), and `verdictShift`: a Won/Lost battle has no type matchup or chip.
@@ -422,6 +440,7 @@ Branch `streamline-systems`, draft PR; not merged or deployed.
 **Saves.** `retireSystems` in `src/app/persistence.ts` runs before every check: it drops the cut party fields (`curse`, `cup`, `quaff`, `quaffed`, `tera`, `powers`, `armed`, `tired`, `sent`) and stage rules, turns any saved Tera Orb into an X Attack, and collapses a forked adventurer to the path it is on (one not yet levelled keeps path A). Snapshot card fields the engine no longer reads (`power`, `knack`, `curse`) stay and are ignored. Every frozen fixture loads and plays on (57 in `save-fixtures.test.ts`); `tests/fork.test.ts` now checks the fork collapse, `tests/team.test.ts` the rest fields. New fixtures `2026-10-31-crawl-last-level` and `2026-10-31-league-bag-of-two`; the fixture script no longer looks for the cut situations.
 
 **Retune** (without powers: Pub Crawl 17.8%, League 13.0%, measured before the cut):
+
 - Pub Crawl: `PARTY_HEARTS` 11 → 12. Measured: won 25.1%, a won run 50.7 draws; classes 19% (Ranger) to 43% (Paladin); jokes 2% to 8%; every omen, floor and hidden room 15% to 35%; 75% level once, 21% reach the last level.
 - League: `TEAM_HP` 15 → 16; `GYM_NEED` gym 6 8 → 7 and gym 8 9 → 8; `LEGENDARY_NEED` 8 → 7, `ELITE_NEED` 9 → 7, `CHAMPION_NEED` 8 → 7; a Champion takes 2 hits (`CHAMPION_HITS` 3 → 2: its "switch" beat cut, the ace kept); a hideout deals 1 grunt of 3 (was 2); Rowlet +1 HP at every form. Measured: won 23.3%, a won run 69.2 draws (it sat at 70 to 71.5 until the hideout and Champion trims: without "win" powers, lost boss swings add draws, and easier odds alone only let longer runs win); starters 13% (Drowzee) to 45% (Mudkip), Bidoof 7%; hideouts 17% to 40%; 76% evolve once, 48% to the final form.
 
