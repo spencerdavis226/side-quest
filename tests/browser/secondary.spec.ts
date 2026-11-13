@@ -164,7 +164,7 @@ test("leaving a quest mode takes its pack back out of the deck", async ({
   page,
 }) => {
   await page.goto("./");
-  for (const mode of [/^Pub Crawl/, /^Pokémon League/]) {
+  for (const mode of [/^The Quest/, /^Pokémon League/]) {
     await page.getByRole("button", { name: mode }).click();
     await page.getByRole("button", { name: /^Standard/ }).click();
   }
@@ -187,9 +187,9 @@ test("a quest mode chosen before a reload is still chosen", async ({
   page,
 }) => {
   await page.goto("./");
-  await page.getByRole("button", { name: /^Pub Crawl/ }).click();
+  await page.getByRole("button", { name: /^The Quest/ }).click();
   await page.reload();
   await expect(
-    page.getByRole("button", { name: /^Pub Crawl/ }),
+    page.getByRole("button", { name: /^The Quest/ }),
   ).toHaveAttribute("aria-pressed", "true");
 });

@@ -261,7 +261,9 @@ test("a jinx is laid on a scroll that rolls up into the jinx chip", async ({
   const scroll = page.locator(".moment-jinx .jinx-scroll");
   await expect(scroll).toBeVisible();
   await expect(scroll).toContainText("Toad Voice");
-  await expect(scroll).toContainText("The jinxed player croaks after every sentence");
+  await expect(scroll).toContainText(
+    "The jinxed player croaks after every sentence",
+  );
   // Its seal flies into the strip's jinx chip, then the moment ends.
   await expect(page.locator(".moment-flier")).toHaveCount(1, {
     timeout: 6000,
@@ -270,7 +272,7 @@ test("a jinx is laid on a scroll that rolls up into the jinx chip", async ({
   await expect(page.locator(".tag-jinx")).toBeVisible();
   await expect(
     page.getByRole("status").and(page.locator("#banner-announcer")),
-  ).toContainText("Jinxed! Toad Voice.");
+  ).toContainText("Cursed! Toad Voice.");
 });
 
 test("a teammate lost with in a fight faints, quietly, once", async ({
@@ -309,17 +311,17 @@ test("a teammate lost with in a fight faints, quietly, once", async ({
   await expect(page.locator(".moment")).toHaveCount(0);
 });
 
-test("a hidden room's bookcase swings open; a tap on the card skips it and turns it", async ({
+test("a side quest's secret way in swings open; a tap on the card skips it and turns it", async ({
   page,
 }) => {
   await withMotion(page);
-  // The first landing, resting: next is the Speakeasy's first guard.
+  // The miller's plea, taken: next is the Witch's Cottage's first guard.
   await seed(
     page,
     advance(
       crawlAt(
-        "dungeon.landing-stairwell",
-        STEP.landing1,
+        "dungeon.quest-goat",
+        STEP.plea,
         {},
         {
           adventurer: "barbarian",
@@ -327,13 +329,11 @@ test("a hidden room's bookcase swings open; a tap on the card skips it and turns
       ),
     ),
   );
-  await page.getByRole("button", { name: /^Rest/ }).click();
+  await page.getByRole("button", { name: /^Take the quest/ }).click();
   const door = page.locator(".moment-door");
   await expect(door).toBeVisible();
-  await expect(door.locator(".door-room")).toContainText("The Speakeasy");
-  await expect(door.locator(".door-room")).toContainText(
-    "Wanted: The Proprietor",
-  );
+  await expect(door.locator(".door-room")).toContainText("The Witch's Cottage");
+  await expect(door.locator(".door-room")).toContainText("Wanted: Granny Hex");
   await expect(page.locator(".stage-banner")).toHaveCount(0);
   await page.locator(".game-card").click({ force: true });
   await expect(door).toHaveCount(0);
@@ -376,10 +376,7 @@ test("a League evolution holds on its new form until the table taps", async ({
     page,
     advance(leagueAt("pokemon.route-rare-candy-1", { hearts: 9 })),
   );
-  await page
-    .locator(".card-choice.offers .card-choice-option")
-    .first()
-    .click();
+  await page.locator(".card-choice.offers .card-choice-option").first().click();
   const moment = page.locator(".moment-evolution");
   await expect(moment).toBeVisible();
   const hint = moment.locator(".evo-hint");
@@ -393,25 +390,25 @@ test("a League evolution holds on its new form until the table taps", async ({
   await expect(moment).toHaveCount(0);
 });
 
-test("a Pub Crawl level up holds on the new level until the table taps", async ({
+test("a Quest rank up holds on the new rank until the table taps", async ({
   page,
 }) => {
   await withMotion(page);
+  // A Tome of Training read from the satchel (ranks otherwise come when a
+  // boss falls, Realms 2026-11-03).
   await seed(
     page,
     advance(
       crawlAt(
-        "dungeon.landing-stairwell",
-        STEP.landing1,
-        {},
+        "dungeon.drunk-goblin",
+        STEP.floor1,
+        { loot: ["candy"] },
         { adventurer: "barbarian" },
       ),
     ),
   );
-  await page
-    .locator(".card-choice.offers .card-choice-option")
-    .first()
-    .click();
+  await page.locator(".tag-satchel").click();
+  await page.getByRole("dialog").locator(".satchel-use").click();
   const moment = page.locator(".moment-levelup");
   await expect(moment).toBeVisible();
   const hint = moment.locator(".evo-hint");

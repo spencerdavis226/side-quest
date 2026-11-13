@@ -76,7 +76,7 @@ export const classes: CardDefinition[] = [
     },
     {
       title: "Saint",
-      omen: { hearts: 2, heal: 2, loot: ["revive"] },
+      omen: { hearts: 2, heal: 2 },
     },
   ]),
   // Lucky Coins, then one back whenever a boss falls.
@@ -130,19 +130,15 @@ export const classes: CardDefinition[] = [
     [
       {
         title: "Crusader",
-        omen: { hurt: { boss: -1 }, loot: ["shield"] },
+        omen: { hearts: 2 },
       },
       {
         title: "Templar",
-        omen: { hearts: 1, hurt: { boss: -1 }, restock: "shield" },
+        omen: { hearts: 2, roll: { boss: 1 } },
       },
       {
         title: "Lightbringer",
-        omen: {
-          hearts: 2,
-          hurt: { boss: -1, ambush: -1 },
-          restock: "shield",
-        },
+        omen: { hearts: 2, hurt: { boss: -1 } },
       },
     ],
   ),
@@ -205,7 +201,7 @@ export const classes: CardDefinition[] = [
       },
       {
         title: "Lord of Bones",
-        omen: { hearts: -2, roll: { boss: 2, elite: 1 }, loot: ["revive"] },
+        omen: { hearts: -2, roll: { boss: 3, elite: 1 } },
       },
     ],
   ),
@@ -268,7 +264,7 @@ export const classes: CardDefinition[] = [
       },
       {
         title: "Lord Protector",
-        omen: { hearts: 3, hurt: { ambush: -1 }, roll: { ambush: 2, boss: 1 } },
+        omen: { hearts: 2, hurt: { ambush: -1 }, roll: { ambush: 2, boss: 1 } },
       },
     ],
   ),

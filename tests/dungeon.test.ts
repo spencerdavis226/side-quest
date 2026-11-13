@@ -667,9 +667,9 @@ describe("Pub Crawl", () => {
       "dungeon.keg-golem",
     );
     up = settleBattle(advance(fight(up, 18)), true, Math.random, 1);
-    // The Crusader drops the Paladin's extra heart (2026-10-25), and keeps
-    // the omen's two.
-    expect(party(up).max).toBe(H + 2);
+    // The Crusader adds a heart to the Paladin's (Realms, 2026-11-03), and
+    // the omen's two stay.
+    expect(party(up).max).toBe(H + 4);
     roundTrip(up);
   });
 

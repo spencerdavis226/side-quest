@@ -196,6 +196,28 @@ const situations: [string, GameConfig, Find][] = [
     crawl,
     (s) => party(s).beat !== undefined && s.phase === "hidden",
   ],
+  // Realms (2026-11-03): ranks from bosses, the summons, the side quest.
+  ["realms-third-rank", crawl, (s) => (party(s).form ?? 0) >= 3],
+  [
+    "realms-summons-face-up",
+    crawl,
+    (s) =>
+      s.phase === "revealed" &&
+      currentCard(s).id.startsWith("dungeon.summons-"),
+  ],
+  [
+    "realms-side-quest-walked-on",
+    crawl,
+    (s) => {
+      const stages = s.quest!.stages;
+      const at = stages.findIndex((st) => st.label === "A Side Quest");
+      return (
+        at >= 0 &&
+        s.quest!.step > at &&
+        !stages[at + 1].cards.some((c) => / · Guard$/.test(c.ribbon ?? ""))
+      );
+    },
+  ],
   [
     "league-catch-beat",
     league,

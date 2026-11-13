@@ -12,13 +12,13 @@ const rolled = (s: SessionState, face: number) =>
 const meter = (page: Page) => page.locator(".crawl-meter");
 const full = new RegExp(`^Hearts: ${H} of ${H}`);
 
-test("@release Pub Crawl opens on an adventurer and tonight's omen, then the queue", async ({
+test("@release The Quest opens on an adventurer, the omen and the summons, then the gate", async ({
   page,
 }, info) => {
   await page.goto("./");
-  await page.getByRole("button", { name: /^Pub Crawl/ }).click();
-  await expect(page.locator(".crawl-brief")).toContainText("Dungeon night");
-  await expect(page.locator(".crawl-brief")).toContainText("3 floors");
+  await page.getByRole("button", { name: /^The Quest/ }).click();
+  await expect(page.locator(".crawl-brief")).toContainText("Realms");
+  await expect(page.locator(".crawl-brief")).toContainText("3 regions");
   await expect(page.getByRole("button", { name: /^Choose packs/ })).toHaveCount(
     0,
   );
@@ -31,13 +31,13 @@ test("@release Pub Crawl opens on an adventurer and tonight's omen, then the que
     "Your adventurer",
   );
   await expect(page.locator(".stage-banner")).toHaveText(
-    /Pub Crawl\s*Who's going down tonight\?/,
+    /The Quest\s*Who answers the call\?/,
   );
   // The banner is read out through the page's one waiting live region.
   const spoken = page
     .getByRole("status")
     .and(page.locator("#banner-announcer"));
-  await expect(spoken).toHaveText("Pub Crawl. Who's going down tonight?");
+  await expect(spoken).toHaveText("The Quest. Who answers the call?");
   await expect(page.locator(".stage-banner")).toHaveAttribute(
     "aria-hidden",
     "true",
@@ -49,21 +49,39 @@ test("@release Pub Crawl opens on an adventurer and tonight's omen, then the que
   await page.screenshot({ path: info.outputPath("adventurer.png") });
   await page.locator(".game-card").click();
   await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
-    "Tonight's omen",
+    "The omen",
+  );
+  await page.locator(".game-card").click();
+  await expect(page.locator(".game-card .card-ribbon")).toHaveText("The omen");
+  await page.screenshot({ path: info.outputPath("omen.png") });
+  await page.locator(".game-card").click();
+  // The King's Summons names the run's dragon (Realms, 2026-11-03).
+  await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
+    "The King's Summons",
   );
   await page.locator(".game-card").click();
   await expect(page.locator(".game-card .card-ribbon")).toHaveText(
-    "Tonight's omen",
+    "The Summons",
   );
-  await page.screenshot({ path: info.outputPath("omen.png") });
+  const run = await saved(page);
+  const dragon = cards.find(
+    (c) => c.id === run.quest.finale[run.quest.finale.length - 1],
+  )!;
+  await expect(page.locator(".game-card")).toHaveAccessibleName(
+    new RegExp(dragon.title),
+  );
+  await expect(page.locator(".game-card")).not.toHaveAccessibleName(
+    /\{dragon\}/,
+  );
+  await page.screenshot({ path: info.outputPath("summons.png") });
   await page.locator(".game-card").click();
   await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
-    "The Queue",
+    "The City Gate",
   );
   await expect(page.locator(".stage-banner")).toHaveText(
-    /Pub Crawl\s*The Quarter-Zips cut in/,
+    /The Quest\s*The Company pushes past/,
   );
-  await expect(spoken).toHaveText(/^Pub Crawl\. The Quarter-Zips cut in/);
+  await expect(spoken).toHaveText(/^The Quest\. The Company pushes past/);
   const s = await saved(page);
   expect(s.config.packIds).toEqual(["dungeon"]);
   expect(s.quest.party.omen).toBe(s.quest.finale[0]);
@@ -81,8 +99,8 @@ test("@release a monster shows its stakes; a smoke bomb flees it", async ({
   const goblin = crawlAt("dungeon.drunk-goblin", STEP.floor1, {
     loot: ["smoke"],
   });
-  // The room after it is an ordinary one: an ambush would read "Ambush in
-  // room 2 of 8" instead.
+  // The encounter after it is an ordinary one: an ambush would read
+  // "Ambush in encounter 2 of 8" instead.
   const q = goblin.quest!;
   const next = q.stages[finaleStage(q).stage].cards.find(
     (c) => !c.hits && c.id !== currentCard(goblin).id,
@@ -107,7 +125,7 @@ test("@release a monster shows its stakes; a smoke bomb flees it", async ({
   await page.screenshot({ path: info.outputPath("monster.png") });
   await flee.click();
   await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
-    /^Room 2 of 8/,
+    /^Encounter 2 of 8/,
   );
   const s = await saved(page);
   expect(s.quest.party).toMatchObject({ hearts: H, loot: [] });
@@ -155,7 +173,7 @@ for (const width of [320, 375])
     ).toBe(width);
   });
 
-test("a loaded die rerolls a lost fight", async ({ page }, info) => {
+test("a lucky coin rerolls a lost fight", async ({ page }, info) => {
   await seed(
     page,
     rolled(
@@ -164,7 +182,7 @@ test("a loaded die rerolls a lost fight", async ({ page }, info) => {
     ),
   );
   await expect(page.locator(".study-face")).toHaveClass(/battle-lost/);
-  const reroll = page.getByRole("button", { name: /^Use the Loaded Die/ });
+  const reroll = page.getByRole("button", { name: /^Use the Lucky Coin/ });
   await page.screenshot({ path: info.outputPath("lost-roll.png") });
   await reroll.click();
   await expect(page.locator(".game-card")).toHaveAccessibleName(/^Roll 1d20/);
@@ -183,9 +201,9 @@ test("pushing your luck: cash out, or go again for the next prize", async ({
   await seed(page, won);
   const plaques = page.locator(".card-choice.press .card-choice-option");
   await expect(plaques).toHaveCount(2);
-  await expect(plaques.nth(0)).toHaveAccessibleName("Cash out: Loaded Die");
+  await expect(plaques.nth(0)).toHaveAccessibleName("Cash out: Lucky Coin");
   await expect(page.locator(".game-card .stake-prizes")).toHaveAccessibleName(
-    "Prizes, one a win: Loaded Die, then Healing Draught, then Coaster Shield; 0 banked",
+    "Prizes, one a win: Lucky Coin, then Healing Potion, then Tower Shield; 0 banked",
   );
   await page.screenshot({ path: info.outputPath("press.png") });
   await plaques.nth(1).click();
@@ -195,14 +213,14 @@ test("pushing your luck: cash out, or go again for the next prize", async ({
   await seed(page, won);
   await plaques.nth(0).click();
   await expect(page.locator(".tag-satchel")).toHaveAccessibleName(
-    "Satchel: Loaded Die",
+    "Satchel: Lucky Coin",
   );
   const s = await saved(page);
   expect(s.quest.party.loot).toEqual(["die"]);
   expect(s.quest.step).toBe(STEP.floor1 + 2);
 });
 
-test("a Bar Tab passes a lost fight's drinks to someone else", async ({
+test("a Hired Sword passes a lost fight's drinks to someone else", async ({
   page,
 }, info) => {
   await seed(
@@ -212,12 +230,12 @@ test("a Bar Tab passes a lost fight's drinks to someone else", async ({
       2,
     ),
   );
-  const pass = page.getByRole("button", { name: /^Use the Bar Tab/ });
+  const pass = page.getByRole("button", { name: /^Use the Hired Sword/ });
   await expect(pass).toHaveText("Pass it");
   await page.screenshot({ path: info.outputPath("bar-tab.png") });
   await pass.click();
   await expect(page.locator(".news-banner")).toHaveText(
-    /Bar Tab\s*Point at someone\s*This fight's drinks are theirs\./,
+    /Hired Sword\s*Point at someone\s*This fight's drinks are theirs\./,
   );
   await expect(pass).toHaveCount(0);
   const s = await saved(page);
@@ -251,10 +269,10 @@ test("a boss shows its wounds, its trinket, and comes back until it falls", asyn
     "Boss: 1 of 2 hits",
   );
   await expect(page.locator(".game-card .card-ribbon")).toHaveText(
-    "Catacombs · Boss",
+    "Haunted Crypt · Boss",
   );
   await expect(page.locator(".game-card .stake-trinket")).toHaveAccessibleName(
-    "Felling it offers a trinket: Hydra Tooth or Hydra Scale",
+    "Felling it offers a trinket: Golem's Knuckle or Bone Plate",
   );
   await page.screenshot({ path: info.outputPath("boss.png") });
   // The last swing lands: the spoils sheet opens by itself (2026-10-25).
@@ -281,16 +299,16 @@ test("a boss shows its wounds, its trinket, and comes back until it falls", asyn
   const rows = sheet.locator(".spoils-row");
   await expect(rows).toHaveCount(2);
   await expect(rows.nth(0)).toHaveAccessibleName(
-    "Take the Hydra Tooth, Weapon: +2 to boss d20s. Replaces Queen's Dagger: +1 to monster d20s.",
+    "Take the Golem's Knuckle, Weapon: +2 to boss d20s. Replaces Queen's Dagger: +1 to monster d20s.",
   );
   // What it would replace shows as its own small card: its name and what
-  // it does now (its Healing Draught was handed out when it was taken).
+  // it does now (its Healing Potion was handed out when it was taken).
   await expect(rows.nth(0).locator(".spoils-worn")).toHaveText(
     "ReplacesQueen's Dagger+1 to monster d20s.",
   );
   await expect(rows.nth(1).locator(".spoils-worn")).toHaveCount(0);
   await expect(rows.nth(1)).toHaveAccessibleName(
-    "Take the Hydra Scale, Armor: +2 max hearts.",
+    "Take the Bone Plate, Armor: +2 max hearts.",
   );
   await expect(sheet.locator(".spoils-keep")).toHaveText("Keep my gear");
   await page.screenshot({ path: info.outputPath("spoils.png") });
@@ -304,13 +322,13 @@ test("a boss shows its wounds, its trinket, and comes back until it falls", asyn
   await plaque.click();
   await rows.nth(0).click();
   await expect(page.locator(".still-plaque")).toHaveText(
-    /Trinket found\s*Hydra Tooth\s*\+2 to boss d20s\./,
+    /Gear found\s*Golem's Knuckle\s*\+2 to boss d20s\./,
   );
   await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
-    "The Lower Landing",
+    "The Last Inn",
   );
   await page.screenshot({ path: info.outputPath("trinket.png") });
-  // The Tooth replaced the Shot.
+  // The Knuckle replaced the Dagger.
   expect((await saved(page)).quest.party.boons).toEqual([
     "dungeon.hangover-hydra#0",
   ]);
@@ -318,7 +336,7 @@ test("a boss shows its wounds, its trinket, and comes back until it falls", asyn
   await page.locator(".tag-satchel").click();
   const bag = page.getByRole("dialog", { name: "Satchel" });
   await expect(bag.locator(".crawl-gear .bag-name")).toHaveText(
-    "Hydra ToothWeapon",
+    "Golem's KnuckleWeapon",
   );
   await page.keyboard.press("Escape");
   await meter(page).click();
@@ -335,16 +353,16 @@ test("a lost fight can lay a jinx, shown on the meter and as a moment", async ({
     rolled(reveal(crawlAt("dungeon.goblin-shaman", STEP.floor1)), 2),
   );
   await expect(page.locator(".game-card .stake-jinx")).toHaveAccessibleName(
-    "Losing lays a jinx: Toad Voice",
+    "Losing lays a curse: Toad Voice",
   );
   await page.locator(".game-card").click();
   // The jinx's moment (2026-11-01; a banner before), read under Reduced
   // Motion on its still plaque.
   await expect(page.locator(".still-plaque")).toHaveText(
-    /Jinxed!\s*Toad Voice\s*The jinxed player croaks after every sentence/,
+    /Cursed!\s*Toad Voice\s*The jinxed player croaks after every sentence/,
   );
   await expect(page.locator(".tag-jinx")).toBeVisible();
-  await expect(meter(page)).toHaveAccessibleName(/Jinx: Toad Voice/);
+  await expect(meter(page)).toHaveAccessibleName(/Curse: Toad Voice/);
   await page.screenshot({ path: info.outputPath("jinx.png") });
 });
 
@@ -358,7 +376,7 @@ test("with Reduce Motion a moment's plaque fades and goes, and the splat stays c
   );
   await page.locator(".game-card").click();
   const banner = page.locator(".still-plaque");
-  await expect(banner).toHaveText(/Jinxed!\s*Toad Voice/);
+  await expect(banner).toHaveText(/Cursed!\s*Toad Voice/);
   // The plaque fades rather than vanishing at once: still shown a moment
   // in. Every running animation is held at 400 ms in (rather than sleeping
   // 400 ms, which a slow runner can overshoot), then let go.
@@ -399,59 +417,9 @@ test("with Reduce Motion a moment's plaque fades and goes, and the splat stays c
   await expect(page.locator(".tag-jinx")).toBeVisible();
 });
 
-test("a landing levels the adventurer up for drinks, or rests", async ({
-  page,
-}, info) => {
-  await seed(
-    page,
-    reveal(
-      crawlAt(
-        "dungeon.landing-stairwell",
-        STEP.landing1,
-        {},
-        { adventurer: "barbarian" },
-      ),
-    ),
-  );
-  // The level up names the next level, beside the rest.
-  const plaques = page.locator(".card-choice.offers .card-choice-option");
-  await expect(plaques).toHaveCount(2);
-  await expect(plaques.nth(0)).toHaveAccessibleName(
-    "Berserker · drink 3: your adventurer levels up into Berserker",
-  );
-  await expect(plaques.nth(1)).toHaveAccessibleName("Rest: 3 hearts back");
-  await page.screenshot({ path: info.outputPath("landing.png") });
-  await plaques.nth(0).click();
-  // The level up is a moment (2026-11-01); under Reduced Motion its words
-  // sit on a still plaque.
-  await expect(page.locator(".still-plaque")).toHaveText(
-    /Barbarian levels up!\s*Berserker\s*\+2 max hearts\. \+2 to elite and boss d20s\./,
-  );
-  // Two moments at once, the level-up and the hidden room: both are read.
-  const spoken = page.locator("#banner-announcer");
-  await expect(spoken).toContainText(
-    "Barbarian levels up! Berserker. +2 max hearts. +2 to elite and boss d20s.",
-  );
-  await expect(spoken).toContainText(
-    "Behind the bookcase: The Speakeasy. Wanted: The Proprietor.",
-  );
-  // Next comes the hidden room behind the bookcase: its moment (the
-  // bookcase swinging open, 2026-11-01; a stage banner before) names the
-  // keeper waiting inside, and no stage banner sweeps as well.
-  const s = await saved(page);
-  await expect(page.locator(".still-plaque")).toHaveText(
-    /Behind the bookcase\s*The Speakeasy\s*Wanted: The Proprietor/,
-  );
-  await expect(
-    page.locator(".stage-banner:not(.evolution-banner)"),
-  ).toHaveCount(0);
-  await page.screenshot({ path: info.outputPath("level-up.png") });
-  expect(s.quest.party).toMatchObject({ form: 1, max: H + 2 });
-});
-
-// One line of levels (2026-10-31): the plaques read at a glance on a
-// 320px phone, and the second landing offers the next level.
-test("a level up reads at 320px, then the line goes on", async ({
+// Realms (2026-11-03): an inn rests or stocks up; ranks come from bosses.
+// The plaques read at a glance on a 320px phone.
+test("an inn rests or stocks up, and its plaques read at 320px", async ({
   page,
 }, info) => {
   await page.setViewportSize({ width: 320, height: 640 });
@@ -459,15 +427,17 @@ test("a level up reads at 320px, then the line goes on", async ({
     page,
     reveal(
       crawlAt(
-        "dungeon.landing-stairwell",
+        "dungeon.landing-smoking-area",
         STEP.landing1,
-        {},
+        { hearts: H - 4 },
         { adventurer: "barbarian" },
       ),
     ),
   );
   const plaques = page.locator(".card-choice.offers .card-choice-option");
   await expect(plaques).toHaveCount(2);
+  await expect(plaques.nth(0)).toHaveAccessibleName("Rest: 3 hearts back");
+  await expect(plaques.nth(1)).toHaveAccessibleName(/^Stock up · drink 3/);
   // Every plaque's name and line fit, and each is a full touch target.
   for (let i = 0; i < 2; i++) {
     const box = (await plaques.nth(i).boundingBox())!;
@@ -482,23 +452,63 @@ test("a level up reads at 320px, then the line goes on", async ({
       );
     expect(clipped, `plaque ${i}`).toBe(false);
   }
-  await page.screenshot({ path: info.outputPath("level-up-320.png") });
-  const second = crawlAt(
-    "dungeon.landing-boiler-room",
-    STEP.landing2,
-    { form: 1 },
-    { adventurer: "barbarian" },
-  );
-  await seed(page, reveal(second));
-  await expect(plaques).toHaveCount(2);
-  await expect(plaques.nth(0)).toHaveAccessibleName(
-    "Warlord · drink 3: your adventurer levels up into Warlord",
-  );
+  await page.screenshot({ path: info.outputPath("inn-320.png") });
   await plaques.nth(0).click();
-  await expect(page.locator(".still-plaque")).toHaveText(
-    /Berserker levels up!\s*Warlord/,
+  await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
+    "A Side Quest",
   );
-  expect((await saved(page)).quest.party).toMatchObject({ form: 2 });
+  const s = await saved(page);
+  expect(s.quest.party.hearts).toBe(H - 1);
+  expect(s.quest.party.form ?? 0).toBe(0);
+});
+
+test("a region's boss ranks the adventurer up, and a side quest can be walked past", async ({
+  page,
+}, info) => {
+  // The Bridge Troll's second beat, a duel; the felling Won ranks up. The
+  // swing already landed was a draw too.
+  await seed(page, {
+    ...reveal(
+      crawlAt(
+        "dungeon.keg-golem",
+        STEP.boss1,
+        { hits: 1, rounds: 1 },
+        { adventurer: "barbarian" },
+      ),
+    ),
+    discarded: STEP.boss1 + 1,
+  });
+  await page.getByRole("button", { name: "Won", exact: true }).click();
+  const sheet = page.getByRole("dialog", { name: "Spoils" });
+  await sheet.locator(".spoils-row").nth(1).click();
+  const spoken = page.locator("#banner-announcer");
+  await expect(spoken).toContainText(
+    "Barbarian ranks up! Berserker. +2 max hearts. +2 to elite and boss d20s.",
+  );
+  await page.screenshot({ path: info.outputPath("rank-up.png") });
+  await expect.poll(async () => (await saved(page)).quest.party.form).toBe(1);
+  expect((await saved(page)).quest.step).toBe(STEP.landing1);
+  // The side quest's plea: walk on, and its dungeon leaves the run.
+  await seed(
+    page,
+    reveal(
+      crawlAt("dungeon.quest-goat", STEP.plea, {}, { adventurer: "rogue" }),
+    ),
+  );
+  const plaques = page.locator(".card-choice.offers .card-choice-option");
+  await expect(plaques).toHaveCount(2);
+  await expect(plaques.nth(0)).toHaveAccessibleName(/^Take the quest/);
+  await expect(plaques.nth(1)).toHaveAccessibleName(/^Walk on/);
+  await page.screenshot({ path: info.outputPath("side-quest.png") });
+  await plaques.nth(1).click();
+  await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
+    /^Encounter 1 of 8, The Haunted Crypt/,
+  );
+  const walked = await saved(page);
+  expect(
+    walked.quest.stages.map((st: { label: string }) => st.label),
+  ).not.toContain("The Witch's Cottage");
+  expect(walked.quest.step).toBe(STEP.plea + 1);
 });
 
 // Mishaps (2026-10-31): Pub Crawl's rooms with no roll read one line and
@@ -523,7 +533,7 @@ test("a mishap reads its one line and costs no hearts", async ({ page }) => {
   expect((await saved(page)).quest.party.hearts).toBe(8);
 });
 
-test("a Dog-Eared Tome levels the adventurer up from the satchel", async ({
+test("a Tome of Training ranks the adventurer up from the satchel", async ({
   page,
 }) => {
   await seed(
@@ -594,7 +604,7 @@ test("the party dialog lays out the run: adventurer, boons and jinx", async ({
   await page.keyboard.press("Escape");
   // The jinx chip opens the jinx, and only that.
   await page.locator(".tag-jinx").click();
-  const one = page.getByRole("dialog", { name: "Jinx" });
+  const one = page.getByRole("dialog", { name: "Curse" });
   await expect(one.locator(".crawl-curse")).toHaveCount(1);
   await expect(one.locator(".crawl-curse")).toContainText("Toad Voice");
   await page.screenshot({ path: info.outputPath("jinx.png") });
@@ -615,9 +625,9 @@ test("the party dialog lays out the run: adventurer, boons and jinx", async ({
   await page.getByRole("button", { name: "Open game menu" }).click();
   await page.getByRole("button", { name: "How to play" }).click();
   const guide = page.getByRole("dialog", { name: "How to play" });
-  // One row a system (2026-10-31): hearts, fights, bosses, landings, the
-  // satchel and gear, jinxes.
-  await expect(guide.locator(".guide-rows li")).toHaveCount(6);
+  // One row a system (2026-10-31): hearts, fights, bosses, ranks (Realms),
+  // inns and side quests, the satchel and gear, curses.
+  await expect(guide.locator(".guide-rows li")).toHaveCount(7);
   // The seals, the naturals, and the roll-to-beat gem (2026-10-31).
   await expect(guide.locator(".crawl-legend dd")).toHaveCount(8);
   await expect(guide.locator(".crawl-legend")).toContainText(
@@ -640,15 +650,15 @@ test("losing the last heart wipes the party", async ({ page }, info) => {
   );
   await page.locator(".game-card").click();
   await expect(page.locator(".crawl-end.wiped h1")).toHaveText(
-    /Party\s*wiped\./,
+    /The party\s*has fallen\./,
   );
   await expect(page.locator(".crawl-verdict")).toHaveText(
     "Everyone finishes their drink.",
   );
-  // The queue, three floors and the hidden room, the stairs, closing time,
-  // Last Call.
+  // The gate, three regions and the side quest, the crossroads, the lair's
+  // door, the dragon (the summons is no fight, so it is not listed).
   await expect(page.locator(".crawl-floors li").first()).toContainText(
-    "The Queue",
+    "The City Gate",
   );
   await expect(page.locator(".crawl-floors li").nth(1)).toContainText(
     "The King's Road",
@@ -659,7 +669,7 @@ test("losing the last heart wipes the party", async ({ page }, info) => {
   await expect(meter(page)).toHaveAccessibleName(full);
 });
 
-test("felling the Last Call boss wins the crawl", async ({ page }, info) => {
+test("felling the dragon wins the quest", async ({ page }, info) => {
   let s = reveal(
     crawlAt("dungeon.last-call-lich", STEP.lastCall, {
       hits: 2,
@@ -670,25 +680,25 @@ test("felling the Last Call boss wins the crawl", async ({ page }, info) => {
   await seed(page, s);
   await page.locator(".game-card").click();
   await expect(page.locator(".crawl-end h1")).toHaveText(
-    /Last call,\s*survived\./,
+    /The dragon\s*is slain\./,
   );
   await expect(page.locator(".crawl-verdict")).toHaveText(
-    "Make a rule for the rest of the night.",
+    "Half the kingdom is yours: make a rule for the rest of the night.",
   );
   await page.screenshot({ path: info.outputPath("won.png") });
 });
 
-// The end screen (2026-10-25): the trophy wall (one medallion a boss and
-// closing time, gold when felled, a socket otherwise) and the tab (the
-// adventurer's line, tonight's omen, rooms, trinkets, hearts), both
+// The end screen (2026-10-25): the trophies (one medallion a boss and the
+// lair's door, gold when felled, a socket otherwise) and the ballad (the
+// adventurer's line, the omen, encounters, gear, hearts), both
 // screenshot-ready on a phone.
 for (const width of [320, 390])
   test(`the end screen hangs the trophies and the tab at ${width}px`, async ({
     page,
   }, info) => {
     await page.setViewportSize({ width, height: 844 });
-    // A fully levelled Barbarian (the Warlord), with Happy Hour and a
-    // trinket kept, fells Last Call.
+    // A Barbarian at its second rank (the Warlord), with the Harvest
+    // Festival and a trinket kept, fells the dragon.
     let s = crawlAt(
       "dungeon.last-call-lich",
       STEP.lastCall,
@@ -719,13 +729,13 @@ for (const width of [320, 390])
     await seed(page, s);
     await page.locator(".game-card").click();
     const wall = page.locator(".trophy-wall");
-    await expect(wall).toHaveAccessibleName("Trophy wall: 5 of 5");
+    await expect(wall).toHaveAccessibleName("Trophies: 5 of 5");
     await expect(wall.locator("li.won")).toHaveCount(5);
     await expect(wall.locator("li").first()).toContainText("The Bridge Troll");
-    await expect(wall.locator("li").last()).toContainText("The Last Call Lich");
+    await expect(wall.locator("li").last()).toContainText("Emberfang");
     const tab = page.locator(".run-tab");
     await expect(tab).toContainText("Barbarian → Berserker → Warlord");
-    await expect(tab).toContainText("Happy Hour");
+    await expect(tab).toContainText("Harvest Festival");
     await expect(tab).toContainText("Troll Hide");
     // No trophy's name breaks inside a word.
     const broken = await wall
@@ -760,8 +770,8 @@ test("a wiped run's wall shows the bosses felled and empty sockets", async ({
   await page.locator(".game-card").click();
   await expect(page.locator(".crawl-end.wiped h1")).toBeVisible();
   const wall = page.locator(".trophy-wall");
-  // The Cellar's boss and the hidden room's keeper fell; three wait.
-  await expect(wall).toHaveAccessibleName("Trophy wall: 2 of 5");
+  // The King's Road's boss and the side quest's keeper fell; three wait.
+  await expect(wall).toHaveAccessibleName("Trophies: 2 of 5");
   await expect(wall.locator("li.empty .trophy-name")).toHaveText([
     "?",
     "?",
@@ -837,7 +847,7 @@ test("a merchant sells on plaques, and a price in hearts needs a spare heart", a
   // Greyed but solid: the frame must not show through.
   await expect(plaques.nth(1)).toHaveCSS("opacity", "1");
   await expect(plaques.nth(0)).toHaveAccessibleName(
-    "Drink 3: a Healing Draught",
+    "Drink 3: a Healing Potion",
   );
   await page.screenshot({ path: info.outputPath("merchant.png") });
   // A stray tap on the card does nothing; the plaques decide.
@@ -845,7 +855,7 @@ test("a merchant sells on plaques, and a price in hearts needs a spare heart", a
   expect((await saved(page)).quest.step).toBe(at);
   await plaques.nth(0).click();
   await expect(page.locator(".tag-satchel")).toHaveAccessibleName(
-    "Satchel: Healing Draught",
+    "Satchel: Healing Potion",
   );
   const s = await saved(page);
   expect(s.quest.party).toMatchObject({ hearts: 1, loot: ["draught"] });
@@ -860,13 +870,13 @@ test("a fork's loud door deals one of the floor's elites, which drops a trinket"
     reveal(crawlAt("dungeon.red-or-white", STEP.floor1, {}, { other: true })),
   );
   await expect(page.locator(".game-card .card-ribbon")).toHaveText(
-    "Wine Cellar · Fork",
+    "Old Forest · Fork",
   );
   await page.screenshot({ path: info.outputPath("fork.png") });
-  await page.getByRole("button", { name: /^Red aisle/ }).click();
+  await page.getByRole("button", { name: /^Dark path/ }).click();
   await page.locator(".game-card").click();
   await expect(page.locator(".game-card .card-ribbon")).toHaveText(
-    "Wine Cellar · Elite",
+    "Old Forest · Elite",
   );
   await expect(page.locator(".game-card .stake-loss")).toHaveAccessibleName(
     "Losing costs 2 hearts",
@@ -893,35 +903,37 @@ test("an ambush shows its two swings in the medallion", async ({
     discarded: STEP.floor2 + 3,
   });
   await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
-    "Ambush in room 3 of 8: 1 of 2 hits",
+    "Ambush in encounter 3 of 8: 1 of 2 hits",
   );
   await page.screenshot({ path: info.outputPath("ambush.png") });
 });
 
-test("closing time: the rival party, beaten twice", async ({ page }, info) => {
+test("the lair's door: the rival party, beaten twice", async ({
+  page,
+}, info) => {
   await seed(page, reveal(crawlAt("dungeon.closing-last-table", STEP.closing)));
   await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
-    "Ambush, Closing Time: 0 of 2 hits",
+    "Ambush, The Lair's Door: 0 of 2 hits",
   );
   await expect(page.locator(".game-card .card-ribbon")).toHaveText(
-    "Closing Time · Rival",
+    "The Lair's Door · Rival",
   );
   await page.screenshot({ path: info.outputPath("closing.png") });
 });
 
-test("tonight's omen is kept in the party dialog", async ({ page }, info) => {
+test("the omen is kept in the party dialog", async ({ page }, info) => {
   let s = reveal(crawlAt("dungeon.omen-lock-in", STEP.omen));
   s = advance(s);
   await seed(page, s);
   await meter(page).click();
   const dialog = page.getByRole("dialog", { name: "The party" });
-  await expect(dialog.locator(".crawl-boons")).toContainText("The Lock-In");
+  await expect(dialog.locator(".crawl-boons")).toContainText("Curfew");
   await expect(dialog.locator(".crawl-boons")).toContainText(
     "Bosses take 1 more hit.",
   );
-  // The Lock-In's Loaded Die and shield are in the satchel, on the strip.
+  // Curfew's Lucky Coin and shield are in the satchel, on the strip.
   await expect(page.locator(".tag-satchel")).toHaveAccessibleName(
-    "Satchel: Loaded Die, Coaster Shield",
+    "Satchel: Lucky Coin, Tower Shield",
   );
   await page.screenshot({ path: info.outputPath("omen-party.png") });
 });
@@ -948,7 +960,7 @@ test("a boss's next beat is a duel, and its felling win brings spoils", async ({
   );
   await page.locator(".game-card").click();
   await expect.poll(async () => (await saved(page)).quest.party.hits).toBe(1);
-  // The Golem gets back up: a chug race, settled by the table.
+  // The troll climbs back up: an arm-wrestle, settled by the table.
   await page.locator(".game-card").click();
   await expect(page.locator(".game-card")).toHaveAccessibleName(
     /Arm-wrestle.*Choose Won or Lost/,

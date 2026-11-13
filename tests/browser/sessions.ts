@@ -66,9 +66,11 @@ export function leagueAt(
   };
 }
 
-// Where a run is, step by step: the adventurer, tonight's omen, the queue,
-// the first floor's eight rooms and its boss, a landing, the second floor
-// and its boss, a landing, the third floor, closing time, Last Call.
+// Where a run is, step by step (Realms, 2026-11-03): the adventurer, the
+// omen, the King's Summons, the city gate, the first region's eight
+// encounters and its boss, an inn, a side quest's plea, guards and keeper,
+// the second region and its boss, an inn, the crossroads, the third region,
+// the lair's door, the dragon.
 export const STEP = {
   adventurer: 0,
   omen: 1,
@@ -89,11 +91,12 @@ export const STEP = {
   lastCall: 38,
 };
 
-// A Pub Crawl seeded at `step` with `id` in play, the party as given. The
-// floors are the first at each depth (the Cellar, the Catacombs, the Drowned
-// Taproom) and the Speakeasy, unless `other` picks the second three (the
-// Wine Cellar, the Sewers, the Kitchen) and the Basement, or `route` picks
-// floors by index (2: the Brewery, the Walk-in Freezer, the Rooftop Bar).
+// A Quest seeded at `step` with `id` in play, the party as given. The
+// regions are the first at each depth (the King's Road, the Haunted Crypt,
+// the Sunken Coast) and the Witch's Cottage, unless `other` picks the second
+// three (the Old Forest, the Goblin Mines, the Fire Caverns) and the Sunless
+// Vault, or `route` picks regions by index (2: the Marsh, the Wizard's
+// Tower, the Frozen Pass).
 // With `adventurer`, that class was dealt and put aside first.
 export function crawlAt(
   id: string,

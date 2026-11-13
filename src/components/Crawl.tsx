@@ -504,7 +504,7 @@ export function CardStakes({
         {jinx && (
           <span
             className="stake stake-jinx"
-            aria-label={`${card.battle ? "Losing lays" : "Lays"} a jinx: ${jinx.name}`}
+            aria-label={`${card.battle ? "Losing lays" : "Lays"} a ${(theme.words.jinx?.name ?? "Jinx").toLowerCase()}: ${jinx.name}`}
           >
             <CrawlIcon name="jinx" theme={theme} />
           </span>
@@ -1275,7 +1275,15 @@ export function CrawlRecord({
   for (const [i, stage] of record.stages.entries()) {
     const kind = stage.kind;
     // A run's omens open it and a landing is a pause: neither is a floor.
+    // Nor is a lone card with no fight (the Quest's King's Summons).
     if (stage.omen || kind === "rest") continue;
+    const pool = quest?.stages[i]?.cards ?? stage.cards;
+    if (
+      kind === "set-piece" &&
+      pool.length &&
+      pool.every((c) => !c.battle && !c.hits)
+    )
+      continue;
     const last = floors[floors.length - 1];
     // A boss closes the floor before it; one that follows a set piece or
     // another boss (Last Call, the League's gauntlet) stands on its own.

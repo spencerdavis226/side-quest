@@ -39,8 +39,8 @@ export const omens: CardDefinition[] = [
   omen(
     "cargo-shorts",
     "A Bottomless Bag",
-    "A bag bigger on the inside: drink 3. One more satchel slot, with a Healing Potion in it.",
-    { satchel: 4, loot: ["draught"] },
+    "A bag bigger on the inside: drink 3. One more satchel slot.",
+    { satchel: 4 },
   ),
   omen(
     "butterfingers",

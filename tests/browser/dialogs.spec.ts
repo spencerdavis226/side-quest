@@ -135,12 +135,12 @@ test("home has one How to play, for the mode chosen", async ({ page }) => {
   let guide = page.getByRole("dialog", { name: "How to play" });
   await expect(guide.locator(".guide-rows")).toHaveCount(0);
   await page.keyboard.press("Escape");
-  await page.locator(".quest-mode").filter({ hasText: "Pub Crawl" }).click();
+  await page.locator(".quest-mode").filter({ hasText: "The Quest" }).click();
   await page.getByRole("button", { name: /How to play/ }).click();
   guide = page.getByRole("dialog", { name: "How to play" });
-  // One row a system since 2026-10-31: hearts, fights, bosses, landings,
-  // the satchel and gear, jinxes.
-  await expect(guide.locator(".guide-rows li")).toHaveCount(6);
+  // One row a system since 2026-10-31: hearts, fights, bosses, ranks, inns
+  // and side quests, the satchel and gear, curses (Realms, 2026-11-03).
+  await expect(guide.locator(".guide-rows li")).toHaveCount(7);
 });
 
 test("How to play explains every card from the pause menu", async ({
