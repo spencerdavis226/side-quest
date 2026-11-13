@@ -119,7 +119,7 @@ All 18 treasures are "a thing lies here. Drink 1." All 18 merchants are "takes d
 
 **Owner, 2026-11-13:** "Write the plan to do every change you recommend ... I am ok with substantial engine rewriting ... be thorough in what needs to be done and how, so an opus in a new session can do it."
 
-So every recommendation below is in scope and treated as approved in principle. The table is the list of things the owner can still veto before the phase that builds them, and the two limits that the repo says need a number confirmed.
+So every recommendation below is in scope. **Owner, later the same day, on the four open items:** yes to all. Unlocks: "whatever you think the best AAA style or Hearthstone game would do". The run-length ceiling and the runtime budget: "I don't care ... if it needs to change, do it" (both were set in earlier sessions, not by the owner as fixed rules). Heroic mode: "sounds awesome". Nothing below is waiting on an answer.
 
 | # | What | Built in | Status |
 | --- | --- | --- | --- |
@@ -129,12 +129,12 @@ So every recommendation below is in scope and treated as approved in principle. 
 | D4 | Allies: up to two, sent into fights, can die, and die in the party's place at zero hearts | Phase 4 | Approved in principle |
 | D5 | Dragon lore: up to three, each an edge on one swing at the dragon | Phase 4 | Approved in principle |
 | D6 | The road remembers: deeds and echoes; the Lair's Door depends on the Company's record | Phase 6 | Approved in principle |
-| D7 | The Chronicle (a record across runs) with three unlocks | Phase 7 | Record approved; **unlocks: confirm** (some tables dislike locked content) |
+| D7 | The Chronicle (a record across runs) with unlocks and feats, designed in 4.11 | Phase 7 | Approved |
 | D8 | Joke classes become rare (about 6% of runs) | Phase 6 | Approved in principle |
 | D9 | Kits cut; gambles cut to 2 a region | Phase 1 | Approved in principle |
-| D10 | A won run grows from about 52.6 draws to about 58 to 64. Raise the balance test's ceiling from 55 | Phases 2, 3 | **Confirm the number when measured** |
-| D11 | Runtime budget, now 3,874 of 4,096 KiB | Any | **Ask with a measured number** before changing `scripts/check-budget.ts` |
-| D12 | Heroic mode: a harder Quest unlocked by a first win | Phase 7 | Optional; skip if D7's unlocks are declined |
+| D10 | A won run grows from about 52.6 draws to about 58 to 64 | Phases 2, 3 | Approved: set the balance test's ceiling to the measured mean plus 6, and say the new number in `docs/STATUS.md` |
+| D11 | Runtime budget, now 3,874 of 4,096 KiB | Any | Approved: raise the runtime cap in `scripts/check-budget.ts` when a phase needs it, in steps of 512 KiB, and record the measured size and the new cap in `docs/STATUS.md` and `AGENTS.md`. Keep the other checks (500 KiB per image, 200 KiB gzip per lazy chunk, no card text in the initial chunk, no workshop strings): they protect first load and offline install, not this plan |
+| D12 | Heroic mode: a harder Quest unlocked by a first win | Phase 7 | Approved |
 
 **What still binds (from `AGENTS.md`, unchanged by this plan):**
 
@@ -501,8 +501,22 @@ A record across runs under its own key, `side-quest.chronicle.v1`. It is never p
 
 - **Counts:** runs played and won; dragons slain and dragons that won (per dragon); classes won with (of 18); allies met and allies lost; rare cards seen (of 24); landmarks seen (of 27); echoes seen (of 10); hidden results found (of 12 kinds, shown as "?" until found); the last 10 ballads with their dates.
 - **Where it shows:** a "Chronicle" button on the setup screen when The Quest is the mode; a line on the end screen when a run adds something new ("New in the Chronicle: Tidewrack slain").
-- **Unlocks (confirm D7):** Bartholomew can appear once 3 dragons have been slain. The Dragon King can appear once all nine have. Heroic mode (D12) once any run is won.
-- **Heroic mode:** a toggle under The Quest on the setup screen: 2 fewer hearts, dragons have 1 more health, every region need is 1 higher. Wins are counted separately in the Chronicle.
+- **The rule for unlocks** (how the good run-based games do it): the whole game is there on run one. Nothing a first-time table needs is locked. Unlocks only add variety and a harder way to play, each is earned by something the table did, each is shown in the Chronicle as a silhouette with its condition, and each arrives with its own moment on the end screen.
+
+| Unlock | Earned by | What it adds |
+| --- | --- | --- |
+| The Chronicle itself | Finishing a first run, won or lost | The button appears on the setup screen, opening on that run's ballad |
+| **Heroic mode** | Slaying any dragon | A toggle under The Quest |
+| **The Dragonslayer** (a 16th real class) | Slaying 3 different dragons | A class that starts with one lore and +1 to boss d20s; ranks: Wyrmhunter, Scalebreaker, Dragonsbane |
+| **Bartholomew** | Slaying 3 different dragons | He can be the run's dragon (rare) |
+| **The Dragon King** | Slaying all nine | He can be the run's dragon (rare; always on Heroic once unlocked, at 1 in 10) |
+| A gold mode mark on the setup screen | Slaying the Dragon King | Cosmetic |
+| A second row of nine dragon seals | Heroic mode unlocked | Each dragon can be slain again on Heroic; the long collection |
+
+- **Feats.** Twelve one-line achievements, counted only, shown in the Chronicle as "?" until done, each named on the end screen when earned: The Fool's Ballad (win with a joke class); Nobody Left Behind (win with no ally lost); Pour One Out (lose two allies in one run); Well Read (reach the dragon with three lore); One Blow (kill a dragon on a natural 20); By a Thread (win on one heart); Untouched (win without a curse landing); Well Done, Bradley (Sir Bradley dies at the dragon); The Long Way (take a side quest and win); Straight There (walk past the side quest and win); Full House (see every landmark); Collector (see every rare).
+- **Heroic mode:** a toggle under The Quest on the setup screen: 2 fewer hearts, dragons have 1 more health, every region need is 1 higher, and the enraged move list is used from the first round. Its wins fill the second row of seals.
+- **Lost storage.** iOS can evict site data, and Safari and the Home Screen app do not share it (`src/app/CLAUDE.md`). At the bottom of the Chronicle, in small type: "Unlock everything", behind a confirm. It sets the unlocks and leaves the counts alone. A table that lost its record should not have to earn Heroic twice.
+- **The unlock moment (M24):** on the end screen, after the ballad: a wax seal stamps in with the unlock's name and one line ("Heroic mode: the road is harder now."). Blocks, 2.5 s, tap skips. Phase 7.
 - A table with no Chronicle (fresh install, cleared storage, Safari versus Home Screen app) simply starts from zero. Nothing breaks.
 
 ### 4.12 The ballad
@@ -765,6 +779,9 @@ interface Chronicle {
   fellTo: Record<string, number>;
   classesWon: string[]; allies: string[]; alliesLost: string[];
   rares: string[]; landmarks: string[]; echoes: string[]; secrets: string[];
+  heroicSlain: Record<string, number>;
+  feats: string[];                   // 4.11's twelve, by key
+  unlockedAll?: true;                // the "Unlock everything" switch
   ballads: { at: string; won: boolean; lines: string[] }[]; // last 10
 }
 recordRun(c: Chronicle, s: SessionState, at: string): Chronicle  // idempotent
@@ -812,6 +829,7 @@ Every item is a card to write or edit. New cards need an `imprint.ts` entry, a c
 | Lair's Door | 3 removed, 3 new | `lastcall.ts` | 6 |
 | Echoes | 10 new | new `dungeon/echoes.ts` | 6 |
 | Bartholomew, the Dragon King | 2 new lair fights | `dragons.ts` | 7 |
+| The Dragonslayer class | 1 new class, 3 ranks | `classes.ts` | 7 |
 
 About 95 new cards, about 150 edits, 37 removals. After each content phase: `npm run content:manifest`, `npm run cards:review`, update the counts asserted in `tests/workshop.test.ts`, `tests/dungeon.test.ts` and `tests/dungeon.balance.test.ts` (it asserts 18 adventurers, 20 omens, 9 regions, 5 side quests), and the tables in `src/content/CLAUDE.md` and `AGENTS.md`.
 
@@ -823,13 +841,13 @@ One phase is one session and one pull request. Start each session by reading `AG
 
 **The gate, every phase:** `npm test`; `npm run lint`; `npm run typecheck`; `npm run cards:review`; `BASE_PATH=/side-quest/ npm run build` (budgets); `npm run test:balance` (both files; the League's numbers must not move in any phase); `CI=1 BASE_PATH=/side-quest/ TEST_PORT=4398 npm run test:e2e -- --workers=2` and `test:sweep` in Chromium. New saved state: `npm run fixtures:saves` and `tests/save-fixtures.test.ts` green with every old fixture untouched. Say exactly what ran and what did not (WebKit runs only in CI; no phone).
 
-**Quest balance bands to hold after every phase:** won 18 to 40% (aim for 25 to 32%); every class, omen, side quest and region 10 to 50%; joke classes 1 to 10%; a won run's mean draws under the ceiling the owner confirms (D10). New bands to add when their feature lands: every dragon 12 to 45%; every road pair within 8 points of each other; runs that reach the dragon 45 to 65%; mean lore at the dragon 1.0 to 2.0; at least one ally alive at the dragon in 30 to 60% of runs that reach it.
+**Quest balance bands to hold after every phase:** won 18 to 40% (aim for 25 to 32%); every class, omen, side quest and region 10 to 50%; joke classes 1 to 10%; a won run's mean draws under the test's ceiling (D10: the measured mean plus 6). New bands to add when their feature lands: every dragon 12 to 45%; every road pair within 8 points of each other; runs that reach the dragon 45 to 65%; mean lore at the dragon 1.0 to 2.0; at least one ally alive at the dragon in 30 to 60% of runs that reach it.
 
 - [ ] **Phase 0: split the engine.** 5.0. No behavior change. Done when the gate passes and both balance logs match `main` exactly.
 
 - [ ] **Phase 1: copy, cuts and lairs.** Content only. 4.14 (kits, curse wording, the 22 rewrites, rank lines), 4.8's de-template and mixes, 4.3's lairs: the last three finale slots in `dungeon.ts` become one `oneOf` of three routes `[lair region, Lair's Door, that lair's dragons]`; Tidewrack added as an ordinary three-hit boss for now; Old Mother Brine. Retune after the kits change (classes will move). Done when the gate passes and each class is back inside its band.
 
-- [ ] **Phase 2: the dragon battle.** 4.4, 5.2, moments M15 to M20 (the ending part). Nine dragons rewritten as lair fights in `dungeon/dragons.ts`. The strip's scale row in `CrawlStrip` (`Crawl.tsx:308`). Add the dragon bands. Confirm D10 with the measured length. Done when a run can be played to a kill and to a wipe in the browser, `tests/lair.test.ts` and the four fixtures are in, and the gate passes.
+- [ ] **Phase 2: the dragon battle.** 4.4, 5.2, moments M15 to M20 (the ending part). Nine dragons rewritten as lair fights in `dungeon/dragons.ts`. The strip's scale row in `CrawlStrip` (`Crawl.tsx:308`). Add the dragon bands. Set the D10 ceiling from the measured length. Done when a run can be played to a kill and to a wipe in the browser, `tests/lair.test.ts` and the four fixtures are in, and the gate passes.
 
 - [ ] **Phase 3: structure and names.** 4.3 (`{lair}`, name filling everywhere, the Summons, the signs), 5.3 (inserts), 4.8 (27 landmarks and Approaches), `Offer.boon` and `Offer.jinx` (5.4), the ballad (4.12, `ballad.ts`), moments M2, M5, M9, M20's ballad, M21. Lore plaques are written now but give nothing until Phase 4: until then a lore plaque gives a Lucky Coin (a one-line switch in the builder). Fixtures: a run inside a landmark, a run ended with a ballad. Done when the names test, the gate and the fit sweep pass.
 
@@ -839,7 +857,7 @@ One phase is one session and one pull request. Start each session by reading `AG
 
 - [ ] **Phase 6: rare things.** 4.9, 4.10, 5.7, moments M6, M13, M14, M22, M23. The balance test forces each joke class and each rare (deal it directly, as its `deal` helper does) instead of waiting on odds. Done when `tests/rare.test.ts`, `tests/deeds.test.ts`, the fixtures and the gate pass.
 
-- [ ] **Phase 7: the Chronicle.** 4.11, 5.8, Bartholomew and the Dragon King, Heroic mode if D12 stands. Done when a Chronicle survives a reload, a malformed one resets alone, a session save never references it, and the gate passes.
+- [ ] **Phase 7: the Chronicle.** 4.11, 5.8, the unlock table and the twelve feats, The Dragonslayer class, Bartholomew and the Dragon King, Heroic mode, M24. Done when a Chronicle survives a reload, a malformed one resets alone, a session save never references it, and the gate passes.
 
 - [ ] **Phase 8: the owner's table.** Not code. The owner plays two full runs on a phone and reports: does the last half hour drag, do the allies die too fast to love, is the dragon's turn slow in the hand, does the map read at arm's length. Tune from that. Record device results in `docs/DEVICE_CHECKLIST.md`.
 
@@ -856,7 +874,7 @@ One phase is one session and one pull request. Start each session by reading `AG
 - **The last stand may make runs too safe.** Two allies are two extra lives. Tune with hearts, or limit it to one per run.
 - **Length.** About 58 to 64 draws plus the battle's pace. Only a real table can say if it drags.
 - **Balance drift.** Almost every phase moves the win rate. Retune at the end of each phase, not at the end of the project.
-- **Budget.** Moments CSS is already 5,401 lines. Expect to need D11.
+- **Budget.** Moments CSS is already 5,401 lines. Expect to use D11; a bigger runtime means a bigger offline install, so keep measuring and say the number.
 - **Unverified reads.** These are true as read at `2a79dbb` but were not executed: that `spoils` works on a card with `dice.choice` (needed by The Thing Below); that the stage banner can take filled names; that `withNaturals` preserves unknown outcome fields; that `reuseExistingServer` and the workshop's `?moments=1` stage need no change for new moment kinds. Check each when its phase reaches it.
 - **No device evidence.** Every moment is a design on paper. Emulated WebKit is not an iPhone.
 - **Humor is unproven.** The example cards are drafts in the house voice, checked against length rules by eye. Several plaque labels in the tables are longer than the 18-character limit and are written as intent, not final copy.
