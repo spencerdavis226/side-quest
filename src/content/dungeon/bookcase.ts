@@ -46,7 +46,10 @@ export const hiddenRooms: HiddenRoom[] = [
         "flapper-fran",
         "The Witch's Cat",
         "A black cat blocks the path and judges you. Do your best cat for 5 seconds, then roll d20.",
-        vs("It's not impressed. Drink 3.", "It purrs and lets you by. Give 3."),
+        vs(
+          "It's not impressed. Drink 3.",
+          "It purrs and lets you by. Scratch someone behind the ears; they drink 3.",
+        ),
       ),
       guard(
         cottage,
@@ -105,7 +108,7 @@ export const hiddenRooms: HiddenRoom[] = [
         "The bandits charge a toll to get in, and another to get out. Roll 2d6.",
         pair(
           "You pay both. Drink 3.",
-          "You pay in fake coins. Give 3.",
+          "You pay in fake coins. Give 3 to whoever looks richest.",
           "A pair! They pay you. Everyone else drinks 2.",
         ),
       ),
@@ -121,7 +124,10 @@ export const hiddenRooms: HiddenRoom[] = [
         "the-bodyguard",
         "The Gatekeeper",
         "Seven feet tall, one eye, and he wants the password. Roll d20.",
-        vs("Wrong password. Drink 3.", "You walk in like you own it. Give 3."),
+        vs(
+          "Wrong password. Drink 3.",
+          "You walk in like you own it. Give 3 to whoever's royalty here.",
+        ),
       ),
     ],
     keeper: keeper(
@@ -158,7 +164,10 @@ export const hiddenRooms: HiddenRoom[] = [
         "the-accountant",
         "The Barrow Wight",
         "A dead lord in rusted armor, counting his coins, and you. Roll d20.",
-        vs("You're counted. Drink 3.", "You knock his helmet off. Give 3."),
+        vs(
+          "You're counted. Drink 3.",
+          "You knock his helmet off. Give 3 to whoever owes you money.",
+        ),
       ),
       guard(
         barrow,
@@ -239,7 +248,10 @@ export const hiddenRooms: HiddenRoom[] = [
         "the-dealer",
         "The Drowned Priest",
         "He has prayed underwater for a hundred years and wants you to join him. Roll d20.",
-        vs("He blesses you, wetly. Drink 3.", "You ring his bell. Give 3."),
+        vs(
+          "He blesses you, wetly. Drink 3.",
+          "You ring his bell. Bless someone; they drink 3.",
+        ),
       ),
     ],
     keeper: keeper(
@@ -283,7 +295,10 @@ export const hiddenRooms: HiddenRoom[] = [
         "the-ref",
         "The Rune Door",
         "A door covered in runes that change when you look away. Roll d20.",
-        vs("The runes bite. Drink 3.", "It swings open. Give 3."),
+        vs(
+          "The runes bite. Drink 3.",
+          "It swings open. Hold the door for someone; they drink 3.",
+        ),
       ),
       guard(
         vault,

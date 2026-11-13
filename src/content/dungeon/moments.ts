@@ -285,8 +285,8 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
     moment(
       8,
       "rooftop-skyline-toast",
-      "Skyline Toast",
-      "Everyone toasts something they can see from here. Repeat a toast: drink 2.",
+      "Peak Toast",
+      "Everyone toasts something they can see from up here. Repeat a toast: drink 2.",
     ),
     moment(
       8,
@@ -297,8 +297,8 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
     moment(
       8,
       "rooftop-pigeon",
-      "Group Selfie",
-      "Everyone squeezes into one selfie with the skyline. Anyone cut off or blinking drinks 2.",
+      "Group Portrait",
+      "Everyone squeezes into one pose for the painter. Anyone cut off or blinking drinks 2.",
     ),
     moment(
       8,
@@ -311,8 +311,8 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
     moment(
       8,
       "rooftop-first-to-post",
-      "First to Post",
-      "On three, everyone points at who will post this roof first. Most fingers: give 3.",
+      "First Down",
+      "On three, everyone points at who'll be first down the mountain. Most fingers: give 3.",
     ),
   ],
 };

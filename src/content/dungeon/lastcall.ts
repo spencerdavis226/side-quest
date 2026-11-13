@@ -27,7 +27,7 @@ export const queueCards: CardDefinition[] = [
     "Sir Bradley has a charter from the king's cousin. Name a bigger patron, then roll d20.",
     vs(
       "The cousin really is important. Drink 3.",
-      "Nobody has heard of the cousin. Give 3.",
+      "Nobody has heard of the cousin. Give 3 to whoever has the fanciest cousin.",
     ),
     { loot: "draught" },
   ),
@@ -44,7 +44,7 @@ export const queueCards: CardDefinition[] = [
     "Thaddeus tells the gate guard you're his squires. You're not. Roll 2d6 to argue.",
     pair(
       "The guard believes him. Carry his bags and drink 3.",
-      "The guard believes you. Give 3.",
+      "The guard believes you. Pick someone to be your squire; they drink 3.",
       "A pair! The guard sends them to the back. Everyone else drinks 2.",
     ),
     { loot: "shield" },
@@ -86,7 +86,7 @@ export const queueCards: CardDefinition[] = [
     "Chadwick tells the guard you're paying the toll for the whole Company. Roll d20.",
     vs(
       "The guard believes him. Drink 3.",
-      "The guard charges Chadwick double. Give 3.",
+      "The guard charges Chadwick double. Give 3, twice, to the same person.",
     ),
     { loot: "draught" },
   ),
@@ -96,7 +96,7 @@ export const queueCards: CardDefinition[] = [
     "Thaddeus forged a royal seal out of a potato, and he's pressing it on you. Roll d20.",
     vs(
       "It works on you. Drink 3.",
-      "You wash it off in a horse trough. Give 3.",
+      "You wash it off in a horse trough. Seal someone's hand; they drink 3.",
     ),
     { loot: "shield" },
   ),
@@ -129,7 +129,7 @@ export const stairsCards: CardDefinition[] = [
     "A painter is doing the Company's portrait across the whole road, and you're in it. Roll 2d6.",
     pair(
       "You're painted out. Drink 4.",
-      "You pull a face in the background. Give 4.",
+      "You pull a face in the background. Everyone poses; the worst pose drinks 4.",
       "A pair! It's your portrait now. Everyone else drinks 2.",
     ),
     { loot: "shield" },
@@ -145,16 +145,23 @@ export const stairsCards: CardDefinition[] = [
     "leaderboard",
     "The Kill Count",
     "Sir Bradley keeps a tally of monsters slain, and you're second. Roll d20.",
-    vs("He pulls ahead. Drink 4.", "You overtake him. Give 4.", {
-      crit: "You lap him twice. Everyone else drinks 3.",
-    }),
+    vs(
+      "He pulls ahead. Drink 4.",
+      "You overtake him. Give 4 to whoever's last.",
+      {
+        crit: "You lap him twice. Everyone else drinks 3.",
+      },
+    ),
     { loot: "smoke" },
   ),
   stairs(
     "recruitment",
     "The Recruitment",
     "The Company wants you. Thaddeus is holding out a gold cape. Roll d20 to say no.",
-    vs("You say yes. Drink 4.", "You say no and mean it. Give 4."),
+    vs(
+      "You say yes. Drink 4.",
+      "You say no and mean it. Throw someone a cape; they drink 4.",
+    ),
     {
       loot: "round",
       jinx: {

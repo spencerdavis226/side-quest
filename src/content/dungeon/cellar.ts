@@ -6,6 +6,7 @@ import {
   fork,
   merchant,
   monster,
+  pair,
   relic,
   shrine,
   mishap,
@@ -231,13 +232,21 @@ export const cellar: FloorCards = {
           "It tramples four seats. You drink {first}; the next three clockwise drink {second}, {third} and {fourth}.",
       },
     },
+    // 2d6, and doubles are a better win.
     monster(
       0,
       "barback-poltergeist",
       "Pickpocket",
-      "A small boy keeps bumping into you. Your purse is lighter every time. Roll d20.",
-      "He's gone, and so is your purse. Drink 3.",
-      "You catch him by the collar. Give 3.",
+      "A small boy keeps bumping into you. Your purse is lighter every time. Roll 2d6.",
+      "",
+      "",
+      {
+        roll: pair(
+          "He's gone, and so is your purse. Drink 3.",
+          "You catch him by the collar. Make someone turn out their pockets, then give 3.",
+          "He robs everyone else instead. Everyone else drinks 3.",
+        ),
+      },
     ),
     // A secret on a clock.
     {
@@ -296,7 +305,7 @@ export const cellar: FloorCards = {
       "An unlocked chest sits in the middle of the road. Nobody is around. Open it, or walk on.",
       11,
       "It was a mimic. Drink 4.",
-      "Gold, and something useful. Give 3.",
+      "Gold, and something useful. Flip someone a coin; they drink 3.",
       ["Walk on", "Open it"],
       { loot: "draught" },
     ),

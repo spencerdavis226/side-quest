@@ -139,8 +139,8 @@ const jinxes: Readonly<Record<string, Jinx>> = {
     rule: "The jinxed player sips water between every drink. Forgets: drink 1.",
   },
   "closing-venmo-request": {
-    name: "Request Sent",
-    rule: "The jinxed player says 'I'll Venmo you' when given a drink. Forgets: drink 1.",
+    name: "I Owe You",
+    rule: "The jinxed player says 'I'll pay you back' when given a drink. Forgets: drink 1.",
   },
 };
 
