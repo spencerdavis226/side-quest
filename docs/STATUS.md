@@ -4,7 +4,7 @@ Updated 2026-11-13. **Single authoritative handoff.** Read `AGENTS.md` first. Ol
 
 ## Next task (2026-11-13): The Quest 2.0 Phase 1 (copy, cuts and lairs)
 
-Phase 0 is done on branch `claude/quest-2-phase-0-xptjr7` (pull request, not merged; nothing on `main`). Next is **Phase 1** of `docs/QUEST_2_PLAN.md` section 7: content only (kits folded into classes, "cursed player" wording, the 22 pub-skeleton rewrites, rank lines, de-templating and region mixes, lairs as a `oneOf` of three routes, Tidewrack, Old Mother Brine), then retune so every class is back in its band.
+Phase 0 is merged (PR #72, `2197c97`) and **deployed** by CI run #302 (every job green: build, checks, both balance jobs, Chromium and WebKit release, update, deploy). Next is **Phase 1** of `docs/QUEST_2_PLAN.md` section 7: content only (kits folded into classes, "cursed player" wording, the 22 pub-skeleton rewrites, rank lines, de-templating and region mixes, lairs as a `oneOf` of three routes, Tidewrack, Old Mother Brine), then retune so every class is back in its band.
 
 ## Done 2026-11-13: The Quest 2.0 Phase 0, the engine split (no behavior change)
 
