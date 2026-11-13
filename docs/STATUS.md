@@ -4,7 +4,7 @@ Updated 2026-11-13. **Single authoritative handoff.** Read `AGENTS.md` first. Ol
 
 ## Next task (2026-11-13): The Quest 2.0 Phase 2 (the dragon battle)
 
-Phase 1 is done on branch `claude/quest-2-phase-0-xptjr7` (pull request, not merged). Next is **Phase 2** of `docs/QUEST_2_PLAN.md` section 7: the dragons as lair fights (4.4, 5.2), the scale row on the strip, moments M15 to M20, the dragon bands and the D10 run-length ceiling from the measured length.
+Phase 1 is merged (PR #73, `e7c3d93`) and **deployed** by CI run #304, on its second attempt: the first failed one WebKit @release test, `pages.spec.ts` "Pages manifest, assets and production exclusion", which read the page root's background as transparent right after the second navigation (the stylesheet not yet applied; the same build passed it on the PR). The test now polls that colour (`expect.poll`) instead of reading it once; the assertion is unchanged (Chromium, 10 repeats, 80 of 80; WebKit is not installed in this container, so CI checks it). Next is **Phase 2** of `docs/QUEST_2_PLAN.md` section 7: the dragons as lair fights (4.4, 5.2), the scale row on the strip, moments M15 to M20, the dragon bands and the D10 run-length ceiling from the measured length.
 
 ## Done 2026-11-13: The Quest 2.0 Phase 1, copy, cuts and lairs
 
