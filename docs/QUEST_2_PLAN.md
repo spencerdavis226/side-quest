@@ -1,6 +1,6 @@
 # The Quest 2.0: review and execution spec
 
-Written 2026-11-13 from a full read of the Realms pack (all 586 cards, `src/content/dungeon/`, `src/content/dungeon.ts`), the engine (`src/game/engine.ts`, `types.ts`), the moments layer (`src/components/moments/`) and the League for comparison. **Nothing here is implemented.** This file is the build spec for a later session; `docs/STATUS.md` points here.
+Written 2026-11-13 from a full read of the Realms pack (all 586 cards, `src/content/dungeon/`, `src/content/dungeon.ts`), the engine (`src/game/engine.ts`, `types.ts`), the moments layer (`src/components/moments/`) and the League for comparison. **Phase 0 is done (2026-11-13); nothing else is implemented.** This file is the build spec for a later session; `docs/STATUS.md` points here.
 
 How to use it: sections 1 and 2 are the review (why). Section 3 is what the owner approved and what still binds. Section 4 is the design (what the table sees). Section 5 is the engine and save specification (how). Section 6 lists every card to write. Section 7 is the order of work: one phase per session and per pull request, each with a definition of done. Section 8 is what could go wrong and what was read but not run.
 
@@ -598,6 +598,15 @@ Proof of no change: `npm test`, `npm run typecheck`, `npm run lint`, both balanc
 
 Add one helper while there: `stageCards(stage)` returning every card a stage snapshot holds (`cards`, `elite`, and later `rare`, `inserts`, `variants`). Use it in `finaleCard` (`engine.ts:372`) and `validateQuest` (`persistence.ts:132`), which today each list `cards` and `elite` by hand.
 
+**As built (Phase 0, 2026-11-13).** The table above held, with these corrections found while doing it:
+
+- **Functions the table did not place.** `packCardIds` went to `stages.ts`; `partyType`, `cardMatchup`, `cardEdge`, `strikeOutcome`, `strikeText` and the private `joinTeam`, `canThrowAt`, `throwAt`, `settleThrow` to `team.ts`; `awaitingChoice`, `awaitingVerdict` and the `Outcome` type's users to `discard.ts` (`Outcome` itself is declared in `party.ts`, beside `settleParty`); `lostRoll` to `loot.ts`; the private `add` to `party.ts`.
+- **`repace` moved to `discard.ts`**, its only caller, instead of staying in `engine.ts`: kept in `engine.ts` it would have had to become a new public export.
+- **Circular imports are unavoidable, and safe.** Almost every crawl function reads `currentCard` (which the table keeps in `engine.ts`) and `discard` is called from five modules, so the modules import one another and `engine.ts` in a cycle. ES modules allow this because no module calls an import while it loads. The rule that keeps it safe, now in `src/game/CLAUDE.md`: a module in `crawl/` has only declarations and literals at the top level. `dice.ts` still imports `engine.ts` only; the crawl modules import `rollWins` from `dice.ts` directly.
+- **Internals stay internal.** `engine.ts` re-exports by name, not with `export *`, so its public exports are exactly the 81 runtime names it had before plus `stageCards` (checked by importing it before and after and comparing the key lists). Functions that became `export` inside `crawl/` so a sibling can call them (`discard`, `settleParty`, `gainBoon`, `evolve`, `joinTeam`, `throwAt`, `settleThrow`, `newParty`, `withNames`, `withSecret`, `hurt`) are not re-exported.
+- **`stageCards` keeps `validateQuest`'s `Array.isArray` guards**, because it runs on a save before the save is known to be well formed. `retireSystems` (`persistence.ts:322`) also lists `cards` and `elite`, but on raw untyped objects before validation; it was left as it is.
+- **Line references in 5.1 to 5.8** (`engine.ts:NNN`) are to the single file at `2a79dbb`. After Phase 0 find each function in the module this table names; the code itself did not change.
+
 ### 5.1 Types (`src/game/types.ts`), all additions optional
 
 ```ts
@@ -843,7 +852,7 @@ One phase is one session and one pull request. Start each session by reading `AG
 
 **Quest balance bands to hold after every phase:** won 18 to 40% (aim for 25 to 32%); every class, omen, side quest and region 10 to 50%; joke classes 1 to 10%; a won run's mean draws under the test's ceiling (D10: the measured mean plus 6). New bands to add when their feature lands: every dragon 12 to 45%; every road pair within 8 points of each other; runs that reach the dragon 45 to 65%; mean lore at the dragon 1.0 to 2.0; at least one ally alive at the dragon in 30 to 60% of runs that reach it.
 
-- [ ] **Phase 0: split the engine.** 5.0. No behavior change. Done when the gate passes and both balance logs match `main` exactly.
+- [x] **Phase 0: split the engine.** 5.0. No behavior change. Done when the gate passes and both balance logs match `main` exactly. Done 2026-11-13: both balance logs byte-identical to `main`; corrections in 5.0's "As built".
 
 - [ ] **Phase 1: copy, cuts and lairs.** Content only. 4.14 (kits, curse wording, the 22 rewrites, rank lines), 4.8's de-template and mixes, 4.3's lairs: the last three finale slots in `dungeon.ts` become one `oneOf` of three routes `[lair region, Lair's Door, that lair's dragons]`; Tidewrack added as an ordinary three-hit boss for now; Old Mother Brine. Retune after the kits change (classes will move). Done when the gate passes and each class is back inside its band.
 

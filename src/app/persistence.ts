@@ -11,6 +11,7 @@ import {
   omenForm,
   previousCard,
   satchelSize,
+  stageCards,
   TEAM_SIZE,
   validConfig,
 } from "../game/engine";
@@ -129,10 +130,7 @@ function validateQuest(s: SessionState) {
   if (!q) return;
   if (!Array.isArray(q.stages) || !q.stages.length || !Array.isArray(q.finale))
     throw Error("Invalid quest");
-  const pool = q.stages.flatMap((stage) => [
-    ...(Array.isArray(stage?.cards) ? stage.cards : []),
-    ...(Array.isArray(stage?.elite) ? stage.elite : []),
-  ]);
+  const pool = q.stages.flatMap(stageCards);
   validateCatalog(pool, []);
   // The finale is each stage's picks, in stage order, with no repeats; a
   // crawl floor's fork may have swapped one of its later rooms for an elite.
