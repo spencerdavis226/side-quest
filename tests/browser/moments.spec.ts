@@ -262,7 +262,7 @@ test("a jinx is laid on a scroll that rolls up into the jinx chip", async ({
   await expect(scroll).toBeVisible();
   await expect(scroll).toContainText("Toad Voice");
   await expect(scroll).toContainText(
-    "The jinxed player croaks after every sentence",
+    "The cursed player croaks after every sentence",
   );
   // Its seal flies into the strip's jinx chip, then the moment ends.
   await expect(page.locator(".moment-flier")).toHaveCount(1, {

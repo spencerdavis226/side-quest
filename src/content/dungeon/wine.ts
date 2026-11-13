@@ -7,7 +7,6 @@ import {
   d20,
   elite,
   fork,
-  fuse,
   GUESSED,
   merchant,
   monster,
@@ -110,7 +109,7 @@ export const wine: FloorCards = {
         ),
         jinx: {
           name: "Wisp-Struck",
-          rule: "Nobody may look the jinxed player in the eye. Caught: drink 1.",
+          rule: "Nobody may look the cursed player in the eye. Caught: drink 1.",
         },
       },
     ),
@@ -185,16 +184,6 @@ export const wine: FloorCards = {
       { crit: "You slide down it like a sled. Give 4." },
     ),
     // A hidden fuse.
-    {
-      ...mishap(
-        3,
-        "Trap",
-        "sulfite-cloud",
-        "Spore Cloud",
-        "Light the fuse. Pass a cup clockwise, naming a tree. The spores hit whoever holds it.",
-      ),
-      timer: fuse("The spores burst. Whoever is holding the cup drinks 3."),
-    },
     trap(
       3,
       "cork-mines",
@@ -305,7 +294,7 @@ export const wine: FloorCards = {
         loot: "draught",
         jinx: {
           name: "Fairy Manners",
-          rule: "The jinxed player drinks with their pinky out. Caught without it: drink 1.",
+          rule: "The cursed player drinks with their pinky out. Caught without it: drink 1.",
         },
       },
     ),
@@ -313,14 +302,14 @@ export const wine: FloorCards = {
       3,
       "cellar-masters-coat",
       "A Hunter's Pack",
-      "A pack hung on a branch: rope, jerky and a smoke bomb. Drink 1.",
+      "A pack hung on a branch: rope, jerky and a smoke bomb. Chew some pretend jerky, loudly.",
       "smoke",
     ),
     treasure(
       3,
       "the-magnum",
       "Healing Herbs",
-      "A patch of healing herbs in a sunbeam. Drink 1, and brew the rest into a potion.",
+      "A patch of healing herbs in a sunbeam. Sniff your drink like a healer, and brew a potion.",
       "draught",
     ),
     shrine(
@@ -335,16 +324,11 @@ export const wine: FloorCards = {
       "The Fairy Lights",
       "A clearing full of floating lights. Everyone makes a wish and blows on one.",
     ),
-    merchant(
+    shrine(
       3,
-      "cellar-cat",
-      "The Fox Trader",
-      "A fox in a waistcoat sells whatever the hunters dropped. He takes drinks, or blood.",
-      [
-        { label: "Drink 3", loot: "round" },
-        { label: "Bleed for it", cost: 1, loot: "shield" },
-        { label: "Walk on" },
-      ],
+      "forest-white-stag",
+      "The White Stag",
+      "A white stag watches from the trees, and the forest goes still. Everyone raises a glass, silently.",
     ),
     merchant(
       3,
@@ -353,16 +337,16 @@ export const wine: FloorCards = {
       "An old man with a basket swears every mushroom is safe. He insists you taste one.",
       [
         { label: "Taste · drink 3", loot: "draught" },
-        { label: "Bleed for it", cost: 2, loot: "candy" },
+        { label: "Eat the red one", cost: 2, loot: "candy" },
         { label: "Walk on" },
       ],
     ),
     fork(
       3,
       "red-or-white",
-      "Two Paths",
-      "Two paths. One is sunny. The other is where the screaming is coming from.",
-      ["Sunny path", "Dark path"],
+      "The Shortcut",
+      "A woodcutter swears the shortcut through the thorns saves a day. He has never taken it.",
+      ["The long way", "The shortcut"],
     ),
     fork(
       3,
@@ -373,30 +357,12 @@ export const wine: FloorCards = {
     ),
     gamble(
       3,
-      "vintage-auction",
-      "The Elf Market",
-      "Bid on an elven blade. Win, then cash out or raise the bid, harder. Roll d20.",
-      "Outbid by an elf. Drink 3.",
-      "Sold. Give 2.",
-      ["draught", "shield", "candy"],
-    ),
-    gamble(
-      3,
       "mimic-cask",
       "The Wishing Tree",
       "Shake the tree for a gift, until it drops a beehive. Cash out or shake again. Roll d20.",
       "Beehive. Drink 3.",
       "A gift falls. Give 2.",
       ["draught", "draught", "revive"],
-    ),
-    gamble(
-      3,
-      "spin-the-bottle",
-      "The Pixie Wheel",
-      "Pixies spin a wheel of fortune. Win, then cash out or spin again, harder. Roll d20.",
-      "It points at you. Drink 3.",
-      "It points at your left neighbor. Give 2.",
-      ["smoke", "die", "shield"],
     ),
   ],
   elites: [
@@ -482,7 +448,7 @@ export const wine: FloorCards = {
       {
         jinx: {
           name: "Curtsy Court",
-          rule: "The jinxed player curtsies before every drink. Forgets: drink 1.",
+          rule: "The cursed player curtsies before every drink. Forgets: drink 1.",
         },
         drops: [
           trinket("Thorn Crown", { hearts: 1, satchel: 4 }),

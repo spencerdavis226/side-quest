@@ -59,6 +59,8 @@ export type Moment = {
       to: string;
       kicker: string;
       change: string;
+      /** The class's rank-up line for the table (the Quest). */
+      line?: string;
       fromType?: PokemonType;
       toType?: PokemonType;
     }
@@ -420,6 +422,7 @@ export function momentsBetween(
           ? describeChange(now.before, effect, words, base)
           : "";
       const evolving = theme.words.evolving;
+      const line = now ? theme.rankLines?.[now.card.id] : undefined;
       if (now && from && evolving) {
         out.push({
           kind: "evolution",
@@ -429,9 +432,10 @@ export function momentsBetween(
           to: now.title,
           kicker: evolving(from),
           change,
+          ...(line ? { line } : {}),
           fromType: prior?.type ?? now.card.type,
           toType: now.type,
-          say: `${evolving(from)} ${now.title}. ${change}`,
+          say: `${evolving(from)} ${now.title}. ${change}${line ? ` ${line}` : ""}`,
         });
       }
     }

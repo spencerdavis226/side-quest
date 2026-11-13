@@ -41,12 +41,17 @@ export function questRoute(
       : [slot],
   );
 }
-/** Every card a quest's finale stages can deal, elites included. */
+/** Every card a quest's finale stages can deal, elites included, each
+ * once (sibling routes may share cards: every lair has the same door). */
 export function finaleCardIds(rules: PackQuest): string[] {
-  return questStages(rules).flatMap((stage) => [
-    ...stage.cardIds,
-    ...(stage.elite ?? []),
-  ]);
+  return [
+    ...new Set(
+      questStages(rules).flatMap((stage) => [
+        ...stage.cardIds,
+        ...(stage.elite ?? []),
+      ]),
+    ),
+  ];
 }
 /** Draw each stage's cards at random, in stage order. A fork is never the
  * last room of its floor, so its loud door always has a room to swap. */

@@ -5,7 +5,6 @@ import {
   d20,
   elite,
   fork,
-  fuse,
   gamble,
   GUESSED,
   merchant,
@@ -91,7 +90,7 @@ export const brewery: FloorCards = {
         crit: "You call it radiant, and it finally lies back down. Give 6.",
         jinx: {
           name: "Second Opinion",
-          rule: "Anyone who agrees with the jinxed player drinks 1.",
+          rule: "Anyone who agrees with the cursed player drinks 1.",
         },
       },
     ),
@@ -189,16 +188,6 @@ export const brewery: FloorCards = {
       "You surf it out. Give 2 to whoever would have panicked.",
     ),
     // A hidden fuse.
-    {
-      ...mishap(
-        6,
-        "Trap",
-        "co2-leak",
-        "Marsh Gas",
-        "Light the fuse. Pass a cup clockwise, all talking in deep voices. The gas hits whoever holds it.",
-      ),
-      timer: fuse("The gas goes up. Whoever is holding the cup drinks 3."),
-    },
     trap(
       6,
       "hot-wort",
@@ -316,14 +305,14 @@ export const brewery: FloorCards = {
       6,
       "bottle-cap-stash",
       "A Smuggler's Jar",
-      "A sealed jar in the reeds, and a lucky coin inside it. Drink 1.",
+      "A sealed jar in the reeds, and a lucky coin inside it. Flip a pretend coin and call it.",
       "die",
     ),
     treasure(
       6,
       "the-growler",
       "The Herbalist's Hut",
-      "An empty hut with one potion on the shelf, labeled YOURS. Drink 1, and keep it.",
+      "An empty hut with one potion on the shelf, labeled YOURS. Say thank you to nobody, and keep it.",
       "draught",
     ),
     shrine(
@@ -332,20 +321,14 @@ export const brewery: FloorCards = {
       "The Fireflies",
       "A clearing full of fireflies. Everyone toasts their left neighbor.",
     ),
-    shrine(
-      6,
-      "brewers-break",
-      "The Fisher's Shack",
-      "Smoked fish and one dry chair. Everyone eats a pretend fish and sips.",
-    ),
     merchant(
       6,
       "apprentice-brewer",
       "The Hag's Apprentice",
       "The hag's apprentice is selling off her potions while she's out.",
       [
-        { label: "Drink 3", loot: "draught" },
-        { label: "Bleed for it", cost: 1, loot: "shield" },
+        { label: "Buy · drink 3", loot: "draught" },
+        { label: "Give her blood", cost: 1, loot: "shield" },
         { label: "Walk on" },
       ],
     ),
@@ -356,16 +339,16 @@ export const brewery: FloorCards = {
       "He sells eels out of his coat, and wants you to agree they're the best eels.",
       [
         { label: "Agree · drink 2", loot: "round" },
-        { label: "Bleed for it", cost: 2, loot: "candy" },
+        { label: "Wrestle an eel", cost: 2, loot: "candy" },
         { label: "Walk on" },
       ],
     ),
     fork(
       6,
       "two-vats",
-      "Two Boardwalks",
-      "Two boardwalks into the fog. One is quiet. The other creaks, and hums.",
-      ["The quiet one", "The creaking one"],
+      "The Dare",
+      "The bog folk dare you to cross the rotten plank bridge at night. Nobody ever has.",
+      ["Decline politely", "Take the dare"],
     ),
     fork(
       6,
@@ -391,15 +374,6 @@ export const brewery: FloorCards = {
       "It swallows your hand. Drink 3.",
       "It burps. Give 2.",
       ["draught", "shield", "revive"],
-    ),
-    gamble(
-      6,
-      "keg-toss",
-      "Stone Skipping",
-      "The fishers skip stones for prizes. Win, then cash out or throw again. Roll d20.",
-      "Plunk. Drink 3.",
-      "Six skips. Give 2.",
-      ["smoke", "draught", "round"],
     ),
   ],
   elites: [

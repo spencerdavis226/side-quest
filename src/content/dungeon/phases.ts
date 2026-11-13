@@ -250,7 +250,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "the-frozen-ex": [
     duel(
-      "They want closure. Say three nice things about an ex in ten seconds. Fall short: drink 4.",
+      "He asks what he missed. Name three new things in ten seconds. Fall short: drink 4.",
     ),
   ],
   // The dragons: three beats (Realms, 2026-11-03; were Last Call's).
@@ -283,7 +283,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
       "She hisses a riddle. Your left neighbor asks one for her; answer in ten seconds. Fail: drink 4.",
     ),
     roll(
-      "The marsh boils around her. Roll d20.",
+      "The sea boils around her. Roll d20.",
       d20At(
         "You sink to your waist. Everyone drinks 4.",
         "You hold her under. Give 6.",
@@ -342,6 +342,18 @@ const beats: Readonly<Record<string, Beat[]>> = {
     roll(
       "It rises, and the sun goes out. Roll d20.",
       d20At("Darkness. Everyone drinks 4.", "You strike in the dark. Give 6."),
+    ),
+  ],
+  "dragon-tidewrack": [
+    duel(
+      "It wants a shanty. You and your left neighbor sing one line each; the worse, by vote, drinks 4.",
+    ),
+    roll(
+      "Every bell rings at once, and the sea stands up. Roll d20.",
+      d20At(
+        "You go under with the bells. Everyone drinks 4.",
+        "You ring the last bell yourself. Give 6.",
+      ),
     ),
   ],
   // The lair's door: the Gilded Company again.

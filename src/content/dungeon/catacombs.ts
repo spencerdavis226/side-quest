@@ -2,12 +2,10 @@ import {
   gamble,
   ambush,
   boss,
-  clock,
   d20,
   elite,
   fork,
   fuse,
-  GUESSED,
   merchant,
   monster,
   pair,
@@ -42,11 +40,11 @@ export const catacombs: FloorCards = {
     monster(
       1,
       "ex-wraith",
-      "The Ex Wraith",
-      "A wraith with your ex's face reads your old love letters aloud. Roll d20.",
-      "Every word lands. Drink 4.",
-      "You read theirs back. Give 4 to whoever has the worst ex.",
-      { fumble: "It reads the ones you never sent. Finish your drink." },
+      "The Grudge Wraith",
+      "A wraith that remembers every wrong ever done to it, and reads the list aloud. Roll d20.",
+      "Your name is on it, twice. Drink 4.",
+      "You read it a longer list. Give 4 to whoever holds the oldest grudge.",
+      { fumble: "It reads the ones you did. Finish your drink." },
     ),
     monster(
       1,
@@ -106,17 +104,6 @@ export const catacombs: FloorCards = {
       "On three, point at who'd sleep three thousand years if nobody woke them. Most fingers: drink 3.",
     ),
     // A secret on a clock.
-    {
-      ...mishap(
-        1,
-        "Monster",
-        "banshee-karaoke",
-        "The Banshee's Song",
-        "Read alone the banshee's song, start the clock, and hum it. The table guesses the song.",
-      ),
-      secret: "HAPPY BIRTHDAY.",
-      timer: clock(GUESSED, 30),
-    },
     // A table duel.
     trial(
       1,
@@ -126,7 +113,7 @@ export const catacombs: FloorCards = {
       {
         jinx: {
           name: "Question Master",
-          rule: "Anyone who answers a question from the jinxed player drinks 1.",
+          rule: "Anyone who answers a question from the cursed player drinks 1.",
         },
       },
     ),
@@ -179,7 +166,7 @@ export const catacombs: FloorCards = {
       {
         jinx: {
           name: "Flashback",
-          rule: "The jinxed player shudders at every drink. Forgets: drink 1.",
+          rule: "The cursed player shudders at every drink. Forgets: drink 1.",
         },
       },
     ),
@@ -223,14 +210,14 @@ export const catacombs: FloorCards = {
       1,
       "gym-ghoul",
       "The Ghoul Knight",
-      "A ghoul knight, three hundred years past leg day. He needs a spotter. Roll 2d6.",
+      "A ghoul knight still guarding a king three hundred years gone. He wants a duel. Roll 2d6.",
       "",
       "",
       {
         roll: pair(
           "He drops his sword on you. Drink 4.",
-          "You out-lift a corpse. Flex, then give 4.",
-          "You spot him, and he thanks you. Everyone else does a squat or drinks 4.",
+          "You out-fence a corpse. Bow, then give 4.",
+          "You salute the dead king, and he lets you pass. Everyone else bows or drinks 4.",
         ),
       },
     ),
@@ -312,16 +299,9 @@ export const catacombs: FloorCards = {
     ),
     treasure(
       1,
-      "bone-pile",
-      "The Bone Pile",
-      "Under the bones: a smoke bomb and someone's love letters. Keep both. Drink 1.",
-      "smoke",
-    ),
-    treasure(
-      1,
       "offering-bowl",
       "The Offering Bowl",
-      "A bowl of coins left for the dead, and a potion nobody touched. Take it. Drink 1.",
+      "A bowl of coins left for the dead, and an untouched potion. Tap the table: a coin for the dead.",
       "draught",
     ),
     shrine(
@@ -342,7 +322,7 @@ export const catacombs: FloorCards = {
       "The Grave Robber",
       "A grave robber with a cart of stolen goods and no questions asked. Prices are firm.",
       [
-        { label: "Drink 4", loot: "die" },
+        { label: "No questions · 4", loot: "die" },
         { label: "Finish your drink", loot: "shield" },
         { label: "Walk on" },
       ],
@@ -353,8 +333,8 @@ export const catacombs: FloorCards = {
       "The Undertaker",
       "He measures you for a coffin while he sells you things. He's very thorough.",
       [
-        { label: "Drink 4", loot: "revive" },
-        { label: "Bleed for it", cost: 2, loot: "candy" },
+        { label: "Toast · drink 4", loot: "revive" },
+        { label: "Get measured", cost: 2, loot: "candy" },
         { label: "Walk on" },
       ],
     ),
@@ -368,18 +348,9 @@ export const catacombs: FloorCards = {
     fork(
       1,
       "two-crypts",
-      "Two Crypts",
-      "Two crypt doors. One says REST. The other says PARTY, in fresh blood.",
-      ["The REST door", "The PARTY door"],
-    ),
-    gamble(
-      1,
-      "ouija-board",
-      "The Spirit Board",
-      "The pointer is moving on its own. Win, then cash out or ask again, harder. Roll d20.",
-      "It spells your name. Drink 4.",
-      "It spells YES. Give 3.",
-      ["shield", "die", "candy"],
+      "The Locked Door",
+      "A key in the lock, and a sign: DO NOT. Something knocks from the other side.",
+      ["Leave it locked", "Turn the key"],
     ),
     gamble(
       1,
@@ -390,27 +361,18 @@ export const catacombs: FloorCards = {
       "It coughs something up. Give 3.",
       ["draught", "shield", "revive"],
     ),
-    gamble(
-      1,
-      "grave-lottery",
-      "Grave Lottery",
-      "Pick a grave and dig. Win, then cash out or dig again, harder. Roll d20.",
-      "It's occupied. Drink 4.",
-      "Gold teeth. Give 3.",
-      ["smoke", "draught", "round"],
-    ),
   ],
   elites: [
     elite(
       1,
       "crypt-keepers-mom",
-      "The Crypt Keeper's Mom",
-      "She's been waiting up. Do you know what time it is? Roll d20.",
-      "Grounded, in a tomb. Drink 5, then promise to write home.",
-      "You hug her. She packs you something for the road. Give 5.",
+      "The Crypt Matron",
+      "The crypt's oldest ghost tends the dead like children. She does not like visitors. Roll d20.",
+      "She tucks you into a coffin. Drink 5, then say goodnight.",
+      "You promise to wipe your feet. She packs you something for the road. Give 5.",
       [
-        trinket("Mom's Packed Lunch", { heal: 1, loot: ["draught"] }),
-        trinket("Mom's Slipper", { roll: { monster: 1, ambush: 1 } }),
+        trinket("Matron's Basket", { heal: 1, loot: ["draught"] }),
+        trinket("Matron's Ladle", { roll: { monster: 1, ambush: 1 } }),
       ],
     ),
     elite(

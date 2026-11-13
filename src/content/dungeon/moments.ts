@@ -277,8 +277,8 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
     moment(
       5,
       "kitchen-drunk-food",
-      "Drunk Food",
-      "Everyone names their go-to drunk food at once. Anyone who matches someone drinks 2.",
+      "The Campfire Feast",
+      "Everyone names what they'd roast on a cave fire, at once. Anyone who matches someone drinks 2.",
     ),
   ],
   rooftop: [

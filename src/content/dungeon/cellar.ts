@@ -114,7 +114,7 @@ export const cellar: FloorCards = {
       {
         jinx: {
           name: "Toad Voice",
-          rule: "The jinxed player croaks after every sentence. Forgets: drink 1.",
+          rule: "The cursed player croaks after every sentence. Forgets: drink 1.",
         },
       },
     ),
@@ -195,7 +195,7 @@ export const cellar: FloorCards = {
       {
         jinx: {
           name: "Thumb Master",
-          rule: "Whenever the jinxed player puts a thumb on the table, the last to copy drinks 1.",
+          rule: "Whenever the cursed player puts a thumb on the table, the last to copy drinks 1.",
         },
       },
     ),
@@ -249,22 +249,6 @@ export const cellar: FloorCards = {
       },
     ),
     // A secret on a clock.
-    {
-      ...mishap(
-        0,
-        "Monster",
-        "cobweb-bartender",
-        "The Silent Oracle",
-        "Read alone what the oracle showed you, then start the clock and act it out. The table guesses.",
-      ),
-      secret: "A DRAGON.",
-      timer: {
-        version: 1,
-        kind: "countdown",
-        seconds: 45,
-        end: "Time. Someone guessed it? Give 3. Nobody did? Drink 3.",
-      },
-    },
     trial(
       0,
       "low-beam",
@@ -289,15 +273,6 @@ export const cellar: FloorCards = {
     ),
   ],
   finds: [
-    gamble(
-      0,
-      "one-armed-bandit",
-      "The Shell Game",
-      "Three cups, one pea, a man who never loses. Win, then walk away or play again. Roll d20.",
-      "Wrong cup. Drink 3.",
-      "Found it. Give 2.",
-      ["die", "draught", "shield"],
-    ),
     relic(
       0,
       "mimic-cooler",
@@ -309,29 +284,18 @@ export const cellar: FloorCards = {
       ["Walk on", "Open it"],
       { loot: "draught" },
     ),
-    relic(
-      0,
-      "fuse-box",
-      "The Old Well",
-      "A well by the road, a rope still running down into it. Pull it up, or leave it.",
-      11,
-      "Something pulls back. Drink 3.",
-      "A bucket of coins. Give 3, then make a wish.",
-      ["Leave it", "Pull it up"],
-      { loot: "die" },
-    ),
     treasure(
       0,
       "lost-and-found",
       "Abandoned Camp",
-      "A cold campfire, a bedroll, and a dented shield someone left behind. Drink 1.",
+      "A cold campfire, a bedroll, and a dented shield someone left behind. Rap on the table: still sound.",
       "shield",
     ),
     treasure(
       0,
       "tip-jar",
       "The Fallen Knight",
-      "A knight's bones by a milestone. His lucky die is still in his glove. Drink 1.",
+      "A knight's bones by a milestone. His lucky die is still in his glove. Everyone bows their head.",
       "die",
     ),
     shrine(
@@ -352,8 +316,8 @@ export const cellar: FloorCards = {
       "The Peddler",
       "A peddler with a cart of things that fell off other carts. He takes drinks, or blood.",
       [
-        { label: "Drink 3", loot: "draught" },
-        { label: "Bleed for it", cost: 1, loot: "shield" },
+        { label: "Haggle · drink 3", loot: "draught" },
+        { label: "Pay in blood", cost: 1, loot: "shield" },
         { label: "Walk on" },
       ],
     ),
@@ -364,7 +328,18 @@ export const cellar: FloorCards = {
       "He's walked this road for fifty years. He'll trade a story for a story.",
       [
         { label: "Tell one · drink 2", loot: "round" },
-        { label: "Bleed for it", cost: 2, loot: "candy" },
+        { label: "His war diary", cost: 2, loot: "candy" },
+        { label: "Walk on" },
+      ],
+    ),
+    merchant(
+      0,
+      "road-tinker",
+      "The Tinker",
+      "A tinker who mends anything for a price, and sells whatever he couldn't mend.",
+      [
+        { label: "Mend it · drink 3", loot: "die" },
+        { label: "Lend him a hand", cost: 1, loot: "smoke" },
         { label: "Walk on" },
       ],
     ),
@@ -378,18 +353,9 @@ export const cellar: FloorCards = {
     fork(
       0,
       "staff-only",
-      "Two Bridges",
-      "Two bridges over the river. One is stone. Under the wooden one, something growls.",
-      ["Stone bridge", "Wooden bridge"],
-    ),
-    gamble(
-      0,
-      "coin-pusher",
-      "Knucklebones",
-      "Soldiers play knucklebones by a fire. Win, then cash out or play again, harder. Roll d20.",
-      "They take your stake. Drink 3.",
-      "You take the pot. Give 2.",
-      ["shield", "draught", "revive"],
+      "A Cry for Help",
+      "Someone screams for help in the trees off the road. Or you keep walking.",
+      ["Keep walking", "Go and help"],
     ),
     gamble(
       0,
@@ -402,12 +368,12 @@ export const cellar: FloorCards = {
     ),
     gamble(
       0,
-      "rat-dice",
-      "Goblin Dice",
-      "Goblins shoot dice under a bridge. Win, then cash out or let it ride, harder. Roll d20.",
-      "Snake eyes. Drink 3.",
-      "Hot dice. Give 2.",
-      ["smoke", "round", "shield"],
+      "one-armed-bandit",
+      "The Shell Game",
+      "Three cups, one pea, a man who never loses. Win, then walk away or play again. Roll d20.",
+      "Wrong cup. Drink 3.",
+      "Found it. Give 2.",
+      ["die", "draught", "shield"],
     ),
   ],
   elites: [
@@ -496,7 +462,7 @@ export const cellar: FloorCards = {
       {
         jinx: {
           name: "My Lord",
-          rule: "Everyone calls the jinxed player My Lord. Slip: drink 1.",
+          rule: "Everyone calls the cursed player My Lord. Slip: drink 1.",
         },
         drops: [
           trinket("Baron's Saddlebags", { satchel: 4 }),

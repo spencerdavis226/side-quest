@@ -61,7 +61,7 @@ export const queueCards: CardDefinition[] = [
       loot: "die",
       jinx: {
         name: "Champion",
-        rule: "Everyone calls the jinxed player 'Champion', like Sir Bradley does. Slip: drink 1.",
+        rule: "Everyone calls the cursed player 'Champion', like Sir Bradley does. Slip: drink 1.",
       },
     },
   ),
@@ -166,7 +166,7 @@ export const stairsCards: CardDefinition[] = [
       loot: "round",
       jinx: {
         name: "Company Man",
-        rule: "The jinxed player ends every sentence with 'huzzah'. Slip: drink 1.",
+        rule: "The cursed player ends every sentence with 'huzzah'. Slip: drink 1.",
       },
     },
   ),
@@ -205,7 +205,7 @@ export const closingCards: CardDefinition[] = [
     {
       jinx: {
         name: "For the Company",
-        rule: "The jinxed player says 'for the Company' before every drink. Forgets: drink 1.",
+        rule: "The cursed player says 'for the Company' before every drink. Forgets: drink 1.",
       },
     },
   ),
@@ -258,9 +258,10 @@ export const closingCards: CardDefinition[] = [
   ),
 ];
 
-/** The dragons: one of eight, three swings, to win the quest. The King's
+/** The dragons: one of nine, three swings, to win the quest. The King's
  * Summons names the run's dragon from the first card. They play as ordinary
- * bosses in the plain modes. */
+ * bosses in the plain modes. Each lives under one lair region (The Quest
+ * 2.0, 2026-11-13): see `lairs` below. */
 export const lastCallBosses: CardDefinition[] = [
   boss(
     2,
@@ -286,12 +287,12 @@ export const lastCallBosses: CardDefinition[] = [
   boss(
     2,
     "final-tab",
-    "Old Mother Mire",
-    "Older than the marsh and twice as wet. She has eaten heroes for lunch. Roll d20.",
+    "Old Mother Brine",
+    "Older than the sea and twice as wet. She has eaten heroes for lunch. Roll d20.",
     d20(
       BOSS_NEED[2],
       "Swallowed, then spat out. Drink 5.",
-      "You tangle her in the reeds. Give 5.",
+      "You tangle her in the kelp. Give 5.",
       { crit: "She chokes on your boot. Everyone else drinks 4." },
     ),
   ),
@@ -345,7 +346,7 @@ export const lastCallBosses: CardDefinition[] = [
     {
       jinx: {
         name: "Tongue-Tied",
-        rule: "The jinxed player can only mime. Say a word: drink 1.",
+        rule: "The cursed player can only mime. Say a word: drink 1.",
       },
     },
   ),
@@ -361,4 +362,27 @@ export const lastCallBosses: CardDefinition[] = [
       { crit: "It laughs, and you strike its throat. Everyone else drinks 4." },
     ),
   ),
+  boss(
+    2,
+    "dragon-tidewrack",
+    "Tidewrack",
+    "A sea dragon hung with the bells of every ship it sank. They all ring. Roll d20.",
+    d20(
+      BOSS_NEED[2],
+      "A wave of bells breaks over you. Drink 5.",
+      "You cut a bell loose. It sinks. Give 5.",
+      { crit: "It rings its own bell and goes deaf. Everyone else drinks 4." },
+    ),
+  ),
 ];
+
+const dragon = (id: string) =>
+  lastCallBosses.find((c) => c.id === `dungeon.${id}`)!;
+/** Each lair region's three dragons (The Quest 2.0, 2026-11-13): the run's
+ * third region is the dragon's own, so Rimeclaw waits at the end of the
+ * Frozen Pass, never the Fire Caverns. */
+export const lairs = {
+  taproom: ["final-tab", "the-group-chat", "dragon-tidewrack"].map(dragon),
+  kitchen: ["last-call-lich", "two-am-kebab", "the-morning-after"].map(dragon),
+  rooftop: ["bartender-below", "surge-pricing", "house-lights"].map(dragon),
+};
