@@ -2,7 +2,9 @@
 
 Updated 2026-11-03. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Built 2026-11-03 (branch `realms`, not pushed): Realms, Pub Crawl rebuilt as a classic fantasy Quest
+## Deployed 2026-11-13: Realms, Pub Crawl rebuilt as a classic fantasy Quest
+
+**Deployed** by CI run #296 (`0b785e0`, every job green: build, checks, both balance jobs, Chromium and WebKit release, update, deploy), on the owner's "Publish".
 
 Owner decisions (2026-11-03): reskin Pub Crawl to classic fantasy (a dragon has woken; the party travels region to region to its lair), pack **Realms**, mode **The Quest**, humor like the other packs (world straight, the joke mostly in outcome lines), regions stay random, pub content replaced entirely. Sandbox decisions: the dragon is named from the start, the side quest is optional, joke classes stay, classes get **three ranks earned by felling region bosses and the side quest's keeper** (not bought at inns). Hero choice (draft of three classes) was offered and declined.
 
@@ -12,7 +14,7 @@ Owner decisions (2026-11-03): reskin Pub Crawl to classic fantasy (a dragon has 
 - **Framework**: `crawlTheme.ts` words (Encounter, regions, Curse/Cursed!, ranks up, Trophies, The ballad, The dragon is slain / The party has fallen), items (Healing Potion, Tower Shield, Lucky Coin, Smoke Bomb, Phoenix Feather, Tome of Training, Hired Sword; also `omenText.ts`), the guide (7 rows: Ranks and Inns and side quests added), region lighting (`theme.css` scene keys, a new forest palette), marks (castle pack logo, dragon mode mark, coins, cursed star, sword; `scripts/crawl-icons.ts`), the secret-way-in moment kicker, the curse stake label, and the end screen skipping a lone non-fight stage (the summons).
 - **Balance** (`tests/dungeon.balance.test.ts`, run alone): won 35.6% (was above 40% before the rank nerfs), a won run 52.6 draws, 97% rank up once and 80% reach rank 3 (that bound raised to under 90%: three bosses grant ranks now), every class 35% to 48% (Paladin tuned down from 73% to 39%), omens 25% to 44%, side quests 34% to 41% (6% walked past by the simulated table), regions 32% to 38%, jokes 3% to 7%. The simulated table now rests at an inn when 3+ hearts down, else stocks up, and takes a side quest above 6 hearts.
 - **Checked**: `validate-content`, `npm test` 434 (3 new fixtures `2026-11-03-realms-*`), lint, typecheck, build (budgets pass, 3,874 KiB runtime), Chromium `test:e2e` 169 passed, Chromium `test:sweep` 12 passed, `tests/dungeon.balance.test.ts` 4 passed. `docs/CARD_REVIEW.md` regenerated. `tests/league.balance.test.ts` 4 passed (engine paths shared with the League). **Not run:** WebKit (CI), a phone.
-- **Risks / next:** the 35.6% win rate sits in the upper half of the 18 to 40% band (free ranks); the owner should play a run and say if it feels too easy. Card IDs keep pub-era names (`dungeon.keg-golem` is the Bridge Troll), internal only. Push to `main` (publishes the site) only on the owner's word.
+- **Risks / next:** the 35.6% win rate sits in the upper half of the 18 to 40% band (free ranks); the owner should play a run and say if it feels too easy. Card IDs keep pub-era names (`dungeon.keg-golem` is the Bridge Troll), internal only. Next: the owner plays a run on a phone.
 
 ## Pushed 2026-11-02: the League evolution holds until a tap, and Gym Hype fixed (owner)
 
