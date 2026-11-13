@@ -63,8 +63,8 @@ const jinxes: Readonly<Record<string, Jinx>> = {
     rule: "The jinxed player gasps like a fish after every sip. Forgets: drink 1.",
   },
   "text-them-eel": {
-    name: "Typing...",
-    rule: "The jinxed player says 'typing...' before they speak. Forgets: drink 1.",
+    name: "My Dearest",
+    rule: "The jinxed player starts every sentence with 'My dearest'. Forgets: drink 1.",
   },
   "garlic-wraith": {
     name: "Garlic Breath",
@@ -119,8 +119,8 @@ const jinxes: Readonly<Record<string, Jinx>> = {
     rule: "Everyone bows to the jinxed player before speaking to them. Forgets: drink 1.",
   },
   "the-cash-register": {
-    name: "Cha-Ching",
-    rule: "The jinxed player says 'cha-ching' whenever anyone gives drinks. Misses one: drink 1.",
+    name: "Pieces of Eight",
+    rule: "The jinxed player says 'pieces of eight' whenever anyone gives drinks. Misses one: drink 1.",
   },
   "the-mystery-meat": {
     name: "The Meat",

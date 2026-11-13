@@ -33,32 +33,6 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
   "loose-floorboard": {
     win: "You step over it like a cat. Meow, then give 2.",
   },
-  // The Drowned Taproom.
-  "merfolk-ex": {
-    win: "You're doing amazing too. Toast yourself, then give 5.",
-  },
-  "tap-mimic": {
-    win: "You yank it out by the handle. Pour someone a sip; they drink 4.",
-  },
-  "rip-current": {
-    win: "You ride it out. Give 3 to whoever's drowning in their drink.",
-  },
-  "undertow-tap": { lose: "Swallowed. Drink 4, holding your breath first." },
-  "barnacle-bro": {
-    lose: "Reefed. Drink 5.",
-    win: "You scrape him off the bar. Arm wrestle anyone; the loser drinks 5.",
-    doubles: "He's actually nice. Everyone else drinks 5 to the bro.",
-  },
-  "floating-stools": {
-    win: "You ride it like a surfboard. Pick someone to stand; they drink 3.",
-  },
-  "sea-hag": { win: "She pays you in pearls. Hand out 6 like they're pearls." },
-  "shark-bartender": {
-    win: "You punch it on the nose. Give 6 to whoever should be cut off.",
-  },
-  "lighthouse-keeper": {
-    lose: "He tells you about the forty years. Drink 6 while someone tells you about theirs.",
-  },
   // The Kitchen.
   "garlic-wraith": {
     win: "You hold your breath. Breathe on someone; they drink 5.",
@@ -126,10 +100,6 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
   // Relics.
   "mimic-cooler": {
     win: "Gold, and something useful. Flip someone a coin; give 3.",
-  },
-  "sunken-chest": { win: "Bone dry, and worth it. Give 5, pirate voice." },
-  "the-cash-register": {
-    win: "Tips, and a loaded die. Tip someone a sip; they drink 5.",
   },
   "back-burner": {
     win: "Best soup of your life. Give 5 to whoever cooks the worst.",

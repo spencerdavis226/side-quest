@@ -34,51 +34,6 @@ type Rewrite = {
 };
 
 const rewrites: Readonly<Record<string, Rewrite>> = {
-  // The Drowned Taproom.
-  "sommelier-kraken": {
-    rules: "The kraken sips from four glasses at once. Roll four dice.",
-    dice: seats("Four glasses, four sips."),
-  },
-  "drowned-regular": {
-    rules:
-      "Read alone his one story, start the clock, then tell it as him. The table guesses what it's about.",
-    secret: "THE ONE THAT GOT AWAY (A FISH).",
-    timer: clock(GUESSED),
-  },
-  "piranha-shots": {
-    rules:
-      "Piranhas in the shots. On three, everyone points at who'd do one anyway. Most fingers: drink 3.",
-  },
-  "snorkel-shark": {
-    rules:
-      "Light the fuse. Pass a beer clockwise, naming a fish as you pass. The shark gets whoever holds it.",
-    timer: fuse("The shark bites. Whoever is holding the beer drinks 3."),
-  },
-  "drain-vortex": {
-    rules: "Someone pulled the plug. Last to spin once in their seat drinks 3.",
-  },
-  "merfolk-ex": {
-    duel: true,
-    rules:
-      "Your ex is doing amazing. Out-brag your left neighbor for 15 seconds. Table's loser: drink 4.",
-  },
-  "tap-mimic": {
-    duel: true,
-    rules:
-      "The tap's a mimic. Pour-off with your right neighbor: mime a pint. Table's worse pour: drink 5.",
-  },
-  "last-orders-siren": {
-    rules:
-      "A siren sings one more drink, and it's beautiful. Cover your ears, then roll d20 to resist.",
-  },
-  "text-them-eel": {
-    rules: "An eel whispers: text them. Sit on your hands, then roll d20.",
-    crit: "You text the eel instead. It leaves you on read. Give 10.",
-  },
-  "rip-current": {
-    rules: "The floor is a river now. Swim with your arms, then roll d20.",
-  },
-
   // The Kitchen.
   "deep-fryer-demon": {
     rules:
@@ -177,22 +132,6 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
   "falling-taps": {
     rules:
       "An acorn bonks you on the head, and you're Thumb Master now. Drink 1, then use it.",
-  },
-  "pirate-ghost": {
-    rules:
-      "A drowned pirate wants his rum back. Say 'arr' like you mean it, then roll d20.",
-  },
-  "mermaid-hens": {
-    rules:
-      "A mermaid bachelorette, out of prosecco. Raise your glass to the bride, then roll d20.",
-  },
-  "kelp-bouncer": {
-    rules:
-      "On three, everyone points at who's never on the list. Most fingers: drink 3.",
-  },
-  "fishing-charter": {
-    rules:
-      "Six dads lost on a fishing charter since Tuesday. Cast an imaginary line, then roll d20.",
   },
   "raccoon-crew": {
     rules:
