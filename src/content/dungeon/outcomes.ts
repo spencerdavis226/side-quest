@@ -33,28 +33,6 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
   "loose-floorboard": {
     win: "You step over it like a cat. Meow, then give 2.",
   },
-  // The Kitchen.
-  "garlic-wraith": {
-    win: "You hold your breath. Breathe on someone; they drink 5.",
-  },
-  "rogue-rotisserie": {
-    lose: "Basted. Drink 5.",
-    win: "You carve your way out. Carve someone a drumstick; they drink 5.",
-    doubles: "Chicken for everyone. Everyone else drinks 5 with a mouthful.",
-  },
-  "grease-fire": {
-    win: "You smother it with a lid. Give 3 to whoever looks hot.",
-  },
-  mandoline: {
-    win: "You slide the guard back on. Slice the table in half; the other half drinks 3.",
-  },
-  "microwave-ghost": {
-    win: "You open a window. Give 5 to whoever brought fish to work.",
-  },
-  "ticket-machine": { win: "Heard. Shout 'Heard!' and give 5." },
-  "celebrity-chef": {
-    win: "You make his dish better. Call someone a donkey; they drink 6.",
-  },
   // The Rooftop Bar.
   "pigeon-king": {
     win: "You throw the crown off the roof. Crown someone; they drink 5.",
@@ -100,9 +78,6 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
   // Relics.
   "mimic-cooler": {
     win: "Gold, and something useful. Flip someone a coin; give 3.",
-  },
-  "back-burner": {
-    win: "Best soup of your life. Give 5 to whoever cooks the worst.",
   },
   "the-telescope": {
     win: "A flask in the coin slot. Spy on someone; they drink 5.",

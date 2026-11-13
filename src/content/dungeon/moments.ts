@@ -251,8 +251,8 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
     moment(
       5,
       "kitchen-yes-chef",
-      "86'd",
-      "The drawer names a word. It's 86'd until their next turn: anyone who says it drinks 1.",
+      "The Forbidden Word",
+      "The drawer names a word. It's forbidden until their next turn: anyone who says it drinks 1.",
     ),
     moment(
       5,
@@ -263,14 +263,14 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
     moment(
       5,
       "kitchen-order-up",
-      "Order Up",
-      "Before their next turn, the drawer shouts 'Order up!' once. Last to slap the table drinks 2.",
+      "Hammer Down",
+      "Before their next turn, the drawer shouts 'Hammer down!' once. Last to slap the table drinks 2.",
     ),
     moment(
       5,
       "kitchen-staff-meal",
       "Bread Basket",
-      "The bread basket comes round. Everyone takes a bite of something, or a sip, and thanks the kitchen.",
+      "The bread basket comes round. Everyone takes a bite of something, or a sip, and thanks the smiths.",
       1,
     ),
     // The variety pass (2026-10-31).

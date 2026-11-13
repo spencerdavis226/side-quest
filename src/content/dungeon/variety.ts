@@ -34,53 +34,6 @@ type Rewrite = {
 };
 
 const rewrites: Readonly<Record<string, Rewrite>> = {
-  // The Kitchen.
-  "deep-fryer-demon": {
-    rules:
-      "Light the fuse. Pass a beer clockwise, naming a fried food. The fryer spits on whoever holds it.",
-    timer: fuse("The fryer spits. Whoever is holding the beer drinks 3."),
-  },
-  "walk-in-yeti": {
-    rules:
-      "On three, everyone points at who ate all the shrimp. Most fingers: drink 3.",
-  },
-  "dish-pit-horror": {
-    rules: "The dish pit horror burps up forks, four of them. Roll four dice.",
-    dice: seats("Four forks, four seats."),
-  },
-  "swinging-door": {
-    rules:
-      "A server bursts through the swinging door. Everyone shouts 'Behind!'; the last to shout drinks 3.",
-  },
-  "rat-chef": {
-    rules:
-      "Read alone the rat's special, start the clock, then describe it like a menu. The table guesses.",
-    secret: "TRUFFLE MAC AND CHEESE.",
-    timer: clock(GUESSED),
-  },
-  "line-cook-golem": {
-    duel: true,
-    rules:
-      "Your left neighbor calls three drink orders. Repeat them back in order. Miss one: drink 5.",
-  },
-  "garlic-wraith": {
-    duel: true,
-    rules:
-      "Breath-off: hold your breath against your right neighbor. Breathe first: drink 4.",
-  },
-  "microwave-ghost": {
-    rules:
-      "The ghost of every fish ever microwaved at work. Hold your nose, then roll d20.",
-    fumble: "You were the one who microwaved the fish. Drink 10 and apologize.",
-  },
-  "grease-fire": {
-    rules:
-      "Somebody threw water on it. Everyone yells 'FIRE!', then you roll d20.",
-  },
-  mandoline: {
-    rules: "The mandoline is slicing on its own. Hands up, then roll d20.",
-  },
-
   // The Rooftop Bar.
   "the-seagull": {
     rules:
@@ -132,19 +85,6 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
   "falling-taps": {
     rules:
       "An acorn bonks you on the head, and you're Thumb Master now. Drink 1, then use it.",
-  },
-  "raccoon-crew": {
-    rules:
-      "Two raccoons in chef's hats are stealing the bread. Hide your hands, then roll d20.",
-  },
-  "hot-pan": {
-    rules:
-      "Light the fuse. Pass a beer clockwise, saying 'hot, hot, hot'. It burns whoever holds it.",
-    timer: fuse("Too hot. Whoever is holding the beer drinks 3."),
-  },
-  "food-truck-guys": {
-    rules:
-      "Two food truck guys are robbing the walk-in. Shout today's special, then roll d20.",
   },
   "the-sprinklers": {
     rules:

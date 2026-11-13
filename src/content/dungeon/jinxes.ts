@@ -67,7 +67,7 @@ const jinxes: Readonly<Record<string, Jinx>> = {
     rule: "The jinxed player starts every sentence with 'My dearest'. Forgets: drink 1.",
   },
   "garlic-wraith": {
-    name: "Garlic Breath",
+    name: "Smoky",
     rule: "The jinxed player covers their mouth to talk. Forgets: drink 1.",
   },
   "sour-mash-witch": {
@@ -123,8 +123,8 @@ const jinxes: Readonly<Record<string, Jinx>> = {
     rule: "The jinxed player says 'pieces of eight' whenever anyone gives drinks. Misses one: drink 1.",
   },
   "the-mystery-meat": {
-    name: "The Meat",
-    rule: "The jinxed player calls every drink 'the meat'. Slip: drink 1.",
+    name: "Hatchling",
+    rule: "The jinxed player calls everyone 'mother'. Slip: drink 1.",
   },
   "cold-room": {
     name: "Mud in the Ears",
