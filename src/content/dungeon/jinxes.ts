@@ -83,16 +83,16 @@ const jinxes: Readonly<Record<string, Jinx>> = {
     rule: "The jinxed player says 'my good fellow' before every sip. Forgets: drink 1.",
   },
   "freezer-burn": {
-    name: "Freezer Burn",
-    rule: "The jinxed player clutches their head and says 'brain freeze' after every sip. Forgets: drink 1.",
+    name: "Stone-Faced",
+    rule: "The jinxed player may not smile. Caught smiling: drink 1.",
   },
   "hypothermia-hal": {
-    name: "Not Even Cold",
-    rule: "The jinxed player says 'I'm not even cold' before every sip. Forgets: drink 1.",
+    name: "Totally Fine",
+    rule: "The jinxed player says 'I'm totally fine' before every sip. Forgets: drink 1.",
   },
   "the-snow-bartender": {
-    name: "Brrr",
-    rule: "The jinxed player ends every sentence with 'brrr'. Forgets: drink 1.",
+    name: "Bubbles",
+    rule: "The jinxed player ends every sentence with 'bloop'. Forgets: drink 1.",
   },
   "the-frozen-ex": {
     name: "As I Was Saying",
@@ -131,7 +131,7 @@ const jinxes: Readonly<Record<string, Jinx>> = {
     rule: "The jinxed player says 'what?' before answering anyone. Forgets: drink 1.",
   },
   "the-chest-freezer": {
-    name: "Ice Pack",
+    name: "Hold Your Hat",
     rule: "The jinxed player keeps one hand on their head. Lets go: drink 1.",
   },
   "the-water-tower": {

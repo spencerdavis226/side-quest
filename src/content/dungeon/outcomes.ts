@@ -81,34 +81,6 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
   "celebrity-chef": {
     win: "You make his dish better. Call someone a donkey; they drink 6.",
   },
-  // The Walk-in Freezer.
-  "ice-wraith": {
-    win: "You breathe back, harder. Breathe on someone's neck; they drink 4.",
-  },
-  "frozen-bachelor": {
-    win: "You get him to the church. Pick a best man; they drink 4.",
-  },
-  "ice-sculpture": {
-    win: "You chip it into ice cubes. Drop one in someone's drink; they drink 4.",
-  },
-  "hypothermia-hal": {
-    win: "You get Hal a coat. Give 4 to the least-dressed player here.",
-  },
-  "slippery-floor": {
-    win: "You triple-axel it. The table scores you; give 3.",
-  },
-  "thawed-caveman": {
-    lose: "He clubs your phone. Drink 4.",
-    win: "You show him a meme. Grunt at someone; they drink 4.",
-    doubles: "He makes you chief. Everyone else grunts and drinks 4.",
-  },
-  "ice-machine": { win: "You unplug it in time. Give 3, ice cold." },
-  "the-enforcer": {
-    win: "You make him an offer. Pick someone who owes you; they drink 5.",
-  },
-  "freezer-witch": {
-    win: "You thaw the ex. Give 5 to whoever has an ex on ice.",
-  },
   // The Rooftop Bar.
   "pigeon-king": {
     win: "You throw the crown off the roof. Crown someone; they drink 5.",
@@ -161,12 +133,6 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
   },
   "back-burner": {
     win: "Best soup of your life. Give 5 to whoever cooks the worst.",
-  },
-  "frozen-in-the-ice": {
-    win: "Something old and good. Give 4 to the oldest player here.",
-  },
-  "the-chest-freezer": {
-    win: "Ice cream and a loaded die. Give 4 to whoever wants a scoop.",
   },
   "the-telescope": {
     win: "A flask in the coin slot. Spy on someone; they drink 5.",

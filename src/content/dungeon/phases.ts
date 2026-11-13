@@ -222,7 +222,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
       ),
     ),
   ],
-  // The Walk-in Freezer.
+  // The Wizard's Tower (was the Walk-in Freezer).
   "the-walk-in": [
     duel(
       "The light's out. Eyes shut, touch the nose of your left neighbor on the first try. Miss: drink 4.",
@@ -230,20 +230,22 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "the-snow-bartender": [
     roll(
-      "He serves the brain freeze. Roll 2d6.",
+      "He serves the house special. Roll 2d6.",
       pair(
-        "Brain freeze. Drink 5.",
-        "You drink it slowly, like an adult. Give 5.",
-        "You hand it back. He freezes solid. Give 7.",
+        "It explodes. Drink 5.",
+        "You sip it slowly, like an adult. Give 5.",
+        "You hand it back, and it explodes on him. Give 7.",
       ),
     ),
   ],
   "absolute-zero": [
-    duel("Freeze while the table counts to 15. Move, laugh or blink: drink 4."),
+    duel(
+      "He casts a holding spell. Freeze while the table counts to 15. Move, laugh or blink: drink 4.",
+    ),
   ],
   "the-ice-cream-man": [
     duel(
-      "He plays the jingle. Name six ice cream flavors in ten seconds. Fall short: drink 4.",
+      "He makes the table dance. Name six dances in ten seconds. Fall short: drink 4.",
     ),
   ],
   "the-frozen-ex": [

@@ -34,60 +34,6 @@ type Rewrite = {
 };
 
 const rewrites: Readonly<Record<string, Rewrite>> = {
-  // The Walk-in Freezer.
-  "brain-freeze": {
-    rules:
-      "Everyone presses a thumb to the roof of their mouth. Last to say 'brain freeze' drinks 3.",
-  },
-  "the-snowman": {
-    rules:
-      "Read alone who the snowman looks like, start the clock, and describe them. The table guesses.",
-    secret: "SANTA, AFTER A DIVORCE.",
-    timer: clock(GUESSED),
-  },
-  "the-door-shuts": {
-    rules:
-      "Light the fuse. Pass a beer clockwise, naming a frozen food. The cold gets whoever holds it.",
-    timer: fuse("The light goes out. Whoever is holding the beer drinks 3."),
-  },
-  "popsicle-golem": {
-    rules:
-      "The golem auctions its last grape popsicle. Bid sips clockwise; top bid drinks it.",
-  },
-  "ice-goblin": {
-    rules: "The ice goblin juggles cubes around the table. Roll four dice.",
-    dice: seats("Four cubes down four collars."),
-  },
-  "freezer-burn": {
-    duel: true,
-    rules:
-      "Cold stare-down with your left neighbor. First to blink or laugh loses. Lose: drink 4.",
-  },
-  "the-mammoth": {
-    duel: true,
-    rules:
-      "Mammoth tusk wrestle: link pinkies with your right neighbor and pull. Let go first: drink 4.",
-  },
-  "ice-wraith": {
-    rules:
-      "A ghost made of frost breathes on your neck. Shiver dramatically, then roll d20.",
-  },
-  "frost-giant": {
-    rules:
-      "Nine feet tall, ice for hands, and he says you're cut off. Act sober, then roll d20.",
-    fumble: "He's right. You're cut off. Drink 8, then water.",
-  },
-  "icicle-drop": {
-    rules:
-      "The ceiling is all icicles, and you just sneezed. Freeze, then roll d20.",
-  },
-  "the-walk-in": {
-    rules: `The walk-in wakes up. ${SIDE_BETS} Roll d20.`,
-  },
-  "the-ice-cream-man": {
-    rules: `The ice cream van, in a minor key. ${SIDE_BETS} Roll d20.`,
-  },
-
   // The Drowned Taproom.
   "sommelier-kraken": {
     rules: "The kraken sips from four glasses at once. Roll four dice.",
@@ -231,28 +177,6 @@ const rewrites: Readonly<Record<string, Rewrite>> = {
   "falling-taps": {
     rules:
       "An acorn bonks you on the head, and you're Thumb Master now. Drink 1, then use it.",
-  },
-  "margarita-elemental": {
-    rules:
-      "A slushie with salt on its rim and nothing to lose. Lick your lips, then roll d20.",
-  },
-  "tongue-on-the-pole": {
-    rules:
-      "Read alone what you licked on a dare, start the clock, and mime it. The table guesses.",
-    secret: "THE ICE MACHINE.",
-    timer: clock(GUESSED, 30),
-  },
-  "penguin-gang": {
-    rules:
-      "Six penguins in tuxes say you're on their ice. Waddle in your seat, then roll d20.",
-  },
-  "frozen-peas": {
-    rules:
-      "Peas everywhere, and they're organized. Count to five out loud, then roll d20.",
-  },
-  "ski-lodge-crew": {
-    rules:
-      "Five people in ski gear who never made the slopes. Say 'après-ski', then roll d20.",
   },
   "pirate-ghost": {
     rules:
