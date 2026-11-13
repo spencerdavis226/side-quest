@@ -14,6 +14,7 @@ Read `docs/STATUS.md` before planning or editing. It is the single current hando
 - `reference/` holds raw user-supplied sources (CABIIN sheet, house Sheet1 CSV, sample deck JSON). Keep them exactly as supplied and out of `src/` and the bundle; replace with a newer supplied file and rerun the matching `npm run *:reference` parse instead of editing them to match shipping content.
 - Saved games must survive every update. `tests/fixtures/saves/` holds real saves frozen from seeded games (`npm run fixtures:saves`), and `tests/save-fixtures.test.ts` requires each to load and play on. A change to what a save holds, to `parseSession`/`validateParty`/`validateRoll`, or to the runtime card rules in `src/content/validate.ts` adds fixtures for the new state (the script writes `<date>-<situation>.json` and never rewrites a file); never edit or delete a fixture to make the test pass. A save that still fails to load is copied to `side-quest.session.corrupt.v1` before the recovery screen clears it.
 - Merge, push, and publication need explicit user authorization; ordinary local edits/checks do not.
+- The Quest 2.0 (owner, 2026-11-13) is built from `docs/QUEST_2_PLAN.md`, one phase per session and pull request. For that work the owner has approved changing the runtime budget in `scripts/check-budget.ts` and the balance test's run-length ceiling when a phase needs it (record the measured number in `docs/STATUS.md`), and has reversed "regions stay random".
 
 ## Commands (Node 22.12+, `npm ci`)
 
