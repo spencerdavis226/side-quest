@@ -83,7 +83,7 @@ export const hiddenRooms: HiddenRoom[] = [
       {
         jinx: {
           name: "Ribbit",
-          rule: "The jinxed player says 'ribbit' after every sip. Forgets: drink 1.",
+          rule: "The cursed player says 'ribbit' after every sip. Forgets: drink 1.",
         },
         drops: [
           trinket("Witch's Flask", { loot: ["draught", "draught"] }),
@@ -141,7 +141,7 @@ export const hiddenRooms: HiddenRoom[] = [
       {
         jinx: {
           name: "Bandit's Honor",
-          rule: "Nobody speaks to the jinxed player except through someone else. Slip: drink 1.",
+          rule: "Nobody speaks to the cursed player except through someone else. Slip: drink 1.",
         },
         drops: [
           trinket("Mag's Eyepatch", { hurt: { monster: -1 } }),
@@ -207,7 +207,7 @@ export const hiddenRooms: HiddenRoom[] = [
       {
         jinx: {
           name: "Grave Manners",
-          rule: "The jinxed player bows before every sentence. Forgets: drink 1.",
+          rule: "The cursed player bows before every sentence. Forgets: drink 1.",
         },
         drops: [
           trinket("Grave Gold", { loot: ["round", "shield"] }),
@@ -265,7 +265,7 @@ export const hiddenRooms: HiddenRoom[] = [
       {
         jinx: {
           name: "Voiceless",
-          rule: "The jinxed player may only whisper. Speaks up: drink 1.",
+          rule: "The cursed player may only whisper. Speaks up: drink 1.",
         },
         drops: [
           trinket("Siren's Scale", { crit: 19 }),

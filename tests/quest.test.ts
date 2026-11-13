@@ -17,6 +17,7 @@ import type {
   CardDefinition,
   GameConfig,
   PackDefinition,
+  PackQuest,
   SessionState,
 } from "../src/game/types";
 
@@ -324,6 +325,37 @@ describe("quest mode", () => {
       expect(() =>
         validateCatalog(catalog, [{ ...pack, quest: { ...rules, ...change } }]),
       ).toThrow("Invalid quest");
+  });
+
+  it("a card is dealt at most once a run, but sibling routes may share one", () => {
+    const rival = { label: "Rival", pick: 1, cardIds: ["quest.rival-a"] };
+    const boss = { label: "Boss", pick: 1, cardIds: ["quest.boss"] };
+    const other = { label: "Other", pick: 1, cardIds: ["quest.rival-b"] };
+    const check = (finale: PackQuest["finale"]) => () =>
+      validateCatalog(catalog, [
+        { ...pack, quest: { ...pack.quest!, finale } },
+      ]);
+    // Every lair has the same door (2026-11-13): one route is dealt.
+    expect(
+      check([
+        {
+          oneOf: [
+            [rival, boss],
+            [other, boss],
+          ],
+        },
+      ]),
+    ).not.toThrow();
+    // Two slots, or two stages of one route, would deal it twice.
+    expect(check([{ oneOf: [[rival], [other]] }, boss, boss])).toThrow(
+      "Invalid quest",
+    );
+    expect(check([{ oneOf: [[rival, boss, boss], [other]] }])).toThrow(
+      "Invalid quest",
+    );
+    expect(check([{ oneOf: [[rival], [boss]] }, boss])).toThrow(
+      "Invalid quest",
+    );
   });
 });
 

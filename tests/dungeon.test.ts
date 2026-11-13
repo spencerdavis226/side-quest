@@ -38,6 +38,12 @@ import { parseSession } from "../src/app/persistence";
 import { cards, packs } from "../src/content/catalog";
 import type { GameConfig, Loot, SessionState } from "../src/game/types";
 import { BOSS_NEED, PARTY_HEARTS } from "../src/content/dungeon/shared";
+import { lairs } from "../src/content/dungeon/lastcall";
+const LAIRS = {
+  taproom: "The Sunken Coast",
+  kitchen: "The Fire Caverns",
+  rooftop: "The Frozen Pass",
+};
 
 // The party's starting hearts, before any adventurer or omen.
 const H = PARTY_HEARTS;
@@ -416,13 +422,30 @@ describe("Pub Crawl", () => {
     roundTrip(b);
   });
 
+  it("the dragon waits under its own lair, the run's third region", () => {
+    const seen = new Set<string>();
+    for (let seed = 1; seed <= 60; seed++) {
+      const s = createSession(crawl, cards, packs, seeded(seed));
+      const q = s.quest!;
+      const region = q.stages[finaleStage(q, STEP.floor3).stage].label;
+      const dragon = q.finale[STEP.lastCall];
+      const key = Object.entries(LAIRS).find(([, r]) => r === region)![0];
+      expect(lairs[key as keyof typeof lairs].map((c) => c.id)).toContain(
+        dragon,
+      );
+      seen.add(`${region} ${dragon}`);
+    }
+    // Every lair and every dragon comes up.
+    expect(seen.size).toBe(9);
+  });
+
   it("the last boss falling wins the crawl", () => {
-    let s = deal(fromStep(start(), STEP.lastCall), "dungeon.last-call-lich");
-    // Three beats (2026-10-25): its d20, a shouting duel, a last d20.
+    let s = deal(fromStep(start(), STEP.lastCall), "dungeon.final-tab");
+    // Three beats (2026-10-25): its d20, a riddle duel, a last d20.
     s = fight(s, 15);
     expect(currentCard(advance(s)).dice).toBeUndefined();
     s = settleBattle(advance(s), true);
-    expect(currentCard(advance(s)).rules).toMatch(/One last breath of fire/);
+    expect(currentCard(advance(s)).rules).toMatch(/The sea boils around her/);
     s = fight(s, 15);
     expect(s.phase).toBe("complete");
     expect(questRecord(s)!.won).toBe(true);
@@ -648,7 +671,7 @@ describe("Pub Crawl", () => {
     ).toBe(9);
     // A longer boss fight; an ambush is not a boss.
     s = tonight("lock-in");
-    expect(hitsNeeded(s.quest, findCard(s, "dungeon.last-call-lich")!)).toBe(4);
+    expect(hitsNeeded(s.quest, findCard(s, "dungeon.final-tab")!)).toBe(4);
     expect(hitsNeeded(s.quest, findCard(s, "dungeon.lost-bridesmaids")!)).toBe(
       2,
     );
@@ -963,7 +986,7 @@ describe("Pub Crawl", () => {
       seeded(3),
     );
     expect(s.quest).toBeUndefined();
-    expect(s.cards).toHaveLength(308);
+    expect(s.cards).toHaveLength(301);
     expect(s.cards.some((c) => c.reward && !c.battle)).toBe(false);
     expect(
       s.cards.some(
@@ -1181,23 +1204,41 @@ describe("Pub Crawl", () => {
     ]);
   });
 
-  it("an adventurer walks in wearing its starting gear, until a piece replaces it", () => {
-    // The Barbarian's Rusty Greataxe, a weapon.
+  it("a class's kit is folded into its numbers; an old save's kit still holds", () => {
+    // Kits were cut (The Quest 2.0, 2026-11-13): the Barbarian's Rusty
+    // Greataxe is now its own +1 to monster d20s, at every rank.
     const s = adventure("barbarian");
-    const axe = findCard(s, "dungeon.class-barbarian")!.kit!;
-    expect(axe).toMatchObject({ name: "Rusty Greataxe", slot: "weapon" });
-    expect(party(s).boons).toEqual(["dungeon.class-barbarian#k"]);
+    const barbarian = findCard(s, "dungeon.class-barbarian")!;
+    expect(barbarian.kit).toBeUndefined();
+    expect(party(s).boons ?? []).toEqual([]);
     expect(omenEffect(s.quest)!.roll).toMatchObject({ monster: 1, boss: 2 });
-    roundTrip(s);
-    // Every class but the Alchemist and the Bartender has a kit with a slot,
-    // and its card names it.
+    for (const rank of barbarian.evolves!)
+      expect(rank.omen.roll?.monster ?? 0).toBeGreaterThanOrEqual(1);
     for (const c of cards.filter((c) => c.id.startsWith("dungeon.class-"))) {
-      const bare = ["dungeon.class-alchemist", "dungeon.class-bartender"];
-      expect(!!c.kit, c.id).toBe(!bare.includes(c.id));
-      if (c.kit) {
-        expect(c.kit.slot, c.id).toBeDefined();
-        expect(c.rules, c.id).toContain(`Wears ${c.kit.name}.`);
-      }
+      expect(c.kit, c.id).toBeUndefined();
+      expect(c.rules, c.id).not.toMatch(/Wears /);
     }
+    // A class snapshot saved with a kit still puts it on (old saves).
+    let old = make();
+    const q = old.quest!;
+    const at = q.stages.findIndex((st) =>
+      st.cards.some((c) => c.id === "dungeon.class-barbarian"),
+    );
+    const stages = structuredClone(q.stages);
+    const card = stages[at].cards.find(
+      (c) => c.id === "dungeon.class-barbarian",
+    )!;
+    card.omen = { roll: { boss: 2 }, hurt: { trap: 1 } };
+    card.kit = {
+      name: "Rusty Greataxe",
+      rules: "+1 to monster d20s.",
+      effect: { roll: { monster: 1 } },
+      slot: "weapon",
+    };
+    old = { ...old, quest: { ...q, stages } };
+    old = advance(advance(deal(old, "dungeon.class-barbarian")));
+    expect(party(old).boons).toEqual(["dungeon.class-barbarian#k"]);
+    expect(omenEffect(old.quest)!.roll).toMatchObject({ monster: 1, boss: 2 });
+    roundTrip(old);
   });
 });

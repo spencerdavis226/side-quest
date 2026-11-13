@@ -14,6 +14,7 @@ import {
   hiddenRoomFor,
   momentsBetween,
 } from "../src/components/moments/detect";
+import { crawlTheme } from "../src/components/crawlTheme";
 
 // The moments layer's triggers (2026-11-01): display only, read from two
 // snapshots the table just made. A resume or an undo plays nothing.
@@ -132,6 +133,27 @@ describe("moments", () => {
     };
     const found = momentsBetween(started, evolved);
     expect(kinds(found)).toContain("evolution");
+  });
+
+  it("a Quest rank up carries its class's line for the table", () => {
+    const theme = crawlTheme("dungeon");
+    const classIds = cards
+      .filter((c) => c.id.startsWith("dungeon.class-"))
+      .map((c) => c.id);
+    expect(Object.keys(theme.rankLines!).sort()).toEqual(classIds.sort());
+    const c = createSession(crawl, cards, packs, seeded(5));
+    const started = advance(advance(c, seeded(1)), seeded(1));
+    const party = started.quest!.party!;
+    const ranked = {
+      ...started,
+      quest: { ...started.quest!, party: { ...party, form: 1 } },
+    };
+    const rank = momentsBetween(started, ranked).find(
+      (m) => m.kind === "evolution",
+    );
+    const line = theme.rankLines![party.omen!];
+    expect(rank).toMatchObject({ line });
+    expect(rank?.say).toContain(line);
   });
 
   /** The same game with its party changed, as the table just made it. */

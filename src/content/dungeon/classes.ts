@@ -1,5 +1,5 @@
-import type { CardDefinition } from "../../game/types";
-import { adventurer } from "./shared";
+import type { CardDefinition, OmenEffect } from "../../game/types";
+import { adventurer as build } from "./shared";
 
 // The run's first card: the adventurer, one of eighteen (2026-10-17, the
 // League's starters done as a dungeon party; Realms, 2026-11-03, a fantasy
@@ -13,6 +13,73 @@ import { adventurer } from "./shared";
 // Perks are written from the numbers, so the flavor here is only the first
 // sentence. Check every class's own win rate in
 // `tests/dungeon.balance.test.ts`.
+
+// Starting gear was cut (The Quest 2.0, 2026-11-13): a kit was a second
+// thing to read on the first card and was replaced by the first boss's
+// piece. Each class keeps its kit's number, folded into its base effect and
+// every rank. The joke classes' kits were a little worse than nothing, and
+// still are. The Alchemist and the Bartender never had one. In the
+// retune the Drunken Monk's Wine Gourd (+1 heal) was dropped (50% with it,
+// 43% without, 4,000 runs), and the Warlock (51%) was slowed: the
+// Archfiend +2 to every d20 (was +3), the Soul Broker a heart less. Saves from
+// before keep their `kit` snapshot; the engine still reads it.
+const kits: Readonly<Record<string, OmenEffect>> = {
+  barbarian: { roll: { monster: 1 } }, // Rusty Greataxe
+  rogue: { roll: { ambush: 1 } }, // Shiv
+  cleric: { hearts: 1 }, // Holy Vestments
+  wizard: { hearts: 1 }, // Pointy Hat
+  bard: { heal: 1 }, // Battered Lute
+  paladin: { roll: { boss: 1 } }, // Holy Mace
+  ranger: { roll: { ambush: 1 } }, // Hunting Bow
+  necromancer: { roll: { boss: 1 } }, // Bone Wand
+  warlock: { hearts: 1 }, // Hellfire Cloak
+  bouncer: { roll: { monster: 1 } }, // Family Sword
+  mercenary: { hearts: 1 }, // Chainmail Vest
+  druid: { heal: 1 }, // Pet Ferret
+  "plus-one": { hurt: { trap: 1 } }, // Smock
+  intern: { heal: -1 }, // Oversized Helmet
+  mimic: { roll: { monster: -1 } }, // Its Own Lid
+};
+/** An effect with a kit's numbers added (a sum of 0 drops the key). */
+export function fold(effect: OmenEffect, kit: OmenEffect = {}): OmenEffect {
+  const out: OmenEffect = { ...effect };
+  const sum = (a = 0, b = 0) => a + b || undefined;
+  const maps = (
+    a: Partial<Record<string, number>> = {},
+    b: Partial<Record<string, number>> = {},
+  ) => {
+    const next: Partial<Record<string, number>> = { ...a };
+    for (const [k, n] of Object.entries(b)) {
+      // Held to the validator's range (+3 at most): a rank already at the
+      // cap gains nothing from its kit.
+      const v = Math.max(-3, Math.min(3, (next[k] ?? 0) + (n ?? 0)));
+      if (v) next[k] = v;
+      else delete next[k];
+    }
+    return Object.keys(next).length ? next : undefined;
+  };
+  out.hearts = sum(out.hearts, kit.hearts);
+  out.heal = sum(out.heal, kit.heal);
+  out.roll = maps(out.roll, kit.roll) as OmenEffect["roll"];
+  out.hurt = maps(out.hurt, kit.hurt) as OmenEffect["hurt"];
+  for (const key of Object.keys(out) as (keyof OmenEffect)[])
+    if (out[key] === undefined) delete out[key];
+  return out;
+}
+const adventurer = (
+  id: string,
+  title: string,
+  flavor: string,
+  effect: OmenEffect,
+  levels: { title: string; omen: OmenEffect }[],
+) =>
+  build(
+    id,
+    title,
+    flavor,
+    fold(effect, kits[id]),
+    levels.map((l) => ({ ...l, omen: fold(l.omen, kits[id]) })),
+  );
 
 export const classes: CardDefinition[] = [
   // Boss killer who runs into traps.
@@ -40,7 +107,7 @@ export const classes: CardDefinition[] = [
   adventurer(
     "rogue",
     "Rogue",
-    "Has your purse.",
+    "Took that.",
     { satchel: 4, loot: ["smoke"], roll: { trap: 2, relic: 2 } },
     [
       {
@@ -239,11 +306,11 @@ export const classes: CardDefinition[] = [
       },
       {
         title: "Archfiend",
-        omen: { hearts: -2, roll: { all: 3 }, crit: 19 },
+        omen: { hearts: -2, roll: { all: 2 }, crit: 19 },
       },
       {
         title: "Soul Broker",
-        omen: { hearts: -1, roll: { all: 3 }, crit: 19 },
+        omen: { hearts: -2, roll: { all: 3 }, crit: 19 },
       },
     ],
   ),
@@ -487,3 +554,8 @@ for (const c of classes) {
   c.palette = palette(c.title);
   for (const e of c.evolves ?? []) e.palette = palette(e.title);
 }
+
+// A renamed class must not lose its folded kit without notice.
+for (const id of Object.keys(kits))
+  if (!classes.some((c) => c.id === `dungeon.class-${id}`))
+    throw Error(`Kit for a missing class: ${id}`);

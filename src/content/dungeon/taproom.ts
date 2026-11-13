@@ -4,7 +4,6 @@ import {
   clock,
   elite,
   fork,
-  fuse,
   GUESSED,
   merchant,
   monster,
@@ -79,8 +78,8 @@ export const taproom: FloorCards = {
     trial(
       2,
       "merfolk-ex",
-      "Your Merfolk Ex",
-      "Your ex is a merfolk, doing amazing. Out-brag your left neighbor for 15 seconds. Loser: drink 4.",
+      "The Merfolk Herald",
+      "A merfolk herald wants your deeds. Out-brag your left neighbor for 15 seconds. Loser: drink 4.",
     ),
     monster(
       2,
@@ -109,21 +108,11 @@ export const taproom: FloorCards = {
       {
         jinx: {
           name: "Pirate Tongue",
-          rule: "The jinxed player ends every sentence with 'arr'. Forgets: drink 1.",
+          rule: "The cursed player ends every sentence with 'arr'. Forgets: drink 1.",
         },
       },
     ),
     // A hidden fuse.
-    {
-      ...mishap(
-        2,
-        "Monster",
-        "snorkel-shark",
-        "The Circling Shark",
-        "Light the fuse. Pass a cup clockwise, naming a fish as you pass. The shark gets whoever holds it.",
-      ),
-      timer: fuse("The shark bites. Whoever is holding the cup drinks 3."),
-    },
     trial(
       2,
       "drowned-choir",
@@ -182,16 +171,16 @@ export const taproom: FloorCards = {
     ambush(
       2,
       "happy-hour-eels",
-      "Party Eels",
-      "Two eels in party hats want to buy you a drink. You know what that means. Roll d20.",
-      "Bitten, twice. Drink 4.",
+      "The Shock Eels",
+      "Two eels circle your boots, sparking. They are not here to talk. Roll d20.",
+      "Zapped, twice. Drink 4.",
       "You tie them in a knot. Give 4.",
     ),
     ambush(
       2,
       "mermaid-hens",
-      "Mermaid Bachelorettes",
-      "A mermaid bachelorette party, out of wine. Raise your glass to the bride, then roll d20.",
+      "The Merfolk Wedding",
+      "A merfolk wedding, out of wine, and you're the nearest guests. Toast the bride, then roll d20.",
       "They take yours. Drink 4.",
       "You find them wine. They cry. Give 4.",
     ),
@@ -200,7 +189,7 @@ export const taproom: FloorCards = {
       "Monster",
       "kelp-bouncer",
       "The Kelp Guard",
-      "On three, everyone points at who's never on the guest list. Most fingers: drink 3.",
+      "Living kelp asks who looks least like a fish. On three, everyone points. Most fingers: drink 3.",
     ),
     // 2d6, and doubles are a better win.
     monster(
@@ -264,15 +253,6 @@ export const taproom: FloorCards = {
     ),
   ],
   finds: [
-    gamble(
-      2,
-      "claw-machine",
-      "The Crab Grab",
-      "A giant crab with a claw full of coins. Grab, then cash out or grab again, harder. Roll d20.",
-      "It drops them. Again. Drink 5.",
-      "You hold on. Give 4.",
-      ["draught", "shield", "candy"],
-    ),
     relic(
       2,
       "sunken-chest",
@@ -299,14 +279,14 @@ export const taproom: FloorCards = {
       2,
       "message-bottle",
       "Message in a Bottle",
-      "It says drink me. Of course it does. Drink 1, and keep the bottle.",
+      "A note inside says DRINK ME. Read it aloud in a pirate voice.",
       "draught",
     ),
     treasure(
       2,
       "lifebuoy",
       "A Ship's Shield",
-      "A round shield off a wreck's rail, still painted. Wear it with pride. Drink 1.",
+      "A round shield off a wreck's rail, still painted. Hold it up: everyone says 'ahoy'.",
       "shield",
     ),
     shrine(
@@ -327,8 +307,8 @@ export const taproom: FloorCards = {
       "The Pearl Diver",
       "A diver in a rusted helmet trades whatever he finds at the bottom of the bay.",
       [
-        { label: "Drink 5", loot: "shield" },
-        { label: "Bleed for it", cost: 1, loot: "die" },
+        { label: "Dive · drink 5", loot: "shield" },
+        { label: "Hold your breath", cost: 1, loot: "die" },
         { label: "Walk on" },
       ],
     ),
@@ -338,17 +318,17 @@ export const taproom: FloorCards = {
       "The Ferryman",
       "A hooded figure in a rowboat takes you across, for a price, and sells extras.",
       [
-        { label: "Drink 5", loot: "revive" },
-        { label: "Bleed for it", cost: 1, loot: "smoke" },
+        { label: "Fare · drink 5", loot: "revive" },
+        { label: "Pay in blood", cost: 1, loot: "smoke" },
         { label: "Walk on" },
       ],
     ),
     fork(
       2,
       "two-taps",
-      "Two Coves",
-      "Two coves. One is calm. In the other, something is screaming.",
-      ["Calm cove", "Screaming cove"],
+      "The Dare",
+      "The sailors bet you won't swim out to the wreck at high tide. They're already counting.",
+      ["Not tonight", "Swim for it"],
     ),
     fork(
       2,
@@ -374,15 +354,6 @@ export const taproom: FloorCards = {
       "It snaps shut. Drink 5.",
       "A pearl. Give 4.",
       ["draught", "shield", "candy"],
-    ),
-    gamble(
-      2,
-      "drowned-pub-quiz",
-      "The Drowned Quiz",
-      "The drowned sailors' quiz, double or nothing. Win, then cash out or play on. Roll d20.",
-      "Wrong. Drink 5.",
-      "Right. Give 4.",
-      ["smoke", "draught", "round"],
     ),
   ],
   elites: [

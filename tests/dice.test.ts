@@ -360,7 +360,6 @@ describe("choice cards", () => {
       "pokemon.route-mew-truck",
       // Dungeon night relics: walk away, or roll for the loot.
       "dungeon.mimic-cooler",
-      "dungeon.fuse-box",
       "dungeon.dusty-bottle",
       "dungeon.locked-reserve",
       "dungeon.cursed-idol",

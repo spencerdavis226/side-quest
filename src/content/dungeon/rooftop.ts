@@ -1,11 +1,9 @@
 import {
   ambush,
-  clock,
   elite,
   fork,
   fuse,
   gamble,
-  GUESSED,
   merchant,
   monster,
   moves,
@@ -101,7 +99,7 @@ export const rooftop: FloorCards = {
         fumble: "He shouts, and it's your mom. Drink 10, and wave again.",
         jinx: {
           name: "Avalanche Rules",
-          rule: "The jinxed player may only whisper. Speak up: drink 1.",
+          rule: "The cursed player may only whisper. Speak up: drink 1.",
         },
       },
     ),
@@ -129,17 +127,6 @@ export const rooftop: FloorCards = {
       },
     ),
     // A secret on a clock.
-    {
-      ...mishap(
-        8,
-        "Monster",
-        "the-proposal",
-        "The Proposal",
-        "Read alone his proposal, start the clock, then act it out. The table guesses the line.",
-      ),
-      secret: "'WILL YOU SHARE A SLEEPING BAG WITH ME FOREVER?'",
-      timer: clock(GUESSED),
-    },
     // A table duel.
     trial(
       8,
@@ -275,15 +262,6 @@ export const rooftop: FloorCards = {
     ),
   ],
   finds: [
-    gamble(
-      8,
-      "ring-toss",
-      "Snowball Toss",
-      "Throw snowballs at the icicles. Win, then cash out or throw again, harder. Roll d20.",
-      "It sails off the cliff. Drink 5.",
-      "A clean break. Give 4.",
-      ["draught", "die", "revive"],
-    ),
     relic(
       8,
       "the-telescope",
@@ -310,14 +288,21 @@ export const rooftop: FloorCards = {
       8,
       "rooftop-lost-found",
       "Left Behind",
-      "A frozen pack in the snow: one boot, one glove and a smoke bomb. Drink 1.",
+      "A frozen pack in the snow: one boot, one glove and a smoke bomb. Blow on your hands.",
       "smoke",
     ),
     treasure(
       8,
       "abandoned-table",
       "The Frozen Feast",
-      "A whole camp left its supper and never came back. Their wine is yours. Drink 1.",
+      "A whole camp left its supper and never came back. Pour a splash for them.",
+      "draught",
+    ),
+    treasure(
+      8,
+      "pass-frozen-scout",
+      "The Frozen Scout",
+      "A scout frozen at her post, a potion still on her belt. Everyone salutes her.",
       "draught",
     ),
     shrine(
@@ -334,32 +319,21 @@ export const rooftop: FloorCards = {
     ),
     merchant(
       8,
-      "the-rooftop-bartender",
-      "The Mountain Trader",
-      "A trader in a yak-wool coat selling 24-gold cocktails, and she takes blood.",
-      [
-        { label: "Drink 5", loot: "die" },
-        { label: "Bleed for it", cost: 1, loot: "shield" },
-        { label: "Walk on" },
-      ],
-    ),
-    merchant(
-      8,
       "the-bottle-girl",
       "The Yak Herder",
       "A yak herder with a sled of supplies and a spot by his fire, for a price.",
       [
-        { label: "Drink 5", loot: "round" },
-        { label: "Bleed for it", cost: 2, loot: "revive" },
+        { label: "By the fire · 5", loot: "round" },
+        { label: "Trade your boots", cost: 2, loot: "revive" },
         { label: "Walk on" },
       ],
     ),
     fork(
       8,
       "the-two-terraces",
-      "Two Passes",
-      "The quiet pass under clear skies, or the loud one, where giants are partying.",
-      ["Quiet pass", "Giants' party"],
+      "A Cry for Help",
+      "A horn from a stuck caravan up the pass: three short blasts, for help.",
+      ["Press on", "Answer the horn"],
     ),
     fork(
       8,
@@ -385,15 +359,6 @@ export const rooftop: FloorCards = {
       "It bites. Drink 5.",
       "Something glints. Give 4.",
       ["draught", "shield", "revive"],
-    ),
-    gamble(
-      8,
-      "rooftop-dares",
-      "Mountain Dares",
-      "The camp plays truth or dare, and the stakes go up. Cash out or go again. Roll d20.",
-      "Dared. Drink 5.",
-      "You dare them back. Give 4.",
-      ["smoke", "draught", "round"],
     ),
   ],
   elites: [

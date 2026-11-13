@@ -10,9 +10,9 @@ import { kitchen } from "./dungeon/kitchen";
 import { applyPhases } from "./dungeon/phases";
 import { applyJinxes } from "./dungeon/jinxes";
 import { floorMoments } from "./dungeon/moments";
-import { applyKits } from "./dungeon/kits";
 import {
   closingCards,
+  lairs,
   lastCallBosses,
   queueCards,
   stairsCards,
@@ -101,7 +101,6 @@ export const dungeonCards: CardDefinition[] = applyPhases([
   ...closingCards,
   ...hiddenRoomCards,
 ]).map(withNaturals);
-applyKits(dungeonCards);
 // Curses became jinxes (2026-10-25): one spoken system, not two.
 applyJinxes(dungeonCards);
 
@@ -122,6 +121,13 @@ const one = (label: string, intro: string, cards: CardDefinition[]) => ({
   pick: 1,
   cardIds: ids(cards),
 });
+
+/** A lair: its region, the Company at the door and its dragons. */
+const lair = (region: ReturnType<typeof floor>, dragons: CardDefinition[]) => [
+  region,
+  one("The Lair's Door", "The Company got here first", closingCards),
+  one("The Dragon's Lair", "It's awake", dragons),
+];
 
 export const dungeonPack: PackDefinition = {
   version: 1,
@@ -202,15 +208,26 @@ export const dungeonPack: PackDefinition = {
       },
       one("The Last Inn", "One last night's sleep", lowerLandings),
       one("The Crossroads", "The Gilded Company is ahead", stairsCards),
+      // The lair (The Quest 2.0, 2026-11-13): the dragon picks the third
+      // region, its own, so each route is that region, the Company at its
+      // door and one of its three dragons. The door is the same in every
+      // route; only one route is ever dealt.
       {
         oneOf: [
-          [floor("The Sunken Coast", "Down to the Sunken Coast", taproom)],
-          [floor("The Fire Caverns", "Into the Fire Caverns", kitchen)],
-          [floor("The Frozen Pass", "Up into the Frozen Pass", rooftop)],
+          lair(
+            floor("The Sunken Coast", "Down to the Sunken Coast", taproom),
+            lairs.taproom,
+          ),
+          lair(
+            floor("The Fire Caverns", "Into the Fire Caverns", kitchen),
+            lairs.kitchen,
+          ),
+          lair(
+            floor("The Frozen Pass", "Up into the Frozen Pass", rooftop),
+            lairs.rooftop,
+          ),
         ],
       },
-      one("The Lair's Door", "The Company got here first", closingCards),
-      one("The Dragon's Lair", "It's awake", lastCallBosses),
     ],
   },
 };

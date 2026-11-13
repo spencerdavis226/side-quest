@@ -5,7 +5,6 @@ import {
   d20,
   elite,
   fork,
-  fuse,
   gamble,
   GUESSED,
   merchant,
@@ -60,12 +59,12 @@ export const freezer: FloorCards = {
       7,
       "frost-giant",
       "The Clay Golem",
-      "Nine feet of clay, and it says you're not on the list. Act important, then roll d20.",
+      "Nine feet of clay guarding the stair, and it wants the password. Guess one aloud, then roll d20.",
       "It squeezes you into a new shape. Drink 4.",
       "You smudge the word on its forehead. It sits down. Give 4.",
       {
         loot: "shield",
-        fumble: "It's right. You're not important. Drink 8, then water.",
+        fumble: "Wrong password, twice. Drink 8, then water.",
       },
     ),
     mishap(
@@ -97,7 +96,7 @@ export const freezer: FloorCards = {
       {
         jinx: {
           name: "Statue",
-          rule: "Whenever the jinxed player says 'freeze', the last to stop moving drinks 1.",
+          rule: "Whenever the cursed player says 'freeze', the last to stop moving drinks 1.",
         },
       },
     ),
@@ -111,10 +110,10 @@ export const freezer: FloorCards = {
     monster(
       7,
       "hypothermia-hal",
-      "Hal the Fire Mage",
-      "Hal is fine. Hal is great, actually. Hal has set his own robe on fire. Roll d20.",
-      "Hal hands you his robe. Drink 4.",
-      "You put Hal out. Give 4 to the most flammable player here.",
+      "The Burning Mage",
+      "A fire mage in the tower's cold room, on fire, insisting he meant to be. Roll d20.",
+      "He hugs you for warmth. Drink 4.",
+      "You put him out. Give 4 to the most flammable player here.",
     ),
     monster(
       7,
@@ -129,7 +128,7 @@ export const freezer: FloorCards = {
       7,
       "the-shiver",
       "The Cold Spell",
-      "Say the coldest thing you've ever said to an ex, true or not. Nobody winces: drink 4.",
+      "The wind wants something colder than itself. Say the coldest line you can. Nobody winces: drink 4.",
     ),
     trial(
       7,
@@ -158,16 +157,6 @@ export const freezer: FloorCards = {
       "You triple-axel it. The table scores you; give 3.",
     ),
     // A hidden fuse.
-    {
-      ...mishap(
-        7,
-        "Trap",
-        "the-door-shuts",
-        "The Sealing Spell",
-        "Light the fuse. Pass a cup clockwise, naming a spell. The door seals on whoever holds it.",
-      ),
-      timer: fuse("The door seals. Whoever is holding the cup drinks 3."),
-    },
     trap(
       7,
       "icicle-drop",
@@ -262,15 +251,6 @@ export const freezer: FloorCards = {
     ),
   ],
   finds: [
-    gamble(
-      7,
-      "ice-bucket-challenge",
-      "The Wishing Fountain",
-      "One wish per coin. Toss, then cash out or toss again, harder. Roll d20.",
-      "It soaks you. Drink 4.",
-      "A wish, a small one. Give 3.",
-      ["shield", "round", "draught"],
-    ),
     relic(
       7,
       "frozen-in-the-ice",
@@ -297,15 +277,15 @@ export const freezer: FloorCards = {
       7,
       "lost-parka",
       "The Lost Robe",
-      "A wizard's robe on a hook, a potion in the pocket. Drink 1, and keep the potion.",
+      "A wizard's robe on a hook, a potion in the pocket. Twirl in it like a wizard.",
       "draught",
     ),
     treasure(
       7,
       "ice-tray",
-      "The Ingredient Shelf",
-      "Jars of eyes and toes, and one smoke bomb. Drink 1.",
-      "smoke",
+      "The Spellbook Shelf",
+      "Jars of eyes and toes, and a training tome. Read its first line aloud; make it up.",
+      "candy",
     ),
     shrine(
       7,
@@ -325,8 +305,8 @@ export const freezer: FloorCards = {
       "The Familiar",
       "The wizard's cat runs a little shop out of the library, for treats.",
       [
-        { label: "Drink 4", loot: "shield" },
-        { label: "Bleed for it", cost: 1, loot: "round" },
+        { label: "Treats · drink 4", loot: "shield" },
+        { label: "Let it scratch you", cost: 1, loot: "round" },
         { label: "Walk on" },
       ],
     ),
@@ -336,17 +316,17 @@ export const freezer: FloorCards = {
       "The Silenced Mage",
       "A mage who cast silence on himself mid-sale. He sells by pointing.",
       [
-        { label: "Drink 4", loot: "draught" },
-        { label: "Bleed for it", cost: 2, loot: "candy" },
+        { label: "Point · drink 4", loot: "draught" },
+        { label: "Point at a scar", cost: 2, loot: "candy" },
         { label: "Walk on" },
       ],
     ),
     fork(
       7,
       "two-shelves",
-      "Two Staircases",
-      "A staircase that goes up, and one that goes up sideways, where something laughs.",
-      ["The normal one", "The sideways one"],
+      "The Shortcut",
+      "A teleport circle chalked on the floor, half rubbed out. It might go up.",
+      ["Take the stairs", "Step in the circle"],
     ),
     fork(
       7,
@@ -372,15 +352,6 @@ export const freezer: FloorCards = {
       "It bites. Drink 4.",
       "A useful book. Give 3.",
       ["shield", "draught", "revive"],
-    ),
-    gamble(
-      7,
-      "snow-globe",
-      "The Snow Globe",
-      "Shake the wizard's giant snow globe. Win, then cash out or shake again, harder. Roll d20.",
-      "It cracks. Drink 4.",
-      "Something floats up. Give 3.",
-      ["smoke", "shield", "round"],
     ),
   ],
   elites: [
@@ -424,9 +395,9 @@ export const freezer: FloorCards = {
       7,
       "freezer-witch",
       "The Mirror Witch",
-      "She keeps her ex in a mirror, and there's room for one more. Roll d20.",
+      "She keeps her rivals in mirrors, and there's room for one more. Roll d20.",
       "You're in the mirror. Drink 5.",
-      "You free the ex. Give 5 to whoever has an ex who deserves a mirror.",
+      "You free a rival. Give 5 to whoever would look best in a mirror.",
       [
         trinket("Mirror Heart", { hearts: 2, hurt: { boss: 1 } }),
         trinket("Frost Wand", { roll: { monster: 1, ambush: 1 } }),
@@ -484,7 +455,7 @@ export const freezer: FloorCards = {
       {
         jinx: {
           name: "Countdown",
-          rule: "The jinxed player counts down from three, out loud, before every sip. Forgets: drink 1.",
+          rule: "The cursed player counts down from three, out loud, before every sip. Forgets: drink 1.",
         },
         drops: [
           trinket("Archmage's Staff", { crit: 19 }),
@@ -513,18 +484,18 @@ export const freezer: FloorCards = {
     boss(
       7,
       "the-frozen-ex",
-      "The Frozen Ex",
-      "Your ex, frozen by the wizard at the moment you broke up, now thawing. Roll d20.",
+      "The Frozen Apprentice",
+      "The wizard's last apprentice, frozen mid-spell a hundred years ago, now thawing. Roll d20.",
       d20(
         BOSS_NEED[1],
-        "They pick up mid-sentence. Drink 5.",
-        "You say you've moved on, and mean it. They shatter. Give 5.",
-        { crit: "You both laugh about it. Everyone else drinks 3." },
+        "He finishes the spell, on you. Drink 5.",
+        "You tell him the wizard retired. He shatters. Give 5.",
+        { crit: "He thanks you and melts, politely. Everyone else drinks 3." },
       ),
       {
         drops: [
-          trinket("Closure", { heal: 1, hearts: 1 }),
-          trinket("Their Cloak", { hurt: { monster: -1 } }),
+          trinket("Thawed Heart", { heal: 1, hearts: 1 }),
+          trinket("Frozen Cloak", { hurt: { monster: -1 } }),
         ],
       },
     ),

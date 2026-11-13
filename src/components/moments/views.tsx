@@ -311,7 +311,7 @@ function Still({
 function caption(m: Moment): [string, string, string] {
   switch (m.kind) {
     case "evolution":
-      return [m.kicker, m.to, m.change];
+      return [m.kicker, m.to, [m.change, m.line].filter(Boolean).join(" ")];
     case "entrance":
       return [m.kicker, m.title, ""];
     case "badge":
@@ -539,6 +539,7 @@ function LevelUp({ m, scale, onDone }: ViewProps<"evolution">) {
         <span className="forge-new">{m.to}</span>
       </div>
       {m.change && <p className="forge-change">{m.change}</p>}
+      {m.line && <p className="forge-line">{m.line}</p>}
       <p className="evo-hint">Tap to continue</p>
     </Stage>
   );

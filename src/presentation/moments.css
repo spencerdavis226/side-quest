@@ -615,6 +615,19 @@
   text-shadow: 0 2px 8px #000;
   animation: forge-change-hold var(--len) ease both;
 }
+/* The class's rank-up line for the table (The Quest 2.0, 2026-11-13), in
+   gold under what changed; it arrives with the change. */
+.forge-line {
+  position: absolute;
+  top: calc(50% + clamp(140px, 36vw, 200px));
+  margin: 0;
+  width: 88%;
+  text-align: center;
+  color: #ffd27a;
+  font: italic 600 clamp(17px, 4.6vw, 22px) / 1.25 var(--font-tavern);
+  text-shadow: 0 2px 8px #000;
+  animation: forge-change-hold var(--len) ease both;
+}
 /* Held until a tap (2026-11-02): these rest on the last frame, where the
    ones below fade out. */
 @keyframes forge-kicker-hold {

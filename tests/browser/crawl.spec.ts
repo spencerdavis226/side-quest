@@ -359,7 +359,7 @@ test("a lost fight can lay a jinx, shown on the meter and as a moment", async ({
   // The jinx's moment (2026-11-01; a banner before), read under Reduced
   // Motion on its still plaque.
   await expect(page.locator(".still-plaque")).toHaveText(
-    /Cursed!\s*Toad Voice\s*The jinxed player croaks after every sentence/,
+    /Cursed!\s*Toad Voice\s*The cursed player croaks after every sentence/,
   );
   await expect(page.locator(".tag-jinx")).toBeVisible();
   await expect(meter(page)).toHaveAccessibleName(/Curse: Toad Voice/);
@@ -483,7 +483,7 @@ test("a region's boss ranks the adventurer up, and a side quest can be walked pa
   await sheet.locator(".spoils-row").nth(1).click();
   const spoken = page.locator("#banner-announcer");
   await expect(spoken).toContainText(
-    "Barbarian ranks up! Berserker. +2 max hearts. +2 to elite and boss d20s.",
+    "Barbarian ranks up! Berserker. +2 max hearts. +1 to monster d20s. +2 to elite and boss d20s. Everyone roars.",
   );
   await page.screenshot({ path: info.outputPath("rank-up.png") });
   await expect.poll(async () => (await saved(page)).quest.party.form).toBe(1);
@@ -671,7 +671,7 @@ test("losing the last heart wipes the party", async ({ page }, info) => {
 
 test("felling the dragon wins the quest", async ({ page }, info) => {
   let s = reveal(
-    crawlAt("dungeon.last-call-lich", STEP.lastCall, {
+    crawlAt("dungeon.final-tab", STEP.lastCall, {
       hits: 2,
       rounds: 2,
     }),
@@ -700,7 +700,7 @@ for (const width of [320, 390])
     // A Barbarian at its second rank (the Warlord), with the Harvest
     // Festival and a trinket kept, fells the dragon.
     let s = crawlAt(
-      "dungeon.last-call-lich",
+      "dungeon.final-tab",
       STEP.lastCall,
       { hits: 2, rounds: 2, form: 2 },
       { adventurer: "barbarian" },
@@ -732,7 +732,7 @@ for (const width of [320, 390])
     await expect(wall).toHaveAccessibleName("Trophies: 5 of 5");
     await expect(wall.locator("li.won")).toHaveCount(5);
     await expect(wall.locator("li").first()).toContainText("The Bridge Troll");
-    await expect(wall.locator("li").last()).toContainText("Emberfang");
+    await expect(wall.locator("li").last()).toContainText("Old Mother Brine");
     const tab = page.locator(".run-tab");
     await expect(tab).toContainText("Barbarian → Berserker → Warlord");
     await expect(tab).toContainText("Harvest Festival");
@@ -847,7 +847,7 @@ test("a merchant sells on plaques, and a price in hearts needs a spare heart", a
   // Greyed but solid: the frame must not show through.
   await expect(plaques.nth(1)).toHaveCSS("opacity", "1");
   await expect(plaques.nth(0)).toHaveAccessibleName(
-    "Drink 3: a Healing Potion",
+    "Haggle · drink 3: a Healing Potion",
   );
   await page.screenshot({ path: info.outputPath("merchant.png") });
   // A stray tap on the card does nothing; the plaques decide.
@@ -873,7 +873,7 @@ test("a fork's loud door deals one of the floor's elites, which drops a trinket"
     "Old Forest · Fork",
   );
   await page.screenshot({ path: info.outputPath("fork.png") });
-  await page.getByRole("button", { name: /^Dark path/ }).click();
+  await page.getByRole("button", { name: /^The shortcut/ }).click();
   await page.locator(".game-card").click();
   await expect(page.locator(".game-card .card-ribbon")).toHaveText(
     "Old Forest · Elite",

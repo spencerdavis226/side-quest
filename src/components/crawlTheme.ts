@@ -49,6 +49,9 @@ export interface CrawlTheme {
   /** A class's or starter's perk and its levels are written from their
    * numbers in these words (`game/omenText.ts`). */
   omenWords?: OmenWords;
+  /** A line the table acts out when the adventurer ranks up, by class
+   * card ID (The Quest 2.0, 2026-11-13); shown under the forge. */
+  rankLines?: Readonly<Record<string, string>>;
   /** Pub Crawl's equipment (2026-10-25): the slots' names and the spoils
    * sheet's words. */
   equipment?: {
@@ -165,7 +168,10 @@ const SCENES: [RegExp, string][] = [
   [/City Gate|Crossroads|Lair.s Door/, "rival"],
   [/Dragon.s Lair/, "lair"],
   [/Inn\b/, "inn"],
-  [/Side Quest|Barrow|Bandit Fort|Witch.s Cottage|Drowned Shrine|Sunless Vault/, "hidden"],
+  [
+    /Side Quest|Barrow|Bandit Fort|Witch.s Cottage|Drowned Shrine|Sunless Vault/,
+    "hidden",
+  ],
 ];
 function dungeonScene(label: string) {
   return SCENES.find(([test]) => test.test(label))?.[1];
@@ -202,6 +208,26 @@ const dungeon: CrawlTheme = {
   eat: "Read",
   drink: "Drink",
   omenWords: dungeonOmenWords,
+  rankLines: {
+    "dungeon.class-barbarian": "Everyone roars.",
+    "dungeon.class-rogue": "Everyone pats their purse to be sure.",
+    "dungeon.class-cleric": "Everyone bows their head for a blessing.",
+    "dungeon.class-wizard": "Everyone wiggles their fingers and says a spell.",
+    "dungeon.class-bard": "Everyone hums a fanfare.",
+    "dungeon.class-paladin": "Everyone salutes.",
+    "dungeon.class-ranger": "Everyone howls once.",
+    "dungeon.class-monk": "Everyone takes one calm sip.",
+    "dungeon.class-necromancer": "Everyone plays dead for three seconds.",
+    "dungeon.class-alchemist": "Everyone clinks glasses: to science.",
+    "dungeon.class-warlock": "Everyone signs an invisible contract.",
+    "dungeon.class-bouncer": "Everyone kneels to be knighted.",
+    "dungeon.class-bartender": "Everyone taps the table twice.",
+    "dungeon.class-mercenary": "Everyone rubs finger and thumb: coin.",
+    "dungeon.class-druid": "Everyone makes a bird noise.",
+    "dungeon.class-plus-one": "Nobody claps. The Peasant claps alone.",
+    "dungeon.class-intern": "Everyone gives the Squire a thumbs up.",
+    "dungeon.class-mimic": "Everyone opens and shuts their mouth like a lid.",
+  },
   equipment: {
     slots: { weapon: "Weapon", armor: "Armor", trinket: "Trinket" },
     spoils: "Spoils",
@@ -315,7 +341,8 @@ const dungeon: CrawlTheme = {
   },
   won: {
     title: ["The dragon", "is slain."],
-    verdict: "Half the kingdom is yours: make a rule for the rest of the night.",
+    verdict:
+      "Half the kingdom is yours: make a rule for the rest of the night.",
   },
 };
 

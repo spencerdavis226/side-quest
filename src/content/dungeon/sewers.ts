@@ -2,12 +2,10 @@ import {
   gamble,
   ambush,
   boss,
-  clock,
   d20,
   elite,
   fork,
   fuse,
-  GUESSED,
   merchant,
   monster,
   moves,
@@ -128,7 +126,7 @@ export const sewers: FloorCards = {
       {
         jinx: {
           name: "Bat Signal",
-          rule: "Whenever the jinxed player points at the ceiling, the last to copy drinks 1.",
+          rule: "Whenever the cursed player points at the ceiling, the last to copy drinks 1.",
         },
       },
     ),
@@ -208,17 +206,6 @@ export const sewers: FloorCards = {
       "You out-cool them. Give 3.",
     ),
     // A secret on a clock.
-    {
-      ...mishap(
-        4,
-        "Monster",
-        "flushed-goldfish",
-        "The Cave Painting",
-        "Read alone what the cave painting shows, start the clock, then mime it. The table guesses.",
-      ),
-      secret: "A DWARF LOSING HIS BEARD.",
-      timer: clock(GUESSED),
-    },
     // 2d6, and doubles are a better win.
     monster(
       4,
@@ -270,15 +257,6 @@ export const sewers: FloorCards = {
     ),
   ],
   finds: [
-    gamble(
-      4,
-      "fishing-the-drain",
-      "Panning for Gold",
-      "A pan and an underground stream. Win, then cash out or pan again, harder. Roll d20.",
-      "You catch a rat. Drink 4.",
-      "A gold fleck. Give 3.",
-      ["smoke", "round", "shield"],
-    ),
     relic(
       4,
       "glint-in-the-drain",
@@ -303,7 +281,7 @@ export const sewers: FloorCards = {
         loot: "smoke",
         jinx: {
           name: "Cave Hands",
-          rule: "The jinxed player drinks with no hands. Caught using one: drink 1.",
+          rule: "The cursed player drinks with no hands. Caught using one: drink 1.",
         },
       },
     ),
@@ -311,15 +289,22 @@ export const sewers: FloorCards = {
       4,
       "flushed-purse",
       "A Dead Miner's Purse",
-      "A dead miner's purse, somehow dry: a candle, a flint and a sellsword's contract. Drink 1.",
+      "A dead miner's purse, somehow dry: a candle, a flint and a sellsword's contract. Sign it in the air.",
       "round",
     ),
     treasure(
       4,
       "maintenance-locker",
       "The Tool Shed",
-      "A miner's helmet on a hook, and a flask of something brown. Drink 1 from the flask.",
+      "A miner's helmet on a hook, and a flask of something brown. Put the helmet on: tap your head twice.",
       "shield",
+    ),
+    treasure(
+      4,
+      "mines-dwarf-stash",
+      "The Dwarf's Stash",
+      "Behind a loose stone, a dwarf's stash and one lucky coin. Knock twice on the table to thank him.",
+      "die",
     ),
     shrine(
       4,
@@ -327,20 +312,14 @@ export const sewers: FloorCards = {
       "The Air Shaft",
       "A shaft overhead and real moonlight. Everyone looks up and makes a wish.",
     ),
-    shrine(
-      4,
-      "dry-ledge",
-      "The Dry Ledge",
-      "A dry ledge, a barrel and two stools. Everyone sits back and takes one slow sip.",
-    ),
     merchant(
       4,
       "mole-man",
       "The Mole Man",
       "A man who lives down here sells whatever falls down the shafts. He takes drinks, or blood.",
       [
-        { label: "Drink 4", loot: "draught" },
-        { label: "Bleed for it", cost: 1, loot: "smoke" },
+        { label: "Pay · drink 4", loot: "draught" },
+        { label: "Pay in blood", cost: 1, loot: "smoke" },
         { label: "Walk on" },
       ],
     ),
@@ -350,17 +329,17 @@ export const sewers: FloorCards = {
       "The Kobold Peddler",
       "A kobold with a bag of pills, potions and one very old book.",
       [
-        { label: "Drink 4", loot: "shield" },
-        { label: "Bleed for it", cost: 2, loot: "candy" },
+        { label: "Pills · drink 4", loot: "shield" },
+        { label: "The old book", cost: 2, loot: "candy" },
         { label: "Walk on" },
       ],
     ),
     fork(
       4,
       "two-pipes",
-      "Two Tunnels",
-      "Two tunnels. One drips. The other gurgles, and it sounds like laughing.",
-      ["Dripping tunnel", "Gurgling tunnel"],
+      "A Cry for Help",
+      "A miner's voice from a collapsed tunnel: 'Help! And bring snacks.'",
+      ["Mark it, move on", "Dig him out"],
     ),
     fork(
       4,

@@ -481,6 +481,31 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         : slots.flatMap((slot) =>
             "oneOf" in slot ? slot.oneOf.flat() : [slot],
           );
+      // A card is dealt at most once a run. Sibling routes of one `oneOf`
+      // may share cards (The Quest 2.0, 2026-11-13: every lair has the same
+      // door), since a game deals only one of them; two slots, or two
+      // stages of one route, may not.
+      const stageIds = (stage: QuestStage) => [
+        ...(Array.isArray(stage?.cardIds) ? stage.cardIds : []),
+        ...(Array.isArray(stage?.elite) ? stage.elite : []),
+      ];
+      const repeatsInARun = (all: typeof slots) => {
+        const seen = new Set<string>();
+        for (const slot of all) {
+          const routes = "oneOf" in slot ? slot.oneOf : [[slot]];
+          const dealt = new Set<string>();
+          for (const route of routes) {
+            const ids = route.flatMap(stageIds);
+            if (new Set(ids).size !== ids.length) return true;
+            for (const id of ids) dealt.add(id);
+          }
+          for (const id of dealt) {
+            if (seen.has(id)) return true;
+            seen.add(id);
+          }
+        }
+        return false;
+      };
       const finaleIds = stages.flatMap((stage) => [
         ...(Array.isArray(stage?.cardIds) ? stage.cardIds : []),
         ...(Array.isArray(stage?.elite) ? stage.elite : []),
@@ -526,7 +551,7 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
             (stage.elite !== undefined &&
               (!crawl || !Array.isArray(stage.elite) || !stage.elite.length)),
         ) ||
-        new Set(finaleIds).size !== finaleIds.length ||
+        repeatsInARun(slots) ||
         finaleIds.some(
           (id) => !ids.has(id) || (!crawl && playable.includes(id)),
         ) ||
