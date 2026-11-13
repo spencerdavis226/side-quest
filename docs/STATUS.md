@@ -4,7 +4,7 @@ Updated 2026-11-03. **Single authoritative handoff.** Read `AGENTS.md` first. Ol
 
 ## Next task (2026-11-13): The Quest 2.0, reviewed and specified, not started
 
-Owner: "Fully review the new The Quest mode ... a 2.0 mode ... I don't want you to do any of the work". The review and the phased execution spec are in **`docs/QUEST_2_PLAN.md`** (written at the owner's request as the handoff for a later session; this file stays the status record). No code or card changed. Before Phase 2 the owner answers decisions D1 to D8 in its section 3 (D1 reopens "regions stay random"). Not checked: no run played, no balance simulation run for any proposal.
+Owner: "Fully review the new The Quest mode ... a 2.0 mode ... I don't want you to do any of the work". The review and the phased execution spec are in **`docs/QUEST_2_PLAN.md`** (written at the owner's request as the handoff for a later session; this file stays the status record). No code or card changed. Revised the same day after the owner lifted the engine limit ("I'm fine with major engine rewrites"): the plan now includes a dragon battle with the dragon's own turns, a map with road choices, allies who can die, dragon lore, choices that come back, rare cards and a cross-run Chronicle, in eight phases starting with a no-behavior-change split of `engine.ts`. Before Phase 2 the owner answers decisions D1 to D11 in its section 3 (D1 reopens "regions stay random"; D10 and D11 ask for a longer run and a larger runtime budget). Not checked: no run played, no balance simulation run for any proposal.
 
 ## Deployed 2026-11-13: Realms, Pub Crawl rebuilt as a classic fantasy Quest
 
