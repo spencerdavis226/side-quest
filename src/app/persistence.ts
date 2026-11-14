@@ -264,8 +264,12 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
           (id) =>
             typeof id !== "string" ||
             !dealt.includes(id) ||
-            !teamMember(s.quest!, id)?.type,
+            // A typed Pokémon, or an ally (The Quest 2.0 Phase 4).
+            (!teamMember(s.quest!, id)?.type &&
+              !teamMember(s.quest!, id)?.ally),
         ))) ||
+    // Dragon lore (The Quest 2.0 Phase 4): one to three.
+    (p.lore !== undefined && (!whole(p.lore, 1) || p.lore > 3)) ||
     // The ball thrown at the Pokémon face up (2026-10-27), kept until its
     // card is put aside.
     (p.throw !== undefined &&
@@ -296,7 +300,8 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
       (typeof p.fainted !== "string" ||
         !dealt.includes(p.fainted) ||
         !!p.team?.includes(p.fainted) ||
-        !teamMember(s.quest!, p.fainted)?.type)) ||
+        (!teamMember(s.quest!, p.fainted)?.type &&
+          !teamMember(s.quest!, p.fainted)?.ally))) ||
     // The beat of the phased boss put aside last.
     (p.beat !== undefined &&
       (!whole(p.beat, 1) ||

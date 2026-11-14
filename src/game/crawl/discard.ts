@@ -9,6 +9,7 @@ import { rollWins } from "../dice";
 import { currentCard, paceQuest, shuffle, type Random } from "../engine";
 import { finaleCard, finaleStage } from "./stages";
 import {
+  addLore,
   evolve,
   gainBoon,
   hurt,
@@ -121,11 +122,17 @@ export function discard(
     random,
     verdict,
     spoil,
+    lost ? sent : undefined,
   );
   const after = next.quest?.party;
   if (!lost || !after || !sent) return next;
   const team = (after.team ?? []).filter((m) => m !== sent);
-  const fallen: PartyState = { ...after, team, fainted: sent };
+  // A last stand on the same card is the news; the one sent in falls too.
+  const fallen: PartyState = {
+    ...after,
+    team,
+    fainted: after.fainted ?? sent,
+  };
   if (!team.length) delete fallen.team;
   return { ...next, quest: { ...next.quest!, party: fallen } };
 }
@@ -134,6 +141,8 @@ function discardCard(
   random: Random,
   verdict?: Outcome,
   spoil?: number,
+  /** An ally or Pokémon sent in and lost on this card. */
+  sent?: string,
 ): SessionState {
   s = settleThrow(s);
   const history = { previousRoll: s.roll, roll: null };
@@ -190,6 +199,19 @@ function discardCard(
         hearts: Math.ceil(next.max / 2),
         loot: next.loot.filter((_, i) => i !== revive),
       };
+    // The last stand (The Quest 2.0 Phase 4): when the hearts run out, the
+    // oldest living ally dies in the party's place (never one sent in and
+    // lost on this card: it is already gone) and the party stands on one.
+    if (next.hearts === 0) {
+      const stand = (next.team ?? []).find(
+        (id) => id !== sent && !!finaleCard(q, id)?.ally,
+      );
+      if (stand) {
+        const team = next.team!.filter((id) => id !== stand);
+        next = { ...next, hearts: 1, team, fainted: stand };
+        if (!team.length) delete next.team;
+      }
+    }
     // The hearts ran out: the party wipes and the game ends on this card.
     if (next.hearts === 0)
       return {
@@ -237,6 +259,9 @@ function discardCard(
       if (card.levelUp) next = evolve(next, { ...q, party: next });
       // A Legendary caught on its last beat joins the team (2026-11-01).
       if (card.joins) next = joinTeam(next, card.id);
+      // The Quest 2.0 Phase 4: a keeper's ally joins, and its lore is told.
+      if (card.ally) next = joinTeam(next, card.id);
+      if (card.reward?.lore) next = addLore(next);
       // A badge restocks the starter's item, room permitting; in a crawl
       // without badges (Pub Crawl), any boss does.
       const restock = omenEffect(q)?.restock;

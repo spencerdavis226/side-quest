@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   advance,
+  cardEdge,
   createSession,
   currentCard,
   finaleCard,
@@ -146,9 +147,12 @@ describe("the dragon battle", () => {
   it("at half health the table plays the enrage contest once, then the enraged moves", () => {
     let s = atDragon();
     const fightOf = dragonOf(s).lairFight!;
-    s = fight(s, 15);
-    expect(party(s).duel!.contest).toBeUndefined();
-    s = fight(s, 15);
+    // 19: a hit against any move's target (15, or 17 for a harder one).
+    for (let i = 1; i < Math.ceil(DRAGON_HEALTH / 2); i++) {
+      s = fight(s, 19);
+      expect(party(s).duel!.contest).toBeUndefined();
+    }
+    s = fight(s, 19);
     expect(party(s)).toMatchObject({
       hits: Math.ceil(DRAGON_HEALTH / 2),
       duel: { contest: true },
@@ -162,18 +166,38 @@ describe("the dragon battle", () => {
     const hearts = party(s).hearts;
     const lost = settleBattle(advance(s), false, seeded(3));
     expect(party(lost).hearts).toBe(hearts - ENRAGE_HURT);
-    expect(party(lost).hits).toBe(2);
+    expect(party(lost).hits).toBe(Math.ceil(DRAGON_HEALTH / 2));
     expect(party(lost).duel).toMatchObject({ enraged: true, prev: "contest" });
     expect(previousCard(lost)!.rules).toBe(fightOf.enrage.rules);
     // A won one breaks a scale, and the contest never comes back.
     s = settleBattle(advance(s), true, seeded(3));
-    expect(party(s).hits).toBe(3);
+    expect(party(s).hits).toBe(Math.ceil(DRAGON_HEALTH / 2) + 1);
     const duel = party(s).duel!;
     expect(duel.enraged).toBe(true);
     expect(currentCard(advance(s)).rules).toBe(
       fightOf.enraged[duel.move].rules,
     );
     roundTrip(s);
+  });
+
+  it("each lore is an edge on one of the first swings, never on the contest (Phase 4)", () => {
+    const s = atDragon();
+    s.quest!.party!.lore = 2;
+    expect(cardEdge(s.quest, currentCard(s))).toBe("advantage");
+    const rolled = rollDice(advance(s), seeded(4));
+    expect(rolled.roll).toMatchObject({ edge: "advantage" });
+    expect(rolled.roll!.dropped).toHaveLength(1);
+    roundTrip(rolled);
+    // Two swings in, the lore is spent.
+    s.quest!.party!.duel = { ...party(s).duel!, swings: 2 };
+    expect(cardEdge(s.quest, currentCard(s))).toBeNull();
+    // The contest has no die to roll twice.
+    s.quest!.party!.duel = { move: 0, swings: 1, contest: true };
+    expect(cardEdge(s.quest, currentCard(s))).toBeNull();
+    // Lore is one to three.
+    const bad = structuredClone(atDragon());
+    bad.quest!.party!.lore = 4;
+    expect(() => parseSession(JSON.stringify(bad))).toThrow();
   });
 
   it("a natural 20 breaks two scales", () => {

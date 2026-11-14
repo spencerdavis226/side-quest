@@ -84,12 +84,15 @@ describe("how to play", () => {
     );
     expect(LEVEL_DRINK).toBe(3);
     // One row a system, and nothing cut on 2026-10-31; ranks since Realms;
-    // the dragon battle since The Quest 2.0 (2026-11-13).
+    // the dragon battle since The Quest 2.0 (2026-11-13); lore and allies
+    // since its Phase 4 (2026-11-14).
     expect(rows.map((r) => r.title)).toEqual([
       "Hearts",
       "Fights",
       "Bosses",
       "The dragon",
+      "Lore",
+      "Allies",
       "Ranks",
       "Inns and side quests",
       "Satchel and gear",

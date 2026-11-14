@@ -2,7 +2,14 @@ import type { SessionState } from "../types";
 import { rollWins } from "../dice";
 import { currentCard, type Random } from "../engine";
 import { finaleStage } from "./stages";
-import { evolve, gainBoon, omenEffect, omenForm, satchelSize } from "./party";
+import {
+  addLore,
+  evolve,
+  gainBoon,
+  omenEffect,
+  omenForm,
+  satchelSize,
+} from "./party";
 import { joinTeam, throwAt } from "./team";
 import { discard } from "./discard";
 // Plaques (merchants, forks, inns, pleas) and push-your-luck pulls.
@@ -67,6 +74,10 @@ export function takeOffer(
   if (offer.boon) party = gainBoon(party, currentCard(s), now, `o${index}`);
   if (offer.jinx && currentCard(s).jinx)
     party = { ...party, jinx: currentCard(s).id };
+  // The Quest 2.0 Phase 4: dragon lore, and an ally hired or freed.
+  if (offer.lore) party = addLore(party);
+  if (offer.recruit && currentCard(s).ally)
+    party = joinTeam(party, currentCard(s).id);
   let finale = q.finale;
   // The loud door: the next room on this floor becomes one of its elites.
   if (offer.elite) {

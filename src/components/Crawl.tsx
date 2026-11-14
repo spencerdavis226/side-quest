@@ -33,6 +33,7 @@ import {
   isLasting,
   catchReplaces,
   partyTeam,
+  runNames,
   questRecord,
   replaces,
   stageKind,
@@ -300,7 +301,13 @@ export function CrawlProgress({ quest }: { quest: QuestState }) {
 
 /** What the strip opens: the satchel, the League's badge case, or one thing
  * on the party, on its own. */
-export type StripDialog = "satchel" | "badges" | "jinx" | "matchup";
+export type StripDialog =
+  | "satchel"
+  | "badges"
+  | "jinx"
+  | "matchup"
+  // The Quest 2.0 Phase 4: the dragon lore found.
+  | "lore";
 
 /** The strip under the top row in a crawl (2026-10-17): what the table acts
  * on, each a chip that opens its own dialog. The League's type edge on the
@@ -404,7 +411,11 @@ export function CrawlStrip({
           `${helper.title} sent in: +${assistBonus(helper)} to the roll`,
           "satchel",
           <>
-            {helper.type && <TypeMark type={helper.type} />}
+            {helper.type ? (
+              <TypeMark type={helper.type} />
+            ) : (
+              <CrawlIcon name="ally" theme={theme} />
+            )}
             <span className="chip-name">+{assistBonus(helper)}</span>
           </>,
         )}
@@ -421,13 +432,37 @@ export function CrawlStrip({
             {party.loot.map((item, i) => (
               <CrawlIcon key={i} name={item} theme={theme} />
             ))}
-            {caught.map((m) => m.type && <TypeMark key={m.id} type={m.type} />)}
+            {caught.map((m) =>
+              m.type ? (
+                <TypeMark key={m.id} type={m.type} />
+              ) : (
+                <CrawlIcon key={m.id} name="ally" theme={theme} />
+              ),
+            )}
             {gear.map((b) => (
               <CrawlIcon key={b.key} name={gearIcon(b.boon)} theme={theme} />
             ))}
           </>
         ),
       )}
+      {/* Dragon lore (The Quest 2.0 Phase 4): three runes, one lit for each
+          lore found; each is an edge on one swing at the dragon. */}
+      {quest.packId === "dungeon" &&
+        chip(
+          `tag-lore${party.lore ? "" : " empty"}`,
+          `Dragon lore: ${party.lore ?? 0} of 3`,
+          "lore",
+          <span className="hud-runes" aria-hidden="true">
+            {[0, 1, 2].map((i) => (
+              <CrawlIcon
+                key={i < (party.lore ?? 0) ? `lit-${i}` : `dark-${i}`}
+                name="lore"
+                theme={theme}
+                className={`rune${i < (party.lore ?? 0) ? " lit" : ""}`}
+              />
+            ))}
+          </span>,
+        )}
       {words.badges &&
         record.badges.of > 0 &&
         chip(
@@ -686,28 +721,42 @@ export function OfferPlaque({
     : offer.heal
       ? `+${heartCount(theme, offer.heal)}`
       : undefined;
+  // Plaques that do more (The Quest 2.0 Phases 3 and 4): gear, a dragon
+  // lore, an ally; a plaque's curse names itself in its label's seal.
   const icon: CrawlIconName | null = offer.loot
     ? offer.loot
-    : offer.elite
-      ? "elite"
-      : offer.evolve
-        ? "adventurer"
-        : offer.heal
-          ? "heart"
-          : null;
+    : offer.boon
+      ? gearIcon(offer.boon)
+      : offer.lore
+        ? "lore"
+        : offer.recruit
+          ? "ally"
+          : offer.elite
+            ? "elite"
+            : offer.evolve
+              ? "adventurer"
+              : offer.heal
+                ? "heart"
+                : null;
   const brings = offer.loot
     ? `a ${theme.loot[offer.loot].name}`
-    : offer.elite
-      ? theme.words.elite
-      : offer.evolve
-        ? !can
-          ? `${theme.words.grows.who} is ${theme.words.grows.done}`
-          : branch
-            ? `${theme.words.grows.who} ${theme.words.grows.verb} into ${branch.name}`
-            : `${theme.words.grows.who} ${theme.words.grows.verb}`
-        : offer.heal
-          ? `${offer.heal} ${theme.words.hearts} back`
-          : "nothing";
+    : offer.boon
+      ? offer.boon.name
+      : offer.lore
+        ? "a dragon lore"
+        : offer.recruit
+          ? "an ally"
+          : offer.elite
+            ? theme.words.elite
+            : offer.evolve
+              ? !can
+                ? `${theme.words.grows.who} is ${theme.words.grows.done}`
+                : branch
+                  ? `${theme.words.grows.who} ${theme.words.grows.verb} into ${branch.name}`
+                  : `${theme.words.grows.who} ${theme.words.grows.verb}`
+              : offer.heal
+                ? `${offer.heal} ${theme.words.hearts} back`
+                : "nothing";
   return (
     <button
       className={`card-choice-option offer-plaque ${offer.elite ? "offer-loud" : icon ? "offer-buy" : "offer-pass"}`}
@@ -851,7 +900,11 @@ export function SendInPlaque({
       aria-label={`Go, ${member.title}! ${sendInDoes(member)}`}
       onClick={() => onSend(member.id)}
     >
-      {member.type && <TypeMark type={member.type} />}
+      {member.type ? (
+        <TypeMark type={member.type} />
+      ) : member.ally ? (
+        <AllyMark />
+      ) : null}
       <span className="offer-label">
         <span className="offer-name">Go, {member.title}!</span>
         <small className="offer-price">
@@ -865,7 +918,13 @@ export function SendInPlaque({
 /** What sending caught Pokémon `member` in does (2026-10-31): its bonus
  * joins the roll; it stays after a win and faints for good after a loss. */
 export const sendInDoes = (member: CardDefinition) =>
-  `+${assistBonus(member)} to this roll. Win and it stays; lose and it faints.`;
+  member.ally
+    ? `+${assistBonus(member)} to this roll. Win and they stay; lose and they die.`
+    : `+${assistBonus(member)} to this roll. Win and it stays; lose and it faints.`;
+/** An ally's mark, in the Quest's own art (The Quest 2.0 Phase 4). */
+function AllyMark() {
+  return <CrawlIcon name="ally" theme={crawlTheme("dungeon")} />;
+}
 
 /** One optional action on a card (an item, a send-in), described
  * once so it can sit on the card's foot or in the "Use" sheet. */
@@ -916,7 +975,11 @@ export function buildExtras(
       long: true,
       name: `Go, ${member.title}!`,
       does: sendInDoes(member),
-      mark: member.type ? <TypeMark type={member.type} /> : null,
+      mark: member.type ? (
+        <TypeMark type={member.type} />
+      ) : member.ally ? (
+        <CrawlIcon name="ally" theme={theme} />
+      ) : null,
       run: () => onSend?.(member.id),
       plaque: (
         <SendInPlaque
@@ -1199,6 +1262,24 @@ export function SpoilsSheet({
   );
 }
 
+/** An ally's calling and ritual, in one line (The Quest 2.0 Phase 4). */
+export const allyLine = (ally: NonNullable<CardDefinition["ally"]>) => {
+  const calling = ally.calling.includes("any")
+    ? "any fight"
+    : ally.calling
+        .map((k) => (k === "relic" ? "relic or gamble" : k))
+        .join(" or ");
+  return `+${ally.bonus} to a ${calling}.${ally.ritual ? ` ${ally.ritual}` : ""}`;
+};
+/** The run's dragon and the lore lines found so far, in order. */
+export function loreFound(quest: QuestState) {
+  const { id } = runNames(quest);
+  const dragon = id ? finaleCard(quest, id) : undefined;
+  if (!dragon?.lairFight) return null;
+  const n = quest.party?.lore ?? 0;
+  return { dragon: dragon.title, lines: dragon.lairFight.lore.slice(0, n) };
+}
+
 type RunRecord = NonNullable<ReturnType<typeof questRecord>>;
 /** One dialog's share of the run (`CrawlRecord`'s `part`). */
 export type RecordPart = "party" | StripDialog;
@@ -1322,6 +1403,9 @@ export function CrawlRecord({
   const { words } = theme;
   const quest = session?.quest;
   const team = partyTeam(quest);
+  const allies = team.some((m) => m.ally);
+  // The dragon's lore found so far (The Quest 2.0 Phase 4).
+  const lore = quest ? loreFound(quest) : null;
   // The boss waiting at the bottom of this floor, while the run is on.
   const wanted =
     quest && !party.wiped && !record.won && words.wanted
@@ -1454,25 +1538,51 @@ export function CrawlRecord({
           </span>
         </p>
       )}
+      {show("lore") && lore && (
+        <section className="crawl-lore">
+          <p className="bag-hint">
+            Each lore is an edge on one swing at {lore.dragon}: the first swings
+            are rolled twice and the better kept.
+          </p>
+          <ol className="lore-lines">
+            {[0, 1, 2].map((i) => (
+              <li key={i} className={i < lore.lines.length ? "found" : ""}>
+                <CrawlIcon name="lore" theme={theme} />
+                <span>{lore.lines[i] ?? "Not yet found."}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
       {show("satchel") && !party.wiped && !record.won && (
         <div className="bag">
           {team.length > 0 && (
             <section className="bag-section">
               <h3 className="bag-heading">
-                Team{" "}
+                {allies ? "Allies" : "Team"}{" "}
                 <small>
                   {team.length} of {TEAM_SIZE}
                 </small>
               </h3>
               <p className="bag-hint">
-                Send one into a d20 battle its type beats (Normal: any it
-                doesn’t lose to, one less). Lose and it faints.
+                {allies
+                  ? "Send one into a d20 fight of its calling. Lose and it dies. At zero hearts, one dies in your place."
+                  : "Send one into a d20 battle its type beats (Normal: any it doesn’t lose to, one less). Lose and it faints."}
               </p>
-              <ul className="bag-list crawl-team" aria-label="Caught Pokémon">
+              <ul
+                className="bag-list crawl-team"
+                aria-label={allies ? "Allies" : "Caught Pokémon"}
+              >
                 {team.map((m) => (
                   <BagRow
                     key={m.id}
-                    mark={m.type && <TypeMark type={m.type} />}
+                    mark={
+                      m.type ? (
+                        <TypeMark type={m.type} />
+                      ) : (
+                        <CrawlIcon name="ally" theme={theme} />
+                      )
+                    }
                     name={m.title}
                     badge={
                       <span
@@ -1483,7 +1593,9 @@ export function CrawlRecord({
                       </span>
                     }
                     detail={
-                      m.type ? (
+                      m.ally ? (
+                        allyLine(m.ally)
+                      ) : m.type ? (
                         <span
                           className="bag-type"
                           style={typeStyle(m.type) as CSSProperties}
@@ -1496,7 +1608,7 @@ export function CrawlRecord({
                     }
                     drop={
                       onDrop && {
-                        verb: "Release",
+                        verb: m.ally ? "Dismiss" : "Release",
                         onConfirm: () => onDrop({ caught: m.id }),
                       }
                     }

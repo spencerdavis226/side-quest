@@ -5697,3 +5697,121 @@
   text-transform: none;
   text-align: center;
 }
+
+/* The Quest 2.0 Phase 4: a dragon lore found (M8), an ally joins (M10),
+   an ally sent in (M11, no ball), an ally falls (M12). */
+.moment-lore,
+.moment-ally,
+.moment-fallen {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 12px;
+  padding: 0 24px;
+  text-align: center;
+}
+.moment-lore {
+  background: radial-gradient(
+    circle at 50% 45%,
+    rgb(20 12 6 / 0.82),
+    rgb(0 0 0 / 0.9)
+  );
+  animation: wanted-night var(--len) ease both;
+}
+.lore-kicker,
+.ally-kicker,
+.fallen-kicker {
+  color: #e9d6b0;
+  font: 700 clamp(13px, 3.6vw, 17px) / 1 var(--font-tavern);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+.lore-line {
+  margin: 0;
+  max-width: 22ch;
+  color: var(--dragon, #ff7a3a);
+  font: 700 clamp(24px, 7.4vw, 40px) / 1.15 var(--font-card-title);
+  text-shadow:
+    0 2px 0 var(--dragon-deep, #6e140a),
+    0 0 22px var(--dragon, #ff6a2a);
+  animation: wanted-in 600ms 200ms ease both;
+}
+.lore-runes {
+  display: inline-flex;
+  gap: 10px;
+}
+.lore-runes i {
+  width: 18px;
+  height: 24px;
+  border-radius: 4px;
+  background: #4a3a26;
+}
+.lore-runes i.lit {
+  background: linear-gradient(180deg, #ffe7a8, #e0a43a);
+  box-shadow: 0 0 10px rgb(255 200 90 / 0.6);
+}
+.lore-runes i.new {
+  animation: rune-light 900ms 1200ms ease-out both;
+}
+.moment-ally {
+  background: radial-gradient(
+    circle at 50% 45%,
+    rgb(60 44 14 / 0.75),
+    rgb(0 0 0 / 0.86)
+  );
+  animation: wanted-night var(--len) ease both;
+}
+.ally-light {
+  position: absolute;
+  inset: 30% 20%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #f2c94c55, transparent 70%);
+}
+.ally-name {
+  color: #fff3c4;
+  font: 800 clamp(30px, 9vw, 52px) / 1.05 var(--font-card-title);
+  text-shadow:
+    0 3px 0 #6a4408,
+    0 0 26px #f2c94c;
+  animation: wanted-in 500ms 150ms ease both;
+}
+.ally-line {
+  max-width: 30ch;
+  color: #f1e3c4;
+  font: 500 clamp(15px, 4.2vw, 19px) / 1.35 var(--font-tavern);
+  animation: wanted-in 500ms 700ms ease both;
+}
+.moment-sendin.ally .sendin-light {
+  background: radial-gradient(circle, #ffe7a8, #f2c94c55 45%, transparent 70%);
+}
+.sendin-bonus {
+  position: absolute;
+  top: calc(46% + clamp(60px, 18vw, 110px) + clamp(40px, 12vw, 70px));
+  color: #ffe7a8;
+  font: 800 clamp(22px, 6vw, 34px) / 1 var(--font-card-title);
+  text-shadow: 0 2px 0 #6a4408;
+}
+.moment-fallen {
+  background: #000;
+  animation: wanted-night var(--len) ease both;
+}
+.fallen-name {
+  color: #fff;
+  font: 700 clamp(30px, 9vw, 52px) / 1.05 var(--font-card-title);
+}
+.fallen-line {
+  color: #d9cfc0;
+  font: 500 clamp(15px, 4.2vw, 19px) / 1.35 var(--font-tavern);
+}
+.fallen-candle {
+  margin-top: 26px;
+}
+.fallen-candle::before,
+.fallen-candle::after,
+.fallen-candle i {
+  animation: none;
+}
+.wanted-runes {
+  margin-top: 6px;
+  animation: wanted-in 500ms 2700ms ease both;
+}

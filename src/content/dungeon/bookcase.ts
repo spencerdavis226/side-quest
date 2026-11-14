@@ -342,6 +342,47 @@ export const hiddenRooms: HiddenRoom[] = [
   },
 ];
 
+// The Quest 2.0 Phase 4 (2026-11-14): the one each side quest rescues
+// joins as an ally when its keeper falls, and tells the party one dragon
+// lore. Each is sent into one kind of fight for +3; lost there, it dies.
+const ALLIES: Record<string, NonNullable<CardDefinition["ally"]>> = {
+  "dungeon.the-proprietor": {
+    name: "Gertie the Goat",
+    calling: ["trap"],
+    bonus: 3,
+    ritual: "Everyone bleats when the party heals. Silent: drink 1.",
+  },
+  "dungeon.the-promoter": {
+    name: "Coin the Mule",
+    calling: ["ambush"],
+    bonus: 3,
+    ritual:
+      "Whoever uses an item pats the table twice first. Forgets: drink 1.",
+  },
+  "dungeon.the-manager": {
+    name: "Mort the Skull",
+    calling: ["relic"],
+    bonus: 3,
+    ritual: "Before any gamble, the left neighbor advises as Mort.",
+  },
+  "dungeon.big-mike": {
+    name: "Pip the Cabin Boy",
+    calling: ["monster"],
+    bonus: 3,
+    ritual: "The table shouts 'Pip!' at every monster. Last to shout drinks 1.",
+  },
+  "dungeon.the-undefeated": {
+    name: "Durla Ironbraid",
+    calling: ["boss"],
+    bonus: 3,
+    ritual: "Everyone clinks glasses before a boss swing.",
+  },
+};
+for (const r of hiddenRooms) {
+  r.keeper.ally = ALLIES[r.keeper.id];
+  r.keeper.reward = { lore: true };
+}
+
 export const hiddenRoomCards: CardDefinition[] = hiddenRooms.flatMap((r) => [
   r.plea,
   ...r.guards,

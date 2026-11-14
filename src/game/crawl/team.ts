@@ -37,11 +37,12 @@ export function cardMatchup(
 /** Pokémon League (2026-10-25): the Pokémon the table has caught, held in
  * the bag (2026-10-26) until one is used on a battle it beats. */
 export const TEAM_SIZE = 2;
-/** The caught Pokémon in the bag, as cards, oldest first. */
+/** The caught Pokémon in the bag (or the Quest's allies), as cards,
+ * oldest first. */
 export function partyTeam(quest: QuestState | undefined) {
   return (quest?.party?.team ?? []).flatMap((id) => {
     const card = quest ? teamMember(quest, id) : undefined;
-    return card?.type ? [card] : [];
+    return card?.type || card?.ally ? [card] : [];
   });
 }
 /** Team member `id` as the team sees it: its card, or for a card that
@@ -52,6 +53,8 @@ export function teamMember(
   id: string,
 ): CardDefinition | undefined {
   const card = finaleCard(quest, id);
+  // An ally (The Quest 2.0 Phase 4) goes by its own name.
+  if (card?.ally) return { ...card, title: card.ally.name };
   if (!card?.joins) return card;
   const { name, type, rate } = card.joins;
   return {
@@ -254,13 +257,15 @@ export function letGo(
  * Caterpie, caught on a 5) to +4 (a Gyarados, on a 15). One caught before
  * catch numbers (2026-10-27) adds 1. */
 export function assistBonus(member: CardDefinition | undefined): number {
+  // An ally's own bonus (The Quest 2.0 Phase 4).
+  if (member?.ally) return member.ally.bonus;
   if (!member?.catchRate) return 1;
   const bonus = Math.max(1, Math.min(5, Math.round(member.catchRate / 4)));
   // Normal has no super-effective type, so it is sent into any fight that is
   // not a disadvantage (see `canSendIn`); one less in return, down to +1.
   return member.type === "normal" ? Math.max(1, bonus - 1) : bonus;
 }
-/** Whether caught Pokémon `id` can be sent into the battle face up: a
+/** Whether caught Pokémon (or an ally) `id` can be sent into the battle face up: a
  * single-d20 battle not yet rolled, with its type super effective on the
  * foe's. A Normal Pokémon beats nothing, so it goes in on any matchup that
  * is not a disadvantage (2026-10-31, owner), for one less (`assistBonus`).
@@ -271,6 +276,23 @@ export function canSendIn(s: SessionState, id: string): boolean {
   if (!party.team?.includes(id) || party.throw || party.assist) return false;
   const card = currentCard(s);
   const member = teamMember(s.quest, id);
+  // An ally (The Quest 2.0 Phase 4) goes into a single-d20 battle of its
+  // calling, not yet rolled (a gamble's kind is a relic, the dragon's a
+  // boss).
+  if (member?.ally) {
+    const kind = card.encounter;
+    return (
+      !!card.battle &&
+      card.dice?.count === 1 &&
+      card.dice.sides === 20 &&
+      !s.roll &&
+      !card.dice.choice &&
+      !party.press &&
+      !!kind &&
+      (member.ally.calling.includes("any") ||
+        member.ally.calling.includes(kind))
+    );
+  }
   if (!card.type || !member?.type || !card.battle) return false;
   if (card.dice?.count !== 1 || card.dice.sides !== 20) return false;
   if (s.roll || card.dice.choice || party.press) return false;
@@ -317,6 +339,17 @@ export function cardEdge(
   quest: QuestState | undefined,
   card: CardDefinition,
 ): Edge | null {
+  // Dragon lore (The Quest 2.0 Phase 4): the dragon's first swings, one a
+  // lore held, are rolled twice and the better kept. Never on the contest.
+  const party = quest?.party;
+  const duel = party?.duel;
+  if (
+    card.lairFight &&
+    duel &&
+    !duel.contest &&
+    duel.swings < (party.lore ?? 0)
+  )
+    return "advantage";
   return cardMatchup(quest, card)?.edge ?? null;
 }
 /** What a strike comes to: the starter's edge wins it, a disadvantage loses

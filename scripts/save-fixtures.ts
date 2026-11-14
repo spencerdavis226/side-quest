@@ -62,7 +62,8 @@ const secrets = config(["core", "secrets"], null);
 const league = config(["pokemon"], null, "pokemon");
 const crawl = config(["dungeon"], null, "dungeon");
 
-type Find = (s: SessionState) => boolean;
+/** A situation, read from a state and the one before it. */
+type Find = (s: SessionState, prev?: SessionState) => boolean;
 const party = (s: SessionState) => s.quest!.party!;
 const situations: [string, GameConfig, Find][] = [
   ["standard-mid", standard, (s) => s.discarded >= 12 && s.phase === "hidden"],
@@ -279,6 +280,42 @@ const situations: [string, GameConfig, Find][] = [
         st.cards.some((c) => c.id === s.previousId && c.lairFight),
       ),
   ],
+  // Lore and allies (The Quest 2.0 Phase 4, 2026-11-14): an ally held, one
+  // sent in face up, one fallen in a fight, a last stand, and a swing at the
+  // dragon rolled twice for its lore.
+  [
+    "realms-ally-held",
+    crawl,
+    (s) => s.phase === "hidden" && partyTeam(s.quest).some((m) => !!m.ally),
+  ],
+  [
+    "realms-ally-sent-in",
+    crawl,
+    (s) => !!party(s).assist && s.phase === "revealed",
+  ],
+  [
+    "realms-ally-fell",
+    crawl,
+    (s, prev) =>
+      !!party(s).fainted && !!prev && party(prev).assist === party(s).fainted,
+  ],
+  [
+    "realms-last-stand",
+    crawl,
+    (s, prev) =>
+      !!party(s).fainted &&
+      !!prev &&
+      party(prev).assist !== party(s).fainted &&
+      party(s).hearts === 1,
+  ],
+  [
+    "realms-lore-edge",
+    crawl,
+    (s) =>
+      (party(s).lore ?? 0) > 0 &&
+      s.roll?.edge === "advantage" &&
+      !!currentCard(s).lairFight,
+  ],
   [
     "league-catch-beat",
     league,
@@ -355,8 +392,13 @@ const situations: [string, GameConfig, Find][] = [
 ];
 
 function find(config: GameConfig, match: Find) {
-  for (let seed = 1; seed <= 400; seed++)
-    for (const s of play(config, seed)) if (match(s)) return s;
+  for (let seed = 1; seed <= 400; seed++) {
+    let prev: SessionState | undefined;
+    for (const s of play(config, seed)) {
+      if (match(s, prev)) return s;
+      prev = s;
+    }
+  }
   throw Error("No seeded game reached this situation");
 }
 

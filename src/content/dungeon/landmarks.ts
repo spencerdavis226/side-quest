@@ -6,9 +6,9 @@ import { FLOORS, LORE, card, trinket, type Floor } from "./shared";
 // (`inserts` on the region's stage in `dungeon.ts`). The lair's landmark is
 // its Approach, and names `{dragon}`. "Elite next" is the fork's loud door:
 // the region's next card becomes one of its elites. A plaque with `jinx`
-// lays the card's curse only when taken. Lore plaques bring a Lucky Coin
-// until Phase 4 (`LORE`); the Frozen Knight is a Tower Shield until allies
-// land. Plaques the plan marks "remembered" set deeds from Phase 6. The
+// lays the card's curse only when taken. Lore plaques bring one dragon
+// lore (`LORE`); chipping out the Frozen Knight hires him as an ally
+// (Phase 4). Plaques the plan marks "remembered" set deeds from Phase 6. The
 // Quest only.
 const landmark = (
   floor: Floor,
@@ -292,7 +292,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       "The Frozen Army",
       "A hundred knights in ice, swords raised at {dragon}. Everyone freezes for three seconds.",
       [
-        { label: "Chip one out", cost: 1, loot: "shield" },
+        { label: "Chip one out", cost: 1, recruit: true },
         { label: "Salute", heal: 1 },
       ],
     ),
@@ -346,4 +346,16 @@ export const landmarks: Record<string, CardDefinition[]> = {
       ],
     ),
   ],
+};
+
+// The Frozen Knight (The Quest 2.0 Phase 4): chipped out of the ice, he
+// joins for the dragon.
+const army = landmarks.rooftop.find(
+  (c) => c.id === "dungeon.landmark-frozen-army",
+)!;
+army.ally = {
+  name: "The Frozen Knight",
+  calling: ["boss"],
+  bonus: 3,
+  ritual: "The drawer says 'for the king' before every swing.",
 };

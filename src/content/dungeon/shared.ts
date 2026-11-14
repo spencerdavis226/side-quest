@@ -50,7 +50,7 @@ export const SAVE = [9, 11, 13] as const;
 /** Hearts a lost room fight costs. */
 export const HURT = [1, 2, 3] as const;
 /** A boss's target and the hearts a missed swing costs. */
-export const BOSS_NEED = [9, 12, 14] as const;
+export const BOSS_NEED = [9, 12, 15] as const;
 export const BOSS_HURT = [2, 2, 2] as const;
 /** Swings a floor boss takes: two on the first floors, three at Last Call
  * (2026-10-25: two beats at least, so every boss has a second act). */
@@ -84,12 +84,11 @@ export const KEEPER_HURT = 2;
 /** An inn between regions: rest for hearts, or stock up for drinks. */
 export const LANDING_HEAL = 3;
 export const LEVEL_DRINK = 3;
-/** What a lore plaque gives (The Quest 2.0 Phase 3, 2026-11-14): written
- * now, it brings a Lucky Coin until lore lands in Phase 4, when this line
- * becomes `{ lore: true }`. */
-export const LORE = { loot: "die" } as const;
+/** What a lore plaque gives: one dragon lore (The Quest 2.0 Phase 4,
+ * 2026-11-14; a Lucky Coin in Phase 3). */
+export const LORE = { lore: true } as const;
 /** The party's shared hearts before the adventurer. */
-export const PARTY_HEARTS = 11;
+export const PARTY_HEARTS = 10;
 
 /** The variety pass's helpers (2026-10-31; shared since Realms, 2026-11-03,
  * when each region's file took its rooms' final text): a hidden fuse, a
@@ -462,7 +461,7 @@ export const boss = (
 
 /** The dragon battle (The Quest 2.0, 2026-11-13): the dragon's health,
  * the hearts a missed swing costs, and what a lost enrage contest costs. */
-export const DRAGON_HEALTH = 4;
+export const DRAGON_HEALTH = 5;
 export const DRAGON_HURT = 1;
 export const ENRAGE_HURT = 2;
 /** A dragon's move: its name (18 characters at most), what the table does,
@@ -678,6 +677,22 @@ export const landing = (
     { label: rest, heal: LANDING_HEAL },
     { label: `Stock up · drink ${LEVEL_DRINK}`, loot: stock },
   ],
+});
+/** The inns' third plaque (The Quest 2.0 Phase 4, 2026-11-14): the first
+ * inn hires a blade (an ally for elite fights), the last tells of the
+ * dragon (lore), each for drinks. */
+export const HIRE_DRINK = 3;
+export const hire = (inn: CardDefinition): CardDefinition => ({
+  ...inn,
+  ally: { name: "A Hired Blade", calling: ["elite"], bonus: 3 },
+  offers: [
+    ...inn.offers!,
+    { label: `Hire · drink ${HIRE_DRINK}`, recruit: true },
+  ],
+});
+export const ask = (inn: CardDefinition): CardDefinition => ({
+  ...inn,
+  offers: [...inn.offers!, { label: `Ask · drink ${HIRE_DRINK}`, ...LORE }],
 });
 
 /** The rival party in the queue at the door: one fight, and the winner

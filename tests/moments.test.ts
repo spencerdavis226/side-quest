@@ -214,6 +214,51 @@ describe("moments", () => {
     quest: { ...at.quest!, party: { ...at.quest!.party!, ...change } },
   });
 
+  it("the Quest's lore, an ally joining, sent in and falling (Phase 4)", () => {
+    const c = createSession(crawl, cards, packs, seeded(8));
+    const at = atStep(c, stepOf(c, "The Last Inn"));
+    const shown = { ...at, phase: "revealed" as const };
+    const inn = c.quest!.finale[stepOf(c, "The Inn")];
+    const { dragon, id } = runNames(c.quest!);
+    // A lore found: the dragon's first line.
+    const lore = momentsBetween(shown, withParty(shown, { lore: 1 })).find(
+      (m) => m.kind === "lore",
+    );
+    expect(lore).toMatchObject({ dragon, id, count: 1 });
+    expect(lore?.say).toMatch(/^You learn: /);
+    // An ally joins (the first inn's hired blade).
+    const joined = momentsBetween(shown, withParty(shown, { team: [inn] }));
+    expect(joined.find((m) => m.kind === "ally")).toMatchObject({
+      name: "A Hired Blade",
+    });
+    expect(kinds(joined)).not.toContain("join");
+    // Sent in: no ball, its bonus.
+    const held = withParty(shown, { team: [inn] });
+    const sent = momentsBetween(held, withParty(held, { assist: inn }));
+    expect(sent.find((m) => m.kind === "sendin")).toMatchObject({
+      ally: true,
+      bonus: "+3",
+    });
+    // Lost with it: fallen, never the League's faint.
+    const lost = momentsBetween(withParty(held, { assist: inn }), {
+      ...withParty(held, { fainted: inn, team: undefined }),
+      discarded: held.discarded + 1,
+    });
+    expect(lost.find((m) => m.kind === "fallen")).toMatchObject({
+      name: "A Hired Blade",
+      stand: false,
+    });
+    expect(kinds(lost)).not.toContain("faint");
+    // The last stand: it fell without being sent in.
+    const stand = momentsBetween(held, {
+      ...withParty(held, { fainted: inn, team: undefined, hearts: 1 }),
+      discarded: held.discarded + 1,
+    });
+    expect(stand.find((m) => m.kind === "fallen")).toMatchObject({
+      stand: true,
+    });
+  });
+
   it("catches a Legendary on its last beat as a join, never a ball's catch", () => {
     const at = atStep(s, stepOf(s, "Legendary"));
     const legendary = currentCard(at);

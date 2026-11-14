@@ -3,7 +3,7 @@ import { LORE, card } from "./shared";
 
 // Dragon signs (The Quest 2.0 Phase 3, 2026-11-14): one dealt after the
 // first region's boss. The dragon passes over, or leaves something behind;
-// a table beat, then a choice: learn about it (lore, a Lucky Coin until
+// a table beat, then a choice: learn about it (one dragon lore, since
 // Phase 4) or take what is there. `{dragon}` is filled when the card is
 // dealt. The Quest only.
 const sign = (

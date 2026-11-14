@@ -101,7 +101,13 @@ export interface CardDefinition {
   levelUp?: true;
   /** Pub Crawl: what the card brings the party when it is put aside (a
    * battle only on a win): an item for the satchel, or hearts back. */
-  reward?: { loot?: Loot; heal?: number };
+  reward?: {
+    loot?: Loot;
+    heal?: number;
+    /** The Quest 2.0 Phase 4: one dragon lore (`party.lore`, at most 3).
+     * On a boss, at its fall. */
+    lore?: true;
+  };
   /** Pub Crawl: what kind of room the card is, so an omen can single out
    * traps or monsters. A boss is told apart from an ambush (both have
    * `hits`) only by this; saves from before it have no ambushes. */
@@ -186,6 +192,18 @@ export interface CardDefinition {
    * card's title and type; `rate` stands in for a catch number, which sets
    * the send-in bonus (`assistBonus`). */
   joins?: { name?: string; type?: PokemonType; rate: number };
+  /** The Quest 2.0 Phase 4 (2026-11-14): an ally this card brings, joining
+   * the party (`party.team`) at a boss's fall or through a plaque with
+   * `recruit`. Sent into a single-d20 fight of its `calling` (`any` for
+   * every kind), it adds `bonus` to the roll; lost with it, it dies for the
+   * run. When the hearts would run out, a living ally dies instead (the
+   * last stand). `ritual` is a spoken rule kept while it lives. */
+  ally?: {
+    name: string;
+    calling: (Encounter | "any")[];
+    bonus: number;
+    ritual?: string;
+  };
 }
 /** A dragon's move for one round of its battle (`lairFight`). */
 export interface DragonMove {
@@ -304,6 +322,10 @@ export interface Offer {
   /** The Quest 2.0 Phase 3 (2026-11-14): gear sold or given by this
    * plaque, kept as "<card id>#o<index>". */
   boon?: Boon;
+  /** The Quest 2.0 Phase 4: one dragon lore (`party.lore`, at most 3). */
+  lore?: true;
+  /** The card's `ally` joins the party. */
+  recruit?: true;
   /** The card's `jinx` lands only when this plaque is taken (never when
    * the card is put aside another way). */
   jinx?: true;
@@ -479,8 +501,13 @@ export interface PartyState {
    * so Previous Card shows the beat that was played. */
   beat?: number;
   /** Pokémon League (2026-10-25): the Pokémon caught for the team, by card
-   * ID, oldest first (at most `TEAM_SIZE`). */
+   * ID, oldest first (at most `TEAM_SIZE`). The Quest's allies (2026-11-14)
+   * are kept here too, by the ID of the card that brought them. */
   team?: string[];
+  /** The Quest 2.0 Phase 4: dragon lore found, 1 to 3. Each is an edge on
+   * one swing at the dragon (its first swings, rolled twice, the better
+   * kept). */
+  lore?: number;
   /** The ball thrown at the Pokémon on the card in play (2026-10-27): its
    * card ID and the d20 face, kept until the card is put aside so a reload
    * never throws again. */

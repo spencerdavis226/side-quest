@@ -37,7 +37,11 @@ import { returnToCard, rollDice, rollWins } from "../src/game/dice";
 import { parseSession } from "../src/app/persistence";
 import { cards, packs } from "../src/content/catalog";
 import type { GameConfig, Loot, SessionState } from "../src/game/types";
-import { BOSS_NEED, PARTY_HEARTS } from "../src/content/dungeon/shared";
+import {
+  BOSS_NEED,
+  DRAGON_HEALTH,
+  PARTY_HEARTS,
+} from "../src/content/dungeon/shared";
 import { lairs } from "../src/content/dungeon/dragons";
 const LAIRS = {
   taproom: "The Sunken Coast",
@@ -208,8 +212,9 @@ describe("Pub Crawl", () => {
     ).toEqual([
       ["boss", 2],
       ["boss", 2],
-      // The dragon battle (2026-11-13): four scales of health.
-      ["boss", 4],
+      // The dragon battle (2026-11-13): its scales of health (five since
+      // The Quest 2.0 Phase 4).
+      ["boss", DRAGON_HEALTH],
     ]);
     expect(at(STEP.closing)).toMatchObject({ encounter: "ambush", hits: 2 });
     for (const step of [STEP.landing1, STEP.landing2])
@@ -447,15 +452,16 @@ describe("Pub Crawl", () => {
 
   it("the last boss falling wins the crawl", () => {
     let s = deal(fromStep(start(), STEP.lastCall), "dungeon.final-tab");
-    // The dragon battle (2026-11-13): four scales. Two swings land, the
-    // next round is the enrage contest (Won and Lost), then one more swing
-    // and the felling one.
-    s = fight(s, 15);
-    s = fight(s, 15);
+    // The dragon battle (2026-11-13): its scales. Swings land until half
+    // health, the next round is the enrage contest (Won and Lost), then
+    // swings until the felling one.
+    const half = Math.ceil(DRAGON_HEALTH / 2);
+    // 19: a hit against any move's target (15, or 17 for a harder one).
+    for (let i = 0; i < half; i++) s = fight(s, 19);
     expect(currentCard(advance(s)).dice).toBeUndefined();
     expect(currentCard(advance(s)).ribbon).toBe("Enraged");
     s = settleBattle(advance(s), true);
-    s = fight(s, 15);
+    for (let i = half + 1; i < DRAGON_HEALTH; i++) s = fight(s, 19);
     expect(s.phase).toBe("complete");
     expect(questRecord(s)!.won).toBe(true);
     roundTrip(s);
@@ -582,9 +588,11 @@ describe("Pub Crawl", () => {
       );
     const s = at("barbarian");
     expect(awaitingOffer(s)).toBe(true);
+    // The first inn also hires a blade (The Quest 2.0 Phase 4).
     expect(currentCard(s).offers!.map((o) => o.label)).toEqual([
       "Rest",
       "Stock up · drink 3",
+      "Hire · drink 3",
     ]);
     s.quest!.party!.hearts = H - 4;
     const rested = takeOffer(s, 0);
@@ -680,7 +688,9 @@ describe("Pub Crawl", () => {
     ).toBe(9);
     // A longer boss fight; an ambush is not a boss.
     s = tonight("lock-in");
-    expect(hitsNeeded(s.quest, findCard(s, "dungeon.final-tab")!)).toBe(5);
+    expect(hitsNeeded(s.quest, findCard(s, "dungeon.final-tab")!)).toBe(
+      DRAGON_HEALTH + 1,
+    );
     expect(hitsNeeded(s.quest, findCard(s, "dungeon.lost-bridesmaids")!)).toBe(
       2,
     );
