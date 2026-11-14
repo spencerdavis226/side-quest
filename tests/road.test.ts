@@ -60,7 +60,11 @@ describe("the road", () => {
       out.set(closed, (out.get(closed) ?? 0) + 1);
       // The card names the two regions open, in order.
       const card = q.stages[ROAD].cards[0];
-      expect(card.offers!.map((o) => o.label)).toEqual(offered);
+      // (and, since The Quest 2.1, a coin for a split vote).
+      expect(card.offers!.map((o) => o.label)).toEqual([
+        ...offered,
+        "Flip for it",
+      ]);
       expect(added(s)).toBe(q.finale.length);
     }
     for (const r of DEPTH1) {
@@ -72,7 +76,7 @@ describe("the road", () => {
   it("taking a road drops the other, with its picks, and every count adds up", () => {
     const s = createSession(crawl, cards, packs, seeded(3));
     const choice = atChoice(s, ROAD);
-    expect(currentCard(choice).offers).toHaveLength(2);
+    expect(currentCard(choice).offers).toHaveLength(3);
     roundTrip(choice);
     for (const route of [0, 1] as const) {
       const took = takeOffer(choice, route);

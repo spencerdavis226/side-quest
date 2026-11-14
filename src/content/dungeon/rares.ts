@@ -49,7 +49,7 @@ export const regionRares: Record<string, CardDefinition[]> = {
         0,
         "rare-king-disguise",
         "The King in Disguise",
-        "A beggar who is obviously the king. The drawer chats with him without bowing or saying 'king'.",
+        "A beggar who is plainly the king. The drawer chats for 20 seconds; no bowing, no saying 'king'.",
         { loot: "candy" },
       ),
     ),
@@ -325,7 +325,7 @@ export const innRares: CardDefinition[] = [
     ribbon: "Inn · Rare",
     offers: [
       { label: "Take a potion", loot: "draught" },
-      { label: "Draw on Bradley" },
+      { label: "Draw on Bradley", deed: "drew-on-bradley" },
     ],
   },
 ];

@@ -1,3 +1,4 @@
+import { flip } from "../author";
 import {
   gamble,
   ambush,
@@ -30,6 +31,23 @@ import {
 
 export const sewers: FloorCards = {
   fights: [
+    // The Quest 2.1: a fight settled by one coin.
+    monster(
+      4,
+      "coin-goblin-wager",
+      "The Goblin's Wager",
+      "A goblin bets his hat against yours on one flip. Shake on it, then flip the coin.",
+      "",
+      "",
+      {
+        roll: () =>
+          flip(
+            "Tails. He takes your hat, and it suits him. Drink 4.",
+            "Heads. You win a hat that smells of goblin. Give 4.",
+            true,
+          ),
+      },
+    ),
     monster(
       4,
       "gator-junior",

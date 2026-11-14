@@ -54,7 +54,11 @@ export const dragons: CardDefinition[] = [
         ),
       ],
       enraged: [
-        move("Inferno", "Everyone drinks 3.", TWO),
+        move(
+          "Inferno",
+          "Everyone drinks 3. First under the table drinks 1 instead.",
+          TWO,
+        ),
         move("Wing Buffet", "Everyone leans back. Last to lean drinks 3.", ONE),
         move(
           "Molten Gold",
@@ -77,7 +81,7 @@ export const dragons: CardDefinition[] = [
         ),
       ],
       contest:
-        "Out-roar it: everyone roars for five seconds. Anyone stops early: Lost, and they drink 4.",
+        "Out-roar it: everyone roars for five seconds. Quietest, by vote, drinks 4. Then flip the coin.",
       lore: [
         "Its left wing never healed.",
         "It hates the sound of bells.",
@@ -127,7 +131,11 @@ export const dragons: CardDefinition[] = [
         ),
       ],
       enraged: [
-        move("Devour", "Everyone drinks 3.", TWO),
+        move(
+          "Devour",
+          "It eats the fullest glass: its owner drinks 3, everyone else 2.",
+          TWO,
+        ),
         move("Gulp", "The drawer's two neighbors drink 3.", ONE),
         move(
           "Crunch",
@@ -146,7 +154,7 @@ export const dragons: CardDefinition[] = [
         move("Food Coma", "It yawns, stuffed. This swing is 2 easier.", EASIER),
       ],
       contest:
-        "Everyone names a food in turn, twice round. A stall or repeat: Lost, and that player drinks 4.",
+        "Everyone names a food in turn, twice round. First stall or repeat drinks 4. Then flip the coin.",
       lore: [
         "It chews on the left.",
         "It cannot stand a full plate left alone.",
@@ -192,7 +200,11 @@ export const dragons: CardDefinition[] = [
         ),
       ],
       enraged: [
-        move("Age of Fire", "Everyone drinks 3.", TWO),
+        move(
+          "Age of Fire",
+          "Everyone drinks 3 in turn, oldest first, in silence.",
+          TWO,
+        ),
         move(
           "Forgotten Kings",
           "Everyone names a king in turn. Stall or repeat: drink 3.",
@@ -200,7 +212,7 @@ export const dragons: CardDefinition[] = [
         ),
         move(
           "Crushing Years",
-          "The oldest and the youngest players drink 3.",
+          "Everyone stands, slowly. The last two up drink 3.",
           ONE,
         ),
         move(
@@ -219,7 +231,7 @@ export const dragons: CardDefinition[] = [
         ),
       ],
       contest:
-        "Everyone tells it something new. The drawer calls any dud: Lost, and that player drinks 4.",
+        "Everyone tells it something new. The drawer picks the dullest, who drinks 4. Then flip the coin.",
       lore: [
         "The oldest scale is loose.",
         "It fears being forgotten.",
@@ -269,7 +281,11 @@ export const dragons: CardDefinition[] = [
         ),
       ],
       enraged: [
-        move("Blizzard", "Everyone drinks 3.", TWO),
+        move(
+          "Blizzard",
+          "Everyone drinks 3 with their glass held in both hands.",
+          TWO,
+        ),
         move(
           "Deep Freeze",
           "Everyone freezes. First to move before the roll drinks 4.",
@@ -292,7 +308,7 @@ export const dragons: CardDefinition[] = [
         ),
       ],
       contest:
-        "Everyone freezes for ten seconds, silent. Anyone moves or laughs: Lost, and they drink 4.",
+        "Everyone freezes, silent. First to move or laugh drinks 4. Then flip the coin.",
       lore: [
         "The ice on its throat is thin.",
         "It fears a warm hand.",
@@ -335,7 +351,11 @@ export const dragons: CardDefinition[] = [
         ),
       ],
       enraged: [
-        move("Supercell", "Everyone drinks 3.", TWO),
+        move(
+          "Supercell",
+          "Everyone drinks 3. Last glass back on the table drinks 1 more.",
+          TWO,
+        ),
         move(
           "Ball Lightning",
           "Pass a cup clockwise until the drawer says stop. Whoever holds it drinks 3.",
@@ -362,7 +382,7 @@ export const dragons: CardDefinition[] = [
         ),
       ],
       contest:
-        "Count to ten around the table, clapping on every third number. A miss: Lost; that player drinks 4.",
+        "Count to ten round the table, clapping on every third number. First miss drinks 4. Then flip.",
       lore: [
         "One horn is cracked.",
         "It fears a clear sky.",
@@ -400,20 +420,20 @@ export const dragons: CardDefinition[] = [
         move("Preening", "Everyone fixes their hair. Last to drinks 3."),
         move(
           "Golden Glare",
-          "Whoever wears the most gold or yellow drinks 3.",
+          "Everyone points at the shiniest thing here. Last to point drinks 3.",
           ONE,
         ),
       ],
       enraged: [
-        move("Blinding Flash", "Everyone drinks 3.", TWO),
+        move("Blinding Flash", "Everyone drinks 3 with their eyes shut.", TWO),
         move(
           "Jealous Wing",
-          "The best-dressed player, by vote, drinks 3.",
+          "Everyone strikes a pose. The drawer picks the best, who drinks 3.",
           ONE,
         ),
         move(
           "Gilded Claw",
-          "Everyone wearing jewelry drinks 3. Nobody? The drawer drinks 3.",
+          "Last to hide both hands under the table drinks 3.",
           ONE,
         ),
         move(
@@ -432,7 +452,7 @@ export const dragons: CardDefinition[] = [
         ),
       ],
       contest:
-        "Everyone compliments it, in turn. A stall or a repeat: Lost, and that player drinks 4.",
+        "Everyone compliments it, in turn. First stall or repeat drinks 4. Then flip the coin.",
       lore: [
         "The gold is paint on its belly.",
         "It fears a mirror at dawn.",
@@ -478,7 +498,11 @@ export const dragons: CardDefinition[] = [
         move("Tidal Slap", "The drawer's two neighbors drink 2.", ONE),
       ],
       enraged: [
-        move("Tidal Wave", "Everyone drinks 3.", TWO),
+        move(
+          "Tidal Wave",
+          "Everyone drinks 3, then says 'thank you, Mother'. Forget: drink 1.",
+          TWO,
+        ),
         move(
           "Hungry Again",
           "She eats the drawer's supper. The drawer drinks 3.",
@@ -502,7 +526,7 @@ export const dragons: CardDefinition[] = [
         ),
       ],
       contest:
-        "The left neighbor asks a riddle. Ten seconds: wrong or silent is Lost, and the drawer drinks 4.",
+        "The left neighbor asks the drawer a riddle. Wrong in ten seconds: drink 4. Then flip the coin.",
       lore: [
         "Barnacles hide a soft spot.",
         "She fears her own daughters.",
@@ -548,7 +572,11 @@ export const dragons: CardDefinition[] = [
         move("Tell-Tale", "Whoever spoke last before this card drinks 3.", ONE),
       ],
       enraged: [
-        move("Scream", "Everyone drinks 3.", TWO),
+        move(
+          "Scream",
+          "Everyone drinks 3 without a sound. Any noise: drink 1 more.",
+          TWO,
+        ),
         move(
           "Confession",
           "Everyone confesses one small thing. Refuse: drink 3.",
@@ -575,7 +603,7 @@ export const dragons: CardDefinition[] = [
         ),
       ],
       contest:
-        "Everyone confesses one small thing, in turn. Anyone refuses: Lost, and they drink 4.",
+        "Everyone confesses one small thing, in turn. Anyone who refuses drinks 4. Then flip the coin.",
       lore: [
         "It has no scales under the jaw.",
         "It fears being overheard.",
@@ -625,7 +653,11 @@ export const dragons: CardDefinition[] = [
         ),
       ],
       enraged: [
-        move("Shipwreck", "Everyone drinks 3.", TWO),
+        move(
+          "Shipwreck",
+          "Everyone drinks 3, then grabs a neighbor's arm. Last to grab drinks 1.",
+          TWO,
+        ),
         move("Breaker", "Last to grab the edge of the table drinks 3.", ONE),
         move(
           "Bell Storm",
@@ -648,7 +680,7 @@ export const dragons: CardDefinition[] = [
         ),
       ],
       contest:
-        "Everyone sings one line of a shanty, in turn. Whoever breaks the rhythm: Lost, and they drink 4.",
+        "Everyone sings one line of a shanty, in turn. Whoever breaks the rhythm drinks 4. Then flip.",
       lore: [
         "A harpoon is still in its side.",
         "It fears a lighthouse.",
@@ -718,7 +750,7 @@ export const unlockedDragons: CardDefinition[] = [
           ),
         ],
         contest:
-          "The drawer picks a topic and debates it. The table votes; the drawer loses: Lost, and they drink 4.",
+          "The drawer debates a topic of their choice. The table votes; lose it and drink 4. Then flip.",
         lore: [
           "It has a bad back.",
           "It fears confrontation.",
@@ -753,10 +785,13 @@ export const unlockedDragons: CardDefinition[] = [
             "Everyone freezes until the roll. First to move drinks 3. This swing is 2 harder.",
             HARDER,
           ),
-          move("Tidal Wave", "Everyone stands; last to stand drinks 3."),
+          move(
+            "Tidal Wave",
+            "Everyone lifts their glass high. Last to lift drinks 3.",
+          ),
           move(
             "Royal Decree",
-            "The drawer makes a rule for the rest of the game. Break it: drink 2.",
+            "The drawer names a word. Anyone who says it before the roll drinks 3.",
           ),
           move("Roar", "Last to cover both ears drinks 3."),
         ],
@@ -781,7 +816,7 @@ export const unlockedDragons: CardDefinition[] = [
           ),
         ],
         contest:
-          "Everyone stands and stays standing until it falls. Anyone sits: Lost, and they drink 4.",
+          "Everyone stands until it falls. Anyone who sits drinks 4. Now flip the coin.",
         lore: [
           "It has no weak scale.",
           "It fears nothing.",

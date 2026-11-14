@@ -50,7 +50,7 @@ export const SAVE = [9, 11, 13] as const;
 /** Hearts a lost room fight costs. */
 export const HURT = [1, 2, 3] as const;
 /** A boss's target and the hearts a missed swing costs. */
-export const BOSS_NEED = [9, 12, 17] as const;
+export const BOSS_NEED = [9, 12, 14] as const;
 export const BOSS_HURT = [2, 2, 2] as const;
 /** Swings a floor boss takes: two on the first floors, three at Last Call
  * (2026-10-25: two beats at least, so every boss has a second act). */
@@ -463,7 +463,7 @@ export const boss = (
 
 /** The dragon battle (The Quest 2.0, 2026-11-13): the dragon's health,
  * the hearts a missed swing costs, and what a lost enrage contest costs. */
-export const DRAGON_HEALTH = 5;
+export const DRAGON_HEALTH = 7;
 /** The Chronicle's dragons (The Quest 2.0 Phase 7): once unlocked, one of
  * them is the run's dragon this often; on Heroic, 1 in 10. */
 export const DRAGON_RARE = 0.04;
@@ -514,7 +514,8 @@ export const dragon = (
   lairFight: {
     calm: fight.calm,
     enraged: fight.enraged,
-    enrage: { rules: fight.contest, damage: ENRAGE_HURT },
+    // The Quest 2.1: the contest ends on a coin, so nobody judges it.
+    enrage: { rules: fight.contest, damage: ENRAGE_HURT, flip: true },
     lore: fight.lore,
   },
   ...(more.jinx ? { jinx: more.jinx } : {}),

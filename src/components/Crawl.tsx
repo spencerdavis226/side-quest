@@ -578,6 +578,8 @@ export function CardStakes({
   )
     return null;
   const d20 = target?.count === 1 && target.sides === 20;
+  // A coin (The Quest 2.1): heads wins, so the gem names the face.
+  const coin = target?.sides === 2;
   const boss = isBossCard(card);
   return (
     <span className="card-stakes">
@@ -678,13 +680,23 @@ export function CardStakes({
         {target && (
           <span
             className="stake stake-target stake-gem"
-            aria-label={`Roll ${target.target} or more${d20 ? "" : ` on ${target.count}d${target.sides}`} to win`}
+            aria-label={
+              coin
+                ? "Flip heads to win"
+                : `Roll ${target.target} or more${d20 ? "" : ` on ${target.count}d${target.sides}`} to win`
+            }
           >
-            <b>{target.target}+</b>
-            {!d20 && (
-              <small>
-                {target.count}d{target.sides}
-              </small>
+            {coin ? (
+              <b>Heads</b>
+            ) : (
+              <>
+                <b>{target.target}+</b>
+                {!d20 && (
+                  <small>
+                    {target.count}d{target.sides}
+                  </small>
+                )}
+              </>
             )}
           </span>
         )}

@@ -1154,7 +1154,9 @@ test("the road out: two regions, one taken, the map", async ({
   };
   await seed(page, reveal(s));
   const plaques = page.locator(".card-choice.offers .card-choice-option");
-  await expect(plaques).toHaveCount(2);
+  // Two roads and, since The Quest 2.1, a coin for a split vote.
+  await expect(plaques).toHaveCount(3);
+  await expect(plaques.nth(2)).toHaveAccessibleName(/Flip for it/);
   const first = currentCard(reveal(s)).offers![0].label;
   await expect(plaques.nth(0)).toHaveAccessibleName(
     `${first}: the road to ${first.replace(/^The /, "the ")}`,

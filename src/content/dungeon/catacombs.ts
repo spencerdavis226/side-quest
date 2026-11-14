@@ -1,3 +1,4 @@
+import { flip } from "../author";
 import {
   gamble,
   ambush,
@@ -29,6 +30,23 @@ import {
 
 export const catacombs: FloorCards = {
   fights: [
+    // The Quest 2.1: a fight settled by one coin.
+    monster(
+      1,
+      "coin-charons-obol",
+      "Charon's Obol",
+      "The dead want a coin for the crossing, and they call it in the air. Flip the coin.",
+      "",
+      "",
+      {
+        roll: () =>
+          flip(
+            "Tails. They called it. Drink 4.",
+            "Heads. They called it wrong. Give 4 to whoever looks deadest.",
+            true,
+          ),
+      },
+    ),
     monster(
       1,
       "bachelor-ghosts",

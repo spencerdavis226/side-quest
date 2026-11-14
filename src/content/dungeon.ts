@@ -181,9 +181,12 @@ const lair = (region: ReturnType<typeof floor>, dragons: CardDefinition[]) => [
     pick: 1,
     cardIds: ids(Object.values(echoes)),
     optional: true as const,
+    // The Quest 2.1: the side quest's own echoes (every run holds one of
+    // those deeds) are dealt only when no choice has an echo.
     variants: Object.entries(echoes).map(([deed, c]) => ({
       deeds: [deed],
       cardIds: [c.id],
+      ...(deed.startsWith("quest-") ? { fallback: true as const } : {}),
     })),
   },
   {
@@ -228,7 +231,7 @@ export const dungeonPack: PackDefinition = {
     goal: 0,
     length: 1,
     cardIds: [],
-    party: { hearts: PARTY_HEARTS },
+    party: { hearts: PARTY_HEARTS, coin: true },
     // Realms (2026-11-03): the adventurer, the omen and the King's Summons
     // (which names the run's dragon), the Gilded Company at the city gate,
     // then one of three regions at each depth (eight encounters, and a boss

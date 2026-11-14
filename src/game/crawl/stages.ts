@@ -412,9 +412,12 @@ export function resolveStage(
   const picked = quest.finale[step];
   if (stage.rare?.cards.some((c) => c.id === picked)) return quest;
   const held = new Set(quest.party?.deeds ?? []);
-  const groups = stage.variants.filter(
+  const all = stage.variants.filter(
     (v) => v.cards.length && v.deeds.every((d) => held.has(d)),
   );
+  // The Quest 2.1: a fallback variant is used only when no other applies.
+  const first = all.filter((v) => !v.fallback);
+  const groups = first.length ? first : all;
   if (!groups.length)
     return stage.optional ? dropInto(quest, (i) => i === at.stage) : quest;
   const group = groups[Math.floor(random() * groups.length)];

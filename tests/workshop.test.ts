@@ -34,13 +34,13 @@ test("Core composition matches the trimmed content brief", () => {
   const core = packs.find((p) => p.id === "core")!;
   // The Core deck is three plain sources (2026-10-24, owner): the generated
   // main deck, the supplied house sheet and Cabin weekend.
-  expect(core.cardIds).toHaveLength(275);
+  expect(core.cardIds).toHaveLength(285);
   const coreCards = cards.filter(
     (c) => core.cardIds.includes(c.id) && c.id.startsWith("core."),
   );
   // The 2026-10-07 rewrite: sample set (25), classics (24) and the standard
   // expansion (47), with the bare roll-and-pour cards cut.
-  expect(coreCards).toHaveLength(96);
+  expect(coreCards).toHaveLength(106);
   expect(
     Object.fromEntries(
       ["sip", "group", "category", "challenge", "rule"].map((c) => [
@@ -48,8 +48,9 @@ test("Core composition matches the trimmed content brief", () => {
         coreCards.filter((card) => card.category === c).length,
       ]),
     ),
-  ).toEqual({ sip: 13, group: 21, category: 10, challenge: 37, rule: 15 });
-  expect(coreCards.filter((c) => c.dice)).toHaveLength(16);
+  ).toEqual({ sip: 16, group: 25, category: 10, challenge: 40, rule: 15 });
+  // 16 dice cards and the 10 coin cards (The Quest 2.1).
+  expect(coreCards.filter((c) => c.dice)).toHaveLength(26);
 });
 
 // Sheet rows that are CABIIN board spaces keep their `cabin.*` IDs.
@@ -91,7 +92,7 @@ test("each supplied sheet row lands in the Core deck (House or CABIIN IDs) or VI
   expect(vip.cardIds.slice(-4)).toEqual(
     [3, 4, 5, 6].map((row) => `vip.sheet-${String(row).padStart(3, "0")}`),
   );
-  expect(cards).toHaveLength(1912); // 96 core + 94 house + 16 vip + 120 Pokémon (+72 League-only gym leaders, 79 gauntlet cards, 35 starters, 239 route, Victory Road and rival cards, 36 hideout cards) + 85 cabin + 250 likely + 156 secrets + 634 Realms (301 fights, elites and bosses; 153 Quest finds, gambles, merchants, forks and table moments; 20 omens, 19 adventurers (the Dragonslayer locked), 2 locked dragons, 6 summons, 6 dragon signs, 6 road choices, 27 landmarks, 22 rares, 10 echoes, 3 new Lair's Door cards (3 cut), 16 inns, 21 rival-party cards and 25 side-quest cards)
+  expect(cards).toHaveLength(1926); // 106 core (10 coin cards, The Quest 2.1) + 94 house + 16 vip + 120 Pokémon (+72 League-only gym leaders, 79 gauntlet cards, 35 starters, 239 route, Victory Road and rival cards, 36 hideout cards) + 85 cabin + 250 likely + 156 secrets + 638 Realms (304 fights, elites and bosses; 153 Quest finds, gambles, merchants, forks and table moments; 20 omens, 19 adventurers (the Dragonslayer locked), 2 locked dragons, 6 summons, 6 dragon signs, 6 road choices, 27 landmarks, 22 rares, 11 echoes, 3 new Lair's Door cards (3 cut), 16 inns, 21 rival-party cards and 25 side-quest cards)
 });
 
 test("League gyms come in eight tiers, one leader per region in each", () => {

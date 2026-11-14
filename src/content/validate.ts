@@ -184,7 +184,12 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
       (!(c.battle || c.strike) || !count(c.damage, 5))
     )
       fail(`Invalid damage: ${c.id}`);
-    if (c.hits !== undefined && (!c.battle || !count(c.hits, 5)))
+    // A dragon's health may run to 8 scales (The Quest 2.1); any other
+    // boss or ambush takes 5 swings at most.
+    if (
+      c.hits !== undefined &&
+      (!c.battle || !count(c.hits, c.lairFight ? 8 : 5))
+    )
       fail(`Invalid boss hits: ${c.id}`);
     // A lieutenant that levels the adventurer up when it falls (2026-11-03).
     if (c.levelUp !== undefined && (c.levelUp !== true || !c.hits))
@@ -298,6 +303,11 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
             (o.lore !== undefined && o.lore !== true) ||
             (o.recruit !== undefined && (o.recruit !== true || !c.ally)) ||
             (o.route !== undefined && o.route !== 0 && o.route !== 1) ||
+            // The Quest 2.1: a coin picks between the card's two roads.
+            (o.flip !== undefined &&
+              (o.flip !== true ||
+                !c.offers!.some((x) => x.route === 0) ||
+                !c.offers!.some((x) => x.route === 1))) ||
             (o.deed !== undefined &&
               (typeof o.deed !== "string" || !/^[a-z-]{2,24}$/.test(o.deed))),
         ))
@@ -521,6 +531,7 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         !Number.isSafeInteger(fight.enrage.damage) ||
         fight.enrage.damage < 1 ||
         fight.enrage.damage > 3 ||
+        (fight.enrage.flip !== undefined && fight.enrage.flip !== true) ||
         !Array.isArray(fight.lore) ||
         fight.lore.length !== 3 ||
         fight.lore.some((l) => typeof l !== "string" || !l.trim()))
@@ -743,6 +754,7 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
                 !v.deeds.every(deedName) ||
                 !Array.isArray(v.cardIds) ||
                 !v.cardIds.length ||
+                (v.fallback !== undefined && v.fallback !== true) ||
                 (v.harder !== undefined &&
                   (!Number.isSafeInteger(v.harder) ||
                     v.harder < 1 ||

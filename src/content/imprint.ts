@@ -182,6 +182,16 @@ export const imprintAssignments: Record<string, ImprintAssignment> = {
   "core.prophecy": { icon: "lorc/treasure-map", tint: "plum" },
   "core.mimic-chest": { icon: "lorc/treasure-map", tint: "rose" },
   "core.side-quest": { icon: "lorc/scroll-unfurled", tint: "teal" },
+  "core.coin-double-nothing": { icon: "delapouite/two-coins", tint: "amber" },
+  "core.coin-sudden-death": { icon: "delapouite/two-coins", tint: "rose" },
+  "core.coin-the-decider": { icon: "delapouite/two-coins", tint: "teal" },
+  "core.coin-two-faced": { icon: "delapouite/two-coins", tint: "plum" },
+  "core.coin-heads-you-win": { icon: "delapouite/two-coins", tint: "amber" },
+  "core.coin-bad-penny": { icon: "delapouite/two-coins", tint: "sepia" },
+  "core.coin-wishing-well": { icon: "delapouite/two-coins", tint: "teal" },
+  "core.coin-the-ref": { icon: "delapouite/two-coins", tint: "rose" },
+  "core.coin-fifty-fifty": { icon: "delapouite/two-coins", tint: "plum" },
+  "core.coin-heads-or-tails": { icon: "delapouite/two-coins", tint: "amber" },
 
   // Pokémon pack highlights. Slugs all exist in the shipped sprite.
   "pokemon.mareep": { icon: "lorc/clover", tint: "sage" },

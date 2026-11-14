@@ -1,3 +1,4 @@
+import { flip } from "../author";
 import {
   gamble,
   ambush,
@@ -28,6 +29,23 @@ import {
 
 export const taproom: FloorCards = {
   fights: [
+    // The Quest 2.1: a fight settled by one coin.
+    monster(
+      2,
+      "coin-pirates-doubloon",
+      "The Pirate's Doubloon",
+      "A drowned pirate offers double or nothing on his last doubloon. Flip the coin.",
+      "",
+      "",
+      {
+        roll: () =>
+          flip(
+            "Tails. Nothing, and he keeps your boots. Drink 5.",
+            "Heads. Double! He pays in seaweed. Give 5.",
+            true,
+          ),
+      },
+    ),
     // Four seats, four dice.
     {
       ...mishap(

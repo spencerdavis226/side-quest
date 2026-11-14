@@ -45,7 +45,9 @@ const roundTrip = (s: SessionState) =>
   expect(parseSession(JSON.stringify(s))).toEqual(s);
 const rollTo = (s: SessionState, face: number) => {
   const sides = currentCard(s).dice!.sides;
-  return returnToCard(rollDice(s, () => (face - 0.5) / sides));
+  // A coin (the enrage contest, The Quest 2.1): a high face is heads.
+  const show = sides === 2 ? (face > 10 ? 2 : 1) : face;
+  return returnToCard(rollDice(s, () => (show - 0.5) / sides));
 };
 const fight = (s: SessionState, face: number, random = seeded(7)) =>
   advance(rollTo(advance(s), face), random);
@@ -165,19 +167,20 @@ describe("the dragon battle", () => {
       duel: { contest: true },
     });
     const contest = currentCard(advance(s));
-    expect(contest.dice).toBeUndefined();
+    // The Quest 2.1: the contest ends on a coin, never on Won and Lost.
+    expect(contest.dice).toMatchObject({ count: 1, sides: 2 });
     expect(contest.rules).toBe(fightOf.enrage.rules);
     expect(contest.ribbon).toBe("Enraged");
     roundTrip(advance(s));
     // A lost contest costs its own hearts and lands no hit.
     const hearts = party(s).hearts;
-    const lost = settleBattle(advance(s), false, seeded(3));
+    const lost = fight(s, 1, seeded(3));
     expect(party(lost).hearts).toBe(hearts - ENRAGE_HURT);
     expect(party(lost).hits).toBe(Math.ceil(DRAGON_HEALTH / 2));
     expect(party(lost).duel).toMatchObject({ enraged: true, prev: "contest" });
     expect(previousCard(lost)!.rules).toBe(fightOf.enrage.rules);
     // A won one breaks a scale, and the contest never comes back.
-    s = settleBattle(advance(s), true, seeded(3));
+    s = fight(s, 20, seeded(3));
     expect(party(s).hits).toBe(Math.ceil(DRAGON_HEALTH / 2) + 1);
     const duel = party(s).duel!;
     expect(duel.enraged).toBe(true);
@@ -251,9 +254,9 @@ describe("the dragon battle", () => {
     s.quest!.party!.hits = 2;
     s.quest!.party!.duel = { move: 0, swings: 2, contest: true };
     s.quest!.party!.hearts = 2;
-    s = settleBattle(advance(s), false);
+    s = fight(s, 1);
     expect(party(s).wiped).toBe(true);
-    expect(previousCard(s)!.dice).toBeUndefined();
+    expect(previousCard(s)!.dice?.sides).toBe(2);
     roundTrip(s);
   });
 

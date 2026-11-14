@@ -104,6 +104,13 @@ export const echoes: Record<string, CardDefinition> = {
     "The One You Left",
     "They did it themselves, and they're not speaking to you. Everyone drinks 2.",
   ),
+  // The Quest 2.1: the Company's Table, and what the party drew there.
+  "drew-on-bradley": scene(
+    "moustache",
+    "Bradley's Moustache",
+    "Sir Bradley rides by with an inked moustache he hasn't found yet. Nobody laughs, or drinks 2.",
+    { reward: { heal: 1 } },
+  ),
   "ally-fell": scene(
     "grave",
     "A Grave by the Road",

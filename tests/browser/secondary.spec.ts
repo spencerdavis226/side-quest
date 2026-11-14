@@ -89,7 +89,7 @@ test("the pack count stays readable with every pack selected", async ({
   await dialog.getByRole("button", { name: "Done" }).click();
   const row = page.locator(".pack-selector");
   await expect(row.locator(".pack-logo")).toHaveCount(5);
-  const count = row.getByText("817 cards");
+  const count = row.getByText("827 cards");
   await expect(count).toBeVisible();
   expect(
     await count.evaluate((el) => {
@@ -124,8 +124,9 @@ test("VIP is a selectable add-on and Core can be deselected", async ({
     key,
   );
   expect(session.config.packIds).toEqual(["core", "vip"]);
-  // Core holds the house sheet and Cabin weekend too: 275 + 16 VIP cards.
-  expect(session.cards).toHaveLength(291);
+  // Core holds the house sheet and Cabin weekend too: 285 + 16 VIP cards
+  // (10 coin cards since The Quest 2.1).
+  expect(session.cards).toHaveLength(301);
   expect(
     session.cards.some((card: { id: string }) => card.id === "house.sheet-091"),
   ).toBe(true);

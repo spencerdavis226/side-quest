@@ -20,7 +20,9 @@ async function walk(dir: string): Promise<string[]> {
 // cap on the sum of every pack only penalised adding packs. The runtime cap
 // below still bounds the whole offline precache.
 // 4 MiB since 2026-10-15 (owner decision): Secrets & fuses passed 3 MiB.
-const RUNTIME_LIMIT = 4 * 1024 * 1024;
+// 6 MiB since 2026-11-14 (The Quest 2.1; owner: "budget increase makes no
+// difference to me"): the coin's renderer and the Quest's art passed 4 MiB.
+const RUNTIME_LIMIT = 6 * 1024 * 1024;
 const IMAGE_LIMIT = 500 * 1024;
 const LAZY_JS_LIMIT = 200 * 1024;
 
@@ -84,7 +86,7 @@ const leaked = cards.find((card) => {
 });
 if (leaked) throw Error(`Card text reached the initial chunk: ${leaked.id}`);
 // Conservatively count all runtime files, including SW, rather than undercount precache.
-if (cache > RUNTIME_LIMIT) throw Error(`Runtime cache exceeds 4 MiB: ${cache}`);
+if (cache > RUNTIME_LIMIT) throw Error(`Runtime cache exceeds 6 MiB: ${cache}`);
 console.log(
   `Budgets passed: ${(cache / 1024).toFixed(0)} KiB runtime; ${(initialJs / 1024).toFixed(1)} KiB gzip initial + ${(lazyJs / 1024).toFixed(1)} KiB gzip lazy JavaScript (largest chunk ${largestLazy.name}, ${(largestLazy.gzip / 1024).toFixed(1)} KiB). Workshop excluded.`,
 );

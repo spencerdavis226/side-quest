@@ -1,5 +1,6 @@
 import type {
   CardDefinition,
+  DiceDefinition,
   DragonMove,
   PartyState,
   QuestState,
@@ -14,6 +15,18 @@ import { hitsNeeded } from "./bosses";
 // the card's own d20. The first round at half health or below is the enrage
 // contest, settled with Won and Lost; every round after it uses the enraged
 // moves.
+
+/** The enrage contest's coin (The Quest 2.1): heads breaks a scale, tails
+ * costs the contest's hearts. */
+export const CONTEST_COIN: DiceDefinition = {
+  version: 1,
+  count: 1,
+  sides: 2,
+  outcomes: [
+    { min: 1, max: 1, instruction: "Tails. The dragon has you." },
+    { min: 2, max: 2, instruction: "Heads! A scale breaks.", win: true },
+  ],
+};
 
 export type Duel = NonNullable<PartyState["duel"]>;
 /** A round as the card reads it: a move from one list, or the contest. */
@@ -62,6 +75,8 @@ export function atRound(card: CardDefinition, round: Round): CardDefinition {
       ribbon: "Enraged",
       rules: fight.enrage.rules,
       damage: fight.enrage.damage,
+      // The Quest 2.1: the contest ends on a coin, so nobody judges it.
+      ...(fight.enrage.flip ? { dice: CONTEST_COIN } : {}),
     };
   }
   const move = moveOf(card, round);
@@ -83,6 +98,8 @@ export function nextDuel(
   before: Duel | undefined,
   hits: number,
   random: Random,
+  /** A won contest left the last scale: this round's swing has the edge. */
+  staggered = false,
 ): Duel {
   const need = hitsNeeded(quest, card);
   // Heroic mode (The Quest 2.0 Phase 7): enraged from the first round, so
@@ -107,6 +124,7 @@ export function nextDuel(
     move,
     swings,
     ...(enraged ? { enraged: true as const } : {}),
+    ...(staggered ? { staggered: true as const } : {}),
     ...(prev ? { prev } : {}),
   };
 }
@@ -116,6 +134,7 @@ export function nextDuel(
  * hit. */
 export function killingRound(s: SessionState, card: CardDefinition): boolean {
   const party = s.quest?.party;
-  if (!party?.duel || !card.lairFight) return false;
+  // Never the contest: the felling blow is always a swing.
+  if (!party?.duel || party.duel.contest || !card.lairFight) return false;
   return party.hits + 1 >= hitsNeeded(s.quest, card);
 }

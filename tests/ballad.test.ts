@@ -39,7 +39,9 @@ const BOSS1 = 13;
 const BOSS2 = 29;
 const rollTo = (s: SessionState, face: number) => {
   const sides = currentCard(s).dice!.sides;
-  return returnToCard(rollDice(s, () => (face - 0.5) / sides));
+  // A coin (the enrage contest, The Quest 2.1): a high face is heads.
+  const show = sides === 2 ? (face > 10 ? 2 : 1) : face;
+  return returnToCard(rollDice(s, () => (show - 0.5) / sides));
 };
 const fight = (s: SessionState, face: number, random = seeded(7)) =>
   advance(rollTo(advance(s), face), random);
