@@ -2459,78 +2459,159 @@
   height: 24px;
 }
 
-/* The Quest's map (The Quest 2.0 Phase 5): parchment, faint roads, the
-   road taken in ink, regions lit, closed ones crossed out. */
+/* The Quest's map (The Quest 2.0 Phase 5; an inked parchment since The
+   Quest 2.1): deckled paper, ink rules, terrain marks in medallions, faint
+   roads and the road taken in ink, the party's token. */
 .quest-map {
   display: block;
   width: 100%;
-  max-width: 340px;
+  max-width: 360px;
   margin: 0 auto;
   font-family: var(--font-tavern);
+  filter: drop-shadow(0 6px 10px rgb(0 0 0 / 0.45));
 }
 .quest-map .map-paper {
-  fill: #e8d6ae;
-  stroke: #8a6a3c;
-  stroke-width: 2;
+  stroke: #7a5a2c;
+  stroke-width: 1.5;
 }
-.quest-map .map-road {
-  stroke: #b49a6e;
-  stroke-width: 2;
-  stroke-dasharray: 4 5;
+.quest-map .map-rule {
+  fill: none;
+  stroke: #5a3c1e;
+  stroke-width: 1.4;
+  opacity: 0.7;
+}
+.quest-map .map-rule.thin {
+  stroke-width: 0.6;
+}
+.quest-map .map-compass {
+  fill: #6a4a24;
+  opacity: 0.55;
+}
+.quest-map .map-road path,
+.quest-map path.map-road {
+  stroke: #9a7a4a;
+  stroke-width: 1.6;
+  stroke-dasharray: 3 4;
+  stroke-linecap: round;
   fill: none;
 }
 .quest-map .map-inked {
   fill: none;
-  stroke: #3a2614;
-  stroke-width: 3.5;
+  stroke: #2e1c0c;
+  stroke-width: 3.2;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.quest-map .map-stop circle,
-.quest-map .map-stop rect {
-  fill: #5a3c1e;
+.quest-map.drawing .map-inked.last {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: map-ink 1.2s 0.5s ease-in-out forwards;
+}
+@keyframes map-ink {
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 .quest-map text {
-  fill: #3a2614;
-  font-size: 11px;
-  font-weight: 600;
+  fill: #2e1c0c;
+  font-size: 10.5px;
+  font-weight: 700;
   text-anchor: middle;
+  paint-order: stroke;
+  stroke: #f0dfb6;
+  stroke-width: 3px;
+  stroke-linejoin: round;
 }
-.quest-map .map-region circle {
-  fill: #c9ad7c;
-  stroke: #8a6a3c;
-  stroke-width: 2;
+.quest-map .map-stop.gate path {
+  fill: #4a2e14;
 }
-.quest-map .map-region.lit circle {
-  fill: #e0a43a;
-  stroke: #6a4408;
+.quest-map .map-stop.inn circle {
+  fill: #f0dfb6;
+  stroke: #5a3c1e;
+  stroke-width: 1.4;
 }
-.quest-map .map-region.open circle {
-  fill: #f2c94c;
-  filter: drop-shadow(0 0 4px #f2c94c);
+.quest-map .map-stop.inn path {
+  fill: #5a3c1e;
 }
-.quest-map .map-region.passed circle,
-.quest-map .map-region.current circle {
-  fill: #6a4408;
+.quest-map .map-medal {
+  fill: #ecd9ae;
+  stroke: #7a5a2c;
+  stroke-width: 1.6;
 }
-.quest-map .map-region.closed text {
-  fill: #8a7558;
+.quest-map .map-terrain {
+  fill: #6a4a24;
+}
+.quest-map .map-region.lit .map-medal {
+  fill: #f6e6bc;
+  stroke: #a8741c;
+  stroke-width: 2.4;
+}
+.quest-map .map-region.lit .map-terrain {
+  fill: #3a2410;
+}
+.quest-map .map-region.open .map-medal {
+  stroke: #c9900e;
+  stroke-width: 3;
+}
+.quest-map .map-region.open .map-halo {
+  animation: map-halo 2.4s ease-in-out infinite alternate;
+}
+@keyframes map-halo {
+  from {
+    opacity: 0.55;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.suspended .quest-map .map-halo {
+  animation-play-state: paused;
+}
+.quest-map .map-region.passed .map-medal,
+.quest-map .map-region.current .map-medal {
+  fill: #3a2410;
+  stroke: #a8741c;
+}
+.quest-map .map-region.passed .map-terrain,
+.quest-map .map-region.current .map-terrain {
+  fill: #f2d9a0;
+}
+.quest-map .map-region.bypassed,
+.quest-map .map-region.closed {
+  opacity: 0.5;
 }
 .quest-map .map-cross {
-  stroke: #7a2a1c;
-  stroke-width: 2.5;
+  stroke: #8a2a1c;
+  stroke-width: 2.6;
   stroke-linecap: round;
 }
 .quest-map .map-words {
-  font-size: 9px;
-  font-weight: 500;
+  font-size: 8.5px;
+  font-weight: 600;
   font-style: italic;
 }
-.quest-map .map-dragon {
-  fill: #a8240f;
+.quest-map .map-lair-ring {
+  fill: #2a0a06;
+  stroke: #a8240f;
+  stroke-width: 2;
 }
-.quest-map .map-lair text {
-  text-anchor: start;
+.quest-map .map-dragon {
+  fill: #e8573a;
+}
+.quest-map .map-lair.reached .map-lair-ring {
+  filter: drop-shadow(0 0 6px #ff5a2a);
+}
+.quest-map .lair-name {
+  fill: #6e140a;
+}
+.quest-map .map-token path {
+  fill: #b8860b;
+  stroke: #3a2410;
+  stroke-width: 1.2;
+}
+.quest-map .map-token .map-token-mark {
+  fill: #fff3c8;
+  stroke: none;
 }
 .crawl-map-section {
   margin: 4px 0 14px;

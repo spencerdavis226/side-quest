@@ -25,7 +25,7 @@ import {
 import { asset } from "../../presentation/theme";
 import { TypeMark } from "../LeagueMarks";
 import { CrawlIcon } from "../Crawl";
-import { crawlTheme } from "../crawlTheme";
+import { QUEST_MAP, crawlTheme } from "../crawlTheme";
 import { QuestMap } from "../QuestMap";
 
 // The moments themselves (2026-11-01; styles in `presentation/moments.css`).
@@ -1558,6 +1558,11 @@ function MapOpens({ m, scale, onDone }: ViewProps<"map">) {
 /** The road so far (M4): the map as a strip across the middle, the road
  * inked to the new region, its name writing in. Taps go through. */
 function RoadSoFar({ m, scale, onDone }: ViewProps<"road">) {
+  // The strip shows the row the new region is on (the lair at the top).
+  const depth = QUEST_MAP.findIndex((row) =>
+    row.some((r) => r.label === m.region),
+  );
+  const y = depth === 0 ? 282 : depth === 1 ? 152 : 38;
   return (
     <Stage
       kind="road"
@@ -1565,9 +1570,10 @@ function RoadSoFar({ m, scale, onDone }: ViewProps<"road">) {
       scale={scale}
       onDone={onDone}
       ambient
+      style={{ "--road-y": y }}
     >
       <div className="road-strip">
-        <QuestMap quest={m.quest} words={false} />
+        <QuestMap quest={m.quest} words={false} draw />
       </div>
       <strong className="road-name">{m.region}</strong>
       {m.words && <span className="road-words">{m.words}</span>}

@@ -5809,14 +5809,18 @@
   animation: map-fade var(--len) ease both;
 }
 .road-strip {
-  width: min(70vw, 260px);
-  height: 120px;
+  --w: min(80vw, 300px);
+  width: var(--w);
+  height: calc(var(--w) * 0.5);
   overflow: hidden;
   border-radius: 12px;
   box-shadow: 0 6px 18px rgb(0 0 0 / 0.6);
 }
+/* Centred on the row of the region just reached (`--road-y`, in the
+   map's own 380-unit height), never past its top. */
 .road-strip .quest-map {
-  margin-top: -110px;
+  max-width: none;
+  margin-top: min(0px, calc(var(--w) * 0.25 - var(--w) * var(--road-y) / 300));
 }
 .road-name {
   color: #fff3c4;
