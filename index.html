@@ -65,6 +65,43 @@
     <!-- The installed app's status-bar edge; see .status-edge in style.css. -->
     <div class="status-edge" aria-hidden="true"></div>
     <div id="root"></div>
+    <!-- Shown only when the app never started (an older iOS than 26 that
+         cannot run the build, or a failed download); see the script below. -->
+    <div
+      id="unsupported"
+      style="
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        place-content: center;
+        gap: 12px;
+        padding: 32px;
+        background: #271c11;
+        color: #f0d29b;
+        font:
+          18px/1.4 -apple-system,
+          system-ui,
+          sans-serif;
+        text-align: center;
+      "
+    >
+      <strong style="font-size: 24px">Side Quest needs iOS 26 or newer.</strong>
+      <span
+        >Update in Settings, General, Software Update, then open Side Quest
+        again.</span
+      >
+    </div>
+    <script>
+      // The app marks itself started as it boots (main.tsx). Module scripts
+      // finish before "load", so if it never started, this device cannot
+      // run it: say so plainly instead of leaving a blank page (iOS 26 is
+      // the minimum since 2026-11-14).
+      addEventListener("load", function () {
+        if (!window.__sideQuestStarted)
+          document.getElementById("unsupported").style.display = "grid";
+      });
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
