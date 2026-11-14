@@ -51,6 +51,7 @@ import {
   type CrawlIconName,
   type CrawlTheme,
 } from "./crawlTheme";
+import { QuestMap } from "./QuestMap";
 import {
   BadgeCase,
   EdgeMark,
@@ -725,38 +726,42 @@ export function OfferPlaque({
   // lore, an ally; a plaque's curse names itself in its label's seal.
   const icon: CrawlIconName | null = offer.loot
     ? offer.loot
-    : offer.boon
-      ? gearIcon(offer.boon)
-      : offer.lore
-        ? "lore"
-        : offer.recruit
-          ? "ally"
-          : offer.elite
-            ? "elite"
-            : offer.evolve
-              ? "adventurer"
-              : offer.heal
-                ? "heart"
-                : null;
+    : offer.route !== undefined
+      ? "door"
+      : offer.boon
+        ? gearIcon(offer.boon)
+        : offer.lore
+          ? "lore"
+          : offer.recruit
+            ? "ally"
+            : offer.elite
+              ? "elite"
+              : offer.evolve
+                ? "adventurer"
+                : offer.heal
+                  ? "heart"
+                  : null;
   const brings = offer.loot
     ? `a ${theme.loot[offer.loot].name}`
-    : offer.boon
-      ? offer.boon.name
-      : offer.lore
-        ? "a dragon lore"
-        : offer.recruit
-          ? "an ally"
-          : offer.elite
-            ? theme.words.elite
-            : offer.evolve
-              ? !can
-                ? `${theme.words.grows.who} is ${theme.words.grows.done}`
-                : branch
-                  ? `${theme.words.grows.who} ${theme.words.grows.verb} into ${branch.name}`
-                  : `${theme.words.grows.who} ${theme.words.grows.verb}`
-              : offer.heal
-                ? `${offer.heal} ${theme.words.hearts} back`
-                : "nothing";
+    : offer.route !== undefined
+      ? `the road to ${offer.label.replace(/^The /, "the ")}`
+      : offer.boon
+        ? offer.boon.name
+        : offer.lore
+          ? "a dragon lore"
+          : offer.recruit
+            ? "an ally"
+            : offer.elite
+              ? theme.words.elite
+              : offer.evolve
+                ? !can
+                  ? `${theme.words.grows.who} is ${theme.words.grows.done}`
+                  : branch
+                    ? `${theme.words.grows.who} ${theme.words.grows.verb} into ${branch.name}`
+                    : `${theme.words.grows.who} ${theme.words.grows.verb}`
+                : offer.heal
+                  ? `${offer.heal} ${theme.words.hearts} back`
+                  : "nothing";
   return (
     <button
       className={`card-choice-option offer-plaque ${offer.elite ? "offer-loud" : icon ? "offer-buy" : "offer-pass"}`}
@@ -1502,6 +1507,12 @@ export function CrawlRecord({
             .filter((f) => !f.piece)
             .reduce((n, f) => n + f.rooms, 0)}
         />
+      )}
+      {/* The map (The Quest 2.0 Phase 5), in play. */}
+      {show("party") && !ending && quest?.packId === "dungeon" && (
+        <section className="crawl-map-section">
+          <QuestMap quest={quest} />
+        </section>
       )}
       {show("party") && !ending && record.form && (
         <FormPanel form={record.form} theme={theme} />

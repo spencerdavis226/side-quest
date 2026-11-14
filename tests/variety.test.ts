@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { dungeonCards, dungeonPack } from "../src/content/dungeon";
 import { pokemonCards, pokemonPack } from "../src/content/pokemon";
-import type { CardDefinition, QuestStage } from "../src/game/types";
+import type { CardDefinition, QuestSlot } from "../src/game/types";
 
 // The variety pass (2026-10-31, owner: "double down on ... variety and
 // interesting fun cards ... especially variety within cards"). A crawl's
@@ -89,8 +89,14 @@ const involves = (c: CardDefinition) =>
     ].join(" "),
   );
 
-const stages = (finale: (QuestStage | { oneOf: QuestStage[][] })[]) =>
-  finale.flatMap((s) => ("oneOf" in s ? s.oneOf.flat() : [s]));
+const stages = (finale: QuestSlot[]) =>
+  finale.flatMap((s) =>
+    "oneOf" in s
+      ? s.oneOf.flat()
+      : "choose" in s
+        ? s.choose.routes.flat()
+        : [s],
+  );
 const pools = [
   ...stages(dungeonPack.quest!.finale)
     .filter((s) => s.pick === 8)

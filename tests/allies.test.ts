@@ -15,6 +15,7 @@ import { returnToCard, rollDice, rollTarget } from "../src/game/dice";
 import { parseSession } from "../src/app/persistence";
 import { cards, packs } from "../src/content/catalog";
 import type { GameConfig, SessionState } from "../src/game/types";
+import { takeRoads } from "./roads";
 
 // Allies (The Quest 2.0 Phase 4, 2026-11-14): companions kept in
 // `party.team` by the ID of the card that brought them, sent into a
@@ -33,7 +34,8 @@ const seeded = (seed: number): Random => {
     return (seed - 1) / 2147483646;
   };
 };
-const STEP = { floor1: 4, landing1: 14, keeper: 18, floor2: 19 };
+// With both roads taken (Phase 5): the Road Out at 4, the Signpost at 20.
+const STEP = { floor1: 5, landing1: 15, keeper: 19, floor2: 21 };
 const party = (s: SessionState) => s.quest!.party!;
 const roundTrip = (s: SessionState) =>
   expect(parseSession(JSON.stringify(s))).toEqual(s);
@@ -46,7 +48,7 @@ const rollTo = (s: SessionState, face: number) => {
  * card `id`), revealed, holding `team` (cards already dealt). */
 function at(keeper: string, team: string[] = [], id?: string) {
   for (let seed = 1; ; seed++) {
-    let s = createSession(crawl, cards, packs, seeded(seed));
+    let s = takeRoads(createSession(crawl, cards, packs, seeded(seed)));
     const q = s.quest!;
     if (q.finale[STEP.keeper] !== keeper) continue;
     const region = q.stages.find(
@@ -82,7 +84,7 @@ function at(keeper: string, team: string[] = [], id?: string) {
 }
 /** The first inn of a run, revealed. */
 function inn() {
-  const s = createSession(crawl, cards, packs, seeded(1));
+  const s = takeRoads(createSession(crawl, cards, packs, seeded(1)));
   return advance({
     ...s,
     discarded: STEP.landing1,

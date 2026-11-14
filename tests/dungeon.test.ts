@@ -43,6 +43,7 @@ import {
   PARTY_HEARTS,
 } from "../src/content/dungeon/shared";
 import { lairs } from "../src/content/dungeon/dragons";
+import { roadDraw, takeRoads } from "./roads";
 const LAIRS = {
   taproom: "The Sunken Coast",
   kitchen: "The Fire Caverns",
@@ -76,12 +77,21 @@ const seeded = (seed: number): Random => {
 const ORIGINAL = [0.1, 0.1, 0.1, 0.1];
 const OTHER = [0.5, 0.9, 0.5, 0.5];
 const NEW = [0.9, 0.5, 0.9, 0.9];
+// The first two depths are road choices (The Quest 2.0 Phase 5): the draw
+// for each leaves the wanted region on the road, and both roads are taken
+// at once, so the run reads as it will be dealt.
+const DEPTH1 = ["The King's Road", "The Old Forest", "The Marsh"];
+const DEPTH2 = ["The Haunted Crypt", "The Goblin Mines", "The Wizard's Tower"];
 const make = (floors = ORIGINAL, seed = 1) => {
   const rest = seeded(seed);
-  const queue = [...floors];
-  return createSession(crawl, cards, packs, () =>
+  const [d1, room, d2, lair] = floors;
+  const r1 = Math.floor(d1 * 3);
+  const r2 = Math.floor(d2 * 3);
+  const queue = [roadDraw(r1), room, roadDraw(r2), lair];
+  const s = createSession(crawl, cards, packs, () =>
     queue.length ? queue.shift()! : rest(),
   );
+  return takeRoads(s, [DEPTH1[r1], DEPTH2[r2]]);
 };
 // Where the run is, step by step: the adventurer, tonight's omen, the
 // queue, the first floor's eight rooms and its boss, a landing, the second
@@ -91,21 +101,24 @@ const STEP = {
   omen: 1,
   summons: 2,
   queue: 3,
-  floor1: 4,
-  boss1: 12,
+  // The Road Out and the Signpost (The Quest 2.0 Phase 5).
+  road: 4,
+  floor1: 5,
+  boss1: 13,
   // A dragon sign (The Quest 2.0 Phase 3) after the first boss.
-  sign: 13,
-  landing1: 14,
-  plea: 15,
-  hidden: 16,
-  keeper: 18,
-  floor2: 19,
-  boss2: 27,
-  landing2: 28,
-  stairs: 29,
-  floor3: 30,
-  closing: 38,
-  lastCall: 39,
+  sign: 14,
+  landing1: 15,
+  plea: 16,
+  hidden: 17,
+  keeper: 19,
+  signpost: 20,
+  floor2: 21,
+  boss2: 29,
+  landing2: 30,
+  stairs: 31,
+  floor3: 32,
+  closing: 40,
+  lastCall: 41,
 };
 // The run past the door, with no adventurer or omen: the King's Road's first
 // room.
@@ -165,6 +178,7 @@ describe("Pub Crawl", () => {
       ["The omen", 1],
       ["The King's Summons", 1],
       ["The City Gate", 1],
+      ["The Road Out", 1],
       ["The King's Road", 8],
       ["King's Road boss", 1],
       ["A Dragon Sign", 1],
@@ -172,6 +186,7 @@ describe("Pub Crawl", () => {
       ["A Side Quest", 1],
       ["The Witch's Cottage", 2],
       ["Witch's Cottage boss", 1],
+      ["The Signpost", 1],
       ["The Haunted Crypt", 8],
       ["Haunted Crypt boss", 1],
       ["The Last Inn", 1],
@@ -180,7 +195,7 @@ describe("Pub Crawl", () => {
       ["The Lair's Door", 1],
       ["The Dragon's Lair", 1],
     ]);
-    expect(s.quest!.finale).toHaveLength(40);
+    expect(s.quest!.finale).toHaveLength(42);
     expect(currentCard(s).omen).toBeDefined();
     const at = (step: number) => findCard(s, s.quest!.finale[step])!;
     expect(at(STEP.hidden).ribbon).toBe("Witch's Cottage · Guard");
@@ -242,6 +257,7 @@ describe("Pub Crawl", () => {
       "The omen",
       "The King's Summons",
       "The City Gate",
+      "The Road Out",
       "The Old Forest",
       "Old Forest boss",
       "A Dragon Sign",
@@ -249,6 +265,7 @@ describe("Pub Crawl", () => {
       "A Side Quest",
       "The Sunless Vault",
       "Sunless Vault boss",
+      "The Signpost",
       "The Goblin Mines",
       "Goblin Mines boss",
       "The Last Inn",
@@ -264,6 +281,7 @@ describe("Pub Crawl", () => {
       "The omen",
       "The King's Summons",
       "The City Gate",
+      "The Road Out",
       "The Marsh",
       "Marsh boss",
       "A Dragon Sign",
@@ -271,6 +289,7 @@ describe("Pub Crawl", () => {
       "A Side Quest",
       "The Old Barrow",
       "Old Barrow boss",
+      "The Signpost",
       "The Wizard's Tower",
       "Wizard's Tower boss",
       "The Last Inn",
@@ -288,10 +307,16 @@ describe("Pub Crawl", () => {
     const adventurers = new Set<string>();
     const omens = new Set<string>();
     for (let seed = 1; seed <= 400; seed++) {
+      // Every region the run holds (both roads offered at each depth,
+      // Phase 5), by depth.
       const s = createSession(crawl, cards, packs, seeded(seed));
-      const labels = s.quest!.stages.map((st) => st.label);
-      [labels[4], labels[11], labels[15]].forEach((l, i) => floors[i].add(l));
-      rooms.add(labels[9]);
+      const regions = s.quest!.stages.filter((st) => st.pick === 8);
+      const depth = (st: (typeof regions)[number]) =>
+        st.route === undefined ? 2 : DEPTH1.includes(st.label) ? 0 : 1;
+      for (const st of regions) floors[depth(st)].add(st.label);
+      rooms.add(
+        s.quest!.stages.find((st) => st.pick === 2 && !st.route)!.label,
+      );
       adventurers.add(s.quest!.finale[STEP.adventurer]);
       omens.add(s.quest!.finale[STEP.omen]);
     }
@@ -436,7 +461,7 @@ describe("Pub Crawl", () => {
   it("the dragon waits under its own lair, the run's third region", () => {
     const seen = new Set<string>();
     for (let seed = 1; seed <= 60; seed++) {
-      const s = createSession(crawl, cards, packs, seeded(seed));
+      const s = takeRoads(createSession(crawl, cards, packs, seeded(seed)));
       const q = s.quest!;
       const region = q.stages[finaleStage(q, STEP.floor3).stage].label;
       const dragon = q.finale[STEP.lastCall];
@@ -630,7 +655,8 @@ describe("Pub Crawl", () => {
     const read = spendLoot(s, "candy");
     // The Sorcerer's −1, and the Pointy Hat's +1 (2026-10-25).
     expect(party(read)).toMatchObject({ form: 1, max: H });
-    expect(party(read).loot).toEqual(["die", "die", "die"]);
+    // One coin to start since The Quest 2.0 Phase 5, and the Sorcerer's.
+    expect(party(read).loot).toEqual(["die", "die"]);
     roundTrip(read);
     // The third Tome reaches the line's end (three ranks since Realms).
     read.quest!.party!.loot = [...party(read).loot.slice(0, 2), "candy"];
@@ -915,7 +941,7 @@ describe("Pub Crawl", () => {
       hearts: H - 1,
       jinx: "dungeon.queue-group-name",
     });
-    expect(s.quest!.step).toBe(STEP.floor1);
+    expect(s.quest!.step).toBe(STEP.road);
     roundTrip(s);
     const won = fight(
       deal(fromStep(make(), STEP.queue), "dungeon.queue-group-name"),
@@ -1098,6 +1124,8 @@ describe("Pub Crawl", () => {
       ...(st.inserts ? { inserts: st.inserts } : {}),
     }));
     old.quest!.finale = [legacy.id, ...old.quest!.finale.slice(2)];
+    // Saves from then had no roads to choose (The Quest 2.0 Phase 5).
+    delete old.quest!.dropped;
     let s = advance(advance(old));
     expect(party(s)).toMatchObject({
       hearts: H + 2,
@@ -1106,7 +1134,8 @@ describe("Pub Crawl", () => {
     });
     expect(party(s).boons).toBeUndefined();
     roundTrip(s);
-    s = fight(deal(fromStep(s, 3), "dungeon.gelatinous-shot"), 2);
+    // The first region, after the Road Out (Phase 5).
+    s = fight(deal(fromStep(s, 4), "dungeon.gelatinous-shot"), 2);
     roundTrip(s);
     // A tampered omen is rejected.
     const forged = structuredClone(start());
@@ -1200,7 +1229,8 @@ describe("Pub Crawl", () => {
     expect(lanyard.slot).toBeUndefined();
     const next = takeSpoils(s, 0);
     expect(party(next).boons ?? []).toEqual([]);
-    expect(party(next).loot).toContain("revive");
+    // A Tower Shield since The Quest 2.0 Phase 5 (a Phoenix Feather before).
+    expect(party(next).loot).toContain("shield");
     roundTrip(next);
   });
 

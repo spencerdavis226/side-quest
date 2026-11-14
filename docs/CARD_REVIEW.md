@@ -1319,7 +1319,7 @@ the Review column is intentionally blank so you can mark it up.
 
 ## Realms (`dungeon`)
 
-593 cards · 36 sip · 139 group · 0 category · 380 challenge · 38 rule · 272 dice
+599 cards · 36 sip · 145 group · 0 category · 380 challenge · 38 rule · 272 dice
 
 | Review | Title | ID | Cat | Rules | Dice, secret or timer |
 | --- | --- | --- | --- | --- | --- |
@@ -1450,6 +1450,12 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | The Burned Mill | `dungeon.sign-mill` | group | A mill, still smoking. {dragon} was here an hour ago. Everyone pours out a sip. |  |
 | ☐ | Tracks | `dungeon.sign-tracks` | group | One footprint, big enough to sit in. Everyone sits in it. Last down drinks 2. |  |
 | ☐ | The Old Song | `dungeon.sign-song` | group | A shepherd sings the old song about {dragon}. Everyone hums along. Nobody knows it. |  |
+| ☐ | The Road Out | `dungeon.road-out-parade` | group | The King's Road is closed for a parade. Forest or marsh? Everyone votes; the drawer decides. |  |
+| ☐ | The Road Out | `dungeon.road-out-elves` | group | The forest is shut: the elves are sulking. Road or marsh? Everyone votes; the drawer decides. |  |
+| ☐ | The Road Out | `dungeon.road-out-flood` | group | The marsh is flooded to the eaves. Road or forest? Everyone votes; the drawer decides. |  |
+| ☐ | The Signpost | `dungeon.road-sign-full` | group | The crypt is full. Mines or tower? Everyone votes; the drawer decides. |  |
+| ☐ | The Signpost | `dungeon.road-sign-strike` | group | The mines are on strike. Crypt or tower? Everyone votes; the drawer decides. |  |
+| ☐ | The Signpost | `dungeon.road-sign-moved` | group | The tower has moved again. Crypt or mines? Everyone votes; the drawer decides. |  |
 | ☐ | The Gallows Tree | `dungeon.landmark-gallows-tree` | group | A man on the gallows swears he's innocent. Everyone votes: guilty or not. |  |
 | ☐ | The Tourney Field | `dungeon.landmark-tourney-field` | group | A joust, and they need one more fool. Everyone points at the drawer. |  |
 | ☐ | The Toll Keep | `dungeon.landmark-toll-keep` | group | A baron's keep across the road, and the toll is due. The drawer counts their coins aloud. |  |
@@ -1901,7 +1907,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Barbarian | `dungeon.class-barbarian` | rule | Rage first. Questions never. +1 to monster d20s. +2 to boss d20s. Traps hurt 1 more. |  |
 | ☐ | Rogue | `dungeon.class-rogue` | rule | Took that. +2 to trap and relic d20s. +1 to ambush d20s. +1 satchel slot. Starts with a Smoke Bomb. |  |
 | ☐ | Cleric | `dungeon.class-cleric` | rule | Blesses every drink, loudly. +1 max heart. Every heal heals 1 more. |  |
-| ☐ | Wizard | `dungeon.class-wizard` | rule | Smells of burnt eyebrows. −1 max heart. Starts with 2 Lucky Coins. |  |
+| ☐ | Wizard | `dungeon.class-wizard` | rule | Smells of burnt eyebrows. −1 max heart. Starts with a Lucky Coin. |  |
 | ☐ | Bard | `dungeon.class-bard` | rule | Brought a lute. Nobody asked. +1 max heart. Natural 20 on a 19 or 20. Every heal heals 1 more. |  |
 | ☐ | Paladin | `dungeon.class-paladin` | rule | Sworn to protect, loudly. +1 max heart. +1 to boss d20s. Starts with a Tower Shield. |  |
 | ☐ | Ranger | `dungeon.class-ranger` | rule | Hasn't slept indoors in years. +2 to monster d20s. +1 to ambush d20s. Bosses hurt 1 more. |  |

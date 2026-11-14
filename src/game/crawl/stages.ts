@@ -27,19 +27,85 @@ export function packCardIds(pack: PackDefinition): string[] {
 /** Every stage a quest's finale can deal, on every route. */
 export function questStages(rules: PackQuest): QuestStage[] {
   return rules.finale.flatMap((slot) =>
-    "oneOf" in slot ? slot.oneOf.flat() : [slot],
+    "oneOf" in slot
+      ? slot.oneOf.flat()
+      : "choose" in slot
+        ? [...slot.choose.card, ...slot.choose.routes.flat()]
+        : [slot],
   );
 }
-/** One game's stages: each `oneOf` slot's route is picked at random. */
+/** One game's stages: each `oneOf` slot's route is picked at random. A
+ * `choose` slot (The Quest 2.0 Phase 5) leaves one route out at random and
+ * deals the choice card for the other two, then both routes, tagged 0 and
+ * 1, until the table picks one. */
 export function questRoute(
   rules: PackQuest,
   random: Random = Math.random,
-): QuestStage[] {
-  return rules.finale.flatMap((slot) =>
-    "oneOf" in slot
-      ? slot.oneOf[Math.floor(random() * slot.oneOf.length)]
-      : [slot],
-  );
+): (QuestStage & { route?: 0 | 1 })[] {
+  return rules.finale.flatMap((slot) => {
+    if ("oneOf" in slot)
+      return slot.oneOf[Math.floor(random() * slot.oneOf.length)];
+    if (!("choose" in slot)) return [slot];
+    const { card, routes } = slot.choose;
+    const out = Math.floor(random() * routes.length);
+    const kept = routes.filter((_, i) => i !== out);
+    return [
+      card[out],
+      ...kept[0].map((st) => ({ ...st, route: 0 as const })),
+      ...kept[1].map((st) => ({ ...st, route: 1 as const })),
+    ];
+  });
+}
+/** The road chosen on the choice card at stage `stage` (The Quest 2.0
+ * Phase 5): the other road (the run of tagged stages straight after it
+ * with the other tag) leaves the run, with its picks, into `dropped`. */
+export function chooseRoad(
+  quest: QuestState,
+  stage: number,
+  route: 0 | 1,
+): QuestState {
+  const other = (i: number) => {
+    if (i <= stage) return false;
+    for (let j = stage + 1; j <= i; j++)
+      if (quest.stages[j]?.route === undefined) return false;
+    return quest.stages[i].route !== route;
+  };
+  return dropInto(quest, other);
+}
+/** Take stages out of a run into `dropped`, with their picks. */
+export function dropInto(
+  quest: QuestState,
+  drop: (index: number) => boolean,
+): QuestState {
+  const { stages, finale, gone } = dropStages(quest, drop);
+  if (!gone.length) return quest;
+  return {
+    ...quest,
+    stages,
+    finale,
+    dropped: [...(quest.dropped ?? []), ...gone],
+  };
+}
+/** Take stages out of a run, with their picks: the stages and the picks
+ * left, and the stages taken out (for `quest.dropped`). */
+export function dropStages(
+  quest: QuestState,
+  drop: (index: number) => boolean,
+) {
+  const stages: QuestState["stages"] = [];
+  const gone: QuestState["stages"] = [];
+  const finale: string[] = [];
+  let first = 0;
+  for (const [i, stage] of quest.stages.entries()) {
+    const picks = quest.finale.slice(first, first + stage.pick);
+    first += stage.pick;
+    if (drop(i)) gone.push(stage);
+    else {
+      stages.push(stage);
+      finale.push(...picks);
+    }
+  }
+  return { stages, finale, gone };
 }
 /** Every card a quest's finale stages can deal, elites included, each
  * once (sibling routes may share cards: every lair has the same door). */

@@ -17,6 +17,7 @@ import { atRound, roundOf } from "./crawl/lair";
 // pieces live in `./crawl/` and are re-exported here, so every import of
 // `engine` keeps working. Modules outside `src/game` import from here only.
 export {
+  chooseRoad,
   finaleCard,
   finaleCardIds,
   finaleStage,
@@ -221,10 +222,15 @@ export function createSession(
         if (!card) throw new Error("A finale card is missing.");
         return structuredClone(card);
       });
+    // A quest with road choices (The Quest 2.0 Phase 5) records each
+    // stage's place and road, so a replay can put dropped stages back.
+    const roads = rules.finale.some((slot) => "choose" in slot);
     const stages = questRoute(rules, random).map(
-      ({ label, pick, cardIds, elite, inserts }) => ({
+      ({ label, pick, cardIds, elite, inserts, route }, at) => ({
         label,
         pick,
+        ...(roads ? { at } : {}),
+        ...(route !== undefined ? { route } : {}),
         cards: snapshot(cardIds),
         ...(elite?.length ? { elite: snapshot(elite) } : {}),
         ...(inserts?.length
@@ -323,6 +329,19 @@ export function findCard(s: SessionState, id: string | null) {
     (s.quest && id !== null ? finaleCard(s.quest, id) : undefined);
   return card && withNames(s, card);
 }
+/** A quest without its dropped stages (they come back into `stages`). */
+function withoutDropped(q: QuestState): QuestState {
+  const { dropped: _dropped, ...rest } = q;
+  return rest;
+}
+/** A run's stages as dealt at game start: the ones left and the ones a
+ * choice removed, back in order (by `at`). A quest without them is its
+ * stages as they are. */
+function restoreStages(q: QuestState): QuestState["stages"] {
+  const all = structuredClone([...q.stages, ...(q.dropped ?? [])]);
+  if (!q.dropped?.length || all.some((st) => st.at === undefined)) return all;
+  return all.sort((a, b) => a.at! - b.at!);
+}
 export function replaySession(
   s: SessionState,
   random: Random = Math.random,
@@ -350,9 +369,11 @@ export function replaySession(
     ...(s.quest
       ? {
           quest: {
-            ...s.quest,
-            stages: structuredClone(s.quest.stages),
-            finale: pickFinale(s.quest.stages, random),
+            ...withoutDropped(s.quest),
+            // Stages a road choice or a Walk on removed come back, in
+            // their places (The Quest 2.0 Phase 5).
+            stages: restoreStages(s.quest),
+            finale: pickFinale(restoreStages(s.quest), random),
             count: 0,
             due: s.quest.goal === 0,
             step: 0,

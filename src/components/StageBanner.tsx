@@ -79,6 +79,9 @@ function stageBanner(session: SessionState) {
     };
   }
   if (stage.index !== 0) return null;
+  // A Quest region's road-so-far moment (M4, The Quest 2.0 Phase 5)
+  // plays instead of its banner.
+  if (quest.packId === "dungeon" && stage.size === 8) return null;
   // Once per stage: not again when a boss is dealt for another swing or a
   // lost Champion is replaced.
   const pool = quest.stages[stage.stage].cards;

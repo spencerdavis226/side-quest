@@ -326,6 +326,9 @@ export interface Offer {
   lore?: true;
   /** The card's `ally` joins the party. */
   recruit?: true;
+  /** The Quest 2.0 Phase 5: the road chosen (0 or 1) on a `choose` slot's
+   * card; the other road's stages leave the run. */
+  route?: 0 | 1;
   /** The card's `jinx` lands only when this plaque is taken (never when
    * the card is put aside another way). */
   jinx?: true;
@@ -409,7 +412,14 @@ export interface QuestStage {
 }
 /** A run's place in the finale: one stage, or `oneOf` a set of routes (each
  * a list of stages, such as a floor and its boss), one picked per game. */
-export type QuestSlot = QuestStage | { oneOf: QuestStage[][] };
+export type QuestSlot =
+  | QuestStage
+  | { oneOf: QuestStage[][] }
+  /** The Quest 2.0 Phase 5 (2026-11-14): the table chooses the road. At game
+   * start one of the routes is left out (at random) and `card[i]`, the
+   * choice for the other two, is dealt; its plaques (`Offer.route`) keep one
+   * route and drop the other. */
+  | { choose: { card: QuestStage[]; routes: QuestStage[][] } };
 /** A pack's game mode: a table-wide meter that, on reaching its goal, deals
  * the finale stages one card at a time between deck cards, and the game ends
  * when the last is put aside. Finale cards are authored with the pack's cards
@@ -460,7 +470,16 @@ export interface QuestState {
     /** Cards dealt at a fixed place (`QuestStage.inserts`); older saves
      * omit it. */
     inserts?: { at: number; cards: CardDefinition[] }[];
+    /** The Quest 2.0 Phase 5: which of a road choice's two routes this
+     * stage belongs to, until the choice is made. */
+    route?: 0 | 1;
+    /** Its place in the run as dealt at game start, so stages a choice or
+     * a Walk on removed can be put back in order for a replay. */
+    at?: number;
   }[];
+  /** Stages a road choice or a Walk on removed from the run (Phase 5), kept
+   * for a replay. */
+  dropped?: QuestState["stages"];
   finale: string[];
   step: number;
   /** Battles lost so far. Each was a draw that took no deck position or

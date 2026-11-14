@@ -24,6 +24,7 @@ import { asset } from "../../presentation/theme";
 import { TypeMark } from "../LeagueMarks";
 import { CrawlIcon } from "../Crawl";
 import { crawlTheme } from "../crawlTheme";
+import { QuestMap } from "../QuestMap";
 
 // The moments themselves (2026-11-01; styles in `presentation/moments.css`).
 // A lazy chunk: the director (`Director.tsx`) loads it when a game starts.
@@ -65,6 +66,8 @@ const LENGTH: Record<Moment["kind"], number> = {
   lore: 2500,
   ally: 2500,
   fallen: 3000,
+  map: 2500,
+  road: 2000,
 };
 /** A lifted jinx reads less than a laid one: only its name burns away. */
 const LIFTED = 2000;
@@ -119,6 +122,10 @@ export default function MomentView({
       return <AllyJoins m={moment} scale={scale} onDone={onDone} />;
     case "fallen":
       return <Fallen m={moment} scale={scale} onDone={onDone} />;
+    case "map":
+      return <MapOpens m={moment} scale={scale} onDone={onDone} />;
+    case "road":
+      return <RoadSoFar m={moment} scale={scale} onDone={onDone} />;
     case "doubles":
       return <Doubles m={moment} scale={scale} onDone={onDone} />;
     case "door":
@@ -372,6 +379,10 @@ function caption(m: Moment): [string, string, string] {
       return ["Joins the party", m.name, m.line];
     case "fallen":
       return [m.stand ? "Took the blow" : "Fallen", m.name, m.line];
+    case "map":
+      return ["The map", m.title, ""];
+    case "road":
+      return ["The road", m.region, m.words];
     default:
       return ["", "", ""];
   }
@@ -1313,6 +1324,39 @@ function Fallen({ m, scale, onDone }: ViewProps<"fallen">) {
         <i />
       </span>
       <span className="fallen-line">{m.line}</span>
+    </Stage>
+  );
+}
+
+/** The map opens (The Quest 2.0 Phase 5, M3): the parchment unrolls with
+ * the two regions offered lit and their three words, then rolls up to the
+ * card and its plaques. Taps go through. */
+function MapOpens({ m, scale, onDone }: ViewProps<"map">) {
+  return (
+    <Stage kind="map" length={LENGTH.map} scale={scale} onDone={onDone} ambient>
+      <div className="map-scroll">
+        <QuestMap quest={m.quest} />
+      </div>
+    </Stage>
+  );
+}
+
+/** The road so far (M4): the map as a strip across the middle, the road
+ * inked to the new region, its name writing in. Taps go through. */
+function RoadSoFar({ m, scale, onDone }: ViewProps<"road">) {
+  return (
+    <Stage
+      kind="road"
+      length={LENGTH.road}
+      scale={scale}
+      onDone={onDone}
+      ambient
+    >
+      <div className="road-strip">
+        <QuestMap quest={m.quest} words={false} />
+      </div>
+      <strong className="road-name">{m.region}</strong>
+      {m.words && <span className="road-words">{m.words}</span>}
     </Stage>
   );
 }

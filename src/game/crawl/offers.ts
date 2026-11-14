@@ -1,7 +1,7 @@
-import type { SessionState } from "../types";
+import type { QuestState, SessionState } from "../types";
 import { rollWins } from "../dice";
 import { currentCard, type Random } from "../engine";
-import { finaleStage } from "./stages";
+import { chooseRoad, dropInto, finaleStage } from "./stages";
 import {
   addLore,
   evolve,
@@ -90,18 +90,17 @@ export function takeOffer(
     }
   }
   // Declining a side quest (2026-11-03): its later stages leave the run,
-  // with their picks, so every count still adds up.
-  let stages = q.stages;
-  if (offer.skip) {
-    const { stage } = finaleStage(q);
-    const from = stage + 1;
-    const to = Math.min(q.stages.length - 1, stage + offer.skip);
-    const start = q.stages.slice(0, from).reduce((n, st) => n + st.pick, 0);
-    const drop = q.stages.slice(from, to + 1).reduce((n, st) => n + st.pick, 0);
-    stages = [...q.stages.slice(0, from), ...q.stages.slice(to + 1)];
-    finale = [...finale.slice(0, start), ...finale.slice(start + drop)];
-  }
-  return discard({ ...s, quest: { ...q, stages, finale, party } }, random);
+  // with their picks, so every count still adds up. A road chosen (The
+  // Quest 2.0 Phase 5) drops the other road: the stages right after the
+  // choice tagged with it. Either way the stages taken out are kept in
+  // `dropped` (since Phase 5) so a replay can deal them again.
+  let next: QuestState = { ...q, finale, party };
+  const { stage } = finaleStage(q);
+  if (offer.skip)
+    next = dropInto(next, (i) => i > stage && i <= stage + offer.skip!);
+  else if (offer.route !== undefined)
+    next = chooseRoad(next, stage, offer.route);
+  return discard({ ...s, quest: next }, random);
 }
 /** Each pull on a push-your-luck card rolls this much lower. */
 export const PRESS_STEP = 2;

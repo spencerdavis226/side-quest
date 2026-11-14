@@ -151,7 +151,9 @@ export const classes: CardDefinition[] = [
     "wizard",
     "Wizard",
     "Smells of burnt eyebrows.",
-    { hearts: -2, loot: ["die", "die"] },
+    // One Lucky Coin to start since The Quest 2.0 Phase 5 (2026-11-14): 54%
+    // with two.
+    { hearts: -2, loot: ["die"] },
     [
       {
         title: "Sorcerer",
@@ -165,7 +167,8 @@ export const classes: CardDefinition[] = [
         title: "Grand Magus",
         // A heart less since The Quest 2.0 Phase 3 (2026-11-14), when the
         // signs and landmarks brought more Lucky Coins: 50%.
-        omen: { roll: { all: 2 }, restock: "die" },
+        // +1 since The Quest 2.0 Phase 5 (2026-11-14): 50% at +2.
+        omen: { roll: { all: 1 }, crit: 19, restock: "die" },
       },
     ],
   ),

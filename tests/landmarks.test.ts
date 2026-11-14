@@ -82,9 +82,10 @@ const holding = (id: string) => {
 describe("landmarks", () => {
   it("every region deals one of its landmarks fifth, and a fork never sits before it or last", () => {
     for (let seed = 1; seed <= 200; seed++) {
+      // Every region the run holds, both roads offered included (Phase 5).
       const s = createSession(crawl, cards, packs, seeded(seed));
       const rs = regions(s);
-      expect(rs).toHaveLength(3);
+      expect(rs).toHaveLength(5);
       for (const { st, at: first } of rs) {
         const picks = s.quest!.finale.slice(first, first + 8);
         expect(LANDMARKS.has(picks[4]), st.label).toBe(true);
@@ -164,7 +165,13 @@ describe("landmarks", () => {
     expect(check(() => {})).not.toThrow();
     const region = (p: typeof dungeon) => {
       const slot = p.quest!.finale[4];
-      return ("oneOf" in slot ? slot.oneOf[0][0] : slot).inserts!;
+      return (
+        "oneOf" in slot
+          ? slot.oneOf[0][0]
+          : "choose" in slot
+            ? slot.choose.routes[0][0]
+            : slot
+      ).inserts!;
     };
     expect(check((p) => (region(p)[0].at = 8))).toThrow("Invalid quest");
     expect(check((p) => (region(p)[0].cardIds = []))).toThrow("Invalid quest");

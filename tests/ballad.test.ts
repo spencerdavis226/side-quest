@@ -17,6 +17,7 @@ import { JOKE_CLASSES, classes } from "../src/content/dungeon/classes";
 import { lairs } from "../src/content/dungeon/dragons";
 import { DRAGON_HEALTH } from "../src/content/dungeon/shared";
 import type { GameConfig, SessionState } from "../src/game/types";
+import { takeRoads } from "./roads";
 
 // The ballad (The Quest 2.0 Phase 3, 2026-11-14): the end screen's verse.
 const crawl: GameConfig = {
@@ -32,9 +33,10 @@ const seeded = (seed: number): Random => {
     return (seed - 1) / 2147483646;
   };
 };
-const CLOSING = 38;
-const BOSS1 = 12;
-const BOSS2 = 27;
+// With both roads taken (The Quest 2.0 Phase 5).
+const CLOSING = 40;
+const BOSS1 = 13;
+const BOSS2 = 29;
 const rollTo = (s: SessionState, face: number) => {
   const sides = currentCard(s).dice!.sides;
   return returnToCard(rollDice(s, () => (face - 0.5) / sides));
@@ -45,7 +47,7 @@ const fight = (s: SessionState, face: number, random = seeded(7)) =>
 /** A run with its adventurer put aside as `cls`, both region bosses put
  * aside, at the Lair's Door with `hearts`. */
 function atDoor(seed = 1, hearts = 30, cls = "dungeon.class-barbarian") {
-  let s = createSession(crawl, cards, packs, seeded(seed));
+  let s = takeRoads(createSession(crawl, cards, packs, seeded(seed)));
   const q = s.quest!;
   const finale = [...q.finale];
   const was = finale.indexOf(cls);
