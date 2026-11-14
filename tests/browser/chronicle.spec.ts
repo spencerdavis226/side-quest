@@ -41,16 +41,20 @@ test("the Chronicle opens from setup, and Heroic starts a harder run", async ({
   await expect(play).toBeInViewport();
   await page.getByRole("button", { name: /Chronicle/ }).click();
   const book = page.getByRole("dialog", { name: "Chronicle" });
-  await expect(book.getByText("Emberfang")).toBeVisible();
+  await expect(book.getByText("Emberfang", { exact: true })).toBeVisible();
   await expect(book.getByText("By a Thread")).toBeVisible();
   await expect(book.getByText("and slew Emberfang.")).toBeVisible();
   // The Dragon King is still a silhouette, until everything is unlocked.
-  await expect(book.getByText("The Dragon King")).toHaveCount(0);
+  await expect(book.getByText("The Dragon King", { exact: true })).toHaveCount(
+    0,
+  );
   await book.getByRole("button", { name: /Unlock everything/ }).click();
   await book
     .getByRole("button", { name: "Unlock everything", exact: true })
     .click();
-  await expect(book.getByText("The Dragon King")).toBeVisible();
+  await expect(
+    book.getByText("The Dragon King", { exact: true }),
+  ).toBeVisible();
   await book.getByRole("button", { name: "Done" }).click();
   await heroic.click();
   await expect(heroic).toHaveAttribute("aria-pressed", "true");

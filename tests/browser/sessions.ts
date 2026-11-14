@@ -117,11 +117,15 @@ export function crawlAt(
     route = other ? 1 : 0,
     adventurer,
     room = other ? 4 : 0,
+    unlocked,
   }: {
     other?: boolean;
     route?: number;
     adventurer?: string;
     room?: number;
+    /** The Chronicle's unlocks (The Quest 2.0 Phase 7), for a locked card.
+     * Left out, the run deals as before. */
+    unlocked?: ReadonlySet<string>;
   } = {},
 ): SessionState {
   // The route draws come in run order: floor 1, the hidden room (0 to 4),
@@ -137,6 +141,7 @@ export function crawlAt(
       cards,
       packs,
       () => floors.shift() ?? rest(),
+      unlocked,
     ),
     [QUEST_MAP[0][route].label, QUEST_MAP[1][route].label],
   );
