@@ -280,3 +280,31 @@ test("the League's card art loads only once the League is chosen", async ({
   await page.getByRole("button", { name: /^Pokémon League/ }).click();
   await expect.poll(() => league.length).toBe(2);
 });
+
+// Minimum iOS 26 (2026-11-14): a device that cannot run the build gets a
+// plain message instead of a blank page. The app marks itself started; a
+// script in index.html shows the message on load when it never did.
+test("a device that cannot run the app is told it needs iOS 26", async ({
+  page,
+}) => {
+  await page.goto("./");
+  await expect(
+    page.getByRole("button", { name: "Play", exact: true }),
+  ).toBeVisible();
+  await expect(page.locator("#unsupported")).toBeHidden();
+  // An entry script this browser cannot parse, as an older Safari would.
+  const fresh = await page.context().browser()!.newPage();
+  await fresh.route("**/assets/index-*.js", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "text/javascript",
+      body: "export const = ;",
+    }),
+  );
+  await fresh.goto(page.url());
+  await expect(fresh.locator("#unsupported")).toBeVisible();
+  await expect(fresh.locator("#unsupported")).toContainText(
+    "Side Quest needs iOS 26 or newer.",
+  );
+  await fresh.close();
+});

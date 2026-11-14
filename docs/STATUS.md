@@ -4,7 +4,11 @@ Updated 2026-11-13. **Single authoritative handoff.** Read `AGENTS.md` first. Ol
 
 ## Next task (2026-11-14): The Quest 2.0 Phase 3 (structure and names)
 
-Phase 2 is done on branch `claude/quest-2-phase-0-xptjr7` (pull request, not merged). Next is **Phase 3** of `docs/QUEST_2_PLAN.md` section 7: `{lair}` and name filling everywhere, the Summons rewritten, the six dragon signs, stage inserts and the 27 landmarks and Approaches, `Offer.boon` and `Offer.jinx`, the ballad, and moments M2, M5, M9, M20's ballad and "With a single blow", M21.
+Phase 2 is merged (PR #75, `4056a8e`, with the iOS 26 minimum). Next is **Phase 3** of `docs/QUEST_2_PLAN.md` section 7: `{lair}` and name filling everywhere, the Summons rewritten, the six dragon signs, stage inserts and the 27 landmarks and Approaches, `Offer.boon` and `Offer.jinx`, the ballad, and moments M2, M5, M9, M20's ballad and "With a single blow", M21.
+
+## Done 2026-11-14: older devices are told they need iOS 26 (owner)
+
+Owner: "If that's best practice for iOS 26 then yes." Done as a start-up watchdog rather than a version check (reading the iOS version from the user agent is fragile): `main.tsx` sets `window.__sideQuestStarted` after every module has loaded, and an inline script in `index.html` shows a full-screen "Side Quest needs iOS 26 or newer. Update in Settings, General, Software Update, then open Side Quest again." on `load` if it never did. Module scripts finish before `load`, so this catches a build an older Safari cannot parse and a failed download alike; a working app never shows it. Its styles are inline, so it does not depend on the app's stylesheet. Test: `pages.spec.ts` (a normal load never shows it; an entry script that cannot parse does), Chromium 27 of 27 over 3 repeats. Limit: a device whose Safari can parse the build but lacks a newer CSS feature is not caught (it would look wrong, not blank). Checked: typecheck, lint, `npm test`, build (budgets pass), Chromium `test:release`. Not run: WebKit (CI), a phone on an older iOS.
 
 ## Done 2026-11-14: minimum platform raised to iOS 26 (owner)
 

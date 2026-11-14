@@ -50,6 +50,10 @@ import "./presentation/theme.css";
 import "./presentation/card-front.css";
 import "./presentation/crawl.css";
 import "./presentation/moments.css";
+
+// The app started: every module above loaded and ran. `index.html` shows
+// "Side Quest needs iOS 26 or newer" on load when this never runs.
+(window as Window & { __sideQuestStarted?: boolean }).__sideQuestStarted = true;
 migrateStorageKeys();
 // theme.motion's camelCase keys become kebab-case CSS variables
 // (dialogExit -> --motion-dialog-exit), set once on the app root.
