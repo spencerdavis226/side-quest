@@ -2401,3 +2401,60 @@
     animation: none;
   }
 }
+
+/* Dragon lore (The Quest 2.0 Phase 4): three runes on the strip, one lit
+   for each lore found; the newest lights with a flare. */
+.hud-runes {
+  display: inline-flex;
+  gap: 3px;
+}
+.hud-runes .rune {
+  width: 14px;
+  height: 18px;
+  background: #b89a6a;
+  opacity: 0.4;
+}
+.hud-runes .rune.lit {
+  background: linear-gradient(180deg, #ffe7a8, #e0a43a);
+  opacity: 1;
+  filter: drop-shadow(0 0 4px rgb(255 200 90 / 0.7));
+  animation: rune-light 900ms ease-out both;
+}
+@keyframes rune-light {
+  0% {
+    filter: brightness(2.4) drop-shadow(0 0 10px #ffd27a);
+    transform: scale(1.4);
+  }
+  100% {
+    filter: drop-shadow(0 0 4px rgb(255 200 90 / 0.7));
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hud-runes .rune.lit {
+    animation: none;
+  }
+}
+.crawl-lore .lore-lines {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.crawl-lore .lore-lines li {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  align-items: center;
+  gap: 10px;
+  color: #8a7558;
+  font: italic 500 1rem / 1.35 var(--font-tavern);
+}
+.crawl-lore .lore-lines li.found {
+  color: #f1e2bf;
+  font-style: normal;
+}
+.crawl-lore .lore-lines li .crawl-icon {
+  width: 24px;
+  height: 24px;
+}

@@ -24,8 +24,11 @@ import {
   takeSpoils,
   replaces,
   type Random,
+  canSendIn,
+  partyTeam,
+  sendIn,
 } from "../src/game/engine";
-import { returnToCard, rollDice, rollWins } from "../src/game/dice";
+import { returnToCard, rollDice, rollTarget, rollWins } from "../src/game/dice";
 import { parseSession } from "../src/app/persistence";
 import { cards, packs } from "../src/content/catalog";
 import type { GameConfig, Loot, SessionState } from "../src/game/types";
@@ -56,17 +59,18 @@ const STEP = {
   queue: 3,
   floor1: 4,
   boss1: 12,
-  landing1: 13,
-  plea: 14,
-  hidden: 15,
-  keeper: 17,
-  floor2: 18,
-  boss2: 26,
-  landing2: 27,
-  stairs: 28,
-  floor3: 29,
-  closing: 37,
-  lastCall: 38,
+  sign: 13,
+  landing1: 14,
+  plea: 15,
+  hidden: 16,
+  keeper: 18,
+  floor2: 19,
+  boss2: 27,
+  landing2: 28,
+  stairs: 29,
+  floor3: 30,
+  closing: 38,
+  lastCall: 39,
 };
 const party = (s: SessionState) => s.quest!.party!;
 const roundTrip = (s: SessionState) =>
@@ -89,6 +93,9 @@ const deal = (s: SessionState, id: string): SessionState => {
 // an inn (Realms, 2026-11-03) a rest when three or more hearts are gone,
 // else its item when the satchel has room, and a side quest taken above 6
 // hearts. Real cards, real engine, so a change to either shows up here.
+/** What the party brought to the dragon (Phase 4): its lore and its
+ * living allies, by run seed, for the main runs only. */
+const atDragon = new Map<number, { lore: number; allies: number }>();
 function playRun(seed: number, adventurer?: string) {
   const random = seeded(seed);
   let s = createSession(crawl, cards, packs, random);
@@ -100,6 +107,11 @@ function playRun(seed: number, adventurer?: string) {
   for (let guard = 0; guard < 500 && s.phase !== "complete"; guard++) {
     s = advance(s, random);
     const card = currentCard(s);
+    if (!adventurer && card.lairFight && !atDragon.has(seed))
+      atDragon.set(seed, {
+        lore: party(s).lore ?? 0,
+        allies: partyTeam(s.quest).filter((m) => m.ally).length,
+      });
     if (party(s).hearts <= 3) use("draught");
     if (!joke()) use("candy");
     if (awaitingOffer(s)) {
@@ -125,12 +137,23 @@ function playRun(seed: number, adventurer?: string) {
             p.hearts > 6 ? first((o) => !!o.elite) : -1,
             first((o) => !o.cost && !o.elite),
           ].find((i) => i >= 0) ?? 0;
-      } else if (card.encounter === "rest")
+      } else if (card.encounter === "rest") {
+        // The inns' third plaque (Phase 4): hire a blade with no ally yet,
+        // ask about the dragon below three lore; when not hurt.
+        const third = offers[2];
+        const wants =
+          !!third &&
+          ((third.recruit && !(p.team ?? []).length) ||
+            (third.lore && (p.lore ?? 0) < 3));
         pick =
-          p.max - p.hearts >= 3 || p.loot.length >= satchelSize(s.quest)
+          p.max - p.hearts >= 3
             ? 0
-            : 1;
-      else
+            : wants
+              ? 2
+              : p.loot.length >= satchelSize(s.quest)
+                ? 0
+                : 1;
+      } else
         pick = Math.max(
           0,
           offers.findIndex(
@@ -173,6 +196,17 @@ function playRun(seed: number, adventurer?: string) {
       );
       continue;
     }
+    // An ally (Phase 4) goes into a fight of its calling when its bonus
+    // makes the roll 55% or better, and always at the dragon.
+    if (card.dice && !s.roll)
+      for (const m of partyTeam(s.quest)) {
+        if (!m.ally || !canSendIn(s, m.id)) continue;
+        const need = rollTarget(s, card)?.target ?? 21;
+        if (card.lairFight || need - m.ally.bonus <= 10) {
+          s = sendIn(s, m.id);
+          break;
+        }
+      }
     if (card.dice) {
       if (!s.roll) s = rollDice(s, random);
       s = returnToCard(s);
@@ -261,8 +295,9 @@ it("a crawl is hard: the party wins about a quarter of its runs", () => {
   expect(mean).toBeGreaterThan(38);
   // D10 (The Quest 2.0, 2026-11-13): the measured mean plus 6. Measured
   // 54.4 after the dragon battle (Phase 2), so 60.4; 55.0 with the
-  // landmarks and the dragon sign (Phase 3), so 61.
-  expect(mean).toBeLessThan(61);
+  // landmarks and the dragon sign (Phase 3), so 61; 56.1 with allies,
+  // lore and a five-scale dragon (Phase 4), so 62.
+  expect(mean).toBeLessThan(62);
   // Nearly every run gets through the gate and the first region.
   const early = ["The City Gate", "Region 1"].reduce(
     (n, l) => n + (wipes.get(l) ?? 0),
@@ -275,10 +310,9 @@ it("a crawl is hard: the party wins about a quarter of its runs", () => {
 it("the dragon battle is the run's last hard fight, never a wall", () => {
   // The Quest 2.0 Phase 2 (2026-11-13): every dragon between 12% and 45%
   // of the runs it ends, and 45% to 65% of runs reach it.
-  const reached = runs.filter(
-    (s) => s.quest!.step >= STEP.lastCall && s.quest!.finale.length > 38,
-  );
-  const atLair = reached.filter(
+  // Every run that ended at the dragon (Phase 4: walked-on side quests
+  // counted too; the old filter on the run's length left them out).
+  const atLair = runs.filter(
     (s) => finaleStage(s.quest!).label === "The Dragon's Lair",
   );
   const dragons = by((s) => {
@@ -294,8 +328,23 @@ it("the dragon battle is the run's last hard fight, never a wall", () => {
       `${meanSwings.toFixed(1)} swings; ` +
       dragons.map(([n, r]) => `${n} ${pct(r)}`).join(", "),
   );
+  // Lore and allies (Phase 4): the party brings 1 to 2 lore on average,
+  // and at least one ally lives to the dragon in 60% to 90% of the runs
+  // that reach it (the plan said 30% to 60%; a keeper's ally joins in
+  // most runs and meets few fights of its calling, so most live: see the
+  // plan's Phase 4 "As built").
+  const brought = [...atDragon.values()];
+  const meanLore = brought.reduce((a, b) => a + b.lore, 0) / brought.length;
+  const withAlly = brought.filter((b) => b.allies > 0).length / brought.length;
+  console.log(
+    `at the dragon: ${meanLore.toFixed(2)} lore on average; an ally alive in ${pct(withAlly)}`,
+  );
   expect(atLair.length / RUNS).toBeGreaterThan(0.45);
   expect(atLair.length / RUNS).toBeLessThan(0.65);
+  expect(meanLore).toBeGreaterThan(1);
+  expect(meanLore).toBeLessThan(2);
+  expect(withAlly).toBeGreaterThan(0.6);
+  expect(withAlly).toBeLessThan(0.9);
   for (const [name, r] of dragons) {
     expect(r, name).toBeGreaterThan(0.12);
     expect(r, name).toBeLessThan(0.45);

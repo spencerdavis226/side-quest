@@ -222,6 +222,11 @@ export function replaces(quest: QuestState | undefined, boon: Boon) {
     ? partyBoons(quest).filter((b) => b.boon.slot === boon.slot)
     : [];
 }
+/** One more dragon lore (The Quest 2.0 Phase 4), three at most. */
+export const addLore = (party: PartyState): PartyState => ({
+  ...party,
+  lore: Math.min(3, (party.lore ?? 0) + 1),
+});
 /** A heart loss: the shield takes it whole. */
 export function hurt(party: PartyState, damage: number): PartyState {
   if (damage <= 0) return party;
@@ -251,8 +256,10 @@ export function settleParty(
         (card.encounter ? (omen?.hurt?.[card.encounter] ?? 0) : 0)) *
         (nat === 1 ? 2 : 1),
     );
-  if (outcome === null || outcome === "won") {
+  // A boss's reward comes at its fall (`discardCard`), not on each swing.
+  if ((outcome === null || outcome === "won") && !card.hits) {
     const { loot, heal } = card.reward ?? {};
+    if (card.reward?.lore) next = addLore(next);
     const times = outcome === "won" && nat === 20 ? 2 : 1;
     for (let i = 0; i < times; i++)
       if (loot && next.loot.length < size)

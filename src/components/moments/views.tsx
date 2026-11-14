@@ -62,6 +62,9 @@ const LENGTH: Record<Moment["kind"], number> = {
   enraged: 2500,
   wanted: 3500,
   shadow: 1500,
+  lore: 2500,
+  ally: 2500,
+  fallen: 3000,
 };
 /** A lifted jinx reads less than a laid one: only its name burns away. */
 const LIFTED = 2000;
@@ -110,6 +113,12 @@ export default function MomentView({
       return <Wanted m={moment} scale={scale} onDone={onDone} />;
     case "shadow":
       return <Shadow m={moment} scale={scale} onDone={onDone} />;
+    case "lore":
+      return <LoreFound m={moment} scale={scale} onDone={onDone} />;
+    case "ally":
+      return <AllyJoins m={moment} scale={scale} onDone={onDone} />;
+    case "fallen":
+      return <Fallen m={moment} scale={scale} onDone={onDone} />;
     case "doubles":
       return <Doubles m={moment} scale={scale} onDone={onDone} />;
     case "door":
@@ -357,6 +366,12 @@ function caption(m: Moment): [string, string, string] {
       return ["Wanted", m.dragon, m.lair ? `Lair: ${m.lair}` : ""];
     case "shadow":
       return ["A shadow passes", m.dragon, ""];
+    case "lore":
+      return ["You learn", m.line, `${m.count} of 3 lore`];
+    case "ally":
+      return ["Joins the party", m.name, m.line];
+    case "fallen":
+      return [m.stand ? "Took the blow" : "Fallen", m.name, m.line];
     default:
       return ["", "", ""];
   }
@@ -943,21 +958,26 @@ function SendIn({ m, scale, onDone }: ViewProps<"sendin">) {
   return (
     <Stage
       kind="sendin"
+      className={m.ally ? "ally" : ""}
       length={LENGTH.sendin}
       scale={scale}
       onDone={onDone}
       style={typeVars("c", m.type)}
     >
-      <div className="sendin-arc">
-        <div className="mini-ball">
-          <span className="top" />
-          <span className="bottom" />
-          <span className="button" />
+      {/* The Quest's ally steps in on a gold light, with no ball. */}
+      {!m.ally && (
+        <div className="sendin-arc">
+          <div className="mini-ball">
+            <span className="top" />
+            <span className="bottom" />
+            <span className="button" />
+          </div>
         </div>
-      </div>
+      )}
       <span className="sendin-light" ref={light} />
       {m.type && <TypeMark type={m.type} className="sendin-mark" />}
       <strong className="sendin-word">Go, {m.name}!</strong>
+      {m.bonus && <small className="sendin-bonus">{m.bonus}</small>}
     </Stage>
   );
 }
@@ -1215,6 +1235,12 @@ function Wanted({ m, scale, onDone }: ViewProps<"wanted">) {
         ))}
       </p>
       {m.lair && <small className="wanted-lair">Lair: {m.lair}</small>}
+      {/* Three unlit runes: the lore still to find (Phase 4). */}
+      <span className="lore-runes wanted-runes" aria-hidden="true">
+        <i />
+        <i />
+        <i />
+      </span>
     </Stage>
   );
 }
@@ -1232,6 +1258,61 @@ function Shadow({ m, scale, onDone }: ViewProps<"shadow">) {
       style={dragonStyle(m.id)}
     >
       <span className="dragon-wing" />
+    </Stage>
+  );
+}
+
+/** A dragon lore found (The Quest 2.0 Phase 4, M8): the dragon's line in
+ * its colour, kicker "You learn", then the rune on the strip lights. */
+function LoreFound({ m, scale, onDone }: ViewProps<"lore">) {
+  return (
+    <Stage
+      kind="lore"
+      length={LENGTH.lore}
+      scale={scale}
+      onDone={onDone}
+      style={dragonStyle(m.id)}
+    >
+      <small className="lore-kicker">You learn</small>
+      <p className="lore-line">{m.line}</p>
+      <span className="lore-runes" aria-hidden="true">
+        {[0, 1, 2].map((i) => (
+          <i
+            key={i}
+            className={`${i < m.count ? "lit" : ""}${i === m.count - 1 ? " new" : ""}`}
+          />
+        ))}
+      </span>
+    </Stage>
+  );
+}
+
+/** An ally joins (M10): the name, kicker "Joins the party", what they do
+ * and their ritual under. */
+function AllyJoins({ m, scale, onDone }: ViewProps<"ally">) {
+  return (
+    <Stage kind="ally" length={LENGTH.ally} scale={scale} onDone={onDone}>
+      <span className="ally-light" />
+      <small className="ally-kicker">Joins the party</small>
+      <strong className="ally-name">{m.name}</strong>
+      <span className="ally-line">{m.line}</span>
+    </Stage>
+  );
+}
+
+/** An ally dies (M12): the name in white on black, one candle lit under
+ * it; on a last stand, kicker "Took the blow". */
+function Fallen({ m, scale, onDone }: ViewProps<"fallen">) {
+  return (
+    <Stage kind="fallen" length={LENGTH.fallen} scale={scale} onDone={onDone}>
+      <small className="fallen-kicker">
+        {m.stand ? "Took the blow" : "Fallen"}
+      </small>
+      <strong className="fallen-name">{m.name}</strong>
+      <span className="wiped-candle fallen-candle" aria-hidden="true">
+        <i />
+      </span>
+      <span className="fallen-line">{m.line}</span>
     </Stage>
   );
 }

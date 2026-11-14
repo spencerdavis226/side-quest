@@ -1936,7 +1936,7 @@ export const packs: PackDefinition[] = [
       goal: 0,
       length: 1,
       cardIds: [],
-      party: { hearts: 11 },
+      party: { hearts: 10 },
       finale: [
         {
           label: "Your adventurer",

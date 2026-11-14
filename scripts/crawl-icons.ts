@@ -32,6 +32,9 @@ const picks: Record<string, string> = {
   "crawl/armor": "lorc/breastplate",
   "crawl/rest": "lorc/campfire",
   "crawl/jinx": "lorc/cursed-star",
+  // The Quest 2.0 Phase 4 (2026-11-14): an ally, and a dragon lore rune.
+  "crawl/ally": "lorc/backup",
+  "crawl/lore": "lorc/rune-stone",
   // The Hired Sword, and the League's Baton Pass.
   "crawl/round": "delapouite/sword-brandish",
   "league/baton-pass": "skoll/baton",

@@ -4,7 +4,10 @@ import { advance, currentCard, finaleStage } from "../../src/game/engine";
 import { returnToCard, rollDice } from "../../src/game/dice";
 import type { SessionState } from "../../src/game/types";
 import { cards } from "../../src/content/catalog";
-import { PARTY_HEARTS as H } from "../../src/content/dungeon/shared";
+import {
+  DRAGON_HEALTH,
+  PARTY_HEARTS as H,
+} from "../../src/content/dungeon/shared";
 import { STEP, crawlAt } from "./sessions";
 const reveal = (s: SessionState) => advance(s);
 const rolled = (s: SessionState, face: number) =>
@@ -162,8 +165,9 @@ for (const width of [320, 375])
         party: { ...q.party!, jinx: "dungeon.goblin-shaman" },
       },
     });
+    // The satchel, the jinx and the lore runes (Phase 4).
     const chips = page.locator(".hud-strip .hud-chip");
-    await expect(chips).toHaveCount(2);
+    await expect(chips).toHaveCount(3);
     for (const box of await chips.evaluateAll((els) =>
       els.map((e) => e.getBoundingClientRect().toJSON()),
     )) {
@@ -437,11 +441,13 @@ test("an inn rests or stocks up, and its plaques read at 320px", async ({
     ),
   );
   const plaques = page.locator(".card-choice.offers .card-choice-option");
-  await expect(plaques).toHaveCount(2);
+  await expect(plaques).toHaveCount(3);
   await expect(plaques.nth(0)).toHaveAccessibleName("Rest: 3 hearts back");
   await expect(plaques.nth(1)).toHaveAccessibleName(/^Stock up · drink 3/);
+  // The first inn hires a blade (Phase 4).
+  await expect(plaques.nth(2)).toHaveAccessibleName("Hire · drink 3: an ally");
   // Every plaque's name and line fit, and each is a full touch target.
-  for (let i = 0; i < 2; i++) {
+  for (let i = 0; i < 3; i++) {
     const box = (await plaques.nth(i).boundingBox())!;
     expect(box.height).toBeGreaterThanOrEqual(44);
     expect(box.x).toBeGreaterThanOrEqual(0);
@@ -593,8 +599,8 @@ test("the party dialog lays out the run: adventurer, boons and jinx", async ({
     },
   });
   // The strip under the top row carries the party's things at a glance:
-  // the satchel and the jinx.
-  await expect(page.locator(".hud-strip .hud-chip")).toHaveCount(2);
+  // the satchel, the jinx and the dragon lore runes (Phase 4).
+  await expect(page.locator(".hud-strip .hud-chip")).toHaveCount(3);
   await page.screenshot({ path: info.outputPath("strip.png") });
   // The hearts open the party: hearts, adventurer, boons, and nothing else.
   await meter(page).click();
@@ -628,9 +634,9 @@ test("the party dialog lays out the run: adventurer, boons and jinx", async ({
   await page.getByRole("button", { name: "How to play" }).click();
   const guide = page.getByRole("dialog", { name: "How to play" });
   // One row a system (2026-10-31): hearts, fights, bosses, the dragon (The
-  // Quest 2.0), ranks (Realms), inns and side quests, the satchel and gear,
-  // curses.
-  await expect(guide.locator(".guide-rows li")).toHaveCount(8);
+  // Quest 2.0), lore and allies (its Phase 4), ranks (Realms), inns and side
+  // quests, the satchel and gear, curses.
+  await expect(guide.locator(".guide-rows li")).toHaveCount(10);
   // The seals, the naturals, and the roll-to-beat gem (2026-10-31).
   await expect(guide.locator(".crawl-legend dd")).toHaveCount(8);
   await expect(guide.locator(".crawl-legend")).toContainText(
@@ -675,12 +681,12 @@ test("losing the last heart wipes the party", async ({ page }, info) => {
 test("felling the dragon wins the quest", async ({ page }, info) => {
   let s = reveal(
     crawlAt("dungeon.final-tab", STEP.lastCall, {
-      // Four scales (the dragon battle, 2026-11-13): one left.
-      hits: 3,
-      rounds: 3,
+      // Its scales (the dragon battle, 2026-11-13): one left.
+      hits: DRAGON_HEALTH - 1,
+      rounds: DRAGON_HEALTH - 1,
     }),
   );
-  s = rolled({ ...s, discarded: STEP.lastCall + 3 }, 18);
+  s = rolled({ ...s, discarded: STEP.lastCall + DRAGON_HEALTH - 1 }, 18);
   await seed(page, s);
   await page.locator(".game-card").click();
   await expect(page.locator(".crawl-end h1")).toHaveText(
@@ -698,24 +704,25 @@ test("felling the dragon wins the quest", async ({ page }, info) => {
 test("the dragon battle: a round's move, the scales, the kill and the wipe", async ({
   page,
 }, info) => {
-  const round = { move: 0, swings: 3, enraged: true as const };
+  const left = DRAGON_HEALTH - 1;
+  const round = { move: 0, swings: left, enraged: true as const };
   let s = reveal(
     crawlAt("dungeon.final-tab", STEP.lastCall, {
-      hits: 3,
-      rounds: 3,
+      hits: left,
+      rounds: left,
       duel: round,
     }),
   );
-  s = { ...s, discarded: STEP.lastCall + 3 };
+  s = { ...s, discarded: STEP.lastCall + left };
   const dragon = currentCard(s);
   await seed(page, s);
   await expect(page.locator(".game-card .card-ribbon")).toHaveText(
     dragon.ribbon!,
   );
   await expect(page.locator(".hud-scales")).toHaveAccessibleName(
-    `${dragon.title}: 1 of 4 scales`,
+    `${dragon.title}: 1 of ${DRAGON_HEALTH} scales`,
   );
-  await expect(page.locator(".hud-scales .scale.broken")).toHaveCount(3);
+  await expect(page.locator(".hud-scales .scale.broken")).toHaveCount(left);
   // A hit fells it: the card says so.
   await expect(page.locator(".game-card .card-stands")).toHaveText(
     "Everyone stands.",
@@ -792,7 +799,7 @@ for (const width of [320, 390])
     let s = crawlAt(
       "dungeon.final-tab",
       STEP.lastCall,
-      { hits: 3, rounds: 3, form: 2 },
+      { hits: DRAGON_HEALTH - 1, rounds: DRAGON_HEALTH - 1, form: 2 },
       { adventurer: "barbarian" },
     );
     const q = s.quest!;
@@ -815,7 +822,10 @@ for (const width of [320, 390])
         },
       },
     };
-    s = rolled({ ...reveal(s), discarded: STEP.lastCall + 3 }, 18);
+    s = rolled(
+      { ...reveal(s), discarded: STEP.lastCall + DRAGON_HEALTH - 1 },
+      18,
+    );
     await seed(page, s);
     await page.locator(".game-card").click();
     const wall = page.locator(".trophy-wall");
@@ -910,10 +920,10 @@ for (const width of [320, 390])
     const centre = (b: { y: number; height: number }) => b.y + b.height / 2;
     expect(Math.abs(centre(left!) - centre(middle!))).toBeLessThan(2);
     expect(Math.abs(centre(menu!) - centre(middle!))).toBeLessThan(2);
-    // The strip: two chips here, all there is (the satchel and the jinx),
-    // under the row, inside the screen, above the card.
+    // The strip: three chips here, all there is (the satchel, the jinx and
+    // the lore runes), under the row, inside the screen, above the card.
     const chips = page.locator(".hud-strip .hud-chip");
-    await expect(chips).toHaveCount(2);
+    await expect(chips).toHaveCount(3);
     for (const chip of await chips.all()) {
       const b = (await chip.boundingBox())!;
       expect(b.x).toBeGreaterThanOrEqual(0);
@@ -1063,4 +1073,57 @@ test("a boss's next beat is a duel, and its felling win brings spoils", async ({
   const s = await saved(page);
   expect(s.quest.party.boons).toContain("dungeon.keg-golem#0");
   expect(s.quest.step).toBe(STEP.sign);
+});
+
+// Lore and allies (The Quest 2.0 Phase 4): the strip's runes open the lore
+// found; an ally is sent into a fight of its calling with a plaque, and the
+// bag lists it with what it does.
+test("the lore runes and an ally sent in", async ({ page }, info) => {
+  await page.setViewportSize({ width: 320, height: 700 });
+  const inn = (s: SessionState) => s.quest!.finale[STEP.landing1];
+  let s = crawlAt("dungeon.final-tab", STEP.lastCall, { lore: 2 });
+  s = {
+    ...s,
+    quest: {
+      ...s.quest!,
+      party: { ...s.quest!.party!, team: [inn(s)] },
+    },
+  };
+  // An elite on the lair's road: the hired blade's calling.
+  const region = s.quest!.stages.find(
+    (st, i) => st.pick === 8 && i > 12 && st.elite?.length,
+  )!;
+  const elite = region.elite!.find(
+    (c) => c.dice?.count === 1 && c.dice.sides === 20 && !c.dice.choice,
+  )!;
+  const step = STEP.floor3 + 1;
+  const finale = [...s.quest!.finale];
+  finale[step] = elite.id;
+  s = reveal({
+    ...s,
+    discarded: step,
+    previousId: finale[step - 1],
+    quest: { ...s.quest!, finale, step },
+  });
+  await seed(page, s);
+  const runes = page.locator(".hud-strip .tag-lore");
+  await expect(runes).toHaveAccessibleName("Dragon lore: 2 of 3");
+  await expect(runes.locator(".rune.lit")).toHaveCount(2);
+  await runes.click();
+  const dialog = page.getByRole("dialog", { name: "Dragon lore" });
+  await expect(dialog.locator(".lore-lines li.found")).toHaveCount(2);
+  await page.screenshot({ path: info.outputPath("lore.png") });
+  await page.keyboard.press("Escape");
+  // The send-in sits on the card or behind "Use".
+  const go = page.getByRole("button", { name: /^Go, A Hired Blade!/ });
+  const use = page.getByRole("button", { name: /ready$/ });
+  if (await use.isVisible()) await use.click();
+  await go.click();
+  await expect
+    .poll(async () => (await saved(page)).quest.party.assist)
+    .toBe(inn(s));
+  await expect(page.locator(".hud-strip .tag-assist")).toHaveAccessibleName(
+    "A Hired Blade sent in: +3 to the roll",
+  );
+  await page.screenshot({ path: info.outputPath("ally-sent.png") });
 });

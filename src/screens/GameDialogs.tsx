@@ -31,6 +31,8 @@ export type DialogName =
   | "jinx"
   // The League's type matchup chip (2026-10-25).
   | "matchup"
+  // The Quest's dragon lore runes (2026-11-14).
+  | "lore"
   | "guide"
   // The previous card opened from the header's stud.
   | "recap"
@@ -189,7 +191,8 @@ export function GameDialogs({
       displayed === "badges" ||
       displayed === "satchel" ||
       displayed === "jinx" ||
-      displayed === "matchup") &&
+      displayed === "matchup" ||
+      displayed === "lore") &&
     record?.party
   ) {
     const crawl = crawlTheme(session?.quest?.packId);
@@ -205,6 +208,7 @@ export function GameDialogs({
       satchel: words.Satchel,
       jinx: words.jinx?.name ?? "Jinx",
       matchup: "Type matchup",
+      lore: "Dragon lore",
     }[part];
     return (
       <Modal title={title} onClose={() => setModal(null)} exiting={exiting}>

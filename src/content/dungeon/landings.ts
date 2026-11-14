@@ -1,9 +1,11 @@
 import type { CardDefinition } from "../../game/types";
-import { landing } from "./shared";
+import { ask, hire, landing } from "./shared";
 
 // The inns between regions (2026-10-17 as landings; Realms, 2026-11-03):
 // the quest's campfires. Rest for hearts, or stock up on what the inn has
-// for drinks; never both. Each inn has its own pool (eight), so the two in
+// for drinks; never both. Since The Quest 2.0 Phase 4 (2026-11-14) the
+// first inn also hires a blade (an ally) and the last tells of the dragon
+// (lore), each for drinks. Each inn has its own pool (eight), so the two in
 // a run are never the same card. The Quest only.
 
 /** After the first region's boss. */
@@ -62,7 +64,7 @@ export const upperLandings: CardDefinition[] = [
     "Sleep",
     "smoke",
   ),
-];
+].map(hire);
 
 /** After the second region's boss. Each names the run's dragon (The Quest
  * 2.0 Phase 3, 2026-11-14). */
@@ -121,4 +123,4 @@ export const lowerLandings: CardDefinition[] = [
     "Sleep, nervously",
     "smoke",
   ),
-];
+].map(ask);

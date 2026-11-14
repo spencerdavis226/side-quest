@@ -1,6 +1,7 @@
 import { validateDice } from "../game/dice";
 import { validateTimer } from "../game/timer";
 import type {
+  Encounter,
   CardDefinition,
   OmenEffect,
   PackDefinition,
@@ -190,13 +191,40 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
     if (
       c.reward !== undefined &&
       (!c.reward ||
-        (c.reward.loot === undefined && c.reward.heal === undefined) ||
+        (c.reward.loot === undefined &&
+          c.reward.heal === undefined &&
+          c.reward.lore === undefined) ||
+        (c.reward.lore !== undefined && c.reward.lore !== true) ||
         (c.reward.loot !== undefined && !LOOT.includes(c.reward.loot)) ||
         (c.reward.heal !== undefined && !count(c.reward.heal, 5)))
     )
       fail(`Invalid reward: ${c.id}`);
     if (c.encounter !== undefined && !ENCOUNTERS.includes(c.encounter))
       fail(`Invalid encounter: ${c.id}`);
+    // An ally (The Quest 2.0 Phase 4): a name, one or more callings, a
+    // bonus of +1 to +5, an optional spoken ritual; on a boss (it joins at
+    // the fall) or a card with a plaque that recruits it.
+    if (
+      c.ally !== undefined &&
+      (!c.ally ||
+        typeof c.ally.name !== "string" ||
+        !c.ally.name.trim() ||
+        c.ally.name.length > 22 ||
+        !Array.isArray(c.ally.calling) ||
+        !c.ally.calling.length ||
+        c.ally.calling.some(
+          (k) => k !== "any" && !ENCOUNTERS.includes(k as Encounter),
+        ) ||
+        !Number.isSafeInteger(c.ally.bonus) ||
+        c.ally.bonus < 1 ||
+        c.ally.bonus > 5 ||
+        (c.ally.ritual !== undefined &&
+          (typeof c.ally.ritual !== "string" ||
+            !c.ally.ritual.trim() ||
+            c.ally.ritual.length > 110)) ||
+        (!c.hits && !c.offers?.some((o) => o?.recruit)))
+    )
+      fail(`Invalid ally: ${c.id}`);
     // A merchant's wares or a fork's doors: two or three plaques, on a card
     // with no other way to be put aside.
     if (
@@ -225,7 +253,10 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
             // The Quest 2.0 Phase 3: gear on a plaque, and a curse that
             // lands only on its plaque.
             (o.boon !== undefined && !goodBoon(o.boon)) ||
-            (o.jinx !== undefined && (o.jinx !== true || !c.jinx)),
+            (o.jinx !== undefined && (o.jinx !== true || !c.jinx)) ||
+            // Phase 4: lore, and the card's own ally.
+            (o.lore !== undefined && o.lore !== true) ||
+            (o.recruit !== undefined && (o.recruit !== true || !c.ally)),
         ))
     )
       fail(`Invalid offers: ${c.id}`);

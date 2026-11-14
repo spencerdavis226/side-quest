@@ -2,9 +2,21 @@
 
 Updated 2026-11-14. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Next task (2026-11-14): The Quest 2.0 Phase 4 (lore and allies)
+## Next task (2026-11-14): The Quest 2.0 Phase 5 (the map and the road)
 
-Phase 3 is done (below). Next is **Phase 4** of `docs/QUEST_2_PLAN.md` section 7: lore (`party.lore`, the edge on a swing at the dragon; `LORE` in `dungeon/shared.ts` becomes `{ lore: true }`, so every lore plaque written in Phase 3 starts giving it), allies (`CardDefinition.ally`, `Offer.recruit`, sent into fights, dying for good, a last stand at zero hearts), the runes on the strip and M2's three runes, the inns' third plaques, moments M8, M10, M11, M12, and the lore and ally balance bands. Expect the win rate (33.5% now, above the 25 to 32% aim) to rise; retune.
+Phase 4 is done (below). Next is **Phase 5** of `docs/QUEST_2_PLAN.md` section 7: the table chooses the road for regions 1 and 2 (`choose` slots, 5.6, including the F12 fix), the six road choice cards, `QuestMap`, moments M3 and M4, and the road-pair band.
+
+## Done 2026-11-14: The Quest 2.0 Phase 4, lore and allies
+
+- **Engine** (all optional, schema v2 unchanged): `CardDefinition.ally` (name, calling, bonus, ritual), `Offer.lore`, `Offer.recruit`, `reward.lore`, `PartyState.lore` (1 to 3). Allies live in `party.team` beside the League's caught Pokémon: `partyTeam`/`teamMember` return them (by the ally's name), `canSendIn` sends one into a single-d20 battle of its calling, `assistBonus` reads its bonus, a lost send-in kills it (`fainted`), and when the hearts run out the oldest living ally dies in the party's place and the party stands on 1 (after a Phoenix Feather). A keeper brings its ally and a lore when it falls; a boss's `reward` now comes only at its fall. Lore is an edge (`cardEdge`) on the dragon's first swings, one a lore. `validateParty` accepts a team member or `fainted` with a type or an ally, and `lore` 1 to 3; `validateCatalog` checks an ally's shape and the new plaque fields.
+- **Content**: five keepers' allies (`bookcase.ts`), A Hired Blade on every first inn ("Hire · drink 3"), the Last Inns' "Ask · drink 3" lore, the Frozen Knight (the Frozen Army's plaque), `LORE` now gives lore (signs, three Approaches, the Oldest Tree, the Room of Doors).
+- **UI**: lore runes on the strip and the "Dragon lore" dialog; allies in the bag, on the send-in plaque and the sent-in chip; plaque marks for gear, lore and an ally; How to play gains "Lore" and "Allies" (10 rows); moments M8, M10, M11 (ally), M12, and M2's runes. New marks `public/art/crawl/ally.svg` and `lore.svg` (`scripts/crawl-icons.ts`).
+- **Balance** (`tests/dungeon.balance.test.ts`, 4,000 runs): lore and allies took the win rate to 43.9%. Retuned (`PARTY_HEARTS` 10, was 11; `DRAGON_HEALTH` 5, was 4; the dragon's target 15, was 14): **won 31.1%**, a won run 56.1 draws, so the **run-length ceiling is now 62** (was 61). 61% reach the dragon, 51% of those win; every dragon 27% to 35%; classes 24% to 49%; jokes 1% to 3%. New bands: lore at the dragon 1.55 on average (band 1 to 2), an ally alive there in 75% of runs that reach it (band corrected to 60% to 90%, see the plan's Phase 4 "As built"). The bot hires a blade or asks about the dragon at an inn when not hurt, and sends an ally in at 55% or better and always at the dragon.
+- **League unchanged:** `tests/league.balance.test.ts` 4 passed, its `LEAGUE_LOG` output byte-identical to the Phase 0 baseline; `tests/team.test.ts` unchanged and passing.
+- **Fixtures**: `2026-11-14-realms-ally-held`, `-ally-sent-in`, `-ally-fell`, `-last-stand`, `-lore-edge` (the fixture script's situations can now read the state before, `Find(s, prev)`). 80 fixtures, every old one untouched and loading.
+- **Tests:** `tests/allies.test.ts` (keepers' allies, send-in by calling, death on a loss, the last stand after a Feather, hiring, the League's type check), lore cases in `tests/lair.test.ts` (the edge on the first swings, never the contest, the save check), a moments case for M8, M10 to M12, browser specs for the runes, the lore dialog and an ally sent in; dragon tests now read `DRAGON_HEALTH`.
+- **Checked:** `npm test` 496 passed; lint; typecheck; `cards:review`; `BASE_PATH=/side-quest/ npm run build` (budgets pass, runtime 3,920 KiB of 4,096, initial JavaScript 144.5 KiB gzip); both balance files; Chromium `test:e2e` 174 of 174; Chromium `test:sweep` 12 of 12.
+- **Not run:** WebKit (CI), a phone.
 
 ## Done 2026-11-14: The Quest 2.0 Phase 3, structure and names
 

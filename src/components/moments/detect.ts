@@ -21,7 +21,7 @@ import { describeChange } from "../../game/omenText";
 import { badgeArt } from "../../presentation/league-art";
 import { badgeType } from "../../presentation/pokemon-types";
 import { crawlTheme, type CrawlIconName } from "../crawlTheme";
-import { gearIcon, isOmenBoon } from "../Crawl";
+import { allyLine, gearIcon, isOmenBoon } from "../Crawl";
 import { badgeName } from "../LeagueMarks";
 
 // The moments layer's triggers (2026-11-01, owner: "premium ... eye candy
@@ -87,7 +87,22 @@ export type Moment = {
       /** A strike, settled by the matchup alone (no roll). */
       strike: boolean;
     }
-  | { kind: "sendin"; name: string; type?: PokemonType; bonus?: string }
+  | {
+      kind: "sendin";
+      name: string;
+      type?: PokemonType;
+      bonus?: string;
+      /** The Quest's ally (2026-11-14): no ball, a gold light. */
+      ally?: true;
+    }
+  /** A dragon lore found (The Quest 2.0 Phase 4, M8): the dragon's line,
+   * then a rune lights. */
+  | { kind: "lore"; id: string; dragon: string; line: string; count: number }
+  /** An ally joins the party (M10). */
+  | { kind: "ally"; name: string; line: string }
+  /** An ally dies (M12): lost in a fight, or in the party's place at zero
+   * hearts (`stand`). */
+  | { kind: "fallen"; name: string; stand: boolean; line: string }
   | { kind: "omen"; league: boolean; title: string; type?: PokemonType }
   | {
       kind: "badge";
@@ -521,6 +536,9 @@ export function momentsBetween(
           key: `send:${party.assist}:${after.discarded}`,
           name: member.title,
           type: member.type,
+          ...(member.ally
+            ? { ally: true as const, bonus: `+${member.ally.bonus}` }
+            : {}),
           say: `Go, ${member.title}!`,
         });
     }
@@ -543,10 +561,55 @@ export function momentsBetween(
       }
     }
 
+    // An ally joins (The Quest 2.0 Phase 4, M10).
+    if (newest && newest !== was.team?.at(-1)) {
+      const member = teamMember(q, newest);
+      if (member?.ally)
+        out.push({
+          kind: "ally",
+          key: `ally:${newest}`,
+          name: member.title,
+          line: allyLine(member.ally),
+          say: `${member.title} joins the party.`,
+        });
+    }
+    // A dragon lore found (M8): its line, in order.
+    const lore = party.lore ?? 0;
+    if (lore > (was.lore ?? 0)) {
+      const names = runNames(q);
+      const dragon = names.id ? finaleCard(q, names.id) : undefined;
+      const line = dragon?.lairFight?.lore[lore - 1];
+      if (dragon && line)
+        out.push({
+          kind: "lore",
+          key: `lore:${lore}`,
+          id: dragon.id,
+          dragon: dragon.title,
+          line,
+          count: lore,
+          say: `You learn: ${line}`,
+        });
+    }
+    // An ally dies (M12): lost in a fight, or in the party's place.
+    if (party.fainted && party.fainted !== was.fainted) {
+      const fallen = teamMember(q, party.fainted);
+      if (fallen?.ally) {
+        const stand = party.fainted !== was.assist;
+        const line = "Pour one out. The drawer drinks 2.";
+        out.push({
+          kind: "fallen",
+          key: `fallen:${party.fainted}:${after.discarded}`,
+          name: fallen.title,
+          stand,
+          line,
+          say: `${fallen.title} ${stand ? "took the blow" : "has fallen"}. ${line}`,
+        });
+      }
+    }
     // A caught Pokémon lost with (a Nuzlocke, 2026-10-31): gone for good.
     if (party.fainted && party.fainted !== was.fainted) {
       const fallen = teamMember(q, party.fainted);
-      if (fallen) {
+      if (fallen && !fallen.ally) {
         const line = "Gone for good. The drawer drinks 2.";
         out.push({
           kind: "faint",

@@ -26,7 +26,10 @@ export type CrawlIconName =
   | "jinx"
   // Pub Crawl's equipment slots (2026-10-25); a trinket keeps its mark.
   | "weapon"
-  | "armor";
+  | "armor"
+  // The Quest 2.0 Phase 4: an ally, a dragon lore rune.
+  | "ally"
+  | "lore";
 
 /** One row of the how-to-play guide: a mark, a name, one line. */
 export interface GuideRow {
@@ -318,6 +321,17 @@ const dungeon: CrawlTheme = {
         icon: "boss",
         title: "The dragon",
         line: "Its scales are its health. Each round it makes a move, then the drawer swings. At half health the whole table plays, and it gets angrier.",
+      },
+      // The Quest 2.0 Phase 4 (2026-11-14).
+      {
+        icon: "lore",
+        title: "Lore",
+        line: "Learn about the dragon on the road: up to three runes. Each one rolls one swing at the dragon twice, and the better counts.",
+      },
+      {
+        icon: "ally",
+        title: "Allies",
+        line: "Up to two travel with you. Send one into a fight of its calling for a bonus; lose and it dies. At zero hearts, one dies in your place.",
       },
       {
         icon: "adventurer",
