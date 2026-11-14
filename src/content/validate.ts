@@ -59,6 +59,29 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
     throw new Error(message);
   };
   const ids = new Set<string>();
+  /** A boon's shape: a spoil, a kit or (Phase 3) a plaque's gear. */
+  const goodBoon = (b: unknown) => {
+    const boon = b as {
+      name?: unknown;
+      rules?: unknown;
+      effect?: unknown;
+      slot?: unknown;
+    };
+    return (
+      !!boon &&
+      typeof boon.name === "string" &&
+      !!boon.name.trim() &&
+      boon.name.length <= 24 &&
+      typeof boon.rules === "string" &&
+      !!boon.rules.trim() &&
+      !!boon.effect &&
+      typeof boon.effect === "object" &&
+      // Equipment's slot (2026-10-25), on a trinket with a lasting effect.
+      (boon.slot === undefined ||
+        (SLOTS.includes(boon.slot as Slot) &&
+          Object.keys(boon.effect).some((k) => k !== "loot")))
+    );
+  };
   for (const c of cs) {
     if (
       !c ||
@@ -198,7 +221,11 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
             (o.elite !== undefined && o.elite !== true) ||
             (o.evolve !== undefined && o.evolve !== true) ||
             (o.skip !== undefined &&
-              (!Number.isSafeInteger(o.skip) || o.skip < 1 || o.skip > 3)),
+              (!Number.isSafeInteger(o.skip) || o.skip < 1 || o.skip > 3)) ||
+            // The Quest 2.0 Phase 3: gear on a plaque, and a curse that
+            // lands only on its plaque.
+            (o.boon !== undefined && !goodBoon(o.boon)) ||
+            (o.jinx !== undefined && (o.jinx !== true || !c.jinx)),
         ))
     )
       fail(`Invalid offers: ${c.id}`);
@@ -296,28 +323,6 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
     )
       fail(`Invalid boon: ${c.id}`);
     // Spoils: two or three boons offered by a dice fight when it is won.
-    const goodBoon = (b: unknown) => {
-      const boon = b as {
-        name?: unknown;
-        rules?: unknown;
-        effect?: unknown;
-        slot?: unknown;
-      };
-      return (
-        !!boon &&
-        typeof boon.name === "string" &&
-        !!boon.name.trim() &&
-        boon.name.length <= 24 &&
-        typeof boon.rules === "string" &&
-        !!boon.rules.trim() &&
-        !!boon.effect &&
-        typeof boon.effect === "object" &&
-        // Equipment's slot (2026-10-25), on a trinket with a lasting effect.
-        (boon.slot === undefined ||
-          (SLOTS.includes(boon.slot as Slot) &&
-            Object.keys(boon.effect).some((k) => k !== "loot")))
-      );
-    };
     if (
       c.spoils !== undefined &&
       (!Array.isArray(c.spoils) ||
@@ -532,9 +537,16 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
       // may share cards (The Quest 2.0, 2026-11-13: every lair has the same
       // door), since a game deals only one of them; two slots, or two
       // stages of one route, may not.
+      const insertIds = (stage: QuestStage) =>
+        Array.isArray(stage?.inserts)
+          ? stage.inserts.flatMap((i) =>
+              Array.isArray(i?.cardIds) ? i.cardIds : [],
+            )
+          : [];
       const stageIds = (stage: QuestStage) => [
         ...(Array.isArray(stage?.cardIds) ? stage.cardIds : []),
         ...(Array.isArray(stage?.elite) ? stage.elite : []),
+        ...insertIds(stage),
       ];
       const repeatsInARun = (all: typeof slots) => {
         const seen = new Set<string>();
@@ -553,10 +565,29 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         }
         return false;
       };
-      const finaleIds = stages.flatMap((stage) => [
-        ...(Array.isArray(stage?.cardIds) ? stage.cardIds : []),
-        ...(Array.isArray(stage?.elite) ? stage.elite : []),
-      ]);
+      const finaleIds = stages.flatMap(stageIds);
+      // A landmark (The Quest 2.0 Phase 3): each insert at its own place
+      // inside the stage, its pool not empty, and enough rooms beside them.
+      const badInserts = (stage: QuestStage) => {
+        const inserts = stage.inserts;
+        if (inserts === undefined) return false;
+        return (
+          !crawl ||
+          !Array.isArray(inserts) ||
+          !inserts.length ||
+          new Set(inserts.map((i) => i?.at)).size !== inserts.length ||
+          inserts.some(
+            (i) =>
+              !i ||
+              !Number.isSafeInteger(i.at) ||
+              i.at < 0 ||
+              i.at >= stage.pick ||
+              !Array.isArray(i.cardIds) ||
+              !i.cardIds.length,
+          ) ||
+          stage.pick - inserts.length > (stage.cardIds?.length ?? 0)
+        );
+      };
       const playable = [...p.cardIds, ...(cardIds ?? [])];
       const advancing = cs.filter(
         (c) => c.quest === p.id && playable.includes(c.id),
@@ -594,7 +625,8 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
             !Number.isSafeInteger(stage.pick) ||
             stage.pick < 1 ||
             !Array.isArray(stage.cardIds) ||
-            stage.pick > stage.cardIds.length ||
+            stage.pick - (stage.inserts?.length ?? 0) > stage.cardIds.length ||
+            badInserts(stage) ||
             (stage.elite !== undefined &&
               (!crawl || !Array.isArray(stage.elite) || !stage.elite.length)),
         ) ||

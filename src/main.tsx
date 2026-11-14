@@ -2,7 +2,13 @@ import React, { useEffect, useState, type CSSProperties } from "react";
 import { createRoot } from "react-dom/client";
 import { packs } from "./content/manifest.generated";
 import { loadedPackCards, loadPackCards } from "./content/loaders";
-import { createSession, questRecord, replaySession } from "./game/engine";
+import {
+  ballad,
+  createSession,
+  questRecord,
+  replaySession,
+  singleBlow,
+} from "./game/engine";
 import type { SessionState } from "./game/types";
 import {
   loadPreferences,
@@ -258,6 +264,8 @@ function App() {
           <Completion
             count={display.discarded}
             record={questRecord(display)}
+            ballad={ballad(display)}
+            singleBlow={singleBlow(display)}
             league={display.quest?.packId === "pokemon"}
             packId={display.quest?.packId}
             mode={

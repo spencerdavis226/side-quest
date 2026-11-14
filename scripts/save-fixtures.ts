@@ -20,6 +20,7 @@ import {
   partyTeam,
   advance,
   awaitingCatch,
+  ballad,
   awaitingChoice,
   cardMatchup,
   createSession,
@@ -243,6 +244,40 @@ const situations: [string, GameConfig, Find][] = [
     "realms-lair-won",
     crawl,
     (s) => s.phase === "complete" && !!party(s).duel && !party(s).wiped,
+  ],
+  // Landmarks and plaques that do more (The Quest 2.0 Phase 3,
+  // 2026-11-14): a landmark face up, gear kept from a plaque ("#o<index>"),
+  // a curse laid by one, and a run ended with its ballad, won and wiped.
+  [
+    "realms-landmark-face-up",
+    crawl,
+    (s) =>
+      s.phase === "revealed" &&
+      currentCard(s).id.startsWith("dungeon.landmark-"),
+  ],
+  [
+    "realms-plaque-gear",
+    crawl,
+    (s) => !!party(s).boons?.some((k) => k.includes("#o")),
+  ],
+  [
+    "realms-plaque-curse",
+    crawl,
+    (s) => !!party(s).jinx?.startsWith("dungeon.landmark-"),
+  ],
+  [
+    "realms-ballad-won",
+    crawl,
+    (s) => s.phase === "complete" && !party(s).wiped && ballad(s).length > 0,
+  ],
+  [
+    "realms-ballad-wiped-at-lair",
+    crawl,
+    (s) =>
+      party(s).wiped &&
+      !!s.quest!.stages.some((st) =>
+        st.cards.some((c) => c.id === s.previousId && c.lairFight),
+      ),
   ],
   [
     "league-catch-beat",

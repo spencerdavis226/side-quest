@@ -138,6 +138,7 @@ describe("the Quest's lit scenes (2026-10-31; regions since Realms)", () => {
     expect(scene("The Dragon's Lair")).toBe("lair");
     expect(scene("The Last Inn")).toBe("inn");
     expect(scene("A Side Quest")).toBe("hidden");
+    expect(scene("A Dragon Sign")).toBe("lair");
   });
   it("the League stamps its bosses but lights no scenes (2026-11-01)", () => {
     const league = crawlTheme("pokemon").flourish!;

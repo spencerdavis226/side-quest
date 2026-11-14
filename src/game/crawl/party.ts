@@ -38,7 +38,9 @@ export function partyBoons(quest: QuestState | undefined) {
         ? card?.boon
         : pick === "k"
           ? card?.kit
-          : card?.spoils?.[Number(pick)];
+          : pick[0] === "o"
+            ? card?.offers?.[Number(pick.slice(1))]?.boon
+            : card?.spoils?.[Number(pick)];
     return card && boon ? [{ card, boon, key }] : [];
   });
 }
@@ -164,14 +166,17 @@ export function gainBoon(
   party: PartyState,
   card: CardDefinition,
   quest: QuestState,
-  spoil?: number | "kit",
+  spoil?: number | "kit" | `o${number}`,
 ): PartyState {
+  // A plaque's gear (The Quest 2.0 Phase 3) is kept as "<id>#o<index>".
   const boon =
     spoil === undefined
       ? card.boon
       : spoil === "kit"
         ? card.kit
-        : card.spoils?.[spoil];
+        : typeof spoil === "string"
+          ? card.offers?.[Number(spoil.slice(1))]?.boon
+          : card.spoils?.[spoil];
   const key =
     spoil === undefined
       ? card.id
@@ -274,7 +279,13 @@ export function settleParty(
     // An adventurer's starting gear goes on with it (2026-10-25).
     if (card.kit) next = gainBoon(next, card, quest, "kit");
   }
-  if (card.jinx && (outcome === null || outcome === "lost"))
+  // A card whose plaques carry the jinx lays it only from that plaque
+  // (`takeOffer`).
+  if (
+    card.jinx &&
+    (outcome === null || outcome === "lost") &&
+    !card.offers?.some((o) => o.jinx)
+  )
     next = { ...next, jinx: card.id };
   // Push your luck: a win takes every prize banked and this one; a loss
   // forfeits them. The count clears either way.

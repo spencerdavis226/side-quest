@@ -1340,13 +1340,7 @@ export function CrawlRecord({
     // A run's omens open it and a landing is a pause: neither is a floor.
     // Nor is a lone card with no fight (the Quest's King's Summons).
     if (stage.omen || kind === "rest") continue;
-    const pool = quest?.stages[i]?.cards ?? stage.cards;
-    if (
-      kind === "set-piece" &&
-      pool.length &&
-      pool.every((c) => !c.battle && !c.hits)
-    )
-      continue;
+    if (kind === "set-piece" && !stage.fight) continue;
     const last = floors[floors.length - 1];
     // A boss closes the floor before it; one that follows a set piece or
     // another boss (Last Call, the League's gauntlet) stands on its own.

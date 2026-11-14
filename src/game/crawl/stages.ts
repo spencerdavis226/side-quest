@@ -49,17 +49,21 @@ export function finaleCardIds(rules: PackQuest): string[] {
       questStages(rules).flatMap((stage) => [
         ...stage.cardIds,
         ...(stage.elite ?? []),
+        ...(stage.inserts ?? []).flatMap((i) => i.cardIds),
       ]),
     ),
   ];
 }
 /** Draw each stage's cards at random, in stage order. A fork is never the
- * last room of its floor, so its loud door always has a room to swap. */
+ * last room of its floor, so its loud door always has a room to swap. A
+ * stage with inserts (a landmark) picks the rest and puts one card of each
+ * insert's pool at its place (`placeInserts`). */
 export function pickFinale(
   stages: QuestState["stages"],
   random: Random = Math.random,
 ): string[] {
-  return stages.flatMap(({ pick, cards }) => {
+  return stages.flatMap(({ pick, cards, inserts }) => {
+    if (inserts?.length) return placeInserts(pick, cards, inserts, random);
     const picks = shuffle(
       cards.map((c) => c.id),
       random,
@@ -78,6 +82,39 @@ export function pickFinale(
     }
     return picks;
   });
+}
+/** A stage with inserts (The Quest 2.0 Phase 3, 2026-11-14): the rooms
+ * drawn as for any stage, then one card of each insert's pool spliced in at
+ * its place. A fork is never last and never directly before an insert, so
+ * its loud door (which swaps the next room) never swaps the landmark. */
+function placeInserts(
+  pick: number,
+  cards: CardDefinition[],
+  inserts: NonNullable<QuestState["stages"][number]["inserts"]>,
+  random: Random,
+): string[] {
+  const picks = shuffle(
+    cards.map((c) => c.id),
+    random,
+  ).slice(0, pick - inserts.length);
+  const sorted = [...inserts].sort((a, b) => a.at - b.at);
+  for (const { at, cards: pool } of sorted)
+    picks.splice(at, 0, pool[Math.floor(random() * pool.length)].id);
+  const places = new Set(sorted.map((i) => i.at));
+  const fork = (i: number) =>
+    !places.has(i) &&
+    cards.find((c) => c.id === picks[i])?.encounter === "fork";
+  const blocked = (i: number) => i === picks.length - 1 || places.has(i + 1);
+  for (let i = 0; i < picks.length; i++) {
+    if (!fork(i) || !blocked(i)) continue;
+    const rooms = picks.flatMap((_, j) =>
+      places.has(j) || fork(j) || blocked(j) ? [] : [j],
+    );
+    if (!rooms.length) continue;
+    const j = rooms[Math.floor(random() * rooms.length)];
+    [picks[i], picks[j]] = [picks[j], picks[i]];
+  }
+  return picks;
 }
 /** The stage a finale card belongs to (`stage` counts from 0), and its place
  * within that stage. */
@@ -122,6 +159,10 @@ export function questRecord(s: SessionState) {
     // A fight dealt again until it falls (a boss, closing time's rival):
     // a trophy on Pub Crawl's end screen (2026-10-25).
     const trophy = stage.pick === 1 && stage.cards.some((c) => !!c.hits);
+    // Whether the stage can deal a fight at all, read from its whole pool
+    // (a lone card with none, such as a summons or a dragon sign, is not a
+    // floor on the end screen, reached or not).
+    const fight = stage.cards.some((c) => !!c.battle || !!c.hits);
     return {
       label: stage.label,
       size: stage.pick,
@@ -130,6 +171,7 @@ export function questRecord(s: SessionState) {
       omen,
       kind,
       trophy,
+      fight,
     };
   });
   return {
@@ -188,14 +230,39 @@ export function stageKind(stage: QuestState["stages"][number]): StageKind {
   if (cards.some(isBossCard)) return "boss";
   return pick === 1 ? "set-piece" : "floor";
 }
-/** Every card a stage snapshot holds: its pool and its elites (later also
- * its rares, inserts and variants). Guarded, because `validateQuest` runs it
+/** Every card a stage snapshot holds: its pool, its elites and its
+ * inserts (later also its rares and variants). Guarded, because `validateQuest` runs it
  * on a save before the save is known to be well formed. */
 export const stageCards = (
   stage: QuestState["stages"][number],
 ): CardDefinition[] => [
   ...(Array.isArray(stage?.cards) ? stage.cards : []),
   ...(Array.isArray(stage?.elite) ? stage.elite : []),
+  ...(Array.isArray(stage?.inserts)
+    ? stage.inserts.flatMap((i) => (Array.isArray(i?.cards) ? i.cards : []))
+    : []),
 ];
-export const finaleCard = (quest: QuestState, id: string) =>
-  quest.stages.flatMap(stageCards).find((c) => c.id === id);
+/** A finale card by ID, from any stage's pool, elites or inserts. A plain
+ * search, no copy: it runs on every read of the card in play. */
+export function finaleCard(
+  quest: QuestState,
+  id: string,
+): CardDefinition | undefined {
+  const find = (cards: unknown) =>
+    Array.isArray(cards)
+      ? (cards as CardDefinition[]).find((c) => c?.id === id)
+      : undefined;
+  for (const stage of quest.stages) {
+    const card =
+      find(stage?.cards) ??
+      find(stage?.elite) ??
+      (Array.isArray(stage?.inserts)
+        ? stage.inserts.reduce<CardDefinition | undefined>(
+            (got, i) => got ?? find(i?.cards),
+            undefined,
+          )
+        : undefined);
+    if (card) return card;
+  }
+  return undefined;
+}

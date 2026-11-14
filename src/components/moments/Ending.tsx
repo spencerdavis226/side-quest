@@ -33,9 +33,15 @@ export default function Ending({
   packId,
   count,
   title,
+  ballad = [],
+  singleBlow = false,
   onDone,
 }: {
   kind: EndingKind;
+  /** The Quest's verse: its last line closes the wipe (M21). */
+  ballad?: string[];
+  /** A natural 20 slew the dragon (M20). */
+  singleBlow?: boolean;
   record: RunRecord | null;
   packId?: string;
   count: number;
@@ -83,10 +89,10 @@ export default function Ending({
         <Hall record={record} packId={packId ?? ""} count={count} />
       )}
       {kind === "survived" && record && (
-        <Survived record={record} title={title} />
+        <Survived record={record} title={title} singleBlow={singleBlow} />
       )}
       {kind === "whiteout" && <Whiteout record={record} title={title} />}
-      {kind === "wiped" && <Wiped title={title} />}
+      {kind === "wiped" && <Wiped title={title} line={ballad.at(-1)} />}
       {kind === "toast" && <Toast />}
     </div>,
     document.body,
@@ -256,9 +262,11 @@ function Hall({
 function Survived({
   record,
   title,
+  singleBlow,
 }: {
   record: RunRecord;
   title: [string, string];
+  singleBlow: boolean;
 }) {
   const trophies = record.stages
     .filter((s) => s.trophy)
@@ -321,6 +329,7 @@ function Survived({
     <>
       <span className="ending-gold" />
       <p className="ending-words">
+        {singleBlow && <small>With a single blow</small>}
         <strong>{title[0]}</strong>
         <em>{title[1]}</em>
       </p>
@@ -374,7 +383,7 @@ function Whiteout({
 
 /** Pub Crawl lost: the candles gutter one by one, the dark closes in, and
  * the words settle. */
-function Wiped({ title }: { title: [string, string] }) {
+function Wiped({ title, line }: { title: [string, string]; line?: string }) {
   useSteps([
     [
       1700,
@@ -403,6 +412,7 @@ function Wiped({ title }: { title: [string, string] }) {
       <p className="ending-words wiped-words">
         <strong>{title[0]}</strong>
         <em>{title[1]}</em>
+        {line && <small className="wiped-ballad">{line}</small>}
       </p>
     </>
   );

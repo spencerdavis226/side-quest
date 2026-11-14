@@ -166,7 +166,8 @@ const SCENES: [RegExp, string][] = [
   [/Fire Caverns/, "fire"],
   [/Sunken Coast/, "coast"],
   [/City Gate|Crossroads|Lair.s Door/, "rival"],
-  [/Dragon.s Lair/, "lair"],
+  // A dragon sign (The Quest 2.0 Phase 3) is a glimpse of the lair's light.
+  [/Dragon.s Lair|Dragon Sign/, "lair"],
   [/Inn\b/, "inn"],
   [
     /Side Quest|Barrow|Bandit Fort|Witch.s Cottage|Drowned Shrine|Sunless Vault/,

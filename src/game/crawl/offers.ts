@@ -2,7 +2,7 @@ import type { SessionState } from "../types";
 import { rollWins } from "../dice";
 import { currentCard, type Random } from "../engine";
 import { finaleStage } from "./stages";
-import { evolve, omenEffect, omenForm, satchelSize } from "./party";
+import { evolve, gainBoon, omenEffect, omenForm, satchelSize } from "./party";
 import { joinTeam, throwAt } from "./team";
 import { discard } from "./discard";
 // Plaques (merchants, forks, inns, pleas) and push-your-luck pulls.
@@ -62,6 +62,11 @@ export function takeOffer(
     party.loot = [...party.loot, offer.loot];
   // A catch card's Pokémon joins the team (2026-10-25).
   if (offer.catch) party = joinTeam(party, currentCard(s).id);
+  // The Quest 2.0 Phase 3 (2026-11-14): a plaque's gear, and a curse that
+  // lands only from its own plaque.
+  if (offer.boon) party = gainBoon(party, currentCard(s), now, `o${index}`);
+  if (offer.jinx && currentCard(s).jinx)
+    party = { ...party, jinx: currentCard(s).id };
   let finale = q.finale;
   // The loud door: the next room on this floor becomes one of its elites.
   if (offer.elite) {

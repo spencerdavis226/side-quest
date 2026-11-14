@@ -15,6 +15,8 @@ import { dragons as lastCallBosses, lairs } from "./dungeon/dragons";
 import { lowerLandings, upperLandings } from "./dungeon/landings";
 import { omens } from "./dungeon/omens";
 import { summonsCards } from "./dungeon/summons";
+import { signCards } from "./dungeon/signs";
+import { landmarks } from "./dungeon/landmarks";
 import { rooftop } from "./dungeon/rooftop";
 import { sewers } from "./dungeon/sewers";
 import { PARTY_HEARTS, type FloorCards } from "./dungeon/shared";
@@ -88,6 +90,8 @@ export const dungeonCards: CardDefinition[] = applyPhases([
   ...Object.values(floors).flatMap((f) => f.finds),
   ...omens,
   ...summonsCards,
+  ...signCards,
+  ...Object.values(landmarks).flat(),
   ...classes,
   ...upperLandings,
   ...lowerLandings,
@@ -101,14 +105,21 @@ applyJinxes(dungeonCards);
 
 const ids = (cards: CardDefinition[]) => cards.map((c) => c.id);
 
-/** A floor's eight rooms, drawn from its fights and finds; its elites wait
- * behind the fork's loud door. */
-const floor = (label: string, intro: string, f: FloorCards) => ({
+/** A region's eight cards, drawn from its fights and finds, the fifth
+ * one of its three landmarks (The Quest 2.0 Phase 3, 2026-11-14); its
+ * elites wait behind the fork's loud door. */
+const floor = (
+  label: string,
+  intro: string,
+  f: FloorCards,
+  marks: CardDefinition[],
+) => ({
   label,
   intro,
   pick: 8,
   cardIds: ids([...f.fights, ...f.finds]),
   elite: ids(f.elites),
+  inserts: [{ at: 4, cardIds: ids(marks) }],
 });
 const one = (label: string, intro: string, cards: CardDefinition[]) => ({
   label,
@@ -156,19 +167,37 @@ export const dungeonPack: PackDefinition = {
       {
         oneOf: [
           [
-            floor("The King's Road", "Out through the city gate", cellar),
+            floor(
+              "The King's Road",
+              "Out through the city gate",
+              cellar,
+              landmarks.cellar,
+            ),
             one("King's Road boss", "Something blocks the road", cellar.bosses),
           ],
           [
-            floor("The Old Forest", "Into the Old Forest", wine),
+            floor(
+              "The Old Forest",
+              "Into the Old Forest",
+              wine,
+              landmarks.wine,
+            ),
             one("Old Forest boss", "The trees go quiet", wine.bosses),
           ],
           [
-            floor("The Marsh", "Down into the Marsh", brewery),
+            floor(
+              "The Marsh",
+              "Down into the Marsh",
+              brewery,
+              landmarks.brewery,
+            ),
             one("Marsh boss", "Something stirs in the reeds", brewery.bosses),
           ],
         ],
       },
+      // A dragon sign (The Quest 2.0 Phase 3): the dragon passes over. No
+      // banner: its shadow crosses the card instead.
+      { label: "A Dragon Sign", pick: 1, cardIds: ids(signCards) },
       one("The Inn", "A warm fire and a bad bed", upperLandings),
       // A side quest: one of five pleas, its dungeon's two guards and its
       // keeper (2026-10-17 as the hidden rooms). Walking on skips both.
@@ -188,15 +217,26 @@ export const dungeonPack: PackDefinition = {
               "The Haunted Crypt",
               "Down into the Haunted Crypt",
               catacombs,
+              landmarks.catacombs,
             ),
             one("Haunted Crypt boss", "The dead stand up", catacombs.bosses),
           ],
           [
-            floor("The Goblin Mines", "Down into the Goblin Mines", sewers),
+            floor(
+              "The Goblin Mines",
+              "Down into the Goblin Mines",
+              sewers,
+              landmarks.sewers,
+            ),
             one("Goblin Mines boss", "Drums in the deep", sewers.bosses),
           ],
           [
-            floor("The Wizard's Tower", "Up the Wizard's Tower", freezer),
+            floor(
+              "The Wizard's Tower",
+              "Up the Wizard's Tower",
+              freezer,
+              landmarks.freezer,
+            ),
             one("Wizard's Tower boss", "The lights go out", freezer.bosses),
           ],
         ],
@@ -210,15 +250,30 @@ export const dungeonPack: PackDefinition = {
       {
         oneOf: [
           lair(
-            floor("The Sunken Coast", "Down to the Sunken Coast", taproom),
+            floor(
+              "The Sunken Coast",
+              "Down to the Sunken Coast",
+              taproom,
+              landmarks.taproom,
+            ),
             lairs.taproom,
           ),
           lair(
-            floor("The Fire Caverns", "Into the Fire Caverns", kitchen),
+            floor(
+              "The Fire Caverns",
+              "Into the Fire Caverns",
+              kitchen,
+              landmarks.kitchen,
+            ),
             lairs.kitchen,
           ),
           lair(
-            floor("The Frozen Pass", "Up into the Frozen Pass", rooftop),
+            floor(
+              "The Frozen Pass",
+              "Up into the Frozen Pass",
+              rooftop,
+              landmarks.rooftop,
+            ),
             lairs.rooftop,
           ),
         ],

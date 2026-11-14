@@ -301,6 +301,12 @@ export interface Offer {
   skip?: number;
   /** Pokémon League (2026-10-25): the card's Pokémon joins the team. */
   catch?: true;
+  /** The Quest 2.0 Phase 3 (2026-11-14): gear sold or given by this
+   * plaque, kept as "<card id>#o<index>". */
+  boon?: Boon;
+  /** The card's `jinx` lands only when this plaque is taken (never when
+   * the card is put aside another way). */
+  jinx?: true;
 }
 /** What an omen changes for the run. `hearts` moves the party's maximum and
  * current hearts; `loot` goes into the satchel; `satchel` is its size;
@@ -374,6 +380,10 @@ export interface QuestStage {
   /** Pub Crawl: the floor's elites, dealt only through a fork's loud door
    * (never picked, never in `cardIds`). */
   elite?: string[];
+  /** The Quest 2.0 Phase 3 (2026-11-14): a card dealt at a fixed place
+   * among the picks (a region's landmark, fifth). `at` counts from 0; one
+   * card of each pool is picked when the game starts. */
+  inserts?: { at: number; cardIds: string[] }[];
 }
 /** A run's place in the finale: one stage, or `oneOf` a set of routes (each
  * a list of stages, such as a floor and its boss), one picked per game. */
@@ -425,6 +435,9 @@ export interface QuestState {
     cards: CardDefinition[];
     /** A crawl floor's elites (`QuestStage.elite`); older saves omit it. */
     elite?: CardDefinition[];
+    /** Cards dealt at a fixed place (`QuestStage.inserts`); older saves
+     * omit it. */
+    inserts?: { at: number; cards: CardDefinition[] }[];
   }[];
   finale: string[];
   step: number;

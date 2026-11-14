@@ -1936,7 +1936,7 @@ export const packs: PackDefinition[] = [
       goal: 0,
       length: 1,
       cardIds: [],
-      party: { hearts: 12 },
+      party: { hearts: 11 },
       finale: [
         {
           label: "Your adventurer",
@@ -2075,6 +2075,16 @@ export const packs: PackDefinition[] = [
                   "dungeon.keg-mimic-queen",
                   "dungeon.the-exterminator",
                 ],
+                inserts: [
+                  {
+                    at: 4,
+                    cardIds: [
+                      "dungeon.landmark-gallows-tree",
+                      "dungeon.landmark-tourney-field",
+                      "dungeon.landmark-toll-keep",
+                    ],
+                  },
+                ],
               },
               {
                 label: "King's Road boss",
@@ -2143,6 +2153,16 @@ export const packs: PackDefinition[] = [
                   "dungeon.grape-elemental",
                   "dungeon.cellar-master",
                   "dungeon.wine-influencer",
+                ],
+                inserts: [
+                  {
+                    at: 4,
+                    cardIds: [
+                      "dungeon.landmark-fairy-court",
+                      "dungeon.landmark-oldest-tree",
+                      "dungeon.landmark-hunters-feast",
+                    ],
+                  },
                 ],
               },
               {
@@ -2213,6 +2233,16 @@ export const packs: PackDefinition[] = [
                   "dungeon.hostile-brewer",
                   "dungeon.head-brewer",
                 ],
+                inserts: [
+                  {
+                    at: 4,
+                    cardIds: [
+                      "dungeon.landmark-sunken-chapel",
+                      "dungeon.landmark-hags-bargain",
+                      "dungeon.landmark-frog-ferry",
+                    ],
+                  },
+                ],
               },
               {
                 label: "Marsh boss",
@@ -2227,6 +2257,18 @@ export const packs: PackDefinition[] = [
                 ],
               },
             ],
+          ],
+        },
+        {
+          label: "A Dragon Sign",
+          pick: 1,
+          cardIds: [
+            "dungeon.sign-shadow",
+            "dungeon.sign-scale",
+            "dungeon.sign-knights",
+            "dungeon.sign-mill",
+            "dungeon.sign-tracks",
+            "dungeon.sign-song",
           ],
         },
         {
@@ -2425,6 +2467,16 @@ export const packs: PackDefinition[] = [
                   "dungeon.bone-dragon",
                   "dungeon.banshee-bride",
                 ],
+                inserts: [
+                  {
+                    at: 4,
+                    cardIds: [
+                      "dungeon.landmark-dead-ferryman",
+                      "dungeon.landmark-hall-of-kings",
+                      "dungeon.landmark-weeping-statue",
+                    ],
+                  },
+                ],
               },
               {
                 label: "Haunted Crypt boss",
@@ -2495,6 +2547,16 @@ export const packs: PackDefinition[] = [
                   "dungeon.sewer-king",
                   "dungeon.sewer-siren",
                 ],
+                inserts: [
+                  {
+                    at: 4,
+                    cardIds: [
+                      "dungeon.landmark-goblin-market",
+                      "dungeon.landmark-the-lift",
+                      "dungeon.landmark-dwarf-ghosts",
+                    ],
+                  },
+                ],
               },
               {
                 label: "Goblin Mines boss",
@@ -2563,6 +2625,16 @@ export const packs: PackDefinition[] = [
                   "dungeon.abominable-barback",
                   "dungeon.the-enforcer",
                   "dungeon.freezer-witch",
+                ],
+                inserts: [
+                  {
+                    at: 4,
+                    cardIds: [
+                      "dungeon.landmark-room-of-doors",
+                      "dungeon.landmark-the-library",
+                      "dungeon.landmark-familiars-exam",
+                    ],
+                  },
                 ],
               },
               {
@@ -2664,6 +2736,16 @@ export const packs: PackDefinition[] = [
                   "dungeon.the-kraken-bouncer",
                   "dungeon.lighthouse-keeper",
                 ],
+                inserts: [
+                  {
+                    at: 4,
+                    cardIds: [
+                      "dungeon.landmark-bell-reef",
+                      "dungeon.landmark-drowned-town",
+                      "dungeon.landmark-last-lighthouse",
+                    ],
+                  },
+                ],
               },
               {
                 label: "The Lair's Door",
@@ -2746,6 +2828,16 @@ export const packs: PackDefinition[] = [
                   "dungeon.the-owner",
                   "dungeon.celebrity-chef",
                 ],
+                inserts: [
+                  {
+                    at: 4,
+                    cardIds: [
+                      "dungeon.landmark-bone-road",
+                      "dungeon.landmark-last-forge",
+                      "dungeon.landmark-hoards-edge",
+                    ],
+                  },
+                ],
               },
               {
                 label: "The Lair's Door",
@@ -2827,6 +2919,16 @@ export const packs: PackDefinition[] = [
                   "dungeon.gargoyle-king",
                   "dungeon.storm-chaser",
                   "dungeon.helicopter-pilot",
+                ],
+                inserts: [
+                  {
+                    at: 4,
+                    cardIds: [
+                      "dungeon.landmark-frozen-army",
+                      "dungeon.landmark-wind-shrine",
+                      "dungeon.landmark-glass-bridge",
+                    ],
+                  },
                 ],
               },
               {

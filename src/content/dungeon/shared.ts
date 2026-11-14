@@ -44,13 +44,13 @@ export const FLOORS = [
 export const tier = (floor: Floor) => (floor % 3) as 0 | 1 | 2;
 
 /** The d20 a room monster needs, depth by depth. */
-export const NEED = [7, 9, 11] as const;
+export const NEED = [7, 9, 12] as const;
 /** The d20 a trap's save needs. */
 export const SAVE = [9, 11, 13] as const;
 /** Hearts a lost room fight costs. */
 export const HURT = [1, 2, 3] as const;
 /** A boss's target and the hearts a missed swing costs. */
-export const BOSS_NEED = [9, 12, 13] as const;
+export const BOSS_NEED = [9, 12, 14] as const;
 export const BOSS_HURT = [2, 2, 2] as const;
 /** Swings a floor boss takes: two on the first floors, three at Last Call
  * (2026-10-25: two beats at least, so every boss has a second act). */
@@ -84,8 +84,12 @@ export const KEEPER_HURT = 2;
 /** An inn between regions: rest for hearts, or stock up for drinks. */
 export const LANDING_HEAL = 3;
 export const LEVEL_DRINK = 3;
+/** What a lore plaque gives (The Quest 2.0 Phase 3, 2026-11-14): written
+ * now, it brings a Lucky Coin until lore lands in Phase 4, when this line
+ * becomes `{ lore: true }`. */
+export const LORE = { loot: "die" } as const;
 /** The party's shared hearts before the adventurer. */
-export const PARTY_HEARTS = 12;
+export const PARTY_HEARTS = 11;
 
 /** The variety pass's helpers (2026-10-31; shared since Realms, 2026-11-03,
  * when each region's file took its rooms' final text): a hidden fuse, a

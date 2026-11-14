@@ -4,7 +4,10 @@ import { card } from "./shared";
 // The King's Summons (Realms, 2026-11-03): the run's third card, after the
 // adventurer and the omen. The game picks its dragon when it starts, and
 // `{dragon}` names it here (`currentCard` fills it in), so from the first
-// card the table knows what waits at the end. The Quest only.
+// card the table knows what waits at the end. Since The Quest 2.0 Phase 3
+// (2026-11-14) most also name its lair (`{lair}`, filled the same way;
+// `tests/realms-names.test.ts` holds the filled lines to the limits). The
+// Quest only.
 const summons = (id: string, title: string, rules: string): CardDefinition => ({
   ...card(`summons-${id}`, title, "group", rules),
   ribbon: "The Summons",
@@ -16,17 +19,17 @@ export const summonsCards: CardDefinition[] = [
   summons(
     "proclamation",
     "The King's Decree",
-    "{dragon} has woken. The king offers half the kingdom. Everyone raises a glass to the king.",
+    "{dragon} has woken under {lair}. Everyone raises a glass to the king.",
   ),
   summons(
     "burned-village",
     "A Burned Village",
-    "A village in ashes, and {dragon} flying away from it. Everyone drinks 1 for the village.",
+    "A village in ashes; {dragon} flew home to {lair}. Everyone drinks 1 for it.",
   ),
   summons(
     "wanted-poster",
     "The Bounty",
-    "WANTED: {dragon}. REWARD: half the kingdom. Everyone toasts the reward.",
+    "WANTED: {dragon}. LAST SEEN: {lair}. Everyone toasts the reward.",
   ),
   summons(
     "prophecy",
@@ -36,11 +39,11 @@ export const summonsCards: CardDefinition[] = [
   summons(
     "princess",
     "A Princess Writes",
-    "'{dragon} ate my wedding. Please hurry. Bring cake.' The drawer reads it aloud, sobbing.",
+    "'{dragon} took me to {lair}. Bring cake.' The drawer reads it aloud, sobbing.",
   ),
   summons(
     "survivor",
     "The Last Survivor",
-    "A singed knight gasps, '{dragon}... too big...' and faints. Everyone drinks 1 to him.",
+    "A singed knight gasps '{dragon}... {lair}...' and faints. Everyone toasts him.",
   ),
 ];

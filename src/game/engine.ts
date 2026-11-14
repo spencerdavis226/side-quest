@@ -105,7 +105,7 @@ export {
   settleBattle,
   skipRoll,
 } from "./crawl/discard";
-export { DRAGON } from "./crawl/names";
+export { DRAGON, LAIR, fillNames, runNames } from "./crawl/names";
 export {
   atRound,
   isLairFight,
@@ -113,6 +113,7 @@ export {
   lairMove,
   type Round,
 } from "./crawl/lair";
+export { BALLAD_WIDTH, ballad, singleBlow } from "./ballad";
 export type Random = () => number;
 export function shuffle(
   ids: string[],
@@ -221,11 +222,19 @@ export function createSession(
         return structuredClone(card);
       });
     const stages = questRoute(rules, random).map(
-      ({ label, pick, cardIds, elite }) => ({
+      ({ label, pick, cardIds, elite, inserts }) => ({
         label,
         pick,
         cards: snapshot(cardIds),
         ...(elite?.length ? { elite: snapshot(elite) } : {}),
+        ...(inserts?.length
+          ? {
+              inserts: inserts.map(({ at, cardIds }) => ({
+                at,
+                cards: snapshot(cardIds),
+              })),
+            }
+          : {}),
       }),
     );
     const { label, goal, length } = rules;
