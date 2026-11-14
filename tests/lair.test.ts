@@ -31,8 +31,8 @@ const seeded = (seed: number): Random => {
     return (seed - 1) / 2147483646;
   };
 };
-const CLOSING = 37;
-const LAIR = 38;
+const CLOSING = 38;
+const LAIR = 39;
 const party = (s: SessionState) => s.quest!.party!;
 const roundTrip = (s: SessionState) =>
   expect(parseSession(JSON.stringify(s))).toEqual(s);

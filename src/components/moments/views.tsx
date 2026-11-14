@@ -60,6 +60,8 @@ const LENGTH: Record<Moment["kind"], number> = {
   thread: 2100,
   dragonmove: 1200,
   enraged: 2500,
+  wanted: 3500,
+  shadow: 1500,
 };
 /** A lifted jinx reads less than a laid one: only its name burns away. */
 const LIFTED = 2000;
@@ -104,6 +106,10 @@ export default function MomentView({
       return <DragonMoveSlam m={moment} scale={scale} onDone={onDone} />;
     case "enraged":
       return <Enraged m={moment} scale={scale} onDone={onDone} />;
+    case "wanted":
+      return <Wanted m={moment} scale={scale} onDone={onDone} />;
+    case "shadow":
+      return <Shadow m={moment} scale={scale} onDone={onDone} />;
     case "doubles":
       return <Doubles m={moment} scale={scale} onDone={onDone} />;
     case "door":
@@ -347,6 +353,10 @@ function caption(m: Moment): [string, string, string] {
       return [m.dragon, m.name, ""];
     case "enraged":
       return [m.dragon, "Enraged", m.line];
+    case "wanted":
+      return ["Wanted", m.dragon, m.lair ? `Lair: ${m.lair}` : ""];
+    case "shadow":
+      return ["A shadow passes", m.dragon, ""];
     default:
       return ["", "", ""];
   }
@@ -1179,6 +1189,49 @@ function Enraged({ m, scale, onDone }: ViewProps<"enraged">) {
       <small className="enraged-line">
         {m.dragon}. {m.line}
       </small>
+    </Stage>
+  );
+}
+
+/** The dragon revealed (The Quest 2.0 Phase 3, M2): night falls, a wing's
+ * shadow sweeps the screen, and the dragon's name burns in letter by
+ * letter in its colour under "Wanted", then its lair. A tap skips. */
+function Wanted({ m, scale, onDone }: ViewProps<"wanted">) {
+  return (
+    <Stage
+      kind="wanted"
+      length={LENGTH.wanted}
+      scale={scale}
+      onDone={onDone}
+      style={dragonStyle(m.id)}
+    >
+      <span className="dragon-wing" />
+      <small className="wanted-kicker">Wanted</small>
+      <p className="wanted-name" aria-hidden="true">
+        {[...m.dragon].map((ch, i) => (
+          <span key={i} style={{ "--i": i } as React.CSSProperties}>
+            {ch}
+          </span>
+        ))}
+      </p>
+      {m.lair && <small className="wanted-lair">Lair: {m.lair}</small>}
+    </Stage>
+  );
+}
+
+/** A dragon sign (M9): no banner, only the wing's shadow crossing the card
+ * once in the dragon's colour, with a tremor. Taps go through. */
+function Shadow({ m, scale, onDone }: ViewProps<"shadow">) {
+  return (
+    <Stage
+      kind="shadow"
+      length={LENGTH.shadow}
+      scale={scale}
+      onDone={onDone}
+      ambient
+      style={dragonStyle(m.id)}
+    >
+      <span className="dragon-wing" />
     </Stage>
   );
 }

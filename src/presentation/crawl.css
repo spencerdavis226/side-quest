@@ -2367,3 +2367,37 @@
     opacity: 1;
   }
 }
+
+/* The ballad (The Quest 2.0 Phase 3, M20 and M21): the run as a verse on
+   the end screen, each line on its own, written in one by one as the table
+   arrives (`.celebrate`), as it stands on a reload. */
+.complete > p.crawl-ballad {
+  display: grid;
+  gap: 2px;
+  max-width: 420px;
+  margin: -6px auto 20px;
+  padding: 0 16px;
+  color: #f1e2bf;
+  /* 44 characters a line (BALLAD_WIDTH) fit one line on a 320px phone. */
+  font: italic 500 clamp(13px, 4vw, 17px) / 1.35 var(--font-tavern);
+  text-align: center;
+  text-wrap: balance;
+}
+.complete.celebrate .crawl-ballad span {
+  animation: ballad-line 600ms calc(600ms + var(--i) * 700ms) ease both;
+}
+@keyframes ballad-line {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .complete.celebrate .crawl-ballad span {
+    animation: none;
+  }
+}

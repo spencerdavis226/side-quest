@@ -138,18 +138,40 @@ function validateQuest(s: SessionState) {
   for (const stage of q.stages) {
     const picks = q.finale.slice(at, at + stage.pick);
     const elite = stage.elite;
+    // A landmark (The Quest 2.0 Phase 3, 2026-11-14): a card from an
+    // insert's pool at that insert's place.
+    const inserts = stage.inserts;
+    const badInserts =
+      inserts !== undefined &&
+      (!q.party ||
+        !Array.isArray(inserts) ||
+        !inserts.length ||
+        inserts.length >= stage.pick ||
+        new Set(inserts.map((i) => i?.at)).size !== inserts.length ||
+        inserts.some(
+          (i) =>
+            !i ||
+            !whole(i.at, 0) ||
+            i.at >= stage.pick ||
+            !Array.isArray(i.cards) ||
+            !i.cards.length,
+        ));
     if (
       typeof stage.label !== "string" ||
       !stage.label.trim() ||
       !whole(stage.pick, 1) ||
-      stage.pick > stage.cards.length ||
+      badInserts ||
+      stage.pick - (inserts?.length ?? 0) > stage.cards.length ||
       picks.length !== stage.pick ||
       (elite !== undefined &&
         (!q.party || !Array.isArray(elite) || !elite.length)) ||
       picks.some(
         (id, i) =>
           !stage.cards.some((c) => c.id === id) &&
-          !(i > 0 && elite?.some((c) => c.id === id)),
+          !(i > 0 && elite?.some((c) => c.id === id)) &&
+          !inserts?.some(
+            (ins) => ins.at === i && ins.cards.some((c) => c.id === id),
+          ),
       )
     )
       throw Error("Invalid quest");
@@ -216,7 +238,10 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
               ? !card.boon
               : pick === "k"
                 ? !card.kit
-                : !/^\d$/.test(pick) || !card.spoils?.[Number(pick)])
+                : // A plaque's gear (The Quest 2.0 Phase 3).
+                  /^o\d$/.test(pick)
+                  ? !card.offers?.[Number(pick.slice(1))]?.boon
+                  : !/^\d$/.test(pick) || !card.spoils?.[Number(pick)])
           );
         }) ||
         new Set(p.boons.map((k) => k.split("#")[0])).size !==

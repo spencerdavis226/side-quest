@@ -81,7 +81,9 @@ test("@release The Quest opens on an adventurer, the omen and the summons, then 
   await expect(page.locator(".stage-banner")).toHaveText(
     /The Quest\s*The Company pushes past/,
   );
-  await expect(spoken).toHaveText(/^The Quest\. The Company pushes past/);
+  // The Summons named the dragon and its lair aloud (Phase 3, M2).
+  await expect(spoken).toContainText(`Wanted: ${dragon.title}.`);
+  await expect(spoken).toContainText("The Quest. The Company pushes past");
   const s = await saved(page);
   expect(s.config.packIds).toEqual(["dungeon"]);
   expect(s.quest.party.omen).toBe(s.quest.finale[0]);
@@ -487,7 +489,7 @@ test("a region's boss ranks the adventurer up, and a side quest can be walked pa
   );
   await page.screenshot({ path: info.outputPath("rank-up.png") });
   await expect.poll(async () => (await saved(page)).quest.party.form).toBe(1);
-  expect((await saved(page)).quest.step).toBe(STEP.landing1);
+  expect((await saved(page)).quest.step).toBe(STEP.sign);
   // The side quest's plea: walk on, and its dungeon leaves the run.
   await seed(
     page,
@@ -724,6 +726,11 @@ test("the dragon battle: a round's move, the scales, the kill and the wipe", asy
   await expect(page.locator(".crawl-end h1")).toHaveText(
     /The dragon\s*is slain\./,
   );
+  // The ballad (Phase 3): the run as a verse, ending on the dragon slain.
+  const verse = page.locator(".crawl-ballad span");
+  await expect(verse.last()).toContainText(`slew ${dragon.title}`);
+  expect(await verse.count()).toBeGreaterThanOrEqual(3);
+  await page.screenshot({ path: info.outputPath("ballad.png") });
   // On the last heart, a miss loses the quest.
   const last = {
     ...s,
@@ -733,6 +740,41 @@ test("the dragon battle: a round's move, the scales, the kill and the wipe", asy
   await page.locator(".game-card").click();
   await expect(page.locator(".crawl-end h1")).toHaveText(
     /The party\s*has fallen\./,
+  );
+  await expect(page.locator(".crawl-ballad span").last()).toContainText(
+    `${dragon.title} sleeps on`,
+  );
+});
+
+// A landmark (The Quest 2.0 Phase 3, M5): a violet banner names the place
+// as it is dealt, fifth in the region; its plaques read at 320px.
+test("a landmark is named as it is dealt, and its plaques choose", async ({
+  page,
+}, info) => {
+  await page.setViewportSize({ width: 320, height: 700 });
+  const at = crawlAt("dungeon.landmark-toll-keep", STEP.floor1 + 4);
+  await seed(page, at);
+  await expect(page.locator(".stage-banner")).toContainText("Landmark");
+  await expect(page.locator(".stage-banner")).toContainText("The Toll Keep");
+  await page.locator(".game-card").click();
+  const plaques = page.locator(".offer-plaque");
+  await expect(plaques).toHaveCount(3);
+  await expect(page.locator(".game-card .card-ribbon")).toHaveText(
+    "King's Road · Landmark",
+  );
+  await expect(page.locator(".game-card")).toHaveAccessibleName(
+    /The Toll Keep/,
+  );
+  await page.screenshot({ path: info.outputPath("landmark.png") });
+  // Sneak round: the loud door, so the region's next card is an elite.
+  await plaques.nth(1).click();
+  await expect
+    .poll(async () => (await saved(page)).quest.step)
+    .toBe(STEP.floor1 + 5);
+  const s: SessionState = await saved(page);
+  const region = s.quest!.stages.find((st) => st.inserts)!;
+  expect(region.elite!.map((c) => c.id)).toContain(
+    s.quest!.finale[STEP.floor1 + 5],
   );
 });
 
@@ -1020,5 +1062,5 @@ test("a boss's next beat is a duel, and its felling win brings spoils", async ({
   await sheet.locator(".spoils-row").first().click();
   const s = await saved(page);
   expect(s.quest.party.boons).toContain("dungeon.keg-golem#0");
-  expect(s.quest.step).toBe(STEP.landing1);
+  expect(s.quest.step).toBe(STEP.sign);
 });

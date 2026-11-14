@@ -3,12 +3,14 @@ import {
   advance,
   createSession,
   currentCard,
+  runNames,
   type Random,
 } from "../src/game/engine";
 import { returnToCard, rollDice } from "../src/game/dice";
 import { cards, packs } from "../src/content/catalog";
 import type { GameConfig, PartyState, SessionState } from "../src/game/types";
 import {
+  AMBIENT,
   cardFinish,
   entranceFor,
   hiddenRoomFor,
@@ -161,6 +163,25 @@ describe("moments", () => {
       phase: "revealed",
     }).find((m) => m.kind === "enraged");
     expect(enraged).toMatchObject({ dragon: dragon.title });
+  });
+
+  it("the Summons names the dragon and its lair; a dragon sign's shadow passes (Phase 3)", () => {
+    const c = createSession(crawl, cards, packs, seeded(6));
+    const { dragon, lair, id } = runNames(c.quest!);
+    const summons = atStep(c, stepOf(c, "The King's Summons"));
+    const wanted = momentsBetween(summons, {
+      ...summons,
+      phase: "revealed",
+    }).find((m) => m.kind === "wanted");
+    expect(wanted).toMatchObject({ id, dragon, lair });
+    expect(wanted?.say).toContain(dragon!);
+    const sign = atStep(c, stepOf(c, "A Dragon Sign"));
+    const shown = { ...sign, phase: "revealed" as const };
+    expect(kinds(momentsBetween(sign, shown))).toContain("shadow");
+    expect(AMBIENT.has("shadow")).toBe(true);
+    // Never on a resume or an undo.
+    expect(momentsBetween(null, shown)).toEqual([]);
+    expect(momentsBetween(sign, shown, true)).toEqual([]);
   });
 
   it("a Quest rank up carries its class's line for the table", () => {

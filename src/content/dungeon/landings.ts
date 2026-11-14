@@ -64,59 +64,60 @@ export const upperLandings: CardDefinition[] = [
   ),
 ];
 
-/** After the second region's boss. */
+/** After the second region's boss. Each names the run's dragon (The Quest
+ * 2.0 Phase 3, 2026-11-14). */
 export const lowerLandings: CardDefinition[] = [
   landing(
     "boiler-room",
     "The Last Warm Fire",
-    "Past here, no more inns. Everyone warms their hands and names one thing they'll miss.",
+    "Past here, only {dragon}. Everyone warms their hands and names one thing they'll miss.",
     "Lie down",
   ),
   landing(
     "campfire",
     "A Campfire",
-    "A fire under the stars. Everyone tells the scariest thing that's happened on the road.",
+    "A fire under the stars. Everyone tells the scariest thing they've heard about {dragon}.",
     "Rest",
     "shield",
   ),
   landing(
     "staff-room",
     "The Monastery",
-    "Silent monks pour you soup. Everyone stays silent for one minute. First to make a sound drinks 2.",
+    "Monks who pray against {dragon}. Everyone stays silent a minute. First sound drinks 2.",
     "Meditate",
     "die",
   ),
   landing(
     "fire-escape",
     "The Watchtower",
-    "A ruined tower, and below it the whole road you walked. Everyone toasts how far you've come.",
+    "A ruined tower; far off, smoke from {dragon}. Everyone toasts how far you've come.",
     "Take it in",
     "smoke",
   ),
   landing(
     "service-stairs",
     "The Hermit's Cave",
-    "A hermit with soup and no news since the old king. Everyone tells him one piece of gossip.",
+    "A hermit who once met {dragon}. Everyone tells him one piece of gossip.",
     "Sit",
   ),
   landing(
     "the-bunker",
     "The Empty Fort",
-    "An empty fort with full barrels. Everyone names who they'd want on these walls.",
+    "A fort abandoned when {dragon} woke. Everyone names who they'd want on its walls.",
     "Bunk down",
     "shield",
   ),
   landing(
     "laundry-room",
     "The Hot Springs",
-    "Steam in the rocks. Everyone confesses one thing they've never told the party.",
+    "Springs warm as {dragon}'s breath. Everyone confesses one secret to the party.",
     "Soak",
     "die",
   ),
   landing(
     "stuck-elevator",
     "The Haunted Inn",
-    "The innkeeper is a ghost, and very polite about it. Everyone hums his song on three.",
+    "The innkeeper is a ghost; {dragon} got him. Everyone hums his song on three.",
     "Sleep, nervously",
     "smoke",
   ),

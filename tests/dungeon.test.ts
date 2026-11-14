@@ -89,17 +89,19 @@ const STEP = {
   queue: 3,
   floor1: 4,
   boss1: 12,
-  landing1: 13,
-  plea: 14,
-  hidden: 15,
-  keeper: 17,
-  floor2: 18,
-  boss2: 26,
-  landing2: 27,
-  stairs: 28,
-  floor3: 29,
-  closing: 37,
-  lastCall: 38,
+  // A dragon sign (The Quest 2.0 Phase 3) after the first boss.
+  sign: 13,
+  landing1: 14,
+  plea: 15,
+  hidden: 16,
+  keeper: 18,
+  floor2: 19,
+  boss2: 27,
+  landing2: 28,
+  stairs: 29,
+  floor3: 30,
+  closing: 38,
+  lastCall: 39,
 };
 // The run past the door, with no adventurer or omen: the King's Road's first
 // room.
@@ -161,6 +163,7 @@ describe("Pub Crawl", () => {
       ["The City Gate", 1],
       ["The King's Road", 8],
       ["King's Road boss", 1],
+      ["A Dragon Sign", 1],
       ["The Inn", 1],
       ["A Side Quest", 1],
       ["The Witch's Cottage", 2],
@@ -173,7 +176,7 @@ describe("Pub Crawl", () => {
       ["The Lair's Door", 1],
       ["The Dragon's Lair", 1],
     ]);
-    expect(s.quest!.finale).toHaveLength(39);
+    expect(s.quest!.finale).toHaveLength(40);
     expect(currentCard(s).omen).toBeDefined();
     const at = (step: number) => findCard(s, s.quest!.finale[step])!;
     expect(at(STEP.hidden).ribbon).toBe("Witch's Cottage · Guard");
@@ -236,6 +239,7 @@ describe("Pub Crawl", () => {
       "The City Gate",
       "The Old Forest",
       "Old Forest boss",
+      "A Dragon Sign",
       "The Inn",
       "A Side Quest",
       "The Sunless Vault",
@@ -257,6 +261,7 @@ describe("Pub Crawl", () => {
       "The City Gate",
       "The Marsh",
       "Marsh boss",
+      "A Dragon Sign",
       "The Inn",
       "A Side Quest",
       "The Old Barrow",
@@ -280,8 +285,8 @@ describe("Pub Crawl", () => {
     for (let seed = 1; seed <= 400; seed++) {
       const s = createSession(crawl, cards, packs, seeded(seed));
       const labels = s.quest!.stages.map((st) => st.label);
-      [labels[4], labels[10], labels[14]].forEach((l, i) => floors[i].add(l));
-      rooms.add(labels[8]);
+      [labels[4], labels[11], labels[15]].forEach((l, i) => floors[i].add(l));
+      rooms.add(labels[9]);
       adventurers.add(s.quest!.finale[STEP.adventurer]);
       omens.add(s.quest!.finale[STEP.omen]);
     }
@@ -599,7 +604,7 @@ describe("Pub Crawl", () => {
       title: "Berserker",
       next: "Warlord",
     });
-    expect(b.quest!.step).toBe(STEP.landing1);
+    expect(b.quest!.step).toBe(STEP.sign);
     roundTrip(b);
     // The Peasant ranks up into nothing better.
     let p = adventure("plus-one", undefined, STEP.boss1);
@@ -1080,6 +1085,7 @@ describe("Pub Crawl", () => {
       pick: st.pick,
       cards: i === 0 ? [legacy] : st.cards,
       ...(st.elite ? { elite: st.elite } : {}),
+      ...(st.inserts ? { inserts: st.inserts } : {}),
     }));
     old.quest!.finale = [legacy.id, ...old.quest!.finale.slice(2)];
     let s = advance(advance(old));

@@ -10,6 +10,7 @@ import {
   useState,
   type ComponentType,
   type ComponentProps,
+  type CSSProperties,
 } from "react";
 import type { EndingKind } from "../components/moments/Ending";
 
@@ -32,6 +33,8 @@ function NoEnding() {
 export function Completion({
   count,
   record,
+  ballad = [],
+  singleBlow = false,
   mode,
   league = false,
   packId,
@@ -44,6 +47,10 @@ export function Completion({
 }: {
   count: number;
   record: ReturnType<typeof questRecord>;
+  /** The Quest's verse (The Quest 2.0 Phase 3): empty for any other game. */
+  ballad?: string[];
+  /** The dragon fell to a natural 20: "With a single blow" over the title. */
+  singleBlow?: boolean;
   /** The quest mode's name, e.g. "Pokémon League". */
   mode?: string;
   league?: boolean;
@@ -86,6 +93,8 @@ export function Completion({
             packId={packId}
             count={count}
             title={end.title}
+            ballad={ballad}
+            singleBlow={singleBlow}
             onDone={() => setShown(true)}
           />
         </Suspense>
@@ -103,13 +112,26 @@ export function Completion({
               theme={look}
               className="crawl-end-mark"
             />
-            <p className="hall-kicker">{mode}</p>
+            <p className="hall-kicker">
+              {singleBlow ? "With a single blow" : mode}
+            </p>
             <h1>
               {end.title[0]}
               <br />
               <em>{end.title[1]}</em>
             </h1>
             <p className="crawl-verdict">{end.verdict}</p>
+            {ballad.length > 0 && (
+              // The run as a verse (M20, M21): written in line by line as
+              // the table arrives, read as it stands on a reload.
+              <p className="crawl-ballad">
+                {ballad.map((line, i) => (
+                  <span key={i} style={{ "--i": i } as CSSProperties}>
+                    {line}
+                  </span>
+                ))}
+              </p>
+            )}
             <CrawlRecord record={record} theme={look} />
           </>
         ) : record?.won ? (

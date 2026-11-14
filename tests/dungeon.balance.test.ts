@@ -108,7 +108,24 @@ function playRun(seed: number, adventurer?: string) {
       let pick: number;
       if (card.encounter === "fork") pick = p.hearts > 6 ? 1 : 0;
       else if (offers.some((o) => o.skip)) pick = p.hearts > 6 ? 0 : 1;
-      else if (card.encounter === "rest")
+      // A landmark or a dragon sign (The Quest 2.0 Phase 3): gear, then an
+      // item, then a heal when hurt, then the loud door when healthy, else
+      // whatever is free.
+      else if (card.encounter === "shrine") {
+        const room = p.loot.length < satchelSize(s.quest);
+        const ok = (i: number) =>
+          canTakeOffer(s, i) && (!offers[i].cost || p.hearts > 6);
+        const first = (want: (o: (typeof offers)[number]) => boolean) =>
+          offers.findIndex((o, i) => want(o) && ok(i));
+        pick =
+          [
+            first((o) => !!o.boon),
+            first((o) => !!o.loot && room),
+            p.max - p.hearts >= 2 ? first((o) => !!o.heal) : -1,
+            p.hearts > 6 ? first((o) => !!o.elite) : -1,
+            first((o) => !o.cost && !o.elite),
+          ].find((i) => i >= 0) ?? 0;
+      } else if (card.encounter === "rest")
         pick =
           p.max - p.hearts >= 3 || p.loot.length >= satchelSize(s.quest)
             ? 0
@@ -187,7 +204,8 @@ function playRun(seed: number, adventurer?: string) {
   return s;
 }
 
-const RUNS = 4000;
+// For tuning: QUEST_RUNS=1000 plays fewer runs (the bands then wobble).
+const RUNS = Number(process.env.QUEST_RUNS ?? 4000);
 // The tests below read thousands of runs; beside the other harness in a
 // full parallel `npm test` they can pass the 5 s default, so each has 30 s.
 // A finished run is kept without its deck snapshot (`cards`, a clone of
@@ -242,8 +260,9 @@ it("a crawl is hard: the party wins about a quarter of its runs", () => {
   expect(won).toBeLessThan(0.4);
   expect(mean).toBeGreaterThan(38);
   // D10 (The Quest 2.0, 2026-11-13): the measured mean plus 6. Measured
-  // 54.4 after the dragon battle (Phase 2), so 60.4.
-  expect(mean).toBeLessThan(60.4);
+  // 54.4 after the dragon battle (Phase 2), so 60.4; 55.0 with the
+  // landmarks and the dragon sign (Phase 3), so 61.
+  expect(mean).toBeLessThan(61);
   // Nearly every run gets through the gate and the first region.
   const early = ["The City Gate", "Region 1"].reduce(
     (n, l) => n + (wipes.get(l) ?? 0),

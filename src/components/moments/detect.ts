@@ -13,6 +13,7 @@ import {
   partyType,
   questRecord,
   teamMember,
+  runNames,
   wantedBoss,
 } from "../../game/engine";
 import { rollWins } from "../../game/dice";
@@ -145,6 +146,11 @@ export type Moment = {
     }
   /** The dragon's enrage contest turns over: the eye narrows (M18). */
   | { kind: "enraged"; id: string; dragon: string; line: string }
+  /** The King's Summons turns over: the dragon is named, and its lair
+   * (The Quest 2.0 Phase 3, M2). */
+  | { kind: "wanted"; id: string; dragon: string; lair: string }
+  /** A dragon sign turns over: its shadow crosses the card (M9). */
+  | { kind: "shadow"; id: string; dragon: string }
   /** A jinx laid (its name and rule) or lifted (the boss fell). */
   | {
       kind: "jinx";
@@ -162,6 +168,7 @@ export type MomentKind = Moment["kind"];
  * clash must never eat the tap that rolls). */
 export const AMBIENT: ReadonlySet<MomentKind> = new Set([
   "dragonmove",
+  "shadow",
   "milestone",
   "natural",
   "clash",
@@ -360,6 +367,31 @@ export function momentsBetween(
         enraged: !!duel.enraged,
         say: `${dragon}: ${card.ribbon}.`,
       });
+  }
+
+  // The Quest 2.0 Phase 3: the Summons names the dragon (M2); a dragon
+  // sign's shadow crosses the card (M9).
+  if (turned && q?.due && q.packId === "dungeon") {
+    const names = runNames(q);
+    if (names.id && names.dragon) {
+      if (card.ribbon === "The Summons")
+        out.push({
+          kind: "wanted",
+          key: `wanted:${after.discarded}`,
+          id: names.id,
+          dragon: names.dragon,
+          lair: names.lair ?? "",
+          say: `Wanted: ${names.dragon}.${names.lair ? ` Lair: ${names.lair}.` : ""}`,
+        });
+      else if (card.ribbon === "Dragon Sign")
+        out.push({
+          kind: "shadow",
+          key: `shadow:${after.discarded}`,
+          id: names.id,
+          dragon: names.dragon,
+          say: `A shadow passes: ${names.dragon}.`,
+        });
+    }
   }
 
   // The run's first card turned over: the starter or the adventurer.

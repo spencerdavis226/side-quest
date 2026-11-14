@@ -420,3 +420,32 @@ test("a Quest rank up holds on the new rank until the table taps", async ({
   await moment.click({ force: true });
   await expect(moment).toHaveCount(0);
 });
+
+// The Quest 2.0 Phase 3: the Summons names the dragon and its lair in the
+// dark (M2); a dragon sign's shadow crosses the card (M9); a reload plays
+// neither.
+test("the Summons reveals the dragon once, and a dragon sign's shadow passes", async ({
+  page,
+}) => {
+  await withMotion(page);
+  const at = crawlAt("dungeon.summons-proclamation", STEP.summons);
+  await seed(page, at);
+  await page.locator(".game-card").click();
+  const wanted = page.locator(".moment-wanted");
+  await expect(wanted).toBeVisible();
+  await expect(wanted.locator(".wanted-kicker")).toHaveText("Wanted");
+  await expect(wanted.locator(".wanted-lair")).toContainText("Lair: the ");
+  // A tap skips it; the card is face up under it.
+  await wanted.click();
+  await expect(wanted).toHaveCount(0);
+  await expect.poll(async () => (await saved(page)).phase).toBe("revealed");
+  await page.reload();
+  await frames(page, 10);
+  await expect(page.locator(".moment-wanted")).toHaveCount(0);
+  // A dragon sign: no banner, the shadow is ambient (taps go through).
+  await seed(page, crawlAt("dungeon.sign-shadow", STEP.sign));
+  await expect(page.locator(".stage-banner")).toHaveCount(0);
+  await page.locator(".game-card").click();
+  await expect(page.locator(".moment-shadow")).toBeVisible();
+  await expect.poll(async () => (await saved(page)).phase).toBe("revealed");
+});

@@ -163,7 +163,9 @@ export const classes: CardDefinition[] = [
       },
       {
         title: "Grand Magus",
-        omen: { hearts: 1, roll: { all: 2 }, restock: "die" },
+        // A heart less since The Quest 2.0 Phase 3 (2026-11-14), when the
+        // signs and landmarks brought more Lucky Coins: 50%.
+        omen: { roll: { all: 2 }, restock: "die" },
       },
     ],
   ),
@@ -184,7 +186,8 @@ export const classes: CardDefinition[] = [
       },
       {
         title: "Living Legend",
-        omen: { hearts: 3, crit: 17, roll: { all: 1 } },
+        // A heart less since The Quest 2.0 Phase 3 (2026-11-14): 50%.
+        omen: { hearts: 2, crit: 17, roll: { all: 1 } },
       },
     ],
   ),
@@ -310,7 +313,8 @@ export const classes: CardDefinition[] = [
       },
       {
         title: "Soul Broker",
-        omen: { hearts: -2, roll: { all: 3 }, crit: 19 },
+        // A heart dearer since The Quest 2.0 Phase 3 (2026-11-14): 52%.
+        omen: { hearts: -3, roll: { all: 3 }, crit: 19 },
       },
     ],
   ),

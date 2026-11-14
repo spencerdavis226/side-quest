@@ -54,7 +54,7 @@ const crawlRoutes = [0, 1, 2].flatMap((route) =>
   })),
 );
 // Where a card is dealt: its stage's first step (an elite, behind a fork,
-// one room later).
+// one room later; a landmark at its insert's place).
 function crawlPlace(id: string) {
   for (const { route, room, base } of crawlRoutes) {
     let first = 0;
@@ -63,6 +63,11 @@ function crawlPlace(id: string) {
         return { step: first, route, room };
       if (stage.elite?.some((c) => c.id === id))
         return { step: first + 1, route, room };
+      // A landmark (The Quest 2.0 Phase 3) at its own place in the region.
+      const insert = stage.inserts?.find((i) =>
+        i.cards.some((c) => c.id === id),
+      );
+      if (insert) return { step: first + insert.at, route, room };
       first += stage.pick;
     }
   }

@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { SessionState } from "../game/types";
-import { finaleStage, questStages, wantedBoss } from "../game/engine";
+import {
+  fillNames,
+  finaleStage,
+  questStages,
+  wantedBoss,
+} from "../game/engine";
 import { crawlTheme } from "./crawlTheme";
 import { packs } from "../content/manifest.generated";
 import { stageArt } from "../presentation/league-art";
@@ -55,6 +60,24 @@ function stageBanner(session: SessionState) {
   const quest = session.quest;
   if (!quest?.due || session.phase !== "hidden") return null;
   const stage = finaleStage(quest);
+  // A landmark (The Quest 2.0 Phase 3, M5): a violet banner names the
+  // place as it is dealt, mid-region.
+  const insert = quest.stages[stage.stage].inserts?.find(
+    (i) => i.at === stage.index,
+  );
+  const mark = insert?.cards.find((c) => c.id === quest.finale[quest.step]);
+  if (mark && !entranceFor(session)) {
+    return {
+      key: `${stage.stage}:${session.discarded}`,
+      stage: stage.stage,
+      mode: mark.ribbon?.split(" · ")[1] ?? "Landmark",
+      intro: mark.title,
+      tone: "violet" as const,
+      art: undefined,
+      wanted: undefined,
+      wantedWord: undefined,
+    };
+  }
   if (stage.index !== 0) return null;
   // Once per stage: not again when a boss is dealt for another swing or a
   // lost Champion is replaced.
@@ -64,10 +87,14 @@ function stageBanner(session: SessionState) {
   if (entranceFor(session)) return null;
   // So does a hidden room's bookcase.
   if (hiddenRoomFor(session)) return null;
+  // A dragon sign has no banner: its shadow crosses the card (M9).
+  if (pool.every((c) => c.ribbon === "Dragon Sign")) return null;
   const rules = packs.find((p) => p.id === quest.packId)?.quest;
-  const intro =
+  const intro = fillNames(
+    quest,
     (rules && questStages(rules).find((s) => s.label === stage.label)?.intro) ??
-    stage.label;
+      stage.label,
+  );
   // The banner takes the stage's ribbon finish (pearl, violet, crimson).
   const tone = quest.stages[stage.stage].cards[0]?.ribbonTone ?? "gold";
   const art = quest.packId === "pokemon" ? stageArt(tone) : undefined;
