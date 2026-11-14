@@ -6373,3 +6373,150 @@
     opacity: 0;
   }
 }
+
+/* Allies' medallions (The Quest 2.1): struck gold with the ally's emblem;
+   cold iron, cracked, when one falls. */
+.ally-medal {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.ally-medal .medal-rim {
+  fill: #b8860b;
+  stroke: #fff1c2;
+  stroke-width: 2;
+}
+.ally-medal .medal-field {
+  fill: #f6dc8c;
+  stroke: #8a5a10;
+  stroke-width: 3;
+}
+.ally-medal .medal-mark {
+  fill: #4a2c00;
+}
+.ally-medal.fallen .medal-rim {
+  fill: #4a4a50;
+  stroke: #8a8a90;
+}
+.ally-medal.fallen .medal-field {
+  fill: #2a2a2e;
+  stroke: #1a1a1c;
+}
+.ally-medal.fallen .medal-mark {
+  fill: #9a9aa0;
+}
+.ally-medal .medal-crack {
+  fill: none;
+  stroke: #0a0a0c;
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+.ally-medal-wrap {
+  position: relative;
+  width: min(36vw, 150px);
+  animation: medal-strike 900ms cubic-bezier(0.2, 1.5, 0.4, 1) both;
+  filter: drop-shadow(0 0 24px rgb(255 214 120 / 0.7));
+}
+.ally-rays {
+  position: absolute;
+  inset: -60%;
+  background: repeating-conic-gradient(
+    from 0deg,
+    rgb(255 230 160 / 0.28) 0deg 6deg,
+    transparent 6deg 18deg
+  );
+  mask: radial-gradient(circle, #000 20%, transparent 70%);
+  animation: rays-turn var(--len) linear both;
+}
+@keyframes rays-turn {
+  from {
+    opacity: 0;
+    rotate: 0deg;
+  }
+  20% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.4;
+    rotate: 40deg;
+  }
+}
+@keyframes medal-strike {
+  0% {
+    opacity: 0;
+    transform: scale(2.4) rotate(-30deg);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(0.94) rotate(4deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+.fallen-medal-wrap {
+  width: min(28vw, 116px);
+  animation: medal-fall var(--len) ease both;
+}
+@keyframes medal-fall {
+  0% {
+    opacity: 0;
+    filter: brightness(2) saturate(1);
+  }
+  20% {
+    opacity: 1;
+    filter: brightness(1.2);
+  }
+  100% {
+    filter: brightness(0.8);
+  }
+}
+.sendin-medal {
+  width: min(30vw, 120px);
+  animation: medal-strike 700ms cubic-bezier(0.2, 1.5, 0.4, 1) both;
+  filter: drop-shadow(0 0 20px rgb(255 214 120 / 0.8));
+}
+/* Lore: the dragon's mark, carved faint behind the line it gave up. */
+.lore-stone {
+  position: absolute;
+  width: min(70vw, 300px);
+  fill: var(--dragon, #ff7a3a);
+  opacity: 0;
+  animation: lore-stone var(--len) ease both;
+}
+@keyframes lore-stone {
+  0% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+  30% {
+    opacity: 0.16;
+    transform: none;
+  }
+  100% {
+    opacity: 0.08;
+  }
+}
+/* An echo: a quill writes over the earlier page. */
+.echo-quill {
+  position: absolute;
+  top: 26%;
+  width: min(24vw, 96px);
+  fill: #3a2410;
+  opacity: 0.35;
+  animation: echo-quill var(--len) ease both;
+}
+@keyframes echo-quill {
+  0% {
+    opacity: 0;
+    transform: translate(-30px, 10px) rotate(-12deg);
+  }
+  40% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(30px, -6px) rotate(6deg);
+  }
+}

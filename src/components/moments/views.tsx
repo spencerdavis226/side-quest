@@ -1,5 +1,8 @@
 import { DragonEye } from "./DragonEye";
-import { questArt } from "../../presentation/quest-art.generated";
+import {
+  questArt,
+  type QuestArt,
+} from "../../presentation/quest-art.generated";
 import {
   useEffect,
   useRef,
@@ -1074,6 +1077,11 @@ function SendIn({ m, scale, onDone }: ViewProps<"sendin">) {
         </div>
       )}
       <span className="sendin-light" ref={light} />
+      {m.ally && (
+        <div className="sendin-medal">
+          <AllyMedal name={m.name} />
+        </div>
+      )}
       {m.type && <TypeMark type={m.type} className="sendin-mark" />}
       <strong className="sendin-word">Go, {m.name}!</strong>
       {m.bonus && <small className="sendin-bonus">{m.bonus}</small>}
@@ -1275,6 +1283,55 @@ function LootFound({ m, scale, onDone }: ViewProps<"loot">) {
 /** The dragon's move (The Quest 2.0, M16): its name slams in from the top
  * edge with a flash and a shake, then clears to the card. Taps go
  * through; a roll cuts it. */
+/** Each ally's emblem (The Quest 2.1), by its name. */
+const ALLY_MARK: [RegExp, QuestArt][] = [
+  [/Goat/, "goat"],
+  [/Mule/, "mule"],
+  [/Mort|Skull/, "ally-skull"],
+  [/Pip|Cabin/, "cabin-boy"],
+  [/Durla|Dwarf/, "dwarf"],
+  [/Frozen Knight/, "frozen-knight"],
+  [/Hatchling/, "hatchling"],
+  [/Chester/, "chester"],
+  [/Bard/, "bard"],
+  [/Bradley/, "bradley"],
+  [/Blade|Sword/, "blade"],
+];
+const allyMark = (name: string): QuestArt =>
+  ALLY_MARK.find(([re]) => re.test(name))?.[1] ?? "shield";
+
+/** An ally's medallion: a struck gold ring with its emblem; `fallen` is
+ * cold iron, cracked. */
+function AllyMedal({
+  name,
+  fallen = false,
+}: {
+  name: string;
+  fallen?: boolean;
+}) {
+  return (
+    <svg
+      className={`ally-medal${fallen ? " fallen" : ""}`}
+      viewBox="-60 -60 120 120"
+      aria-hidden="true"
+    >
+      <circle className="medal-rim" r="56" />
+      <circle className="medal-field" r="46" />
+      <path
+        className="medal-mark"
+        d={questArt[allyMark(name)]}
+        transform="translate(-32 -32) scale(0.125)"
+      />
+      {fallen && (
+        <path
+          className="medal-crack"
+          d="M-6 -56 L2 -30 L-8 -8 L6 12 L-4 34 L4 56"
+        />
+      )}
+    </svg>
+  );
+}
+
 /** The dragon's shadow crossing the screen: a wyvern in flight, soft at
  * the edges, in the dragon's deep colour (The Quest 2.1; a clipped shape
  * before). */
@@ -1498,6 +1555,9 @@ function LoreFound({ m, scale, onDone }: ViewProps<"lore">) {
       onDone={onDone}
       style={dragonStyle(m.id)}
     >
+      <svg className="lore-stone" viewBox="0 0 512 512" aria-hidden="true">
+        <path d={questArt.dragon} />
+      </svg>
       <small className="lore-kicker">You learn</small>
       <p className="lore-line">{m.line}</p>
       <span className="lore-runes" aria-hidden="true">
@@ -1515,9 +1575,27 @@ function LoreFound({ m, scale, onDone }: ViewProps<"lore">) {
 /** An ally joins (M10): the name, kicker "Joins the party", what they do
  * and their ritual under. */
 function AllyJoins({ m, scale, onDone }: ViewProps<"ally">) {
+  const medal = useRef<HTMLDivElement>(null);
+  useTimeline(
+    [
+      [
+        420,
+        () =>
+          at(medal.current, "sparks", {
+            count: 60,
+            colors: ["#fff3c8", "#f2c94c", "#ffffff"],
+          }),
+      ],
+    ],
+    scale,
+  );
   return (
     <Stage kind="ally" length={LENGTH.ally} scale={scale} onDone={onDone}>
       <span className="ally-light" />
+      <div className="ally-medal-wrap" ref={medal}>
+        <span className="ally-rays" />
+        <AllyMedal name={m.name} />
+      </div>
       <small className="ally-kicker">Joins the party</small>
       <strong className="ally-name">{m.name}</strong>
       <span className="ally-line">{m.line}</span>
@@ -1530,6 +1608,9 @@ function AllyJoins({ m, scale, onDone }: ViewProps<"ally">) {
 function Fallen({ m, scale, onDone }: ViewProps<"fallen">) {
   return (
     <Stage kind="fallen" length={LENGTH.fallen} scale={scale} onDone={onDone}>
+      <div className="fallen-medal-wrap">
+        <AllyMedal name={m.name} fallen />
+      </div>
       <small className="fallen-kicker">
         {m.stand ? "Took the blow" : "Fallen"}
       </small>
@@ -1586,6 +1667,9 @@ function RoadSoFar({ m, scale, onDone }: ViewProps<"road">) {
 function Echo({ m, scale, onDone }: ViewProps<"echo">) {
   return (
     <Stage kind="echo" length={LENGTH.echo} scale={scale} onDone={onDone}>
+      <svg className="echo-quill" viewBox="0 0 512 512" aria-hidden="true">
+        <path d={questArt.quill} />
+      </svg>
       {m.earlier && <span className="echo-earlier">{m.earlier}</span>}
       <strong className="echo-title">{m.title}</strong>
     </Stage>
