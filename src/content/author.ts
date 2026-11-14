@@ -59,6 +59,29 @@ export const choice = (
 ): DiceDefinition => ({ ...dice, choice: { skip, roll: rollLabel } });
 
 /**
+ * A coin (The Quest 2.1): one flip, tails or heads, each its own exact
+ * line. `win` marks heads as a battle's winning face.
+ */
+export const flip = (
+  tails: string,
+  heads: string,
+  win = false,
+): DiceDefinition => ({
+  version: 1,
+  count: 1,
+  sides: 2,
+  outcomes: [
+    { min: 1, max: 1, instruction: tails },
+    {
+      min: 2,
+      max: 2,
+      instruction: heads,
+      ...(win ? { win: true as const } : {}),
+    },
+  ],
+});
+
+/**
  * A dice card whose result branches. Outcomes must cover every total exactly
  * once; `validateDice` enforces that at build time.
  */

@@ -103,6 +103,21 @@ export function takeOffer(
     next = dropInto(next, (i) => i > stage && i <= stage + offer.skip!);
   else if (offer.route !== undefined)
     next = chooseRoad(next, stage, offer.route);
+  else if (offer.flip) {
+    // The Quest 2.1: a coin picks the road, and stays as news.
+    const face = random() < 0.5 ? 1 : 2;
+    next = chooseRoad(next, stage, face === 2 ? 0 : 1);
+    const after = discard({ ...s, quest: next }, random);
+    return after.quest?.party
+      ? {
+          ...after,
+          quest: {
+            ...after.quest,
+            party: { ...after.quest.party, coin: { face, for: "road" } },
+          },
+        }
+      : after;
+  }
   return discard({ ...s, quest: next }, random);
 }
 /** Each pull on a push-your-luck card rolls this much lower. */

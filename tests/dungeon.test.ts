@@ -493,9 +493,10 @@ describe("Pub Crawl", () => {
     const half = Math.ceil(DRAGON_HEALTH / 2);
     // 19: a hit against any move's target (15, or 17 for a harder one).
     for (let i = 0; i < half; i++) s = fight(s, 19);
-    expect(currentCard(advance(s)).dice).toBeUndefined();
+    // The Quest 2.1: the contest ends on a coin; heads breaks a scale.
+    expect(currentCard(advance(s)).dice?.sides).toBe(2);
     expect(currentCard(advance(s)).ribbon).toBe("Enraged");
-    s = settleBattle(advance(s), true);
+    s = advance(returnToCard(rollDice(advance(s), () => 0.99)), seeded(7));
     for (let i = half + 1; i < DRAGON_HEALTH; i++) s = fight(s, 19);
     expect(s.phase).toBe("complete");
     expect(questRecord(s)!.won).toBe(true);
@@ -1041,7 +1042,7 @@ describe("Pub Crawl", () => {
       seeded(3),
     );
     expect(s.quest).toBeUndefined();
-    expect(s.cards).toHaveLength(301);
+    expect(s.cards).toHaveLength(304);
     expect(s.cards.some((c) => c.reward && !c.battle)).toBe(false);
     expect(
       s.cards.some(

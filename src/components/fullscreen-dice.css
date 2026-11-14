@@ -62,3 +62,19 @@
   opacity: 0.35;
   filter: grayscale(0.7);
 }
+/* A coin's face, when the flip is not shown (The Quest 2.1). */
+.roll-static-result span.coin-face {
+  width: auto;
+  aspect-ratio: auto;
+  padding: 14px 26px;
+  border-radius: 999px;
+  border-color: #f2d17a;
+  color: #4a2c00;
+  background: radial-gradient(circle at 35% 30%, #fff1b8, #e0a83a 60%, #8a5a10);
+  box-shadow:
+    0 5px 12px #120c08a0,
+    inset 0 0 0 3px #f8e4a0;
+  font-size: 28px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}

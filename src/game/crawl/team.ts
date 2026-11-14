@@ -343,11 +343,13 @@ export function cardEdge(
   // lore held, are rolled twice and the better kept. Never on the contest.
   const party = quest?.party;
   const duel = party?.duel;
+  // The Quest 2.1: a Lucky Coin that came up heads.
+  if (party?.coin?.for === "luck" && party.coin.face === 2) return "advantage";
   if (
     card.lairFight &&
     duel &&
     !duel.contest &&
-    duel.swings < (party.lore ?? 0)
+    (duel.swings < (party.lore ?? 0) || duel.staggered)
   )
     return "advantage";
   return cardMatchup(quest, card)?.edge ?? null;

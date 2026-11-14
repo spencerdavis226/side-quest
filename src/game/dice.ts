@@ -70,12 +70,14 @@ export function validateDice(value: unknown): asserts value is DiceDefinition {
   if (
     !d ||
     d.version !== 1 ||
-    ![6, 20].includes(d.sides) ||
+    ![2, 6, 20].includes(d.sides) ||
     !Number.isInteger(d.count) ||
     d.count < 1 ||
-    d.count > 4
+    d.count > 4 ||
+    // A coin (The Quest 2.1) is flipped alone.
+    (d.sides === 2 && d.count !== 1)
   )
-    throw Error("Invalid dice: use one to four d6 or d20 dice");
+    throw Error("Invalid dice: use one to four d6 or d20 dice, or one coin");
   if (
     d.choice !== undefined &&
     ![d.choice?.skip, d.choice?.roll].every(

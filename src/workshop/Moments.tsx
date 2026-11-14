@@ -4,6 +4,9 @@ import Ending, { type EndingKind } from "../components/moments/Ending";
 import { leagueBadges } from "../presentation/league-art";
 import { asset } from "../presentation/theme";
 import type { Moment } from "../components/moments/detect";
+import type { SessionState } from "../game/types";
+import roadSave from "../../tests/fixtures/saves/2026-11-14-realms-road-choice-waiting.json?raw";
+import roadTaken from "../../tests/fixtures/saves/2026-11-14-realms-road-chosen.json?raw";
 import "../presentation/theme.css";
 import "../style.css";
 import "../presentation/crawl.css";
@@ -313,6 +316,171 @@ const SAMPLES: Moment[] = [
   },
 ];
 
+// The Quest's moments (The Quest 2.1): every one built in Quest 2.0, on a
+// real saved run for the map.
+const mapQuest = (JSON.parse(roadSave) as SessionState).quest!;
+const roadQuest = (JSON.parse(roadTaken) as SessionState).quest!;
+const EMBERFANG = "dungeon.last-call-lich";
+const RIMECLAW = "dungeon.bartender-below";
+const BRINE = "dungeon.final-tab";
+const QUEST: Moment[] = [
+  {
+    kind: "wanted",
+    key: "wanted",
+    id: EMBERFANG,
+    dragon: "Emberfang",
+    lair: "The Fire Caverns",
+    say: "",
+  },
+  {
+    kind: "wanted",
+    key: "wanted-long",
+    id: "dungeon.two-am-kebab",
+    dragon: "Gorgrath the Hungry",
+    lair: "The Fire Caverns",
+    say: "",
+  },
+  { kind: "shadow", key: "shadow", id: RIMECLAW, dragon: "Rimeclaw", say: "" },
+  { kind: "map", key: "map", quest: mapQuest, title: "The Road Out", say: "" },
+  {
+    kind: "road",
+    key: "road",
+    quest: roadQuest,
+    region: "The Old Forest",
+    words: "Bargains, healing, curses",
+    say: "",
+  },
+  {
+    kind: "lore",
+    key: "lore",
+    id: EMBERFANG,
+    dragon: "Emberfang",
+    line: "Its left wing never healed.",
+    count: 1,
+    say: "",
+  },
+  {
+    kind: "lore",
+    key: "lore-3",
+    id: BRINE,
+    dragon: "Old Mother Brine",
+    line: "Her name is the tide table.",
+    count: 3,
+    say: "",
+  },
+  {
+    kind: "ally",
+    key: "ally",
+    name: "Gertie the Goat",
+    line: "Everyone bleats when the party heals. Silent: drink 1.",
+    say: "",
+  },
+  {
+    kind: "sendin",
+    key: "send-ally",
+    name: "Durla Ironbraid",
+    bonus: "+3",
+    ally: true,
+    say: "",
+  },
+  {
+    kind: "fallen",
+    key: "fallen",
+    name: "Pip the Cabin Boy",
+    stand: false,
+    line: "Pour one out. The drawer drinks 2.",
+    say: "",
+  },
+  {
+    kind: "fallen",
+    key: "fallen-stand",
+    name: "The Frozen Knight",
+    stand: true,
+    line: "The party stands on one heart.",
+    say: "",
+  },
+  {
+    kind: "echo",
+    key: "echo",
+    title: "The Hanged Man Returns",
+    earlier: "The Gallows Tree",
+    say: "",
+  },
+  {
+    kind: "hidden",
+    key: "hidden",
+    line: "It follows you home.",
+    counter: "3 of 8 found",
+    say: "",
+  },
+  { kind: "deed", key: "deed", say: "" },
+  {
+    kind: "dragonmove",
+    key: "move",
+    id: EMBERFANG,
+    dragon: "Emberfang",
+    name: "Fire Breath",
+    enraged: false,
+    say: "",
+  },
+  {
+    kind: "dragonmove",
+    key: "move-enraged",
+    id: RIMECLAW,
+    dragon: "Rimeclaw",
+    name: "Blizzard",
+    enraged: true,
+    say: "",
+  },
+  {
+    kind: "enraged",
+    key: "enraged",
+    id: EMBERFANG,
+    dragon: "Emberfang",
+    line: "Out-roar it.",
+    say: "",
+  },
+  {
+    kind: "entrance",
+    key: "dragon",
+    style: "final",
+    league: false,
+    kicker: "It's awake",
+    title: "Stormcrown",
+    foe: { name: "Stormcrown" },
+    hero: { name: "Wizard" },
+    hearts: 6,
+    max: 12,
+    heartsWord: "hearts",
+    say: "",
+  },
+  {
+    kind: "entrance",
+    key: "region-boss",
+    style: "boss",
+    league: false,
+    kicker: "King's Road boss",
+    title: "The Bridge Troll",
+    foe: { name: "The Bridge Troll" },
+    hero: { name: "Ranger" },
+    hearts: 9,
+    max: 12,
+    heartsWord: "hearts",
+    say: "",
+  },
+  {
+    kind: "evolution",
+    key: "rank",
+    league: false,
+    from: "Ranger",
+    to: "Tracker",
+    kicker: "Ranger ranks up!",
+    change: "+1 to ambush d20s.",
+    line: "Everyone howls.",
+    say: "",
+  },
+];
+
 const gyms = Object.keys(leagueBadges).slice(0, 8);
 // A finished run's record, enough for the endings to lay out.
 const RECORD = {
@@ -354,7 +522,7 @@ export default function Moments() {
   const [playing, setPlaying] = useState<{ m: Moment; n: number } | null>(
     () => {
       const want = params.get("play");
-      const m = SAMPLES.find((s) => s.key === want);
+      const m = [...SAMPLES, ...QUEST].find((s) => s.key === want);
       return m ? { m, n: 0 } : null;
     },
   );
@@ -397,7 +565,7 @@ export default function Moments() {
             <option value={4}>0.25x</option>
           </select>
         </label>
-        {SAMPLES.map((m) => (
+        {[...SAMPLES, ...QUEST].map((m) => (
           <button
             key={m.key}
             type="button"
@@ -425,14 +593,29 @@ export default function Moments() {
           key={`${ending.kind}-${ending.n}`}
           kind={ending.kind}
           record={RECORD}
-          packId="pokemon"
+          packId={params.get("pack") ?? "pokemon"}
           count={64}
+          ballad={
+            params.get("pack") === "dungeon"
+              ? [
+                  "A Lord of Feasts left by the King's Road,",
+                  "felled the Ogre and the Bone Golem,",
+                  "with Gertie the Goat at their side,",
+                  "and slew Stormcrown with 6 hearts to spare.",
+                ]
+              : undefined
+          }
+          singleBlow={params.get("blow") === "1"}
           title={
-            ending.kind === "whiteout"
-              ? ["Whited", "out."]
-              : ending.kind === "wiped"
-                ? ["Party", "wiped."]
-                : ["Last call,", "survived."]
+            params.get("pack") === "dungeon"
+              ? ending.kind === "wiped"
+                ? ["The party", "has fallen."]
+                : ["The dragon", "is slain."]
+              : ending.kind === "whiteout"
+                ? ["Whited", "out."]
+                : ending.kind === "wiped"
+                  ? ["Party", "wiped."]
+                  : ["Last call,", "survived."]
           }
           onDone={() => setEnding(null)}
         />

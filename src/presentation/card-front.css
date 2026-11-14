@@ -1187,3 +1187,32 @@
 .foil-prism .card-foil::after {
   animation-duration: 7s;
 }
+
+/* A coin's face on the card (The Quest 2.1): a gold oval with its word. */
+.dice-result-face.coin-result {
+  min-width: auto;
+  padding-inline: 0.8em;
+  border-radius: 999px;
+  color: #4a2c00;
+  border-color: #c9962e;
+  background: radial-gradient(
+    circle at 35% 30%,
+    #fff3c2,
+    #e7b347 58%,
+    #a26e16
+  );
+  box-shadow:
+    0 2px 5px rgb(40 20 0 / 0.35),
+    inset 0 0 0 2px #f7e3a0;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.dice-result-face.coin-result.tails {
+  background: radial-gradient(
+    circle at 35% 30%,
+    #f1e6cf,
+    #b9a27a 58%,
+    #6a5636
+  );
+  border-color: #8d7650;
+}

@@ -75,7 +75,21 @@ export function spendLoot(
       );
       return used;
     case "die":
-      return { ...used, roll: null };
+      // The Quest 2.1: the Lucky Coin is flipped. Heads, the reroll is
+      // made twice and the better kept (`cardEdge`); tails, a plain one.
+      return s.quest!.coin
+        ? {
+            ...used,
+            roll: null,
+            quest: {
+              ...used.quest,
+              party: {
+                ...used.quest.party,
+                coin: { face: random() < 0.5 ? 1 : 2, for: "luck" },
+              },
+            },
+          }
+        : { ...used, roll: null };
     case "smoke":
       return discard(used, random, "fled");
     case "candy":

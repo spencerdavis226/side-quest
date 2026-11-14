@@ -4,6 +4,9 @@ import {
   createSession,
   currentCard,
   finaleStage,
+  awaitingPress,
+  cashOut,
+  settleBattle,
   takeOffer,
   type Random,
 } from "../src/game/engine";
@@ -53,14 +56,30 @@ const at = (s: SessionState, step: number, deeds: string[] = []) =>
     },
   });
 /** Put the third region's last card aside (a won roll, or any plaque). */
-const pass = (s: SessionState) => {
+const passOnce = (s: SessionState) => {
   const card = currentCard(s);
   if (card.offers?.length) return takeOffer(s, card.offers.length - 1);
-  if (card.dice)
-    return advance(
-      returnToCard(rollDice(s, () => (19 - 0.5) / card.dice!.sides)),
+  // A trial settled at the table: won.
+  if (card.battle && !card.dice) return settleBattle(s, true);
+  if (card.dice) {
+    // A winning face: 19 on a d20, the top face of a d6 or a coin.
+    const sides = card.dice.sides;
+    const rolled = returnToCard(
+      rollDice(s, () => (Math.min(19, sides) - 0.5) / sides),
     );
+    // A gamble won: the table walks away with it.
+    return awaitingPress(rolled) ? cashOut(rolled) : advance(rolled);
+  }
   return advance(s);
+};
+
+/** The same, until the run moves on (an ambush is dealt twice). */
+const pass = (s: SessionState) => {
+  const step = s.quest!.step;
+  let next = passOnce(s);
+  for (let i = 0; i < 4 && next.quest!.step === step; i++)
+    next = passOnce(advance(next));
+  return next;
 };
 
 describe("deeds", () => {

@@ -96,9 +96,14 @@ const deal = (s: SessionState, id: string): SessionState => {
 /** What the party brought to the dragon (Phase 4): its lore and its
  * living allies, by run seed, for the main runs only. */
 const atDragon = new Map<number, { lore: number; allies: number }>();
-function playRun(seed: number, adventurer?: string) {
+function playRun(seed: number, adventurer?: string, heroic = false) {
   const random = seeded(seed);
-  let s = createSession(crawl, cards, packs, random);
+  let s = createSession(
+    heroic ? { ...crawl, heroic: true } : crawl,
+    cards,
+    packs,
+    random,
+  );
   if (adventurer) s = deal(s, `dungeon.class-${adventurer}`);
   const use = (item: Loot) => {
     if (canUseLoot(s, item)) s = spendLoot(s, item, random);
@@ -107,7 +112,7 @@ function playRun(seed: number, adventurer?: string) {
   for (let guard = 0; guard < 500 && s.phase !== "complete"; guard++) {
     s = advance(s, random);
     const card = currentCard(s);
-    if (!adventurer && card.lairFight && !atDragon.has(seed))
+    if (!adventurer && !heroic && card.lairFight && !atDragon.has(seed))
       atDragon.set(seed, {
         lore: party(s).lore ?? 0,
         allies: partyTeam(s.quest).filter((m) => m.ally).length,
@@ -213,6 +218,11 @@ function playRun(seed: number, adventurer?: string) {
     if (card.dice) {
       if (!s.roll) s = rollDice(s, random);
       s = returnToCard(s);
+      // The Quest 2.1: how often a swing at the dragon lands.
+      if (!adventurer && !heroic && card.lairFight && card.dice.sides === 20) {
+        lairSwings.all++;
+        if (rollWins(card.dice, s.roll!.values, s.roll!)) lairSwings.hit++;
+      }
       if (card.battle && !rollWins(card.dice, s.roll!.values, s.roll!)) {
         use("die");
         if (!s.roll) s = returnToCard(rollDice(s, random));
@@ -241,6 +251,8 @@ function playRun(seed: number, adventurer?: string) {
   return s;
 }
 
+/** Swings at the dragon across every run, and those that landed. */
+const lairSwings = { all: 0, hit: 0 };
 // For tuning: QUEST_RUNS=1000 plays fewer runs (the bands then wobble).
 const RUNS = Number(process.env.QUEST_RUNS ?? 4000);
 // The tests below read thousands of runs; beside the other harness in a
@@ -254,6 +266,7 @@ const slim = (s: SessionState, i: number): SessionState => {
   if (i < 50) full.push(s);
   return { ...s, cards: [] };
 };
+const slimRun = (s: SessionState): SessionState => ({ ...s, cards: [] });
 const runs = Array.from({ length: RUNS }, (_, i) => slim(playRun(i + 1), i));
 const rate = (group: SessionState[]) =>
   group.filter((s) => questRecord(s)!.won).length / group.length;
@@ -341,9 +354,13 @@ it("the dragon battle is the run's last hard fight, never a wall", () => {
   const brought = [...atDragon.values()];
   const meanLore = brought.reduce((a, b) => a + b.lore, 0) / brought.length;
   const withAlly = brought.filter((b) => b.allies > 0).length / brought.length;
+  const landed = lairSwings.hit / lairSwings.all;
   console.log(
-    `at the dragon: ${meanLore.toFixed(2)} lore on average; an ally alive in ${pct(withAlly)}`,
+    `at the dragon: ${meanLore.toFixed(2)} lore on average; an ally alive in ${pct(withAlly)}; ` +
+      `${pct(landed)} of swings land`,
   );
+  // The Quest 2.1: the fight is hits traded, not a wall of misses.
+  expect(landed).toBeGreaterThan(0.4);
   expect(atLair.length / RUNS).toBeGreaterThan(0.45);
   expect(atLair.length / RUNS).toBeLessThan(0.65);
   expect(meanLore).toBeGreaterThan(1);
@@ -467,4 +484,17 @@ it("the joke classes are the worst adventurers, and still win now and then", () 
     expect(r, name).toBeGreaterThan(0.01);
     expect(r, name).toBeLessThan(Math.min(0.1, worst));
   }
+}, 120_000);
+
+it("Heroic is much harder, and still winnable (The Quest 2.1)", () => {
+  // 2 fewer hearts, a scale more, enraged from the first round, region
+  // fights a point harder: between 5% and 20% (normal play: 18% to 40%).
+  const n = Math.max(400, Math.round(RUNS / 4));
+  const heroic = Array.from({ length: n }, (_, i) =>
+    slimRun(playRun(50_000 + i, undefined, true)),
+  );
+  const won = rate(heroic);
+  console.log(`heroic (${n} runs): won ${(won * 100).toFixed(1)}%`);
+  expect(won).toBeGreaterThan(0.05);
+  expect(won).toBeLessThan(0.2);
 }, 120_000);

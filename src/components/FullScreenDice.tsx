@@ -61,12 +61,24 @@ export default function FullScreenDice({
     stage.current = null;
     setStatus("loading");
     setStopReason("");
-    ready.current = import("../presentation/dice/library")
-      .then(({ createDiceStage }) =>
-        current()
-          ? createDiceStage(`#${CSS.escape(stageId)}`, colors.current)
-          : null,
-      )
+    // A coin (The Quest 2.1) has its own stage, minted for the pack.
+    const coin = card.dice?.sides === 2;
+    const quest = card.id.startsWith("dungeon.");
+    ready.current = (
+      coin
+        ? import("../presentation/coin/stage").then(
+            (m) => () =>
+              m.createCoinStage(
+                `#${CSS.escape(stageId)}`,
+                quest ? m.QUEST_COIN : m.TAVERN_COIN,
+              ) as Promise<Stage>,
+          )
+        : import("../presentation/dice/library").then(
+            (m) => () =>
+              m.createDiceStage(`#${CSS.escape(stageId)}`, colors.current),
+          )
+    )
+      .then((create) => (current() ? create() : null))
       .then((created) => {
         if (!current()) {
           created?.dispose();
@@ -288,9 +300,15 @@ export default function FullScreenDice({
       </div>
       {staticResult && (
         <div className="roll-static-result">
-          {roll.values.map((value, index) => (
-            <span key={index}>{value}</span>
-          ))}
+          {roll.values.map((value, index) =>
+            card.dice?.sides === 2 ? (
+              <span key={index} className="coin-face">
+                {value === 2 ? "Heads" : "Tails"}
+              </span>
+            ) : (
+              <span key={index}>{value}</span>
+            ),
+          )}
           {roll.dropped?.map((value, index) => (
             <span key={`dropped-${index}`} className="dropped">
               {value}

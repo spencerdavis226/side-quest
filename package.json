@@ -32,7 +32,8 @@
   "dependencies": {
     "@3d-dice/dice-box-threejs": "0.0.12",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "three": "^0.143.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -40,6 +41,7 @@
     "@types/node": "^22.0.0",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
+    "@types/three": "^0.143.0",
     "@vitejs/plugin-react": "^4.5.0",
     "eslint": "^10.12.0",
     "eslint-plugin-react-hooks": "^7.1.1",

@@ -1,6 +1,6 @@
 # src/presentation/dice — dice renderer adapter
 
-The only renderer is `@3d-dice/dice-box-threejs`, lazy-loaded through `library.ts` (`createDiceStage`) and used by `src/components/FullScreenDice.tsx`. Do not add a second renderer or a CDN asset.
+The only dice renderer is `@3d-dice/dice-box-threejs` (a coin, `sides: 2`, uses `src/presentation/coin/stage.ts` instead: same contract, no physics, the spin solved from the saved face), lazy-loaded through `library.ts` (`createDiceStage`) and used by `src/components/FullScreenDice.tsx`. Do not add a second renderer or a CDN asset.
 
 - Outcomes come from `src/game/dice.ts` and are committed before the throw. The adapter records the library's own pre-simulation, replays it as a bounded 1.5–2.6 s trajectory (`trajectory.ts`), and checks that the final upward faces equal the saved values.
 - Never change per-body damping or sleep between the pre-simulation and the replay: the forced face diverges.

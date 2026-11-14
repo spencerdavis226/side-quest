@@ -105,7 +105,7 @@ export const RARE_COUNT = 24;
 /** The rest of the Chronicle's "of n": classes (the joke ones too, the
  * Dragonslayer not), echoes and hidden results. */
 export const CLASS_COUNT = 18;
-export const ECHO_COUNT = 10;
+export const ECHO_COUNT = 11;
 export const SECRET_COUNT = 8;
 /** A hidden result's kind: every region's mimic hides the same one
  * (Chester), so they count once. */

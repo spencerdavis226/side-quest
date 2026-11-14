@@ -44,7 +44,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       "The Gallows Tree",
       "A man on the gallows swears he's innocent. Everyone votes: guilty or not.",
       [
-        { label: "Free him · drink 2", heal: 1, deed: "freed" },
+        { label: "Free him", cost: 1, deed: "freed" },
         { label: "Ride on", deed: "rode-on" },
       ],
     ),
@@ -66,7 +66,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       [
         { label: "Pay the toll", cost: 1, loot: "smoke" },
         { label: "Sneak round", elite: true },
-        { label: "Bow · drink 3" },
+        { label: "Bow · drink 3", heal: 1 },
       ],
     ),
   ],
@@ -112,7 +112,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       6,
       "sunken-chapel",
       "The Sunken Chapel",
-      "A chapel up to its windows in mud, and the bell still rings. Everyone says 'ding'.",
+      "A chapel up to its windows in mud, and the bell still rings. Last to bow their head drinks 2.",
       [
         { label: "Wade in", elite: true },
         { label: "Light a candle", heal: 1 },
@@ -149,7 +149,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       1,
       "dead-ferryman",
       "The Dead Ferryman",
-      "He'll row you past the worst of the crypt. Everyone closes their eyes for the crossing.",
+      "He'll row you past the worst of the crypt. Eyes shut for the crossing; first to peek drinks 2.",
       [
         { label: "Pay him", cost: 1, loot: "smoke" },
         { label: "Walk" },
@@ -164,7 +164,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       1,
       "hall-of-kings",
       "The Hall of Kings",
-      "Twelve dead kings on twelve thrones, one empty. The drawer stares at it a little too long.",
+      "Twelve dead kings on twelve thrones, one empty. The drawer names who here would sit in it.",
       [
         { label: "Sit in it", elite: true },
         { label: "Bow to each", heal: 1 },
@@ -205,7 +205,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       4,
       "the-lift",
       "The Lift",
-      "A cage on a rusty chain, or a thousand stairs down. Everyone listens to it creak.",
+      "A cage on a rusty chain, or a thousand stairs. Everyone creaks like it; worst creak drinks 2.",
       [{ label: "Ride it", elite: true }, { label: "Stairs · drink 2" }],
     ),
     landmark(
@@ -263,7 +263,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       5,
       "bone-road",
       "The Bone Road",
-      "Empty armor all the way down to {dragon}. Everyone salutes the ones who came first.",
+      "Empty armor all the way down to {dragon}. Last to salute the fallen drinks 2.",
       [
         { label: "Shield · drink 2", loot: "shield" },
         { label: "Read a journal", cost: 1, ...LORE },
@@ -313,7 +313,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       8,
       "wind-shrine",
       "The Wind Shrine",
-      "Prayer flags, and an old monk who has seen {dragon}. Everyone bows to the wind.",
+      "Prayer flags, and an old monk who has seen {dragon}. Last to bow to the wind drinks 2.",
       [
         { label: "Ask him · drink 2", ...LORE },
         { label: "Hang a flag", heal: 1 },
@@ -332,8 +332,11 @@ export const landmarks: Record<string, CardDefinition[]> = {
       2,
       "bell-reef",
       "The Bell Reef",
-      "Ships' bells hung on the reef by {dragon}. Everyone rings one: 'ding'.",
-      [{ label: "Ring one", elite: true }, { label: "Row past" }],
+      "Ships' bells hung on the reef by {dragon}. Everyone clinks a glass; last clink drinks 2.",
+      [
+        { label: "Ring one", elite: true },
+        { label: "Row past", heal: 1 },
+      ],
     ),
     approach(
       2,
@@ -349,11 +352,11 @@ export const landmarks: Record<string, CardDefinition[]> = {
       2,
       "last-lighthouse",
       "The Last Lighthouse",
-      "The keeper is leaving before {dragon} comes back. Everyone waves goodbye to him.",
+      "The keeper is leaving before {dragon} comes back. Last to wave him goodbye drinks 2.",
       [
         {
           label: "Take his lamp",
-          boon: trinket("Keeper's Lamp", { roll: { trap: 2 } }),
+          boon: trinket("Keeper's Lamp", { roll: { boss: 1 } }),
         },
         { label: "Share his rum", heal: 2 },
       ],

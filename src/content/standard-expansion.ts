@@ -1,5 +1,5 @@
 import type { CardDefinition, Category, DiceDefinition } from "../game/types";
-import { cardFactory, roll, rollTable } from "./author";
+import { cardFactory, flip, roll, rollTable } from "./author";
 
 /**
  * The generated standard deck. The 2026-10-07 rewrite cut the bare "roll d6,
@@ -355,6 +355,95 @@ const drafts: Draft[] = [
     "Formal Night",
     "rule",
     "Until your next turn, everyone addresses others as my liege. Slip: drink 2.",
+  ],
+  // --- The coin (The Quest 2.1): one flip, two lines -----------------------
+  [
+    "coin-double-nothing",
+    "Double or Nothing",
+    "sip",
+    "You owe the table 2 drinks. Flip the coin to double it or dodge it.",
+    flip("Tails. Doubled. Drink 4.", "Heads. Nothing. Give 2 instead."),
+  ],
+  [
+    "coin-sudden-death",
+    "Sudden Death",
+    "challenge",
+    "You and the player across from you, one coin. Stare each other down, then flip it.",
+    flip("Tails. You drink 3.", "Heads. They drink 3."),
+  ],
+  [
+    "coin-the-decider",
+    "The Decider",
+    "group",
+    "The table can't agree on anything. Flip the coin to settle which half is wrong.",
+    flip(
+      "Tails. Everyone on your right drinks 2.",
+      "Heads. Everyone on your left drinks 2.",
+    ),
+  ],
+  [
+    "coin-two-faced",
+    "Two-Faced",
+    "challenge",
+    "Say something nice about your left neighbor. Then flip the coin.",
+    flip(
+      "Tails. You lied. Drink 2 and say what you really think.",
+      "Heads. You meant it. They give 2.",
+    ),
+  ],
+  [
+    "coin-heads-you-win",
+    "Heads You Win",
+    "sip",
+    "Heads you win, tails everyone else does. Flip the coin.",
+    flip("Tails. Everyone else gives you 1 each.", "Heads. Give 4."),
+  ],
+  [
+    "coin-bad-penny",
+    "Bad Penny",
+    "sip",
+    "A bad penny always turns up, and tonight it's turned up for you. Flip the coin.",
+    flip(
+      "Tails. It's yours. Drink 3.",
+      "Heads. It's someone else's problem. Give 3.",
+    ),
+  ],
+  [
+    "coin-wishing-well",
+    "Wishing Well",
+    "group",
+    "Make a wish out loud, then flip the coin into the well.",
+    flip(
+      "Tails. Denied. Drink 2 and wish smaller.",
+      "Heads. Granted. Everyone else drinks 2 to your wish.",
+    ),
+  ],
+  [
+    "coin-the-ref",
+    "The Ref",
+    "challenge",
+    "You're the ref. Point at two players, one hand each, then flip the coin for kick-off.",
+    flip(
+      "Tails. Your left hand's player drinks 3.",
+      "Heads. Your right hand's player drinks 3.",
+    ),
+  ],
+  [
+    "coin-fifty-fifty",
+    "Fifty-Fifty",
+    "group",
+    "Half the table is safe. Hands freeze where they are, then flip the coin.",
+    flip(
+      "Tails. Everyone holding a drink in their left hand drinks 2.",
+      "Heads. Everyone holding a drink in their right hand drinks 2.",
+    ),
+  ],
+  [
+    "coin-heads-or-tails",
+    "Heads or Tails",
+    "group",
+    "Everyone puts both hands on their head or on their tail. Then flip the coin.",
+    flip("Tails. Hands on tails drink 2.", "Heads. Hands on heads drink 2."),
   ],
 ];
 

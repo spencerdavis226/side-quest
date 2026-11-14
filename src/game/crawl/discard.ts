@@ -170,6 +170,11 @@ function discardCard(
   sent?: string,
 ): SessionState {
   s = settleThrow(s);
+  // A coin flipped off the card before (The Quest 2.1) is old news.
+  if (s.quest?.party?.coin) {
+    const { coin: _coin, ...rest } = s.quest.party;
+    s = { ...s, quest: { ...s.quest, party: rest } };
+  }
   const history = { previousRoll: s.roll, roll: null };
   const card = currentCard(s);
   const discarded = s.discarded + 1,
@@ -261,10 +266,15 @@ function discardCard(
     // falls.
     const need = hitsNeeded(q, card);
     if (need && outcome !== "fled") {
-      const hits = Math.min(
+      let hits = Math.min(
         need,
         next.hits + (outcome === "won" ? (nat === 20 ? 2 : 1) : 0),
       );
+      // The Quest 2.1: the dragon never falls to its contest. A won
+      // contest that would break the last scale leaves it, and the next
+      // swing is rolled twice (`duel.staggered`).
+      const staggered = !!duel?.contest && hits >= need;
+      if (staggered) hits = need - 1;
       if (hits < need)
         return {
           ...s,
@@ -281,7 +291,7 @@ function discardCard(
               rounds: next.rounds + (outcome === "won" ? 1 : 0),
               // The dragon's next round, and its move, dealt with it.
               ...(raw?.lairFight
-                ? { duel: nextDuel(q, raw, duel, hits, random) }
+                ? { duel: nextDuel(q, raw, duel, hits, random, staggered) }
                 : {}),
             },
           },

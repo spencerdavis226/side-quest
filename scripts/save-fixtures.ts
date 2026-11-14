@@ -374,6 +374,52 @@ const situations: [string, GameConfig, Find][] = [
       s.quest!.step > 16 &&
       party(s).hearts < party(s).max,
   ],
+  // The Quest 2.1: the enrage contest on a coin (flipped, on the card), a
+  // Lucky Coin just
+  // flipped, a road taken by the coin, a dragon six scales down, a Realms
+  // fight settled by a coin, and a plain game's coin card.
+  [
+    "realms-contest-coin",
+    crawl,
+    (s) =>
+      s.phase === "revealed" &&
+      !!party(s).duel?.contest &&
+      currentCard(s).dice?.sides === 2 &&
+      !!s.roll?.returned,
+  ],
+  [
+    "realms-lucky-coin-flip",
+    crawl,
+    (s) => party(s).coin?.for === "luck" && !s.roll,
+  ],
+  [
+    "realms-lucky-coin-rerolled",
+    crawl,
+    (s) => party(s).coin?.for === "luck" && !!s.roll?.returned,
+  ],
+  ["realms-road-flipped", crawl, (s) => party(s).coin?.for === "road"],
+  [
+    "realms-dragon-six-down",
+    crawl,
+    (s) => s.phase === "revealed" && !!party(s).duel && party(s).hits >= 6,
+  ],
+  [
+    "realms-coin-fight",
+    crawl,
+    (s) =>
+      s.phase === "revealed" &&
+      currentCard(s).dice?.sides === 2 &&
+      !party(s).duel &&
+      !!s.roll?.returned,
+  ],
+  [
+    "core-coin-flipped",
+    standard,
+    (s) =>
+      s.phase === "revealed" &&
+      currentCard(s).dice?.sides === 2 &&
+      !!s.roll?.returned,
+  ],
   [
     "league-catch-beat",
     league,

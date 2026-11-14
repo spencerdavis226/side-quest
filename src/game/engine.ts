@@ -298,11 +298,14 @@ export function createSession(
           : {}),
         ...(variants?.length
           ? {
-              variants: variants.map(({ deeds, cardIds, harder }) => ({
-                deeds: [...deeds],
-                cards: snapshot(cardIds),
-                ...(harder ? { harder } : {}),
-              })),
+              variants: variants.map(
+                ({ deeds, cardIds, harder, fallback }) => ({
+                  deeds: [...deeds],
+                  cards: snapshot(cardIds),
+                  ...(harder ? { harder } : {}),
+                  ...(fallback ? { fallback } : {}),
+                }),
+              ),
             }
           : {}),
         ...(optional ? { optional } : {}),
@@ -326,6 +329,7 @@ export function createSession(
           }
         : {}),
       ...(config.heroic && rules.party ? { heroic: true as const } : {}),
+      ...(rules.party?.coin ? { coin: true as const } : {}),
     };
   }
   return {

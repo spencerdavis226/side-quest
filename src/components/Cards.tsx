@@ -339,20 +339,34 @@ export function CardFace({
             <div className="dice-result">
               <div
                 className="dice-result-equation"
-                aria-label={`${roll!.edge ? `Rolled with ${roll!.edge}: kept ` : "Rolled "}${roll!.values.join(" plus ")}${
-                  roll!.values.length > 1 ? `, total ${roll!.total}` : ""
-                }${
-                  roll!.bonus
-                    ? `, ${roll!.bonus < 0 ? "minus" : "plus"} ${Math.abs(roll!.bonus)}, reads ${readTotal(card.dice!, roll!.values, roll!)}`
-                    : ""
-                }${roll!.dropped ? `; dropped ${roll!.dropped.join(" plus ")}` : ""}`}
+                aria-label={
+                  card.dice!.sides === 2
+                    ? `Flipped ${roll!.values[0] === 2 ? "heads" : "tails"}`
+                    : `${roll!.edge ? `Rolled with ${roll!.edge}: kept ` : "Rolled "}${roll!.values.join(" plus ")}${
+                        roll!.values.length > 1 ? `, total ${roll!.total}` : ""
+                      }${
+                        roll!.bonus
+                          ? `, ${roll!.bonus < 0 ? "minus" : "plus"} ${Math.abs(roll!.bonus)}, reads ${readTotal(card.dice!, roll!.values, roll!)}`
+                          : ""
+                      }${roll!.dropped ? `; dropped ${roll!.dropped.join(" plus ")}` : ""}`
+                }
               >
                 <span className="dice-result-faces" aria-hidden="true">
-                  {roll!.values.map((value, index) => (
-                    <span className="dice-result-face" key={index}>
-                      {value}
-                    </span>
-                  ))}
+                  {roll!.values.map((value, index) =>
+                    card.dice!.sides === 2 ? (
+                      // A coin (The Quest 2.1): the face, struck in gold.
+                      <span
+                        className={`dice-result-face coin-result ${value === 2 ? "heads" : "tails"}`}
+                        key={index}
+                      >
+                        {value === 2 ? "Heads" : "Tails"}
+                      </span>
+                    ) : (
+                      <span className="dice-result-face" key={index}>
+                        {value}
+                      </span>
+                    ),
+                  )}
                 </span>
                 {/* A starter's bonus on a crawl d20: the face, the bonus, and
                     the total the card reads. */}

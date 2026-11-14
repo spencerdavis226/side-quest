@@ -21,6 +21,8 @@ const road = (
   offers: [
     { label: a, route: 0 },
     { label: b, route: 1 },
+    // The Quest 2.1: a split vote goes to the coin.
+    { label: "Flip for it", flip: true },
   ],
 });
 

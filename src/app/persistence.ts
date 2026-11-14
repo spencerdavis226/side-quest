@@ -231,6 +231,7 @@ function validateQuest(s: SessionState) {
     q.step >= q.finale.length ||
     // Heroic (The Quest 2.0 Phase 7) only with its config.
     (q.heroic !== undefined && (q.heroic !== true || !s.config.heroic)) ||
+    (q.coin !== undefined && (q.coin !== true || !q.party)) ||
     (!q.due && q.step !== 0) ||
     // A crawl's rooms are also its pack's deck cards, never dealt in a crawl.
     (!q.party && pool.some((c) => s.cards.some((d) => d.id === c.id)))
@@ -309,6 +310,12 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
         ))) ||
     // Dragon lore (The Quest 2.0 Phase 4): one to three.
     (p.lore !== undefined && (!whole(p.lore, 1) || p.lore > 3)) ||
+    // The Quest 2.1: a coin just flipped.
+    (p.coin !== undefined &&
+      (!p.coin ||
+        typeof p.coin !== "object" ||
+        (p.coin.face !== 1 && p.coin.face !== 2) ||
+        (p.coin.for !== "luck" && p.coin.for !== "road"))) ||
     // Deeds (Phase 6): short names, each once; found: cards already dealt.
     (p.deeds !== undefined &&
       (!Array.isArray(p.deeds) ||
@@ -402,6 +409,8 @@ function badDuel(s: SessionState, duel: NonNullable<PartyState["duel"]>) {
     (duel.contest !== undefined &&
       (duel.contest !== true || duel.move !== 0 || !!duel.enraged)) ||
     (duel.enraged !== undefined && duel.enraged !== true) ||
+    (duel.staggered !== undefined &&
+      (duel.staggered !== true || !!duel.contest)) ||
     (duel.prev !== undefined && !round(duel.prev))
   );
 }

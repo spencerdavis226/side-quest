@@ -24,7 +24,8 @@ export interface HiddenReward {
 export interface DiceDefinition {
   version: 1;
   count: number;
-  sides: 6 | 20;
+  /** 2 is a coin (The Quest 2.1): one only, 2 reads heads and 1 tails. */
+  sides: 2 | 6 | 20;
   instruction?: string;
   /** Replaces the normal instruction when every die shows the same face. */
   doubles?: string;
@@ -188,7 +189,14 @@ export interface CardDefinition {
     calm: DragonMove[];
     enraged: DragonMove[];
     /** The whole table's contest; a loss costs `damage` hearts. */
-    enrage: { rules: string; damage: number };
+    enrage: {
+      rules: string;
+      damage: number;
+      /** The Quest 2.1: the contest ends on a coin flip (heads, a scale
+       * breaks; tails, `damage` hearts) in place of Won and Lost plaques.
+       * Snapshots from before have none and keep the plaques. */
+      flip?: true;
+    };
     /** Weak scale, fear, true name (lore arrives in Phase 4). */
     lore: [string, string, string];
   };
@@ -353,6 +361,9 @@ export interface Offer {
   /** The Quest 2.0 Phase 5: the road chosen (0 or 1) on a `choose` slot's
    * card; the other road's stages leave the run. */
   route?: 0 | 1;
+  /** The Quest 2.1: on a road card, a coin picks the road (heads the
+   * first, tails the second; `party.coin`). */
+  flip?: true;
   /** The card's `jinx` lands only when this plaque is taken (never when
    * the card is put aside another way). */
   jinx?: true;
@@ -445,7 +456,13 @@ export interface QuestStage {
    * group whose deeds the party holds (picked at random among them), its
    * battle `harder` by that much. None held: the pick made at game start,
    * or, with `optional`, the stage leaves the run. */
-  variants?: { deeds: string[]; cardIds: string[]; harder?: number }[];
+  variants?: {
+    deeds: string[];
+    cardIds: string[];
+    harder?: number;
+    /** The Quest 2.1: used only when no other variant's deeds are held. */
+    fallback?: true;
+  }[];
   optional?: true;
 }
 /** A run's place in the finale: one stage, or `oneOf` a set of routes (each
@@ -486,7 +503,12 @@ export interface PackQuest {
    * Retired systems (2026-10-31: powers, knacks, floor rules, the Cup, the
    * Quaff, curses, the Tera Orb) are dropped from saves by `retireSystems`
    * in `persistence.ts`. */
-  party?: { hearts: number };
+  party?: {
+    hearts: number;
+    /** The Quest 2.1: the Lucky Coin is flipped when it is used (heads,
+     * the reroll is made twice and the better kept). */
+    coin?: true;
+  };
 }
 /** A quest's progress in one game. `stages` snapshots each stage's pool and
  * `finale` holds the cards picked at the start, in the order they are dealt.
@@ -517,7 +539,12 @@ export interface QuestState {
     /** Phase 6: the rares, the variants, `optional`, and the extra need
      * the variant dealt brings. */
     rare?: { odds: number; cards: CardDefinition[] };
-    variants?: { deeds: string[]; cards: CardDefinition[]; harder?: number }[];
+    variants?: {
+      deeds: string[];
+      cards: CardDefinition[];
+      harder?: number;
+      fallback?: true;
+    }[];
     optional?: true;
     harder?: number;
   }[];
@@ -527,6 +554,8 @@ export interface QuestState {
   /** The Quest 2.0 Phase 7: Heroic mode (`GameConfig.heroic`), read by the
    * engine without the config. */
   heroic?: true;
+  /** The Quest 2.1: this run's Lucky Coin is flipped (`PackQuest.party.coin`). */
+  coin?: true;
   finale: string[];
   step: number;
   /** Battles lost so far. Each was a draw that took no deck position or
@@ -601,11 +630,19 @@ export interface PartyState {
    * is the enrage contest, whether the dragon is enraged, the swings made
    * so far, and the round just put aside for Previous Card. When the
    * dragon falls or the party wipes, `prev` is that last round. */
+  /** The Quest 2.1: a coin just flipped off a card (2 heads, 1 tails): a
+   * Lucky Coin (`luck`: heads gives this card's reroll the edge) or a road
+   * card's "Flip for it" (`road`: news until the next put-aside). */
+  coin?: { face: 1 | 2; for: "luck" | "road" };
   duel?: {
     move: number;
     swings: number;
     contest?: true;
     enraged?: true;
+    /** The Quest 2.1: a won contest that would have broken the last scale
+     * left it instead; this round's swing is rolled twice, the better
+     * kept. */
+    staggered?: true;
     prev?: { move: number; enraged?: true } | "contest";
   };
 }
