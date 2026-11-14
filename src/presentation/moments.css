@@ -6,6 +6,10 @@
 
 .moment {
   --m: 1;
+  /* Each moment's length, from its stage (`Stage` sets --stage-len); a
+     moment's own rule may set --len itself. The Quest 2.0's moments read
+     --len and set none, so until The Quest 2.1 none of them animated. */
+  --len: var(--stage-len, 1s);
   position: fixed;
   inset: 0;
   z-index: var(--z-moment);
@@ -5495,18 +5499,11 @@
   animation: enraged-dark var(--len) ease both;
 }
 .enraged-eye {
-  width: min(46vw, 220px);
-  height: min(18vw, 86px);
-  border-radius: 50%;
-  background: radial-gradient(
-    ellipse at center,
-    #1a0200 0 18%,
-    #ffb347 20%,
-    #ff4a12 45%,
-    #6e0a02 80%
-  );
-  box-shadow: 0 0 40px rgb(255 80 20 / 0.6);
-  animation: enraged-eye var(--len) ease both;
+  width: min(86vw, 420px);
+  filter: drop-shadow(0 0 30px var(--dragon, #ff4a12));
+}
+.enraged-eye .dragon-eye {
+  --len: calc(var(--m) * 2500ms);
 }
 .enraged-word {
   margin: 0;
@@ -5530,17 +5527,6 @@
     opacity: 1;
   }
 }
-@keyframes enraged-eye {
-  0% {
-    transform: scaleY(1);
-  }
-  40% {
-    transform: scaleY(0.25);
-  }
-  100% {
-    transform: scaleY(0.35);
-  }
-}
 
 /* The dragon revealed (The Quest 2.0 Phase 3, M2): night falls, a wing's
    shadow sweeps across, the name burns in letter by letter. */
@@ -5559,30 +5545,13 @@
 }
 .dragon-wing {
   position: absolute;
-  top: 18%;
+  top: 14%;
   left: 0;
-  width: 160vw;
-  height: 46vh;
-  background: radial-gradient(
-    ellipse 50% 40% at 50% 50%,
-    color-mix(in srgb, var(--dragon-deep, #3a0a04) 70%, black) 0 55%,
-    transparent 72%
-  );
-  clip-path: polygon(
-    0 52%,
-    18% 30%,
-    34% 40%,
-    50% 8%,
-    66% 40%,
-    82% 30%,
-    100% 52%,
-    78% 58%,
-    62% 72%,
-    50% 64%,
-    38% 72%,
-    22% 58%
-  );
-  opacity: 0.85;
+  width: min(140vw, 760px);
+  height: auto;
+  fill: color-mix(in srgb, var(--dragon-deep, #3a0a04) 55%, black);
+  filter: blur(3px) drop-shadow(0 0 30px rgb(0 0 0 / 0.6));
+  opacity: 0.9;
   transform: translateX(-160vw);
   animation: dragon-wing calc(var(--len) * 0.55) ease-in-out both;
   pointer-events: none;
@@ -5624,13 +5593,13 @@
 }
 @keyframes dragon-wing {
   0% {
-    transform: translateX(-160vw);
+    transform: translateX(-110%) translateY(8vh) rotate(8deg) scale(0.8);
   }
-  45% {
-    translate: 0 3px;
+  50% {
+    transform: translateX(-10%) translateY(0) rotate(-2deg) scale(1.05);
   }
   100% {
-    transform: translateX(100vw);
+    transform: translateX(110vw) translateY(-10vh) rotate(-10deg) scale(1.2);
   }
 }
 @keyframes wanted-letter {
@@ -5983,4 +5952,420 @@
   font: italic 500 clamp(15px, 4.2vw, 19px) / 1.3 var(--font-tavern);
   letter-spacing: 0.04em;
   text-shadow: 0 2px 8px #000;
+}
+
+/* The dragon's eye (The Quest 2.1, `DragonEye.tsx`): lids that slide apart
+   or shut, a slit pupil that narrows on the table, a glow that breathes.
+   `--len` is the moment's length. */
+.dragon-eye {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.dragon-eye .eye-lid,
+.dragon-eye .eye-pupil,
+.dragon-eye .eye-glow,
+.dragon-eye .eye-iris {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.dragon-eye .lid-top {
+  transform-origin: 50% 0%;
+}
+.dragon-eye .lid-bottom {
+  transform-origin: 50% 100%;
+}
+/* Open: shut, a crack, then wide; the pupil narrows on the table. */
+.eye-open .lid-top {
+  animation: lid-top-open calc(var(--len) * 0.3) calc(var(--len) * 0.15)
+    cubic-bezier(0.5, 0, 0.2, 1) both;
+}
+.eye-open .lid-bottom {
+  animation: lid-bottom-open calc(var(--len) * 0.3) calc(var(--len) * 0.15)
+    cubic-bezier(0.5, 0, 0.2, 1) both;
+}
+.eye-open .eye-pupil {
+  animation: pupil-narrow calc(var(--len) * 0.22) calc(var(--len) * 0.4)
+    cubic-bezier(0.3, 0, 0.2, 1) both;
+}
+.eye-open .eye-glow {
+  animation: eye-breathe calc(var(--len) * 0.6) calc(var(--len) * 0.2) ease both;
+}
+@keyframes lid-top-open {
+  0% {
+    transform: none;
+  }
+  30% {
+    transform: translateY(-16%);
+  }
+  45% {
+    transform: translateY(-10%);
+  }
+  100% {
+    transform: translateY(-100%);
+  }
+}
+@keyframes lid-bottom-open {
+  0% {
+    transform: none;
+  }
+  30% {
+    transform: translateY(16%);
+  }
+  45% {
+    transform: translateY(10%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+@keyframes pupil-narrow {
+  from {
+    transform: scaleX(1.9);
+  }
+  to {
+    transform: scaleX(0.38);
+  }
+}
+@keyframes eye-breathe {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+  100% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+}
+/* Rage: already open, it widens, then snaps to a hairline, glowing hot. */
+.eye-rage .lid-top {
+  transform: translateY(-100%);
+  animation: lid-top-rage calc(var(--len) * 0.5) ease both;
+}
+.eye-rage .lid-bottom {
+  transform: translateY(100%);
+  animation: lid-bottom-rage calc(var(--len) * 0.5) ease both;
+}
+.eye-rage .eye-pupil {
+  animation: pupil-rage calc(var(--len) * 0.5) calc(var(--len) * 0.08)
+    cubic-bezier(0.7, 0, 0.2, 1) both;
+}
+.eye-rage .eye-glow {
+  animation: eye-flare calc(var(--len) * 0.7) ease both;
+}
+.eye-rage .eye-iris {
+  animation: iris-hot calc(var(--len) * 0.7) ease both;
+}
+@keyframes lid-top-rage {
+  0% {
+    transform: translateY(-45%);
+  }
+  100% {
+    transform: translateY(-62%);
+  }
+}
+@keyframes lid-bottom-rage {
+  0% {
+    transform: translateY(45%);
+  }
+  100% {
+    transform: translateY(62%);
+  }
+}
+@keyframes pupil-rage {
+  0% {
+    transform: scaleX(1.4);
+  }
+  40% {
+    transform: scaleX(1.8);
+  }
+  100% {
+    transform: scaleX(0.16);
+  }
+}
+@keyframes eye-flare {
+  0% {
+    opacity: 0.4;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.35);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+@keyframes iris-hot {
+  from {
+    filter: none;
+  }
+  to {
+    filter: saturate(1.6) brightness(1.25);
+  }
+}
+/* Close: open, then the lids fall shut and the glow dies. */
+.eye-close .lid-top {
+  animation: lid-top-open calc(var(--len) * 0.5) reverse
+    cubic-bezier(0.6, 0, 0.8, 0.4) both;
+  animation-delay: calc(var(--len) * 0.35);
+}
+.eye-close .lid-bottom {
+  animation: lid-bottom-open calc(var(--len) * 0.5) reverse
+    cubic-bezier(0.6, 0, 0.8, 0.4) both;
+  animation-delay: calc(var(--len) * 0.35);
+}
+.eye-close .eye-pupil {
+  transform: scaleX(1.6);
+}
+.eye-close .eye-glow {
+  animation: eye-die var(--len) ease both;
+}
+@keyframes eye-die {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
+
+/* The dragon wakes (M15, The Quest 2.1). */
+.moment-entrance.lair {
+  --len: calc(var(--m) * 4600ms);
+  display: grid;
+  grid-template-rows: 1fr auto auto auto auto 1.2fr;
+  justify-items: center;
+  align-items: center;
+  gap: 10px;
+  padding: 24px 16px;
+}
+.lair-dark {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 38%,
+    color-mix(in srgb, var(--dragon-deep) 35%, #000) 0%,
+    #000 70%
+  );
+  animation: lair-dark var(--len) ease both;
+}
+@keyframes lair-dark {
+  0% {
+    opacity: 0;
+  }
+  8%,
+  88% {
+    opacity: 0.97;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.lair-eye {
+  position: relative;
+  grid-row: 1;
+  align-self: end;
+  width: min(92vw, 460px);
+  filter: drop-shadow(
+    0 0 24px color-mix(in srgb, var(--dragon) 70%, transparent)
+  );
+  animation: lair-fade var(--len) ease both;
+}
+@keyframes lair-fade {
+  0%,
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.lair-kicker {
+  position: relative;
+  grid-row: 2;
+  color: #e9d6b0;
+  font: 700 clamp(14px, 3.8vw, 18px) / 1 var(--font-tavern);
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  animation: wanted-in calc(var(--len) * 0.1) calc(var(--len) * 0.33) ease both;
+}
+.lair-name {
+  position: relative;
+  grid-row: 3;
+  margin: 0;
+  text-align: center;
+  color: var(--dragon);
+  font: 800 clamp(38px, 12vw, 68px) / 1.02 var(--font-card-title);
+  text-shadow:
+    0 0 24px var(--dragon-deep),
+    0 0 4px #000;
+  text-wrap: balance;
+}
+.lair-name span {
+  display: inline-block;
+  white-space: pre;
+  animation: wanted-letter 420ms ease both;
+  animation-delay: calc(var(--len) * 0.4 + var(--i) * 45ms);
+}
+.lair-scales {
+  position: relative;
+  grid-row: 4;
+  display: flex;
+  gap: 6px;
+}
+.lair-scales i {
+  width: 18px;
+  height: 22px;
+  border-radius: 50% 50% 50% 50% / 30% 30% 70% 70%;
+  background: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--dragon) 70%, #fff) 0%,
+    var(--dragon) 45%,
+    var(--dragon-deep) 100%
+  );
+  box-shadow:
+    inset 0 1px rgb(255 240 220 / 0.6),
+    0 0 10px color-mix(in srgb, var(--dragon) 60%, transparent);
+  animation: lair-scale 380ms cubic-bezier(0.3, 1.5, 0.5, 1) both;
+  animation-delay: calc(var(--len) * 0.6 + var(--i) * 70ms);
+}
+@keyframes lair-scale {
+  from {
+    opacity: 0;
+    transform: translateY(-14px) scale(0.4) rotate(-20deg);
+  }
+}
+.lair-tally {
+  position: relative;
+  grid-row: 5;
+  color: #e9d6b0;
+  font: 600 clamp(14px, 3.8vw, 17px) / 1.2 var(--font-tavern);
+  letter-spacing: 0.08em;
+  animation: wanted-in calc(var(--len) * 0.1) calc(var(--len) * 0.72) ease both;
+}
+
+/* The end of the fight (The Quest 2.1, M20 and M21): over the ending's
+   first beats, the dragon's eye, open, then the lids fall and the glow
+   dies. */
+.ending-eye {
+  --len: 2200ms;
+  position: absolute;
+  top: max(2%, var(--top-safe, 0px));
+  left: 50%;
+  width: min(70vw, 340px);
+  translate: -50% 0;
+  z-index: 3;
+  pointer-events: none;
+  filter: drop-shadow(0 0 22px var(--dragon));
+  animation: ending-eye var(--len) ease both;
+}
+@keyframes ending-eye {
+  0% {
+    opacity: 0;
+  }
+  12%,
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+
+/* The dragon's move, by kind (The Quest 2.1). */
+.dragonmove-note {
+  margin-top: 8px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  color: #fff3dc;
+  background: color-mix(in srgb, var(--dragon-deep) 80%, #000);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--dragon) 50%, transparent);
+  font: 700 clamp(12px, 3.4vw, 15px) / 1.2 var(--font-tavern);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  animation: dragonmove-slam var(--len) 80ms cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+.moment-dragonmove {
+  grid-auto-flow: row;
+  align-content: center;
+}
+.dragonmove-breath {
+  position: absolute;
+  inset: -20%;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    color-mix(in srgb, var(--dragon) 75%, transparent) 46%,
+    color-mix(in srgb, #fff1c2 60%, transparent) 50%,
+    color-mix(in srgb, var(--dragon-deep) 70%, transparent) 56%,
+    transparent 72%
+  );
+  mix-blend-mode: screen;
+  animation: dragon-breath calc(var(--len) * 0.7) 120ms ease-in both;
+}
+@keyframes dragon-breath {
+  0% {
+    opacity: 0;
+    transform: translateX(-70%);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(60%);
+  }
+}
+.moment-dragonmove.move-harder .dragon-wing {
+  top: 8%;
+  opacity: 0.75;
+  animation-duration: var(--len);
+}
+.moment-dragonmove.move-easier .dragonmove-name {
+  opacity: 0.8;
+  filter: saturate(0.6);
+}
+/* A swing lands or misses (The Quest 2.1). */
+.moment-swing {
+  pointer-events: none;
+}
+.swing-flash {
+  position: absolute;
+  inset: 0;
+  animation: swing-flash var(--len) ease-out both;
+}
+.moment-swing.hit .swing-flash {
+  background: radial-gradient(
+    circle at 50% 42%,
+    rgb(255 255 255 / 0.75),
+    color-mix(in srgb, var(--dragon) 30%, transparent) 40%,
+    transparent 70%
+  );
+}
+.moment-swing.miss .swing-flash {
+  background: radial-gradient(
+    circle at 50% 50%,
+    transparent 40%,
+    color-mix(in srgb, var(--dragon-deep) 85%, transparent) 100%
+  );
+}
+@keyframes swing-flash {
+  0% {
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }

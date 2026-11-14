@@ -1,4 +1,12 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
+import { dragonColors } from "../presentation/dragon-colors";
+import type { lairScene } from "./crawlTheme";
+
+/** The backdrop couldn't load (offline before it was cached). */
+const NoBackdrop = () => <></>;
+const LairBackdrop = lazy(() =>
+  import("./LairBackdrop").catch(() => ({ default: NoBackdrop })),
+);
 
 /** After this long without a tap the table goes still (owner, 2026-10-18). */
 export const IDLE_MS = 60_000;
@@ -10,11 +18,15 @@ export const IDLE_MS = 60_000;
 export function Atmosphere({
   hidden,
   scene,
+  lair,
 }: {
   hidden: boolean;
   scene?: string;
+  /** The dragon battle in play (The Quest 2.1): its lair, living. */
+  lair?: ReturnType<typeof lairScene>;
 }) {
   const idle = useIdle(IDLE_MS);
+  const [bright, deep] = dragonColors(lair?.id);
   return (
     <div
       className={`atmosphere${hidden ? " suspended" : ""}${idle ? " idle" : ""}`}
@@ -25,6 +37,17 @@ export function Atmosphere({
         <div className="firelight" />
         <div className="candle" />
       </div>
+      {lair && (
+        <Suspense fallback={null}>
+          <LairBackdrop
+            scene={lair.scene}
+            bright={bright}
+            deep={deep}
+            enraged={lair.enraged}
+            paused={hidden || idle}
+          />
+        </Suspense>
+      )}
       <div className="embers">
         {[0, 1, 2, 3, 4, 5].map((i) => (
           <i className={`ember ember-${i}`} key={i} />

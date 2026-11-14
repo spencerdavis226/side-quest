@@ -421,6 +421,7 @@ const QUEST: Moment[] = [
     dragon: "Emberfang",
     name: "Fire Breath",
     enraged: false,
+    effect: "hurt",
     say: "",
   },
   {
@@ -428,8 +429,25 @@ const QUEST: Moment[] = [
     key: "move-enraged",
     id: RIMECLAW,
     dragon: "Rimeclaw",
-    name: "Blizzard",
+    name: "Snow Blind",
     enraged: true,
+    effect: "harder",
+    say: "",
+  },
+  {
+    kind: "swing",
+    key: "swing-hit",
+    id: "dungeon.last-call-lich",
+    hit: true,
+    scales: 1,
+    say: "",
+  },
+  {
+    kind: "swing",
+    key: "swing-miss",
+    id: "dungeon.bartender-below",
+    hit: false,
+    scales: 0,
     say: "",
   },
   {
@@ -452,6 +470,7 @@ const QUEST: Moment[] = [
     hearts: 6,
     max: 12,
     heartsWord: "hearts",
+    dragon: { id: "dungeon.surge-pricing", scales: 7, lore: 2 },
     say: "",
   },
   {
@@ -606,11 +625,16 @@ export default function Moments() {
               : undefined
           }
           singleBlow={params.get("blow") === "1"}
+          dragon={
+            params.get("pack") === "dungeon"
+              ? "dungeon.surge-pricing"
+              : undefined
+          }
           title={
             params.get("pack") === "dungeon"
               ? ending.kind === "wiped"
                 ? ["The party", "has fallen."]
-                : ["The dragon", "is slain."]
+                : ["Stormcrown", "is slain."]
               : ending.kind === "whiteout"
                 ? ["Whited", "out."]
                 : ending.kind === "wiped"

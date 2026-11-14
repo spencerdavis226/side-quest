@@ -1,4 +1,5 @@
 import type {
+  DragonMove,
   Loot,
   PokemonType,
   QuestState,
@@ -11,7 +12,9 @@ import {
   finaleCard,
   finaleStage,
   formEffect,
+  hitsNeeded,
   isBossCard,
+  lairMove,
   natural,
   omenForm,
   partyBoons,
@@ -89,6 +92,9 @@ export type Moment = {
       heartsWord: string;
       /** The badge a gym pays, its art and name. */
       badge?: { name: string; art?: string };
+      /** The Quest 2.1: the dragon's eye opens (its card, its scales and
+       * the lore the party brings). */
+      dragon?: { id: string; scales: number; lore: number };
     }
   | {
       kind: "clash";
@@ -169,7 +175,13 @@ export type Moment = {
       dragon: string;
       name: string;
       enraged: boolean;
+      /** The Quest 2.1: what the move does, for its telegraph: costs
+       * hearts, makes the swing harder or easier, or is the table's alone. */
+      effect?: "hurt" | "harder" | "easier" | "table";
     }
+  /** The Quest 2.1: a swing at the dragon lands (a scale breaks, two on a
+   * natural 20) or misses, as the dice settle. */
+  | { kind: "swing"; id: string; hit: boolean; scales: number }
   /** The dragon's enrage contest turns over: the eye narrows (M18). */
   | { kind: "enraged"; id: string; dragon: string; line: string }
   /** The King's Summons turns over: the dragon is named, and its lair
@@ -214,6 +226,7 @@ export type MomentKind = Moment["kind"];
  * clash must never eat the tap that rolls). */
 export const AMBIENT: ReadonlySet<MomentKind> = new Set([
   "dragonmove",
+  "swing",
   "shadow",
   "map",
   "road",
@@ -235,6 +248,32 @@ export const CUT_ON_MOTION: ReadonlySet<MomentKind> = new Set([
 /** Moments that play over a motion already under way (the omen's reveal
  * covers the card turning; a natural lands as the dice settle). */
 export const OVER_MOTION: ReadonlySet<MomentKind> = new Set(["omen"]);
+
+/** What a dragon's move does, for its telegraph (The Quest 2.1). */
+function moveEffect(move: DragonMove | undefined) {
+  if (!move) return undefined;
+  if (move.damage) return "hurt" as const;
+  if (move.harder === 2) return "harder" as const;
+  if (move.harder === -2) return "easier" as const;
+  return "table" as const;
+}
+
+/** A swing at the dragon settled on the card, keyed to that one roll. */
+function swingKey(s: SessionState | null) {
+  if (!s || s.phase !== "revealed" || !s.roll?.returned) return null;
+  const q = s.quest;
+  const duel = q?.party?.duel;
+  const card = currentCard(s);
+  if (!duel || duel.contest || !card.lairFight || card.dice?.sides !== 20)
+    return null;
+  const hit = rollWins(card.dice, s.roll.values, s.roll);
+  return {
+    key: `${s.discarded}:${q!.party!.hits}`,
+    id: card.id,
+    hit,
+    scales: hit ? (natural(card, s.roll) === 20 ? 2 : 1) : 0,
+  };
+}
 
 /** A d20 natural face up on a returned roll, keyed to that one roll. */
 function naturalKey(s: SessionState | null) {
@@ -352,6 +391,13 @@ export function entranceFor(s: SessionState) {
     badge: gym
       ? { name: `${badgeName(card)} Badge`, art: badgeArt(card.id) }
       : undefined,
+    dragon: card.lairFight
+      ? {
+          id: card.id,
+          scales: hitsNeeded(q, card),
+          lore: party.lore ?? 0,
+        }
+      : undefined,
   };
 }
 
@@ -419,9 +465,22 @@ export function momentsBetween(
         dragon,
         name: card.ribbon,
         enraged: !!duel.enraged,
+        effect: moveEffect(lairMove(q, finaleCard(q!, card.id) ?? card)),
         say: `${dragon}: ${card.ribbon}.`,
       });
   }
+
+  // The Quest 2.1: a swing at the dragon as the dice settle.
+  const swung = swingKey(after);
+  if (swung && swung.key !== swingKey(before)?.key)
+    out.push({
+      kind: "swing",
+      key: `swing:${swung.key}`,
+      id: swung.id,
+      hit: swung.hit,
+      scales: swung.scales,
+      say: "",
+    });
 
   // The Quest 2.0 Phase 3: the Summons names the dragon (M2); a dragon
   // sign's shadow crosses the card (M9).

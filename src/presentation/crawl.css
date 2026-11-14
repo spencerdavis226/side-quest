@@ -2628,3 +2628,29 @@
     opacity: 0;
   }
 }
+
+/* The dragon's card (The Quest 2.1): the frame takes the dragon's colour,
+   the parchment and title band keep theirs, and its edge smoulders. */
+.lair-fight .game-card .study-face::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    radial-gradient(ellipse at 50% 100%, var(--dragon) 0%, transparent 60%),
+    linear-gradient(160deg, var(--dragon) 0%, var(--dragon-deep) 100%);
+  mix-blend-mode: color;
+  opacity: 0.85;
+  /* Everything but the parchment (about inset 27% 9% 10%). */
+  mask:
+    linear-gradient(#000 0 0),
+    linear-gradient(#000 0 0) 50% 73% / 82% 63% no-repeat;
+  mask-composite: exclude;
+}
+.lair-fight .game-card {
+  filter: drop-shadow(
+    0 0 18px color-mix(in srgb, var(--dragon) 45%, transparent)
+  );
+}

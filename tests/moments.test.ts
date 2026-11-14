@@ -3,6 +3,7 @@ import {
   advance,
   createSession,
   currentCard,
+  finaleCard,
   runNames,
   takeOffer,
   type Random,
@@ -164,6 +165,61 @@ describe("moments", () => {
       phase: "revealed",
     }).find((m) => m.kind === "enraged");
     expect(enraged).toMatchObject({ dragon: dragon.title });
+    // The Quest 2.1: the move's telegraph names what it does.
+    const calm = finaleCard(shown.quest!, dragon.id)!.lairFight!.calm[2];
+    expect(move).toMatchObject({
+      effect: calm.damage
+        ? "hurt"
+        : calm.harder === 2
+          ? "harder"
+          : calm.harder === -2
+            ? "easier"
+            : "table",
+    });
+  });
+
+  it("a swing at the dragon lands or misses as the dice settle, once (The Quest 2.1)", () => {
+    const c = createSession(crawl, cards, packs, seeded(5));
+    const last = c.quest!.finale.length - 1;
+    const base = atStep(c, last);
+    const shown = {
+      ...base,
+      phase: "revealed" as const,
+      quest: {
+        ...base.quest!,
+        party: { ...base.quest!.party!, duel: { move: 2, swings: 1 } },
+      },
+    };
+    const dice = currentCard(shown).dice!;
+    const swung = (face: number) =>
+      returnToCard(rollDice(shown, () => (face - 0.5) / dice.sides));
+    const hit = momentsBetween(shown, swung(19)).find(
+      (m) => m.kind === "swing",
+    );
+    expect(hit).toMatchObject({ hit: true, scales: 1 });
+    const crit = momentsBetween(shown, swung(20)).find(
+      (m) => m.kind === "swing",
+    );
+    expect(crit).toMatchObject({ hit: true, scales: 2 });
+    const miss = momentsBetween(shown, swung(2)).find(
+      (m) => m.kind === "swing",
+    );
+    expect(miss).toMatchObject({ hit: false });
+    // Never on a resume, an undo or the same roll seen again.
+    expect(momentsBetween(null, swung(19))).toEqual([]);
+    expect(momentsBetween(shown, swung(19), true)).toEqual([]);
+    expect(
+      momentsBetween(swung(19), swung(19)).some((m) => m.kind === "swing"),
+    ).toBe(false);
+    expect(AMBIENT.has("swing")).toBe(true);
+  });
+
+  it("the dragon's entrance opens its eye, with its scales and the lore brought (The Quest 2.1)", () => {
+    const c = createSession(crawl, cards, packs, seeded(5));
+    const last = c.quest!.finale.length - 1;
+    const e = entranceFor(atStep(c, last));
+    expect(e?.dragon).toMatchObject({ id: c.quest!.finale[last], lore: 0 });
+    expect(e!.dragon!.scales).toBeGreaterThanOrEqual(5);
   });
 
   it("the Summons names the dragon and its lair; a dragon sign's shadow passes (Phase 3)", () => {

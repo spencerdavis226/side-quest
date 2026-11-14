@@ -37,6 +37,7 @@ export function Completion({
   record,
   ballad = [],
   singleBlow = false,
+  dragon,
   news = null,
   mode,
   league = false,
@@ -54,6 +55,9 @@ export function Completion({
   ballad?: string[];
   /** The dragon fell to a natural 20: "With a single blow" over the title. */
   singleBlow?: boolean;
+  /** The Quest 2.1: the run ended at the dragon (slain, or the party
+   * fell to it): its card, named in the title, its eye closing. */
+  dragon?: { id: string; title: string };
   /** What this run just added to the Chronicle (The Quest 2.0 Phase 7),
    * shown only as the table arrives; dragons slain first by title. */
   news?: (Omit<ChronicleNews, "firsts"> & { firsts: string[] }) | null;
@@ -75,7 +79,12 @@ export function Completion({
   const crawl = record?.party;
   const wiped = !!crawl?.wiped;
   const look = crawlTheme(packId);
-  const end = wiped ? look.wiped : look.won;
+  const plain = wiped ? look.wiped : look.won;
+  // The Quest 2.1: the dragon slain is named ("Stormcrown is slain.").
+  const end =
+    dragon && !wiped && packId === "dungeon"
+      ? { ...plain, title: [dragon.title, plain.title[1]] as [string, string] }
+      : plain;
   // Seen once: `celebrate` is the table arriving here, never a reload.
   const [show, setShow] = useState(celebrate);
   if (celebrate && !show) setShow(true);
@@ -119,6 +128,7 @@ export function Completion({
             title={end.title}
             ballad={ballad}
             singleBlow={singleBlow}
+            dragon={packId === "dungeon" ? dragon?.id : undefined}
             onDone={() => setShown(true)}
           />
         </Suspense>

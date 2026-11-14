@@ -1,5 +1,11 @@
 import type { Loot, QuestStage, SessionState, Slot } from "../game/types";
-import { DRAUGHT_DRINKS, DRAUGHT_HEAL, finaleStage } from "../game/engine";
+import {
+  DRAUGHT_DRINKS,
+  DRAUGHT_HEAL,
+  finaleCard,
+  finaleStage,
+  runNames,
+} from "../game/engine";
 import {
   dungeonOmenWords,
   leagueOmenWords,
@@ -553,6 +559,27 @@ export function crawlScene(s: SessionState | null | undefined) {
   if (quest.step >= quest.finale.length) return undefined;
   const scene = crawlTheme(quest.packId).flourish?.scene;
   return scene?.(finaleStage(quest).label);
+}
+
+/** The dragon battle in play (The Quest 2.1): its lair's light, the
+ * dragon's card, and whether it is enraged; none off a lair fight. */
+export function lairScene(s: SessionState | null | undefined) {
+  const quest = s?.quest;
+  if (!quest?.party?.duel || !quest.due || s!.phase === "complete") return;
+  const card = finaleCard(quest, quest.finale[quest.step]);
+  if (!card?.lairFight) return;
+  const lair = runNames(quest).lair ?? "";
+  const scene = /Frozen/.test(lair)
+    ? ("frost" as const)
+    : /Sunken|Coast/.test(lair)
+      ? ("tide" as const)
+      : ("fire" as const);
+  const duel = quest.party.duel;
+  return {
+    scene,
+    id: card.id,
+    enraged: !!(duel.enraged || duel.contest),
+  };
 }
 
 /** A mark's path under `public/`. */
