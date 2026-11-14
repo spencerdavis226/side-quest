@@ -190,7 +190,8 @@ export const classes: CardDefinition[] = [
       {
         title: "Living Legend",
         // A heart less since The Quest 2.0 Phase 3 (2026-11-14): 50%.
-        omen: { hearts: 2, crit: 17, roll: { all: 1 } },
+        // Naturals on 18 since The Quest 2.0 Phase 6 (2026-11-14): 51%.
+        omen: { hearts: 2, crit: 18, roll: { all: 1 } },
       },
     ],
   ),

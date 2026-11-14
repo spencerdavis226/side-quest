@@ -222,6 +222,11 @@ export function replaces(quest: QuestState | undefined, boon: Boon) {
     ? partyBoons(quest).filter((b) => b.boon.slot === boon.slot)
     : [];
 }
+/** A deed the run remembers (The Quest 2.0 Phase 6), once. */
+export const addDeed = (party: PartyState, deed: string): PartyState =>
+  party.deeds?.includes(deed)
+    ? party
+    : { ...party, deeds: [...(party.deeds ?? []), deed] };
 /** One more dragon lore (The Quest 2.0 Phase 4), three at most. */
 export const addLore = (party: PartyState): PartyState => ({
   ...party,
@@ -260,6 +265,8 @@ export function settleParty(
   if ((outcome === null || outcome === "won") && !card.hits) {
     const { loot, heal } = card.reward ?? {};
     if (card.reward?.lore) next = addLore(next);
+    // A won battle's ally (The Quest 2.0 Phase 6: the Dragon Egg).
+    if (card.reward?.ally && card.ally) next = joinTeam(next, card.id);
     const times = outcome === "won" && nat === 20 ? 2 : 1;
     for (let i = 0; i < times; i++)
       if (loot && next.loot.length < size)
@@ -307,6 +314,15 @@ export function settleParty(
     next = { ...next };
     delete next.press;
   }
+  // A deed by how the battle went (The Quest 2.0 Phase 6: the Company's
+  // record, read by the Lair's Door).
+  const deed =
+    outcome === "won"
+      ? card.deed?.won
+      : outcome === "lost"
+        ? card.deed?.lost
+        : undefined;
+  if (deed) next = addDeed(next, deed);
   // A boss's or an ambush's boon comes when it falls (`discard`).
   if (!card.hits && (outcome === null || outcome === "won"))
     next = gainBoon(next, card, quest, spoil);

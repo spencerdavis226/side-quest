@@ -138,10 +138,6 @@ const jinxes: Readonly<Record<string, Jinx>> = {
     name: "Hydrate",
     rule: "The cursed player sips water between every drink. Forgets: drink 1.",
   },
-  "closing-venmo-request": {
-    name: "I Owe You",
-    rule: "The cursed player says 'I'll pay you back' when given a drink. Forgets: drink 1.",
-  },
 };
 
 /** Lay each listed card's jinx (2026-10-25: Pub Crawl's curses became

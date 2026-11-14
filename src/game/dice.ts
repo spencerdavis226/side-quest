@@ -3,12 +3,14 @@ import type {
   DiceDefinition,
   DiceOutcome,
   DiceRoll,
+  HiddenReward,
   SessionState,
 } from "./types";
 import {
   assistBonus,
   cardEdge,
   currentCard,
+  finaleStage,
   lairMove,
   teamMember,
   omenEffect,
@@ -145,6 +147,19 @@ export function resolveInstruction(
     .replaceAll("{third}", String(values[2]))
     .replaceAll("{fourth}", String(values[3]));
 }
+/** The hidden result a committed roll lands on, if any (The Quest 2.0
+ * Phase 6): the outcome it resolves to, or the doubles line. */
+export function hiddenReward(
+  dice: DiceDefinition,
+  values: number[],
+  reading?: RollReading,
+): HiddenReward | undefined {
+  const total = readTotal(dice, values, reading);
+  const doubles =
+    values.length > 1 && values.every((value) => value === values[0]);
+  if (doubles && dice.doubles) return dice.doublesReward;
+  return dice.outcomes?.find((range) => covers(range, total))?.reward;
+}
 /** Whether a committed roll is one of a battle's winning outcomes. */
 export function rollWins(
   dice: DiceDefinition,
@@ -175,8 +190,16 @@ export function rollBonus(session: SessionState, card: CardDefinition): number {
     PRESS_STEP * pulls +
     (sent ? assistBonus(sent) : 0) -
     // The dragon's move can make this round's swing harder or easier.
-    (lairMove(session.quest, card)?.harder ?? 0)
+    (lairMove(session.quest, card)?.harder ?? 0) -
+    // A variant dealt harder (The Quest 2.0 Phase 6: the Company, sour).
+    stageHarder(session, card)
   );
+}
+/** The extra need of the card in play, from its stage's variant. */
+function stageHarder(session: SessionState, card: CardDefinition): number {
+  const q = session.quest;
+  if (!q?.due || q.finale[q.step] !== card.id) return 0;
+  return q.stages[finaleStage(q).stage]?.harder ?? 0;
 }
 /** The face a crawl battle's dice must show to win (2026-10-31, owner: a
  * gem on the card): the lowest winning total, less the d20's bonus, held to

@@ -116,6 +116,9 @@ export function finaleCardIds(rules: PackQuest): string[] {
         ...stage.cardIds,
         ...(stage.elite ?? []),
         ...(stage.inserts ?? []).flatMap((i) => i.cardIds),
+        // The Quest 2.0 Phase 6: rares and variants.
+        ...(stage.rare?.cardIds ?? []),
+        ...(stage.variants ?? []).flatMap((v) => v.cardIds),
       ]),
     ),
   ];
@@ -128,7 +131,40 @@ export function pickFinale(
   stages: QuestState["stages"],
   random: Random = Math.random,
 ): string[] {
-  return stages.flatMap(({ pick, cards, inserts }) => {
+  return stages.flatMap((stage) => {
+    const picks = pickStage(stage, random);
+    return stage.rare?.cards.length ? withRare(stage, picks, random) : picks;
+  });
+}
+/** A rare (The Quest 2.0 Phase 6): with its odds, one replaces a pick that
+ * is not a fork, not an insert and, on a stage of several, not the last. */
+function withRare(
+  stage: QuestState["stages"][number],
+  picks: string[],
+  random: Random,
+): string[] {
+  const { odds, cards: rares } = stage.rare!;
+  if (random() >= odds) return picks;
+  const places = new Set((stage.inserts ?? []).map((i) => i.at));
+  const fork = (id: string) =>
+    stage.cards.find((c) => c.id === id)?.encounter === "fork";
+  const open = picks.flatMap((id, i) =>
+    places.has(i) || fork(id) || (picks.length > 1 && i === picks.length - 1)
+      ? []
+      : [i],
+  );
+  if (!open.length) return picks;
+  const at = open[Math.floor(random() * open.length)];
+  const next = [...picks];
+  next[at] = rares[Math.floor(random() * rares.length)].id;
+  return next;
+}
+/** One stage's picks (before any rare). */
+function pickStage(
+  { pick, cards, inserts }: QuestState["stages"][number],
+  random: Random,
+): string[] {
+  {
     if (inserts?.length) return placeInserts(pick, cards, inserts, random);
     const picks = shuffle(
       cards.map((c) => c.id),
@@ -147,7 +183,7 @@ export function pickFinale(
       }
     }
     return picks;
-  });
+  }
 }
 /** A stage with inserts (The Quest 2.0 Phase 3, 2026-11-14): the rooms
  * drawn as for any stage, then one card of each insert's pool spliced in at
@@ -224,7 +260,9 @@ export function questRecord(s: SessionState) {
     const kind = stageKind(stage);
     // A fight dealt again until it falls (a boss, closing time's rival):
     // a trophy on Pub Crawl's end screen (2026-10-25).
-    const trophy = stage.pick === 1 && stage.cards.some((c) => !!c.hits);
+    // An echo (optional, Phase 6) is not a trophy even when it is a fight.
+    const trophy =
+      stage.pick === 1 && !stage.optional && stage.cards.some((c) => !!c.hits);
     // Whether the stage can deal a fight at all, read from its whole pool
     // (a lone card with none, such as a summons or a dragon sign, is not a
     // floor on the end screen, reached or not).
@@ -238,6 +276,8 @@ export function questRecord(s: SessionState) {
       kind,
       trophy,
       fight,
+      /** An echo (Phase 6): dealt only for a deed held. */
+      optional: !!stage.optional,
     };
   });
   return {
@@ -301,13 +341,29 @@ export function stageKind(stage: QuestState["stages"][number]): StageKind {
  * on a save before the save is known to be well formed. */
 export const stageCards = (
   stage: QuestState["stages"][number],
-): CardDefinition[] => [
-  ...(Array.isArray(stage?.cards) ? stage.cards : []),
-  ...(Array.isArray(stage?.elite) ? stage.elite : []),
-  ...(Array.isArray(stage?.inserts)
-    ? stage.inserts.flatMap((i) => (Array.isArray(i?.cards) ? i.cards : []))
-    : []),
-];
+): CardDefinition[] =>
+  uniqueIds([
+    ...(Array.isArray(stage?.cards) ? stage.cards : []),
+    ...(Array.isArray(stage?.elite) ? stage.elite : []),
+    ...(Array.isArray(stage?.inserts)
+      ? stage.inserts.flatMap((i) => (Array.isArray(i?.cards) ? i.cards : []))
+      : []),
+    // The Quest 2.0 Phase 6: rares and variants.
+    ...(Array.isArray(stage?.rare?.cards) ? stage.rare.cards : []),
+    ...(Array.isArray(stage?.variants)
+      ? stage.variants.flatMap((v) => (Array.isArray(v?.cards) ? v.cards : []))
+      : []),
+  ]);
+/** Each card once, by ID (a variant may reuse its stage's own pool). */
+const uniqueIds = (cards: CardDefinition[]) => {
+  const seen = new Set<string>();
+  return cards.filter((c) => {
+    const id = c?.id;
+    if (typeof id === "string" && seen.has(id)) return false;
+    if (typeof id === "string") seen.add(id);
+    return true;
+  });
+};
 /** A finale card by ID, from any stage's pool, elites or inserts. A plain
  * search, no copy: it runs on every read of the card in play. */
 export function finaleCard(
@@ -327,8 +383,50 @@ export function finaleCard(
             (got, i) => got ?? find(i?.cards),
             undefined,
           )
+        : undefined) ??
+      find(stage?.rare?.cards) ??
+      (Array.isArray(stage?.variants)
+        ? stage.variants.reduce<CardDefinition | undefined>(
+            (got, v) => got ?? find(v?.cards),
+            undefined,
+          )
         : undefined);
     if (card) return card;
   }
   return undefined;
+}
+/** A stage with variants reached (The Quest 2.0 Phase 6): the first card
+ * becomes one of a group whose deeds the party all holds (picked at random
+ * among them; that group's `harder` kept on the stage), unless a rare was
+ * picked there at game start. None held: the pick made at game start, or,
+ * on an `optional` stage, the stage leaves the run. Written into the run at
+ * once, so a reload never resolves it again. */
+export function resolveStage(
+  quest: QuestState,
+  step: number,
+  random: Random,
+): QuestState {
+  const at = finaleStage(quest, step);
+  const stage = quest.stages[at.stage];
+  if (at.index !== 0 || !stage.variants?.length) return quest;
+  const picked = quest.finale[step];
+  if (stage.rare?.cards.some((c) => c.id === picked)) return quest;
+  const held = new Set(quest.party?.deeds ?? []);
+  const groups = stage.variants.filter(
+    (v) => v.cards.length && v.deeds.every((d) => held.has(d)),
+  );
+  if (!groups.length)
+    return stage.optional ? dropInto(quest, (i) => i === at.stage) : quest;
+  const group = groups[Math.floor(random() * groups.length)];
+  const taken = new Set(quest.finale);
+  const fresh = group.cards.filter((c) => !taken.has(c.id) || c.id === picked);
+  const pool = fresh.length ? fresh : group.cards;
+  const finale = [...quest.finale];
+  finale[step] = pool[Math.floor(random() * pool.length)].id;
+  const stages = [...quest.stages];
+  stages[at.stage] = {
+    ...stage,
+    ...(group.harder ? { harder: group.harder } : {}),
+  };
+  return { ...quest, finale, stages };
 }

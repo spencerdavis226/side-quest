@@ -171,7 +171,7 @@ const SCENES: [RegExp, string][] = [
   [/Sunken Coast/, "coast"],
   [/City Gate|Crossroads|Lair.s Door/, "rival"],
   // A dragon sign (The Quest 2.0 Phase 3) is a glimpse of the lair's light.
-  [/Dragon.s Lair|Dragon Sign/, "lair"],
+  [/Dragon.s Lair|Dragon Sign|An Echo/, "lair"],
   [/Inn\b/, "inn"],
   [
     /Side Quest|Barrow|Bandit Fort|Witch.s Cottage|Drowned Shrine|Sunless Vault/,
@@ -585,4 +585,18 @@ export const LAIR_WORDS: Record<string, string> = {
   "The Sunken Coast": "All hands on deck",
   "The Fire Caverns": "Endurance and heat",
   "The Frozen Pass": "Ice, traps, treasure",
+};
+/** What each echo remembers (The Quest 2.0 Phase 6, M14): the earlier
+ * card's title, shown faintly as the echo turns. Display only. */
+export const ECHO_OF: Record<string, string> = {
+  "dungeon.echo-hanged-man": "The Gallows Tree",
+  "dungeon.echo-brother": "The Gallows Tree",
+  "dungeon.echo-fair-folk": "The Fairy Court",
+  "dungeon.echo-lord-remembers": "The Hunter's Feast",
+  "dungeon.echo-hag-owed": "The Hag's Bargain",
+  "dungeon.echo-ferryman": "The Dead Ferryman",
+  "dungeon.echo-goblin-posse": "The Goblin Market",
+  "dungeon.echo-gift": "A Side Quest",
+  "dungeon.echo-one-you-left": "A Side Quest",
+  "dungeon.echo-grave": "A Fallen Friend",
 };
