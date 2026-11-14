@@ -127,12 +127,16 @@ export {
   NINE,
   UNLOCKS,
   chronicleNews,
+  CHAMPION_COUNT,
   emptyChronicle,
+  emptyLeague,
+  STARTER_COUNT,
   readChronicle,
   recordRun,
   unlocks,
   type Chronicle,
   type ChronicleNews,
+  type LeagueRecord,
 } from "./chronicle";
 export type Random = () => number;
 export function shuffle(

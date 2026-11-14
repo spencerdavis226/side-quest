@@ -75,6 +75,11 @@
   font-size: 0.9rem;
   opacity: 0.8;
 }
+.chronicle-list {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
 .chronicle-counts {
   display: grid;
   gap: 4px;

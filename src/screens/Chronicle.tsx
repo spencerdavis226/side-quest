@@ -11,7 +11,10 @@ import {
   SECRET_COUNT,
   UNLOCKS,
   unlocks,
+  CHAMPION_COUNT,
+  STARTER_COUNT,
   type Chronicle,
+  type LeagueRecord,
 } from "../game/engine";
 import { loadPackCards } from "../content/loaders";
 import { Button } from "../components/UI";
@@ -20,7 +23,105 @@ import "./chronicle.css";
 // The Chronicle (The Quest 2.0 Phase 7): The Quest's record across runs.
 // A lazy chunk, opened from setup. It only reads; the one thing it changes
 // is the "Unlock everything" switch, for a table whose record was lost.
+// Since 2026-11-14 it keeps the Pokémon League's record too, on its own page.
 export default function ChronicleBook({
+  chronicle,
+  league,
+  onUnlockAll,
+}: {
+  chronicle: Chronicle;
+  league?: boolean;
+  onUnlockAll: () => void;
+}) {
+  return league ? (
+    <LeagueBook record={chronicle.league} />
+  ) : (
+    <QuestBook chronicle={chronicle} onUnlockAll={onUnlockAll} />
+  );
+}
+
+const shortDate = (at: string) =>
+  new Date(at).toLocaleDateString(undefined, {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+
+/** The Pokémon League's page: the tally, the Hall of Fame, the Champions
+ * beaten and the starters that made it, and what the team caught. */
+function LeagueBook({ record: r }: { record?: LeagueRecord }) {
+  if (!r || r.played === 0)
+    return <p>No League run has ended yet. Finish one to start the record.</p>;
+  const tally = (m: Record<string, number>) =>
+    Object.entries(m)
+      .filter(([, n]) => n > 0)
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .map(([name, n]) => `${name}${n > 1 ? ` ×${n}` : ""}`)
+      .join(", ");
+  const champions = tally(r.champions);
+  const fell = tally(r.fellTo);
+  return (
+    <div className="chronicle">
+      <p className="chronicle-tally">
+        <span>
+          <strong>{r.played}</strong> {r.played === 1 ? "run" : "runs"}
+        </span>
+        <span>
+          <strong>{r.won}</strong> won
+        </span>
+        <span>
+          <strong>{r.bestBadges}</strong> best badges
+        </span>
+      </p>
+      <h3>Records</h3>
+      <dl className="chronicle-counts">
+        <div>
+          <dt>Starters in the Hall of Fame</dt>
+          <dd>{`${Math.min(r.starters.length, STARTER_COUNT)} of ${STARTER_COUNT}`}</dd>
+        </div>
+        <div>
+          <dt>Champions beaten</dt>
+          <dd>{`${Math.min(Object.keys(r.champions).length, CHAMPION_COUNT)} of ${CHAMPION_COUNT}`}</dd>
+        </div>
+        <div>
+          <dt>Pokémon caught</dt>
+          <dd>{r.caught.length}</dd>
+        </div>
+      </dl>
+      {champions && <p className="chronicle-fell">{`Beat ${champions}`}</p>}
+      {fell && <p className="chronicle-fell">{`Whited out to ${fell}`}</p>}
+      {r.starters.length > 0 && (
+        <>
+          <h3>Starters that made it</h3>
+          <p className="chronicle-list">{r.starters.join(", ")}</p>
+        </>
+      )}
+      {r.caught.length > 0 && (
+        <>
+          <h3>Caught</h3>
+          <p className="chronicle-list">{r.caught.join(", ")}</p>
+        </>
+      )}
+      {r.halls.length > 0 && (
+        <>
+          <h3>Hall of Fame</h3>
+          <ol className="chronicle-ballads">
+            {[...r.halls].reverse().map((h, i) => (
+              <li key={`${h.at}-${i}`}>
+                <small>{`${shortDate(h.at)} · Beat ${h.champion}`}</small>
+                <p>
+                  <span>{[h.starter, ...h.team].join(" · ")}</span>
+                </p>
+              </li>
+            ))}
+          </ol>
+        </>
+      )}
+    </div>
+  );
+}
+
+function QuestBook({
   chronicle: c,
   onUnlockAll,
 }: {
@@ -157,11 +258,7 @@ export default function ChronicleBook({
             {[...c.ballads].reverse().map((b, i) => (
               <li key={`${b.at}-${i}`}>
                 <small>
-                  {`${new Date(b.at).toLocaleDateString(undefined, {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  })} · ${b.won ? "Won" : "Fell"}`}
+                  {`${shortDate(b.at)} · ${b.won ? "Won" : "Fell"}`}
                 </small>
                 <p>
                   {b.lines.map((line, j) => (

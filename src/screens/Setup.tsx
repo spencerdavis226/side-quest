@@ -18,6 +18,8 @@ import { Guide } from "../components/Guide";
 // The Chronicle (The Quest 2.0 Phase 7): a lazy chunk, opened from here.
 type ChronicleProps = {
   chronicle: Chronicle;
+  /** Show the Pokémon League's record instead of The Quest's. */
+  league?: boolean;
   onUnlockAll: () => void;
 };
 const ChronicleBook = lazy(
@@ -29,6 +31,8 @@ function NoChronicle() {
 }
 /** The Quest's pack: its Chronicle, Heroic mode and gold mark. */
 const QUEST_PACK = "dungeon";
+/** The Pokémon League's pack: its own page in the Chronicle. */
+const LEAGUE_PACK = "pokemon";
 
 export function Setup({
   prefs,
@@ -92,6 +96,11 @@ export function Setup({
               : [slot]
           ).some((st) => st.pick > 1),
         ).length;
+  // The Chronicle: The Quest's record, or the League's (2026-11-14).
+  const league = crawlPack?.id === LEAGUE_PACK;
+  const record = theQuest ? chronicle : league ? chronicle?.league : undefined;
+  const showChronicle = !!record && record.played > 0;
+  const showHeroic = theQuest && earned.has("heroic");
   const hearts = crawlPack
     ? crawlPack.quest!.party!.hearts - (heroic ? 2 : 0)
     : 0;
@@ -224,45 +233,49 @@ export function Setup({
               </small>
             </span>
           </div>
-          {theQuest &&
-            (earned.has("heroic") || (chronicle?.played ?? 0) > 0) && (
-              <div className="quest-extras">
-                {theQuest && earned.has("heroic") && (
-                  <Button
-                    variant="choice"
-                    className="heroic-toggle"
-                    aria-pressed={heroic}
-                    onClick={() => setHeroic(!heroic)}
-                  >
-                    <span>
-                      <strong>Heroic</strong>
-                      <small>Harder road</small>
-                    </span>
-                  </Button>
-                )}
-                {theQuest && chronicle && chronicle.played > 0 && (
-                  <Button
-                    variant="menu-row"
-                    className="chronicle-open"
-                    onClick={() => setChronicleOpen(true)}
-                  >
-                    <span>
-                      <strong>Chronicle</strong>
-                      <small>
-                        {`${chronicle.played} ${chronicle.played === 1 ? "run" : "runs"} · ${chronicle.won} won`}
-                      </small>
-                    </span>
-                    <span aria-hidden="true">›</span>
-                  </Button>
-                )}
-              </div>
-            )}
+          {(showHeroic || showChronicle) && (
+            <div className="quest-extras">
+              {showHeroic && (
+                <Button
+                  variant="choice"
+                  className="heroic-toggle"
+                  aria-pressed={heroic}
+                  onClick={() => setHeroic(!heroic)}
+                >
+                  <span>
+                    <strong>Heroic</strong>
+                    <small>{heroic ? "On · harder road" : "Harder road"}</small>
+                  </span>
+                  <span className="heroic-pip" aria-hidden="true" />
+                </Button>
+              )}
+              {showChronicle && (
+                <Button
+                  variant="menu-row"
+                  className="chronicle-open"
+                  onClick={() => setChronicleOpen(true)}
+                >
+                  <span>
+                    <strong>Chronicle</strong>
+                    <small>
+                      {`${record!.played} ${record!.played === 1 ? "run" : "runs"} · ${record!.won} won`}
+                    </small>
+                  </span>
+                  <span aria-hidden="true">›</span>
+                </Button>
+              )}
+            </div>
+          )}
         </div>
       )}
       {chronicleOpen && chronicle && (
         <Modal title="Chronicle" onClose={() => setChronicleOpen(false)}>
           <Suspense fallback={<p className="chronicle-loading">Opening…</p>}>
-            <ChronicleBook chronicle={chronicle} onUnlockAll={onUnlockAll} />
+            <ChronicleBook
+              chronicle={chronicle}
+              league={league}
+              onUnlockAll={onUnlockAll}
+            />
           </Suspense>
           <Button onClick={() => setChronicleOpen(false)}>Done</Button>
         </Modal>

@@ -1,6 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   advance,
+  CHAMPION_COUNT,
+  STARTER_COUNT,
   CLASS_COUNT,
   createSession,
   currentCard,
@@ -311,5 +313,56 @@ describe("Heroic mode", () => {
     expect(loadPreferences().config.heroic).toBe(true);
     expect(chooseLength(prefs, "standard").config.heroic).toBeUndefined();
     expect(chooseQuest(prefs, "pokemon").config.heroic).toBeUndefined();
+  });
+});
+
+// The Pokémon League's record (2026-11-14): its own page in the Chronicle,
+// kept as an optional field so a Chronicle from before still loads.
+describe("the League's record", () => {
+  const league: GameConfig = {
+    version: 1,
+    packIds: ["pokemon"],
+    limit: null,
+    quest: "pokemon",
+  };
+  it("counts a run once, when it ends, and The Quest's counts stay apart", () => {
+    const s = createSession(league, cards, packs, seeded(5));
+    expect(recordRun(emptyChronicle(), s, "2026-11-14T20:00:00Z")).toEqual(
+      emptyChronicle(),
+    );
+    const won = recordRun(emptyChronicle(), ended(s), "2026-11-14T21:00:00Z");
+    expect(won).toMatchObject({ played: 0, won: 0 });
+    const champion = finaleCard(s.quest!, s.quest!.finale.at(-1)!)!.title;
+    expect(won.league).toMatchObject({ played: 1, won: 1, bestBadges: 8 });
+    expect(won.league!.champions).toEqual({ [champion]: 1 });
+    expect(won.league!.starters).toHaveLength(1);
+    expect(won.league!.halls[0]).toMatchObject({ champion });
+    // A reload on the end screen changes nothing.
+    expect(recordRun(won, ended(s), "2026-11-14T22:00:00Z")).toBe(won);
+    const t = createSession(league, cards, packs, seeded(6));
+    const lost = recordRun(won, ended(t, false), "2026-11-15T21:00:00Z");
+    expect(lost.league).toMatchObject({ played: 2, won: 1 });
+    expect(Object.values(lost.league!.fellTo)).toEqual([1]);
+    expect(lost.league!.halls).toHaveLength(1);
+  });
+
+  it("names the starters and Champions it counts", () => {
+    const league = packs.find((p) => p.id === "pokemon")!.quest!;
+    const stage = (label: string) =>
+      league.finale.find((st) => "label" in st && st.label === label) as {
+        cardIds: string[];
+      };
+    expect(stage("Your starter").cardIds).toHaveLength(STARTER_COUNT);
+    expect(stage("Champion").cardIds).toHaveLength(CHAMPION_COUNT);
+  });
+
+  it("a malformed League record is dropped alone", () => {
+    const s = createSession(league, cards, packs, seeded(7));
+    const c = recordRun(emptyChronicle(), ended(s), "2026-11-14T21:00:00Z");
+    expect(readChronicle(JSON.parse(JSON.stringify(c)))).toEqual(c);
+    const bad = { ...c, played: 3, league: { ...c.league, won: "one" } };
+    const read = readChronicle(bad)!;
+    expect(read.played).toBe(3);
+    expect(read.league).toBeUndefined();
   });
 });
