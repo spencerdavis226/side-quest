@@ -2,6 +2,12 @@
 
 Updated 2026-11-14. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Done 2026-11-14: setup row fixed, and a Chronicle for the Pokémon League
+
+- **Setup bug (owner screenshot):** Heroic and Chronicle sat outside `.lengths`, so Heroic fell back to the default white button (text unreadable) and Chronicle to a bare underlined row. `.quest-extras > button` in `src/presentation/crawl.css` now styles both as tiles like the crawl brief; Heroic has a pip that lights red when on and reads "On · harder road".
+- **League Chronicle:** `Chronicle.league` (optional `LeagueRecord`, same key `side-quest.chronicle.v1`, no migration; a malformed one is dropped alone by `readChronicle`). `recordLeague` in `src/game/chronicle.ts` keeps Pokémon caught at any time and, once per run when it ends: played, won, best badges, starters that won, Champions beaten, what whited the team out, and the last ten Hall of Fame entries (starter's form, team, Champion). Names are stored, not IDs, so the page needs no pack load. `main.tsx` now records `pokemon` saves too; League runs never touch The Quest's counts or unlocks. Setup shows the Chronicle tile in the League once a run has ended; `Chronicle.tsx` renders `LeagueBook`. No League unlocks or end-screen news line yet.
+- **Verified:** `npm test` (45 files, 559 tests, incl. 3 new in `tests/chronicle.test.ts`), lint, typecheck, `BASE_PATH=/side-quest/ npm run build` (budgets pass). Setup and the League Chronicle checked by Chromium screenshot at 390×844; not on a device, and Playwright suites not run.
+
 ## Done 2026-11-14: The Quest 2.1, part 1: the climax fixed, and a coin
 
 Owner: a full review of Quest 2.0, then "make the comprehensive plan ... implement in this session", with "budget increase makes no difference", "No sound", "No player roster", the coin's uses left to me, and "merge and deploy automatically". The plan (review findings, then a presentation rebuild in phases) is summarised in this section and the next task.

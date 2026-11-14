@@ -2,6 +2,8 @@ import type { SessionState } from "./types";
 import { ballad, singleBlow, BALLAD_FOOLS } from "./ballad";
 import { finaleCard, finaleStage } from "./crawl/stages";
 import { runNames } from "./crawl/names";
+import { omenForm } from "./crawl/party";
+import { teamMember } from "./crawl/team";
 
 // The Chronicle (The Quest 2.0 Phase 7, 2026-11-14): The Quest's record
 // across runs, kept under its own storage key (`side-quest.chronicle.v1`)
@@ -36,7 +38,47 @@ export interface Chronicle {
   unlockedAll?: true;
   /** The last ten ballads. */
   ballads: { at: string; won: boolean; lines: string[] }[];
+  /** The Pokémon League's record (2026-11-14), optional so a Chronicle
+   * kept before it still loads. A malformed one is dropped alone. */
+  league?: LeagueRecord;
 }
+
+/** The Pokémon League's record across runs. Names, not card IDs, so the
+ * Chronicle shows it without loading the pack. */
+export interface LeagueRecord {
+  /** Keys of runs already counted (the last 60). */
+  runs: string[];
+  played: number;
+  won: number;
+  /** The most badges any run earned. */
+  bestBadges: number;
+  /** Starters that reached the Hall of Fame, by the starter card's name. */
+  starters: string[];
+  /** Champions beaten, and what whited the team out, by name. */
+  champions: Record<string, number>;
+  fellTo: Record<string, number>;
+  /** Pokémon caught for the team, by name, in the order first caught. */
+  caught: string[];
+  /** The last ten Hall of Fame entries. */
+  halls: { at: string; starter: string; team: string[]; champion: string }[];
+}
+
+export const emptyLeague = (): LeagueRecord => ({
+  runs: [],
+  played: 0,
+  won: 0,
+  bestBadges: 0,
+  starters: [],
+  champions: {},
+  fellTo: {},
+  caught: [],
+  halls: [],
+});
+
+/** How many starters and Champions the League deals (a unit test holds
+ * these to the content). */
+export const STARTER_COUNT = 35;
+export const CHAMPION_COUNT = 13;
 
 export const emptyChronicle = (): Chronicle => ({
   version: 1,
@@ -196,7 +238,8 @@ const add = (list: string[], items: string[]) => {
 
 /** Fold a session into the Chronicle: what the run has seen so far (at
  * any time), and once it ends, its counts, its ballad and its feats. A
- * run already counted is not counted again. Only The Quest is recorded. */
+ * run already counted is not counted again. The Quest and the Pokémon
+ * League (its own record, `league`) are recorded. */
 export function recordRun(
   c: Chronicle,
   s: SessionState,
@@ -204,6 +247,11 @@ export function recordRun(
 ): Chronicle {
   const q = s.quest;
   const party = q?.party;
+  if (q?.packId === "pokemon" && party) {
+    const before = c.league ?? emptyLeague();
+    const league = recordLeague(before, s, at);
+    return league === before ? c : { ...c, league };
+  }
   if (!q || !party || q.packId !== "dungeon") return c;
   // The cards dealt so far.
   const upTo = s.phase === "complete" ? q.finale.length : q.step + 1;
@@ -305,6 +353,99 @@ export function recordRun(
   return { ...next, feats: add(c.feats, earned) };
 }
 
+/** Fold a League session into its record: the Pokémon caught at any
+ * time, and once the run ends, its counts and (a win) its Hall of Fame. */
+export function recordLeague(
+  r: LeagueRecord,
+  s: SessionState,
+  at: string,
+): LeagueRecord {
+  const q = s.quest;
+  const party = q?.party;
+  if (!q || !party) return r;
+  const names = (party.team ?? [])
+    .map((id) => teamMember(q, id)?.title)
+    .filter((n): n is string => !!n);
+  const caught = add(r.caught, names);
+  const key = runKey(s);
+  if (s.phase !== "complete" || r.runs.includes(key))
+    return caught === r.caught ? r : { ...r, caught };
+  const won = !party.wiped;
+  const step = Math.min(q.step, q.finale.length - 1);
+  const last = finaleCard(q, q.finale[step]);
+  // Badges: the leaders (quest-tagged) put aside before the run ended.
+  const beaten = won ? q.finale.length : step;
+  const badges = q.finale
+    .slice(0, beaten)
+    .filter((id) => finaleCard(q, id)?.quest === q.packId).length;
+  const bump = (m: Record<string, number>, name: string) => ({
+    ...m,
+    [name]: (m[name] ?? 0) + 1,
+  });
+  // The starter: the omen put aside, else the run's first card if it is one.
+  const first = finaleCard(q, q.finale[0]);
+  const starter = party.omen
+    ? finaleCard(q, party.omen)?.title
+    : first?.encounter === "omen"
+      ? first.title
+      : undefined;
+  return {
+    ...r,
+    caught,
+    runs: [...r.runs, key].slice(-60),
+    played: r.played + 1,
+    won: r.won + (won ? 1 : 0),
+    bestBadges: Math.max(r.bestBadges, badges),
+    starters: won && starter ? add(r.starters, [starter]) : r.starters,
+    champions: won && last ? bump(r.champions, last.title) : r.champions,
+    fellTo: !won && last ? bump(r.fellTo, last.title) : r.fellTo,
+    halls:
+      won && last
+        ? [
+            ...r.halls,
+            {
+              at,
+              starter: omenForm(q)?.title ?? starter ?? "",
+              team: names,
+              champion: last.title,
+            },
+          ].slice(-10)
+        : r.halls,
+  };
+}
+
+/** A stored League record, checked: anything malformed is none. */
+function readLeague(raw: unknown): LeagueRecord | null {
+  const r = raw as LeagueRecord;
+  const list = (x: unknown) =>
+    Array.isArray(x) && x.every((v) => typeof v === "string");
+  const whole = (n: unknown) => Number.isSafeInteger(n) && (n as number) >= 0;
+  const counts = (x: unknown) =>
+    !!x &&
+    typeof x === "object" &&
+    !Array.isArray(x) &&
+    Object.values(x).every(whole);
+  if (
+    !r ||
+    typeof r !== "object" ||
+    ![r.runs, r.starters, r.caught].every(list) ||
+    ![r.played, r.won, r.bestBadges].every(whole) ||
+    !counts(r.champions) ||
+    !counts(r.fellTo) ||
+    !Array.isArray(r.halls) ||
+    r.halls.some(
+      (h) =>
+        !h ||
+        typeof h.at !== "string" ||
+        typeof h.starter !== "string" ||
+        typeof h.champion !== "string" ||
+        !list(h.team),
+    )
+  )
+    return null;
+  return r;
+}
+
 /** What a run just added to the Chronicle, for the end screen: new
  * unlocks, new feats, dragons slain for the first time. */
 export function chronicleNews(before: Chronicle, after: Chronicle) {
@@ -367,5 +508,9 @@ export function readChronicle(raw: unknown): Chronicle | null {
     )
   )
     return null;
-  return c;
+  if (c.league === undefined) return c;
+  const league = readLeague(c.league);
+  if (league) return c;
+  const { league: _bad, ...rest } = c;
+  return rest;
 }

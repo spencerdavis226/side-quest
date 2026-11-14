@@ -101,10 +101,12 @@ function App() {
     setChronicle(next);
     saveChronicle(next);
   };
-  // Every save of The Quest folds into the Chronicle: what it has seen at
-  // any time, and once the run ends, its counts (once per run).
+  // Every save of The Quest or the Pokémon League folds into the
+  // Chronicle: what it has seen at any time, and once the run ends, its
+  // counts (once per run).
   const record = (next: SessionState | null) => {
-    if (next?.config.quest !== "dungeon") return;
+    const quest = next?.config.quest;
+    if (!next || (quest !== "dungeon" && quest !== "pokemon")) return;
     const before = chronicleRef.current;
     const after = recordRun(before, next, new Date().toISOString());
     if (after === before) return;
