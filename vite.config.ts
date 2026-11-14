@@ -9,11 +9,11 @@ const name = preview ? "Side Quest Preview" : "Side Quest";
 export default defineConfig({
   base,
   build: {
-    // iOS 16 is the oldest Safari the app supports: its CSS uses container
-    // query units (cqw), which arrived in Safari 16.0. Name it, so a newer
-    // esbuild default never drops the transforms older Safari needs.
-    target: ["es2020", "safari16"],
-    cssTarget: ["safari16"],
+    // iOS 26 is the oldest Safari the app supports (owner, 2026-11-14; it
+    // was iOS 16 before). Named, so the build keeps no transforms for older
+    // engines and a newer esbuild default never changes what ships.
+    target: ["safari26"],
+    cssTarget: ["safari26"],
   },
   plugins: [
     react(),
