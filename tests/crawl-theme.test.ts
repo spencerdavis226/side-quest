@@ -83,11 +83,13 @@ describe("how to play", () => {
       `rest for ${LANDING_HEAL} hearts, or stock up for drinks`,
     );
     expect(LEVEL_DRINK).toBe(3);
-    // One row a system, and nothing cut on 2026-10-31; ranks since Realms.
+    // One row a system, and nothing cut on 2026-10-31; ranks since Realms;
+    // the dragon battle since The Quest 2.0 (2026-11-13).
     expect(rows.map((r) => r.title)).toEqual([
       "Hearts",
       "Fights",
       "Bosses",
+      "The dragon",
       "Ranks",
       "Inns and side quests",
       "Satchel and gear",

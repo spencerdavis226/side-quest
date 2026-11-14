@@ -400,6 +400,53 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         }))
     )
       fail(`Invalid phases: ${c.id}`);
+    // The dragon battle (The Quest 2.0, 2026-11-13): a boss with a single
+    // d20 and no phases, six calm and six enraged moves, an enrage contest
+    // and three lore lines. Older dragons with phases stay valid.
+    const fight = c.lairFight;
+    const goodMove = (m: unknown) => {
+      const move = m as { [k: string]: unknown } | null;
+      return (
+        !!move &&
+        typeof move === "object" &&
+        typeof move.name === "string" &&
+        !!move.name.trim() &&
+        move.name.length <= 18 &&
+        typeof move.rules === "string" &&
+        !!move.rules.trim() &&
+        move.rules.length <= 110 &&
+        (move.damage === undefined || move.damage === 1 || move.damage === 2) &&
+        (move.harder === undefined || move.harder === 2 || move.harder === -2)
+      );
+    };
+    if (
+      fight !== undefined &&
+      (!fight ||
+        typeof fight !== "object" ||
+        !c.battle ||
+        !c.hits ||
+        c.encounter !== "boss" ||
+        c.phases !== undefined ||
+        c.dice?.count !== 1 ||
+        c.dice.sides !== 20 ||
+        !Array.isArray(fight.calm) ||
+        fight.calm.length !== 6 ||
+        !fight.calm.every(goodMove) ||
+        !Array.isArray(fight.enraged) ||
+        fight.enraged.length !== 6 ||
+        !fight.enraged.every(goodMove) ||
+        !fight.enrage ||
+        typeof fight.enrage.rules !== "string" ||
+        !fight.enrage.rules.trim() ||
+        fight.enrage.rules.length > 110 ||
+        !Number.isSafeInteger(fight.enrage.damage) ||
+        fight.enrage.damage < 1 ||
+        fight.enrage.damage > 3 ||
+        !Array.isArray(fight.lore) ||
+        fight.lore.length !== 3 ||
+        fight.lore.some((l) => typeof l !== "string" || !l.trim()))
+    )
+      fail(`Invalid lair fight: ${c.id}`);
     const omens = [
       ...(c.omen !== undefined ? [c.omen] : []),
       ...(Array.isArray(c.evolves) ? c.evolves.map((e) => e.omen) : []),

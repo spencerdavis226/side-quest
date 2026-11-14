@@ -134,6 +134,17 @@ export type Moment = {
   /** A Pokémon joins with no ball: an egg hatched, a Legendary caught on
    * its last beat. */
   | { kind: "join"; name: string; type?: PokemonType; hatched: boolean }
+  /** The dragon's move slams in as its round turns over (The Quest 2.0,
+   * M16). */
+  | {
+      kind: "dragonmove";
+      id: string;
+      dragon: string;
+      name: string;
+      enraged: boolean;
+    }
+  /** The dragon's enrage contest turns over: the eye narrows (M18). */
+  | { kind: "enraged"; id: string; dragon: string; line: string }
   /** A jinx laid (its name and rule) or lifted (the boss fell). */
   | {
       kind: "jinx";
@@ -150,6 +161,7 @@ export type MomentKind = Moment["kind"];
  * (the natural burst always let the next tap put the card aside; a type
  * clash must never eat the tap that rolls). */
 export const AMBIENT: ReadonlySet<MomentKind> = new Set([
+  "dragonmove",
   "milestone",
   "natural",
   "clash",
@@ -160,6 +172,7 @@ export const AMBIENT: ReadonlySet<MomentKind> = new Set([
  * under a banked pull's coins). */
 export const CUT_ON_MOTION: ReadonlySet<MomentKind> = new Set([
   "clash",
+  "dragonmove",
   "press",
 ]);
 /** Moments that play over a motion already under way (the omen's reveal
@@ -250,8 +263,9 @@ export function entranceFor(s: SessionState) {
         ? "final"
         : "boss";
   const theme = crawlTheme(q.packId);
-  const kicker =
-    style === "elite"
+  const kicker = card.lairFight
+    ? "It's awake"
+    : style === "elite"
       ? `Elite Four · ${at.index + 1} of ${at.size}`
       : style === "rival"
         ? "Your rival"
@@ -321,6 +335,32 @@ export function momentsBetween(
     before.phase === "hidden" &&
     after.phase === "revealed" &&
     before.discarded === after.discarded;
+
+  // The dragon battle (The Quest 2.0): each round's move as it turns over,
+  // or the enrage contest.
+  const duel = q?.party?.duel;
+  if (turned && duel && card.lairFight) {
+    const dragon = card.title;
+    if (duel.contest)
+      out.push({
+        kind: "enraged",
+        key: `enraged:${after.discarded}`,
+        id: card.id,
+        dragon,
+        line: "The whole table plays.",
+        say: `${dragon} is enraged. The whole table plays.`,
+      });
+    else if (card.ribbon)
+      out.push({
+        kind: "dragonmove",
+        key: `move:${after.discarded}`,
+        id: card.id,
+        dragon,
+        name: card.ribbon,
+        enraged: !!duel.enraged,
+        say: `${dragon}: ${card.ribbon}.`,
+      });
+  }
 
   // The run's first card turned over: the starter or the adventurer.
   if (turned && q?.due && card.encounter === "omen" && card.omen) {

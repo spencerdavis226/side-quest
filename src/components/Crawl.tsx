@@ -9,6 +9,7 @@ import { createPortal } from "react-dom";
 import type {
   Boon,
   CardDefinition,
+  DragonMove,
   Loot,
   Offer,
   PartyState,
@@ -358,8 +359,33 @@ export function CrawlStrip({
       {children}
     </button>
   );
+  // The dragon battle (The Quest 2.0): its scales, broken ones dimmed,
+  // the newest crack played once (keyed by the hits landed).
+  const dragon =
+    party.duel && quest.due && session.phase !== "complete"
+      ? finaleCard(quest, quest.finale[quest.step])
+      : undefined;
+  const health = dragon?.lairFight ? hitsNeeded(quest, dragon) : 0;
   return (
     <div className="hud-strip" role="group" aria-label={words.party}>
+      {dragon && health > 0 && (
+        <div
+          className={`hud-scales${party.duel?.enraged || party.duel?.contest ? " enraged" : ""}`}
+          role="img"
+          aria-label={`${dragon.title}: ${health - party.hits} of ${health} scales`}
+        >
+          {/* Enraged: the screen's edge burns for the rest of the fight. */}
+          {(party.duel?.enraged || party.duel?.contest) && (
+            <i className="lair-edge" aria-hidden="true" />
+          )}
+          {Array.from({ length: health }, (_, i) => (
+            <i
+              key={i < party.hits ? `broken-${i}-${party.hits}` : `whole-${i}`}
+              className={`scale${i < party.hits ? " broken" : ""}${i === party.hits - 1 ? " just" : ""}`}
+            />
+          ))}
+        </div>
+      )}
       {matchup?.edge &&
         chip(
           `tag-edge edge-${matchup.edge}`,
@@ -433,6 +459,30 @@ export function CrawlStrip({
   );
 }
 
+/** The dragon's move a lair fight's face shows, found by its rules (a face
+ * may be Previous Card, a round behind the duel in play). */
+export function lairMoveShown(card: CardDefinition): DragonMove | undefined {
+  const fight = card.lairFight;
+  return fight
+    ? [...fight.calm, ...fight.enraged].find((m) => m.rules === card.rules)
+    : undefined;
+}
+/** The face shows the dragon's round in play and a hit would fell it: the
+ * card adds "Everyone stands." (M19). */
+export function everyoneStands(
+  card: CardDefinition,
+  party: PartyState | undefined,
+  hits: number,
+): boolean {
+  const fight = card.lairFight;
+  const duel = party?.duel;
+  if (!fight || !duel || !hits || party!.hits + 1 < hits) return false;
+  const now = duel.contest
+    ? fight.enrage.rules
+    : (duel.enraged ? fight.enraged : fight.calm)[duel.move]?.rules;
+  return card.rules === now;
+}
+
 /** What a card in a crawl puts on the line, as wax seals in the card's
  * foot. Every seal is the same pill: what can go wrong on the left (hearts
  * lost, a jinx, and a boss's or ambush's swings), what it brings on the
@@ -469,6 +519,9 @@ export function CardStakes({
       : undefined;
   const jinx = card.jinx;
   const prizes = card.press?.prizes;
+  // The dragon's move this round (The Quest 2.0): its own heart cost, win
+  // or lose, read from the move the card's rules came from.
+  const move = lairMoveShown(card);
   // A Pokémon a win adds to the team (2026-11-01): an egg, a Legendary.
   const joins = card.joins
     ? {
@@ -478,6 +531,7 @@ export function CardStakes({
     : null;
   if (
     !damage &&
+    !move?.damage &&
     !gain &&
     !hits &&
     !trinket &&
@@ -498,6 +552,15 @@ export function CardStakes({
             aria-label={`${card.strike ? "Costs" : "Losing costs"} ${heartCount(theme, damage)}`}
           >
             <b>−{damage}</b>
+            <CrawlIcon name="heart" theme={theme} />
+          </span>
+        ) : null}
+        {move?.damage ? (
+          <span
+            className="stake stake-loss stake-move"
+            aria-label={`${move.name} costs ${heartCount(theme, move.damage)}, win or lose`}
+          >
+            <b>−{move.damage}</b>
             <CrawlIcon name="heart" theme={theme} />
           </span>
         ) : null}

@@ -7,7 +7,7 @@ import {
 } from "../src/game/engine";
 import { returnToCard, rollDice } from "../src/game/dice";
 import { cards, packs } from "../src/content/catalog";
-import type { GameConfig, SessionState } from "../src/game/types";
+import type { GameConfig, PartyState, SessionState } from "../src/game/types";
 import {
   cardFinish,
   entranceFor,
@@ -133,6 +133,34 @@ describe("moments", () => {
     };
     const found = momentsBetween(started, evolved);
     expect(kinds(found)).toContain("evolution");
+  });
+
+  it("slams the dragon's move in as its round turns over, and the enrage contest", () => {
+    const c = createSession(crawl, cards, packs, seeded(5));
+    const last = c.quest!.finale.length - 1;
+    const at = (duel: PartyState["duel"]) => {
+      const s = atStep(c, last);
+      return {
+        ...s,
+        quest: { ...s.quest!, party: { ...s.quest!.party!, duel } },
+      };
+    };
+    const hidden = at({ move: 2, swings: 1 });
+    const shown = { ...hidden, phase: "revealed" as const };
+    const dragon = currentCard(shown);
+    const move = momentsBetween(hidden, shown).find(
+      (m) => m.kind === "dragonmove",
+    );
+    expect(move).toMatchObject({ name: dragon.ribbon, enraged: false });
+    expect(move?.say).toContain(dragon.ribbon!);
+    // A resume plays nothing.
+    expect(momentsBetween(null, shown)).toEqual([]);
+    const contest = at({ move: 0, swings: 2, contest: true });
+    const enraged = momentsBetween(contest, {
+      ...contest,
+      phase: "revealed",
+    }).find((m) => m.kind === "enraged");
+    expect(enraged).toMatchObject({ dragon: dragon.title });
   });
 
   it("a Quest rank up carries its class's line for the table", () => {

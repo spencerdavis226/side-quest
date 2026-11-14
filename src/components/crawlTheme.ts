@@ -314,6 +314,11 @@ const dungeon: CrawlTheme = {
         line: "One ends each of the first two regions. Its pips are the wins it takes; each drawer gets one swing.",
       },
       {
+        icon: "boss",
+        title: "The dragon",
+        line: "Its scales are its health. Each round it makes a move, then the drawer swings. At half health the whole table plays, and it gets angrier.",
+      },
+      {
         icon: "adventurer",
         title: "Ranks",
         line: "Your adventurer has three ranks to earn: the two region bosses and the side quest's keeper each give one. A Tome of Training gives one too.",

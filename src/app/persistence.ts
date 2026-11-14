@@ -278,6 +278,9 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
         p.beat > (findCard(s, s.previousId)?.phases?.length ?? 0))) ||
     (p.passed !== undefined &&
       (!whole(p.passed, 0) || p.passed > s.discarded)) ||
+    // The dragon battle (The Quest 2.0, 2026-11-13): only while a lair
+    // fight is the card in play; a move from its six, or the contest.
+    (p.duel !== undefined && badDuel(s, p.duel)) ||
     // The starter's form: a later form it has, once the omen is set.
     (p.form !== undefined &&
       (!whole(p.form, 1) ||
@@ -285,6 +288,42 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
         p.form > (omenForm(s.quest)?.forms ?? 0)))
   )
     throw Error("Invalid party");
+}
+/** Whether a saved dragon battle is malformed or out of place. */
+function badDuel(s: SessionState, duel: NonNullable<PartyState["duel"]>) {
+  const q = s.quest!;
+  // A finished battle keeps its last round (`prev`) on the card put aside.
+  const card =
+    s.phase === "complete"
+      ? finaleCard(q, s.previousId ?? "")
+      : q.due
+        ? finaleCard(q, q.finale[q.step])
+        : undefined;
+  const moves = (n: unknown) =>
+    Number.isSafeInteger(n) && (n as number) >= 0 && (n as number) < 6;
+  const round = (r: unknown) => {
+    if (r === "contest") return true;
+    const m = r as { move?: unknown; enraged?: unknown } | null;
+    return (
+      !!m &&
+      typeof m === "object" &&
+      moves(m.move) &&
+      (m.enraged === undefined || m.enraged === true)
+    );
+  };
+  return (
+    !duel ||
+    typeof duel !== "object" ||
+    !card?.lairFight ||
+    (s.phase === "complete" && duel.prev === undefined) ||
+    !moves(duel.move) ||
+    !Number.isSafeInteger(duel.swings) ||
+    duel.swings < 0 ||
+    (duel.contest !== undefined &&
+      (duel.contest !== true || duel.move !== 0 || !!duel.enraged)) ||
+    (duel.enraged !== undefined && duel.enraged !== true) ||
+    (duel.prev !== undefined && !round(duel.prev))
+  );
 }
 /** Systems cut on 2026-10-31 (owner: "way too much clutter"): signature
  * powers, Pub Crawl's knacks, floor rules, Cup and Quaff, curses, the Tera
