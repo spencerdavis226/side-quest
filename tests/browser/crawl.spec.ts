@@ -1,9 +1,14 @@
 import { type Page } from "@playwright/test";
-import { test, expect, seed, reseed, saved } from "./support";
-import { advance, currentCard, finaleStage } from "../../src/game/engine";
+import { test, expect, seed, reseed, saved, rng } from "./support";
+import {
+  advance,
+  createSession,
+  currentCard,
+  finaleStage,
+} from "../../src/game/engine";
 import { returnToCard, rollDice } from "../../src/game/dice";
 import type { SessionState } from "../../src/game/types";
-import { cards } from "../../src/content/catalog";
+import { cards, packs } from "../../src/content/catalog";
 import {
   DRAGON_HEALTH,
   PARTY_HEARTS as H,
@@ -509,8 +514,9 @@ test("a region's boss ranks the adventurer up, and a side quest can be walked pa
   await expect(plaques.nth(1)).toHaveAccessibleName(/^Walk on/);
   await page.screenshot({ path: info.outputPath("side-quest.png") });
   await plaques.nth(1).click();
+  // The Signpost comes next (The Quest 2.0 Phase 5).
   await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
-    /^Encounter 1 of 8, The Haunted Crypt/,
+    "The Signpost",
   );
   const walked = await saved(page);
   expect(
@@ -1090,9 +1096,7 @@ test("the lore runes and an ally sent in", async ({ page }, info) => {
     },
   };
   // An elite on the lair's road: the hired blade's calling.
-  const region = s.quest!.stages.find(
-    (st, i) => st.pick === 8 && i > 12 && st.elite?.length,
-  )!;
+  const region = s.quest!.stages[finaleStage(s.quest!, STEP.floor3).stage];
   const elite = region.elite!.find(
     (c) => c.dice?.count === 1 && c.dice.sides === 20 && !c.dice.choice,
   )!;
@@ -1126,4 +1130,46 @@ test("the lore runes and an ally sent in", async ({ page }, info) => {
     "A Hired Blade sent in: +3 to the roll",
   );
   await page.screenshot({ path: info.outputPath("ally-sent.png") });
+});
+
+// The road (The Quest 2.0 Phase 5): the Road Out offers two regions on
+// plaques; taking one drops the other, and the map in the party dialog
+// lights the road taken.
+test("the road out: two regions, one taken, the map", async ({
+  page,
+}, info) => {
+  await page.setViewportSize({ width: 320, height: 700 });
+  let s = createSession(
+    { version: 1, packIds: ["dungeon"], limit: null, quest: "dungeon" },
+    cards,
+    packs,
+    rng("the road out"),
+  );
+  s = {
+    ...s,
+    discarded: STEP.road,
+    previousId: s.quest!.finale[STEP.road - 1],
+    quest: { ...s.quest!, step: STEP.road },
+  };
+  await seed(page, reveal(s));
+  const plaques = page.locator(".card-choice.offers .card-choice-option");
+  await expect(plaques).toHaveCount(2);
+  const first = currentCard(reveal(s)).offers![0].label;
+  await expect(plaques.nth(0)).toHaveAccessibleName(
+    `${first}: the road to ${first.replace(/^The /, "the ")}`,
+  );
+  await page.screenshot({ path: info.outputPath("road-out.png") });
+  await plaques.nth(0).click();
+  await expect
+    .poll(async () => (await saved(page)).quest.step)
+    .toBe(STEP.road + 1);
+  const after: SessionState = await saved(page);
+  expect(after.quest!.dropped).toHaveLength(2);
+  expect(after.quest!.stages.some((st) => st.label === first)).toBe(true);
+  await meter(page).click();
+  const map = page.locator(".quest-map");
+  await expect(map).toBeVisible();
+  await expect(map).toHaveAccessibleName(new RegExp(first));
+  await expect(map.locator(".map-region.current")).toHaveCount(1);
+  await page.screenshot({ path: info.outputPath("map.png") });
 });

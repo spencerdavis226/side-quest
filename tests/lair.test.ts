@@ -15,6 +15,7 @@ import { parseSession } from "../src/app/persistence";
 import { cards, packs, validateCatalog } from "../src/content/catalog";
 import { DRAGON_HEALTH, ENRAGE_HURT } from "../src/content/dungeon/shared";
 import type { GameConfig, SessionState } from "../src/game/types";
+import { takeRoads } from "./roads";
 
 // The dragon battle (The Quest 2.0 Phase 2, 2026-11-13): a lair fight is a
 // boss whose re-deals are rounds, each with a move sampled when it is
@@ -32,8 +33,9 @@ const seeded = (seed: number): Random => {
     return (seed - 1) / 2147483646;
   };
 };
-const CLOSING = 38;
-const LAIR = 39;
+// With both roads taken (The Quest 2.0 Phase 5).
+const CLOSING = 40;
+const LAIR = 41;
 const party = (s: SessionState) => s.quest!.party!;
 const roundTrip = (s: SessionState) =>
   expect(parseSession(JSON.stringify(s))).toEqual(s);
@@ -48,7 +50,7 @@ const dragonOf = (s: SessionState) =>
 
 /** A run at the Lair's Door, the Company felled with one natural 20 so the dragon's first round is dealt the way a game deals it. */
 function atDragon(seed = 1, hearts = 30): SessionState {
-  let s = createSession(crawl, cards, packs, seeded(seed));
+  let s = takeRoads(createSession(crawl, cards, packs, seeded(seed)));
   const q = s.quest!;
   const finale = [...q.finale];
   finale[CLOSING] = "dungeon.closing-last-table";

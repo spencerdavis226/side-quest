@@ -123,7 +123,7 @@ export interface CrawlTheme {
   badgeLock?: { cards: string[]; why: string };
   /** What the setup screen counts as the run's length (floors, gyms);
    * by default every stage of several rooms. */
-  lengthOf?: (stages: QuestStage[]) => number;
+  lengthOf?: (stages: (QuestStage & { route?: 0 | 1 })[]) => number;
   /** The seals legend in the guide: −hearts, hits, +item. */
   legend: [string, string, string];
   /** The legend's last two lines, the standing rule on a d20: what a
@@ -159,7 +159,8 @@ export interface CrawlTheme {
  * a run reads as a journey. The rivals' Lair's Door is tested before the
  * Dragon's Lair. The King's Road keeps the hearth's own light. */
 const SCENES: [RegExp, string][] = [
-  [/King.s Road|Summons/, "road"],
+  // The road choices (The Quest 2.0 Phase 5) are on the open road.
+  [/King.s Road|Summons|Road Out|Signpost/, "road"],
   [/Old Forest/, "forest"],
   [/Marsh/, "marsh"],
   [/Goblin Mines/, "mines"],
@@ -294,7 +295,10 @@ const dungeon: CrawlTheme = {
   ],
   // Floors are the stages of eight rooms; the hidden room's two guards are
   // not a floor.
-  lengthOf: (stages) => stages.filter((st) => st.pick >= 4).length,
+  // A depth with a road choice (Phase 5) holds two regions until it is
+  // chosen; count one.
+  lengthOf: (stages) =>
+    stages.filter((st) => st.pick >= 4 && st.route !== 1).length,
   legendMore: {
     trinket: "Gear on a win: it holds the rest of the quest",
     jinx: "A curse on a loss: a table rule until the boss falls",
@@ -560,3 +564,25 @@ export function crawlIconPath(theme: CrawlTheme, name: CrawlIconName) {
 export function heartCount(theme: CrawlTheme, n: number) {
   return `${n} ${n === 1 ? theme.words.heart : theme.words.hearts}`;
 }
+
+/** The Quest's map (The Quest 2.0 Phase 5, 2026-11-14): the regions of
+ * the first two depths, left to right, each with its three words; the
+ * lair region is read from the run. Display only. */
+export const QUEST_MAP: { label: string; words: string }[][] = [
+  [
+    { label: "The King's Road", words: "People, tolls, merchants" },
+    { label: "The Old Forest", words: "Bargains, healing, curses" },
+    { label: "The Marsh", words: "Traps, gambles, mud" },
+  ],
+  [
+    { label: "The Haunted Crypt", words: "Curses, relics, the dead" },
+    { label: "The Goblin Mines", words: "Greed, gambles, loot" },
+    { label: "The Wizard's Tower", words: "Riddles, tricks, tomes" },
+  ],
+];
+/** The lairs' three words, by region label. */
+export const LAIR_WORDS: Record<string, string> = {
+  "The Sunken Coast": "All hands on deck",
+  "The Fire Caverns": "Endurance and heat",
+  "The Frozen Pass": "Ice, traps, treasure",
+};

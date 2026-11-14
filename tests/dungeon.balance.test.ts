@@ -118,7 +118,10 @@ function playRun(seed: number, adventurer?: string) {
       const offers = card.offers!;
       const p = party(s);
       let pick: number;
-      if (card.encounter === "fork") pick = p.hearts > 6 ? 1 : 0;
+      // The road (Phase 5): a coin flip between the two regions offered.
+      if (offers.some((o) => o.route !== undefined))
+        pick = random() < 0.5 ? 0 : 1;
+      else if (card.encounter === "fork") pick = p.hearts > 6 ? 1 : 0;
       else if (offers.some((o) => o.skip)) pick = p.hearts > 6 ? 0 : 1;
       // A landmark or a dragon sign (The Quest 2.0 Phase 3): gear, then an
       // item, then a heal when hurt, then the loud door when healthy, else
@@ -296,8 +299,9 @@ it("a crawl is hard: the party wins about a quarter of its runs", () => {
   // D10 (The Quest 2.0, 2026-11-13): the measured mean plus 6. Measured
   // 54.4 after the dragon battle (Phase 2), so 60.4; 55.0 with the
   // landmarks and the dragon sign (Phase 3), so 61; 56.1 with allies,
-  // lore and a five-scale dragon (Phase 4), so 62.
-  expect(mean).toBeLessThan(62);
+  // lore and a five-scale dragon (Phase 4), so 62; 58.1 with the two road
+  // cards (Phase 5), so 64.
+  expect(mean).toBeLessThan(64);
   // Nearly every run gets through the gate and the first region.
   const early = ["The City Gate", "Region 1"].reduce(
     (n, l) => n + (wipes.get(l) ?? 0),
@@ -351,6 +355,23 @@ it("the dragon battle is the run's last hard fight, never a wall", () => {
   }
 });
 
+it("no road is the easy one (The Quest 2.0 Phase 5)", () => {
+  // Each pair of regions offered (the choice card dealt) wins within 8
+  // points of every other at its depth.
+  for (const label of ["The Road Out", "The Signpost"]) {
+    const pairs = by(
+      (s) =>
+        s.quest!.stages.find((st) => st.label === label)?.cards[0].id ?? "none",
+    ).filter(([n]) => n !== "none");
+    console.log(
+      `${label}: ${pairs.map(([n, r]) => `${n.replace("dungeon.road-", "")} ${pct(r)}`).join(", ")}`,
+    );
+    expect(pairs).toHaveLength(3);
+    const rates = pairs.map(([, r]) => r);
+    expect(Math.max(...rates) - Math.min(...rates)).toBeLessThan(0.08);
+  }
+});
+
 it("adventurers rank up often, but not always all the way", () => {
   const levelling = runs.filter(
     (s) => !JOKE_CLASSES.includes(party(s).omen ?? ""),
@@ -388,10 +409,21 @@ it("no adventurer, omen or dungeon makes a crawl a walkover or hopeless", () => 
   const walked = runs.filter((s) => room(s) === "walked on").length / RUNS;
   // Each region on its own (27 whole routes are too thin to measure), by
   // its eight-encounter stage at each depth.
-  const regions = (s: SessionState) =>
-    s.quest!.stages.filter((st) => st.pick === 8);
+  // A run that fell before a road choice (Phase 5) holds both regions
+  // offered at that depth and reached neither: it is left out there.
+  const DEPTHS = [
+    ["The King's Road", "The Old Forest", "The Marsh"],
+    ["The Haunted Crypt", "The Goblin Mines", "The Wizard's Tower"],
+    ["The Sunken Coast", "The Fire Caverns", "The Frozen Pass"],
+  ];
+  const regionAt = (s: SessionState, depth: number) => {
+    const at = s.quest!.stages.filter(
+      (st) => st.pick === 8 && DEPTHS[depth].includes(st.label),
+    );
+    return at.length === 1 ? at[0].label.replace("The ", "") : "none";
+  };
   const dungeons = [0, 1, 2].flatMap((i) =>
-    by((s) => regions(s)[i].label.replace("The ", "")),
+    by((s) => regionAt(s, i)).filter(([n]) => n !== "none"),
   );
   console.log(
     `adventurers: ${adventurers.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}\n` +

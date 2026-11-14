@@ -1,4 +1,9 @@
-import type { Loot, PokemonType, SessionState } from "../../game/types";
+import type {
+  Loot,
+  PokemonType,
+  QuestState,
+  SessionState,
+} from "../../game/types";
 import {
   cardMatchup,
   currentCard,
@@ -20,7 +25,12 @@ import { rollWins } from "../../game/dice";
 import { describeChange } from "../../game/omenText";
 import { badgeArt } from "../../presentation/league-art";
 import { badgeType } from "../../presentation/pokemon-types";
-import { crawlTheme, type CrawlIconName } from "../crawlTheme";
+import {
+  LAIR_WORDS,
+  QUEST_MAP,
+  crawlTheme,
+  type CrawlIconName,
+} from "../crawlTheme";
 import { allyLine, gearIcon, isOmenBoon } from "../Crawl";
 import { badgeName } from "../LeagueMarks";
 
@@ -166,6 +176,12 @@ export type Moment = {
   | { kind: "wanted"; id: string; dragon: string; lair: string }
   /** A dragon sign turns over: its shadow crosses the card (M9). */
   | { kind: "shadow"; id: string; dragon: string }
+  /** The Quest 2.0 Phase 5: a road card turns over and the map opens on
+   * the two regions offered (M3). */
+  | { kind: "map"; quest: QuestState; title: string }
+  /** The first card of a region is dealt: the road so far, and the
+   * region's name and three words (M4; it replaces the region's banner). */
+  | { kind: "road"; quest: QuestState; region: string; words: string }
   /** A jinx laid (its name and rule) or lifted (the boss fell). */
   | {
       kind: "jinx";
@@ -184,6 +200,8 @@ export type MomentKind = Moment["kind"];
 export const AMBIENT: ReadonlySet<MomentKind> = new Set([
   "dragonmove",
   "shadow",
+  "map",
+  "road",
   "milestone",
   "natural",
   "clash",
@@ -406,6 +424,41 @@ export function momentsBetween(
           dragon: names.dragon,
           say: `A shadow passes: ${names.dragon}.`,
         });
+    }
+  }
+
+  // The road (The Quest 2.0 Phase 5): the map opens on a choice (M3), and
+  // the road so far shows as each region begins (M4).
+  if (q?.due && q.packId === "dungeon") {
+    if (turned && card.offers?.some((o) => o.route !== undefined))
+      out.push({
+        kind: "map",
+        key: `map:${after.discarded}`,
+        quest: q,
+        title: card.title,
+        say: `The map: ${card.offers.map((o) => o.label).join(" or ")}.`,
+      });
+    const was = before.quest;
+    const at = finaleStage(q);
+    const st = q.stages[at.stage];
+    if (
+      after.phase === "hidden" &&
+      was?.step !== q.step &&
+      at.index === 0 &&
+      st.pick === 8
+    ) {
+      const words =
+        QUEST_MAP.flat().find((r) => r.label === st.label)?.words ??
+        LAIR_WORDS[st.label] ??
+        "";
+      out.push({
+        kind: "road",
+        key: `road:${st.label}:${after.discarded}`,
+        quest: q,
+        region: st.label,
+        words,
+        say: `${st.label}. ${words}.`,
+      });
     }
   }
 

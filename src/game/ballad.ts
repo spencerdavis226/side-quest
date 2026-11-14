@@ -39,8 +39,12 @@ export function ballad(s: SessionState): string[] {
   const form = omenForm(q);
   const { dragon = "the dragon", lair = "the lair" } = runNames(q);
   const stages = record.stages;
-  const region = stages.find((st) => st.kind === "floor" && st.size >= 4);
-  const where = mid(region?.label ?? "the road");
+  // The first region the party set foot in (with roads to choose, a run
+  // that fell before the choice holds two it never took: Phase 5).
+  const region = stages.find(
+    (st) => st.kind === "floor" && st.size >= 4 && st.cards.length > 0,
+  );
+  const where = mid(region?.label ?? "the city gate");
 
   // 1. Who set out, and where to.
   const hero = form?.title ?? "hero";

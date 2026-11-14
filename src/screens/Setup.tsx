@@ -56,9 +56,12 @@ export function Setup({
     : crawlLook.lengthOf
       ? crawlLook.lengthOf(questRoute(crawlPack.quest!, () => 0))
       : crawlPack.quest!.finale.filter((slot) =>
-          ("oneOf" in slot ? slot.oneOf.flat() : [slot]).some(
-            (st) => st.pick > 1,
-          ),
+          ("oneOf" in slot
+            ? slot.oneOf.flat()
+            : "choose" in slot
+              ? slot.choose.routes.flat()
+              : [slot]
+          ).some((st) => st.pick > 1),
         ).length;
   // Leaving a quest mode switches its pack off again if choosing it switched
   // the pack on (persistence.ts).

@@ -16,6 +16,7 @@ import { lowerLandings, upperLandings } from "./dungeon/landings";
 import { omens } from "./dungeon/omens";
 import { summonsCards } from "./dungeon/summons";
 import { signCards } from "./dungeon/signs";
+import { roadOut, signposts } from "./dungeon/roads";
 import { landmarks } from "./dungeon/landmarks";
 import { rooftop } from "./dungeon/rooftop";
 import { sewers } from "./dungeon/sewers";
@@ -91,6 +92,8 @@ export const dungeonCards: CardDefinition[] = applyPhases([
   ...omens,
   ...summonsCards,
   ...signCards,
+  ...roadOut,
+  ...signposts,
   ...Object.values(landmarks).flat(),
   ...classes,
   ...upperLandings,
@@ -164,36 +167,45 @@ export const dungeonPack: PackDefinition = {
       one("The omen", "A sign in the sky", omens),
       one("The King's Summons", "The king needs a hero", summonsCards),
       one("The City Gate", "The Company pushes past", queueCards),
+      // The road (The Quest 2.0 Phase 5): the table chooses two of three
+      // regions at each of the first two depths.
       {
-        oneOf: [
-          [
-            floor(
-              "The King's Road",
-              "Out through the city gate",
-              cellar,
-              landmarks.cellar,
-            ),
-            one("King's Road boss", "Something blocks the road", cellar.bosses),
+        choose: {
+          card: roadOut.map((c) => one("The Road Out", "Which way?", [c])),
+          routes: [
+            [
+              floor(
+                "The King's Road",
+                "Out through the city gate",
+                cellar,
+                landmarks.cellar,
+              ),
+              one(
+                "King's Road boss",
+                "Something blocks the road",
+                cellar.bosses,
+              ),
+            ],
+            [
+              floor(
+                "The Old Forest",
+                "Into the Old Forest",
+                wine,
+                landmarks.wine,
+              ),
+              one("Old Forest boss", "The trees go quiet", wine.bosses),
+            ],
+            [
+              floor(
+                "The Marsh",
+                "Down into the Marsh",
+                brewery,
+                landmarks.brewery,
+              ),
+              one("Marsh boss", "Something stirs in the reeds", brewery.bosses),
+            ],
           ],
-          [
-            floor(
-              "The Old Forest",
-              "Into the Old Forest",
-              wine,
-              landmarks.wine,
-            ),
-            one("Old Forest boss", "The trees go quiet", wine.bosses),
-          ],
-          [
-            floor(
-              "The Marsh",
-              "Down into the Marsh",
-              brewery,
-              landmarks.brewery,
-            ),
-            one("Marsh boss", "Something stirs in the reeds", brewery.bosses),
-          ],
-        ],
+        },
       },
       // A dragon sign (The Quest 2.0 Phase 3): the dragon passes over. No
       // banner: its shadow crosses the card instead.
@@ -211,35 +223,38 @@ export const dungeonPack: PackDefinition = {
         ]),
       },
       {
-        oneOf: [
-          [
-            floor(
-              "The Haunted Crypt",
-              "Down into the Haunted Crypt",
-              catacombs,
-              landmarks.catacombs,
-            ),
-            one("Haunted Crypt boss", "The dead stand up", catacombs.bosses),
+        choose: {
+          card: signposts.map((c) => one("The Signpost", "Which way?", [c])),
+          routes: [
+            [
+              floor(
+                "The Haunted Crypt",
+                "Down into the Haunted Crypt",
+                catacombs,
+                landmarks.catacombs,
+              ),
+              one("Haunted Crypt boss", "The dead stand up", catacombs.bosses),
+            ],
+            [
+              floor(
+                "The Goblin Mines",
+                "Down into the Goblin Mines",
+                sewers,
+                landmarks.sewers,
+              ),
+              one("Goblin Mines boss", "Drums in the deep", sewers.bosses),
+            ],
+            [
+              floor(
+                "The Wizard's Tower",
+                "Up the Wizard's Tower",
+                freezer,
+                landmarks.freezer,
+              ),
+              one("Wizard's Tower boss", "The lights go out", freezer.bosses),
+            ],
           ],
-          [
-            floor(
-              "The Goblin Mines",
-              "Down into the Goblin Mines",
-              sewers,
-              landmarks.sewers,
-            ),
-            one("Goblin Mines boss", "Drums in the deep", sewers.bosses),
-          ],
-          [
-            floor(
-              "The Wizard's Tower",
-              "Up the Wizard's Tower",
-              freezer,
-              landmarks.freezer,
-            ),
-            one("Wizard's Tower boss", "The lights go out", freezer.bosses),
-          ],
-        ],
+        },
       },
       one("The Last Inn", "One last night's sleep", lowerLandings),
       one("The Crossroads", "The Gilded Company is ahead", stairsCards),

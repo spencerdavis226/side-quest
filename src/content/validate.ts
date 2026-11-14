@@ -256,7 +256,8 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
             (o.jinx !== undefined && (o.jinx !== true || !c.jinx)) ||
             // Phase 4: lore, and the card's own ally.
             (o.lore !== undefined && o.lore !== true) ||
-            (o.recruit !== undefined && (o.recruit !== true || !c.ally)),
+            (o.recruit !== undefined && (o.recruit !== true || !c.ally)) ||
+            (o.route !== undefined && o.route !== 0 && o.route !== 1),
         ))
     )
       fail(`Invalid offers: ${c.id}`);
@@ -559,11 +560,39 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
                 (route) => !Array.isArray(route) || !route.length,
               ))),
       );
-      const stages: QuestStage[] = badSlot
-        ? []
-        : slots.flatMap((slot) =>
-            "oneOf" in slot ? slot.oneOf.flat() : [slot],
-          );
+      // A road choice (The Quest 2.0 Phase 5): three routes and three
+      // choice cards, each a single card whose plaques pick road 0 or 1.
+      const badChoice = slots.some(
+        (slot) =>
+          !!slot &&
+          "choose" in slot &&
+          (!slot.choose ||
+            !Array.isArray(slot.choose.card) ||
+            !Array.isArray(slot.choose.routes) ||
+            slot.choose.routes.length !== 3 ||
+            slot.choose.card.length !== 3 ||
+            slot.choose.routes.some((r) => !Array.isArray(r) || !r.length) ||
+            slot.choose.card.some(
+              (st) =>
+                st?.pick !== 1 ||
+                !Array.isArray(st.cardIds) ||
+                st.cardIds.some((id) => {
+                  const c = cs.find((x) => x.id === id);
+                  const roads = (c?.offers ?? []).map((o) => o.route);
+                  return !roads.includes(0) || !roads.includes(1);
+                }),
+            )),
+      );
+      const stages: QuestStage[] =
+        badSlot || badChoice
+          ? []
+          : slots.flatMap((slot) =>
+              "oneOf" in slot
+                ? slot.oneOf.flat()
+                : "choose" in slot
+                  ? [...slot.choose.card, ...slot.choose.routes.flat()]
+                  : [slot],
+            );
       // A card is dealt at most once a run. Sibling routes of one `oneOf`
       // may share cards (The Quest 2.0, 2026-11-13: every lair has the same
       // door), since a game deals only one of them; two slots, or two
@@ -581,7 +610,17 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
       ];
       const repeatsInARun = (all: typeof slots) => {
         const seen = new Set<string>();
-        for (const slot of all) {
+        // A road choice deals one of its cards (siblings) and two of its
+        // routes (which may share nothing).
+        const flat = all.flatMap((slot) =>
+          "choose" in slot
+            ? [
+                { oneOf: slot.choose.card.map((c) => [c]) },
+                { oneOf: [slot.choose.routes.flat()] },
+              ]
+            : [slot],
+        );
+        for (const slot of flat) {
           const routes = "oneOf" in slot ? slot.oneOf : [[slot]];
           const dealt = new Set<string>();
           for (const route of routes) {
@@ -661,6 +700,7 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
             (stage.elite !== undefined &&
               (!crawl || !Array.isArray(stage.elite) || !stage.elite.length)),
         ) ||
+        badChoice ||
         repeatsInARun(slots) ||
         finaleIds.some(
           (id) => !ids.has(id) || (!crawl && playable.includes(id)),

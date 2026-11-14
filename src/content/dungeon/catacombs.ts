@@ -383,7 +383,10 @@ export const catacombs: FloorCards = {
       "Collected. Drink 5.",
       "You fill out his scrolls wrong. He runs, and drops his hourglass. Give 5.",
       [
-        trinket("Death's Hourglass", { loot: ["revive"] }),
+        // A Tower Shield, not a Phoenix Feather, and the Dragon Bone two
+        // hearts, not three, since The Quest 2.0 Phase 5 (2026-11-14): the
+        // Crypt was the easiest region by 8 points.
+        trinket("Death's Hourglass", { loot: ["shield"] }),
         trinket("Death's Ledger", { roll: { elite: 1, boss: 1 } }),
       ],
     ),
@@ -396,7 +399,7 @@ export const catacombs: FloorCards = {
       "You take the hat. It deflates. Give 5.",
       [
         trinket("The Tiny Hat", { roll: { all: 1 } }),
-        trinket("Dragon Bone", { hearts: 3, hurt: { trap: 1 } }),
+        trinket("Dragon Bone", { hearts: 2, hurt: { trap: 1 } }),
       ],
     ),
     elite(

@@ -142,6 +142,8 @@ describe("the Quest's lit scenes (2026-10-31; regions since Realms)", () => {
     expect(scene("The Last Inn")).toBe("inn");
     expect(scene("A Side Quest")).toBe("hidden");
     expect(scene("A Dragon Sign")).toBe("lair");
+    expect(scene("The Road Out")).toBe("road");
+    expect(scene("The Signpost")).toBe("road");
   });
   it("the League stamps its bosses but lights no scenes (2026-11-01)", () => {
     const league = crawlTheme("pokemon").flourish!;
@@ -155,7 +157,9 @@ describe("Pub Crawl floors read as different rooms", () => {
     const byFloor = new Map<string, string[]>();
     for (const c of cards) {
       const floor = c.id.startsWith("dungeon.") && c.ribbon?.split(" · ")[0];
-      if (!floor) continue;
+      // The road's choice cards (Phase 5) share their stage's name on
+      // purpose; they are not a region.
+      if (!floor || floor === "The Road") continue;
       byFloor.set(floor, [...(byFloor.get(floor) ?? []), c.title]);
     }
     for (const [floor, titles] of byFloor)

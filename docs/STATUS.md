@@ -2,9 +2,21 @@
 
 Updated 2026-11-14. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Next task (2026-11-14): The Quest 2.0 Phase 5 (the map and the road)
+## Next task (2026-11-14): The Quest 2.0 Phase 6 (rare things)
 
-Phase 4 is done (below). Next is **Phase 5** of `docs/QUEST_2_PLAN.md` section 7: the table chooses the road for regions 1 and 2 (`choose` slots, 5.6, including the F12 fix), the six road choice cards, `QuestMap`, moments M3 and M4, and the road-pair band.
+Phase 5 is done (below). Next is **Phase 6** of `docs/QUEST_2_PLAN.md` section 7: rare cards (regional and single-stage), hidden results, deeds and echoes, the deed-driven Lair's Door, joke classes made rare, moments M6, M13, M14, M22, M23, and the allies that wait on those cards (the Hatchling, Chester, the Company's Bard, Sir Bradley) and the `ally-fell` deed.
+
+## Done 2026-11-14: The Quest 2.0 Phase 5, the map and the road
+
+- **Engine** (all optional, schema v2 unchanged): a third finale slot form, `{ choose: { card, routes } }`. At game start one route is left out at random and its choice card is dealt with both other routes, tagged 0 and 1 (`questRoute`). A plaque with `route` keeps one and drops the other's stages and picks into `quest.dropped` (`chooseRoad`, `dropInto`). A Walk on's stages go there too (F12), and `replaySession` puts every dropped stage back in its place (`at`). `validateQuest` accepts `route`, `at` and `dropped` (its cards checked like the run's); `validateCatalog` checks a choose slot (three routes, three choice cards whose plaques name road 0 and 1; the two routes dealt together share no card).
+- **Content** (1,877 cards): six road cards (`dungeon/roads.ts`: three Road Outs, three Signposts, each saying why the third region is closed); the first two depths are choices; the Signpost follows the side quest.
+- **UI**: the map (`QuestMap.tsx`, inline SVG) in the party dialog; moments M3 (`map`, the map opens on a road card) and M4 (`road`, the road so far as a region begins, replacing its banner); road plaques marked with the door; Setup's brief still counts three regions.
+- **Balance** (4,000 runs): **won 31.6%**, a won run 58.1 draws, so the **run-length ceiling is now 64** (was 62). New band: every road pair within 8 points at its depth (Road Out 30% to 33%, Signpost 27% to 35%). Retuned: the Wizard starts with one Lucky Coin and its top rank is +1 with naturals on 19 (it reached 54%); the Haunted Crypt's elite spoils are lighter (Death's Hourglass a Tower Shield, the Dragon Bone +2 hearts). The Crypt is still the easiest region at 42%. Classes 19% to 47%, jokes 1% to 4%, dragons 27% to 35%, lore 1.56, an ally alive at the dragon 74%.
+- **League unchanged:** `LEAGUE_LOG` byte-identical to the Phase 0 baseline.
+- **Fixtures**: `2026-11-14-realms-road-choice-waiting`, `-road-chosen`. 82 fixtures, every old one untouched and loading.
+- **Tests:** `tests/road.test.ts` (two of three offered, about a third each over 300 runs; taking either drops the other and every count adds up; the Signpost after the side quest and a Walk on; a replay restores every stage; a save without roads loads and replays), `tests/roads.ts` (test helpers), moments cases for M3 and M4, browser specs for the road card, the choice and the map; the tests' step maps moved.
+- **Checked:** `npm test` 504 passed; lint; typecheck; `cards:review`; `BASE_PATH=/side-quest/ npm run build` (budgets pass, runtime 3,930 KiB of 4,096; initial JavaScript 146.7 KiB gzip); both balance files; Chromium `test:e2e` 174 of 175 (the known `game.spec.ts` "offline reload" race); Chromium `test:sweep` 12 of 12. Screenshots of the road card and the map at 320px looked right.
+- **Not run:** WebKit (CI), a phone.
 
 ## Done 2026-11-14: The Quest 2.0 Phase 4, lore and allies
 

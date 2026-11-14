@@ -130,7 +130,23 @@ function validateQuest(s: SessionState) {
   if (!q) return;
   if (!Array.isArray(q.stages) || !q.stages.length || !Array.isArray(q.finale))
     throw Error("Invalid quest");
-  const pool = q.stages.flatMap(stageCards);
+  // Stages a road choice or a Walk on removed (The Quest 2.0 Phase 5),
+  // kept for a replay: each a stage, its cards checked like the run's.
+  if (
+    q.dropped !== undefined &&
+    (!q.party ||
+      !Array.isArray(q.dropped) ||
+      q.dropped.some(
+        (st) =>
+          !st ||
+          typeof st.label !== "string" ||
+          !whole(st.pick, 1) ||
+          !Array.isArray(st.cards) ||
+          st.pick > st.cards.length + (st.inserts?.length ?? 0),
+      ))
+  )
+    throw Error("Invalid quest");
+  const pool = [...q.stages, ...(q.dropped ?? [])].flatMap(stageCards);
   validateCatalog(pool, []);
   // The finale is each stage's picks, in stage order, with no repeats; a
   // crawl floor's fork may have swapped one of its later rooms for an elite.
@@ -160,6 +176,9 @@ function validateQuest(s: SessionState) {
       typeof stage.label !== "string" ||
       !stage.label.trim() ||
       !whole(stage.pick, 1) ||
+      // A road's tag and the stage's place (Phase 5).
+      (stage.route !== undefined && stage.route !== 0 && stage.route !== 1) ||
+      (stage.at !== undefined && !whole(stage.at, 0)) ||
       badInserts ||
       stage.pick - (inserts?.length ?? 0) > stage.cards.length ||
       picks.length !== stage.pick ||

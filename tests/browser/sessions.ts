@@ -5,6 +5,8 @@ import { advance, createSession } from "../../src/game/engine";
 import type { PartyState, SessionState } from "../../src/game/types";
 import { cards, packs } from "../../src/content/catalog";
 import { rng } from "./support";
+import { roadDraw, takeRoads } from "../roads";
+import { QUEST_MAP } from "../../src/components/crawlTheme";
 
 // Pokémon League plays on the crawl engine since 2026-10-16: a starter, eight
 // routes each closed by a gym, a villain hideout, Victory Road, the rival and
@@ -76,21 +78,25 @@ export const STEP = {
   omen: 1,
   summons: 2,
   queue: 3,
-  floor1: 4,
-  boss1: 12,
+  // The Road Out and the Signpost (The Quest 2.0 Phase 5), both roads
+  // taken by `crawlAt`.
+  road: 4,
+  floor1: 5,
+  boss1: 13,
   // A dragon sign (The Quest 2.0 Phase 3) after the first boss.
-  sign: 13,
-  landing1: 14,
-  plea: 15,
-  hidden: 16,
-  keeper: 18,
-  floor2: 19,
-  boss2: 27,
-  landing2: 28,
-  stairs: 29,
-  floor3: 30,
-  closing: 38,
-  lastCall: 39,
+  sign: 14,
+  landing1: 15,
+  plea: 16,
+  hidden: 17,
+  keeper: 19,
+  signpost: 20,
+  floor2: 21,
+  boss2: 29,
+  landing2: 30,
+  stairs: 31,
+  floor3: 32,
+  closing: 40,
+  lastCall: 41,
 };
 
 // A Quest seeded at `step` with `id` in play, the party as given. The
@@ -118,14 +124,19 @@ export function crawlAt(
 ): SessionState {
   // The route draws come in run order: floor 1, the hidden room (0 to 4),
   // floor 2, floor 3.
+  // The first two depths are road choices (Phase 5): the draw leaves the
+  // wanted region on the road, and the road is taken at once.
   const f = (route + 0.5) / 3;
-  const floors = [f, (room + 0.5) / 5, f, f];
+  const floors = [roadDraw(route), (room + 0.5) / 5, roadDraw(route), f];
   const rest = rng(`${id} ${step} ${route} ${room} ${adventurer}`);
-  let s = createSession(
-    { version: 1, packIds: ["dungeon"], limit: null, quest: "dungeon" },
-    cards,
-    packs,
-    () => floors.shift() ?? rest(),
+  let s = takeRoads(
+    createSession(
+      { version: 1, packIds: ["dungeon"], limit: null, quest: "dungeon" },
+      cards,
+      packs,
+      () => floors.shift() ?? rest(),
+    ),
+    [QUEST_MAP[0][route].label, QUEST_MAP[1][route].label],
   );
   const place = (s: SessionState, id: string, step: number) => {
     const finale = [...s.quest!.finale];

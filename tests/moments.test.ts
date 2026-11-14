@@ -4,6 +4,7 @@ import {
   createSession,
   currentCard,
   runNames,
+  takeOffer,
   type Random,
 } from "../src/game/engine";
 import { returnToCard, rollDice } from "../src/game/dice";
@@ -212,6 +213,25 @@ describe("moments", () => {
   ): SessionState => ({
     ...at,
     quest: { ...at.quest!, party: { ...at.quest!.party!, ...change } },
+  });
+
+  it("the map opens on a road card, and the road so far as a region begins (Phase 5)", () => {
+    const c = createSession(crawl, cards, packs, seeded(12));
+    const road = atStep(c, stepOf(c, "The Road Out"));
+    const map = momentsBetween(road, { ...road, phase: "revealed" }).find(
+      (m) => m.kind === "map",
+    );
+    expect(map).toMatchObject({ title: "The Road Out" });
+    expect(AMBIENT.has("map")).toBe(true);
+    // The road taken: the region's first card dealt face down.
+    const shown = { ...road, phase: "revealed" as const };
+    const took = takeOffer(shown, 0);
+    const begun = momentsBetween(shown, took).find((m) => m.kind === "road");
+    expect(begun).toMatchObject({
+      region: currentCard(shown).offers![0].label,
+    });
+    expect((begun as { words: string }).words).not.toBe("");
+    expect(momentsBetween(null, took)).toEqual([]);
   });
 
   it("the Quest's lore, an ally joining, sent in and falling (Phase 4)", () => {

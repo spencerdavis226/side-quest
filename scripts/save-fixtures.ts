@@ -316,6 +316,20 @@ const situations: [string, GameConfig, Find][] = [
       s.roll?.edge === "advantage" &&
       !!currentCard(s).lairFight,
   ],
+  // The road (The Quest 2.0 Phase 5): a road choice face up with both
+  // roads in the run, and a run after the choice (the other road dropped).
+  [
+    "realms-road-choice-waiting",
+    crawl,
+    (s) =>
+      s.phase === "revealed" &&
+      !!currentCard(s).offers?.some((o) => o.route !== undefined),
+  ],
+  [
+    "realms-road-chosen",
+    crawl,
+    (s) => s.phase === "hidden" && (s.quest!.dropped?.length ?? 0) >= 2,
+  ],
   [
     "league-catch-beat",
     league,

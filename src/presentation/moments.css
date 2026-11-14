@@ -5815,3 +5815,76 @@
   margin-top: 6px;
   animation: wanted-in 500ms 2700ms ease both;
 }
+
+/* The road (The Quest 2.0 Phase 5): the map unrolls on a choice (M3); the
+   road so far as a strip when a region begins (M4). Taps go through. */
+.moment-map,
+.moment-road {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 10px;
+  padding: 0 16px;
+  pointer-events: none;
+}
+.moment-map {
+  background: rgb(0 0 0 / 0.55);
+  animation: map-fade var(--len) ease both;
+}
+.map-scroll {
+  width: min(86vw, 340px);
+  transform-origin: 50% 0;
+  animation: map-unroll var(--len) cubic-bezier(0.2, 1, 0.4, 1) both;
+}
+.moment-road {
+  animation: map-fade var(--len) ease both;
+}
+.road-strip {
+  width: min(70vw, 260px);
+  height: 120px;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.6);
+}
+.road-strip .quest-map {
+  margin-top: -110px;
+}
+.road-name {
+  color: #fff3c4;
+  font: 800 clamp(26px, 8vw, 44px) / 1.05 var(--font-card-title);
+  text-shadow:
+    0 3px 0 #6a4408,
+    0 0 22px #f2c94c;
+  animation: wanted-in 500ms 300ms ease both;
+}
+.road-words {
+  color: #f1e3c4;
+  font: italic 500 clamp(15px, 4.2vw, 19px) / 1.3 var(--font-tavern);
+  text-shadow: 0 2px 6px #000;
+  animation: wanted-in 500ms 700ms ease both;
+}
+@keyframes map-unroll {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.05);
+  }
+  25%,
+  80% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: scaleY(0.05);
+  }
+}
+@keyframes map-fade {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  12%,
+  85% {
+    opacity: 1;
+  }
+}

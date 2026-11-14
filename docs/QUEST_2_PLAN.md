@@ -906,7 +906,18 @@ One phase is one session and one pull request. Start each session by reading `AG
   - **The balance test's "reach the dragon"** counted only runs that took the side quest (it filtered on the run's length); it now counts every run that ends at the dragon.
   - **UI**: three runes on the strip (`.tag-lore`, opening "Dragon lore": the lines found), allies in the bag and on the sent-in chip with their own mark (`crawl/ally.svg`, `crawl/lore.svg` from the vendored set), plaque marks for gear, lore and an ally, How to play rows "Lore" and "Allies"; moments M8 (`lore`), M10 (`ally`), M11 (the League's send-in without the ball, with the bonus), M12 (`fallen`, "Took the blow" on a last stand), and M2's three unlit runes.
 
-- [ ] **Phase 5: the map and the road.** 4.7, 5.6 (including the F12 fix), `QuestMap`, moments M3, M4. Add the road-pair band. Done when `tests/road.test.ts`, the fixtures and the gate pass.
+- [x] **Phase 5: the map and the road.** 4.7, 5.6 (including the F12 fix), `QuestMap`, moments M3, M4. Add the road-pair band. Done when `tests/road.test.ts`, the fixtures and the gate pass.
+
+  Done 2026-11-14 (won 31.6%; every road pair within 8 points: the Road Out's 30% to 33%, the Signpost's 27% to 35%; a won run 58.1 draws, so the D10 ceiling is 64).
+
+  **As built (Phase 5).** Corrections and choices:
+  - **Route tags stay on the kept stages** (the plan said clear them): a replay needs them to restore the choice, and a choice drops only the run of tagged stages straight after its own card (`chooseRoad` in `crawl/stages.ts`), so the Road Out never touches the Signpost's roads.
+  - **`at` is recorded only in a quest with a road choice** (The Quest), so League snapshots are unchanged. `restoreStages` puts `dropped` back by `at` for a replay; a save without `at` replays its stages as they are.
+  - **The F12 fix** is in: a Walk on's two stages also go to `dropped` (`dropInto`), so a replay after one deals the side quest again.
+  - **The road cards** are `encounter: "fork"`, ribbon "The Road", in `dungeon/roads.ts`; their plaques are the regions' names (`route` 0 and 1), marked with the door. The plea's `skip: 2` is unchanged: the Signpost comes after the side quest's stages.
+  - **The map** (`src/components/QuestMap.tsx`, inline SVG; region words in `QUEST_MAP` and `LAIR_WORDS` in `crawlTheme.ts`) sits in the party dialog (a section, not a tab). M3 (`map`) and M4 (`road`) are ambient moments; M4 replaces a Quest region's stage banner (it no longer names the region's boss as "Wanted"; the strip and the boss's own entrance still do).
+  - **Balance.** The road is a coin flip for the bot. The two road cards lengthen a won run by 2 (58.1 draws). The Wizard reached 54% with the new draws: it now starts with one Lucky Coin (was two) and its top rank is +1 to every d20 with naturals on 19 (was +2). The Haunted Crypt is the easiest region (42%; it was 37% to 39% before): its Signpost pairs sat just over 8 points apart until two of its elite spoils were toned down (Death's Hourglass a Tower Shield, was a Phoenix Feather; the Dragon Bone +2 hearts, was +3). It stays the easiest; worth a look in Phase 8.
+  - **Tests**: `tests/roads.ts` (`roadDraw`, `takeRoads`) makes both choices for tests that read a run as it will be dealt; the tests' `STEP` maps moved by one at the Road Out and one more at the Signpost.
 
 - [ ] **Phase 6: rare things.** 4.9, 4.10, 5.7, moments M6, M13, M14, M22, M23. The balance test forces each joke class and each rare (deal it directly, as its `deal` helper does) instead of waiting on odds. Done when `tests/rare.test.ts`, `tests/deeds.test.ts`, the fixtures and the gate pass.
 
