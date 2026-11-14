@@ -21,7 +21,7 @@ describe("dice palettes", () => {
   it("gives every starter and adventurer level its own colours", () => {
     // 35 starters and their 60 later forms; 18 adventurers and their 54
     // later ranks (one line of three since Realms, 2026-11-03).
-    expect(palettes.length).toBe(35 + 60 + 18 + 54);
+    expect(palettes.length).toBe(35 + 60 + 19 + 57);
     for (const [title, p] of palettes) expect(p, title).toBeDefined();
     const keys = palettes.map(([, p]) => `${p!.primary}${p!.secondary}`);
     expect(new Set(keys).size).toBe(keys.length);

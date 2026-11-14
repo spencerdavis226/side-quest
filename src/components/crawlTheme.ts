@@ -231,6 +231,7 @@ const dungeon: CrawlTheme = {
     "dungeon.class-druid": "Everyone makes a bird noise.",
     "dungeon.class-plus-one": "Nobody claps. The Peasant claps alone.",
     "dungeon.class-intern": "Everyone gives the Squire a thumbs up.",
+    "dungeon.class-dragonslayer": "Everyone bares their teeth at the sky.",
     "dungeon.class-mimic": "Everyone opens and shuts their mouth like a lid.",
   },
   equipment: {

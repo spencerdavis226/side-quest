@@ -14,12 +14,18 @@ import {
   stageCards,
   TEAM_SIZE,
   validConfig,
+  emptyChronicle,
+  readChronicle,
+  type Chronicle,
 } from "../game/engine";
 import type { GameConfig, PartyState, SessionState } from "../game/types";
 import { LOOT } from "../game/types";
 import { IS_PREVIEW, KEY_PREFIX } from "./channel";
 export const SAVE_KEY = `${KEY_PREFIX}session.v1`;
 export const SETTINGS_KEY = `${KEY_PREFIX}settings.v1`;
+/** The Chronicle (The Quest 2.0 Phase 7): The Quest's record across runs,
+ * never part of a session save. */
+export const CHRONICLE_KEY = `${KEY_PREFIX}chronicle.v1`;
 /** The last save that failed to load, kept as it was so a later fix can
  * recover the game. Only the latest is kept. */
 export const CORRUPT_KEY = `${KEY_PREFIX}session.corrupt.v1`;
@@ -69,7 +75,8 @@ export const defaults: Preferences = {
 /** Leave a quest mode's pack the way the player had it: a pack the mode
  * switched on goes off again, unless that would empty the selection. */
 function dropAdded(prefs: Preferences): GameConfig {
-  const { quest: _quest, ...config } = prefs.config;
+  // Heroic (The Quest 2.0 Phase 7) belongs to the quest mode it was set in.
+  const { quest: _quest, heroic: _heroic, ...config } = prefs.config;
   const kept = config.packIds.filter((id) => id !== prefs.added);
   return { ...config, packIds: kept.length ? kept : config.packIds };
 }
@@ -222,6 +229,8 @@ function validateQuest(s: SessionState) {
     !whole(q.step, 0) ||
     (q.lost !== undefined && !whole(q.lost, 0)) ||
     q.step >= q.finale.length ||
+    // Heroic (The Quest 2.0 Phase 7) only with its config.
+    (q.heroic !== undefined && (q.heroic !== true || !s.config.heroic)) ||
     (!q.due && q.step !== 0) ||
     // A crawl's rooms are also its pack's deck cards, never dealt in a crawl.
     (!q.party && pool.some((c) => s.cards.some((d) => d.id === c.id)))
@@ -641,6 +650,31 @@ export function loadPreferences(): Preferences {
   }
   return defaults;
 }
+/** The stored Chronicle, or an empty one when there is none, storage is
+ * unavailable, or it is malformed (a malformed one is reset alone: the
+ * session and settings are never touched). */
+export function loadChronicle(): Chronicle {
+  let raw: string | null;
+  try {
+    raw = localStorage.getItem(CHRONICLE_KEY);
+  } catch {
+    return emptyChronicle();
+  }
+  if (!raw) return emptyChronicle();
+  try {
+    const c = readChronicle(JSON.parse(raw));
+    if (c) return c;
+  } catch {
+    /* malformed */
+  }
+  try {
+    localStorage.removeItem(CHRONICLE_KEY);
+  } catch {
+    /* storage refuses */
+  }
+  return emptyChronicle();
+}
+export const saveChronicle = (c: Chronicle) => save(CHRONICLE_KEY, c);
 export function save(key: string, value: unknown): boolean {
   try {
     if (value === null) localStorage.removeItem(key);

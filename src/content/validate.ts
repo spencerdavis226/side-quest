@@ -537,7 +537,17 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
     ]) {
       if (
         !o ||
-        (omens.includes(o) && (c.battle || c.dice || c.offers || c.reward)) ||
+        (omens.includes(o) &&
+          (c.battle ||
+            c.dice ||
+            c.offers ||
+            // An omen may bring lore (The Quest 2.0 Phase 7: the
+            // Dragonslayer), and nothing else.
+            (c.reward &&
+              (c.reward.lore !== true ||
+                Object.entries(c.reward).some(
+                  ([k, v]) => k !== "lore" && v !== undefined,
+                ))))) ||
         badEffect(o)
       )
         fail(`Invalid omen: ${c.id}`);

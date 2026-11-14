@@ -85,7 +85,9 @@ export function nextDuel(
   random: Random,
 ): Duel {
   const need = hitsNeeded(quest, card);
-  const enraged = !!before?.enraged || !!before?.contest;
+  // Heroic mode (The Quest 2.0 Phase 7): enraged from the first round, so
+  // there is no contest.
+  const enraged = !!quest.heroic || !!before?.enraged || !!before?.contest;
   const swings = before ? before.swings + (before.contest ? 0 : 1) : 0;
   const prev = before ? roundOf(before) : undefined;
   if (!enraged && hits >= Math.ceil(need / 2))

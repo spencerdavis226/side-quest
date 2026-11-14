@@ -41,7 +41,10 @@ export function hitsNeeded(
   // every boss (Marowak) speeds up the big ones, never skips a gym.
   return Math.max(
     1,
-    card.hits + (isBossCard(card) ? (omenEffect(quest)?.bossHits ?? 0) : 0),
+    card.hits +
+      (isBossCard(card) ? (omenEffect(quest)?.bossHits ?? 0) : 0) +
+      // Heroic mode (The Quest 2.0 Phase 7): the dragon has one more scale.
+      (quest?.heroic && card.lairFight ? 1 : 0),
   );
 }
 /** A crawl fight just won whose spoils wait to be picked: an elite's win,

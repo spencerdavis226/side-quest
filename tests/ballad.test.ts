@@ -158,7 +158,8 @@ describe("the ballad", () => {
 
   it("every line fits at table distance with the longest names", () => {
     for (let seed = 1; seed <= 40; seed++) {
-      const cls = classes[seed % classes.length].id;
+      const open = classes.filter((c) => !c.unlock);
+      const cls = open[seed % open.length].id;
       const s = play(atDoor(seed, 30, cls), Array(DRAGON_HEALTH + 2).fill(19));
       for (const line of ballad(s))
         expect(line.length, line).toBeLessThanOrEqual(BALLAD_WIDTH);

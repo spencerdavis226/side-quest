@@ -472,6 +472,33 @@ export const classes: CardDefinition[] = [
       },
     ],
   ),
+  // The Dragonslayer (The Quest 2.0 Phase 7): earned in the Chronicle by
+  // slaying three different dragons. Starts knowing one lore and hits
+  // bosses harder; never dealt until unlocked (`unlock`).
+  {
+    ...adventurer(
+      "dragonslayer",
+      "The Dragonslayer",
+      "Has done this before. Knows a weak scale.",
+      { roll: { boss: 1 } },
+      [
+        {
+          title: "Wyrmhunter",
+          omen: { hearts: 1, roll: { boss: 2 } },
+        },
+        {
+          title: "Scalebreaker",
+          omen: { hearts: 2, roll: { boss: 2, elite: 1 } },
+        },
+        {
+          title: "Dragonsbane",
+          omen: { hearts: 2, roll: { boss: 3, elite: 2 } },
+        },
+      ],
+    ),
+    reward: { lore: true },
+    unlock: "dragonslayer",
+  },
 ];
 
 /** The joke classes: worst by design, measured apart from the rest. */
@@ -553,6 +580,10 @@ const PALETTES: Record<string, [primary: string, secondary: string]> = {
   "Bigger Chest": ["#8a6a3a", "#b89a60"],
   "Storage Unit": ["#8a8a80", "#e07a2a"],
   "Treasure Vault": ["#5a4220", "#ffd060"],
+  "The Dragonslayer": ["#5a1a14", "#d8c8a0"],
+  Wyrmhunter: ["#4a1610", "#c9a227"],
+  Scalebreaker: ["#3a100c", "#e0d0b0"],
+  Dragonsbane: ["#24080a", "#ffd870"],
 };
 const palette = (title: string) => {
   const [primary, secondary] = PALETTES[title];

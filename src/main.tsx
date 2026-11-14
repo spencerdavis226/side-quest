@@ -1,16 +1,24 @@
-import React, { useEffect, useState, type CSSProperties } from "react";
+import React, { useEffect, useRef, useState, type CSSProperties } from "react";
 import { createRoot } from "react-dom/client";
 import { packs } from "./content/manifest.generated";
 import { loadedPackCards, loadPackCards } from "./content/loaders";
 import {
   ballad,
+  chronicleNews,
   createSession,
+  findCard,
   questRecord,
+  recordRun,
   replaySession,
   singleBlow,
+  unlocks,
+  type Chronicle,
+  type ChronicleNews,
 } from "./game/engine";
 import type { SessionState } from "./game/types";
 import {
+  loadChronicle,
+  saveChronicle,
   loadPreferences,
   loadSession,
   migrateStorageKeys,
@@ -80,7 +88,28 @@ function App() {
     ),
     [hidden, setHidden] = useState(document.hidden),
     [starting, setStarting] = useState(false),
-    [loadFailed, setLoadFailed] = useState(false);
+    [loadFailed, setLoadFailed] = useState(false),
+    // The Chronicle (The Quest 2.0 Phase 7): The Quest's record across
+    // runs, under its own key; a session never depends on it. The ref is
+    // what the save callback reads, the state what the screens show.
+    [chronicle, setChronicle] = useState(loadChronicle),
+    [news, setNews] = useState<ChronicleNews | null>(null);
+  const chronicleRef = useRef<Chronicle>(chronicle);
+  const keepChronicle = (next: Chronicle) => {
+    chronicleRef.current = next;
+    setChronicle(next);
+    saveChronicle(next);
+  };
+  // Every save of The Quest folds into the Chronicle: what it has seen at
+  // any time, and once the run ends, its counts (once per run).
+  const record = (next: SessionState | null) => {
+    if (next?.config.quest !== "dungeon") return;
+    const before = chronicleRef.current;
+    const after = recordRun(before, next, new Date().toISOString());
+    if (after === before) return;
+    keepChronicle(after);
+    if (after.played > before.played) setNews(chronicleNews(before, after));
+  };
   const {
     controller,
     session,
@@ -94,6 +123,7 @@ function App() {
     () =>
       new PresentationController(loaded.session, (next) => {
         if (!save(SAVE_KEY, next)) setNotice(true);
+        record(next);
       }),
   );
   const display = outgoing ?? session;
@@ -141,13 +171,22 @@ function App() {
       packs.some((pack) => pack.id === id),
     );
     if (!packIds.length || starting) return;
-    const { quest, ...rest } = prefs.config;
+    const { quest, heroic, ...rest } = prefs.config;
+    const open = unlocks(chronicleRef.current);
     const config = {
       ...rest,
       packIds,
       limit: MODE_LIMITS[prefs.choice],
       ...(prefs.choice === "quest" && quest ? { quest } : {}),
+      // Heroic is The Quest's alone, once the Chronicle has earned it.
+      ...(prefs.choice === "quest" &&
+      quest === "dungeon" &&
+      heroic &&
+      open.has("heroic")
+        ? { heroic }
+        : {}),
     };
+    setNews(null);
     setPrefs({ ...prefs, config });
     // A crawl is its own deck: the other selected packs sit it out, and stay
     // selected for the next game.
@@ -157,11 +196,13 @@ function App() {
       config.quest;
     const game = crawl ? { ...config, packIds: [crawl] } : config;
     const ready = loadedPackCards(game.packIds);
-    if (ready) return controller.start(createSession(game, ready, packs));
+    const fresh = (cards: Parameters<typeof createSession>[1]) =>
+      createSession(game, cards, packs, Math.random, open);
+    if (ready) return controller.start(fresh(ready));
     setStarting(true);
     setLoadFailed(false);
     loadPackCards(game.packIds)
-      .then((cards) => controller.start(createSession(game, cards, packs)))
+      .then((cards) => controller.start(fresh(cards)))
       .catch(() => setLoadFailed(true))
       .finally(() => setStarting(false));
   };
@@ -170,18 +211,32 @@ function App() {
   // snapshot (and so does a crawl whose cards can't load).
   const replay = (s: SessionState) => {
     if (starting) return;
+    setNews(null);
     if (!s.quest?.party) return controller.start(replaySession(s));
     const ready = loadedPackCards(s.config.packIds);
-    if (ready) return controller.start(createSession(s.config, ready, packs));
+    const fresh = (cards: Parameters<typeof createSession>[1]) =>
+      createSession(
+        s.config,
+        cards,
+        packs,
+        Math.random,
+        unlocks(chronicleRef.current),
+      );
+    if (ready) return controller.start(fresh(ready));
     setStarting(true);
     loadPackCards(s.config.packIds)
-      .then((cards) => controller.start(createSession(s.config, cards, packs)))
+      .then((cards) => controller.start(fresh(cards)))
       .catch(() => controller.start(replaySession(s)))
       .finally(() => setStarting(false));
   };
   const finish = (id: number) => controller.finish(id);
   return (
-    <MomentDirector session={session} motion={motion} undone={!!undone}>
+    <MomentDirector
+      session={session}
+      motion={motion}
+      undone={!!undone}
+      secrets={chronicle.secrets}
+    >
       <Atmosphere hidden={hidden} scene={crawlScene(display)} />
       <Announcer />
       <PortraitGate />
@@ -259,6 +314,10 @@ function App() {
             starting={starting}
             onChange={setPrefs}
             onStart={start}
+            chronicle={chronicle}
+            onUnlockAll={() =>
+              keepChronicle({ ...chronicleRef.current, unlockedAll: true })
+            }
           />
         ) : display.phase === "complete" ? (
           <Completion
@@ -266,6 +325,14 @@ function App() {
             record={questRecord(display)}
             ballad={ballad(display)}
             singleBlow={singleBlow(display)}
+            news={
+              news && {
+                ...news,
+                firsts: news.firsts.map(
+                  (id) => findCard(display, id)?.title ?? "A dragon",
+                ),
+              }
+            }
             league={display.quest?.packId === "pokemon"}
             packId={display.quest?.packId}
             mode={

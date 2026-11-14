@@ -658,6 +658,141 @@ export const dragons: CardDefinition[] = [
   ),
 ];
 
+// The Chronicle's dragons (The Quest 2.0 Phase 7): never dealt until
+// unlocked (`unlock`), then a rare at any lair's last stage.
+export const unlockedDragons: CardDefinition[] = [
+  // Would rather talk. No move costs a heart.
+  {
+    ...dragon(
+      "dragon-bartholomew",
+      "Bartholomew",
+      "A dragon looks up from a cup of tea. It sighs. It would rather talk about this. Roll d20.",
+      {
+        miss: "It explains why you're wrong, at length. Drink 3.",
+        hit: "You land a blow while it's mid-sentence. Give 4.",
+        crit: "It loses its train of thought. Everyone else drinks 4.",
+        fumble: "It sits on you, apologizing. Drink 6.",
+      },
+      {
+        calm: [
+          move(
+            "Small Talk",
+            "It asks about the weather. The drawer answers for ten seconds or drinks 3.",
+          ),
+          move("Tea Break", "Everyone takes one slow, polite sip."),
+          move(
+            "A Long Story",
+            "It starts a story. The drawer's left neighbor drinks 2 to make it stop.",
+          ),
+          move(
+            "Strong Opinions",
+            "It has views on the drawer's boots. This swing is 2 harder.",
+            HARDER,
+          ),
+          move(
+            "Compliments",
+            "The drawer compliments the player opposite, or drinks 3.",
+          ),
+          move("Bad Back", "It stretches, groaning. Everyone stretches too."),
+        ],
+        enraged: [
+          move(
+            "Raised Voice",
+            "It is very disappointed. Everyone drinks 2 in shame.",
+          ),
+          move(
+            "Last Word",
+            "The drawer and the player opposite argue. The table picks a loser: drink 3.",
+          ),
+          move(
+            "Cold Shoulder",
+            "It won't look at the drawer. This swing is 2 harder.",
+            HARDER,
+          ),
+          move("Sulk", "Nobody speaks until the roll. First to talk drinks 3."),
+          move("Bart, Please", "Everyone calls it Bart once. Forget: drink 2."),
+          move(
+            "Second Thoughts",
+            "It wonders if this is worth it. This swing is 2 easier.",
+            EASIER,
+          ),
+        ],
+        contest:
+          "The drawer picks a topic and debates it. The table votes; the drawer loses: Lost, and they drink 4.",
+        lore: [
+          "It has a bad back.",
+          "It fears confrontation.",
+          "It prefers Bart.",
+        ],
+      },
+    ),
+    unlock: "bartholomew",
+  },
+  // All of them at once: the worst move of each other dragon.
+  {
+    ...dragon(
+      "dragon-king",
+      "The Dragon King",
+      "Every dragon you've heard of bows to this one. It has been waiting for you. Roll d20.",
+      {
+        miss: "Fire, teeth and ice at once. Drink 4.",
+        hit: "One scale cracks. Give 5.",
+        crit: "It roars in pain for the first time in an age. Everyone else drinks 5.",
+        fumble: "It ignores you completely. Drink 6.",
+      },
+      {
+        calm: [
+          move("Inferno", "Everyone drinks 3.", ONE),
+          move(
+            "Swallow",
+            "It eats the drawer's drink. Pour them a new one; they drink 3 of it.",
+            ONE,
+          ),
+          move(
+            "Frozen Stare",
+            "Everyone freezes until the roll. First to move drinks 3. This swing is 2 harder.",
+            HARDER,
+          ),
+          move("Tidal Wave", "Everyone stands; last to stand drinks 3."),
+          move(
+            "Royal Decree",
+            "The drawer makes a rule for the rest of the game. Break it: drink 2.",
+          ),
+          move("Roar", "Last to cover both ears drinks 3."),
+        ],
+        enraged: [
+          move("All the Fire", "Everyone drinks 4.", TWO),
+          move("Every Tooth", "The drawer and both neighbors drink 3.", ONE),
+          move(
+            "Storm of Wings",
+            "Everyone leans back. Last to lean drinks 3.",
+            ONE,
+          ),
+          move(
+            "Ancient Spell",
+            "Eyes shut until the roll. Peek: drink 3. This swing is 2 harder.",
+            HARDER,
+          ),
+          move("Crown Toss", "Everyone points up. Last to point drinks 3."),
+          move(
+            "Old Wound",
+            "An old wound opens under its crown. This swing is 2 easier.",
+            EASIER,
+          ),
+        ],
+        contest:
+          "Everyone stands and stays standing until it falls. Anyone sits: Lost, and they drink 4.",
+        lore: [
+          "It has no weak scale.",
+          "It fears nothing.",
+          "You already know its name.",
+        ],
+      },
+    ),
+    unlock: "dragon-king",
+  },
+];
+
 const byId = (id: string) => dragons.find((c) => c.id === `dungeon.${id}`)!;
 /** Each lair region's three dragons (The Quest 2.0 Phase 1, 2026-11-13):
  * the run's third region is the dragon's own. */

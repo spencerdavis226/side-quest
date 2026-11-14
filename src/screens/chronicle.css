@@ -1,0 +1,134 @@
+/* The Chronicle (The Quest 2.0 Phase 7): The Quest's record across runs,
+   in the setup screen's dialog. A lazy chunk's styles. */
+.chronicle {
+  display: grid;
+  gap: 10px;
+  text-align: left;
+}
+.chronicle h3 {
+  margin: 10px 0 0;
+  font-family: var(--font-tavern);
+  font-size: 1.25rem;
+  color: var(--gold);
+}
+.chronicle-tally {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  margin: 0;
+  font-size: 1.05rem;
+}
+.chronicle-tally strong {
+  font-family: var(--font-tavern);
+  font-size: 1.8rem;
+  color: var(--cream);
+}
+.chronicle-seals {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.chronicle-seals li {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  font-size: 0.85rem;
+  line-height: 1.15;
+  text-align: center;
+  opacity: 0.55;
+}
+.chronicle-seals li.slain {
+  opacity: 1;
+}
+.chronicle-seals .seal {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px dashed color-mix(in srgb, var(--gold) 60%, transparent);
+}
+.chronicle-seals li.slain .seal {
+  border: 0;
+  background: radial-gradient(circle at 35% 30%, #c8473a, #7a1a14 70%);
+  box-shadow: inset 0 0 0 3px #5a100c;
+}
+.chronicle-fell {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+.chronicle-counts {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+}
+.chronicle-counts div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid color-mix(in srgb, var(--gold) 25%, transparent);
+  padding-bottom: 3px;
+}
+.chronicle-counts dd {
+  margin: 0;
+  color: var(--cream);
+}
+.chronicle-feats,
+.chronicle-unlocks {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.chronicle-feats li,
+.chronicle-unlocks li {
+  display: grid;
+  opacity: 0.6;
+}
+.chronicle-feats li.done,
+.chronicle-unlocks li.open {
+  opacity: 1;
+}
+.chronicle-feats strong,
+.chronicle-unlocks strong {
+  font-family: var(--font-tavern);
+  font-size: 1.1rem;
+  color: var(--cream);
+}
+.chronicle-ballads {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.chronicle-ballads p {
+  display: grid;
+  margin: 2px 0 0;
+  font-style: italic;
+}
+.chronicle-unlock-all,
+.chronicle-unlock-all-link {
+  margin-top: 14px;
+  font-size: 0.8rem;
+  text-align: center;
+}
+.chronicle-unlock-all p {
+  margin: 0;
+}
+.chronicle-unlock-all-link {
+  justify-self: center;
+  border: 0;
+  background: none;
+  color: inherit;
+  opacity: 0.7;
+  text-decoration: underline;
+  font-family: inherit;
+  min-height: 44px;
+}
+.chronicle-loading {
+  text-align: center;
+}

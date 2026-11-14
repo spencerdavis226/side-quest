@@ -365,6 +365,15 @@ const situations: [string, GameConfig, Find][] = [
       s.quest!.stages.some((st) => st.harder !== undefined) &&
       currentCard(s).id.startsWith("dungeon.closing-"),
   ],
+  // Heroic mode (The Quest 2.0 Phase 7): a run past its first region.
+  [
+    "realms-heroic-mid",
+    { ...crawl, heroic: true },
+    (s) =>
+      s.phase === "revealed" &&
+      s.quest!.step > 16 &&
+      party(s).hearts < party(s).max,
+  ],
   [
     "league-catch-beat",
     league,

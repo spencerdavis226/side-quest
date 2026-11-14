@@ -115,6 +115,25 @@ export {
   type Round,
 } from "./crawl/lair";
 export { BALLAD_WIDTH, ballad, singleBlow } from "./ballad";
+export {
+  CLASS_COUNT,
+  DRAGON_KING,
+  ECHO_COUNT,
+  FEATS,
+  LANDMARK_COUNT,
+  RARE_COUNT,
+  SECRET_COUNT,
+  secretKind,
+  NINE,
+  UNLOCKS,
+  chronicleNews,
+  emptyChronicle,
+  readChronicle,
+  recordRun,
+  unlocks,
+  type Chronicle,
+  type ChronicleNews,
+} from "./chronicle";
 export type Random = () => number;
 export function shuffle(
   ids: string[],
@@ -184,7 +203,9 @@ export function validConfig(c: GameConfig): boolean {
     (c.quest === undefined ||
       (typeof c.quest === "string" &&
         c.packIds.includes(c.quest) &&
-        c.limit === null))
+        c.limit === null)) &&
+    // Heroic mode (The Quest 2.0 Phase 7), on a quest only.
+    (c.heroic === undefined || (c.heroic === true && c.quest !== undefined))
   );
 }
 export function createSession(
@@ -192,6 +213,9 @@ export function createSession(
   catalog: CardDefinition[],
   packs: PackDefinition[],
   random: Random = Math.random,
+  /** What the Chronicle has earned (The Quest 2.0 Phase 7): a card with an
+   * `unlock` not in it is never dealt. */
+  unlocked: ReadonlySet<string> = new Set(),
 ): SessionState {
   if (
     !validConfig(config) ||
@@ -216,8 +240,14 @@ export function createSession(
   if (config.quest) {
     const rules = packs.find((p) => p.id === config.quest)?.quest;
     if (!rules) throw new Error("This pack has no quest.");
+    // Cards the Chronicle has not unlocked are left out of every pool.
+    const open = (ids: string[]) =>
+      ids.filter((id) => {
+        const lock = catalog.find((c) => c.id === id)?.unlock;
+        return !lock || unlocked.has(lock);
+      });
     const snapshot = (ids: string[]) =>
-      ids.map((id) => {
+      open(ids).map((id) => {
         const card = catalog.find((c) => c.id === id);
         if (!card) throw new Error("A finale card is missing.");
         return structuredClone(card);
@@ -255,8 +285,16 @@ export function createSession(
             }
           : {}),
         // The Quest 2.0 Phase 6: rares, variants, and an optional stage.
-        ...(rare?.cardIds.length
-          ? { rare: { odds: rare.odds, cards: snapshot(rare.cardIds) } }
+        ...(rare && open(rare.cardIds).length
+          ? {
+              rare: {
+                odds:
+                  config.heroic && rare.heroic !== undefined
+                    ? rare.heroic
+                    : rare.odds,
+                cards: snapshot(rare.cardIds),
+              },
+            }
           : {}),
         ...(variants?.length
           ? {
@@ -282,7 +320,12 @@ export function createSession(
       stages,
       finale: pickFinale(stages, random),
       step: 0,
-      ...(rules.party ? { party: newParty(rules.party.hearts) } : {}),
+      ...(rules.party
+        ? {
+            party: newParty(rules.party.hearts - (config.heroic ? 2 : 0)),
+          }
+        : {}),
+      ...(config.heroic && rules.party ? { heroic: true as const } : {}),
     };
   }
   return {
