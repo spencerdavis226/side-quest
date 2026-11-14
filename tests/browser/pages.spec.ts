@@ -56,11 +56,16 @@ test("@release Pages manifest, assets and production exclusion", async ({
     .map((index) => parseInt(background.slice(index, index + 2), 16))
     .join(", ")})`;
   expect(background).toBe(manifest.theme_color);
-  expect(
-    await page.evaluate(
-      () => getComputedStyle(document.documentElement).backgroundColor,
-    ),
-  ).toBe(asRgb);
+  // Polled, not read once: right after the second navigation WebKit can
+  // report the root before the stylesheet applies (transparent; CI run
+  // #304, 2026-11-13).
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => getComputedStyle(document.documentElement).backgroundColor,
+      ),
+    )
+    .toBe(asRgb);
   expect(
     await page.evaluate(() =>
       getComputedStyle(document.documentElement)
