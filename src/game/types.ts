@@ -223,6 +223,9 @@ export interface CardDefinition {
   /** The Quest 2.0 Phase 6: a deed set when this battle is put aside, by
    * how it went (`party.deeds`). */
   deed?: { won?: string; lost?: string };
+  /** The Quest 2.0 Phase 7: never dealt unless the Chronicle has earned
+   * this unlock (`createSession`'s `unlocked`). */
+  unlock?: string;
 }
 /** A dragon's move for one round of its battle (`lairFight`). */
 export interface DragonMove {
@@ -432,7 +435,12 @@ export interface QuestStage {
   inserts?: { at: number; cardIds: string[] }[];
   /** The Quest 2.0 Phase 6: cards outside the pool; with chance `odds`, one
    * replaces a pick when the game starts. */
-  rare?: { cardIds: string[]; odds: number };
+  rare?: {
+    cardIds: string[];
+    odds: number;
+    /** Phase 7: the odds on Heroic (`GameConfig.heroic`), when different. */
+    heroic?: number;
+  };
   /** Resolved when the stage is reached: the first card dealt is one of a
    * group whose deeds the party holds (picked at random among them), its
    * battle `harder` by that much. None held: the pick made at game start,
@@ -516,6 +524,9 @@ export interface QuestState {
   /** Stages a road choice or a Walk on removed from the run (Phase 5), kept
    * for a replay. */
   dropped?: QuestState["stages"];
+  /** The Quest 2.0 Phase 7: Heroic mode (`GameConfig.heroic`), read by the
+   * engine without the config. */
+  heroic?: true;
   finale: string[];
   step: number;
   /** Battles lost so far. Each was a draw that took no deck position or
@@ -616,6 +627,10 @@ export interface GameConfig {
   /** A quest mode: the id of the selected pack whose quest runs the game.
    * The game has no card limit; it ends on the quest's finale. */
   quest?: string;
+  /** The Quest 2.0 Phase 7: Heroic mode (a quest only): 2 fewer hearts, a
+   * dragon with one more scale, region fights a point harder, and the
+   * dragon enraged from its first round. */
+  heroic?: true;
 }
 export interface SessionState {
   version: 2;

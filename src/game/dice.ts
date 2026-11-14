@@ -195,11 +195,13 @@ export function rollBonus(session: SessionState, card: CardDefinition): number {
     stageHarder(session, card)
   );
 }
-/** The extra need of the card in play, from its stage's variant. */
+/** The extra need of the card in play, from its stage's variant, and on
+ * Heroic (The Quest 2.0 Phase 7) a point on every region fight. */
 function stageHarder(session: SessionState, card: CardDefinition): number {
   const q = session.quest;
   if (!q?.due || q.finale[q.step] !== card.id) return 0;
-  return q.stages[finaleStage(q).stage]?.harder ?? 0;
+  const stage = q.stages[finaleStage(q).stage];
+  return (stage?.harder ?? 0) + (q.heroic && stage?.pick === 8 ? 1 : 0);
 }
 /** The face a crawl battle's dice must show to win (2026-10-31, owner: a
  * gem on the card): the lowest winning total, less the d20's bonus, held to

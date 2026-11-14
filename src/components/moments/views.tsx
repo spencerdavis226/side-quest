@@ -1400,6 +1400,7 @@ function HiddenResult({ m, scale, onDone }: ViewProps<"hidden">) {
     >
       <span className="hidden-seal">?</span>
       <span className="hidden-line">{m.line}</span>
+      {m.counter && <span className="hidden-counter">{m.counter}</span>}
     </Stage>
   );
 }

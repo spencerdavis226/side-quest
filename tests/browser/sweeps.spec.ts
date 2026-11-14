@@ -6,7 +6,7 @@
 // split into chunks so the workers share them.
 import { type Page } from "@playwright/test";
 import { test, expect, reseed } from "./support";
-import { advance } from "../../src/game/engine";
+import { advance, UNLOCKS } from "../../src/game/engine";
 import type { SessionState } from "../../src/game/types";
 import { cards, packs } from "../../src/content/catalog";
 import { crawlAt, leagueAt } from "./sessions";
@@ -46,11 +46,15 @@ const DUNGEON_PARTS = 6;
 const dungeonIds = cards
   .filter((c) => c.id.startsWith("dungeon."))
   .map((c) => c.id);
+// The Chronicle's locked cards (Phase 7) are placed in a run that has
+// everything unlocked; every other card in an ordinary run.
+const ALL = new Set(UNLOCKS.map((u) => u.key));
+const lockedIds = new Set(cards.filter((c) => c.unlock).map((c) => c.id));
 const crawlRoutes = [0, 1, 2].flatMap((route) =>
   [0, 1, 2, 3, 4].map((room) => ({
     route,
     room,
-    base: crawlAt(dungeonIds[0], 0, {}, { route, room }),
+    base: crawlAt(dungeonIds[0], 0, {}, { route, room, unlocked: ALL }),
   })),
 );
 // Where a card is dealt: its stage's first step (an elite, behind a fork,
@@ -90,7 +94,14 @@ for (let part = 0; part < DUNGEON_PARTS; part++)
     const overflowing: string[] = [];
     for (const id of chunk(dungeonIds, part, DUNGEON_PARTS)) {
       const { step, route, room } = crawlPlace(id);
-      const s = reveal(crawlAt(id, step, { loot: ["smoke"] }, { route, room }));
+      const s = reveal(
+        crawlAt(
+          id,
+          step,
+          { loot: ["smoke"] },
+          { route, room, ...(lockedIds.has(id) ? { unlocked: ALL } : {}) },
+        ),
+      );
       if (await spills(page, s)) overflowing.push(id);
     }
     expect(overflowing).toEqual([]);

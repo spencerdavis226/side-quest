@@ -17,7 +17,11 @@ import {
   queueCards,
   stairsCards,
 } from "./dungeon/lastcall";
-import { dragons as lastCallBosses, lairs } from "./dungeon/dragons";
+import {
+  dragons as lastCallBosses,
+  lairs,
+  unlockedDragons,
+} from "./dungeon/dragons";
 import { lowerLandings, upperLandings } from "./dungeon/landings";
 import { omens } from "./dungeon/omens";
 import { summonsCards } from "./dungeon/summons";
@@ -34,7 +38,12 @@ import { applyHidden } from "./dungeon/hidden";
 import { landmarks } from "./dungeon/landmarks";
 import { rooftop } from "./dungeon/rooftop";
 import { sewers } from "./dungeon/sewers";
-import { PARTY_HEARTS, type FloorCards } from "./dungeon/shared";
+import {
+  DRAGON_RARE,
+  DRAGON_RARE_HEROIC,
+  PARTY_HEARTS,
+  type FloorCards,
+} from "./dungeon/shared";
 import { taproom } from "./dungeon/taproom";
 import { wine } from "./dungeon/wine";
 
@@ -116,6 +125,8 @@ export const dungeonCards: CardDefinition[] = applyPhases([
   ...Object.values(echoes),
   bradleyBegs,
   ...doorRares,
+  // The Quest 2.0 Phase 7: the Chronicle's dragons (Quest-only, locked).
+  ...unlockedDragons,
   ...Object.values(landmarks).flat(),
   ...classes,
   ...upperLandings,
@@ -190,7 +201,15 @@ const lair = (region: ReturnType<typeof floor>, dragons: CardDefinition[]) => [
     ],
     rare: { cardIds: ids(doorRares), odds: 0.1 },
   },
-  one("The Dragon's Lair", "It's awake", dragons),
+  // The Chronicle's dragons (The Quest 2.0 Phase 7), once unlocked.
+  {
+    ...one("The Dragon's Lair", "It's awake", dragons),
+    rare: {
+      cardIds: ids(unlockedDragons),
+      odds: DRAGON_RARE,
+      heroic: DRAGON_RARE_HEROIC,
+    },
+  },
 ];
 
 export const dungeonPack: PackDefinition = {

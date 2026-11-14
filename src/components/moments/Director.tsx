@@ -12,6 +12,7 @@ import {
   type ReactNode,
 } from "react";
 import type { SessionState } from "../../game/types";
+import { SECRET_COUNT, secretKind } from "../../game/engine";
 import { announce } from "../Announcer";
 import {
   CUT_ON_MOTION,
@@ -77,14 +78,22 @@ export function MomentDirector({
   session,
   motion,
   undone,
+  secrets,
   children,
 }: {
   session: SessionState | null;
   motion: string | null;
   undone: boolean;
+  /** The hidden results the Chronicle holds, by kind (The Quest 2.0
+   * Phase 7): a new one ticks M22's counter. */
+  secrets?: readonly string[];
   children: ReactNode;
 }) {
   const prev = useRef(session);
+  const known = useRef(secrets);
+  useEffect(() => {
+    known.current = secrets;
+  }, [secrets]);
   const seen = useRef(new Set<string>());
   const [queue, setQueue] = useState<Moment[]>([]);
   const [active, setActive] = useState<Moment | null>(null);
@@ -114,9 +123,17 @@ export function MomentDirector({
     // 0; an undo is flagged and returned above): its moments play again.
     // Keys like `milestone:halfway` or `badge:<gym>` say nothing of the game.
     if (before && session.discarded < before.discarded) seen.current.clear();
-    const found = momentsBetween(before, session, undone).filter(
-      (m) => !seen.current.has(m.key),
-    );
+    const found = momentsBetween(before, session, undone)
+      .filter((m) => !seen.current.has(m.key))
+      .map((m) => {
+        const has = known.current;
+        if (m.kind !== "hidden" || !m.id || !has) return m;
+        if (has.includes(secretKind(m.id))) return m;
+        return {
+          ...m,
+          counter: `${Math.min(has.length + 1, SECRET_COUNT)} of ${SECRET_COUNT} found`,
+        };
+      });
     if (!found.length) return;
     found.forEach((m) => seen.current.add(m.key));
     for (const m of found) announce(m.say);

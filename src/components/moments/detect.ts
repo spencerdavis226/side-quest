@@ -187,7 +187,14 @@ export type Moment = {
    * (M14). */
   | { kind: "echo"; title: string; earlier: string }
   /** A hidden result rolled (M22): the outcome in gold under a seal. */
-  | { kind: "hidden"; line: string }
+  | {
+      kind: "hidden";
+      line: string;
+      /** The card, for the Chronicle's count (Phase 7). */
+      id?: string;
+      /** "3 of 8 found", set by the director when the kind is new. */
+      counter?: string;
+    }
   /** A deed set (M23): "This is remembered." */
   | { kind: "deed" }
   /** A jinx laid (its name and rule) or lifted (the boss fell). */
@@ -497,6 +504,7 @@ export function momentsBetween(
         kind: "hidden",
         key: `hidden:${after.discarded}:${party.hits}`,
         line: after.roll!.instruction,
+        id: card.id,
         say: `Something else happens. ${after.roll!.instruction}`,
       });
     const was = before.quest?.party;

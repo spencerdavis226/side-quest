@@ -1958,6 +1958,7 @@ export const packs: PackDefinition[] = [
             "dungeon.class-bartender",
             "dungeon.class-mercenary",
             "dungeon.class-druid",
+            "dungeon.class-dragonslayer",
           ],
           rare: {
             cardIds: [
@@ -2935,6 +2936,14 @@ export const packs: PackDefinition[] = [
                   "dungeon.the-group-chat",
                   "dungeon.dragon-tidewrack",
                 ],
+                rare: {
+                  cardIds: [
+                    "dungeon.dragon-bartholomew",
+                    "dungeon.dragon-king",
+                  ],
+                  odds: 0.04,
+                  heroic: 0.1,
+                },
               },
             ],
             [
@@ -3094,6 +3103,14 @@ export const packs: PackDefinition[] = [
                   "dungeon.two-am-kebab",
                   "dungeon.the-morning-after",
                 ],
+                rare: {
+                  cardIds: [
+                    "dungeon.dragon-bartholomew",
+                    "dungeon.dragon-king",
+                  ],
+                  odds: 0.04,
+                  heroic: 0.1,
+                },
               },
             ],
             [
@@ -3250,6 +3267,14 @@ export const packs: PackDefinition[] = [
                   "dungeon.surge-pricing",
                   "dungeon.house-lights",
                 ],
+                rare: {
+                  cardIds: [
+                    "dungeon.dragon-bartholomew",
+                    "dungeon.dragon-king",
+                  ],
+                  odds: 0.04,
+                  heroic: 0.1,
+                },
               },
             ],
           ],

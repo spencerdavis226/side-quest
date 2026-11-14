@@ -2535,3 +2535,96 @@
 .crawl-map-section {
   margin: 4px 0 14px;
 }
+
+/* --- The Chronicle (The Quest 2.0 Phase 7) -------------------------------- */
+
+/* Setup: Heroic and the Chronicle, one compact row under the brief. */
+.quest-extras {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+.quest-extras > .choice,
+.quest-extras > .menu-row {
+  flex: 1 1 0;
+  min-height: 48px;
+  padding: 4px 12px;
+  text-align: left;
+}
+.quest-extras > button > span:first-child {
+  display: grid;
+  gap: 1px;
+}
+.quest-extras small {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+.heroic-toggle[aria-pressed="true"] {
+  border-color: #c8473a;
+  box-shadow:
+    inset 0 0 0 1px #c8473a,
+    0 0 12px #c8473a66;
+}
+/* The gold mark: the Dragon King slain. */
+.quest-mode.gold-mark .mode-mark,
+.quest-mode.gold-mark .pack-logo {
+  filter: sepia(1) saturate(4) hue-rotate(5deg) brightness(1.15)
+    drop-shadow(0 0 6px #ffd87088);
+}
+/* The end screen's line when a run adds something new. */
+.complete > p.chronicle-news {
+  margin: 4px 0 0;
+  color: var(--gold);
+  font-size: 1rem;
+}
+/* The unlock moment (M24): a wax seal stamps in over the end screen. */
+.chronicle-seal {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-moment);
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 10px;
+  border: 0;
+  background: #0009;
+  color: var(--cream);
+  font-family: var(--font-tavern);
+  animation: seal-fade 2.5s ease both;
+}
+.chronicle-seal .wax {
+  width: 120px;
+  height: 120px;
+  border-radius: 46% 54% 50% 50% / 52% 48% 52% 48%;
+  background: radial-gradient(circle at 35% 30%, #d0503f, #7a1a14 72%);
+  box-shadow:
+    inset 0 0 0 8px #5a100c,
+    inset 0 0 0 11px #a83a2c,
+    0 8px 18px #000a;
+  animation: seal-stamp 0.45s cubic-bezier(0.2, 1.6, 0.4, 1) both;
+}
+.chronicle-seal strong {
+  font-size: 2rem;
+}
+.chronicle-seal small {
+  font-size: 1.1rem;
+  opacity: 0.85;
+}
+@keyframes seal-stamp {
+  from {
+    transform: scale(2.4) rotate(-12deg);
+    opacity: 0;
+  }
+}
+@keyframes seal-fade {
+  0% {
+    opacity: 0;
+  }
+  8%,
+  88% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

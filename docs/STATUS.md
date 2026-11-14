@@ -2,9 +2,22 @@
 
 Updated 2026-11-14. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Next task (2026-11-14): The Quest 2.0 Phase 7 (the Chronicle)
+## Next task (2026-11-14): The Quest 2.0 Phase 8 (the owner's table)
 
-Phase 6 is done (below). Next is **Phase 7** of `docs/QUEST_2_PLAN.md` section 7: the Chronicle (a record across runs, `side-quest.chronicle.v1`, unlocks and feats, 4.11 and 5.8), the Dragonslayer class, Bartholomew and the Dragon King, Heroic mode, M24, and M22's Chronicle counter.
+Phase 7 is done (below), and with it every code phase of `docs/QUEST_2_PLAN.md`. **Phase 8 is not code**: the owner plays two full runs on a phone and reports (does the last half hour drag, do allies die too fast to love, is the dragon's turn slow in the hand, does the map read at arm's length). Tune from that, and record device results in `docs/DEVICE_CHECKLIST.md`. Nothing here can be done without the owner.
+
+## Done 2026-11-14: The Quest 2.0 Phase 7, the Chronicle
+
+- **Engine** (schema v2 unchanged): `src/game/chronicle.ts` (the record, `recordRun` counting a run once when it ends, `unlocks`, `chronicleNews`, `readChronicle`, the twelve feats and five unlocks); `CardDefinition.unlock` (left out of every pool until earned: `createSession(..., unlocked)`); Heroic (`GameConfig.heroic`, `quest.heroic`: 2 fewer hearts, a scale more on the dragon, enraged from round one, region fights a point harder; `QuestStage.rare.heroic` odds).
+- **Persistence**: `side-quest.chronicle.v1` (`loadChronicle`, `saveChronicle`): a malformed one is removed alone, refused storage gives an empty one, and a session never references it. Preferences may hold `heroic` with The Quest.
+- **Content** (1,912 cards; Realms 634): the Dragonslayer (one lore, +1 to boss d20s; Wyrmhunter, Scalebreaker, Dragonsbane), Bartholomew and the Dragon King (lair rares at 4%, 10% on Heroic). An omen may carry `reward.lore`.
+- **UI**: setup's Heroic toggle and Chronicle button (one row under the brief), the gold mark, `src/screens/Chronicle.tsx` (lazy: tallies, the nine seals and a Heroic row, counts, feats, unlocks, ballads, "Unlock everything"), the end screen's "New in the Chronicle" line, M24 (the wax seal), M22's counter.
+- **Balance**: normal play unchanged (won 31.6%, a won run 58.7 draws; all six balance tests pass). Heroic measured at **11.1%** over 2,000 runs with a temporary copy of the balance test; no band.
+- **League unchanged:** `LEAGUE_LOG` byte-identical to the Phase 0 baseline.
+- **Fixtures**: `2026-11-14-realms-heroic-mid`. 88 fixtures, every old one untouched and loading.
+- **Tests:** `tests/chronicle.test.ts` (a run counted once; unlock thresholds; the counts match the content; survives a reload, a malformed one resets alone, refused storage; never in a session save; locked cards never dealt; the Dragonslayer's lore; the rare odds; Heroic's hearts, scale, region need and save check; the preference), `tests/browser/chronicle.spec.ts` (setup, the book, Unlock everything, a Heroic start, a reload; a malformed record).
+- **Checked:** `npm test` 535 passed; lint; typecheck; `cards:review`; `BASE_PATH=/side-quest/ npm run build` (budgets pass, runtime 3,971 KiB of 4,096: no budget change needed); both balance files; Chromium `test:sweep` 12 of 12; Chromium `test:e2e` 176 of 177, the one failure `game.spec.ts` "offline reload keeps the same revealed card" failing 3 of 3 in this container **on `main`'s build as well** (the known title race), so not this phase's.
+- **Not run:** WebKit (CI), a phone.
 
 ## Done 2026-11-14: The Quest 2.0 Phase 6, rare things, deeds and echoes
 

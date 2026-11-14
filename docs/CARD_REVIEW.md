@@ -1319,7 +1319,7 @@ the Review column is intentionally blank so you can mark it up.
 
 ## Realms (`dungeon`)
 
-631 cards · 37 sip · 168 group · 0 category · 388 challenge · 38 rule · 276 dice
+634 cards · 37 sip · 168 group · 0 category · 390 challenge · 39 rule · 278 dice
 
 | Review | Title | ID | Cat | Rules | Dice, secret or timer |
 | --- | --- | --- | --- | --- | --- |
@@ -1878,6 +1878,8 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | His Brother | `dungeon.echo-brother` | challenge | The hanged man's brother wants a word about the gallows. Roll d20. | 1d20 — 1-1: Natural 1! He has a lot of words. Drink 8. 2-11: He has a lot of words. Drink 4. 12-19: He takes the hint. Give 3. 20-20: Natural 20! He takes the hint. Give 6. |
 | ☐ | The Ferryman Waits | `dungeon.echo-ferryman` | challenge | The ferryman you stiffed is waiting. The drawer pays him in compliments for ten seconds. |  |
 | ☐ | The Goblin Posse | `dungeon.echo-goblin-posse` | challenge | The goblins you robbed have followed you all this way. Roll d20. | 1d20 — 1-1: Natural 1! They take it all back, with interest. Drink 8. 2-11: They take it all back, with interest. Drink 4. 12-19: They flee, dropping a coin. Give 3. 20-20: Natural 20! They flee, dropping a coin. Give 6. |
+| ☐ | Bartholomew | `dungeon.dragon-bartholomew` | challenge | A dragon looks up from a cup of tea. It sighs. It would rather talk about this. Roll d20. | 1d20 — 1-1: Natural 1! It sits on you, apologizing. Drink 6. 2-16: It explains why you're wrong, at length. Drink 3. 17-19: You land a blow while it's mid-sentence. Give 4. 20-20: Natural 20! It loses its train of thought. Everyone else drinks 4. |
+| ☐ | The Dragon King | `dungeon.dragon-king` | challenge | Every dragon you've heard of bows to this one. It has been waiting for you. Roll d20. | 1d20 — 1-1: Natural 1! It ignores you completely. Drink 6. 2-16: Fire, teeth and ice at once. Drink 4. 17-19: One scale cracks. Give 5. 20-20: Natural 20! It roars in pain for the first time in an age. Everyone else drinks 5. |
 | ☐ | Sir Bradley's Charter | `dungeon.queue-knows-the-owner` | challenge | Sir Bradley has a charter from the king's cousin. Name a bigger patron, then roll d20. | 1d20 — 1-1: Natural 1! The cousin really is important. Drink 6. 2-7: The cousin really is important. Drink 3. 8-19: Nobody has heard of the cousin. Give 3 to whoever has the fanciest cousin. 20-20: Natural 20! Nobody has heard of the cousin. Give 6 to whoever has the fanciest cousin. The charter was yours all along. |
 | ☐ | Chadwick's Accent | `dungeon.queue-fake-id` | challenge | Chadwick says he's a foreign prince. You and he (left neighbor) do the accent. His wins: drink 3. |  |
 | ☐ | We're Together | `dungeon.queue-were-together` | challenge | Thaddeus tells the gate guard you're his squires. You're not. Roll 2d6 to argue. | 2d6 — 2-6: The guard believes him. Carry his bags and drink 3. 7-12: The guard believes you. Pick someone to be your squire; they drink 3. |
@@ -1954,6 +1956,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | The Peasant | `dungeon.class-plus-one` | rule | Brought dad's pitchfork. −3 max hearts. −1 to boss d20s. Every 20 is rerolled. Traps hurt 1 more. |  |
 | ☐ | The Squire | `dungeon.class-intern` | rule | Drops things. −2 max hearts. Natural 1 on a 1 or 2. Every heal heals 1 less. −2 satchel slots. |  |
 | ☐ | The Mimic | `dungeon.class-mimic` | rule | A very confused chest. −5 max hearts. −1 to every battle d20. −1 to monster d20s. +2 satchel slots. |  |
+| ☐ | The Dragonslayer | `dungeon.class-dragonslayer` | rule | Has done this before. Knows a weak scale. +1 to boss d20s. |  |
 
 ## Notes for review
 

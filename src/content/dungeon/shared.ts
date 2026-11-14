@@ -464,6 +464,10 @@ export const boss = (
 /** The dragon battle (The Quest 2.0, 2026-11-13): the dragon's health,
  * the hearts a missed swing costs, and what a lost enrage contest costs. */
 export const DRAGON_HEALTH = 5;
+/** The Chronicle's dragons (The Quest 2.0 Phase 7): once unlocked, one of
+ * them is the run's dragon this often; on Heroic, 1 in 10. */
+export const DRAGON_RARE = 0.04;
+export const DRAGON_RARE_HEROIC = 0.1;
 export const DRAGON_HURT = 1;
 export const ENRAGE_HURT = 2;
 /** A dragon's move: its name (18 characters at most), what the table does,

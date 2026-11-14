@@ -3,10 +3,12 @@ import { asset } from "../presentation/theme";
 import { QuestRecord } from "../components/QuestRecord";
 import { CrawlIcon, CrawlRecord } from "../components/Crawl";
 import { crawlTheme } from "../components/crawlTheme";
-import type { questRecord } from "../game/engine";
+import type { ChronicleNews, questRecord } from "../game/engine";
+import { reducedMotion } from "../presentation/motion";
 import {
   lazy,
   Suspense,
+  useEffect,
   useState,
   type ComponentType,
   type ComponentProps,
@@ -35,6 +37,7 @@ export function Completion({
   record,
   ballad = [],
   singleBlow = false,
+  news = null,
   mode,
   league = false,
   packId,
@@ -51,6 +54,9 @@ export function Completion({
   ballad?: string[];
   /** The dragon fell to a natural 20: "With a single blow" over the title. */
   singleBlow?: boolean;
+  /** What this run just added to the Chronicle (The Quest 2.0 Phase 7),
+   * shown only as the table arrives; dragons slain first by title. */
+  news?: (Omit<ChronicleNews, "firsts"> & { firsts: string[] }) | null;
   /** The quest mode's name, e.g. "Pokémon League". */
   mode?: string;
   league?: boolean;
@@ -74,6 +80,24 @@ export function Completion({
   const [show, setShow] = useState(celebrate);
   if (celebrate && !show) setShow(true);
   const [shown, setShown] = useState(false);
+  // The unlock moment (M24): after the ending's show, a wax seal stamps in
+  // with each new unlock, 2.5 s each; a tap skips. Reduced Motion and a
+  // reload show the news line alone.
+  const unlocked = news?.unlocked ?? [];
+  const [sealAt, setSealAt] = useState(0);
+  const sealing = show && shown && sealAt < unlocked.length && !reducedMotion();
+  useEffect(() => {
+    if (!sealing) return;
+    const t = window.setTimeout(() => setSealAt((n) => n + 1), 2500);
+    return () => window.clearTimeout(t);
+  }, [sealing, sealAt]);
+  const newsLine = news
+    ? [
+        ...news.firsts.map((title) => `${title} slain`),
+        ...news.feats.map((f) => f.name),
+        ...unlocked.map((u) => u.name),
+      ]
+    : [];
   const kind: EndingKind = crawl
     ? league
       ? wiped
@@ -98,6 +122,18 @@ export function Completion({
             onDone={() => setShown(true)}
           />
         </Suspense>
+      )}
+      {sealing && (
+        <button
+          className="chronicle-seal"
+          key={sealAt}
+          aria-label={`Unlocked: ${unlocked[sealAt].name}. ${unlocked[sealAt].adds}`}
+          onClick={() => setSealAt((n) => n + 1)}
+        >
+          <span className="wax" aria-hidden="true" />
+          <strong>{unlocked[sealAt].name}</strong>
+          <small>{unlocked[sealAt].adds}</small>
+        </button>
       )}
       <section
         className={`complete${record?.won ? ` hall-of-fame${league ? " painted-hall" : ""}` : ""}${crawl ? " crawl-end" : ""}${wiped ? " wiped" : ""}${celebrate ? " celebrate" : ""}`}
@@ -130,6 +166,11 @@ export function Completion({
                     {line}
                   </span>
                 ))}
+              </p>
+            )}
+            {newsLine.length > 0 && (
+              <p className="chronicle-news">
+                New in the Chronicle: {newsLine.join(" · ")}
               </p>
             )}
             <CrawlRecord record={record} theme={look} />

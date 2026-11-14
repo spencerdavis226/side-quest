@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { lazy, Suspense, useState, type ComponentType } from "react";
 import {
   chooseLength,
   chooseQuest,
@@ -7,7 +7,7 @@ import {
   type Preferences,
 } from "../app/persistence";
 import type { PackDefinition } from "../game/types";
-import { questRoute } from "../game/engine";
+import { questRoute, unlocks, type Chronicle } from "../game/engine";
 import { Button, DeckChoices, Modal, PackTile } from "../components/UI";
 import { PackLogo, ModeMark } from "../components/PackMarks";
 import { asset } from "../presentation/theme";
@@ -15,12 +15,29 @@ import { CrawlIcon } from "../components/Crawl";
 import { crawlTheme } from "../components/crawlTheme";
 import { Guide } from "../components/Guide";
 
+// The Chronicle (The Quest 2.0 Phase 7): a lazy chunk, opened from here.
+type ChronicleProps = {
+  chronicle: Chronicle;
+  onUnlockAll: () => void;
+};
+const ChronicleBook = lazy(
+  (): Promise<{ default: ComponentType<ChronicleProps> }> =>
+    import("./Chronicle").catch(() => ({ default: NoChronicle })),
+);
+function NoChronicle() {
+  return <p>The Chronicle couldn’t load. Check the connection.</p>;
+}
+/** The Quest's pack: its Chronicle, Heroic mode and gold mark. */
+const QUEST_PACK = "dungeon";
+
 export function Setup({
   prefs,
   packs,
   starting = false,
   onChange,
   onStart,
+  chronicle,
+  onUnlockAll = () => {},
 }: {
   prefs: Preferences;
   packs: PackDefinition[];
@@ -28,8 +45,13 @@ export function Setup({
   starting?: boolean;
   onChange: (prefs: Preferences) => void;
   onStart: () => void;
+  /** The Quest's record across runs (absent: none yet). */
+  chronicle?: Chronicle;
+  onUnlockAll?: () => void;
 }) {
   const [packsOpen, setPacksOpen] = useState(false);
+  const [chronicleOpen, setChronicleOpen] = useState(false);
+  const earned = chronicle ? unlocks(chronicle) : new Set<string>();
   const [guideOpen, setGuideOpen] = useState(false);
   const [crestFailed, setCrestFailed] = useState(false);
   const selected = packs.filter((pack) =>
@@ -49,6 +71,13 @@ export function Setup({
   const crawlPack = packs.find((p) => p.id === questPack && p.quest?.party);
   const crawl = !!crawlPack;
   const crawlLook = crawlTheme(crawlPack?.id);
+  const theQuest = crawlPack?.id === QUEST_PACK;
+  // Heroic: two fewer hearts (The Quest 2.0 Phase 7).
+  const heroic = theQuest && earned.has("heroic") && !!prefs.config.heroic;
+  const setHeroic = (on: boolean) => {
+    const { heroic: _was, ...config } = prefs.config;
+    onChange({ ...prefs, config: on ? { ...config, heroic: true } : config });
+  };
   // A floor is a slot holding a stage of rooms (a run of several picks);
   // tonight's omen and Last Call are single cards. The League counts gyms.
   const crawlFloors = !crawlPack
@@ -63,6 +92,9 @@ export function Setup({
               : [slot]
           ).some((st) => st.pick > 1),
         ).length;
+  const hearts = crawlPack
+    ? crawlPack.quest!.party!.hearts - (heroic ? 2 : 0)
+    : 0;
   // Leaving a quest mode switches its pack off again if choosing it switched
   // the pack on (persistence.ts).
   const pickLength = (choice: DeckChoice) =>
@@ -118,7 +150,12 @@ export function Setup({
             .map((pack) => (
               <Button
                 variant="choice"
-                className="quest-mode"
+                className={`quest-mode${
+                  // The gold mark: the Dragon King slain.
+                  pack.id === QUEST_PACK && earned.has("gold-mark")
+                    ? " gold-mark"
+                    : ""
+                }`}
                 key={pack.id}
                 aria-label={`${pack.quest!.mode}, ${pack.quest!.summary}`}
                 aria-pressed={pack.id === questPack}
@@ -176,18 +213,59 @@ export function Setup({
           <div
             className="crawl-brief"
             role="img"
-            aria-label={`${crawlPack.title}: ${crawlLook.words.setupBrief(crawlPack.quest!.party!.hearts, crawlFloors)}`}
+            aria-label={`${crawlPack.title}: ${crawlLook.words.setupBrief(hearts, crawlFloors)}`}
           >
             <PackLogo pack={crawlPack} decorative />
             <span>
               <strong>{crawlPack.title}</strong>
               <small>
                 <CrawlIcon name="heart" theme={crawlLook} />
-                {`${crawlPack.quest!.party!.hearts} ${crawlLook.words.setupHearts} · ${crawlFloors} ${crawlLook.words.setupFloors}`}
+                {`${hearts} ${crawlLook.words.setupHearts} · ${crawlFloors} ${crawlLook.words.setupFloors}`}
               </small>
             </span>
           </div>
+          {theQuest &&
+            (earned.has("heroic") || (chronicle?.played ?? 0) > 0) && (
+              <div className="quest-extras">
+                {theQuest && earned.has("heroic") && (
+                  <Button
+                    variant="choice"
+                    className="heroic-toggle"
+                    aria-pressed={heroic}
+                    onClick={() => setHeroic(!heroic)}
+                  >
+                    <span>
+                      <strong>Heroic</strong>
+                      <small>Harder road</small>
+                    </span>
+                  </Button>
+                )}
+                {theQuest && chronicle && chronicle.played > 0 && (
+                  <Button
+                    variant="menu-row"
+                    className="chronicle-open"
+                    onClick={() => setChronicleOpen(true)}
+                  >
+                    <span>
+                      <strong>Chronicle</strong>
+                      <small>
+                        {`${chronicle.played} ${chronicle.played === 1 ? "run" : "runs"} · ${chronicle.won} won`}
+                      </small>
+                    </span>
+                    <span aria-hidden="true">›</span>
+                  </Button>
+                )}
+              </div>
+            )}
         </div>
+      )}
+      {chronicleOpen && chronicle && (
+        <Modal title="Chronicle" onClose={() => setChronicleOpen(false)}>
+          <Suspense fallback={<p className="chronicle-loading">Opening…</p>}>
+            <ChronicleBook chronicle={chronicle} onUnlockAll={onUnlockAll} />
+          </Suspense>
+          <Button onClick={() => setChronicleOpen(false)}>Done</Button>
+        </Modal>
       )}
       {guideOpen && (
         <Modal title="How to play" onClose={() => setGuideOpen(false)}>

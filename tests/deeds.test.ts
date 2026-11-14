@@ -138,7 +138,8 @@ describe("echoes and the Lair's Door", () => {
     const plain = structuredClone(door);
     delete plain.quest!.stages[finaleStage(plain.quest!).stage].harder;
     const target = (t: SessionState) => rollTarget(t, currentCard(t));
-    if (target(plain)?.count === 1)
+    // The extra need is a d20's (Phase 6): a d6 door card reads as written.
+    if (target(plain)?.count === 1 && target(plain)?.sides === 20)
       expect(target(door)!.target).toBe(target(plain)!.target + 1);
     roundTrip(lost);
   });
