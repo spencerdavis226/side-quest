@@ -95,8 +95,10 @@ export const STEP = {
   landing2: 30,
   stairs: 31,
   floor3: 32,
-  closing: 40,
-  lastCall: 41,
+  // An echo before the Lair's Door (The Quest 2.0 Phase 6), until reached.
+  echo: 40,
+  closing: 41,
+  lastCall: 42,
 };
 
 // A Quest seeded at `step` with `id` in play, the party as given. The
@@ -143,6 +145,18 @@ export function crawlAt(
     const at = finale.indexOf(id);
     if (at >= 0) finale[at] = finale[step];
     finale[step] = id;
+    // A stage deals one rare at most (The Quest 2.0 Phase 6): placing one
+    // puts any other rare there back to an ordinary pick.
+    let first = 0;
+    for (const st of s.quest!.stages) {
+      const rares = new Set((st.rare?.cards ?? []).map((c) => c.id));
+      for (let i = first; i < first + st.pick; i++)
+        if (i !== step && rares.has(finale[i]) && rares.has(id)) {
+          const spare = st.cards.find((c) => !finale.includes(c.id));
+          if (spare) finale[i] = spare.id;
+        }
+      first += st.pick;
+    }
     return { ...s, quest: { ...s.quest!, finale } };
   };
   if (adventurer)

@@ -1,6 +1,7 @@
 import { validateDice } from "../game/dice";
 import { validateTimer } from "../game/timer";
 import type {
+  Loot,
   Encounter,
   CardDefinition,
   OmenEffect,
@@ -193,14 +194,49 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
       (!c.reward ||
         (c.reward.loot === undefined &&
           c.reward.heal === undefined &&
-          c.reward.lore === undefined) ||
+          c.reward.lore === undefined &&
+          c.reward.ally === undefined) ||
         (c.reward.lore !== undefined && c.reward.lore !== true) ||
+        (c.reward.ally !== undefined && (c.reward.ally !== true || !c.ally)) ||
         (c.reward.loot !== undefined && !LOOT.includes(c.reward.loot)) ||
         (c.reward.heal !== undefined && !count(c.reward.heal, 5)))
     )
       fail(`Invalid reward: ${c.id}`);
     if (c.encounter !== undefined && !ENCOUNTERS.includes(c.encounter))
       fail(`Invalid encounter: ${c.id}`);
+    // A battle's deed (The Quest 2.0 Phase 6), and hidden results: only on
+    // one face (or doubles), so a hidden result is always a single roll.
+    const deedOk = (d: unknown) =>
+      d === undefined || (typeof d === "string" && /^[a-z-]{2,24}$/.test(d));
+    if (
+      c.deed !== undefined &&
+      (!c.battle || !c.deed || !deedOk(c.deed.won) || !deedOk(c.deed.lost))
+    )
+      fail(`Invalid deed: ${c.id}`);
+    const goodHidden = (r: unknown) => {
+      const h = r as Record<string, unknown> | undefined;
+      return (
+        !!h &&
+        typeof h === "object" &&
+        Object.keys(h).length > 0 &&
+        Object.keys(h).every((k) =>
+          ["loot", "heal", "lore", "ally"].includes(k),
+        ) &&
+        (h.loot === undefined || LOOT.includes(h.loot as Loot)) &&
+        (h.heal === undefined || count(h.heal as number, 5)) &&
+        (h.lore === undefined || h.lore === true) &&
+        (h.ally === undefined || (h.ally === true && !!c.ally))
+      );
+    };
+    if (
+      (c.dice?.outcomes ?? []).some(
+        (o) =>
+          o.reward !== undefined && (o.min !== o.max || !goodHidden(o.reward)),
+      ) ||
+      (c.dice?.doublesReward !== undefined &&
+        (!c.dice.doubles || !goodHidden(c.dice.doublesReward)))
+    )
+      fail(`Invalid hidden result: ${c.id}`);
     // An ally (The Quest 2.0 Phase 4): a name, one or more callings, a
     // bonus of +1 to +5, an optional spoken ritual; on a boss (it joins at
     // the fall) or a card with a plaque that recruits it.
@@ -222,7 +258,11 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
           (typeof c.ally.ritual !== "string" ||
             !c.ally.ritual.trim() ||
             c.ally.ritual.length > 110)) ||
-        (!c.hits && !c.offers?.some((o) => o?.recruit)))
+        (!c.hits &&
+          !c.offers?.some((o) => o?.recruit) &&
+          !c.reward?.ally &&
+          // A hidden result's ally (Phase 6: Chester, the Black Knight).
+          !c.dice?.outcomes?.some((o) => o.reward?.ally)))
     )
       fail(`Invalid ally: ${c.id}`);
     // A merchant's wares or a fork's doors: two or three plaques, on a card
@@ -257,7 +297,9 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
             // Phase 4: lore, and the card's own ally.
             (o.lore !== undefined && o.lore !== true) ||
             (o.recruit !== undefined && (o.recruit !== true || !c.ally)) ||
-            (o.route !== undefined && o.route !== 0 && o.route !== 1),
+            (o.route !== undefined && o.route !== 0 && o.route !== 1) ||
+            (o.deed !== undefined &&
+              (typeof o.deed !== "string" || !/^[a-z-]{2,24}$/.test(o.deed))),
         ))
     )
       fail(`Invalid offers: ${c.id}`);
@@ -372,13 +414,13 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
       (c.omen === undefined || !goodBoon(c.kit) || !c.kit.slot)
     )
       fail(`Invalid kit: ${c.id}`);
-    // Push your luck: one to three prizes, on a plain single-d20 battle.
+    // Push your luck: one to five prizes (five since The Quest 2.0 Phase 6: the Mother Lode), on a plain single-d20 battle.
     if (
       c.press !== undefined &&
       (!c.press ||
         !Array.isArray(c.press.prizes) ||
         c.press.prizes.length < 1 ||
-        c.press.prizes.length > 3 ||
+        c.press.prizes.length > 5 ||
         c.press.prizes.some((item) => !LOOT.includes(item)) ||
         !c.battle ||
         c.dice?.count !== 1 ||
@@ -603,10 +645,20 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
               Array.isArray(i?.cardIds) ? i.cardIds : [],
             )
           : [];
+      // Each card once a stage: a variant group may reuse the stage's own
+      // pool (The Quest 2.0 Phase 6: the Company, sour).
       const stageIds = (stage: QuestStage) => [
-        ...(Array.isArray(stage?.cardIds) ? stage.cardIds : []),
-        ...(Array.isArray(stage?.elite) ? stage.elite : []),
-        ...insertIds(stage),
+        ...new Set([
+          ...(Array.isArray(stage?.cardIds) ? stage.cardIds : []),
+          ...(Array.isArray(stage?.elite) ? stage.elite : []),
+          ...insertIds(stage),
+          ...(Array.isArray(stage?.rare?.cardIds) ? stage.rare.cardIds : []),
+          ...(Array.isArray(stage?.variants)
+            ? stage.variants.flatMap((v) =>
+                Array.isArray(v?.cardIds) ? v.cardIds : [],
+              )
+            : []),
+        ]),
       ];
       const repeatsInARun = (all: typeof slots) => {
         const seen = new Set<string>();
@@ -658,6 +710,36 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
           stage.pick - inserts.length > (stage.cardIds?.length ?? 0)
         );
       };
+      // Rares and variants (Phase 6): odds in (0, 1], pools not empty,
+      // deeds named, a variant's extra need 1 to 3.
+      const deedName = (d: unknown) =>
+        typeof d === "string" && /^[a-z-]{2,24}$/.test(d);
+      const badExtras = (stage: QuestStage) =>
+        (stage.rare !== undefined &&
+          (!crawl ||
+            !Array.isArray(stage.rare.cardIds) ||
+            !stage.rare.cardIds.length ||
+            typeof stage.rare.odds !== "number" ||
+            !(stage.rare.odds > 0 && stage.rare.odds <= 1))) ||
+        (stage.variants !== undefined &&
+          (!crawl ||
+            !Array.isArray(stage.variants) ||
+            !stage.variants.length ||
+            stage.variants.some(
+              (v) =>
+                !v ||
+                !Array.isArray(v.deeds) ||
+                !v.deeds.length ||
+                !v.deeds.every(deedName) ||
+                !Array.isArray(v.cardIds) ||
+                !v.cardIds.length ||
+                (v.harder !== undefined &&
+                  (!Number.isSafeInteger(v.harder) ||
+                    v.harder < 1 ||
+                    v.harder > 3)),
+            ))) ||
+        (stage.optional !== undefined &&
+          (stage.optional !== true || !stage.variants?.length));
       const playable = [...p.cardIds, ...(cardIds ?? [])];
       const advancing = cs.filter(
         (c) => c.quest === p.id && playable.includes(c.id),
@@ -697,6 +779,7 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
             !Array.isArray(stage.cardIds) ||
             stage.pick - (stage.inserts?.length ?? 0) > stage.cardIds.length ||
             badInserts(stage) ||
+            badExtras(stage) ||
             (stage.elite !== undefined &&
               (!crawl || !Array.isArray(stage.elite) || !stage.elite.length)),
         ) ||

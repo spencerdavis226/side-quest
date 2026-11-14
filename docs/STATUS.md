@@ -2,9 +2,21 @@
 
 Updated 2026-11-14. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Next task (2026-11-14): The Quest 2.0 Phase 6 (rare things)
+## Next task (2026-11-14): The Quest 2.0 Phase 7 (the Chronicle)
 
-Phase 5 is done (below). Next is **Phase 6** of `docs/QUEST_2_PLAN.md` section 7: rare cards (regional and single-stage), hidden results, deeds and echoes, the deed-driven Lair's Door, joke classes made rare, moments M6, M13, M14, M22, M23, and the allies that wait on those cards (the Hatchling, Chester, the Company's Bard, Sir Bradley) and the `ally-fell` deed.
+Phase 6 is done (below). Next is **Phase 7** of `docs/QUEST_2_PLAN.md` section 7: the Chronicle (a record across runs, `side-quest.chronicle.v1`, unlocks and feats, 4.11 and 5.8), the Dragonslayer class, Bartholomew and the Dragon King, Heroic mode, M24, and M22's Chronicle counter.
+
+## Done 2026-11-14: The Quest 2.0 Phase 6, rare things, deeds and echoes
+
+- **Engine** (all optional, schema v2 unchanged): `QuestStage.rare` (a stage's rares replace one pick at game start with their odds; snapshotted with their odds), `variants` and `optional` (decided as the stage is reached by `resolveStage`, written into the run; an optional stage with nothing to deal leaves it), `stage.harder` (`rollBonus`), `DiceOutcome.reward` and `doublesReward` (hidden results; `hiddenReward` in `dice.ts`, applied in `discardCard` with `party.found`), `CardDefinition.deed` and `Offer.deed` (`party.deeds`; `ally-fell` when an ally dies), `reward.ally`. `validateQuest` accepts rare and variant picks (one rare a stage), `deeds` and `found`; `validateCatalog` checks rares, variants, deeds and that a hidden result sits on one face.
+- **Content** (1,909 cards; Realms 631): 22 rares (`dungeon/rares.ts`), the joke classes made rare, 15 hidden results (`dungeon/hidden.ts`), 10 echoes (`dungeon/echoes.ts`), the Lair's Door read from the Company's record (Sir Bradley Begs, a harder fight, two rares; three cards cut).
+- **UI**: a prismatic foil for rares (M6), "The Gilded Company" on the door's entrance (M13), moments `echo` (M14), `hidden` (M22) and `deed` (M23); the end screen skips the echo stage.
+- **Balance** (4,000 runs): **won 31.6%**, a won run 58.7 draws, so the **run-length ceiling is now 65** (was 64). Retuned: `PARTY_HEARTS` 9, the dragon's target 17, the Lair's Door three swings (`CLOSING_HITS`), the Bard's top rank naturals on 18. 64% reach the dragon (band 45 to 65%), 50% of those win; dragons 29% to 37%; classes 17% to 46%; jokes (600 forced runs each) 1% to 3%; road pairs within 3 points; lore 1.65 at the dragon; an ally alive there in 86%.
+- **League unchanged:** `LEAGUE_LOG` byte-identical to the Phase 0 baseline.
+- **Fixtures**: `2026-11-14-realms-rare-in-play`, `-hidden-result`, `-deed-held`, `-echo-dealt`, `-door-humbled` (written before the final retune; they load and play on). 87 fixtures, every old one untouched and loading.
+- **Tests:** `tests/rare.test.ts` (a region's rare about one run in five, never the landmark or the last; jokes about 6%; the prism; every hidden result on one face; the Bridge Troll's toll), `tests/deeds.test.ts` (the gate's record, a plaque's deed, a malformed list rejected, an echo dropped or dealt, Slip inside, Sir Bradley, the harder door), a moments case for M14 and M23; the tests' step maps moved for the echo (door 41, dragon 42); dragon tests swing 19 against the new target; the sweep places rares and variants (and keeps one rare a stage).
+- **Checked:** `npm test` 523 passed; lint; typecheck; `cards:review`; `BASE_PATH=/side-quest/ npm run build` (budgets pass, runtime 3,952 KiB of 4,096; initial JavaScript 149.0 KiB gzip); both balance files; Chromium `test:e2e` 175 of 175; Chromium `test:sweep` 12 of 12.
+- **Not run:** WebKit (CI), a phone. Runtime is 144 KiB under its cap: Phase 7 may need the next 512 KiB step (D11).
 
 ## Done 2026-11-14: The Quest 2.0 Phase 5, the map and the road
 

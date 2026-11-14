@@ -13,7 +13,11 @@ import {
 import { returnToCard, rollDice, rollTarget } from "../src/game/dice";
 import { parseSession } from "../src/app/persistence";
 import { cards, packs, validateCatalog } from "../src/content/catalog";
-import { DRAGON_HEALTH, ENRAGE_HURT } from "../src/content/dungeon/shared";
+import {
+  CLOSING_HITS,
+  DRAGON_HEALTH,
+  ENRAGE_HURT,
+} from "../src/content/dungeon/shared";
 import type { GameConfig, SessionState } from "../src/game/types";
 import { takeRoads } from "./roads";
 
@@ -34,8 +38,8 @@ const seeded = (seed: number): Random => {
   };
 };
 // With both roads taken (The Quest 2.0 Phase 5).
-const CLOSING = 40;
-const LAIR = 41;
+const CLOSING = 41;
+const LAIR = 42;
 const party = (s: SessionState) => s.quest!.party!;
 const roundTrip = (s: SessionState) =>
   expect(parseSession(JSON.stringify(s))).toEqual(s);
@@ -62,7 +66,8 @@ function atDragon(seed = 1, hearts = 30): SessionState {
       ...q,
       finale,
       step: CLOSING,
-      party: { ...q.party!, hits: 0, max: hearts, hearts },
+      // One swing already landed on the door (three since Phase 6).
+      party: { ...q.party!, hits: CLOSING_HITS - 2, max: hearts, hearts },
     },
   };
   // A natural 20 lands both of its hits on its own d20 beat.
@@ -122,7 +127,7 @@ describe("the dragon battle", () => {
       party(
         fight(
           { ...s, quest: { ...s.quest!, party: { ...party(s), loot: [] } } },
-          15,
+          19,
         ),
       ).hearts,
     ).toBe(hearts - 1);
@@ -217,7 +222,7 @@ describe("the dragon battle", () => {
       swings: 4,
       enraged: true,
     };
-    s = fight(s, 15);
+    s = fight(s, 19);
     expect(s.phase).toBe("complete");
     expect(party(s)).toMatchObject({ hearts: 1, wiped: false });
     // The last round stays for Previous Card.
@@ -270,9 +275,9 @@ describe("the dragon battle", () => {
     s = { ...s, quest: { ...q, stages, party: p } };
     roundTrip(s);
     // Its own d20 twice, then its last beat, the duel, fells it.
-    s = fight(s, 15);
+    s = fight(s, 19);
     expect(party(s).duel).toBeUndefined();
-    s = fight(s, 15);
+    s = fight(s, 19);
     expect(currentCard(advance(s)).rules).toMatch(/Out-roar/);
     s = settleBattle(advance(s), true);
     expect(questRecord(s)!.won).toBe(true);

@@ -43,7 +43,10 @@ export const landmarks: Record<string, CardDefinition[]> = {
       "gallows-tree",
       "The Gallows Tree",
       "A man on the gallows swears he's innocent. Everyone votes: guilty or not.",
-      [{ label: "Free him · drink 2", heal: 1 }, { label: "Ride on" }],
+      [
+        { label: "Free him · drink 2", heal: 1, deed: "freed" },
+        { label: "Ride on", deed: "rode-on" },
+      ],
     ),
     landmark(
       0,
@@ -74,7 +77,12 @@ export const landmarks: Record<string, CardDefinition[]> = {
       "The Fairy Court",
       "The fair folk offer a gift and never say the price. Everyone bows to the queen.",
       [
-        { label: "Accept the gift", cost: 1, loot: "candy" },
+        {
+          label: "Accept the gift",
+          cost: 1,
+          loot: "candy",
+          deed: "fairy-debt",
+        },
         { label: "Decline", heal: 1 },
       ],
     ),
@@ -94,7 +102,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       "The Hunter's Feast",
       "A lord's feast in a clearing, and you were not invited. Everyone grabs a bite.",
       [
-        { label: "Sit down anyway", heal: 2 },
+        { label: "Sit down anyway", heal: 2, deed: "feast-crashed" },
         { label: "Steal a pie", loot: "draught" },
       ],
     ),
@@ -116,7 +124,12 @@ export const landmarks: Record<string, CardDefinition[]> = {
       "The Hag's Bargain",
       "She'll trade something you have for something you need. The drawer shakes her clammy hand.",
       [
-        { label: "Trade a heart", cost: 1, loot: "revive" },
+        {
+          label: "Trade a heart",
+          cost: 1,
+          loot: "revive",
+          deed: "hag-deal",
+        },
         { label: "Refuse" },
       ],
     ),
@@ -140,7 +153,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       [
         { label: "Pay him", cost: 1, loot: "smoke" },
         { label: "Walk" },
-        { label: "Stiff him", loot: "smoke", jinx: true },
+        { label: "Stiff him", loot: "smoke", jinx: true, deed: "stiffed" },
       ],
       {
         name: "The Ferryman's Due",
@@ -181,7 +194,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       [
         { label: "Buy · drink 3", loot: "die" },
         { label: "Haggle · drink 1", loot: "draught" },
-        { label: "Steal", loot: "die", jinx: true },
+        { label: "Steal", loot: "die", jinx: true, deed: "stole" },
       ],
       {
         name: "Goblin Grudge",

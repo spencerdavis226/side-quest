@@ -1936,7 +1936,7 @@ export const packs: PackDefinition[] = [
       goal: 0,
       length: 1,
       cardIds: [],
-      party: { hearts: 10 },
+      party: { hearts: 9 },
       finale: [
         {
           label: "Your adventurer",
@@ -1958,10 +1958,15 @@ export const packs: PackDefinition[] = [
             "dungeon.class-bartender",
             "dungeon.class-mercenary",
             "dungeon.class-druid",
-            "dungeon.class-plus-one",
-            "dungeon.class-intern",
-            "dungeon.class-mimic",
           ],
+          rare: {
+            cardIds: [
+              "dungeon.class-plus-one",
+              "dungeon.class-intern",
+              "dungeon.class-mimic",
+            ],
+            odds: 0.06,
+          },
         },
         {
           label: "The omen",
@@ -2002,6 +2007,7 @@ export const packs: PackDefinition[] = [
             "dungeon.summons-princess",
             "dungeon.summons-survivor",
           ],
+          rare: { cardIds: ["dungeon.summons-dragon-writes"], odds: 0.05 },
         },
         {
           label: "The City Gate",
@@ -2106,6 +2112,13 @@ export const packs: PackDefinition[] = [
                       ],
                     },
                   ],
+                  rare: {
+                    cardIds: [
+                      "dungeon.rare-king-disguise",
+                      "dungeon.rare-unicorn",
+                    ],
+                    odds: 0.2,
+                  },
                 },
                 {
                   label: "King's Road boss",
@@ -2185,6 +2198,13 @@ export const packs: PackDefinition[] = [
                       ],
                     },
                   ],
+                  rare: {
+                    cardIds: [
+                      "dungeon.rare-sword-stone",
+                      "dungeon.rare-sleeping-giant",
+                    ],
+                    odds: 0.2,
+                  },
                 },
                 {
                   label: "Old Forest boss",
@@ -2264,6 +2284,10 @@ export const packs: PackDefinition[] = [
                       ],
                     },
                   ],
+                  rare: {
+                    cardIds: ["dungeon.rare-wishing-frog", "dungeon.rare-wisp"],
+                    odds: 0.2,
+                  },
                 },
                 {
                   label: "Marsh boss",
@@ -2307,6 +2331,13 @@ export const packs: PackDefinition[] = [
             "dungeon.landing-mop-closet",
             "dungeon.landing-photo-booth",
           ],
+          rare: {
+            cardIds: [
+              "dungeon.landing-mimic-inn",
+              "dungeon.landing-company-table",
+            ],
+            odds: 0.08,
+          },
         },
         {
           oneOf: [
@@ -2520,6 +2551,13 @@ export const packs: PackDefinition[] = [
                       ],
                     },
                   ],
+                  rare: {
+                    cardIds: [
+                      "dungeon.rare-own-grave",
+                      "dungeon.rare-death-chess",
+                    ],
+                    odds: 0.2,
+                  },
                 },
                 {
                   label: "Haunted Crypt boss",
@@ -2600,6 +2638,13 @@ export const packs: PackDefinition[] = [
                       ],
                     },
                   ],
+                  rare: {
+                    cardIds: [
+                      "dungeon.rare-mother-lode",
+                      "dungeon.rare-thing-below",
+                    ],
+                    odds: 0.2,
+                  },
                 },
                 {
                   label: "Goblin Mines boss",
@@ -2679,6 +2724,13 @@ export const packs: PackDefinition[] = [
                       ],
                     },
                   ],
+                  rare: {
+                    cardIds: [
+                      "dungeon.rare-wizard-home",
+                      "dungeon.rare-old-apprentice",
+                    ],
+                    odds: 0.2,
+                  },
                 },
                 {
                   label: "Wizard's Tower boss",
@@ -2710,6 +2762,7 @@ export const packs: PackDefinition[] = [
             "dungeon.landing-laundry-room",
             "dungeon.landing-stuck-elevator",
           ],
+          rare: { cardIds: ["dungeon.landing-widow"], odds: 0.08 },
         },
         {
           label: "The Crossroads",
@@ -2790,21 +2843,88 @@ export const packs: PackDefinition[] = [
                     ],
                   },
                 ],
+                rare: {
+                  cardIds: [
+                    "dungeon.rare-ghost-ship",
+                    "dungeon.rare-mermaid-kiss",
+                  ],
+                  odds: 0.2,
+                },
+              },
+              {
+                label: "An Echo",
+                intro: "Someone remembers",
+                pick: 1,
+                cardIds: [
+                  "dungeon.echo-hanged-man",
+                  "dungeon.echo-brother",
+                  "dungeon.echo-fair-folk",
+                  "dungeon.echo-lord-remembers",
+                  "dungeon.echo-hag-owed",
+                  "dungeon.echo-ferryman",
+                  "dungeon.echo-goblin-posse",
+                  "dungeon.echo-gift",
+                  "dungeon.echo-one-you-left",
+                  "dungeon.echo-grave",
+                ],
+                optional: true,
+                variants: [
+                  { deeds: ["freed"], cardIds: ["dungeon.echo-hanged-man"] },
+                  { deeds: ["rode-on"], cardIds: ["dungeon.echo-brother"] },
+                  {
+                    deeds: ["fairy-debt"],
+                    cardIds: ["dungeon.echo-fair-folk"],
+                  },
+                  {
+                    deeds: ["feast-crashed"],
+                    cardIds: ["dungeon.echo-lord-remembers"],
+                  },
+                  { deeds: ["hag-deal"], cardIds: ["dungeon.echo-hag-owed"] },
+                  { deeds: ["stiffed"], cardIds: ["dungeon.echo-ferryman"] },
+                  { deeds: ["stole"], cardIds: ["dungeon.echo-goblin-posse"] },
+                  { deeds: ["quest-taken"], cardIds: ["dungeon.echo-gift"] },
+                  {
+                    deeds: ["quest-walked"],
+                    cardIds: ["dungeon.echo-one-you-left"],
+                  },
+                  { deeds: ["ally-fell"], cardIds: ["dungeon.echo-grave"] },
+                ],
               },
               {
                 label: "The Lair's Door",
-                intro: "The Company got here first",
+                intro: "At the lair's door",
                 pick: 1,
                 cardIds: [
                   "dungeon.closing-last-table",
                   "dungeon.closing-the-boys-toast",
                   "dungeon.closing-last-round",
-                  "dungeon.closing-venmo-request",
                   "dungeon.closing-dance-off",
-                  "dungeon.closing-boys-tab",
-                  "dungeon.closing-thads-uber",
                   "dungeon.closing-the-rematch",
                 ],
+                variants: [
+                  {
+                    deeds: ["gate-won", "crossroads-won"],
+                    cardIds: ["dungeon.closing-bradley-begs"],
+                  },
+                  {
+                    deeds: ["gate-lost", "crossroads-lost"],
+                    cardIds: [
+                      "dungeon.closing-last-table",
+                      "dungeon.closing-the-boys-toast",
+                      "dungeon.closing-last-round",
+                      "dungeon.closing-dance-off",
+                      "dungeon.closing-the-rematch",
+                    ],
+                    harder: 1,
+                  },
+                ],
+                rare: {
+                  cardIds: [
+                    "dungeon.closing-singed-capes",
+                    "dungeon.closing-bard",
+                  ],
+                  odds: 0.1,
+                },
               },
               {
                 label: "The Dragon's Lair",
@@ -2882,21 +3002,88 @@ export const packs: PackDefinition[] = [
                     ],
                   },
                 ],
+                rare: {
+                  cardIds: [
+                    "dungeon.rare-dragon-egg",
+                    "dungeon.rare-forge-kings",
+                  ],
+                  odds: 0.2,
+                },
+              },
+              {
+                label: "An Echo",
+                intro: "Someone remembers",
+                pick: 1,
+                cardIds: [
+                  "dungeon.echo-hanged-man",
+                  "dungeon.echo-brother",
+                  "dungeon.echo-fair-folk",
+                  "dungeon.echo-lord-remembers",
+                  "dungeon.echo-hag-owed",
+                  "dungeon.echo-ferryman",
+                  "dungeon.echo-goblin-posse",
+                  "dungeon.echo-gift",
+                  "dungeon.echo-one-you-left",
+                  "dungeon.echo-grave",
+                ],
+                optional: true,
+                variants: [
+                  { deeds: ["freed"], cardIds: ["dungeon.echo-hanged-man"] },
+                  { deeds: ["rode-on"], cardIds: ["dungeon.echo-brother"] },
+                  {
+                    deeds: ["fairy-debt"],
+                    cardIds: ["dungeon.echo-fair-folk"],
+                  },
+                  {
+                    deeds: ["feast-crashed"],
+                    cardIds: ["dungeon.echo-lord-remembers"],
+                  },
+                  { deeds: ["hag-deal"], cardIds: ["dungeon.echo-hag-owed"] },
+                  { deeds: ["stiffed"], cardIds: ["dungeon.echo-ferryman"] },
+                  { deeds: ["stole"], cardIds: ["dungeon.echo-goblin-posse"] },
+                  { deeds: ["quest-taken"], cardIds: ["dungeon.echo-gift"] },
+                  {
+                    deeds: ["quest-walked"],
+                    cardIds: ["dungeon.echo-one-you-left"],
+                  },
+                  { deeds: ["ally-fell"], cardIds: ["dungeon.echo-grave"] },
+                ],
               },
               {
                 label: "The Lair's Door",
-                intro: "The Company got here first",
+                intro: "At the lair's door",
                 pick: 1,
                 cardIds: [
                   "dungeon.closing-last-table",
                   "dungeon.closing-the-boys-toast",
                   "dungeon.closing-last-round",
-                  "dungeon.closing-venmo-request",
                   "dungeon.closing-dance-off",
-                  "dungeon.closing-boys-tab",
-                  "dungeon.closing-thads-uber",
                   "dungeon.closing-the-rematch",
                 ],
+                variants: [
+                  {
+                    deeds: ["gate-won", "crossroads-won"],
+                    cardIds: ["dungeon.closing-bradley-begs"],
+                  },
+                  {
+                    deeds: ["gate-lost", "crossroads-lost"],
+                    cardIds: [
+                      "dungeon.closing-last-table",
+                      "dungeon.closing-the-boys-toast",
+                      "dungeon.closing-last-round",
+                      "dungeon.closing-dance-off",
+                      "dungeon.closing-the-rematch",
+                    ],
+                    harder: 1,
+                  },
+                ],
+                rare: {
+                  cardIds: [
+                    "dungeon.closing-singed-capes",
+                    "dungeon.closing-bard",
+                  ],
+                  odds: 0.1,
+                },
               },
               {
                 label: "The Dragon's Lair",
@@ -2974,21 +3161,85 @@ export const packs: PackDefinition[] = [
                     ],
                   },
                 ],
+                rare: {
+                  cardIds: ["dungeon.rare-yeti-tea", "dungeon.rare-old-slayer"],
+                  odds: 0.2,
+                },
+              },
+              {
+                label: "An Echo",
+                intro: "Someone remembers",
+                pick: 1,
+                cardIds: [
+                  "dungeon.echo-hanged-man",
+                  "dungeon.echo-brother",
+                  "dungeon.echo-fair-folk",
+                  "dungeon.echo-lord-remembers",
+                  "dungeon.echo-hag-owed",
+                  "dungeon.echo-ferryman",
+                  "dungeon.echo-goblin-posse",
+                  "dungeon.echo-gift",
+                  "dungeon.echo-one-you-left",
+                  "dungeon.echo-grave",
+                ],
+                optional: true,
+                variants: [
+                  { deeds: ["freed"], cardIds: ["dungeon.echo-hanged-man"] },
+                  { deeds: ["rode-on"], cardIds: ["dungeon.echo-brother"] },
+                  {
+                    deeds: ["fairy-debt"],
+                    cardIds: ["dungeon.echo-fair-folk"],
+                  },
+                  {
+                    deeds: ["feast-crashed"],
+                    cardIds: ["dungeon.echo-lord-remembers"],
+                  },
+                  { deeds: ["hag-deal"], cardIds: ["dungeon.echo-hag-owed"] },
+                  { deeds: ["stiffed"], cardIds: ["dungeon.echo-ferryman"] },
+                  { deeds: ["stole"], cardIds: ["dungeon.echo-goblin-posse"] },
+                  { deeds: ["quest-taken"], cardIds: ["dungeon.echo-gift"] },
+                  {
+                    deeds: ["quest-walked"],
+                    cardIds: ["dungeon.echo-one-you-left"],
+                  },
+                  { deeds: ["ally-fell"], cardIds: ["dungeon.echo-grave"] },
+                ],
               },
               {
                 label: "The Lair's Door",
-                intro: "The Company got here first",
+                intro: "At the lair's door",
                 pick: 1,
                 cardIds: [
                   "dungeon.closing-last-table",
                   "dungeon.closing-the-boys-toast",
                   "dungeon.closing-last-round",
-                  "dungeon.closing-venmo-request",
                   "dungeon.closing-dance-off",
-                  "dungeon.closing-boys-tab",
-                  "dungeon.closing-thads-uber",
                   "dungeon.closing-the-rematch",
                 ],
+                variants: [
+                  {
+                    deeds: ["gate-won", "crossroads-won"],
+                    cardIds: ["dungeon.closing-bradley-begs"],
+                  },
+                  {
+                    deeds: ["gate-lost", "crossroads-lost"],
+                    cardIds: [
+                      "dungeon.closing-last-table",
+                      "dungeon.closing-the-boys-toast",
+                      "dungeon.closing-last-round",
+                      "dungeon.closing-dance-off",
+                      "dungeon.closing-the-rematch",
+                    ],
+                    harder: 1,
+                  },
+                ],
+                rare: {
+                  cardIds: [
+                    "dungeon.closing-singed-capes",
+                    "dungeon.closing-bard",
+                  ],
+                  odds: 0.1,
+                },
               },
               {
                 label: "The Dragon's Lair",

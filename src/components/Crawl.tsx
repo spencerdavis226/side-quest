@@ -1430,6 +1430,8 @@ export function CrawlRecord({
     // Nor is a lone card with no fight (the Quest's King's Summons).
     if (stage.omen || kind === "rest") continue;
     if (kind === "set-piece" && !stage.fight) continue;
+    // An echo (Phase 6) is no floor, dealt or not.
+    if (stage.optional) continue;
     const last = floors[floors.length - 1];
     // A boss closes the floor before it; one that follows a set piece or
     // another boss (Last Call, the League's gauntlet) stands on its own.

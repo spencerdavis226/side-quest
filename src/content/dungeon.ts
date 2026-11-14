@@ -4,19 +4,33 @@ import { hiddenRoomCards, hiddenRooms } from "./dungeon/bookcase";
 import { brewery } from "./dungeon/brewery";
 import { catacombs } from "./dungeon/catacombs";
 import { cellar } from "./dungeon/cellar";
-import { classes } from "./dungeon/classes";
+import { JOKE_CLASSES, classes } from "./dungeon/classes";
 import { freezer } from "./dungeon/freezer";
 import { kitchen } from "./dungeon/kitchen";
 import { applyPhases } from "./dungeon/phases";
 import { applyJinxes } from "./dungeon/jinxes";
 import { floorMoments } from "./dungeon/moments";
-import { closingCards, queueCards, stairsCards } from "./dungeon/lastcall";
+import {
+  bradleyBegs,
+  closingCards,
+  doorRares,
+  queueCards,
+  stairsCards,
+} from "./dungeon/lastcall";
 import { dragons as lastCallBosses, lairs } from "./dungeon/dragons";
 import { lowerLandings, upperLandings } from "./dungeon/landings";
 import { omens } from "./dungeon/omens";
 import { summonsCards } from "./dungeon/summons";
 import { signCards } from "./dungeon/signs";
 import { roadOut, signposts } from "./dungeon/roads";
+import {
+  innRares,
+  lastInnRare,
+  regionRares,
+  summonsRare,
+} from "./dungeon/rares";
+import { echoes } from "./dungeon/echoes";
+import { applyHidden } from "./dungeon/hidden";
 import { landmarks } from "./dungeon/landmarks";
 import { rooftop } from "./dungeon/rooftop";
 import { sewers } from "./dungeon/sewers";
@@ -94,6 +108,14 @@ export const dungeonCards: CardDefinition[] = applyPhases([
   ...signCards,
   ...roadOut,
   ...signposts,
+  // The Quest 2.0 Phase 6: rares, echoes and the Lair's Door's new cards.
+  ...Object.values(regionRares).flat(),
+  summonsRare,
+  ...innRares,
+  lastInnRare,
+  ...Object.values(echoes),
+  bradleyBegs,
+  ...doorRares,
   ...Object.values(landmarks).flat(),
   ...classes,
   ...upperLandings,
@@ -105,6 +127,9 @@ export const dungeonCards: CardDefinition[] = applyPhases([
 ]).map(withNaturals);
 // Curses became jinxes (2026-10-25): one spoken system, not two.
 applyJinxes(dungeonCards);
+// Hidden results (The Quest 2.0 Phase 6) go on the faces the naturals pass
+// split off.
+applyHidden(dungeonCards);
 
 const ids = (cards: CardDefinition[]) => cards.map((c) => c.id);
 
@@ -116,6 +141,7 @@ const floor = (
   intro: string,
   f: FloorCards,
   marks: CardDefinition[],
+  rares: CardDefinition[],
 ) => ({
   label,
   intro,
@@ -123,6 +149,8 @@ const floor = (
   cardIds: ids([...f.fights, ...f.finds]),
   elite: ids(f.elites),
   inserts: [{ at: 4, cardIds: ids(marks) }],
+  // Two rares a region, one dealt in about one run in five (Phase 6).
+  rare: { cardIds: ids(rares), odds: 0.2 },
 });
 const one = (label: string, intro: string, cards: CardDefinition[]) => ({
   label,
@@ -134,7 +162,34 @@ const one = (label: string, intro: string, cards: CardDefinition[]) => ({
 /** A lair: its region, the Company at the door and its dragons. */
 const lair = (region: ReturnType<typeof floor>, dragons: CardDefinition[]) => [
   region,
-  one("The Lair's Door", "The Company got here first", closingCards),
+  // The road remembers (The Quest 2.0 Phase 6): the echo of one deed the
+  // party holds, or nothing; then the Company, by its record.
+  {
+    label: "An Echo",
+    intro: "Someone remembers",
+    pick: 1,
+    cardIds: ids(Object.values(echoes)),
+    optional: true as const,
+    variants: Object.entries(echoes).map(([deed, c]) => ({
+      deeds: [deed],
+      cardIds: [c.id],
+    })),
+  },
+  {
+    label: "The Lair's Door",
+    intro: "At the lair's door",
+    pick: 1,
+    cardIds: ids(closingCards),
+    variants: [
+      { deeds: ["gate-won", "crossroads-won"], cardIds: [bradleyBegs.id] },
+      {
+        deeds: ["gate-lost", "crossroads-lost"],
+        cardIds: ids(closingCards),
+        harder: 1,
+      },
+    ],
+    rare: { cardIds: ids(doorRares), odds: 0.1 },
+  },
   one("The Dragon's Lair", "It's awake", dragons),
 ];
 
@@ -163,9 +218,21 @@ export const dungeonPack: PackDefinition = {
     // lair's door, and the dragon. File and variable names are the old
     // floors' (cellar is the King's Road, and so on).
     finale: [
-      one("Your adventurer", "Who answers the call?", classes),
+      // The joke classes are rare (The Quest 2.0 Phase 6): about 6 runs in
+      // 100 (D8).
+      {
+        ...one(
+          "Your adventurer",
+          "Who answers the call?",
+          classes.filter((c) => !JOKE_CLASSES.includes(c.id)),
+        ),
+        rare: { cardIds: JOKE_CLASSES, odds: 0.06 },
+      },
       one("The omen", "A sign in the sky", omens),
-      one("The King's Summons", "The king needs a hero", summonsCards),
+      {
+        ...one("The King's Summons", "The king needs a hero", summonsCards),
+        rare: { cardIds: [summonsRare.id], odds: 0.05 },
+      },
       one("The City Gate", "The Company pushes past", queueCards),
       // The road (The Quest 2.0 Phase 5): the table chooses two of three
       // regions at each of the first two depths.
@@ -179,6 +246,7 @@ export const dungeonPack: PackDefinition = {
                 "Out through the city gate",
                 cellar,
                 landmarks.cellar,
+                regionRares.cellar,
               ),
               one(
                 "King's Road boss",
@@ -192,6 +260,7 @@ export const dungeonPack: PackDefinition = {
                 "Into the Old Forest",
                 wine,
                 landmarks.wine,
+                regionRares.wine,
               ),
               one("Old Forest boss", "The trees go quiet", wine.bosses),
             ],
@@ -201,6 +270,7 @@ export const dungeonPack: PackDefinition = {
                 "Down into the Marsh",
                 brewery,
                 landmarks.brewery,
+                regionRares.brewery,
               ),
               one("Marsh boss", "Something stirs in the reeds", brewery.bosses),
             ],
@@ -210,7 +280,10 @@ export const dungeonPack: PackDefinition = {
       // A dragon sign (The Quest 2.0 Phase 3): the dragon passes over. No
       // banner: its shadow crosses the card instead.
       { label: "A Dragon Sign", pick: 1, cardIds: ids(signCards) },
-      one("The Inn", "A warm fire and a bad bed", upperLandings),
+      {
+        ...one("The Inn", "A warm fire and a bad bed", upperLandings),
+        rare: { cardIds: ids(innRares), odds: 0.08 },
+      },
       // A side quest: one of five pleas, its dungeon's two guards and its
       // keeper (2026-10-17 as the hidden rooms). Walking on skips both.
       {
@@ -232,6 +305,7 @@ export const dungeonPack: PackDefinition = {
                 "Down into the Haunted Crypt",
                 catacombs,
                 landmarks.catacombs,
+                regionRares.catacombs,
               ),
               one("Haunted Crypt boss", "The dead stand up", catacombs.bosses),
             ],
@@ -241,6 +315,7 @@ export const dungeonPack: PackDefinition = {
                 "Down into the Goblin Mines",
                 sewers,
                 landmarks.sewers,
+                regionRares.sewers,
               ),
               one("Goblin Mines boss", "Drums in the deep", sewers.bosses),
             ],
@@ -250,13 +325,17 @@ export const dungeonPack: PackDefinition = {
                 "Up the Wizard's Tower",
                 freezer,
                 landmarks.freezer,
+                regionRares.freezer,
               ),
               one("Wizard's Tower boss", "The lights go out", freezer.bosses),
             ],
           ],
         },
       },
-      one("The Last Inn", "One last night's sleep", lowerLandings),
+      {
+        ...one("The Last Inn", "One last night's sleep", lowerLandings),
+        rare: { cardIds: [lastInnRare.id], odds: 0.08 },
+      },
       one("The Crossroads", "The Gilded Company is ahead", stairsCards),
       // The lair (The Quest 2.0, 2026-11-13): the dragon picks the third
       // region, its own, so each route is that region, the Company at its
@@ -270,6 +349,7 @@ export const dungeonPack: PackDefinition = {
               "Down to the Sunken Coast",
               taproom,
               landmarks.taproom,
+              regionRares.taproom,
             ),
             lairs.taproom,
           ),
@@ -279,6 +359,7 @@ export const dungeonPack: PackDefinition = {
               "Into the Fire Caverns",
               kitchen,
               landmarks.kitchen,
+              regionRares.kitchen,
             ),
             lairs.kitchen,
           ),
@@ -288,6 +369,7 @@ export const dungeonPack: PackDefinition = {
               "Up into the Frozen Pass",
               rooftop,
               landmarks.rooftop,
+              regionRares.rooftop,
             ),
             lairs.rooftop,
           ),

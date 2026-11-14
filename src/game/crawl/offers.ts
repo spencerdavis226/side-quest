@@ -3,6 +3,7 @@ import { rollWins } from "../dice";
 import { currentCard, type Random } from "../engine";
 import { chooseRoad, dropInto, finaleStage } from "./stages";
 import {
+  addDeed,
   addLore,
   evolve,
   gainBoon,
@@ -78,6 +79,8 @@ export function takeOffer(
   if (offer.lore) party = addLore(party);
   if (offer.recruit && currentCard(s).ally)
     party = joinTeam(party, currentCard(s).id);
+  // The Quest 2.0 Phase 6: a choice the road remembers.
+  if (offer.deed) party = addDeed(party, offer.deed);
   let finale = q.finale;
   // The loud door: the next room on this floor becomes one of its elites.
   if (offer.elite) {

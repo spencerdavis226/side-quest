@@ -21,11 +21,12 @@ import {
   runNames,
   wantedBoss,
 } from "../../game/engine";
-import { rollWins } from "../../game/dice";
+import { hiddenReward, rollWins } from "../../game/dice";
 import { describeChange } from "../../game/omenText";
 import { badgeArt } from "../../presentation/league-art";
 import { badgeType } from "../../presentation/pokemon-types";
 import {
+  ECHO_OF,
   LAIR_WORDS,
   QUEST_MAP,
   crawlTheme,
@@ -182,6 +183,13 @@ export type Moment = {
   /** The first card of a region is dealt: the road so far, and the
    * region's name and three words (M4; it replaces the region's banner). */
   | { kind: "road"; quest: QuestState; region: string; words: string }
+  /** The Quest 2.0 Phase 6: an echo turns over, someone from earlier
+   * (M14). */
+  | { kind: "echo"; title: string; earlier: string }
+  /** A hidden result rolled (M22): the outcome in gold under a seal. */
+  | { kind: "hidden"; line: string }
+  /** A deed set (M23): "This is remembered." */
+  | { kind: "deed" }
   /** A jinx laid (its name and rule) or lifted (the boss fell). */
   | {
       kind: "jinx";
@@ -202,6 +210,8 @@ export const AMBIENT: ReadonlySet<MomentKind> = new Set([
   "shadow",
   "map",
   "road",
+  "hidden",
+  "deed",
   "milestone",
   "natural",
   "clash",
@@ -303,19 +313,23 @@ export function entranceFor(s: SessionState) {
         ? "final"
         : "boss";
   const theme = crawlTheme(q.packId);
+  // The Company's own cards (The Quest 2.0 Phase 6, M13).
+  const company = !league && / · Rival$/.test(card.ribbon ?? "");
   const kicker = card.lairFight
     ? "It's awake"
-    : style === "elite"
-      ? `Elite Four · ${at.index + 1} of ${at.size}`
-      : style === "rival"
-        ? "Your rival"
-        : style === "ambush"
-          ? theme.words.Ambush
-          : style === "legendary"
-            ? "A Legendary appears"
-            : style === "boss" || style === "final"
-              ? at.label
-              : at.label.replace(/ boss$/, "");
+    : company
+      ? "The Gilded Company"
+      : style === "elite"
+        ? `Elite Four · ${at.index + 1} of ${at.size}`
+        : style === "rival"
+          ? "Your rival"
+          : style === "ambush"
+            ? theme.words.Ambush
+            : style === "legendary"
+              ? "A Legendary appears"
+              : style === "boss" || style === "final"
+                ? at.label
+                : at.label.replace(/ boss$/, "");
   const form = omenForm(q);
   const gym = style === "gym" && card.quest === q.packId;
   return {
@@ -460,6 +474,38 @@ export function momentsBetween(
         say: `${st.label}. ${words}.`,
       });
     }
+  }
+
+  // The Quest 2.0 Phase 6: an echo turns (M14), a hidden result is
+  // rolled (M22), a deed is set (M23).
+  if (q?.due && q.packId === "dungeon" && party) {
+    if (turned && card.ribbon === "An Echo")
+      out.push({
+        kind: "echo",
+        key: `echo:${card.id}`,
+        title: card.title,
+        earlier: ECHO_OF[card.id] ?? "",
+        say: `Someone remembers. ${card.title}.`,
+      });
+    const rolled =
+      after.phase === "revealed" &&
+      !!after.roll?.returned &&
+      !before.roll?.returned &&
+      !!card.dice;
+    if (rolled && hiddenReward(card.dice!, after.roll!.values, after.roll!))
+      out.push({
+        kind: "hidden",
+        key: `hidden:${after.discarded}:${party.hits}`,
+        line: after.roll!.instruction,
+        say: `Something else happens. ${after.roll!.instruction}`,
+      });
+    const was = before.quest?.party;
+    if ((party.deeds?.length ?? 0) > (was?.deeds?.length ?? 0))
+      out.push({
+        kind: "deed",
+        key: `deed:${party.deeds!.at(-1)}`,
+        say: "This is remembered.",
+      });
   }
 
   // The run's first card turned over: the starter or the adventurer.
@@ -879,8 +925,15 @@ function milestone(
 export function cardFinish(
   s: SessionState,
   card: { id: string; encounter?: string; hits?: number },
-): "gold" | "silver" | null {
+): "gold" | "silver" | "prism" | null {
   const q = s.quest;
+  // A rare (The Quest 2.0 Phase 6, M6): a prismatic foil.
+  if (
+    q?.due &&
+    q.party &&
+    q.stages.some((st) => st.rare?.cards.some((c) => c.id === card.id))
+  )
+    return "prism";
   if (q?.due && q.party) {
     if (card.encounter !== "boss" && (card.encounter || !card.hits))
       return null;

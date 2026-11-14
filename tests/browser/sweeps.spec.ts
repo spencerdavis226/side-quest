@@ -68,6 +68,13 @@ function crawlPlace(id: string) {
         i.cards.some((c) => c.id === id),
       );
       if (insert) return { step: first + insert.at, route, room };
+      // A rare or a variant (Phase 6): in a room's place, or the stage's
+      // first card.
+      if (
+        stage.rare?.cards.some((c) => c.id === id) ||
+        stage.variants?.some((v) => v.cards.some((c) => c.id === id))
+      )
+        return { step: first, route, room };
       first += stage.pick;
     }
   }

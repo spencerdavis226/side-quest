@@ -330,6 +330,41 @@ const situations: [string, GameConfig, Find][] = [
     crawl,
     (s) => s.phase === "hidden" && (s.quest!.dropped?.length ?? 0) >= 2,
   ],
+  // Rare things (The Quest 2.0 Phase 6): a rare face up, a hidden result
+  // found, a deed held, an echo dealt, and the Lair's Door made harder by
+  // the Company's record.
+  [
+    "realms-rare-in-play",
+    crawl,
+    (s) =>
+      s.phase === "revealed" &&
+      s.quest!.stages.some((st) =>
+        st.rare?.cards.some((c) => c.id === currentCard(s).id),
+      ),
+  ],
+  [
+    "realms-hidden-result",
+    crawl,
+    (s) => (party(s).found?.length ?? 0) > 0 && s.phase === "hidden",
+  ],
+  [
+    "realms-deed-held",
+    crawl,
+    (s) => (party(s).deeds?.length ?? 0) >= 2 && s.phase === "hidden",
+  ],
+  [
+    "realms-echo-dealt",
+    crawl,
+    (s) => s.phase === "revealed" && currentCard(s).ribbon === "An Echo",
+  ],
+  [
+    "realms-door-humbled",
+    crawl,
+    (s) =>
+      s.phase === "revealed" &&
+      s.quest!.stages.some((st) => st.harder !== undefined) &&
+      currentCard(s).id.startsWith("dungeon.closing-"),
+  ],
   [
     "league-catch-beat",
     league,

@@ -300,8 +300,9 @@ it("a crawl is hard: the party wins about a quarter of its runs", () => {
   // 54.4 after the dragon battle (Phase 2), so 60.4; 55.0 with the
   // landmarks and the dragon sign (Phase 3), so 61; 56.1 with allies,
   // lore and a five-scale dragon (Phase 4), so 62; 58.1 with the two road
-  // cards (Phase 5), so 64.
-  expect(mean).toBeLessThan(64);
+  // cards (Phase 5), so 64; 58.7 with the rares, echoes and a three-swing
+  // Lair's Door (Phase 6), so 65.
+  expect(mean).toBeLessThan(65);
   // Nearly every run gets through the gate and the first region.
   const early = ["The City Gate", "Region 1"].reduce(
     (n, l) => n + (wipes.get(l) ?? 0),
@@ -466,4 +467,4 @@ it("the joke classes are the worst adventurers, and still win now and then", () 
     expect(r, name).toBeGreaterThan(0.01);
     expect(r, name).toBeLessThan(Math.min(0.1, worst));
   }
-}, 60_000);
+}, 120_000);

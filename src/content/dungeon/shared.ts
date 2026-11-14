@@ -50,7 +50,7 @@ export const SAVE = [9, 11, 13] as const;
 /** Hearts a lost room fight costs. */
 export const HURT = [1, 2, 3] as const;
 /** A boss's target and the hearts a missed swing costs. */
-export const BOSS_NEED = [9, 12, 15] as const;
+export const BOSS_NEED = [9, 12, 17] as const;
 export const BOSS_HURT = [2, 2, 2] as const;
 /** Swings a floor boss takes: two on the first floors, three at Last Call
  * (2026-10-25: two beats at least, so every boss has a second act). */
@@ -67,6 +67,8 @@ export const QUEUE_NEED = 8;
 export const QUEUE_HURT = 1;
 export const CLOSING_NEED = 12;
 export const CLOSING_HURT = 3;
+/** The Lair's Door's swings (two before The Quest 2.0 Phase 6). */
+export const CLOSING_HITS = 3;
 /** The rival party on the stairs, between the second landing and the third
  * floor (2026-10-25): one fight, between the door's odds and closing
  * time's. */
@@ -88,7 +90,7 @@ export const LEVEL_DRINK = 3;
  * 2026-11-14; a Lucky Coin in Phase 3). */
 export const LORE = { lore: true } as const;
 /** The party's shared hearts before the adventurer. */
-export const PARTY_HEARTS = 10;
+export const PARTY_HEARTS = 9;
 
 /** The variety pass's helpers (2026-10-31; shared since Realms, 2026-11-03,
  * when each region's file took its rooms' final text): a hidden fuse, a
@@ -716,6 +718,8 @@ export const queue = (
   encounter: "ambush",
   battle: true,
   damage: QUEUE_HURT,
+  // The Lair's Door reads how it went (The Quest 2.0 Phase 6).
+  deed: { won: "gate-won", lost: "gate-lost" },
   ...stakes(more),
 });
 
@@ -741,6 +745,7 @@ export const stairs = (
   encounter: "ambush",
   battle: true,
   damage: STAIRS_HURT,
+  deed: { won: "crossroads-won", lost: "crossroads-lost" },
   ...stakes(more),
 });
 
@@ -757,7 +762,9 @@ export const closing = (
   ribbonTone: "crimson",
   encounter: "ambush",
   battle: true,
-  hits: 2,
+  // Three swings since The Quest 2.0 Phase 6 (2026-11-14): a run that
+  // beat the Company twice, or slipped inside, skips this fight now.
+  hits: CLOSING_HITS,
   damage: CLOSING_HURT,
   ...stakes(more),
 });
@@ -825,7 +832,11 @@ export const plea = (
   ribbon: "Side Quest",
   ribbonTone: "violet",
   encounter: "rest",
-  offers: [{ label: "Take the quest" }, { label: "Walk on", skip: 2 }],
+  // The road remembers either (The Quest 2.0 Phase 6).
+  offers: [
+    { label: "Take the quest", deed: "quest-taken" },
+    { label: "Walk on", skip: 2, deed: "quest-walked" },
+  ],
 });
 
 /** One floor's cards: its rooms (fights and finds), the elites behind its

@@ -234,6 +234,24 @@ describe("moments", () => {
     expect(momentsBetween(null, took)).toEqual([]);
   });
 
+  it("an echo, a hidden result and a deed each have their moment (Phase 6)", () => {
+    const c = createSession(crawl, cards, packs, seeded(14));
+    // A deed set.
+    const held = withParty(c, { deeds: ["freed"] });
+    expect(kinds(momentsBetween(c, held))).toContain("deed");
+    expect(AMBIENT.has("deed")).toBe(true);
+    // An echo turns: put it in the run where the echo stage deals.
+    const echo = stepOf(c, "An Echo");
+    const finale = [...c.quest!.finale];
+    finale[echo] = "dungeon.echo-hanged-man";
+    const dealt = atStep({ ...c, quest: { ...c.quest!, finale } }, echo);
+    const turned = momentsBetween(dealt, { ...dealt, phase: "revealed" });
+    expect(turned.find((m) => m.kind === "echo")).toMatchObject({
+      title: "The Hanged Man Returns",
+      earlier: "The Gallows Tree",
+    });
+  });
+
   it("the Quest's lore, an ally joining, sent in and falling (Phase 4)", () => {
     const c = createSession(crawl, cards, packs, seeded(8));
     const at = atStep(c, stepOf(c, "The Last Inn"));

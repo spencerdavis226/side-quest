@@ -377,6 +377,8 @@ describe("choice cards", () => {
       "dungeon.the-chest-freezer",
       "dungeon.the-telescope",
       "dungeon.the-water-tower",
+      // A rare (The Quest 2.0 Phase 6): pull the sword, or leave it.
+      "dungeon.rare-sword-stone",
     ]);
     for (const choice of [
       {},

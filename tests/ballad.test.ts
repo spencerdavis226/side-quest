@@ -15,7 +15,7 @@ import { returnToCard, rollDice } from "../src/game/dice";
 import { cards, packs } from "../src/content/catalog";
 import { JOKE_CLASSES, classes } from "../src/content/dungeon/classes";
 import { lairs } from "../src/content/dungeon/dragons";
-import { DRAGON_HEALTH } from "../src/content/dungeon/shared";
+import { CLOSING_HITS, DRAGON_HEALTH } from "../src/content/dungeon/shared";
 import type { GameConfig, SessionState } from "../src/game/types";
 import { takeRoads } from "./roads";
 
@@ -34,7 +34,7 @@ const seeded = (seed: number): Random => {
   };
 };
 // With both roads taken (The Quest 2.0 Phase 5).
-const CLOSING = 40;
+const CLOSING = 41;
 const BOSS1 = 13;
 const BOSS2 = 29;
 const rollTo = (s: SessionState, face: number) => {
@@ -62,7 +62,13 @@ function atDoor(seed = 1, hearts = 30, cls = "dungeon.class-barbarian") {
     quest: {
       ...s.quest!,
       step: CLOSING,
-      party: { ...s.quest!.party!, hits: 0, max: hearts, hearts },
+      // One swing already landed on the door (three since Phase 6).
+      party: {
+        ...s.quest!.party!,
+        hits: CLOSING_HITS - 2,
+        max: hearts,
+        hearts,
+      },
     },
   };
 }
@@ -86,7 +92,7 @@ describe("the ballad", () => {
   });
 
   it("sings a win: who set out, the bosses felled, and the dragon slain", () => {
-    const s = play(atDoor(1, 30), Array(DRAGON_HEALTH + 2).fill(15));
+    const s = play(atDoor(1, 30), Array(DRAGON_HEALTH + 2).fill(19));
     expect(s.phase).toBe("complete");
     const lines = ballad(s);
     const { dragon } = runNames(s.quest!);
@@ -120,7 +126,7 @@ describe("the ballad", () => {
   it("a fool's win was foretold; one heart left is by a thread", () => {
     const fool = play(
       atDoor(3, 30, "dungeon.class-intern"),
-      Array(DRAGON_HEALTH + 2).fill(15),
+      Array(DRAGON_HEALTH + 2).fill(19),
     );
     expect(ballad(fool).at(-1)).toMatch(/^and the fool slew /);
     const thin = fight(atDoor(4, 30), 20);
@@ -128,7 +134,7 @@ describe("the ballad", () => {
     thin.quest!.party!.duel = { move: 0, swings: 3, enraged: true };
     thin.quest!.party!.hearts = 1;
     // A swing that wins on the last heart keeps it.
-    const won = play(thin, [15]);
+    const won = play(thin, [19]);
     expect(won.quest!.party!.hearts).toBe(1);
     expect(ballad(won).at(-1)).toMatch(/by a thread\.$/);
   });
@@ -153,7 +159,7 @@ describe("the ballad", () => {
   it("every line fits at table distance with the longest names", () => {
     for (let seed = 1; seed <= 40; seed++) {
       const cls = classes[seed % classes.length].id;
-      const s = play(atDoor(seed, 30, cls), Array(DRAGON_HEALTH + 2).fill(15));
+      const s = play(atDoor(seed, 30, cls), Array(DRAGON_HEALTH + 2).fill(19));
       for (const line of ballad(s))
         expect(line.length, line).toBeLessThanOrEqual(BALLAD_WIDTH);
     }

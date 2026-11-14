@@ -5888,3 +5888,72 @@
     opacity: 1;
   }
 }
+
+/* The Quest 2.0 Phase 6: an echo (M14), a hidden result (M22), a deed
+   (M23). */
+.moment-echo {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  padding: 0 20px;
+  text-align: center;
+  background: rgb(70 48 22 / 0.72);
+  animation: map-fade var(--len) ease both;
+}
+.echo-earlier {
+  color: rgb(241 226 191 / 0.45);
+  font: italic 600 clamp(20px, 6vw, 32px) / 1.1 var(--font-card-title);
+  animation: echo-fade var(--len) ease both;
+}
+.echo-title {
+  color: #fff3c4;
+  font: 800 clamp(28px, 8.5vw, 48px) / 1.05 var(--font-card-title);
+  text-shadow: 0 3px 0 #5a3c1e;
+  animation: wanted-in 500ms 700ms ease both;
+}
+@keyframes echo-fade {
+  0% {
+    opacity: 0;
+  }
+  30%,
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.35;
+  }
+}
+.moment-hidden,
+.moment-deed {
+  display: grid;
+  place-content: end center;
+  justify-items: center;
+  gap: 8px;
+  padding: 0 20px calc(18vh + env(safe-area-inset-bottom));
+  pointer-events: none;
+  text-align: center;
+  animation: map-fade var(--len) ease both;
+}
+.hidden-seal {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffe7a8, #c9922a);
+  color: #4a2e08;
+  font: 800 28px / 1 var(--font-card-title);
+  box-shadow: 0 0 18px #f2c94c;
+}
+.hidden-line {
+  max-width: 30ch;
+  color: #ffe7a8;
+  font: 600 clamp(16px, 4.4vw, 20px) / 1.3 var(--font-tavern);
+  text-shadow: 0 2px 8px #000;
+}
+.deed-words {
+  color: #f1e3c4;
+  font: italic 500 clamp(15px, 4.2vw, 19px) / 1.3 var(--font-tavern);
+  letter-spacing: 0.04em;
+  text-shadow: 0 2px 8px #000;
+}

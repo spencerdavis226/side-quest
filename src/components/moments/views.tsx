@@ -68,6 +68,9 @@ const LENGTH: Record<Moment["kind"], number> = {
   fallen: 3000,
   map: 2500,
   road: 2000,
+  echo: 2000,
+  hidden: 1500,
+  deed: 1200,
 };
 /** A lifted jinx reads less than a laid one: only its name burns away. */
 const LIFTED = 2000;
@@ -126,6 +129,12 @@ export default function MomentView({
       return <MapOpens m={moment} scale={scale} onDone={onDone} />;
     case "road":
       return <RoadSoFar m={moment} scale={scale} onDone={onDone} />;
+    case "echo":
+      return <Echo m={moment} scale={scale} onDone={onDone} />;
+    case "hidden":
+      return <HiddenResult m={moment} scale={scale} onDone={onDone} />;
+    case "deed":
+      return <Remembered m={moment} scale={scale} onDone={onDone} />;
     case "doubles":
       return <Doubles m={moment} scale={scale} onDone={onDone} />;
     case "door":
@@ -383,6 +392,12 @@ function caption(m: Moment): [string, string, string] {
       return ["The map", m.title, ""];
     case "road":
       return ["The road", m.region, m.words];
+    case "echo":
+      return ["Someone remembers", m.title, m.earlier];
+    case "hidden":
+      return ["Something else happens", m.line, ""];
+    case "deed":
+      return ["", "This is remembered.", ""];
     default:
       return ["", "", ""];
   }
@@ -1357,6 +1372,49 @@ function RoadSoFar({ m, scale, onDone }: ViewProps<"road">) {
       </div>
       <strong className="road-name">{m.region}</strong>
       {m.words && <span className="road-words">{m.words}</span>}
+    </Stage>
+  );
+}
+
+/** An echo (The Quest 2.0 Phase 6, M14): the screen warms to sepia, the
+ * earlier card's title shows faintly, then the echo's over it. */
+function Echo({ m, scale, onDone }: ViewProps<"echo">) {
+  return (
+    <Stage kind="echo" length={LENGTH.echo} scale={scale} onDone={onDone}>
+      {m.earlier && <span className="echo-earlier">{m.earlier}</span>}
+      <strong className="echo-title">{m.title}</strong>
+    </Stage>
+  );
+}
+
+/** A hidden result (M22): the outcome in gold under a "?" seal. Taps go
+ * through. */
+function HiddenResult({ m, scale, onDone }: ViewProps<"hidden">) {
+  return (
+    <Stage
+      kind="hidden"
+      length={LENGTH.hidden}
+      scale={scale}
+      onDone={onDone}
+      ambient
+    >
+      <span className="hidden-seal">?</span>
+      <span className="hidden-line">{m.line}</span>
+    </Stage>
+  );
+}
+
+/** A deed set (M23): three words under the card as it leaves. */
+function Remembered({ scale, onDone }: ViewProps<"deed">) {
+  return (
+    <Stage
+      kind="deed"
+      length={LENGTH.deed}
+      scale={scale}
+      onDone={onDone}
+      ambient
+    >
+      <span className="deed-words">This is remembered.</span>
     </Stage>
   );
 }

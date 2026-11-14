@@ -190,8 +190,19 @@ function validateQuest(s: SessionState) {
           !(i > 0 && elite?.some((c) => c.id === id)) &&
           !inserts?.some(
             (ins) => ins.at === i && ins.cards.some((c) => c.id === id),
+          ) &&
+          // The Quest 2.0 Phase 6: a rare, or the variant reached.
+          !stage.rare?.cards?.some((c) => c.id === id) &&
+          !(
+            i === 0 &&
+            stage.variants?.some((v) => v.cards?.some((c) => c.id === id))
           ),
-      )
+      ) ||
+      // At most one rare a stage, and a variant's extra need is small.
+      picks.filter((id) => stage.rare?.cards?.some((c) => c.id === id)).length >
+        1 ||
+      (stage.harder !== undefined &&
+        (!whole(stage.harder, 1) || stage.harder > 3))
     )
       throw Error("Invalid quest");
     at += stage.pick;
@@ -289,6 +300,17 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
         ))) ||
     // Dragon lore (The Quest 2.0 Phase 4): one to three.
     (p.lore !== undefined && (!whole(p.lore, 1) || p.lore > 3)) ||
+    // Deeds (Phase 6): short names, each once; found: cards already dealt.
+    (p.deeds !== undefined &&
+      (!Array.isArray(p.deeds) ||
+        new Set(p.deeds).size !== p.deeds.length ||
+        p.deeds.some(
+          (d) => typeof d !== "string" || !/^[a-z-]{2,24}$/.test(d),
+        ))) ||
+    (p.found !== undefined &&
+      (!Array.isArray(p.found) ||
+        new Set(p.found).size !== p.found.length ||
+        p.found.some((id) => typeof id !== "string" || !dealt.includes(id)))) ||
     // The ball thrown at the Pokémon face up (2026-10-27), kept until its
     // card is put aside.
     (p.throw !== undefined &&

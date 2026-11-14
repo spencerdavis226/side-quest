@@ -1,14 +1,16 @@
 import type {
   CardDefinition,
   DiceRoll,
+  HiddenReward,
   PartyState,
   QuestState,
   SessionState,
 } from "../types";
-import { rollWins } from "../dice";
+import { hiddenReward, rollWins } from "../dice";
 import { currentCard, paceQuest, shuffle, type Random } from "../engine";
-import { finaleCard, finaleStage } from "./stages";
+import { finaleCard, finaleStage, resolveStage } from "./stages";
 import {
+  addDeed,
   addLore,
   evolve,
   gainBoon,
@@ -128,13 +130,36 @@ export function discard(
   if (!lost || !after || !sent) return next;
   const team = (after.team ?? []).filter((m) => m !== sent);
   // A last stand on the same card is the news; the one sent in falls too.
-  const fallen: PartyState = {
+  let fallen: PartyState = {
     ...after,
     team,
     fainted: after.fainted ?? sent,
   };
+  // The road remembers an ally's death (The Quest 2.0 Phase 6).
+  if (s.quest && finaleCard(s.quest, sent)?.ally)
+    fallen = addDeed(fallen, "ally-fell");
   if (!team.length) delete fallen.team;
   return { ...next, quest: { ...next.quest!, party: fallen } };
+}
+/** What a hidden result brings: an item (room permitting), hearts, a
+ * lore, the card's ally; and the card goes on the run's list of found
+ * results. */
+function takeHidden(
+  party: PartyState,
+  card: CardDefinition,
+  hidden: HiddenReward,
+  quest: QuestState,
+): PartyState {
+  let next = party;
+  if (hidden.loot && next.loot.length < satchelSize({ ...quest, party: next }))
+    next = { ...next, loot: [...next.loot, hidden.loot] };
+  if (hidden.heal)
+    next = { ...next, hearts: Math.min(next.max, next.hearts + hidden.heal) };
+  if (hidden.lore) next = addLore(next);
+  if (hidden.ally && card.ally) next = joinTeam(next, card.id);
+  if (!next.found?.includes(card.id))
+    next = { ...next, found: [...(next.found ?? []), card.id] };
+  return next;
 }
 function discardCard(
   s: SessionState,
@@ -167,6 +192,13 @@ function discardCard(
     const q = s.quest;
     const nat = natural(card, s.roll);
     let next = settleParty(party, card, outcome, q, nat, spoil);
+    // A hidden result (The Quest 2.0 Phase 6): the face rolled brings what
+    // its outcome holds, and the run remembers the card.
+    const hidden =
+      card.dice && s.roll?.returned
+        ? hiddenReward(card.dice, s.roll.values, s.roll)
+        : undefined;
+    if (hidden) next = takeHidden(next, card, hidden, q);
     const raw = finaleCard(q, card.id);
     // The dragon battle (The Quest 2.0): this round's move costs its hearts
     // after the swing, so a Tower Shield takes whichever comes first, and
@@ -208,7 +240,10 @@ function discardCard(
       );
       if (stand) {
         const team = next.team!.filter((id) => id !== stand);
-        next = { ...next, hearts: 1, team, fainted: stand };
+        next = addDeed(
+          { ...next, hearts: 1, team, fainted: stand },
+          "ally-fell",
+        );
         if (!team.length) delete next.team;
       }
     }
@@ -313,7 +348,16 @@ function discardCard(
   // The next finale card is dealt; the deck waits where it is. A dragon
   // opens on its first round, its move sampled now.
   if (s.quest?.due) {
-    const q = s.quest;
+    let q = s.quest;
+    // A stage with variants is decided as it is reached (The Quest 2.0
+    // Phase 6); an echo with nothing to echo leaves the run, and the stage
+    // after it (the Lair's Door) is decided in turn.
+    for (let tries = 0; tries < 3 && q.party; tries++) {
+      const next = resolveStage(q, q.step + 1, random);
+      const dropped = next.finale.length < q.finale.length;
+      q = next;
+      if (!dropped) break;
+    }
     const coming = finaleCard(q, q.finale[q.step + 1]);
     const party =
       coming?.lairFight && q.party

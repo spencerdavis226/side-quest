@@ -226,7 +226,20 @@ export function createSession(
     // stage's place and road, so a replay can put dropped stages back.
     const roads = rules.finale.some((slot) => "choose" in slot);
     const stages = questRoute(rules, random).map(
-      ({ label, pick, cardIds, elite, inserts, route }, at) => ({
+      (
+        {
+          label,
+          pick,
+          cardIds,
+          elite,
+          inserts,
+          route,
+          rare,
+          variants,
+          optional,
+        },
+        at,
+      ) => ({
         label,
         pick,
         ...(roads ? { at } : {}),
@@ -241,6 +254,20 @@ export function createSession(
               })),
             }
           : {}),
+        // The Quest 2.0 Phase 6: rares, variants, and an optional stage.
+        ...(rare?.cardIds.length
+          ? { rare: { odds: rare.odds, cards: snapshot(rare.cardIds) } }
+          : {}),
+        ...(variants?.length
+          ? {
+              variants: variants.map(({ deeds, cardIds, harder }) => ({
+                deeds: [...deeds],
+                cards: snapshot(cardIds),
+                ...(harder ? { harder } : {}),
+              })),
+            }
+          : {}),
+        ...(optional ? { optional } : {}),
       }),
     );
     const { label, goal, length } = rules;

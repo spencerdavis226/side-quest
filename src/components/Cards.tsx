@@ -71,7 +71,7 @@ export function CardFace({
     ball?: "great" | "ultra" | "master";
   } | null;
   /** A foil over the frame (2026-11-01): gold or silver for a boss. */
-  finish?: "gold" | "silver" | null;
+  finish?: "gold" | "silver" | "prism" | null;
 }) {
   // A strike reads the line for its matchup (the engine's `strikeText`).
   const outcome =

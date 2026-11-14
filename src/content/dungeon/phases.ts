@@ -270,36 +270,9 @@ const beats: Readonly<Record<string, Beat[]>> = {
       pair("He spills it on you. Drink 4.", "It's yours. Give 4."),
     ),
   ],
-  "closing-venmo-request": [
-    duel(
-      "Pay Bradley (your left neighbor) back in compliments: three in ten seconds. Fall short: drink 4.",
-    ),
-  ],
   "closing-dance-off": [
     duel(
       "Round two: you and Thaddeus (left neighbor) dance, no music. The table votes. He wins: drink 4.",
-    ),
-  ],
-  "closing-boys-tab": [
-    roll(
-      "The moneylender wants a signature. Roll d6.",
-      moves(
-        [
-          "You sign it. Drink 4.",
-          "You sign it twice. Drink 4.",
-          "You tip him too. Drink 3.",
-        ],
-        [
-          "You sign it 'Bradley'. Give 3.",
-          "You sign it 'Chadwick'. Give 4.",
-          "You sign it 'The Company'. Everyone else drinks 2.",
-        ],
-      ),
-    ),
-  ],
-  "closing-thads-uber": [
-    duel(
-      "Dibs on the saddle: you and Thaddeus (left neighbor) call it. Table judges. He's first: drink 4.",
     ),
   ],
   "closing-the-rematch": [

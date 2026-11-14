@@ -1178,3 +1178,12 @@
   text-transform: uppercase;
   font-size: 0.82em;
 }
+/* A rare (The Quest 2.0 Phase 6, M6): the whole card prismatic, stronger
+   and slower than a boss's foil. */
+.foil-prism .card-foil {
+  opacity: 0.85;
+  background-size: 180% 180%;
+}
+.foil-prism .card-foil::after {
+  animation-duration: 7s;
+}

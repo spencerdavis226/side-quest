@@ -1014,12 +1014,13 @@ test("an ambush shows its two swings in the medallion", async ({
   await page.screenshot({ path: info.outputPath("ambush.png") });
 });
 
-test("the lair's door: the rival party, beaten twice", async ({
+test("the lair's door: the rival party, beaten three times", async ({
   page,
 }, info) => {
   await seed(page, reveal(crawlAt("dungeon.closing-last-table", STEP.closing)));
   await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
-    "Ambush, The Lair's Door: 0 of 2 hits",
+    // Three swings since The Quest 2.0 Phase 6.
+    "Ambush, The Lair's Door: 0 of 3 hits",
   );
   await expect(page.locator(".game-card .card-ribbon")).toHaveText(
     "The Lair's Door · Rival",

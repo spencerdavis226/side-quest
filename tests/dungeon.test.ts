@@ -39,6 +39,7 @@ import { cards, packs } from "../src/content/catalog";
 import type { GameConfig, Loot, SessionState } from "../src/game/types";
 import {
   BOSS_NEED,
+  CLOSING_HITS,
   DRAGON_HEALTH,
   PARTY_HEARTS,
 } from "../src/content/dungeon/shared";
@@ -117,8 +118,11 @@ const STEP = {
   landing2: 30,
   stairs: 31,
   floor3: 32,
-  closing: 40,
-  lastCall: 41,
+  // An echo (The Quest 2.0 Phase 6) before the Lair's Door, until it is
+  // reached (none held: it leaves the run).
+  echo: 40,
+  closing: 41,
+  lastCall: 42,
 };
 // The run past the door, with no adventurer or omen: the King's Road's first
 // room.
@@ -192,10 +196,11 @@ describe("Pub Crawl", () => {
       ["The Last Inn", 1],
       ["The Crossroads", 1],
       ["The Sunken Coast", 8],
+      ["An Echo", 1],
       ["The Lair's Door", 1],
       ["The Dragon's Lair", 1],
     ]);
-    expect(s.quest!.finale).toHaveLength(42);
+    expect(s.quest!.finale).toHaveLength(43);
     expect(currentCard(s).omen).toBeDefined();
     const at = (step: number) => findCard(s, s.quest!.finale[step])!;
     expect(at(STEP.hidden).ribbon).toBe("Witch's Cottage · Guard");
@@ -231,7 +236,10 @@ describe("Pub Crawl", () => {
       // The Quest 2.0 Phase 4).
       ["boss", DRAGON_HEALTH],
     ]);
-    expect(at(STEP.closing)).toMatchObject({ encounter: "ambush", hits: 2 });
+    expect(at(STEP.closing)).toMatchObject({
+      encounter: "ambush",
+      hits: CLOSING_HITS,
+    });
     for (const step of [STEP.landing1, STEP.landing2])
       expect(at(step).encounter).toBe("rest");
     // The first two floors' bosses offer two trinkets; Last Call nothing.
@@ -271,6 +279,7 @@ describe("Pub Crawl", () => {
       "The Last Inn",
       "The Crossroads",
       "The Fire Caverns",
+      "An Echo",
       "The Lair's Door",
       "The Dragon's Lair",
     ]);
@@ -295,6 +304,7 @@ describe("Pub Crawl", () => {
       "The Last Inn",
       "The Crossroads",
       "The Frozen Pass",
+      "An Echo",
       "The Lair's Door",
       "The Dragon's Lair",
     ]);
@@ -985,7 +995,7 @@ describe("Pub Crawl", () => {
         first += stage.pick;
       }
     }
-  });
+  }, 30_000);
 
   it("an ambush is dealt again until beaten twice", () => {
     let s = deal(start(), "dungeon.lost-bridesmaids");
@@ -1122,6 +1132,9 @@ describe("Pub Crawl", () => {
       cards: i === 0 ? [legacy] : st.cards,
       ...(st.elite ? { elite: st.elite } : {}),
       ...(st.inserts ? { inserts: st.inserts } : {}),
+      ...(st.rare ? { rare: st.rare } : {}),
+      ...(st.variants ? { variants: st.variants } : {}),
+      ...(st.optional ? { optional: st.optional } : {}),
     }));
     old.quest!.finale = [legacy.id, ...old.quest!.finale.slice(2)];
     // Saves from then had no roads to choose (The Quest 2.0 Phase 5).

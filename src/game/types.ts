@@ -8,6 +8,18 @@ export interface DiceOutcome {
   instruction: string;
   /** A battle card's winning outcome (see `CardDefinition.battle`). */
   win?: true;
+  /** The Quest 2.0 Phase 6 (2026-11-14): a hidden result. Rolling this
+   * outcome (a single face, or doubles) brings this too, though the card's
+   * rules never say so. */
+  reward?: HiddenReward;
+}
+/** What a hidden result brings (The Quest 2.0 Phase 6). */
+export interface HiddenReward {
+  loot?: Loot;
+  heal?: number;
+  lore?: true;
+  /** The card's `ally` joins. */
+  ally?: true;
 }
 export interface DiceDefinition {
   version: 1;
@@ -16,6 +28,8 @@ export interface DiceDefinition {
   instruction?: string;
   /** Replaces the normal instruction when every die shows the same face. */
   doubles?: string;
+  /** A hidden result on doubles (The Quest 2.0 Phase 6). */
+  doublesReward?: HiddenReward;
   /** A battle card's doubles are a win. */
   doublesWin?: true;
   outcomes?: DiceOutcome[];
@@ -107,6 +121,8 @@ export interface CardDefinition {
     /** The Quest 2.0 Phase 4: one dragon lore (`party.lore`, at most 3).
      * On a boss, at its fall. */
     lore?: true;
+    /** The Quest 2.0 Phase 6: the card's `ally` joins (on a win). */
+    ally?: true;
   };
   /** Pub Crawl: what kind of room the card is, so an omen can single out
    * traps or monsters. A boss is told apart from an ambush (both have
@@ -204,6 +220,9 @@ export interface CardDefinition {
     bonus: number;
     ritual?: string;
   };
+  /** The Quest 2.0 Phase 6: a deed set when this battle is put aside, by
+   * how it went (`party.deeds`). */
+  deed?: { won?: string; lost?: string };
 }
 /** A dragon's move for one round of its battle (`lairFight`). */
 export interface DragonMove {
@@ -326,6 +345,8 @@ export interface Offer {
   lore?: true;
   /** The card's `ally` joins the party. */
   recruit?: true;
+  /** The Quest 2.0 Phase 6: a deed the run remembers (`party.deeds`). */
+  deed?: string;
   /** The Quest 2.0 Phase 5: the road chosen (0 or 1) on a `choose` slot's
    * card; the other road's stages leave the run. */
   route?: 0 | 1;
@@ -409,6 +430,15 @@ export interface QuestStage {
    * among the picks (a region's landmark, fifth). `at` counts from 0; one
    * card of each pool is picked when the game starts. */
   inserts?: { at: number; cardIds: string[] }[];
+  /** The Quest 2.0 Phase 6: cards outside the pool; with chance `odds`, one
+   * replaces a pick when the game starts. */
+  rare?: { cardIds: string[]; odds: number };
+  /** Resolved when the stage is reached: the first card dealt is one of a
+   * group whose deeds the party holds (picked at random among them), its
+   * battle `harder` by that much. None held: the pick made at game start,
+   * or, with `optional`, the stage leaves the run. */
+  variants?: { deeds: string[]; cardIds: string[]; harder?: number }[];
+  optional?: true;
 }
 /** A run's place in the finale: one stage, or `oneOf` a set of routes (each
  * a list of stages, such as a floor and its boss), one picked per game. */
@@ -476,6 +506,12 @@ export interface QuestState {
     /** Its place in the run as dealt at game start, so stages a choice or
      * a Walk on removed can be put back in order for a replay. */
     at?: number;
+    /** Phase 6: the rares, the variants, `optional`, and the extra need
+     * the variant dealt brings. */
+    rare?: { odds: number; cards: CardDefinition[] };
+    variants?: { deeds: string[]; cards: CardDefinition[]; harder?: number }[];
+    optional?: true;
+    harder?: number;
   }[];
   /** Stages a road choice or a Walk on removed from the run (Phase 5), kept
    * for a replay. */
@@ -527,6 +563,10 @@ export interface PartyState {
    * one swing at the dragon (its first swings, rolled twice, the better
    * kept). */
   lore?: number;
+  /** The Quest 2.0 Phase 6: deeds the run remembers, in the order set. */
+  deeds?: string[];
+  /** Cards whose hidden result was rolled this run (for the Chronicle). */
+  found?: string[];
   /** The ball thrown at the Pokémon on the card in play (2026-10-27): its
    * card ID and the d20 face, kept until the card is put aside so a reload
    * never throws again. */
