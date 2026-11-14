@@ -695,8 +695,9 @@ test("felling the dragon wins the quest", async ({ page }, info) => {
   s = rolled({ ...s, discarded: STEP.lastCall + DRAGON_HEALTH - 1 }, 18);
   await seed(page, s);
   await page.locator(".game-card").click();
+  // The Quest 2.1: the title names the dragon slain.
   await expect(page.locator(".crawl-end h1")).toHaveText(
-    /The dragon\s*is slain\./,
+    new RegExp(`${currentCard(s).title}\\s*is slain\\.`),
   );
   await expect(page.locator(".crawl-verdict")).toHaveText(
     "Half the kingdom is yours: make a rule for the rest of the night.",
@@ -736,8 +737,9 @@ test("the dragon battle: a round's move, the scales, the kill and the wipe", asy
   await page.screenshot({ path: info.outputPath("lair-round.png") });
   await reseed(page, rolled(s, 18));
   await page.locator(".game-card").click();
+  // The Quest 2.1: the title names the dragon slain.
   await expect(page.locator(".crawl-end h1")).toHaveText(
-    /The dragon\s*is slain\./,
+    new RegExp(`${currentCard(s).title}\\s*is slain\\.`),
   );
   // The ballad (Phase 3): the run as a verse, ending on the dragon slain.
   const verse = page.locator(".crawl-ballad span");

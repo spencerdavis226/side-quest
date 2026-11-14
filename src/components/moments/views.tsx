@@ -1,3 +1,8 @@
+import { DragonEye } from "./DragonEye";
+import {
+  questArt,
+  type QuestArt,
+} from "../../presentation/quest-art.generated";
 import {
   useEffect,
   useRef,
@@ -5,7 +10,7 @@ import {
   type CSSProperties,
   type ReactNode,
 } from "react";
-import { dragonStyle } from "../../presentation/dragon-colors";
+import { dragonColors, dragonStyle } from "../../presentation/dragon-colors";
 import { createPortal } from "react-dom";
 import type { Moment } from "./detect";
 import {
@@ -23,7 +28,7 @@ import {
 import { asset } from "../../presentation/theme";
 import { TypeMark } from "../LeagueMarks";
 import { CrawlIcon } from "../Crawl";
-import { crawlTheme } from "../crawlTheme";
+import { QUEST_MAP, crawlTheme } from "../crawlTheme";
 import { QuestMap } from "../QuestMap";
 
 // The moments themselves (2026-11-01; styles in `presentation/moments.css`).
@@ -59,7 +64,8 @@ const LENGTH: Record<Moment["kind"], number> = {
   door: 2600,
   press: 1300,
   thread: 2100,
-  dragonmove: 1200,
+  dragonmove: 1500,
+  swing: 1100,
   enraged: 2500,
   wanted: 3500,
   shadow: 1500,
@@ -115,6 +121,8 @@ export default function MomentView({
       return <DragonMoveSlam m={moment} scale={scale} onDone={onDone} />;
     case "enraged":
       return <Enraged m={moment} scale={scale} onDone={onDone} />;
+    case "swing":
+      return <Swing m={moment} scale={scale} onDone={onDone} />;
     case "wanted":
       return <Wanted m={moment} scale={scale} onDone={onDone} />;
     case "shadow":
@@ -296,7 +304,13 @@ function Stage({
   return createPortal(
     <div
       className={`moment moment-${kind} ${ambient ? "ambient" : ""} ${skipping ? "skipping" : ""} ${leaving ? "leaving" : ""} ${className}`}
-      style={{ "--m": scale, ...style } as CSSProperties}
+      style={
+        {
+          "--m": scale,
+          "--stage-len": `${length * scale}ms`,
+          ...style,
+        } as CSSProperties
+      }
       aria-hidden="true"
       onPointerDown={ambient ? undefined : skip}
       onPointerUp={ambient ? undefined : (e) => lift(e)}
@@ -376,6 +390,8 @@ function caption(m: Moment): [string, string, string] {
       return m.lifted ? [m.kicker, m.rule, m.name] : [m.kicker, m.name, m.rule];
     case "dragonmove":
       return [m.dragon, m.name, ""];
+    case "swing":
+      return ["", "", ""];
     case "enraged":
       return [m.dragon, "Enraged", m.line];
     case "wanted":
@@ -610,6 +626,7 @@ function LevelUp({ m, scale, onDone }: ViewProps<"evolution">) {
 /* --- Entrances ---------------------------------------------------------- */
 
 function Entrance({ m, scale, onDone }: ViewProps<"entrance">) {
+  if (m.dragon) return <LairEntrance m={m} scale={scale} onDone={onDone} />;
   if (m.style === "legendary")
     return <Legendary m={m} scale={scale} onDone={onDone} />;
   if (m.style === "boss" || m.style === "final")
@@ -772,6 +789,65 @@ function Legendary({ m, scale, onDone }: ViewProps<"entrance">) {
         {m.title}
       </strong>
       {m.foe.type && <TypeMark type={m.foe.type} className="legend-type" />}
+    </Stage>
+  );
+}
+
+/** The dragon wakes (The Quest 2.1, M15): the table goes black, the ground
+ * shakes, one eye opens in the dragon's colours and narrows on the table,
+ * its name burns in under "It's awake", then its scales and the lore the
+ * party brings line up under it. A tap skips. */
+function LairEntrance({ m, scale, onDone }: ViewProps<"entrance">) {
+  const eye = useRef<HTMLDivElement>(null);
+  const [bright, deep] = dragonColors(m.dragon!.id);
+  useTimeline(
+    [
+      [380, tremor],
+      [
+        900,
+        () =>
+          at(eye.current, "embers", {
+            count: 70,
+            colors: [bright, deep, "#fff1c2"],
+            power: 0.9,
+          }),
+      ],
+      [1650, () => at(eye.current, "motes", { count: 40, colors: [bright] })],
+    ],
+    scale,
+  );
+  const scales = m.dragon!.scales;
+  return (
+    <Stage
+      kind="entrance"
+      passTo=".game-card"
+      className="lair"
+      length={4600}
+      scale={scale}
+      onDone={onDone}
+      style={dragonStyle(m.dragon!.id)}
+    >
+      <span className="lair-dark" />
+      <div className="lair-eye" ref={eye}>
+        <DragonEye mode="open" />
+      </div>
+      <small className="lair-kicker">{m.kicker}</small>
+      <p className="lair-name" aria-hidden="true">
+        {[...m.title].map((ch, i) => (
+          <span key={i} style={{ "--i": i } as React.CSSProperties}>
+            {ch}
+          </span>
+        ))}
+      </p>
+      <span className="lair-scales">
+        {Array.from({ length: scales }, (_, i) => (
+          <i key={i} style={{ "--i": i } as React.CSSProperties} />
+        ))}
+      </span>
+      <span className="lair-tally">
+        {m.heartsWord} {m.hearts}/{m.max}
+        {m.dragon!.lore > 0 && ` · ${m.dragon!.lore} lore`}
+      </span>
     </Stage>
   );
 }
@@ -1001,6 +1077,11 @@ function SendIn({ m, scale, onDone }: ViewProps<"sendin">) {
         </div>
       )}
       <span className="sendin-light" ref={light} />
+      {m.ally && (
+        <div className="sendin-medal">
+          <AllyMedal name={m.name} />
+        </div>
+      )}
       {m.type && <TypeMark type={m.type} className="sendin-mark" />}
       <strong className="sendin-word">Go, {m.name}!</strong>
       {m.bonus && <small className="sendin-bonus">{m.bonus}</small>}
@@ -1202,11 +1283,114 @@ function LootFound({ m, scale, onDone }: ViewProps<"loot">) {
 /** The dragon's move (The Quest 2.0, M16): its name slams in from the top
  * edge with a flash and a shake, then clears to the card. Taps go
  * through; a roll cuts it. */
+/** Each ally's emblem (The Quest 2.1), by its name. */
+const ALLY_MARK: [RegExp, QuestArt][] = [
+  [/Goat/, "goat"],
+  [/Mule/, "mule"],
+  [/Mort|Skull/, "ally-skull"],
+  [/Pip|Cabin/, "cabin-boy"],
+  [/Durla|Dwarf/, "dwarf"],
+  [/Frozen Knight/, "frozen-knight"],
+  [/Hatchling/, "hatchling"],
+  [/Chester/, "chester"],
+  [/Bard/, "bard"],
+  [/Bradley/, "bradley"],
+  [/Blade|Sword/, "blade"],
+];
+const allyMark = (name: string): QuestArt =>
+  ALLY_MARK.find(([re]) => re.test(name))?.[1] ?? "shield";
+
+/** An ally's medallion: a struck gold ring with its emblem; `fallen` is
+ * cold iron, cracked. */
+function AllyMedal({
+  name,
+  fallen = false,
+}: {
+  name: string;
+  fallen?: boolean;
+}) {
+  return (
+    <svg
+      className={`ally-medal${fallen ? " fallen" : ""}`}
+      viewBox="-60 -60 120 120"
+      aria-hidden="true"
+    >
+      <circle className="medal-rim" r="56" />
+      <circle className="medal-field" r="46" />
+      <path
+        className="medal-mark"
+        d={questArt[allyMark(name)]}
+        transform="translate(-32 -32) scale(0.125)"
+      />
+      {fallen && (
+        <path
+          className="medal-crack"
+          d="M-6 -56 L2 -30 L-8 -8 L6 12 L-4 34 L4 56"
+        />
+      )}
+    </svg>
+  );
+}
+
+/** The dragon's shadow crossing the screen: a wyvern in flight, soft at
+ * the edges, in the dragon's deep colour (The Quest 2.1; a clipped shape
+ * before). */
+function DragonShadow() {
+  return (
+    <svg className="dragon-wing" viewBox="0 0 512 512" aria-hidden="true">
+      <path d={questArt["dragon-ice"]} />
+    </svg>
+  );
+}
+
+/** The dragon's move as its round turns over (M16; The Quest 2.1 gives
+ * each kind its own telegraph): a move that costs hearts sweeps the
+ * dragon's breath across the screen; one that makes the swing harder casts
+ * its wing's shadow, which lingers; one that makes it easier dims; one for
+ * the table alone slams its name in with sparks. Taps go through, and a roll
+ * cuts it short. */
 function DragonMoveSlam({ m, scale, onDone }: ViewProps<"dragonmove">) {
+  const name = useRef<HTMLParagraphElement>(null);
+  const [bright, deep] = dragonColors(m.id);
+  useTimeline(
+    [
+      [
+        260,
+        () => {
+          if (m.effect === "hurt") {
+            tremor();
+            burst("streaks", {
+              x: 0,
+              y: window.innerHeight * 0.25,
+              count: 34,
+              power: 1.6,
+              colors: [bright, deep, "#fff1c2"],
+              angle: Math.PI / 5,
+              spread: 0.7,
+            });
+          } else
+            at(name.current, "sparks", {
+              count: m.effect === "easier" ? 14 : 36,
+              power: 0.9,
+              colors: [bright, "#fff1c2"],
+            });
+        },
+      ],
+    ],
+    scale,
+  );
+  const note =
+    m.effect === "hurt"
+      ? "It hurts"
+      : m.effect === "harder"
+        ? "Swing 2 harder"
+        : m.effect === "easier"
+          ? "Swing 2 easier"
+          : "";
   return (
     <Stage
       kind="dragonmove"
-      className={m.enraged ? "enraged" : ""}
+      className={`${m.enraged ? "enraged" : ""} move-${m.effect ?? "table"}`}
       style={dragonStyle(m.id)}
       length={LENGTH.dragonmove}
       scale={scale}
@@ -1214,7 +1398,61 @@ function DragonMoveSlam({ m, scale, onDone }: ViewProps<"dragonmove">) {
       ambient
     >
       <span className="dragonmove-flash" />
-      <p className="dragonmove-name">{m.name}</p>
+      {m.effect === "hurt" && <span className="dragonmove-breath" />}
+      {m.effect === "harder" && <DragonShadow />}
+      <p className="dragonmove-name" ref={name}>
+        {m.name}
+      </p>
+      {note && <small className="dragonmove-note">{note}</small>}
+    </Stage>
+  );
+}
+
+/** A swing at the dragon (The Quest 2.1): a hit breaks scales off in a
+ * spray of shards toward the strip's scale row, a white flash and a jolt; a
+ * miss is the dragon's colour washing in from the edges and a shudder.
+ * Taps go through. */
+function Swing({ m, scale, onDone }: ViewProps<"swing">) {
+  const [bright, deep] = dragonColors(m.id);
+  useTimeline(
+    [
+      [
+        40,
+        () => {
+          const strip = document.querySelector(".hud-scales");
+          const r = strip?.getBoundingClientRect();
+          if (m.hit) {
+            burst("shards", {
+              y: window.innerHeight * 0.42,
+              count: 26 * m.scales,
+              power: 1.3,
+              colors: [bright, deep, "#fff6d6"],
+            });
+            if (r)
+              burst("sparks", {
+                x: r.left + r.width / 2,
+                y: r.top + r.height / 2,
+                count: 24,
+                power: 0.5,
+                colors: [bright, "#ffffff"],
+              });
+          } else tremor();
+        },
+      ],
+    ],
+    scale,
+  );
+  return (
+    <Stage
+      kind="swing"
+      className={m.hit ? "hit" : "miss"}
+      style={dragonStyle(m.id)}
+      length={LENGTH.swing}
+      scale={scale}
+      onDone={onDone}
+      ambient
+    >
+      <span className="swing-flash" />
     </Stage>
   );
 }
@@ -1222,6 +1460,22 @@ function DragonMoveSlam({ m, scale, onDone }: ViewProps<"dragonmove">) {
 /** The enrage contest (The Quest 2.0, M18): an eye narrows in the dark and
  * the word burns in; the screen's edge then stays lit (`.lair-edge`). */
 function Enraged({ m, scale, onDone }: ViewProps<"enraged">) {
+  const [bright, deep] = dragonColors(m.id);
+  useTimeline(
+    [
+      [250, tremor],
+      [
+        700,
+        () =>
+          burst("embers", {
+            count: 90,
+            colors: [bright, deep, "#fff1c2"],
+            power: 1.3,
+          }),
+      ],
+    ],
+    scale,
+  );
   return (
     <Stage
       kind="enraged"
@@ -1230,7 +1484,9 @@ function Enraged({ m, scale, onDone }: ViewProps<"enraged">) {
       onDone={onDone}
       style={dragonStyle(m.id)}
     >
-      <span className="enraged-eye" />
+      <div className="enraged-eye">
+        <DragonEye mode="rage" />
+      </div>
       <p className="enraged-word">Enraged</p>
       <small className="enraged-line">
         {m.dragon}. {m.line}
@@ -1251,7 +1507,7 @@ function Wanted({ m, scale, onDone }: ViewProps<"wanted">) {
       onDone={onDone}
       style={dragonStyle(m.id)}
     >
-      <span className="dragon-wing" />
+      <DragonShadow />
       <small className="wanted-kicker">Wanted</small>
       <p className="wanted-name" aria-hidden="true">
         {[...m.dragon].map((ch, i) => (
@@ -1283,7 +1539,7 @@ function Shadow({ m, scale, onDone }: ViewProps<"shadow">) {
       ambient
       style={dragonStyle(m.id)}
     >
-      <span className="dragon-wing" />
+      <DragonShadow />
     </Stage>
   );
 }
@@ -1299,6 +1555,9 @@ function LoreFound({ m, scale, onDone }: ViewProps<"lore">) {
       onDone={onDone}
       style={dragonStyle(m.id)}
     >
+      <svg className="lore-stone" viewBox="0 0 512 512" aria-hidden="true">
+        <path d={questArt.dragon} />
+      </svg>
       <small className="lore-kicker">You learn</small>
       <p className="lore-line">{m.line}</p>
       <span className="lore-runes" aria-hidden="true">
@@ -1316,9 +1575,27 @@ function LoreFound({ m, scale, onDone }: ViewProps<"lore">) {
 /** An ally joins (M10): the name, kicker "Joins the party", what they do
  * and their ritual under. */
 function AllyJoins({ m, scale, onDone }: ViewProps<"ally">) {
+  const medal = useRef<HTMLDivElement>(null);
+  useTimeline(
+    [
+      [
+        420,
+        () =>
+          at(medal.current, "sparks", {
+            count: 60,
+            colors: ["#fff3c8", "#f2c94c", "#ffffff"],
+          }),
+      ],
+    ],
+    scale,
+  );
   return (
     <Stage kind="ally" length={LENGTH.ally} scale={scale} onDone={onDone}>
       <span className="ally-light" />
+      <div className="ally-medal-wrap" ref={medal}>
+        <span className="ally-rays" />
+        <AllyMedal name={m.name} />
+      </div>
       <small className="ally-kicker">Joins the party</small>
       <strong className="ally-name">{m.name}</strong>
       <span className="ally-line">{m.line}</span>
@@ -1331,6 +1608,9 @@ function AllyJoins({ m, scale, onDone }: ViewProps<"ally">) {
 function Fallen({ m, scale, onDone }: ViewProps<"fallen">) {
   return (
     <Stage kind="fallen" length={LENGTH.fallen} scale={scale} onDone={onDone}>
+      <div className="fallen-medal-wrap">
+        <AllyMedal name={m.name} fallen />
+      </div>
       <small className="fallen-kicker">
         {m.stand ? "Took the blow" : "Fallen"}
       </small>
@@ -1359,6 +1639,11 @@ function MapOpens({ m, scale, onDone }: ViewProps<"map">) {
 /** The road so far (M4): the map as a strip across the middle, the road
  * inked to the new region, its name writing in. Taps go through. */
 function RoadSoFar({ m, scale, onDone }: ViewProps<"road">) {
+  // The strip shows the row the new region is on (the lair at the top).
+  const depth = QUEST_MAP.findIndex((row) =>
+    row.some((r) => r.label === m.region),
+  );
+  const y = depth === 0 ? 282 : depth === 1 ? 152 : 38;
   return (
     <Stage
       kind="road"
@@ -1366,9 +1651,10 @@ function RoadSoFar({ m, scale, onDone }: ViewProps<"road">) {
       scale={scale}
       onDone={onDone}
       ambient
+      style={{ "--road-y": y }}
     >
       <div className="road-strip">
-        <QuestMap quest={m.quest} words={false} />
+        <QuestMap quest={m.quest} words={false} draw />
       </div>
       <strong className="road-name">{m.region}</strong>
       {m.words && <span className="road-words">{m.words}</span>}
@@ -1381,6 +1667,9 @@ function RoadSoFar({ m, scale, onDone }: ViewProps<"road">) {
 function Echo({ m, scale, onDone }: ViewProps<"echo">) {
   return (
     <Stage kind="echo" length={LENGTH.echo} scale={scale} onDone={onDone}>
+      <svg className="echo-quill" viewBox="0 0 512 512" aria-hidden="true">
+        <path d={questArt.quill} />
+      </svg>
       {m.earlier && <span className="echo-earlier">{m.earlier}</span>}
       <strong className="echo-title">{m.title}</strong>
     </Stage>

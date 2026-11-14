@@ -47,7 +47,8 @@ import {
   loadInstallHelpDismissed,
 } from "./app/install-help";
 import { Atmosphere } from "./components/Atmosphere";
-import { crawlScene } from "./components/crawlTheme";
+import { crawlScene, lairScene } from "./components/crawlTheme";
+import { dragonStyle } from "./presentation/dragon-colors";
 import { Setup } from "./screens/Setup";
 import { Play } from "./screens/Play";
 import { Completion } from "./screens/Completion";
@@ -230,6 +231,7 @@ function App() {
       .finally(() => setStarting(false));
   };
   const finish = (id: number) => controller.finish(id);
+  const lair = lairScene(display);
   return (
     <MomentDirector
       session={session}
@@ -237,15 +239,18 @@ function App() {
       undone={!!undone}
       secrets={chronicle.secrets}
     >
-      <Atmosphere hidden={hidden} scene={crawlScene(display)} />
+      <Atmosphere hidden={hidden} scene={crawlScene(display)} lair={lair} />
       <Announcer />
       <PortraitGate />
       <main
         className={`${active ? "app playing" : "app"} ${hidden ? "suspended" : ""} ${
           // A Pokémon League game deals every card in the Ancient Mew pair.
           display?.config.quest === LEAGUE_QUEST ? "league-deck" : ""
-        } ${display?.quest?.party ? "crawl-deck" : ""}`}
-        style={motionStyles}
+        } ${display?.quest?.party ? "crawl-deck" : ""} ${
+          // The Quest 2.1: the dragon's lair, in its colours.
+          lair ? `lair-fight lair-${lair.scene}` : ""
+        }`}
+        style={{ ...motionStyles, ...(lair ? dragonStyle(lair.id) : {}) }}
       >
         {!display &&
           !corrupt &&
@@ -325,6 +330,11 @@ function App() {
             record={questRecord(display)}
             ballad={ballad(display)}
             singleBlow={singleBlow(display)}
+            dragon={
+              findCard(display, display.previousId ?? "")?.lairFight
+                ? findCard(display, display.previousId ?? "")
+                : undefined
+            }
             news={
               news && {
                 ...news,

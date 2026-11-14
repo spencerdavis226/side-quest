@@ -1,10 +1,11 @@
+import { DragonEye } from "./DragonEye";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import type { questRecord } from "../../game/engine";
 import { badgeArt } from "../../presentation/league-art";
 import { badgeType, pokemonTypes } from "../../presentation/pokemon-types";
 import { asset } from "../../presentation/theme";
-import { dragonColors } from "../../presentation/dragon-colors";
+import { dragonColors, dragonStyle } from "../../presentation/dragon-colors";
 import { stillMotion } from "../../presentation/motion";
 import { TypeMark, earnedBadges } from "../LeagueMarks";
 import { burst, clearParticles, fireworks } from "./particles";
@@ -35,6 +36,7 @@ export default function Ending({
   title,
   ballad = [],
   singleBlow = false,
+  dragon,
   onDone,
 }: {
   kind: EndingKind;
@@ -42,6 +44,8 @@ export default function Ending({
   ballad?: string[];
   /** A natural 20 slew the dragon (M20). */
   singleBlow?: boolean;
+  /** The Quest 2.1: the run ended at this dragon: its eye closes first. */
+  dragon?: string;
   record: RunRecord | null;
   packId?: string;
   count: number;
@@ -94,6 +98,15 @@ export default function Ending({
       {kind === "whiteout" && <Whiteout record={record} title={title} />}
       {kind === "wiped" && <Wiped title={title} line={ballad.at(-1)} />}
       {kind === "toast" && <Toast />}
+      {/* The Quest 2.1 (M20, M21): the dragon's eye closes over it all. */}
+      {dragon && (kind === "survived" || kind === "wiped") && (
+        <div
+          className="ending-eye"
+          style={dragonStyle(dragon) as CSSProperties}
+        >
+          <DragonEye mode="close" />
+        </div>
+      )}
     </div>,
     document.body,
   );

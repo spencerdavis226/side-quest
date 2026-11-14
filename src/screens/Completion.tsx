@@ -1,3 +1,4 @@
+import { dragonStyle } from "../presentation/dragon-colors";
 import { Button, Artwork } from "../components/UI";
 import { asset } from "../presentation/theme";
 import { QuestRecord } from "../components/QuestRecord";
@@ -37,6 +38,7 @@ export function Completion({
   record,
   ballad = [],
   singleBlow = false,
+  dragon,
   news = null,
   mode,
   league = false,
@@ -54,6 +56,9 @@ export function Completion({
   ballad?: string[];
   /** The dragon fell to a natural 20: "With a single blow" over the title. */
   singleBlow?: boolean;
+  /** The Quest 2.1: the run ended at the dragon (slain, or the party
+   * fell to it): its card, named in the title, its eye closing. */
+  dragon?: { id: string; title: string };
   /** What this run just added to the Chronicle (The Quest 2.0 Phase 7),
    * shown only as the table arrives; dragons slain first by title. */
   news?: (Omit<ChronicleNews, "firsts"> & { firsts: string[] }) | null;
@@ -75,7 +80,12 @@ export function Completion({
   const crawl = record?.party;
   const wiped = !!crawl?.wiped;
   const look = crawlTheme(packId);
-  const end = wiped ? look.wiped : look.won;
+  const plain = wiped ? look.wiped : look.won;
+  // The Quest 2.1: the dragon slain is named ("Stormcrown is slain.").
+  const end =
+    dragon && !wiped && packId === "dungeon"
+      ? { ...plain, title: [dragon.title, plain.title[1]] as [string, string] }
+      : plain;
   // Seen once: `celebrate` is the table arriving here, never a reload.
   const [show, setShow] = useState(celebrate);
   if (celebrate && !show) setShow(true);
@@ -119,6 +129,7 @@ export function Completion({
             title={end.title}
             ballad={ballad}
             singleBlow={singleBlow}
+            dragon={packId === "dungeon" ? dragon?.id : undefined}
             onDone={() => setShown(true)}
           />
         </Suspense>
@@ -160,13 +171,32 @@ export function Completion({
             {ballad.length > 0 && (
               // The run as a verse (M20, M21): written in line by line as
               // the table arrives, read as it stands on a reload.
-              <p className="crawl-ballad">
+              <p
+                className={`crawl-ballad${packId === "dungeon" ? " illuminated" : ""}`}
+                style={
+                  dragon ? (dragonStyle(dragon.id) as CSSProperties) : undefined
+                }
+              >
                 {ballad.map((line, i) => (
                   <span key={i} style={{ "--i": i } as CSSProperties}>
                     {line}
                   </span>
                 ))}
               </p>
+            )}
+            {ballad.length > 0 && packId === "dungeon" && (
+              // The Quest 2.1: the verse as a picture for the group chat.
+              <button
+                type="button"
+                className="ballad-share"
+                onClick={() =>
+                  void import("../presentation/ballad-image").then((m) =>
+                    m.shareBallad(end.title, ballad, dragon?.id),
+                  )
+                }
+              >
+                Share the ballad
+              </button>
             )}
             {newsLine.length > 0 && (
               <p className="chronicle-news">

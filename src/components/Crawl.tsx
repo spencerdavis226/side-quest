@@ -1,4 +1,6 @@
 import {
+  lazy,
+  Suspense,
   useEffect,
   useRef,
   useState,
@@ -51,7 +53,13 @@ import {
   type CrawlIconName,
   type CrawlTheme,
 } from "./crawlTheme";
-import { QuestMap } from "./QuestMap";
+// The map and the trophies' marks carry the Quest's emblem sprite: lazy, so
+// it stays out of the first load (The Quest 2.1).
+const QuestMap = lazy(() =>
+  import("./QuestMap").then((m) => ({ default: m.QuestMap })),
+);
+const TrophyMark = lazy(() => import("./TrophyMark"));
+import { dragonStyle } from "../presentation/dragon-colors";
 import {
   BadgeCase,
   EdgeMark,
@@ -1525,7 +1533,9 @@ export function CrawlRecord({
       {/* The map (The Quest 2.0 Phase 5), in play. */}
       {show("party") && !ending && quest?.packId === "dungeon" && (
         <section className="crawl-map-section">
-          <QuestMap quest={quest} />
+          <Suspense fallback={<div className="quest-map-wait" />}>
+            <QuestMap quest={quest} />
+          </Suspense>
         </section>
       )}
       {show("party") && !ending && record.form && (
@@ -1791,9 +1801,36 @@ function TrophyWall({
           const fell = st.cards[0];
           return (
             <li key={st.label} className={fell ? "won" : "empty"}>
-              <span className="trophy-medal" aria-hidden="true">
+              <span
+                className={`trophy-medal${fell?.lairFight ? " dragon" : ""}`}
+                aria-hidden="true"
+                style={
+                  fell?.lairFight
+                    ? (dragonStyle(fell.id) as CSSProperties)
+                    : undefined
+                }
+              >
                 {fell ? (
-                  <CrawlIcon name={st.boss ? "boss" : "ambush"} theme={theme} />
+                  // The Quest 2.1: the boss's own mark, from a lazy chunk;
+                  // the plain mark until it loads.
+                  <Suspense
+                    fallback={
+                      <CrawlIcon
+                        name={st.boss ? "boss" : "ambush"}
+                        theme={theme}
+                      />
+                    }
+                  >
+                    <TrophyMark
+                      card={fell}
+                      fallback={
+                        <CrawlIcon
+                          name={st.boss ? "boss" : "ambush"}
+                          theme={theme}
+                        />
+                      }
+                    />
+                  </Suspense>
                 ) : (
                   "?"
                 )}

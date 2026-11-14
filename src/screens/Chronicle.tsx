@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
+import { dragonStyle } from "../presentation/dragon-colors";
+import { questArt } from "../presentation/quest-art.generated";
 import {
   CLASS_COUNT,
   ECHO_COUNT,
@@ -49,8 +51,24 @@ export default function ChronicleBook({
       {NINE.map((id) => {
         const n = counts[id] ?? 0;
         return (
-          <li key={id} className={n ? "slain" : undefined}>
-            <span className="seal" aria-hidden="true" />
+          <li
+            key={id}
+            className={n ? "slain" : undefined}
+            style={dragonStyle(id) as CSSProperties}
+          >
+            {/* The Quest 2.1: a wax seal in the dragon's colours, its mark
+                pressed in; a dragon not yet slain is a faint outline. */}
+            <svg className="seal" viewBox="0 0 512 512" aria-hidden="true">
+              <path
+                className="seal-wax"
+                d="M256 16c40 0 52 30 88 40s70-6 92 26-2 64 10 100 46 52 34 92-48 44-62 80 6 72-30 92-62-6-100 4-62 46-104 46-56-34-96-44-72 16-100-4-14-58-28-92-52-42-62-82 24-58 34-94-12-70 12-100 54-22 90-30S216 16 256 16z"
+              />
+              <path
+                className="seal-mark"
+                d={questArt.dragon}
+                transform="translate(112 112) scale(0.5625)"
+              />
+            </svg>
             <span>{n ? name(id) : "?"}</span>
             {n > 1 && <small>×{n}</small>}
           </li>
