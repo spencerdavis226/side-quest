@@ -2710,25 +2710,17 @@
   }
 }
 
-/* The dragon's card (The Quest 2.1): the frame takes the dragon's colour,
-   the parchment and title band keep theirs, and its edge smoulders. */
-.lair-fight .game-card .study-face::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  border-radius: inherit;
-  background:
-    radial-gradient(ellipse at 50% 100%, var(--dragon) 0%, transparent 60%),
-    linear-gradient(160deg, var(--dragon) 0%, var(--dragon-deep) 100%);
-  mix-blend-mode: color;
-  opacity: 0.85;
-  /* Everything but the parchment (about inset 27% 9% 10%). */
-  mask:
-    linear-gradient(#000 0 0),
-    linear-gradient(#000 0 0) 50% 73% / 82% 63% no-repeat;
-  mask-composite: exclude;
+/* The dragon's card (The Quest 2.1): its lair's frame, the approved front
+   with its enamel recoloured (`scripts/lair-frames.ts`: ember, rime, deep
+   sea), gold and wood as painted, and a glow in the dragon's colour. */
+.lair-fight.lair-fire .game-card .study-face {
+  background-image: url("./art/lair-fire.webp");
+}
+.lair-fight.lair-frost .game-card .study-face {
+  background-image: url("./art/lair-frost.webp");
+}
+.lair-fight.lair-tide .game-card .study-face {
+  background-image: url("./art/lair-tide.webp");
 }
 .lair-fight .game-card {
   filter: drop-shadow(
@@ -2816,4 +2808,8 @@
 .complete > .ballad-share:active {
   filter: brightness(1.3);
 }
-.quest-map-wait { aspect-ratio: 300 / 380; max-width: 360px; margin: 0 auto; }
+.quest-map-wait {
+  aspect-ratio: 300 / 380;
+  max-width: 360px;
+  margin: 0 auto;
+}

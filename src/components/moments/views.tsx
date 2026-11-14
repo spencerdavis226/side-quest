@@ -582,6 +582,30 @@ function Evolution({ m, scale, onDone }: ViewProps<"evolution">) {
 /** Pub Crawl's level up: the class's name on an iron plate heats from cold
  * to white under three hammer strikes, sparks flying off each, and the new
  * level stamps over it in gold. */
+/** A class's mark (The Quest 2.1), by its card. */
+const CLASS_MARK: Record<string, QuestArt> = {
+  barbarian: "class-barbarian",
+  rogue: "class-rogue",
+  wizard: "class-wizard",
+  bard: "class-bard",
+  paladin: "class-paladin",
+  ranger: "class-ranger",
+  monk: "class-monk",
+  necromancer: "class-necromancer",
+  alchemist: "class-alchemist",
+  warlock: "class-warlock",
+  bouncer: "class-knight",
+  bartender: "class-innkeeper",
+  mercenary: "class-sellsword",
+  druid: "class-druid",
+  "plus-one": "class-peasant",
+  intern: "class-squire",
+  mimic: "class-mimic",
+  dragonslayer: "class-dragonslayer",
+};
+const classMark = (id: string): QuestArt =>
+  CLASS_MARK[id.replace("dungeon.class-", "")] ?? "shield";
+
 function LevelUp({ m, scale, onDone }: ViewProps<"evolution">) {
   const plate = useRef<HTMLDivElement>(null);
   const strike = (n: number) => () =>
@@ -612,6 +636,14 @@ function LevelUp({ m, scale, onDone }: ViewProps<"evolution">) {
     <Stage kind="levelup" length={3900} scale={scale} onDone={onDone} hold>
       <span className="forge-backdrop" />
       <p className="forge-kicker">{m.kicker}</p>
+      {m.classId && (
+        // The Quest 2.1: the class's mark, struck on the anvil.
+        <div className="forge-mark">
+          <svg viewBox="0 0 512 512" aria-hidden="true">
+            <path d={questArt[classMark(m.classId)]} />
+          </svg>
+        </div>
+      )}
       <div className="forge-plate" ref={plate}>
         <span className="forge-old">{m.from}</span>
         <span className="forge-new">{m.to}</span>
@@ -904,6 +936,23 @@ function Gate({ m, scale, onDone }: ViewProps<"entrance">) {
     >
       <span className="gate-shade" />
       <span className="gate-bars" />
+      {m.kicker === "The Gilded Company" && (
+        // The Quest 2.1 (M13): three gold pennants drop in, a cape on
+        // each, before the sign.
+        <div className="company-pennants" aria-hidden="true">
+          {[0, 1, 2].map((i) => (
+            <span
+              key={i}
+              className="pennant"
+              style={{ "--i": i } as React.CSSProperties}
+            >
+              <svg viewBox="0 0 512 512">
+                <path d={questArt.capes} />
+              </svg>
+            </span>
+          ))}
+        </div>
+      )}
       <div className="gate-sign">
         <span className="gate-chain left" />
         <span className="gate-chain right" />
@@ -1343,6 +1392,9 @@ function DragonShadow() {
   );
 }
 
+/** A race's 3, 2, 1, go, after the move's name (The Quest 2.1). */
+const RACE_MS = 2600;
+
 /** The dragon's move as its round turns over (M16; The Quest 2.1 gives
  * each kind its own telegraph): a move that costs hearts sweeps the
  * dragon's breath across the screen; one that makes the swing harder casts
@@ -1392,7 +1444,7 @@ function DragonMoveSlam({ m, scale, onDone }: ViewProps<"dragonmove">) {
       kind="dragonmove"
       className={`${m.enraged ? "enraged" : ""} move-${m.effect ?? "table"}`}
       style={dragonStyle(m.id)}
-      length={LENGTH.dragonmove}
+      length={LENGTH.dragonmove + (m.countdown ? RACE_MS : 0)}
       scale={scale}
       onDone={onDone}
       ambient
@@ -1404,6 +1456,16 @@ function DragonMoveSlam({ m, scale, onDone }: ViewProps<"dragonmove">) {
         {m.name}
       </p>
       {note && <small className="dragonmove-note">{note}</small>}
+      {m.countdown && (
+        // A race: 3, 2, 1, go, in the dragon's colour, after the name.
+        <span className="race-count" aria-hidden="true">
+          {["3", "2", "1", "Go!"].map((n, i) => (
+            <b key={n} style={{ "--i": i } as React.CSSProperties}>
+              {n}
+            </b>
+          ))}
+        </span>
+      )}
     </Stage>
   );
 }

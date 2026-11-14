@@ -20,6 +20,16 @@ Owner: a full review of Quest 2.0, then "make the comprehensive plan ... impleme
 
 The owner plays two runs on a phone and reports, as Phase 8 below asks, plus the 2.1 questions in `docs/DEVICE_CHECKLIST.md` (the coin in the hand, the lair shader's frame rate and battery, the eye, the share sheet). Then what the plan left (below).
 
+## Done 2026-11-14: The Quest 2.1, part 3: the coin like the dice, and the rest of the plan
+
+Owner: "Build them. And make the coin flip look and feel super elegant like the dice."
+
+- **The coin** (`src/presentation/coin/stage.ts`, rewritten): struck metal with an antique finish; each face's relief is a normal map baked on canvas from its emblem (height, then Sobel), so light moves across the relief as it turns; a raised rim (a torus) on each face and a reeded edge (its own normal map); `MeshPhysicalMaterial` with a little clearcoat over a room environment. Thrown like the dice: from the table's near edge, tumbling end over end along its flight, it lands, kicks up once, then rolls on its rim in a tightening spiral (faster as it flattens) and lies on the saved face at a slight angle, its shadow on the table offset by height; a soft glint crosses it. Sized like a die (a third of the short side; the camera stands back by the aspect), framed from a little behind like the dice camera, landing where it can be read. Still no physics: every turn is solved from the saved face (checked: a tails throw lands on the dragon, the right way up).
+- **The rest of the plan**: lair frames made with `sharp` (`scripts/lair-frames.ts`: the approved front with only its teal enamel recoloured, ember, rime and deep sea; `src/presentation/art/lair-*.webp`, about 200 KiB each) replace the CSS tint on the dragon's card; a 3, 2, 1, go after a racing dragon move ("last to", "first to", "on three"; `dragonmove.countdown`); the Gilded Company's pennants on their entrance (M13); a WebGL thin-film foil on a rare card in play (`RareFoil.tsx`, the shader runner's `foil` scene with alpha); the class's mark struck on the rank-up forge (`evolution.classId`); each landmark's mark inked on its banner (`LandmarkMark.tsx`, lazy); plaques press into the card under the thumb, and a result's faces drop in and its line inks in. Emblems: 114 (`quest-art.generated.ts`), still lazy only.
+- **Not done**: a different deal motion per kind of card (the card's own deal and flip were left alone; a boss's entrance, the rare's foil and the landmark's banner mark those cards instead).
+- **Checked**: `npm test` 556 passed; lint; typecheck; build (budgets pass: runtime 5,220 KiB of 6,144, initial 153.4 KiB gzip); Chromium `test:e2e` 178 of 179 (the known offline-reload race); Chromium `test:sweep` 12 of 12; the coin, the forge, the pennants, the race count, the landmark banner, the rare foil and the three lair frames screenshotted in Chromium.
+- **Not run**: WebKit (CI runs it), a phone.
+
 ## Done 2026-11-14: The Quest 2.1, part 2: the presentation rebuild
 
 Owner: "make moments and UI/UX very special ... supreme eye candy", with no image generation available, so every new picture is procedural: WebGL shaders, SVG, canvas and the vendored game-icons set.

@@ -1734,3 +1734,21 @@ button.quest-meter:active:not(:disabled) {
     opacity: 0;
   }
 }
+
+/* A landmark's mark on its banner (The Quest 2.1): inked in at the top of
+   the cloth as the place is reached. */
+.stage-banner-cloth .landmark-mark {
+  justify-self: center;
+  width: 40px;
+  height: 40px;
+  fill: currentColor;
+  opacity: 0.9;
+  animation: landmark-ink 900ms 250ms ease-out both;
+}
+@keyframes landmark-ink {
+  from {
+    opacity: 0;
+    transform: scale(1.5) rotate(-8deg);
+    filter: blur(4px);
+  }
+}
