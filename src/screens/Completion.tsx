@@ -1,3 +1,4 @@
+import { dragonStyle } from "../presentation/dragon-colors";
 import { Button, Artwork } from "../components/UI";
 import { asset } from "../presentation/theme";
 import { QuestRecord } from "../components/QuestRecord";
@@ -170,13 +171,32 @@ export function Completion({
             {ballad.length > 0 && (
               // The run as a verse (M20, M21): written in line by line as
               // the table arrives, read as it stands on a reload.
-              <p className="crawl-ballad">
+              <p
+                className={`crawl-ballad${packId === "dungeon" ? " illuminated" : ""}`}
+                style={
+                  dragon ? (dragonStyle(dragon.id) as CSSProperties) : undefined
+                }
+              >
                 {ballad.map((line, i) => (
                   <span key={i} style={{ "--i": i } as CSSProperties}>
                     {line}
                   </span>
                 ))}
               </p>
+            )}
+            {ballad.length > 0 && packId === "dungeon" && (
+              // The Quest 2.1: the verse as a picture for the group chat.
+              <button
+                type="button"
+                className="ballad-share"
+                onClick={() =>
+                  void import("../presentation/ballad-image").then((m) =>
+                    m.shareBallad(end.title, ballad, dragon?.id),
+                  )
+                }
+              >
+                Share the ballad
+              </button>
             )}
             {newsLine.length > 0 && (
               <p className="chronicle-news">

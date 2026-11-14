@@ -2735,3 +2735,85 @@
     0 0 18px color-mix(in srgb, var(--dragon) 45%, transparent)
   );
 }
+
+/* Each trophy's own mark (The Quest 2.1); the dragon's in its colours. */
+.trophy-mark {
+  width: 64%;
+  height: 64%;
+  fill: #3a2208;
+}
+.trophy-wall .won .trophy-medal.dragon {
+  border-color: color-mix(in srgb, var(--dragon) 70%, #fff);
+  background: radial-gradient(
+    circle at 35% 30%,
+    color-mix(in srgb, var(--dragon) 70%, #fff),
+    var(--dragon-deep) 75%
+  );
+  box-shadow:
+    0 3px 8px #000a,
+    0 0 16px color-mix(in srgb, var(--dragon) 60%, transparent);
+}
+.trophy-medal.dragon .trophy-mark {
+  fill: #fff4dc;
+}
+/* The ballad as an illuminated page (The Quest 2.1): parchment, a drop
+   cap in the dragon's colour, read at table distance. */
+.complete > p.crawl-ballad.illuminated {
+  position: relative;
+  display: block;
+  max-width: 400px;
+  margin: 4px auto 22px;
+  padding: 20px 22px 18px;
+  border-radius: 6px;
+  color: #3a2410;
+  background: radial-gradient(
+    circle at 50% 40%,
+    #f6e7c2 0%,
+    #e9d3a2 70%,
+    #cfb07a 100%
+  );
+  box-shadow:
+    inset 0 0 0 2px #8a6a3c,
+    inset 0 0 0 6px #f0dfb6,
+    inset 0 0 0 7px #8a6a3c,
+    0 10px 24px rgb(0 0 0 / 0.5);
+  font: italic 600 clamp(15px, 4.4vw, 19px) / 1.5 var(--font-tavern);
+  text-align: left;
+}
+.crawl-ballad.illuminated span {
+  display: block;
+}
+.crawl-ballad.illuminated span:first-child::first-letter {
+  float: left;
+  margin: 2px 6px 0 0;
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: #fff4dc;
+  background: linear-gradient(
+    160deg,
+    var(--dragon, #a8240f),
+    var(--dragon-deep, #5a1008)
+  );
+  box-shadow: inset 0 0 0 1.5px #f2c94c;
+  font: normal 800 2.6em / 1 var(--font-card-title);
+}
+.crawl-ballad.illuminated .ballad-share {
+  display: block;
+  margin: 12px auto 0;
+}
+.complete > .ballad-share {
+  display: block;
+  min-height: 44px;
+  margin: -10px auto 18px;
+  padding: 0 18px;
+  border: 1px solid #c9a86a;
+  border-radius: 999px;
+  color: #f1e2bf;
+  background: rgb(0 0 0 / 0.3);
+  font: 600 15px / 1 var(--font-tavern);
+  letter-spacing: 0.04em;
+}
+.complete > .ballad-share:active {
+  filter: brightness(1.3);
+}
+.quest-map-wait { aspect-ratio: 300 / 380; max-width: 360px; margin: 0 auto; }

@@ -44,15 +44,31 @@
   opacity: 1;
 }
 .chronicle-seals .seal {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: 2px dashed color-mix(in srgb, var(--gold) 60%, transparent);
+  width: 40px;
+  height: 40px;
+  overflow: visible;
 }
+.chronicle-seals .seal-wax {
+  fill: none;
+  stroke: color-mix(in srgb, var(--gold) 55%, transparent);
+  stroke-width: 18;
+  stroke-dasharray: 40 30;
+}
+.chronicle-seals .seal-mark {
+  fill: color-mix(in srgb, var(--gold) 22%, transparent);
+}
+/* Slain: wax in the dragon's colours, the mark pressed in. */
 .chronicle-seals li.slain .seal {
-  border: 0;
-  background: radial-gradient(circle at 35% 30%, #c8473a, #7a1a14 70%);
-  box-shadow: inset 0 0 0 3px #5a100c;
+  filter: drop-shadow(0 2px 3px rgb(0 0 0 / 0.5));
+}
+.chronicle-seals li.slain .seal-wax {
+  fill: var(--dragon-deep);
+  stroke: var(--dragon);
+  stroke-width: 10;
+  stroke-dasharray: none;
+}
+.chronicle-seals li.slain .seal-mark {
+  fill: color-mix(in srgb, var(--dragon) 70%, #fff);
 }
 .chronicle-fell {
   margin: 0;
