@@ -432,6 +432,7 @@ const QUEST: Moment[] = [
     name: "Snow Blind",
     enraged: true,
     effect: "harder",
+    countdown: true,
     say: "",
   },
   {
@@ -475,6 +476,20 @@ const QUEST: Moment[] = [
   },
   {
     kind: "entrance",
+    key: "company",
+    style: "boss",
+    league: false,
+    kicker: "The Gilded Company",
+    title: "The Rematch",
+    foe: { name: "The Rematch" },
+    hero: { name: "Ranger" },
+    hearts: 7,
+    max: 12,
+    heartsWord: "hearts",
+    say: "",
+  },
+  {
+    kind: "entrance",
     key: "region-boss",
     style: "boss",
     league: false,
@@ -496,6 +511,7 @@ const QUEST: Moment[] = [
     kicker: "Ranger ranks up!",
     change: "+1 to ambush d20s.",
     line: "Everyone howls.",
+    classId: "dungeon.class-ranger",
     say: "",
   },
 ];

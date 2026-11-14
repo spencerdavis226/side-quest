@@ -117,6 +117,32 @@ void main() {
   c += bright * step(0.9, h) * smoothstep(0.12, 0.09, r) * smoothstep(0.05, 0.1, r) * 0.8;
   color = vec4(c * vignette(q), 1.0);
 }`,
+  // A rare card's foil (The Quest 2.1): thin-film colours sweeping across
+  // in bands, a slow sheen, and glints; transparent, laid over the card.
+  foil: `
+vec3 film(float t) {
+  return 0.5 + 0.5 * cos(6.2831 * (t + vec3(0.0, 0.33, 0.67)));
+}
+void main() {
+  vec2 q = uv;
+  float aspect = size.x / size.y;
+  vec2 p = vec2(q.x * aspect, q.y);
+  float t = time * 0.12;
+  float n = fbm(p * 3.0 + t);
+  float bands = q.x * 1.3 + q.y * 0.9 + n * 0.6 - t * 2.0;
+  vec3 c = film(bands);
+  // A sheen that sweeps corner to corner every few seconds.
+  float sweep = smoothstep(0.18, 0.0, abs(fract(t * 0.9) * 2.6 - 0.8 - (q.x + 1.0 - q.y) * 0.5));
+  // Glints: tiny stars that twinkle.
+  vec2 g = p * vec2(34.0, 34.0);
+  vec2 cell = floor(g);
+  float h = hash(cell);
+  float tw = 0.5 + 0.5 * sin(time * 3.0 + h * 40.0);
+  float star = step(0.965, h) * smoothstep(0.12, 0.0, length(fract(g) - 0.5)) * tw;
+  float a = 0.22 + 0.25 * sweep + star * 0.9;
+  vec3 rgb = mix(c, vec3(1.0), sweep * 0.5 + star);
+  color = vec4(rgb * a, a);
+}`,
 } as const;
 export type SceneName = keyof typeof SCENES;
 
@@ -130,10 +156,11 @@ export function runShader(
   canvas: HTMLCanvasElement,
   scene: SceneName,
   colors: { bright: string; deep: string },
-  options: { still: boolean },
+  options: { still: boolean; alpha?: boolean },
 ) {
   const gl = canvas.getContext("webgl2", {
-    alpha: false,
+    alpha: !!options.alpha,
+    premultipliedAlpha: true,
     antialias: false,
     powerPreference: "low-power",
     preserveDrawingBuffer: false,

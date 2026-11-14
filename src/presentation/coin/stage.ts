@@ -2,203 +2,232 @@ import {
   ACESFilmicToneMapping,
   AmbientLight,
   CanvasTexture,
+  CircleGeometry,
   CylinderGeometry,
   DirectionalLight,
   Group,
+  LinearEncoding,
   Mesh,
   MeshBasicMaterial,
-  MeshStandardMaterial,
+  MeshPhysicalMaterial,
   PerspectiveCamera,
   PlaneGeometry,
   PMREMGenerator,
   PointLight,
+  Quaternion,
   RepeatWrapping,
   Scene,
   sRGBEncoding,
+  TorusGeometry,
+  Vector2,
+  Vector3,
   WebGLRenderer,
   type Texture,
 } from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { questArt, type QuestArt } from "../quest-art.generated";
 
-// The coin (The Quest 2.1): a thick milled coin, minted on canvas from the
-// Quest's emblems, flipped with no physics. The saved face is decided before
-// the flip (`src/game/dice.ts`), so the spin is solved backwards from it: a
-// whole number of half-turns lands the face asked for, every time. It rises
-// toward the table, slows at the top of its arc, drops, rings on its edge and
-// settles facing up, then a glint crosses it. Same contract as the dice
-// stage (`roll`, `finish`, `dim`, `dispose`), so `FullScreenDice` mounts
-// either. Display only.
+// The coin (The Quest 2.1): struck metal with an antique finish, its relief
+// a normal map baked from the Quest's emblems so the light moves across the
+// crown or the dragon as it turns, a raised rim on each face and a reeded
+// edge. It is thrown like the dice: in from the edge of the table, tumbling
+// end over end through its arc, it lands, kicks up once, then rolls on its
+// rim in a tightening spiral (as a real coin winds down) and lies flat on
+// the face the engine saved. No physics engine: the saved face is decided
+// first (`src/game/dice.ts`) and every turn is solved backwards from it, so
+// it cannot land on the other face. A glint crosses it once it rests. Same
+// contract as the dice stage (`roll`, `finish`, `dim`, `dispose`), so
+// `FullScreenDice` mounts either. Display only.
 
 export interface CoinFaces {
   heads: QuestArt;
   tails: QuestArt;
   /** Bright and deep metal. */
   metal: [string, string];
-  /** The emblem's ink. */
-  ink: string;
 }
 export const QUEST_COIN: CoinFaces = {
   heads: "crown",
   tails: "dragon",
-  metal: ["#ffe08a", "#9a6512"],
-  ink: "#5a3300",
+  metal: ["#ffd978", "#8a5a10"],
 };
 export const TAVERN_COIN: CoinFaces = {
   heads: "tankard",
   tails: "skull",
   // Old copper, for the tavern.
-  metal: ["#f6c79a", "#7a3f1c"],
-  ink: "#3a1606",
+  metal: ["#f2b88a", "#6e3418"],
 };
 
-const RADIUS = 1.15;
-const THICK = 0.16;
-const FLIP_MS = 1900;
+const RADIUS = 0.95;
+const THICK = 0.13;
+/** The throw at full speed; a tap plays it four times as fast. */
+const THROW_MS = 2300;
+const SIZE = 512;
 
-/** One face, minted: the field, a raised rim, the emblem embossed with a
- * shadow and a highlight, and its word around the top. */
-function mintFace(
-  faces: CoinFaces,
-  side: "heads" | "tails",
-): HTMLCanvasElement {
-  const size = 512;
-  const c = document.createElement("canvas");
-  c.width = c.height = size;
-  const g = c.getContext("2d")!;
-  const [bright, deep] = faces.metal;
-  const mid = size / 2;
-  // The field: a soft dome of light.
-  const field = g.createRadialGradient(
-    mid * 0.75,
-    mid * 0.7,
-    10,
-    mid,
-    mid,
-    mid,
-  );
-  field.addColorStop(0, bright);
-  field.addColorStop(0.65, mix(bright, deep, 0.35));
-  field.addColorStop(1, deep);
-  g.fillStyle = field;
-  g.fillRect(0, 0, size, size);
-  // Fine brushing across the field.
-  g.globalAlpha = 0.06;
-  for (let i = 0; i < 260; i++) {
-    g.strokeStyle = i % 2 ? "#fff" : "#000";
-    g.beginPath();
-    const r = 40 + ((i * 37) % 200);
-    g.arc(mid, mid, r, 0, Math.PI * 2);
-    g.stroke();
-  }
-  g.globalAlpha = 1;
-  // The rim: a raised ring, lit from the top left.
-  const rim = g.createLinearGradient(0, 0, size, size);
-  rim.addColorStop(0, "#fff6d0");
-  rim.addColorStop(0.5, bright);
-  rim.addColorStop(1, deep);
-  g.lineWidth = 26;
-  g.strokeStyle = rim;
-  g.beginPath();
-  g.arc(mid, mid, mid - 14, 0, Math.PI * 2);
-  g.stroke();
-  g.lineWidth = 3;
-  g.strokeStyle = mix(deep, "#000000", 0.4);
-  g.beginPath();
-  g.arc(mid, mid, mid - 30, 0, Math.PI * 2);
-  g.stroke();
-  // A ring of beads inside the rim.
-  g.fillStyle = mix(bright, deep, 0.5);
-  for (let i = 0; i < 64; i++) {
-    const a = (i / 64) * Math.PI * 2;
-    g.beginPath();
-    g.arc(
-      mid + Math.cos(a) * (mid - 44),
-      mid + Math.sin(a) * (mid - 44),
-      3.2,
-      0,
-      Math.PI * 2,
-    );
-    g.fill();
-  }
-  // The word, around the top.
-  const word = side === "heads" ? "HEADS" : "TAILS";
-  g.font = "700 34px Georgia, 'Times New Roman', serif";
-  g.textAlign = "center";
-  g.textBaseline = "middle";
-  const arc = 0.13 * (word.length - 1);
-  [...word].forEach((ch, i) => {
-    const a = -Math.PI / 2 - arc + (i * arc * 2) / (word.length - 1);
-    g.save();
-    g.translate(mid + Math.cos(a) * (mid - 76), mid + Math.sin(a) * (mid - 76));
-    g.rotate(a + Math.PI / 2);
-    g.fillStyle = "#fff4cc";
-    g.fillText(ch, 1, 1.5);
-    g.fillStyle = faces.ink;
-    g.fillText(ch, 0, 0);
-    g.restore();
-  });
-  // The emblem, struck: highlight up-left, shadow down-right, then the ink.
-  const path = new Path2D(questArt[faces[side]]);
-  const scale = 0.5;
-  const emblem = (dx: number, dy: number, color: string) => {
-    g.save();
-    g.translate(mid - 256 * scale + dx, mid - 256 * scale + 18 + dy);
-    g.scale(scale, scale);
-    g.fillStyle = color;
-    g.fill(path);
-    g.restore();
-  };
-  emblem(-3, -3, "#fff8dc");
-  emblem(4, 4, mix(deep, "#000000", 0.55));
-  emblem(0, 0, faces.ink);
-  return c;
-}
-
-/** The milled edge: fine vertical reeding. */
-function mintEdge(faces: CoinFaces): HTMLCanvasElement {
-  const c = document.createElement("canvas");
-  c.width = 256;
-  c.height = 16;
-  const g = c.getContext("2d")!;
-  const [bright, deep] = faces.metal;
-  for (let x = 0; x < c.width; x += 4) {
-    g.fillStyle = bright;
-    g.fillRect(x, 0, 2, c.height);
-    g.fillStyle = deep;
-    g.fillRect(x + 2, 0, 2, c.height);
-  }
-  return c;
-}
-
-/** A soft round shadow for the table under the coin. */
-function shadowTexture(): HTMLCanvasElement {
-  const c = document.createElement("canvas");
-  c.width = c.height = 128;
-  const g = c.getContext("2d")!;
-  const r = g.createRadialGradient(64, 64, 4, 64, 64, 64);
-  r.addColorStop(0, "rgba(10,6,2,0.55)");
-  r.addColorStop(1, "rgba(10,6,2,0)");
-  g.fillStyle = r;
-  g.fillRect(0, 0, 128, 128);
-  return c;
-}
-
-function mix(a: string, b: string, t: number) {
+const mix = (a: string, b: string, t: number) => {
   const pa = parse(a),
     pb = parse(b);
   const m = pa.map((v, i) => Math.round(v + (pb[i] - v) * t));
   return `rgb(${m[0]},${m[1]},${m[2]})`;
-}
+};
 function parse(hex: string) {
   const h = hex.replace("#", "");
   return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16));
 }
 
-const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+/** Draw a face's relief: the rim, a ring of beads, the word and the
+ * emblem. `ink` paints raised parts; the field is left as it was. */
+function relief(
+  g: CanvasRenderingContext2D,
+  emblem: QuestArt,
+  word: string,
+  ink: string,
+) {
+  const mid = SIZE / 2;
+  g.fillStyle = ink;
+  g.strokeStyle = ink;
+  g.lineWidth = 30;
+  g.beginPath();
+  g.arc(mid, mid, mid - 15, 0, Math.PI * 2);
+  g.stroke();
+  for (let i = 0; i < 72; i++) {
+    const a = (i / 72) * Math.PI * 2;
+    g.beginPath();
+    g.arc(
+      mid + Math.cos(a) * (mid - 46),
+      mid + Math.sin(a) * (mid - 46),
+      3.4,
+      0,
+      Math.PI * 2,
+    );
+    g.fill();
+  }
+  g.font = "700 40px Georgia, 'Times New Roman', serif";
+  g.textAlign = "center";
+  g.textBaseline = "middle";
+  const arc = 0.14 * (word.length - 1);
+  [...word].forEach((ch, i) => {
+    const a = -Math.PI / 2 - arc + (i * arc * 2) / (word.length - 1);
+    g.save();
+    g.translate(mid + Math.cos(a) * (mid - 82), mid + Math.sin(a) * (mid - 82));
+    g.rotate(a + Math.PI / 2);
+    g.fillText(ch, 0, 0);
+    g.restore();
+  });
+  const scale = 0.52;
+  g.save();
+  g.translate(mid - 256 * scale, mid - 256 * scale + 22);
+  g.scale(scale, scale);
+  g.fill(new Path2D(questArt[emblem]));
+  g.restore();
+}
+
+/** A face's height (white raised, grey field), softened a touch so the
+ * relief has shoulders. */
+function heightMap(emblem: QuestArt, word: string) {
+  const c = document.createElement("canvas");
+  c.width = c.height = SIZE;
+  const g = c.getContext("2d")!;
+  g.fillStyle = "#555";
+  g.fillRect(0, 0, SIZE, SIZE);
+  g.filter = "blur(2.5px)";
+  relief(g, emblem, word, "#fff");
+  g.filter = "none";
+  return c;
+}
+
+/** The height turned into a tangent-space normal map. */
+function normalMap(height: HTMLCanvasElement, strength = 3.2) {
+  const src = height.getContext("2d")!.getImageData(0, 0, SIZE, SIZE).data;
+  const out = document.createElement("canvas");
+  out.width = out.height = SIZE;
+  const g = out.getContext("2d")!;
+  const img = g.createImageData(SIZE, SIZE);
+  const h = (x: number, y: number) =>
+    src[
+      (Math.min(SIZE - 1, Math.max(0, y)) * SIZE +
+        Math.min(SIZE - 1, Math.max(0, x))) *
+        4
+    ] / 255;
+  for (let y = 0; y < SIZE; y++)
+    for (let x = 0; x < SIZE; x++) {
+      const dx = (h(x + 1, y) - h(x - 1, y)) * strength;
+      const dy = (h(x, y + 1) - h(x, y - 1)) * strength;
+      const len = Math.hypot(dx, dy, 1);
+      const i = (y * SIZE + x) * 4;
+      img.data[i] = ((-dx / len) * 0.5 + 0.5) * 255;
+      img.data[i + 1] = ((dy / len) * 0.5 + 0.5) * 255;
+      img.data[i + 2] = ((1 / len) * 0.5 + 0.5) * 255;
+      img.data[i + 3] = 255;
+    }
+  g.putImageData(img, 0, 0);
+  return out;
+}
+
+/** The face's colour: the metal, darkened in the recesses round the relief
+ * (an antique finish) and polished bright on top of it. */
+function colorMap(faces: CoinFaces, emblem: QuestArt, word: string) {
+  const [bright, deep] = faces.metal;
+  const c = document.createElement("canvas");
+  c.width = c.height = SIZE;
+  const g = c.getContext("2d")!;
+  const mid = SIZE / 2;
+  const field = g.createRadialGradient(
+    mid * 0.8,
+    mid * 0.75,
+    20,
+    mid,
+    mid,
+    mid,
+  );
+  field.addColorStop(0, mix(bright, deep, 0.3));
+  field.addColorStop(1, mix(bright, deep, 0.6));
+  g.fillStyle = field;
+  g.fillRect(0, 0, SIZE, SIZE);
+  // The patina pooled round the relief.
+  g.filter = "blur(7px)";
+  g.globalAlpha = 0.55;
+  relief(g, emblem, word, mix(deep, "#000000", 0.35));
+  g.globalAlpha = 1;
+  g.filter = "none";
+  // The raised parts, polished.
+  relief(g, emblem, word, bright);
+  return c;
+}
+
+/** The reeded edge, as a normal map. */
+function edgeNormal() {
+  const c = document.createElement("canvas");
+  c.width = 512;
+  c.height = 8;
+  const g = c.getContext("2d")!;
+  for (let x = 0; x < c.width; x++) {
+    const s = Math.sin((x / 4) * Math.PI);
+    g.fillStyle = `rgb(${Math.round((s * 0.5 + 0.5) * 255)},128,${Math.round(220 + 35 * Math.abs(s))})`;
+    g.fillRect(x, 0, 1, c.height);
+  }
+  return c;
+}
+
+/** A soft round shadow for the table. */
+function shadowTexture() {
+  const c = document.createElement("canvas");
+  c.width = c.height = 128;
+  const g = c.getContext("2d")!;
+  const r = g.createRadialGradient(64, 64, 2, 64, 64, 64);
+  r.addColorStop(0, "rgba(8,4,1,0.75)");
+  r.addColorStop(0.5, "rgba(8,4,1,0.35)");
+  r.addColorStop(1, "rgba(8,4,1,0)");
+  g.fillStyle = r;
+  g.fillRect(0, 0, 128, 128);
+  return c;
+}
+
+const smooth = (t: number) => t * t * (3 - 2 * t);
+const easeOut = (t: number) => 1 - Math.pow(1 - t, 2.4);
+const rand = (a: number, b: number) => a + Math.random() * (b - a);
 
 /** Build the coin's stage in `selector`. Throws when WebGL is unavailable;
- * the caller then reveals the saved face with no flip. */
+ * the caller then reveals the saved face with no throw. */
 export async function createCoinStage(selector: string, faces: CoinFaces) {
   const container = document.querySelector<HTMLElement>(selector)!;
   const width = container.clientWidth || window.innerWidth;
@@ -208,68 +237,130 @@ export async function createCoinStage(selector: string, faces: CoinFaces) {
   renderer.setSize(width, height, false);
   renderer.outputEncoding = sRGBEncoding;
   renderer.toneMapping = ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.0;
+  renderer.toneMappingExposure = 0.95;
   container.append(renderer.domElement);
 
   const scene = new Scene();
   const pmrem = new PMREMGenerator(renderer);
-  const environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  const environment = pmrem.fromScene(new RoomEnvironment(), 0.03).texture;
   scene.environment = environment;
-  const camera = new PerspectiveCamera(32, width / height, 0.1, 100);
-  camera.position.set(0, 0, 11);
+  // Looking down on the table from a little behind and to the side, as the
+  // dice are seen.
+  // The camera stands back far enough that the coin is about a third of
+  // the table's short side, as a die is.
+  const aspect = width / height;
+  const tan = Math.tan((30 / 2) * (Math.PI / 180));
+  const distance = Math.max(
+    RADIUS / 0.34 / (tan * Math.min(1, aspect)),
+    RADIUS / 0.4 / tan,
+  );
+  const camera = new PerspectiveCamera(30, aspect, 0.1, distance * 3);
+  camera.position.set(distance * 0.075, -distance * 0.09, distance);
   camera.lookAt(0, 0, 0);
-  scene.add(new AmbientLight(0xffffff, 0.35));
-  const key = new DirectionalLight(0xfff1d0, 1.6);
-  key.position.set(-3, 4, 6);
+  // The table's half-height and half-width at its plane.
+  const halfH = tan * distance;
+  const halfW = halfH * aspect;
+  scene.add(new AmbientLight(0xffffff, 0.25));
+  const key = new DirectionalLight(0xfff0d0, 2.2);
+  key.position.set(-4, 5, 7);
   scene.add(key);
-  // The glint that crosses the coin once it has settled.
-  const glint = new PointLight(0xffffff, 0, 8);
-  glint.position.set(-3, 2, 3);
+  const rim = new DirectionalLight(0xffe2b0, 0.9);
+  rim.position.set(5, -3, 3);
+  scene.add(rim);
+  // The glint that crosses the coin once it rests.
+  const glint = new PointLight(0xffffff, 0, 6);
+  glint.position.set(-2, 1.5, 2.2);
   scene.add(glint);
 
   const textures: Texture[] = [];
-  const texture = (canvas: HTMLCanvasElement) => {
-    const t = new CanvasTexture(canvas);
-    t.encoding = sRGBEncoding;
-    t.anisotropy = renderer.capabilities.getMaxAnisotropy();
-    textures.push(t);
-    return t;
+  const keep = <T extends Texture>(t: T) => (textures.push(t), t);
+  const anisotropy = renderer.capabilities.getMaxAnisotropy();
+  // The underside's cap reads its canvas mirrored: tails is drawn flipped
+  // so it lands the right way round.
+  const flipped = (c: HTMLCanvasElement, flip: boolean) => {
+    if (!flip) return c;
+    const f = document.createElement("canvas");
+    f.width = c.width;
+    f.height = c.height;
+    const g = f.getContext("2d")!;
+    g.translate(0, c.height);
+    g.scale(1, -1);
+    g.drawImage(c, 0, 0);
+    return f;
   };
-  const edge = texture(mintEdge(faces));
+  const face = (side: "heads" | "tails") => {
+    const word = side === "heads" ? "HEADS" : "TAILS";
+    const flip = side === "tails";
+    const map = keep(
+      new CanvasTexture(flipped(colorMap(faces, faces[side], word), flip)),
+    );
+    map.encoding = sRGBEncoding;
+    map.anisotropy = anisotropy;
+    const normal = keep(
+      new CanvasTexture(normalMap(flipped(heightMap(faces[side], word), flip))),
+    );
+    normal.encoding = LinearEncoding;
+    normal.anisotropy = anisotropy;
+    return new MeshPhysicalMaterial({
+      map,
+      normalMap: normal,
+      normalScale: new Vector2(1.1, 1.1),
+      metalness: 1,
+      roughness: 0.34,
+      clearcoat: 0.35,
+      clearcoatRoughness: 0.4,
+      envMapIntensity: 0.75,
+    });
+  };
+  const edge = keep(new CanvasTexture(edgeNormal()));
   edge.wrapS = RepeatWrapping;
-  edge.repeat.set(6, 1);
-  const metal = { metalness: 0.92, roughness: 0.28, envMapIntensity: 1.2 };
-  // A cylinder's caps read their canvas a quarter-turn round: turned back
-  // so each face stands upright when it lands toward the table.
-  const cap = (side: "heads" | "tails") => {
-    const t = texture(mintFace(faces, side));
-    t.center.set(0.5, 0.5);
-    t.rotation = side === "heads" ? Math.PI / 2 : -Math.PI / 2;
-    return t;
-  };
-  const materials = [
-    new MeshStandardMaterial({ ...metal, map: edge }),
-    new MeshStandardMaterial({ ...metal, map: cap("heads") }),
-    new MeshStandardMaterial({ ...metal, map: cap("tails") }),
-  ];
-  const geometry = new CylinderGeometry(RADIUS, RADIUS, THICK, 96, 1);
-  const coin = new Mesh(geometry, materials);
-  // Its axis toward the table: the top cap (heads) faces the camera.
-  coin.rotation.x = Math.PI / 2;
-  const pivot = new Group();
-  pivot.add(coin);
-  // Nothing shows while the card is read; the coin appears as it is flipped.
-  pivot.visible = false;
-  scene.add(pivot);
-  const shadowGeometry = new PlaneGeometry(RADIUS * 3, RADIUS * 3);
-  const shadowMaterial = new MeshBasicMaterial({
-    map: texture(shadowTexture()),
+  edge.repeat.set(3, 1);
+  const metal = new MeshPhysicalMaterial({
+    color: mix(faces.metal[0], faces.metal[1], 0.35),
+    normalMap: edge,
+    metalness: 1,
+    roughness: 0.3,
+    envMapIntensity: 0.8,
+  });
+  const heads = face("heads");
+  const tails = face("tails");
+
+  // The coin, its axis along y: the edge, the two faces, a raised rim on
+  // each. The body group turns its axis toward the table's normal.
+  const body = new Group();
+  const edgeGeo = new CylinderGeometry(RADIUS, RADIUS, THICK, 128, 1, true);
+  const faceGeo = new CircleGeometry(RADIUS * 0.985, 128);
+  const rimGeo = new TorusGeometry(RADIUS * 0.975, THICK * 0.18, 12, 128);
+  const geometries: { dispose(): void }[] = [edgeGeo, faceGeo, rimGeo];
+  body.add(new Mesh(edgeGeo, metal));
+  const top = new Mesh(faceGeo, heads);
+  top.rotation.x = -Math.PI / 2;
+  top.position.y = THICK / 2;
+  const bottom = new Mesh(faceGeo, tails);
+  bottom.rotation.x = Math.PI / 2;
+  bottom.rotation.z = Math.PI;
+  bottom.position.y = -THICK / 2;
+  body.add(top, bottom);
+  for (const y of [THICK / 2, -THICK / 2]) {
+    const ring = new Mesh(rimGeo, metal);
+    ring.rotation.x = Math.PI / 2;
+    ring.position.y = y;
+    body.add(ring);
+  }
+  body.rotation.x = Math.PI / 2;
+  const coin = new Group();
+  coin.add(body);
+  coin.visible = false;
+  scene.add(coin);
+  const shadowGeo = new PlaneGeometry(RADIUS * 3.2, RADIUS * 3.2);
+  geometries.push(shadowGeo);
+  const shadowMat = new MeshBasicMaterial({
+    map: keep(new CanvasTexture(shadowTexture())),
     transparent: true,
     depthWrite: false,
   });
-  const shadow = new Mesh(shadowGeometry, shadowMaterial);
+  const shadow = new Mesh(shadowGeo, shadowMat);
   shadow.visible = false;
-  shadow.position.set(0.15, -0.2, -1.2);
   scene.add(shadow);
 
   let frame = 0;
@@ -282,10 +373,8 @@ export async function createCoinStage(selector: string, faces: CoinFaces) {
     if (disposed) return;
     disposed = true;
     cancelAnimationFrame(frame);
-    geometry.dispose();
-    shadowGeometry.dispose();
-    materials.forEach((m) => m.dispose());
-    shadowMaterial.dispose();
+    geometries.forEach((g) => g.dispose());
+    [heads, tails, metal, shadowMat].forEach((m) => m.dispose());
     textures.forEach((t) => t.dispose());
     environment.dispose();
     pmrem.dispose();
@@ -297,50 +386,116 @@ export async function createCoinStage(selector: string, faces: CoinFaces) {
     once: true,
   });
 
+  const q = new Quaternion();
+  const q2 = new Quaternion();
+  const axis = new Vector3();
+  const zAxis = new Vector3(0, 0, 1);
   return {
-    /** Flip to `values[0]` (2 heads, 1 tails). Resolves with the face shown. */
+    /** Throw it to `values[0]` (2 heads, 1 tails). Resolves with the face
+     * it shows. */
     roll(_sides: number, values: readonly number[]) {
       const face = values[0] === 2 ? 2 : 1;
       speed = 1;
-      // Five to seven whole turns, plus a half for tails.
-      const turns = 5 + Math.floor(Math.random() * 3);
-      const total = Math.PI * 2 * turns + (face === 1 ? Math.PI : 0);
-      const lean = (Math.random() - 0.5) * 0.5;
-      pivot.visible = shadow.visible = true;
+      // Where it lands, where it comes from (an edge of the table), and the
+      // line it tumbles about.
+      const land = new Vector3(
+        rand(-1, 1) * Math.max(0, halfW - RADIUS * 1.4),
+        rand(-0.3, 0.08) * halfH,
+        0,
+      );
+      const fromSide = Math.random() < 0.5 ? -1 : 1;
+      const from = new Vector3(
+        fromSide * halfW * rand(0.3, 0.8),
+        -halfH * 1.25,
+        0.6,
+      );
+      const heading = Math.atan2(land.y - from.y, land.x - from.x);
+      // It tumbles end over end along its flight: about the horizontal line
+      // across it.
+      const tumble = new Vector3(-Math.sin(heading), Math.cos(heading), 0);
+      // The face it rests on: heads up is the body's own orientation.
+      const rest = new Quaternion();
+      if (face === 1) rest.setFromAxisAngle(new Vector3(1, 0, 0), Math.PI);
+      // Its turn on the table at rest: a little off square, never upside
+      // down to the reader.
+      const yaw = rand(-0.3, 0.3);
+      const restYaw = new Quaternion().setFromAxisAngle(zAxis, yaw);
+      // Whole turns in the air, then the landing's lean is taken off.
+      const turns = 4 + Math.floor(Math.random() * 3);
+      const lean = rand(0.45, 0.6);
+      const spinYaw = rand(2.5, 4.5) * (Math.random() < 0.5 ? -1 : 1);
+      // The rim's roll: it starts across the tumble and winds round.
+      const roll0 = heading + Math.PI / 2;
+      coin.visible = shadow.visible = true;
       return new Promise<number[]>((resolve, reject) => {
         let clock = 0;
         let last = performance.now();
         const tick = (now: number) => {
           if (disposed) return reject(new Error("Coin stage disposed"));
-          clock += Math.min(64, now - last) * speed;
+          clock += Math.min(48, now - last) * speed;
           last = now;
-          const t = Math.min(1, clock / FLIP_MS);
-          // In the air until 78%, then it rings and settles.
-          const air = Math.min(1, t / 0.78);
-          const arc = Math.sin(Math.PI * air);
-          pivot.position.y = -0.4 + arc * 2.1;
-          pivot.position.z = arc * 3.2;
-          // The spin slows into its last half-turn, solved to land the face.
-          coin.rotation.x = Math.PI / 2 + total * easeOut(air);
-          pivot.rotation.y = lean * arc;
-          // The landing: a damped ring on its edge.
-          const settle = Math.max(0, (t - 0.78) / 0.22);
-          const ring = settle > 0 ? Math.exp(-5 * settle) : 0;
-          pivot.rotation.x = ring * 0.32 * Math.cos(settle * 26);
-          pivot.rotation.z = ring * 0.18 * Math.sin(settle * 21);
-          // The shadow tightens as it falls back.
-          const s = 1 - arc * 0.45;
+          const t = Math.min(1, clock / THROW_MS);
+          let z: number;
+          let tiltAxis: Vector3;
+          let tilt: number;
+          let spin: number;
+          let pos: Vector3;
+          if (t < 0.5) {
+            // The arc: in from the edge, up toward the table's eye, down.
+            const u = t / 0.5;
+            pos = from.clone().lerp(land, easeOut(u));
+            z = 0.6 + Math.sin(Math.PI * u) * 3.4 * (1 - u * 0.15);
+            tiltAxis = tumble;
+            tilt = (1 - easeOut(u)) * turns * Math.PI * 2 + lean;
+            spin = spinYaw * (1 - u);
+          } else if (t < 0.64) {
+            // It strikes the table on its rim and kicks up once.
+            const u = (t - 0.5) / 0.14;
+            pos = land.clone();
+            z = Math.sin(Math.PI * u) * 0.45;
+            tiltAxis = tumble;
+            tilt = lean * (1 - 0.35 * smooth(u));
+            spin = 0;
+          } else {
+            // Its rim rolls round in a tightening spiral, faster as it
+            // flattens, and it lies down on the saved face.
+            const u = (t - 0.64) / 0.36;
+            const decay = Math.pow(1 - u, 1.8);
+            tilt = lean * 0.65 * decay;
+            const turn =
+              roll0 + 9 * (1 - Math.pow(1 - u, 0.55)) * (spinYaw > 0 ? 1 : -1);
+            tiltAxis = axis.set(Math.cos(turn), Math.sin(turn), 0);
+            pos = land.clone();
+            z = 0;
+            spin = 0;
+          }
+          // Orientation: the tilt about its axis, over the resting face,
+          // turned to its resting angle (and spun in the air).
+          q.setFromAxisAngle(tiltAxis, tilt);
+          q2.setFromAxisAngle(zAxis, spin * Math.PI);
+          coin.quaternion.copy(restYaw).multiply(q2).multiply(q).multiply(rest);
+          // Resting on its rim: the centre stands up by the lean.
+          const lift =
+            (THICK / 2) * Math.abs(Math.cos(tilt)) +
+            RADIUS * Math.abs(Math.sin(tilt % Math.PI));
+          coin.position.set(pos.x, pos.y, z + lift);
+          // The shadow on the table: offset from the light, softer and
+          // fainter the higher it is.
+          const up = coin.position.z;
+          shadow.position.set(pos.x + up * 0.32, pos.y - up * 0.4, 0.001);
+          const s = 0.85 + up * 0.22;
           shadow.scale.set(s, s, 1);
-          shadowMaterial.opacity = 0.35 + (1 - arc) * 0.65;
-          // The glint crosses after it settles.
-          glint.intensity =
-            settle > 0.35
-              ? Math.sin(Math.PI * Math.min(1, (settle - 0.35) / 0.65)) * 4
-              : 0;
-          glint.position.x = -3 + Math.max(0, settle - 0.35) * 9;
+          shadowMat.opacity = Math.max(0.15, 0.95 - up * 0.17);
+          // The glint, once it rests.
+          const settle = Math.max(0, (t - 0.9) / 0.1);
+          glint.intensity = settle > 0 ? Math.sin(Math.PI * settle) * 1.1 : 0;
+          glint.position.set(pos.x - 1.6 + settle * 3.2, pos.y + 1.2, 2.2);
           render();
           if (t < 1) frame = requestAnimationFrame(tick);
           else {
+            // A last frame with the glint gone.
+            glint.intensity = 0;
+            render();
             container.dataset.faceValues = String(face);
             resolve([face]);
           }
@@ -348,7 +503,7 @@ export async function createCoinStage(selector: string, faces: CoinFaces) {
         frame = requestAnimationFrame(tick);
       });
     },
-    /** The table tapped: the flip plays out four times as fast. */
+    /** The table tapped: the throw plays out four times as fast. */
     finish() {
       speed = 4;
     },

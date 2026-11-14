@@ -75,6 +75,8 @@ import { reducedMotion } from "../presentation/motion";
 type DiceProps = ComponentProps<
   typeof import("../components/FullScreenDice").default
 >;
+/** A rare card's living foil (The Quest 2.1). */
+const RareFoil = lazy(() => import("../components/RareFoil"));
 const FullScreenDice = lazy(
   (): Promise<{ default: ComponentType<DiceProps> }> =>
     import("../components/FullScreenDice").catch(() => ({ default: NoDice })),
@@ -570,6 +572,11 @@ export function Play({
                     ball={ball}
                     finish={finish}
                   />
+                )}
+                {finish === "prism" && session.phase === "revealed" && (
+                  <Suspense fallback={null}>
+                    <RareFoil />
+                  </Suspense>
                 )}
                 {fuseLit && (
                   <span className="fuse-border" aria-hidden="true">

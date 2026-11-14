@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import type { SessionState } from "../game/types";
 import {
   fillNames,
@@ -12,6 +19,9 @@ import { stageArt } from "../presentation/league-art";
 import { useAnnounce } from "./Announcer";
 import { entranceFor, hiddenRoomFor } from "./moments/detect";
 import { useMoments } from "./moments/Director";
+
+/** A landmark's mark, inked on its banner (The Quest 2.1); lazy. */
+const LandmarkMark = lazy(() => import("./LandmarkMark"));
 
 /** The banner that sweeps across the table as each finale stage begins (the
  * Legendary, the Elite Four, the Champion; a crawl's floors and bosses):
@@ -44,6 +54,11 @@ export function StageBanner({ session }: { session: SessionState }) {
     >
       <div className={`stage-banner-cloth${art ? " painted-banner" : ""}`}>
         {art && <img className="stage-banner-art" src={art} alt="" />}
+        {banner.landmark && (
+          <Suspense fallback={null}>
+            <LandmarkMark title={banner.landmark} />
+          </Suspense>
+        )}
         <small>{mode}</small>
         <strong>{intro}</strong>
         {wanted && (
@@ -76,6 +91,7 @@ function stageBanner(session: SessionState) {
       art: undefined,
       wanted: undefined,
       wantedWord: undefined,
+      landmark: mark.title,
     };
   }
   if (stage.index !== 0) return null;

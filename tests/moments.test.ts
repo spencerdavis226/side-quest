@@ -178,6 +178,30 @@ describe("moments", () => {
     });
   });
 
+  it("a race among the dragon's moves counts the table in (The Quest 2.1)", () => {
+    const c = createSession(crawl, cards, packs, seeded(5));
+    const last = c.quest!.finale.length - 1;
+    const base = atStep(c, last);
+    const dragon = finaleCard(base.quest!, base.quest!.finale[last])!;
+    const calm = dragon.lairFight!.calm;
+    for (let move = 0; move < calm.length; move++) {
+      const hidden = {
+        ...base,
+        quest: {
+          ...base.quest!,
+          party: { ...base.quest!.party!, duel: { move, swings: 1 } },
+        },
+      };
+      const found = momentsBetween(hidden, {
+        ...hidden,
+        phase: "revealed" as const,
+      }).find((m) => m.kind === "dragonmove");
+      expect(found, calm[move].name).toMatchObject({
+        countdown: /\b(last to|first to|on three)\b/i.test(calm[move].rules),
+      });
+    }
+  });
+
   it("a swing at the dragon lands or misses as the dice settle, once (The Quest 2.1)", () => {
     const c = createSession(crawl, cards, packs, seeded(5));
     const last = c.quest!.finale.length - 1;

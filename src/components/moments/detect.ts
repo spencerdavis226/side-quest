@@ -76,6 +76,8 @@ export type Moment = {
       change: string;
       /** The class's rank-up line for the table (the Quest). */
       line?: string;
+      /** The Quest 2.1: the class's card, for its mark on the forge. */
+      classId?: string;
       fromType?: PokemonType;
       toType?: PokemonType;
     }
@@ -178,6 +180,8 @@ export type Moment = {
       /** The Quest 2.1: what the move does, for its telegraph: costs
        * hearts, makes the swing harder or easier, or is the table's alone. */
       effect?: "hurt" | "harder" | "easier" | "table";
+      /** The Quest 2.1: a race ("last to", "on three"): 3, 2, 1, go. */
+      countdown?: boolean;
     }
   /** The Quest 2.1: a swing at the dragon lands (a scale breaks, two on a
    * natural 20) or misses, as the dice settle. */
@@ -248,6 +252,9 @@ export const CUT_ON_MOTION: ReadonlySet<MomentKind> = new Set([
 /** Moments that play over a motion already under way (the omen's reveal
  * covers the card turning; a natural lands as the dice settle). */
 export const OVER_MOTION: ReadonlySet<MomentKind> = new Set(["omen"]);
+
+/** A move the table races (The Quest 2.1): it gets a 3, 2, 1, go. */
+const RACE = /\b(last to|first to|on three)\b/i;
 
 /** What a dragon's move does, for its telegraph (The Quest 2.1). */
 function moveEffect(move: DragonMove | undefined) {
@@ -466,6 +473,7 @@ export function momentsBetween(
         name: card.ribbon,
         enraged: !!duel.enraged,
         effect: moveEffect(lairMove(q, finaleCard(q!, card.id) ?? card)),
+        countdown: RACE.test(card.rules),
         say: `${dragon}: ${card.ribbon}.`,
       });
   }
@@ -686,6 +694,7 @@ export function momentsBetween(
           kicker: evolving(from),
           change,
           ...(line ? { line } : {}),
+          ...(q.packId === "dungeon" ? { classId: now.card.id } : {}),
           fromType: prior?.type ?? now.card.type,
           toType: now.type,
           say: `${evolving(from)} ${now.title}. ${change}${line ? ` ${line}` : ""}`,
