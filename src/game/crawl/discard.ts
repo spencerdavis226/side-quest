@@ -11,6 +11,7 @@ import { finaleCard, finaleStage } from "./stages";
 import {
   evolve,
   gainBoon,
+  hurt,
   omenEffect,
   satchelSize,
   settleParty,
@@ -18,6 +19,7 @@ import {
 } from "./party";
 import { bossBeat, hitsNeeded, isBossCard, spoilsOnWin } from "./bosses";
 import { joinTeam, settleThrow, strikeOutcome } from "./team";
+import { moveOf, nextDuel, roundOf } from "./lair";
 // Putting a card aside: the verdict, the party settled, the next card dealt.
 /** The rest of a run, re-paced so the badges still missing keep the run's
  * pace from `from` (the next draw) on. */
@@ -156,8 +158,24 @@ function discardCard(
     const q = s.quest;
     const nat = natural(card, s.roll);
     let next = settleParty(party, card, outcome, q, nat, spoil);
-    // Previous Card shows the beat of a phased boss as it was played.
     const raw = finaleCard(q, card.id);
+    // The dragon battle (The Quest 2.0): this round's move costs its hearts
+    // after the swing, so a Tower Shield takes whichever comes first, and
+    // the swing that breaks the last scale wins even if the move would
+    // have taken the last heart.
+    const duel = raw?.lairFight ? party.duel : undefined;
+    if (raw && duel) {
+      const move = moveOf(raw, roundOf(duel));
+      if (move?.damage) next = hurt(next, move.damage);
+      const swing = outcome === "won" ? (nat === 20 ? 2 : 1) : 0;
+      if (
+        swing &&
+        next.hearts === 0 &&
+        next.hits + swing >= hitsNeeded(q, card)
+      )
+        next = { ...next, hearts: 1 };
+    }
+    // Previous Card shows the beat of a phased boss as it was played.
     const beat = raw?.phases ? bossBeat(q, raw) : 0;
     if (beat) next = { ...next, beat };
     else if (next.beat !== undefined) {
@@ -180,7 +198,7 @@ function discardCard(
         phase: "complete",
         discarded,
         previousId,
-        quest: { ...q, party: { ...next, wiped: true } },
+        quest: { ...q, party: endDuel({ ...next, wiped: true }) },
       };
     // A boss (or an ambush) is dealt again, to the next drawer, until it
     // falls.
@@ -204,11 +222,15 @@ function discardCard(
               ...next,
               hits,
               rounds: next.rounds + (outcome === "won" ? 1 : 0),
+              // The dragon's next round, and its move, dealt with it.
+              ...(raw?.lairFight
+                ? { duel: nextDuel(q, raw, duel, hits, random) }
+                : {}),
             },
           },
         };
       // The floor's boss falls, and the jinx lifts with it.
-      next = { ...next, hits: 0 };
+      next = endDuel({ ...next, hits: 0 });
       if (isBossCard(card)) delete next.jinx;
       next = gainBoon(next, card, q, spoil);
       // Realms (2026-11-03): a lieutenant's fall levels the adventurer up.
@@ -263,16 +285,27 @@ function discardCard(
       discarded,
       previousId,
     };
-  // The next finale card is dealt; the deck waits where it is.
-  if (s.quest?.due)
+  // The next finale card is dealt; the deck waits where it is. A dragon
+  // opens on its first round, its move sampled now.
+  if (s.quest?.due) {
+    const q = s.quest;
+    const coming = finaleCard(q, q.finale[q.step + 1]);
+    const party =
+      coming?.lairFight && q.party
+        ? {
+            ...q.party,
+            duel: nextDuel(q, coming, undefined, q.party.hits, random),
+          }
+        : q.party;
     return {
       ...s,
       ...history,
       discarded,
       previousId,
       phase: "hidden",
-      quest: { ...s.quest, step: s.quest.step + 1 },
+      quest: { ...q, step: q.step + 1, ...(party ? { party } : {}) },
     };
+  }
   // A lost gym leader goes back into the rest of the deck, at least one card
   // away; the next card slides into its place, so the deck does not move.
   if (s.quest && lost && s.position + 1 < s.order.length) {
@@ -318,4 +351,11 @@ function discardCard(
     phase: "hidden",
     position: s.position + 1,
   };
+}
+/** The dragon battle over (felled, or the party wiped): the duel stays,
+ * with the round just played as `prev`, so Previous Card and the save check
+ * read the last round as it was (a lost contest had no dice). */
+function endDuel(party: PartyState): PartyState {
+  const duel = party.duel;
+  return duel ? { ...party, duel: { ...duel, prev: roundOf(duel) } } : party;
 }

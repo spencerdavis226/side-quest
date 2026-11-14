@@ -5,6 +5,7 @@ import {
   type CSSProperties,
   type ReactNode,
 } from "react";
+import { dragonStyle } from "../../presentation/dragon-colors";
 import { createPortal } from "react-dom";
 import type { Moment } from "./detect";
 import {
@@ -57,6 +58,8 @@ const LENGTH: Record<Moment["kind"], number> = {
   door: 2600,
   press: 1300,
   thread: 2100,
+  dragonmove: 1200,
+  enraged: 2500,
 };
 /** A lifted jinx reads less than a laid one: only its name burns away. */
 const LIFTED = 2000;
@@ -97,6 +100,10 @@ export default function MomentView({
       return <Faint m={moment} scale={scale} onDone={onDone} />;
     case "join":
       return <Join m={moment} scale={scale} onDone={onDone} />;
+    case "dragonmove":
+      return <DragonMoveSlam m={moment} scale={scale} onDone={onDone} />;
+    case "enraged":
+      return <Enraged m={moment} scale={scale} onDone={onDone} />;
     case "doubles":
       return <Doubles m={moment} scale={scale} onDone={onDone} />;
     case "door":
@@ -336,6 +343,10 @@ function caption(m: Moment): [string, string, string] {
       return [m.hatched ? "Hatched" : "Caught", m.name, "Joined the team."];
     case "jinx":
       return m.lifted ? [m.kicker, m.rule, m.name] : [m.kicker, m.name, m.rule];
+    case "dragonmove":
+      return [m.dragon, m.name, ""];
+    case "enraged":
+      return [m.dragon, "Enraged", m.line];
     default:
       return ["", "", ""];
   }
@@ -1132,6 +1143,46 @@ function LootFound({ m, scale, onDone }: ViewProps<"loot">) {
 
 /** A ribbon across the top for the deck's milestones; the table plays on
  * under it. */
+/** The dragon's move (The Quest 2.0, M16): its name slams in from the top
+ * edge with a flash and a shake, then clears to the card. Taps go
+ * through; a roll cuts it. */
+function DragonMoveSlam({ m, scale, onDone }: ViewProps<"dragonmove">) {
+  return (
+    <Stage
+      kind="dragonmove"
+      className={m.enraged ? "enraged" : ""}
+      style={dragonStyle(m.id)}
+      length={LENGTH.dragonmove}
+      scale={scale}
+      onDone={onDone}
+      ambient
+    >
+      <span className="dragonmove-flash" />
+      <p className="dragonmove-name">{m.name}</p>
+    </Stage>
+  );
+}
+
+/** The enrage contest (The Quest 2.0, M18): an eye narrows in the dark and
+ * the word burns in; the screen's edge then stays lit (`.lair-edge`). */
+function Enraged({ m, scale, onDone }: ViewProps<"enraged">) {
+  return (
+    <Stage
+      kind="enraged"
+      length={LENGTH.enraged}
+      scale={scale}
+      onDone={onDone}
+      style={dragonStyle(m.id)}
+    >
+      <span className="enraged-eye" />
+      <p className="enraged-word">Enraged</p>
+      <small className="enraged-line">
+        {m.dragon}. {m.line}
+      </small>
+    </Stage>
+  );
+}
+
 function Milestone({ m, scale, onDone }: ViewProps<"milestone">) {
   // A plain game's first card: gilt sparks and confetti off the card as
   // the ribbon drops (`opening`).

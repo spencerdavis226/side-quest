@@ -138,9 +138,9 @@ test("home has one How to play, for the mode chosen", async ({ page }) => {
   await page.locator(".quest-mode").filter({ hasText: "The Quest" }).click();
   await page.getByRole("button", { name: /How to play/ }).click();
   guide = page.getByRole("dialog", { name: "How to play" });
-  // One row a system since 2026-10-31: hearts, fights, bosses, ranks, inns
-  // and side quests, the satchel and gear, curses (Realms, 2026-11-03).
-  await expect(guide.locator(".guide-rows li")).toHaveCount(7);
+  // One row a system since 2026-10-31: hearts, fights, bosses, the dragon
+  // (2026-11-13), ranks, inns and side quests, the satchel and gear, curses.
+  await expect(guide.locator(".guide-rows li")).toHaveCount(8);
 });
 
 test("How to play explains every card from the pause menu", async ({

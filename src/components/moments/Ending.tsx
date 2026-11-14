@@ -4,6 +4,7 @@ import type { questRecord } from "../../game/engine";
 import { badgeArt } from "../../presentation/league-art";
 import { badgeType, pokemonTypes } from "../../presentation/pokemon-types";
 import { asset } from "../../presentation/theme";
+import { dragonColors } from "../../presentation/dragon-colors";
 import { stillMotion } from "../../presentation/motion";
 import { TypeMark, earnedBadges } from "../LeagueMarks";
 import { burst, clearParticles, fireworks } from "./particles";
@@ -262,6 +263,8 @@ function Survived({
   const trophies = record.stages
     .filter((s) => s.trophy)
     .flatMap((s) => s.cards);
+  // The dragon's own colours for the last fireworks (The Quest 2.0, M20).
+  const [bright, deep] = dragonColors(trophies[trophies.length - 1]?.id);
   useSteps([
     [
       200,
@@ -308,7 +311,7 @@ function Survived({
           4,
           [
             ["#ffe9a8", "#f2c94c"],
-            ["#ffd27a", "#ff9a3a"],
+            [bright, deep],
           ],
           true,
         ),

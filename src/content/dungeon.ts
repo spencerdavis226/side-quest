@@ -10,13 +10,8 @@ import { kitchen } from "./dungeon/kitchen";
 import { applyPhases } from "./dungeon/phases";
 import { applyJinxes } from "./dungeon/jinxes";
 import { floorMoments } from "./dungeon/moments";
-import {
-  closingCards,
-  lairs,
-  lastCallBosses,
-  queueCards,
-  stairsCards,
-} from "./dungeon/lastcall";
+import { closingCards, queueCards, stairsCards } from "./dungeon/lastcall";
+import { dragons as lastCallBosses, lairs } from "./dungeon/dragons";
 import { lowerLandings, upperLandings } from "./dungeon/landings";
 import { omens } from "./dungeon/omens";
 import { summonsCards } from "./dungeon/summons";

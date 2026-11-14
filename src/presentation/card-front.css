@@ -1167,3 +1167,14 @@
 .card-actions:not(.plaques-1) .wax-seal {
   display: none;
 }
+
+/* The swing that can fell the dragon (The Quest 2.0, M19): a gold line
+   above the move, no animation. */
+.card-stands {
+  margin: 0 0 0.3em;
+  color: #9a6a12;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.82em;
+}

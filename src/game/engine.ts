@@ -12,6 +12,7 @@ import { awaitingOffer, awaitingPress } from "./crawl/offers";
 import { awaitingCatch } from "./crawl/team";
 import { awaitingVerdict, discard } from "./crawl/discard";
 import { withNames, withSecret } from "./crawl/names";
+import { atRound, roundOf } from "./crawl/lair";
 // The engine's public entry (Quest 2.0 Phase 0, 2026-11-13): the crawl's
 // pieces live in `./crawl/` and are re-exported here, so every import of
 // `engine` keeps working. Modules outside `src/game` import from here only.
@@ -105,6 +106,13 @@ export {
   skipRoll,
 } from "./crawl/discard";
 export { DRAGON } from "./crawl/names";
+export {
+  atRound,
+  isLairFight,
+  killingRound,
+  lairMove,
+  type Round,
+} from "./crawl/lair";
 export type Random = () => number;
 export function shuffle(
   ids: string[],
@@ -280,6 +288,10 @@ export function currentCard(s: SessionState) {
       s.cards.find((c) => c.id === s.order[s.position])!,
     );
   const card = finaleCard(s.quest, s.quest.finale[s.quest.step])!;
+  // The dragon battle reads this round's move (or the enrage contest).
+  const duel = s.quest.party?.duel;
+  if (card.lairFight && duel)
+    return withNames(s, withSecret(s, atRound(card, roundOf(duel))));
   // A boss with phases reads the beat its hits have reached.
   return withNames(
     s,
@@ -289,6 +301,9 @@ export function currentCard(s: SessionState) {
 /** The card put aside last, as it read then: a boss's beat (`party.beat`). */
 export function previousCard(s: SessionState) {
   const card = findCard(s, s.previousId);
+  // The dragon's round just put aside, while the battle goes on.
+  const prev = s.quest?.party?.duel?.prev;
+  if (card?.lairFight && prev) return withNames(s, atRound(card, prev));
   const beat = s.quest?.party?.beat;
   return card?.phases && beat ? withNames(s, atBeat(card, beat)) : card;
 }

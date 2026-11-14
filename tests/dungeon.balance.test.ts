@@ -149,7 +149,8 @@ function playRun(seed: number, adventurer?: string) {
         : -1;
       s = settleBattle(
         s,
-        random() < 0.55,
+        // The enrage contest is a coin flip (The Quest 2.0).
+        random() < (party(s).duel?.contest ? 0.5 : 0.55),
         random,
         spoilsOnWin(s) ? (free >= 0 ? free : 0) : undefined,
       );
@@ -240,7 +241,9 @@ it("a crawl is hard: the party wins about a quarter of its runs", () => {
   expect(won).toBeGreaterThan(0.18);
   expect(won).toBeLessThan(0.4);
   expect(mean).toBeGreaterThan(38);
-  expect(mean).toBeLessThan(55);
+  // D10 (The Quest 2.0, 2026-11-13): the measured mean plus 6. Measured
+  // 54.4 after the dragon battle (Phase 2), so 60.4.
+  expect(mean).toBeLessThan(60.4);
   // Nearly every run gets through the gate and the first region.
   const early = ["The City Gate", "Region 1"].reduce(
     (n, l) => n + (wipes.get(l) ?? 0),
@@ -249,6 +252,36 @@ it("a crawl is hard: the party wins about a quarter of its runs", () => {
   expect(early / RUNS).toBeLessThan(0.1);
   for (const s of full) roundTrip(s);
 }, 30_000);
+
+it("the dragon battle is the run's last hard fight, never a wall", () => {
+  // The Quest 2.0 Phase 2 (2026-11-13): every dragon between 12% and 45%
+  // of the runs it ends, and 45% to 65% of runs reach it.
+  const reached = runs.filter(
+    (s) => s.quest!.step >= STEP.lastCall && s.quest!.finale.length > 38,
+  );
+  const atLair = reached.filter(
+    (s) => finaleStage(s.quest!).label === "The Dragon's Lair",
+  );
+  const dragons = by((s) => {
+    const id = s.quest!.finale[s.quest!.finale.length - 1];
+    return id.replace("dungeon.", "");
+  });
+  const beaten = atLair.filter((s) => questRecord(s)!.won);
+  // Swings at the dragon (a contest round is not a swing), win or lose.
+  const swings = atLair.map((s) => (party(s).duel?.swings ?? 0) + 1);
+  const meanSwings = swings.reduce((a, b) => a + b, 0) / swings.length;
+  console.log(
+    `dragon: ${pct(atLair.length / RUNS)} of runs reach it, ${pct(beaten.length / atLair.length)} of those win; ` +
+      `${meanSwings.toFixed(1)} swings; ` +
+      dragons.map(([n, r]) => `${n} ${pct(r)}`).join(", "),
+  );
+  expect(atLair.length / RUNS).toBeGreaterThan(0.45);
+  expect(atLair.length / RUNS).toBeLessThan(0.65);
+  for (const [name, r] of dragons) {
+    expect(r, name).toBeGreaterThan(0.12);
+    expect(r, name).toBeLessThan(0.45);
+  }
+});
 
 it("adventurers rank up often, but not always all the way", () => {
   const levelling = runs.filter(

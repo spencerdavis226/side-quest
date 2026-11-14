@@ -218,6 +218,32 @@ const situations: [string, GameConfig, Find][] = [
       );
     },
   ],
+  // The dragon battle (The Quest 2.0 Phase 2, 2026-11-13): a round's move,
+  // the enrage contest, an enraged round's roll on the card, and the kill.
+  [
+    "realms-lair-first-round",
+    crawl,
+    (s) =>
+      s.phase === "hidden" &&
+      party(s).duel?.swings === 0 &&
+      !party(s).duel?.contest,
+  ],
+  [
+    "realms-lair-contest",
+    crawl,
+    (s) => s.phase === "revealed" && !!party(s).duel?.contest,
+  ],
+  [
+    "realms-lair-enraged-roll-on-card",
+    crawl,
+    (s) =>
+      s.phase === "revealed" && !!party(s).duel?.enraged && !!s.roll?.returned,
+  ],
+  [
+    "realms-lair-won",
+    crawl,
+    (s) => s.phase === "complete" && !!party(s).duel && !party(s).wiped,
+  ],
   [
     "league-catch-beat",
     league,

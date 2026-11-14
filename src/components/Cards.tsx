@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ballWords } from "./BallThrow";
 import type { CardDefinition, DiceRoll, PartyState } from "../game/types";
-import { CardStakes } from "./Crawl";
+import { CardStakes, everyoneStands } from "./Crawl";
 import type { CrawlTheme } from "./crawlTheme";
 import { diceResultText } from "../presentation/dice/result-text";
 import { readTotal, rollWins } from "../game/dice";
@@ -416,7 +416,13 @@ export function CardFace({
               </p>
             </div>
           ) : (
-            <p>{card.rules}</p>
+            <>
+              {/* The swing that can fell the dragon (The Quest 2.0). */}
+              {everyoneStands(card, party, hits ?? 0) && (
+                <p className="card-stands">Everyone stands.</p>
+              )}
+              <p>{card.rules}</p>
+            </>
           )}
         </div>
         <div className="card-footer">

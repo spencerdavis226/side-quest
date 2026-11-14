@@ -2,6 +2,7 @@ import type {
   CardDefinition,
   DiceDefinition,
   DiceOutcome,
+  DragonMove,
   Encounter,
   Jinx,
   Loot,
@@ -453,6 +454,61 @@ export const boss = (
   ...(tier(floor) < 2 ? { levelUp: true as const } : {}),
   ...(more.jinx ? { jinx: more.jinx } : {}),
   ...(more.drops ? { spoils: more.drops } : {}),
+});
+
+/** The dragon battle (The Quest 2.0, 2026-11-13): the dragon's health,
+ * the hearts a missed swing costs, and what a lost enrage contest costs. */
+export const DRAGON_HEALTH = 4;
+export const DRAGON_HURT = 1;
+export const ENRAGE_HURT = 2;
+/** A dragon's move: its name (18 characters at most), what the table does,
+ * and what it costs (`damage` hearts) or does to this round's swing
+ * (`harder`, 2 or -2). */
+export const move = (
+  name: string,
+  rules: string,
+  effect: Omit<DragonMove, "name" | "rules"> = {},
+): DragonMove => ({ name, rules, ...effect });
+/** A dragon (lair fight): the boss of the run. Its own rules are its intro,
+ * so the plain modes play it as one d20; in The Quest each round shows a
+ * move from `calm` (or, after the contest, `enraged`) and the swing reads
+ * the d20 below. */
+export const dragon = (
+  id: string,
+  title: string,
+  intro: string,
+  swing: { miss: string; hit: string; crit: string; fumble: string },
+  fight: {
+    calm: DragonMove[];
+    enraged: DragonMove[];
+    contest: string;
+    lore: [string, string, string];
+  },
+  more: { jinx?: Jinx } = {},
+): CardDefinition => ({
+  ...card(
+    id,
+    title,
+    "challenge",
+    intro,
+    d20(BOSS_NEED[2], swing.miss, swing.hit, {
+      crit: swing.crit,
+      fumble: swing.fumble,
+    }),
+  ),
+  ribbon: "The Dragon's Lair · Dragon",
+  ribbonTone: "crimson",
+  encounter: "boss",
+  battle: true,
+  hits: DRAGON_HEALTH,
+  damage: DRAGON_HURT,
+  lairFight: {
+    calm: fight.calm,
+    enraged: fight.enraged,
+    enrage: { rules: fight.contest, damage: ENRAGE_HURT },
+    lore: fight.lore,
+  },
+  ...(more.jinx ? { jinx: more.jinx } : {}),
 });
 
 /** An elite: dealt only behind a fork's loud door in Pub Crawl (and as an

@@ -38,7 +38,7 @@ import { parseSession } from "../src/app/persistence";
 import { cards, packs } from "../src/content/catalog";
 import type { GameConfig, Loot, SessionState } from "../src/game/types";
 import { BOSS_NEED, PARTY_HEARTS } from "../src/content/dungeon/shared";
-import { lairs } from "../src/content/dungeon/lastcall";
+import { lairs } from "../src/content/dungeon/dragons";
 const LAIRS = {
   taproom: "The Sunken Coast",
   kitchen: "The Fire Caverns",
@@ -205,7 +205,8 @@ describe("Pub Crawl", () => {
     ).toEqual([
       ["boss", 2],
       ["boss", 2],
-      ["boss", 3],
+      // The dragon battle (2026-11-13): four scales of health.
+      ["boss", 4],
     ]);
     expect(at(STEP.closing)).toMatchObject({ encounter: "ambush", hits: 2 });
     for (const step of [STEP.landing1, STEP.landing2])
@@ -441,11 +442,14 @@ describe("Pub Crawl", () => {
 
   it("the last boss falling wins the crawl", () => {
     let s = deal(fromStep(start(), STEP.lastCall), "dungeon.final-tab");
-    // Three beats (2026-10-25): its d20, a riddle duel, a last d20.
+    // The dragon battle (2026-11-13): four scales. Two swings land, the
+    // next round is the enrage contest (Won and Lost), then one more swing
+    // and the felling one.
+    s = fight(s, 15);
     s = fight(s, 15);
     expect(currentCard(advance(s)).dice).toBeUndefined();
+    expect(currentCard(advance(s)).ribbon).toBe("Enraged");
     s = settleBattle(advance(s), true);
-    expect(currentCard(advance(s)).rules).toMatch(/The sea boils around her/);
     s = fight(s, 15);
     expect(s.phase).toBe("complete");
     expect(questRecord(s)!.won).toBe(true);
@@ -671,7 +675,7 @@ describe("Pub Crawl", () => {
     ).toBe(9);
     // A longer boss fight; an ambush is not a boss.
     s = tonight("lock-in");
-    expect(hitsNeeded(s.quest, findCard(s, "dungeon.final-tab")!)).toBe(4);
+    expect(hitsNeeded(s.quest, findCard(s, "dungeon.final-tab")!)).toBe(5);
     expect(hitsNeeded(s.quest, findCard(s, "dungeon.lost-bridesmaids")!)).toBe(
       2,
     );

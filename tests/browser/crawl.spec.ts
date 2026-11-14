@@ -1,5 +1,5 @@
 import { type Page } from "@playwright/test";
-import { test, expect, seed, saved } from "./support";
+import { test, expect, seed, reseed, saved } from "./support";
 import { advance, currentCard, finaleStage } from "../../src/game/engine";
 import { returnToCard, rollDice } from "../../src/game/dice";
 import type { SessionState } from "../../src/game/types";
@@ -625,9 +625,10 @@ test("the party dialog lays out the run: adventurer, boons and jinx", async ({
   await page.getByRole("button", { name: "Open game menu" }).click();
   await page.getByRole("button", { name: "How to play" }).click();
   const guide = page.getByRole("dialog", { name: "How to play" });
-  // One row a system (2026-10-31): hearts, fights, bosses, ranks (Realms),
-  // inns and side quests, the satchel and gear, curses.
-  await expect(guide.locator(".guide-rows li")).toHaveCount(7);
+  // One row a system (2026-10-31): hearts, fights, bosses, the dragon (The
+  // Quest 2.0), ranks (Realms), inns and side quests, the satchel and gear,
+  // curses.
+  await expect(guide.locator(".guide-rows li")).toHaveCount(8);
   // The seals, the naturals, and the roll-to-beat gem (2026-10-31).
   await expect(guide.locator(".crawl-legend dd")).toHaveCount(8);
   await expect(guide.locator(".crawl-legend")).toContainText(
@@ -672,11 +673,12 @@ test("losing the last heart wipes the party", async ({ page }, info) => {
 test("felling the dragon wins the quest", async ({ page }, info) => {
   let s = reveal(
     crawlAt("dungeon.final-tab", STEP.lastCall, {
-      hits: 2,
-      rounds: 2,
+      // Four scales (the dragon battle, 2026-11-13): one left.
+      hits: 3,
+      rounds: 3,
     }),
   );
-  s = rolled({ ...s, discarded: STEP.lastCall + 2 }, 18);
+  s = rolled({ ...s, discarded: STEP.lastCall + 3 }, 18);
   await seed(page, s);
   await page.locator(".game-card").click();
   await expect(page.locator(".crawl-end h1")).toHaveText(
@@ -686,6 +688,52 @@ test("felling the dragon wins the quest", async ({ page }, info) => {
     "Half the kingdom is yours: make a rule for the rest of the night.",
   );
   await page.screenshot({ path: info.outputPath("won.png") });
+});
+
+// The dragon battle (The Quest 2.0, 2026-11-13): a round shows the
+// dragon's move on its ribbon and its scales on the strip; the last scale
+// wins the quest, the last heart loses it.
+test("the dragon battle: a round's move, the scales, the kill and the wipe", async ({
+  page,
+}, info) => {
+  const round = { move: 0, swings: 3, enraged: true as const };
+  let s = reveal(
+    crawlAt("dungeon.final-tab", STEP.lastCall, {
+      hits: 3,
+      rounds: 3,
+      duel: round,
+    }),
+  );
+  s = { ...s, discarded: STEP.lastCall + 3 };
+  const dragon = currentCard(s);
+  await seed(page, s);
+  await expect(page.locator(".game-card .card-ribbon")).toHaveText(
+    dragon.ribbon!,
+  );
+  await expect(page.locator(".hud-scales")).toHaveAccessibleName(
+    `${dragon.title}: 1 of 4 scales`,
+  );
+  await expect(page.locator(".hud-scales .scale.broken")).toHaveCount(3);
+  // A hit fells it: the card says so.
+  await expect(page.locator(".game-card .card-stands")).toHaveText(
+    "Everyone stands.",
+  );
+  await page.screenshot({ path: info.outputPath("lair-round.png") });
+  await reseed(page, rolled(s, 18));
+  await page.locator(".game-card").click();
+  await expect(page.locator(".crawl-end h1")).toHaveText(
+    /The dragon\s*is slain\./,
+  );
+  // On the last heart, a miss loses the quest.
+  const last = {
+    ...s,
+    quest: { ...s.quest!, party: { ...s.quest!.party!, hearts: 1 } },
+  };
+  await reseed(page, rolled(last, 2));
+  await page.locator(".game-card").click();
+  await expect(page.locator(".crawl-end h1")).toHaveText(
+    /The party\s*has fallen\./,
+  );
 });
 
 // The end screen (2026-10-25): the trophies (one medallion a boss and the
@@ -702,7 +750,7 @@ for (const width of [320, 390])
     let s = crawlAt(
       "dungeon.final-tab",
       STEP.lastCall,
-      { hits: 2, rounds: 2, form: 2 },
+      { hits: 3, rounds: 3, form: 2 },
       { adventurer: "barbarian" },
     );
     const q = s.quest!;
@@ -725,7 +773,7 @@ for (const width of [320, 390])
         },
       },
     };
-    s = rolled({ ...reveal(s), discarded: STEP.lastCall + 2 }, 18);
+    s = rolled({ ...reveal(s), discarded: STEP.lastCall + 3 }, 18);
     await seed(page, s);
     await page.locator(".game-card").click();
     const wall = page.locator(".trophy-wall");

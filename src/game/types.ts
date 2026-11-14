@@ -156,6 +156,20 @@ export interface CardDefinition {
    * none). The felling swing always plays the last. At most `hits - 1`;
    * outside a crawl the card plays as written. */
   phases?: Phase[];
+  /** The Quest 2.0 (2026-11-13): the dragon battle. A boss whose `hits`
+   * are its health and whose re-deals are rounds: each round the dragon
+   * makes a move (`party.duel`), then the drawer swings with the card's d20.
+   * The first round at half health or below is the enrage contest (Won and
+   * Lost plaques); after it the enraged moves are used. In the plain modes,
+   * and in saves without `party.duel`, the card reads as written. */
+  lairFight?: {
+    calm: DragonMove[];
+    enraged: DragonMove[];
+    /** The whole table's contest; a loss costs `damage` hearts. */
+    enrage: { rules: string; damage: number };
+    /** Weak scale, fear, true name (lore arrives in Phase 4). */
+    lore: [string, string, string];
+  };
   /** Pokémon League (2026-10-25): a wild Pokémon the table can catch once
    * it is beaten (a won roll, or a strike won on the matchup). It joins
    * the team (`party.team`). Never on a trainer. */
@@ -172,6 +186,17 @@ export interface CardDefinition {
    * card's title and type; `rate` stands in for a catch number, which sets
    * the send-in bonus (`assistBonus`). */
   joins?: { name?: string; type?: PokemonType; rate: number };
+}
+/** A dragon's move for one round of its battle (`lairFight`). */
+export interface DragonMove {
+  /** Shown on the ribbon; at most 18 characters. */
+  name: string;
+  /** What the table does this round, read in place of the card's rules. */
+  rules: string;
+  /** Hearts it costs, after the swing (a Tower Shield takes it whole). */
+  damage?: 1 | 2;
+  /** Added to this round's swing's need: 2 harder, or -2 easier. */
+  harder?: -2 | 2;
 }
 /** One beat of a boss fight after its first (`CardDefinition.phases`). */
 export interface Phase {
@@ -461,6 +486,18 @@ export interface PartyState {
   /** The caught Pokémon that fainted on the card just put aside (lost with
    * it sent in): off the team for good. News until the next put-aside. */
   fainted?: string;
+  /** The dragon battle in play (`lairFight`, The Quest 2.0): this round's
+   * move (an index into the calm or the enraged list), whether this round
+   * is the enrage contest, whether the dragon is enraged, the swings made
+   * so far, and the round just put aside for Previous Card. When the
+   * dragon falls or the party wipes, `prev` is that last round. */
+  duel?: {
+    move: number;
+    swings: number;
+    contest?: true;
+    enraged?: true;
+    prev?: { move: number; enraged?: true } | "contest";
+  };
 }
 export interface PackDefinition {
   version: 1;

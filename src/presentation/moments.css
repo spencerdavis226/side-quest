@@ -5412,3 +5412,132 @@
     opacity: 0;
   }
 }
+
+/* The dragon battle (The Quest 2.0, 2026-11-13). The move (M16): its name
+   drops from the top edge in ember red with a flash, holds, and clears. */
+.moment-dragonmove {
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.dragonmove-flash {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 40%;
+  background: linear-gradient(180deg, var(--dragon, #ff7a3a), transparent);
+  animation: dragonmove-flash var(--len) ease-out both;
+}
+.dragonmove-name {
+  margin: 0;
+  color: #ffe1b8;
+  font: 800 clamp(30px, 10vw, 52px) / 1 var(--font-card-title);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-shadow:
+    0 3px 0 var(--dragon-deep, #6e140a),
+    0 0 24px var(--dragon, #ff6a2a);
+  animation: dragonmove-slam var(--len) cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+.moment-dragonmove.enraged .dragonmove-name {
+  color: #fff1c2;
+  text-shadow:
+    0 3px 0 #4a0a05,
+    0 0 30px #ff3a1a;
+}
+@keyframes dragonmove-slam {
+  0% {
+    opacity: 0;
+    transform: translateY(-40vh) scale(1.4);
+  }
+  22% {
+    opacity: 1;
+    transform: none;
+  }
+  26% {
+    transform: translateX(-4px);
+  }
+  30% {
+    transform: translateX(3px);
+  }
+  34%,
+  78% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+@keyframes dragonmove-flash {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Enraged (M18): the dark comes up, an eye narrows, the word burns. */
+.moment-enraged {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 12px;
+  background: radial-gradient(
+    circle at 50% 45%,
+    rgb(60 6 2 / 0.75),
+    rgb(0 0 0 / 0.88)
+  );
+  animation: enraged-dark var(--len) ease both;
+}
+.enraged-eye {
+  width: min(46vw, 220px);
+  height: min(18vw, 86px);
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    #1a0200 0 18%,
+    #ffb347 20%,
+    #ff4a12 45%,
+    #6e0a02 80%
+  );
+  box-shadow: 0 0 40px rgb(255 80 20 / 0.6);
+  animation: enraged-eye var(--len) ease both;
+}
+.enraged-word {
+  margin: 0;
+  color: #fff1c2;
+  font: 800 clamp(34px, 11vw, 60px) / 1 var(--font-card-title);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow: 0 0 28px var(--dragon, #ff3a1a);
+}
+.enraged-line {
+  color: #ffd2a8;
+  font: 500 clamp(16px, 4.4vw, 20px) / 1.3 var(--font-tavern);
+}
+@keyframes enraged-dark {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  15%,
+  85% {
+    opacity: 1;
+  }
+}
+@keyframes enraged-eye {
+  0% {
+    transform: scaleY(1);
+  }
+  40% {
+    transform: scaleY(0.25);
+  }
+  100% {
+    transform: scaleY(0.35);
+  }
+}

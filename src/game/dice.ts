@@ -9,6 +9,7 @@ import {
   assistBonus,
   cardEdge,
   currentCard,
+  lairMove,
   teamMember,
   omenEffect,
   PRESS_STEP,
@@ -172,7 +173,9 @@ export function rollBonus(session: SessionState, card: CardDefinition): number {
     (effect.roll?.all ?? 0) +
     (card.encounter ? (effect.roll?.[card.encounter] ?? 0) : 0) -
     PRESS_STEP * pulls +
-    (sent ? assistBonus(sent) : 0)
+    (sent ? assistBonus(sent) : 0) -
+    // The dragon's move can make this round's swing harder or easier.
+    (lairMove(session.quest, card)?.harder ?? 0)
   );
 }
 /** The face a crawl battle's dice must show to win (2026-10-31, owner: a
