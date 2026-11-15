@@ -61,7 +61,7 @@ export const rooftop: FloorCards = {
       "the-wind",
       "The Wind",
       "Not a monster. Just the wind, a mile up, and it wants your drink. Roll d20.",
-      "It takes your hat and your dignity. Drink 5.",
+      "It takes your hat, your dignity and your pants. Drink 5.",
       "You lean into it like a hero on a cliff. Hair flip, then give 5.",
     ),
     mishap(
@@ -120,7 +120,7 @@ export const rooftop: FloorCards = {
       "",
       {
         roll: pair(
-          "Frozen to the bone. Drink 5.",
+          "Frozen to the bone. Your nipples could cut glass. Drink 5.",
           "You dance in it. Everyone dances or drinks 5.",
           "A pair! Thundersnow strikes your cup and warms it. Everyone else drinks 3.",
         ),
@@ -151,7 +151,7 @@ export const rooftop: FloorCards = {
       8,
       "the-slow-dance",
       "The Slow Dance",
-      "Slow dance with your right neighbor for 10 seconds, eyes locked, to keep warm. Laugh: drink 5.",
+      "Slow dance with your right neighbor, eyes locked, hands visible, 10 seconds. Laugh: drink 5.",
     ),
     trial(
       8,
@@ -202,7 +202,7 @@ export const rooftop: FloorCards = {
       "pigeon-squadron",
       "The Griffin Flight",
       "Twelve griffins in a V, on a strafing run. Duck, then roll d20.",
-      "Direct hit. Drink 4.",
+      "Direct hit. It's griffin shit. Drink 4.",
       "You duck behind a rock. Give 4.",
     ),
     // Four seats, four dice.
@@ -220,7 +220,7 @@ export const rooftop: FloorCards = {
       8,
       "hot-tub-wizard",
       "The Hot Spring Wizard",
-      "A 'wizard' in a hot spring wants your drink. Hold it close, then roll d20.",
+      "A naked 'wizard' in a hot spring wants your drink. Hold it close, then roll d20.",
       "He's a wizard. Drink 5.",
       "He's just an old man. Give 5 to whoever believed him.",
       {
@@ -288,7 +288,7 @@ export const rooftop: FloorCards = {
       8,
       "rooftop-lost-found",
       "Left Behind",
-      "A frozen pack in the snow: one boot, one glove and a smoke bomb. Blow on your hands.",
+      "A frozen pack in the snow: one boot, one condom and a smoke bomb. Blow on your hands.",
       "smoke",
     ),
     treasure(

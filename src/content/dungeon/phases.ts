@@ -158,7 +158,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "dj-ossuary": [
     duel(
-      "He plays faster. Freestyle four lines about the table, in rhyme. Stop or stall: drink 4.",
+      "He plays faster. Freestyle four filthy lines about the table, in rhyme. Stop or stall: drink 4.",
     ),
   ],
   "the-lich-lord": [
@@ -180,7 +180,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "the-ghost-of-closing": [
     duel(
-      "Name five things buried with a king, in ten seconds. Fall short: drink 4.",
+      "Name five embarrassing things buried with a king, in ten seconds. Fall short: drink 4.",
     ),
   ],
   // The Goblin Mines (was the Sewers).
@@ -245,7 +245,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "the-ice-cream-man": [
     duel(
-      "He makes the table dance. Name six dances in ten seconds. Fall short: drink 4.",
+      "He makes the table dance. Name six sex positions in ten seconds. Fall short: drink 4.",
     ),
   ],
   "the-frozen-ex": [

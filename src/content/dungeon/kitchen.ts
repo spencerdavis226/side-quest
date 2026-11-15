@@ -95,7 +95,7 @@ export const kitchen: FloorCards = {
       "food-critic-ghoul",
       "The Fire Judge",
       "A demon judge who weighs every hero's soul, and yours is light. Roll d20.",
-      "Found wanting. Drink 5, and list your sins out loud.",
+      "Found wanting. Drink 5, and list your three hottest sins out loud.",
       "You impress him. He tips you his flask. Give 4.",
       { loot: "draught" },
     ),
@@ -104,7 +104,7 @@ export const kitchen: FloorCards = {
       "Monster",
       "walk-in-yeti",
       "The Salamander",
-      "On three, everyone points at who'd pet a salamander that's on fire. Most fingers: drink 3.",
+      "On three, everyone points at who'd lick a salamander that's on fire. Most fingers: drink 3.",
     ),
     // Four seats, four dice.
     {
@@ -122,7 +122,7 @@ export const kitchen: FloorCards = {
       "gordon-wraith",
       "The Screaming Smith",
       "A ghost blacksmith who screams at every blade he sees. Yours is next. Roll d20.",
-      "He calls you useless, at length. Drink 5.",
+      "He calls you a limp, useless sack, at length. Drink 5.",
       "You hand him something perfect. He goes quiet. Give 5.",
       {
         jinx: {
@@ -214,18 +214,18 @@ export const kitchen: FloorCards = {
       5,
       "the-brunch-crowd",
       "The Fire Cult",
-      "A fire cult in red robes insists you join the dancing. Roll d20.",
+      "A fire cult in red robes, nothing under them, insists you join the dancing. Roll d20.",
       "You dance. Drink 4.",
       "You tell them it's the wrong solstice. Their minds break. Give 4.",
     ),
     monster(
       5,
       "microwave-ghost",
-      "The Sulfur Ghost",
-      "The ghost of every rotten egg ever cracked. Hold your nose, then roll d20.",
+      "The Fart Ghost",
+      "The ghost of every fart ever cracked. Hold your nose, then roll d20.",
       "You smell like it now. Drink 5.",
-      "You open a vent. Give 5 to whoever smells eggiest.",
-      { fumble: "You were the rotten egg all along. Drink 10 and apologize." },
+      "You open a vent. Give 5 to whoever dealt it.",
+      { fumble: "You were the farter all along. Drink 10 and apologize." },
     ),
     // A secret on a clock.
     {

@@ -174,7 +174,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       1,
       "weeping-statue",
       "The Weeping Statue",
-      "A stone queen weeps real tears, and they heal. Everyone keeps a straight face.",
+      "A naked stone queen weeps healing tears. Everyone keeps a straight face, and eyes up.",
       [
         { label: "Drink the tears", heal: 3, jinx: true },
         { label: "Leave her be" },
@@ -205,7 +205,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       4,
       "the-lift",
       "The Lift",
-      "A cage on a rusty chain, or a thousand stairs. Everyone creaks like it; worst creak drinks 2.",
+      "A rusty cage lift, or a thousand stairs. Everyone creaks like an old bed; worst creak drinks 2.",
       [{ label: "Ride it", elite: true }, { label: "Stairs · drink 2" }],
     ),
     landmark(
@@ -239,7 +239,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       7,
       "the-library",
       "The Library",
-      "Every book ever written, all badly shelved. The drawer names the last book they read.",
+      "Every book ever written, half of them smut. The drawer names the last book they read, or admits it.",
       [
         { label: "Read · drink 2", loot: "candy" },
         { label: "Borrow one", loot: "die", jinx: true },
