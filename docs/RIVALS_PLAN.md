@@ -334,7 +334,7 @@ Each phase is one session and one pull request. Each ends with: `npm test`, lint
 
 **Done when:** no "Bradley", "Mirabel" or "Tutt" text is left in `src/` (keys excepted); every line is within its limit; the sweep is green.
 
-### Phase 2: maximum frustration (engine)
+### Phase 2: maximum frustration (engine) (built 2026-11-15; see `docs/STATUS.md`)
 
 **Goal:** the new verbs, the Do-Over, pay-offs, and your stolen items used against you.
 

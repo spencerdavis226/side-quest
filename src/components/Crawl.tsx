@@ -38,6 +38,10 @@ import {
   runNames,
   questRecord,
   rivalCut,
+  awaitingInvoice,
+  canPayInvoice,
+  payOffItem,
+  RIVAL_DRINKS,
   rivalProfile,
   replaces,
   stageKind,
@@ -422,7 +426,7 @@ export function CrawlStrip({
       {helper &&
         chip(
           "tag-assist",
-          `${helper.title} sent in: +${assistBonus(helper)} to the roll`,
+          `${helper.title} sent in: +${assistBonus(helper, quest)} to the roll`,
           "satchel",
           <>
             {helper.type ? (
@@ -430,7 +434,7 @@ export function CrawlStrip({
             ) : (
               <CrawlIcon name="ally" theme={theme} />
             )}
-            <span className="chip-name">+{assistBonus(helper)}</span>
+            <span className="chip-name">+{assistBonus(helper, quest)}</span>
           </>,
         )}
       {chip(
@@ -503,9 +507,7 @@ export function CrawlStrip({
           <>
             <CrawlIcon name="ambush" theme={theme} />
             <span className="chip-name">{rival.name}</span>
-            {party.rival!.took.length > 0 && (
-              <b>{party.rival!.took.length}</b>
-            )}
+            {party.rival!.took.length > 0 && <b>{party.rival!.took.length}</b>}
           </>,
         )}
       {jinx &&
@@ -585,6 +587,23 @@ export function CardStakes({
   // The rival's card (2026-11-15): the items a loss (or the card itself)
   // hands them.
   const takes = card.rival?.takes;
+  // Rivals Phase 2: the duel is fought with what they took. Their tricks
+  // still to play (shields show as the swings to land).
+  const spent = party.rival?.arsenal ?? {};
+  const arsenal =
+    card.rival?.returns === "all" &&
+    card.hits &&
+    party.rival?.who === card.rival.who
+      ? (["die", "draught", "smoke"] as const).filter(
+          (item) =>
+            party.rival!.took.includes(item) &&
+            !(item === "die"
+              ? spent.coin
+              : item === "draught"
+                ? spent.draught
+                : spent.swung),
+        )
+      : [];
   const prizes = card.press?.prizes;
   // The dragon's move this round (The Quest 2.0): its own heart cost, win
   // or lose, read from the move the card's rules came from.
@@ -656,7 +675,21 @@ export function CardStakes({
             className="stake stake-hits"
             aria-label={`${boss ? theme.words.aBoss : theme.words.anAmbush}: ${party.hits} of ${hits} hits landed`}
           >
-            <CrawlIcon name={boss ? "boss" : "ambush"} theme={theme} />
+            {arsenal.length ? (
+              // The duel's tricks in the swing seal's place, so the foot
+              // keeps its width.
+              <span
+                className="stake-arsenal"
+                role="img"
+                aria-label={`They fight with your ${arsenal.map((i) => theme.loot[i].name).join(", ")}`}
+              >
+                {arsenal.map((item) => (
+                  <CrawlIcon key={item} name={item} theme={theme} />
+                ))}
+              </span>
+            ) : (
+              <CrawlIcon name={boss ? "boss" : "ambush"} theme={theme} />
+            )}
             <span className="stake-pips">
               {Array.from({ length: hits }, (_, i) => (
                 <i key={i} className={i < party.hits ? "hit" : undefined} />
@@ -948,14 +981,16 @@ export function CatchPlaques({
 export function SendInPlaque({
   member,
   onSend,
+  quest,
 }: {
   member: CardDefinition;
   onSend: (id: string) => void;
+  quest?: QuestState;
 }) {
   return (
     <button
       className="card-choice-option loot-plaque send-plaque"
-      aria-label={`Go, ${member.title}! ${sendInDoes(member)}`}
+      aria-label={`Go, ${member.title}! ${sendInDoes(member, quest)}`}
       onClick={() => onSend(member.id)}
     >
       {member.type ? (
@@ -966,19 +1001,156 @@ export function SendInPlaque({
       <span className="offer-label">
         <span className="offer-name">Go, {member.title}!</span>
         <small className="offer-price">
-          +{assistBonus(member)} to the roll
+          +{assistBonus(member, quest)} to the roll
         </small>
       </span>
     </button>
   );
 }
 
+/** A cut the rival made on the card in play that the table can call off
+ * (Rivals Phase 2): pay them off with the newest item, or drink to keep an
+ * ally they are poaching or to kick them out of the inn. */
+export interface RivalCounter {
+  pay?: Loot;
+  drink?: "poach" | "squat";
+  run: () => void;
+}
+/** The counter for the card in play, if any. */
+export function rivalCounter(
+  session: SessionState,
+  onRival: (answer: "pay" | "drink") => void,
+): RivalCounter | undefined {
+  const cut = session.quest?.party?.rival?.cut;
+  if (session.phase !== "revealed" || !cut || cut === "redo") return undefined;
+  if (cut === "poach" || cut === "squat")
+    return { drink: cut, run: () => onRival("drink") };
+  const pay = payOffItem(session);
+  return pay ? { pay, run: () => onRival("pay") } : undefined;
+}
+const counterWords = (counter: RivalCounter, theme: CrawlTheme) =>
+  counter.pay
+    ? { name: "Pay off", does: `give ${theme.loot[counter.pay].name}` }
+    : {
+        name: `Drink ${RIVAL_DRINKS}`,
+        does: counter.drink === "poach" ? "keep your ally" : "kick them out",
+      };
+function RivalCounterPlaque({
+  counter,
+  theme,
+}: {
+  counter: RivalCounter;
+  theme: CrawlTheme;
+}) {
+  const words = counterWords(counter, theme);
+  return (
+    <button
+      className="card-choice-option loot-plaque rival-plaque"
+      aria-label={`${words.name}: ${words.does}`}
+      onClick={counter.run}
+    >
+      <CrawlIcon name={counter.pay ?? "ambush"} theme={theme} />
+      <span className="offer-label">
+        <span className="offer-name">{words.name}</span>
+        <small className="offer-price">{words.does}</small>
+      </span>
+    </button>
+  );
+}
+/** The rival holding the card in play (Rivals Phase 2): a won roll they
+ * make the table roll again ("Ugh, again", or pay them off), or an invoice
+ * to pay with a heart or an item before the card plays. */
+export function RivalPlaques({
+  session,
+  theme,
+  onRedo,
+  onRival,
+}: {
+  session: SessionState;
+  theme: CrawlTheme;
+  onRedo: () => void;
+  onRival: (answer: "pay" | "heart" | "item") => void;
+}) {
+  const party = session.quest!.party!;
+  if (awaitingInvoice(session)) {
+    const item = party.loot[party.loot.length - 1];
+    return (
+      <>
+        <button
+          className="card-choice-option offer-plaque offer-buy rival-heart"
+          aria-label="Pay a heart"
+          disabled={!canPayInvoice(session, "heart")}
+          onClick={() => onRival("heart")}
+        >
+          <span className="offer-goods" aria-hidden="true">
+            <CrawlIcon name="heart" theme={theme} />
+          </span>
+          <span className="offer-label">
+            <span className="offer-name">Pay a heart</span>
+          </span>
+        </button>
+        <button
+          className="card-choice-option offer-plaque offer-buy rival-item"
+          aria-label={
+            item ? `Pay an item: ${theme.loot[item].name}` : "Pay an item"
+          }
+          disabled={!canPayInvoice(session, "item")}
+          onClick={() => onRival("item")}
+        >
+          <span className="offer-goods" aria-hidden="true">
+            <CrawlIcon name={item ?? "ambush"} theme={theme} />
+          </span>
+          <span className="offer-label">
+            <span className="offer-name">Pay an item</span>
+            {item && (
+              <small className="offer-price">{theme.loot[item].name}</small>
+            )}
+          </span>
+        </button>
+      </>
+    );
+  }
+  const pay = payOffItem(session);
+  return (
+    <>
+      <button
+        className="card-choice-option offer-plaque offer-loud rival-redo"
+        aria-label="Ugh, again: roll it again. The new roll stands."
+        onClick={onRedo}
+      >
+        <span className="offer-goods" aria-hidden="true">
+          <CrawlIcon name="ambush" theme={theme} />
+        </span>
+        <span className="offer-label">
+          <span className="offer-name">Ugh, again</span>
+          <small className="offer-price">the new roll stands</small>
+        </span>
+      </button>
+      {pay && (
+        <button
+          className="card-choice-option offer-plaque offer-buy rival-pay"
+          aria-label={`Pay off: give ${theme.loot[pay].name} and keep the win`}
+          onClick={() => onRival("pay")}
+        >
+          <span className="offer-goods" aria-hidden="true">
+            <CrawlIcon name={pay} theme={theme} />
+          </span>
+          <span className="offer-label">
+            <span className="offer-name">Pay off</span>
+            <small className="offer-price">give {theme.loot[pay].name}</small>
+          </span>
+        </button>
+      )}
+    </>
+  );
+}
+
 /** What sending caught Pokémon `member` in does (2026-10-31): its bonus
  * joins the roll; it stays after a win and faints for good after a loss. */
-export const sendInDoes = (member: CardDefinition) =>
+export const sendInDoes = (member: CardDefinition, quest?: QuestState) =>
   member.ally
-    ? `+${assistBonus(member)} to this roll. Win and they stay; lose and they die.`
-    : `+${assistBonus(member)} to this roll. Win and it stays; lose and it faints.`;
+    ? `+${assistBonus(member, quest)} to this roll. Win and they stay; lose and they die.`
+    : `+${assistBonus(member, quest)} to this roll. Win and it stays; lose and it faints.`;
 /** An ally's mark, in the Quest's own art (The Quest 2.0 Phase 4). */
 function AllyMark() {
   return <CrawlIcon name="ally" theme={crawlTheme("dungeon")} />;
@@ -1004,11 +1176,16 @@ export function buildExtras(
     senders,
     onSpend,
     onSend,
+    quest,
+    counter,
   }: {
     items: readonly Loot[];
     senders: readonly CardDefinition[];
+    quest?: QuestState;
     onSpend?: (item: Loot) => void;
     onSend?: (id: string) => void;
+    /** Rivals Phase 2: a cut the table can call off on this card. */
+    counter?: RivalCounter;
   },
 ): Extra[] {
   const out: Extra[] = items.map((item) => ({
@@ -1032,7 +1209,7 @@ export function buildExtras(
       key: `send-${member.id}`,
       long: true,
       name: `Go, ${member.title}!`,
-      does: sendInDoes(member),
+      does: sendInDoes(member, quest),
       mark: member.type ? (
         <TypeMark type={member.type} />
       ) : member.ally ? (
@@ -1043,10 +1220,29 @@ export function buildExtras(
         <SendInPlaque
           key={`send-${member.id}`}
           member={member}
+          quest={quest}
           onSend={(id) => onSend?.(id)}
         />
       ),
     });
+  if (counter) {
+    const words = counterWords(counter, theme);
+    out.push({
+      key: "rival-counter",
+      long: false,
+      name: words.name,
+      does: words.does,
+      mark: <CrawlIcon name={counter.pay ?? "ambush"} theme={theme} />,
+      run: counter.run,
+      plaque: (
+        <RivalCounterPlaque
+          key="rival-counter"
+          counter={counter}
+          theme={theme}
+        />
+      ),
+    });
+  }
   return out;
 }
 
@@ -1343,15 +1539,18 @@ function RivalPanel({
       </p>
       {cut && (
         <p className="rival-cut">
-          <strong>{cut.kind === "meddle" ? "Meddling" : "Sniping"}:</strong>{" "}
-          {cut.line}
+          <strong>{cut.word}:</strong> {cut.line}
+          {cut.line !== cut.rule && <small> {cut.rule}</small>}
         </p>
       )}
       <h3 className="bag-heading">
         Holding <small>{rival.took.length}</small>
       </h3>
       {rival.took.length ? (
-        <ul className="bag-list rival-ledger" aria-label="What your rival holds">
+        <ul
+          className="bag-list rival-ledger"
+          aria-label="What your rival holds"
+        >
           {rival.took.map((item, i) => (
             <BagRow
               key={i}
@@ -1365,8 +1564,8 @@ function RivalPanel({
         <p className="bag-hint">Nothing of yours. Yet.</p>
       )}
       <p className="bag-hint">
-        Beaten {rival.won}, lost to {rival.lost}. A lost meeting hands them
-        what its card shows; a won one takes an item back.
+        Beaten {rival.won}, lost to {rival.lost}. A lost meeting hands them what
+        its card shows; a won one takes an item back.
       </p>
     </section>
   );
@@ -1708,9 +1907,9 @@ export function CrawlRecord({
                     badge={
                       <span
                         className="bag-bonus"
-                        aria-label={`+${assistBonus(m)} to the roll`}
+                        aria-label={`+${assistBonus(m, quest)} to the roll`}
                       >
-                        +{assistBonus(m)}
+                        +{assistBonus(m, quest)}
                       </span>
                     }
                     detail={

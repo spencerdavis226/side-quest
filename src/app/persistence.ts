@@ -5,6 +5,7 @@ import {
   currentCard,
   findCard,
   finaleCard,
+  RIVAL_VERBS,
   teamMember,
   formEffect,
   hitsNeeded,
@@ -19,13 +20,8 @@ import {
   rivalProfile,
   type Chronicle,
 } from "../game/engine";
-import type {
-  GameConfig,
-  Loot,
-  PartyState,
-  SessionState,
-} from "../game/types";
-import { LOOT } from "../game/types";
+import type { GameConfig, Loot, PartyState, SessionState } from "../game/types";
+import { LOOT, type RivalVerb } from "../game/types";
 import { IS_PREVIEW, KEY_PREFIX } from "./channel";
 export const SAVE_KEY = `${KEY_PREFIX}session.v1`;
 export const SETTINGS_KEY = `${KEY_PREFIX}settings.v1`;
@@ -305,7 +301,10 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
           p.boons.length)) ||
     (p.jinx !== undefined &&
       (typeof p.jinx !== "string" ||
-        !dealt.includes(p.jinx) ||
+        // Rivals Phase 2: a rival's curse may come from a card of theirs
+        // never dealt.
+        (!dealt.includes(p.jinx) &&
+          !finaleCard(s.quest!, p.jinx)?.rival?.curse) ||
         !finaleCard(s.quest!, p.jinx)?.jinx)) ||
     (p.press !== undefined &&
       (!whole(p.press, 1) ||
@@ -411,6 +410,9 @@ function badRival(s: SessionState, rival: NonNullable<PartyState["rival"]>) {
   const intro = rivalProfile(q)?.card;
   const cuts = rival.cuts;
   const news = rival.news;
+  // An ally's card of this run.
+  const ally = (id: unknown) =>
+    typeof id === "string" && !!finaleCard(q, id)?.ally;
   return (
     !intro ||
     !dealt.includes(intro.id) ||
@@ -419,19 +421,39 @@ function badRival(s: SessionState, rival: NonNullable<PartyState["rival"]>) {
     !whole(rival.lost) ||
     (rival.seen !== undefined && !whole(rival.seen)) ||
     (rival.cut !== undefined &&
-      ((rival.cut !== "meddle" && rival.cut !== "snipe") ||
+      (!RIVAL_VERBS.includes(rival.cut) ||
+        rival.cut === ("ambush" as string) ||
         s.phase === "complete")) ||
     (cuts !== undefined &&
       (!cuts ||
         typeof cuts !== "object" ||
         Object.entries(cuts).some(
-          ([k, n]) => !["ambush", "meddle", "snipe"].includes(k) || !whole(n),
+          ([k, n]) =>
+            !(RIVAL_VERBS.includes(k as RivalVerb) || k === "paid") ||
+            !whole(n),
         ))) ||
     (news !== undefined &&
       (!news ||
         typeof news !== "object" ||
         (news.took !== undefined && !items(news.took)) ||
-        (news.back !== undefined && !items(news.back))))
+        (news.back !== undefined && !items(news.back)) ||
+        (news.gone !== undefined && !items(news.gone)) ||
+        (news.poached !== undefined && !ally(news.poached)))) ||
+    // Rivals Phase 2: a Do-Over spent only on a card they cut in on; a
+    // count of Do-Overs; allies they poached; the duel's tricks played.
+    (rival.redone !== undefined &&
+      (rival.redone !== true || rival.cut !== "redo")) ||
+    (rival.redos !== undefined && !whole(rival.redos)) ||
+    (rival.poached !== undefined &&
+      (!Array.isArray(rival.poached) ||
+        rival.poached.length > 8 ||
+        !rival.poached.every(ally))) ||
+    (rival.arsenal !== undefined &&
+      (!rival.arsenal ||
+        typeof rival.arsenal !== "object" ||
+        Object.entries(rival.arsenal).some(
+          ([k, v]) => !["coin", "draught", "swung"].includes(k) || v !== true,
+        )))
   );
 }
 /** Whether a saved dragon battle is malformed or out of place. */

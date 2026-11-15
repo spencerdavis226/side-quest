@@ -6,7 +6,7 @@ import {
   useRef,
   useState,
 } from "react";
-import type { SessionState } from "../game/types";
+import type { RivalCut, SessionState } from "../game/types";
 import {
   fillNames,
   finaleCard,
@@ -31,6 +31,19 @@ const LandmarkMark = lazy(() => import("./LandmarkMark"));
  * Legendary, the Elite Four, the Champion; a crawl's floors and bosses):
  * shown while the stage's first card is dealt face down, once per stage. It never takes a tap; the card
  * underneath stays playable. */
+/** The cut-in banner's words for each way the rival turns up (Rivals
+ * Phase 2). */
+const CUT_INTRO: Record<RivalCut, string> = {
+  meddle: "is meddling",
+  snipe: "wants what this gives",
+  redo: "wants a do-over",
+  swipe: "has light fingers",
+  handoff: "is giving your things away",
+  poach: "is after your ally",
+  squat: "is in your bed",
+  invoice: "sends an invoice",
+  curse: "has a curse for you",
+};
 export function StageBanner({ session }: { session: SessionState }) {
   const banner = stageBanner(session);
   // A moment (a badge, the spoils) plays first; the sweep follows it.
@@ -115,11 +128,7 @@ function stageBanner(session: SessionState) {
       key: `rival:${session.discarded}`,
       stage: `rival:${session.discarded}`,
       mode: cut?.name ?? ambush!.name,
-      intro: cut
-        ? cut.kind === "meddle"
-          ? "is meddling"
-          : "wants what this gives"
-        : "is in your way",
+      intro: cut ? CUT_INTRO[cut.kind] : "is in your way",
       tone: "crimson" as const,
       art: undefined,
       wanted: cut ? cut.line : rivalLine(ambush!, "ambush"),
@@ -252,6 +261,24 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
         title: `gave back your ${names(news.back).join(" and ")}`,
         line: said("back", news.back),
         tone: "gold",
+      });
+    else if (news?.gone?.length)
+      setShown({
+        key: newsKey,
+        kicker: profile.name,
+        title: `${names(news.gone).join(" and ")}: gone for good`,
+        line: rivalLine(profile, "handoff") ?? "Nobody is getting that back.",
+        tone: "crimson",
+      });
+    else if (news?.poached)
+      setShown({
+        key: newsKey,
+        kicker: profile.name,
+        title: `took ${finaleCard(quest, news.poached)?.ally?.name ?? "your ally"}`,
+        line:
+          rivalLine(profile, "poach") ??
+          "Beat them in the duel to get them back.",
+        tone: "crimson",
       });
     else if (beat || lostTo) {
       const line = said(beat ? "beaten" : "lostTo");

@@ -23,6 +23,12 @@ import {
   takeOffer,
   takeSpoils,
   skipSpoils,
+  awaitingInvoice,
+  awaitingRedo,
+  kickOut,
+  payInvoice,
+  payOff,
+  redoRoll,
   type Random,
 } from "../game/engine";
 import type { Loot, SessionState } from "../game/types";
@@ -139,7 +145,9 @@ export class PresentationController {
     if (
       awaitingChoice(session) ||
       awaitingVerdict(session) ||
-      awaitingOffer(session)
+      awaitingOffer(session) ||
+      awaitingRedo(session) ||
+      awaitingInvoice(session)
     )
       return;
     if (
@@ -333,6 +341,36 @@ export class PresentationController {
     const { session, motion } = this.state;
     if (!session || motion) return;
     const next = sendIn(session, id, this.random);
+    if (next === session) return;
+    this.mark(session);
+    this.persist(next);
+    this.transition(next, null);
+    this.effect("press");
+  }
+  /** The rival's Do-Over (Rivals Phase 2): the won roll is wiped and the
+   * card waits to be rolled again. Like a roll, it clears undo: undo must
+   * never take back a Do-Over. */
+  redo() {
+    const { session, motion } = this.state;
+    if (!session || motion || !awaitingRedo(session)) return;
+    const next = redoRoll(session);
+    if (next === session) return;
+    this.mark(null);
+    this.persist(next);
+    this.transition(next, null);
+    this.effect("press");
+  }
+  /** Pay the rival off with the newest item, or drink to call off a poach
+   * or a squat, or pay their invoice: the card stays in play. */
+  rival(answer: "pay" | "drink" | "heart" | "item") {
+    const { session, motion } = this.state;
+    if (!session || motion) return;
+    const next =
+      answer === "pay"
+        ? payOff(session)
+        : answer === "drink"
+          ? kickOut(session)
+          : payInvoice(session, answer);
     if (next === session) return;
     this.mark(session);
     this.persist(next);

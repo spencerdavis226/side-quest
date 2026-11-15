@@ -18,6 +18,8 @@ import {
   awaitingChoice,
   awaitingOffer,
   awaitingPress,
+  awaitingInvoice,
+  awaitingRedo,
   awaitingSpoils,
   fellingSwing,
   fellingVerdict,
@@ -56,6 +58,8 @@ import {
   OfferPlaque,
   CatchPlaques,
   PressPlaques,
+  RivalPlaques,
+  rivalCounter,
   SpoilsButton,
   SpoilsSheet,
   usableItems,
@@ -115,6 +119,8 @@ export function Play({
   onKeepGear = () => {},
   onCashOut = () => {},
   onPress = () => {},
+  onRedo = () => {},
+  onRival = () => {},
   onRevealRoll,
   onFinish,
   renderFace,
@@ -137,6 +143,10 @@ export function Play({
   onKeepGear?: () => void;
   onCashOut?: () => void;
   onPress?: () => void;
+  /** Rivals Phase 2: the rival's Do-Over, and the table's answers to them
+   * (pay off, drink, or pay an invoice with a heart or an item). */
+  onRedo?: () => void;
+  onRival?: (answer: "pay" | "drink" | "heart" | "item") => void;
   onRevealRoll: () => void;
   onFinish: (id: number) => void;
   renderFace?: (card: CardDefinition) => ReactNode;
@@ -205,6 +215,10 @@ export function Play({
     (!fells || stamped === session.discarded);
   // A push-your-luck win: cash out or go again.
   const press = !motion && awaitingPress(session);
+  // Rivals Phase 2: a won roll the rival makes the table roll again, or
+  // their invoice, holds the card until it is answered.
+  const rivalHold =
+    !motion && (awaitingRedo(session) || awaitingInvoice(session));
   // The League's team (2026-10-25): a beaten wild Pokémon to catch, and
   // teammates who can be sent in for this battle.
   const catching = !motion && awaitingCatch(session);
@@ -293,7 +307,16 @@ export function Play({
   );
   // Items and send-ins: on the card's foot when a few short ones fit,
   // otherwise behind one "Use" plaque and its sheet.
-  const extraList = buildExtras(crawl, { items, senders, onSpend, onSend });
+  const counter =
+    motion || rivalHold ? undefined : rivalCounter(session, onRival);
+  const extraList = buildExtras(crawl, {
+    items,
+    senders,
+    onSpend,
+    onSend,
+    quest: session.quest,
+    counter,
+  });
   const layout = extrasLayout(extraList, !!verdict);
   const [using, setUsing] = useState<number | null>(null);
   const usingSheet = layout === "sheet" && using === session.discarded;
@@ -454,7 +477,7 @@ export function Play({
             : ""}
         </span>
         <div
-          className={`card-stage ${motion ?? ""} ${returning ? "boss-return" : ""} ${choice || verdict || offers || spoils || press || catching || acting || likelyFace || extraList.length > 0 ? "choosing" : ""}`}
+          className={`card-stage ${motion ?? ""} ${returning ? "boss-return" : ""} ${choice || verdict || offers || spoils || press || rivalHold || catching || acting || likelyFace || extraList.length > 0 ? "choosing" : ""}`}
         >
           <div className="deck-under" aria-hidden="true" />
           <button
@@ -472,6 +495,7 @@ export function Play({
                 offers ||
                 spoils ||
                 press ||
+                rivalHold ||
                 catching ||
                 blocked
               ) {
@@ -493,6 +517,7 @@ export function Play({
               !!offers ||
               !!spoils ||
               press ||
+              rivalHold ||
               catching ||
               blocked ||
               (!!motion && motion !== "roll") ||
@@ -514,28 +539,32 @@ export function Play({
                         ? `${card.title}. ${diceResultText(card, session.roll!)} Take a trinket: ${spoils.map((b) => b.name).join(", or ")}.`
                         : press
                           ? `${card.title}. ${diceResultText(card, session.roll!)} Cash out or go again.`
-                          : catching
-                            ? `${card.title}. Beaten. ${card.catchRate ? "Throw a ball, or let it go." : "Catch it, or let it go."}`
-                            : ball
-                              ? `${card.title}. Threw a ${ball.face}, needed ${ball.need}. ${ball.caught ? "Caught." : "It got away."} ${ball.line} Tap to put this card aside.`
-                              : blocked
-                                ? `${card.title}. ${card.rules} ${card.timer!.kind === "fuse" ? "Light the fuse" : "Start the clock"}, or skip it.`
-                                : actions.shown === "end"
-                                  ? `${card.title}. ${card.timer!.end} Tap to put this card aside.`
-                                  : card.dice && !session.roll?.returned
-                                    ? session.roll
-                                      ? motion === "roll"
-                                        ? "Finish dice roll"
-                                        : "Revealing dice result"
-                                      : `Roll ${diceNotation(card.dice)}. ${card.rules}`
-                                    : `${card.title}. ${session.roll?.returned ? `Rolled ${session.roll.total}. ${diceResultText(card, session.roll)}` : card.rules} ${cardPacks(
-                                        card.id,
-                                        session.config.packIds,
-                                      )
-                                        .map((pack) => pack.title)
-                                        .join(
-                                          ", ",
-                                        )}. Tap to put this card aside.`
+                          : rivalHold
+                            ? awaitingInvoice(session)
+                              ? `${card.title}. ${card.rules} Pay the invoice: a heart or an item.`
+                              : `${card.title}. ${diceResultText(card, session.roll!)} Your rival wants it rolled again.`
+                            : catching
+                              ? `${card.title}. Beaten. ${card.catchRate ? "Throw a ball, or let it go." : "Catch it, or let it go."}`
+                              : ball
+                                ? `${card.title}. Threw a ${ball.face}, needed ${ball.need}. ${ball.caught ? "Caught." : "It got away."} ${ball.line} Tap to put this card aside.`
+                                : blocked
+                                  ? `${card.title}. ${card.rules} ${card.timer!.kind === "fuse" ? "Light the fuse" : "Start the clock"}, or skip it.`
+                                  : actions.shown === "end"
+                                    ? `${card.title}. ${card.timer!.end} Tap to put this card aside.`
+                                    : card.dice && !session.roll?.returned
+                                      ? session.roll
+                                        ? motion === "roll"
+                                          ? "Finish dice roll"
+                                          : "Revealing dice result"
+                                        : `Roll ${diceNotation(card.dice)}. ${card.rules}`
+                                      : `${card.title}. ${session.roll?.returned ? `Rolled ${session.roll.total}. ${diceResultText(card, session.roll)}` : card.rules} ${cardPacks(
+                                          card.id,
+                                          session.config.packIds,
+                                        )
+                                          .map((pack) => pack.title)
+                                          .join(
+                                            ", ",
+                                          )}. Tap to put this card aside.`
             }
           >
             <span
@@ -733,11 +762,29 @@ export function Play({
               />
             </div>
           )}
+          {rivalHold && (
+            <div
+              ref={choiceRef}
+              className="card-choice offers press rival-hold plaques-2"
+              role="group"
+              aria-label={
+                awaitingInvoice(session) ? "Pay the invoice" : "Your rival"
+              }
+            >
+              <RivalPlaques
+                session={session}
+                onRedo={onRedo}
+                onRival={onRival}
+                theme={crawl}
+              />
+            </div>
+          )}
           {!verdict &&
             !choice &&
             !acting &&
             !spoils &&
             !press &&
+            !rivalHold &&
             !catching &&
             extraList.length > 0 && (
               <div

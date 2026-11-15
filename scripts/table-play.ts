@@ -30,6 +30,15 @@ import {
   spendLoot,
   takeOffer,
   takeSpoils,
+  awaitingInvoice,
+  awaitingRedo,
+  canKickOut,
+  canPayInvoice,
+  kickOut,
+  payInvoice,
+  payOff,
+  payOffItem,
+  redoRoll,
   type Random,
 } from "../src/game/engine";
 import { returnToCard, rollDice } from "../src/game/dice";
@@ -49,6 +58,19 @@ export function nextMove(s: SessionState, random: Random): SessionState {
   const party = s.quest?.party;
   let next: SessionState;
   if (s.phase === "hidden") next = advance(s, random);
+  // The rival (Rivals Phase 2): a Do-Over taken or paid off, an invoice
+  // paid either way, and now and then a cut called off.
+  else if (awaitingRedo(s))
+    next = payOffItem(s) && random() < 0.3 ? payOff(s) : redoRoll(s);
+  else if (awaitingInvoice(s))
+    next = payInvoice(
+      s,
+      canPayInvoice(s, "item") && (!canPayInvoice(s, "heart") || random() < 0.5)
+        ? "item"
+        : "heart",
+    );
+  else if (canKickOut(s) && random() < 0.5) next = kickOut(s);
+  else if (payOffItem(s) && random() < 0.2) next = payOff(s);
   else if (party && party.hearts <= 3 && can("draught"))
     next = spendLoot(s, "draught", random);
   else if (can("candy")) next = spendLoot(s, "candy", random);

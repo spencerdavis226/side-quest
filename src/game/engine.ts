@@ -13,7 +13,7 @@ import { awaitingCatch } from "./crawl/team";
 import { awaitingVerdict, discard } from "./crawl/discard";
 import { withNames, withSecret } from "./crawl/names";
 import { atRound, roundOf } from "./crawl/lair";
-import { withRival } from "./crawl/rival";
+import { awaitingInvoice, awaitingRedo, withRival } from "./crawl/rival";
 // The engine's public entry (Quest 2.0 Phase 0, 2026-11-13): the crawl's
 // pieces live in `./crawl/` and are re-exported here, so every import of
 // `engine` keeps working. Modules outside `src/game` import from here only.
@@ -110,7 +110,22 @@ export {
 export { DRAGON, LAIR, fillNames, runNames } from "./crawl/names";
 export {
   RIVAL_CAP,
+  RIVAL_DRINKS,
   RIVAL_GAP,
+  RIVAL_MERCY,
+  RIVAL_RATE,
+  RIVAL_TOTAL,
+  RIVAL_VERBS,
+  awaitingInvoice,
+  awaitingRedo,
+  canKickOut,
+  canPayInvoice,
+  kickOut,
+  payInvoice,
+  payOff,
+  payOffItem,
+  redoRoll,
+  rivalArsenal,
   rivalCut,
   rivalLine,
   rivalProfile,
@@ -381,6 +396,8 @@ export function advance(
   if (awaitingSpoils(s)) return s;
   if (awaitingPress(s)) return s;
   if (awaitingCatch(s)) return s;
+  // Rivals Phase 2: a Do-Over or an invoice waits for the table.
+  if (awaitingRedo(s) || awaitingInvoice(s)) return s;
   return discard(s, random);
 }
 /** Finale cards are dealt between deck cards and take no deck position. */

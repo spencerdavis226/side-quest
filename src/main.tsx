@@ -377,6 +377,8 @@ function App() {
               onKeepGear={() => controller.keepGear()}
               onCashOut={() => controller.cashOut()}
               onPress={() => controller.press()}
+              onRedo={() => controller.redo()}
+              onRival={(answer) => controller.rival(answer)}
               onRevealRoll={() => controller.revealRoll()}
               onFinish={finish}
             />

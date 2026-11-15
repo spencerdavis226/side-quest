@@ -18,7 +18,20 @@ import {
   type Slot,
 } from "../game/types";
 
-/** The keys a rival's `lines` may hold: the news lines and every verb. */
+/** A rival's verbs (`RivalVerb`), and the keys their `lines` may hold:
+ * the news lines and every verb. */
+const RIVAL_VERBS = [
+  "ambush",
+  "meddle",
+  "snipe",
+  "redo",
+  "swipe",
+  "handoff",
+  "poach",
+  "squat",
+  "invoice",
+  "curse",
+];
 const RIVAL_LINES = [
   "took",
   "back",
@@ -318,17 +331,20 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         (r.returns !== undefined &&
           r.returns !== "all" &&
           !count(r.returns, 3)) ||
+        (r.curse !== undefined && (r.curse !== true || !c.jinx)) ||
         (r.profile !== undefined &&
           (!r.profile ||
             !line(r.profile.name, 22) ||
             !line(r.profile.ritual, 110) ||
             !rivalLines(r.profile) ||
             !r.profile.style ||
-            (["ambush", "meddle", "snipe"] as const).some(
-              (k) =>
-                !Number.isSafeInteger(r.profile!.style[k]) ||
-                r.profile!.style[k] < 0 ||
-                r.profile!.style[k] > 9,
+            typeof r.profile.style !== "object" ||
+            Object.entries(r.profile.style).some(
+              ([k, n]) =>
+                !RIVAL_VERBS.includes(k) ||
+                !Number.isSafeInteger(n) ||
+                n! < 0 ||
+                n! > 9,
             ) ||
             !r.profile.verse ||
             !line(r.profile.verse.beaten, 44) ||
@@ -341,6 +357,8 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
       c.ally?.turncoat !== undefined &&
       (c.ally.turncoat !== true || !c.rival)
     )
+      fail(`Invalid ally: ${c.id}`);
+    if (c.ally?.grudge !== undefined && (c.ally.grudge !== true || !c.rival))
       fail(`Invalid ally: ${c.id}`);
     if (c.offers?.some((o) => o?.restore !== undefined && o.restore !== true))
       fail(`Invalid offers: ${c.id}`);

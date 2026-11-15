@@ -27,6 +27,16 @@ import {
   canSendIn,
   partyTeam,
   sendIn,
+  awaitingInvoice,
+  awaitingRedo,
+  canKickOut,
+  canPayInvoice,
+  isBossCard,
+  kickOut,
+  payInvoice,
+  payOff,
+  payOffItem,
+  redoRoll,
 } from "../src/game/engine";
 import { returnToCard, rollDice, rollTarget, rollWins } from "../src/game/dice";
 import { parseSession } from "../src/app/persistence";
@@ -105,12 +115,35 @@ function playRun(seed: number, adventurer?: string, heroic = false) {
     random,
   );
   if (adventurer) s = deal(s, `dungeon.class-${adventurer}`);
+  // For tuning: QUEST_RIVAL=tutt plays every run against one rival.
+  if (FORCED_RIVAL) {
+    const finale = [...s.quest!.finale];
+    const at = finale.findIndex((id) => /^dungeon\.rival-[a-z]+$/.test(id));
+    if (at >= 0) finale[at] = `dungeon.rival-${FORCED_RIVAL}`;
+    s = { ...s, quest: { ...s.quest!, finale } };
+  }
   const use = (item: Loot) => {
     if (canUseLoot(s, item)) s = spendLoot(s, item, random);
   };
   const joke = () => JOKE_CLASSES.includes(party(s).omen ?? "");
   for (let guard = 0; guard < 500 && s.phase !== "complete"; guard++) {
     s = advance(s, random);
+    // The rival (Rivals Phase 2): an invoice is paid with an item above 6
+    // hearts, else a heart; a poach is always called off with drinks; a
+    // squatter kicked out when hurt.
+    if (awaitingInvoice(s))
+      s = payInvoice(
+        s,
+        (party(s).hearts > 6 && canPayInvoice(s, "item")) ||
+          !canPayInvoice(s, "heart")
+          ? "item"
+          : "heart",
+      );
+    if (
+      canKickOut(s) &&
+      (party(s).rival?.cut === "poach" || party(s).max - party(s).hearts >= 2)
+    )
+      s = kickOut(s);
     const card = currentCard(s);
     if (!adventurer && !heroic && card.lairFight && !atDragon.has(seed))
       atDragon.set(seed, {
@@ -227,6 +260,13 @@ function playRun(seed: number, adventurer?: string, heroic = false) {
     if (card.dice) {
       if (!s.roll) s = rollDice(s, random);
       s = returnToCard(s);
+      // A Do-Over: paid off at 6 hearts or fewer on a boss's swing,
+      // otherwise rolled again (the new roll stands).
+      while (awaitingRedo(s)) {
+        if (party(s).hearts <= 6 && isBossCard(card) && payOffItem(s))
+          s = payOff(s);
+        else s = returnToCard(rollDice(redoRoll(s), random));
+      }
       // The Quest 2.1: how often a swing at the dragon lands.
       if (!adventurer && !heroic && card.lairFight && card.dice.sides === 20) {
         lairSwings.all++;
@@ -264,6 +304,8 @@ function playRun(seed: number, adventurer?: string, heroic = false) {
 const lairSwings = { all: 0, hit: 0 };
 // For tuning: QUEST_RUNS=1000 plays fewer runs (the bands then wobble).
 const RUNS = Number(process.env.QUEST_RUNS ?? 4000);
+// For tuning: QUEST_RIVAL=<who> sets every run's rival.
+const FORCED_RIVAL = process.env.QUEST_RIVAL;
 // For tuning: QUEST_JOKES=3000 reads the joke classes' thin rates closer.
 const JOKE_RUNS = Number(process.env.QUEST_JOKES ?? 600);
 // The tests below read thousands of runs; beside the other harness in a
@@ -384,11 +426,12 @@ it("the dragon battle is the run's last hard fight, never a wall", () => {
   }
 });
 
-it("every rival is a nuisance, none a wall (2026-11-15)", () => {
-  // Runs that met a rival, by who: each within the crawl's own band, and
-  // each turning up between three and seven times a run that reaches the
-  // door (their introduction, the crossroads, the door and what came
-  // uninvited between).
+it("every rival is a nuisance, none a wall (Rivals Phase 2)", () => {
+  // Runs that met a rival, by who: each within the crawl's band and within
+  // 12 points of each other; between 3 and 6 uninvited appearances and 0.5
+  // to 2 Do-Overs a run that reaches the door; 1 to 3 items still theirs
+  // at the end of a run whose ledger was never settled; joined and refused
+  // runs both between 15% and 45%.
   const met = runs.filter((s) => party(s).rival);
   const who = by((s) => party(s).rival?.who ?? "none").filter(
     ([n]) => n !== "none",
@@ -396,29 +439,66 @@ it("every rival is a nuisance, none a wall (2026-11-15)", () => {
   const mean = (f: (s: SessionState) => number, of: SessionState[]) =>
     of.map(f).reduce((a, b) => a + b, 0) / Math.max(1, of.length);
   const uninvited = (s: SessionState) =>
-    Object.values(party(s).rival?.cuts ?? {}).reduce((a, b) => a + b, 0);
+    Object.entries(party(s).rival?.cuts ?? {})
+      .filter(([k]) => k !== "paid")
+      .reduce((a, [, b]) => a + b!, 0);
   const far = met.filter((s) =>
     (party(s).deeds ?? []).some((d) =>
       ["rival-joined", "rival-refused", "rival-skipped"].includes(d),
     ),
   );
+  const has = (s: SessionState, deed: string) =>
+    !!party(s).deeds?.includes(deed);
   const ended = (deed: string) =>
-    far.filter((s) => party(s).deeds!.includes(deed)).length / far.length;
+    far.filter((s) => has(s, deed)).length / far.length;
+  const joined = far.filter((s) => has(s, "rival-joined"));
+  const refused = far.filter((s) => has(s, "rival-refused"));
+  const duelWon = refused.filter((s) => has(s, "rival-beaten"));
+  // Runs whose ledger was never settled at the door: not beaten in the
+  // duel, not fled with it (their Smoke Bomb), and not handed back by
+  // Lady Fingerbang to join.
+  const notWon = far.filter(
+    (s) =>
+      !has(s, "rival-beaten") &&
+      !has(s, "rival-fled") &&
+      !(party(s).rival!.who === "mirabel" && has(s, "rival-joined")),
+  );
+  const kinds = new Map<string, number>();
+  for (const s of far)
+    for (const [k, n] of Object.entries(party(s).rival?.cuts ?? {}))
+      kinds.set(k, (kinds.get(k) ?? 0) + n!);
+  const holding = mean((s) => party(s).rival!.took.length, notWon);
+  const redos = mean((s) => party(s).rival!.redos ?? 0, far);
   console.log(
     `rivals: ${who.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}; ` +
       `${pct(met.length / RUNS)} of runs meet one, ${pct(far.length / RUNS)} reach the door ` +
-      `(joined ${pct(ended("rival-joined"))}, duelled ${pct(ended("rival-refused"))}, skipped ${pct(ended("rival-skipped"))}); ` +
-      `uninvited ${mean(uninvited, far).toFixed(1)} times a run that got there; ` +
+      `(joined ${pct(ended("rival-joined"))}, duelled ${pct(ended("rival-refused"))}, skipped ${pct(ended("rival-skipped"))}, fled ${pct(ended("rival-fled"))}); ` +
+      `uninvited ${mean(uninvited, far).toFixed(1)} times a run that got there ` +
+      `(${[...kinds].map(([k, n]) => `${k} ${(n / far.length).toFixed(2)}`).join(", ")}); ` +
+      `Do-Overs ${redos.toFixed(2)}; ` +
       `confrontations won ${mean((s) => party(s).rival!.won, far).toFixed(1)}, lost ${mean((s) => party(s).rival!.lost, far).toFixed(1)}; ` +
-      `still holding ${mean((s) => party(s).rival!.took.length, far).toFixed(1)} items at the end`,
+      `holding ${holding.toFixed(1)} items at the end (ledger never settled); ` +
+      `won: joined ${pct(rate(joined))}, refused ${pct(rate(refused))}, duel won ${pct(rate(duelWon))}`,
   );
   expect(who).toHaveLength(3);
   for (const [name, r] of who) {
     expect(r, name).toBeGreaterThan(0.1);
     expect(r, name).toBeLessThan(0.5);
   }
-  expect(mean(uninvited, far)).toBeGreaterThan(1.5);
-  expect(mean(uninvited, far)).toBeLessThan(5);
+  const rates = who.map(([, r]) => r);
+  expect(Math.max(...rates) - Math.min(...rates)).toBeLessThan(0.12);
+  expect(mean(uninvited, far)).toBeGreaterThan(3);
+  expect(mean(uninvited, far)).toBeLessThan(6);
+  expect(redos).toBeGreaterThan(0.5);
+  expect(redos).toBeLessThan(2);
+  expect(holding).toBeGreaterThan(1);
+  expect(holding).toBeLessThan(3);
+  for (const group of [joined, refused]) {
+    expect(rate(group)).toBeGreaterThan(0.15);
+    expect(rate(group)).toBeLessThan(0.45);
+  }
+  // That joined runs win less than a duel won is Phase 4's door (its
+  // stakes for refusing), not checked here.
 });
 
 it("no road is the easy one (The Quest 2.0 Phase 5)", () => {

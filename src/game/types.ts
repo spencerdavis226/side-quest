@@ -231,6 +231,9 @@ export interface CardDefinition {
      * she leaves with the whole satchel (it goes back on the rival's
      * ledger) in place of dying, and she never makes the last stand. */
     turncoat?: true;
+    /** The rival, joined (Rivals Phase 2): one more to the bonus for each
+     * meeting the party lost to them, up to 2. */
+    grudge?: true;
   };
   /** The rival (2026-11-15): a card of the run's rival. See `RivalCard`. */
   rival?: RivalCard;
@@ -257,6 +260,9 @@ export interface RivalCard {
   /** Items the rival hands back, oldest first, when the battle is won (a
    * fight of several swings: when it falls); `all` is everything. */
   returns?: number | "all";
+  /** Rivals Phase 2: this card's `jinx` is the one the rival lays when
+   * they curse a card (`cut: "curse"`). */
+  curse?: true;
 }
 export interface RivalProfile {
   name: string;
@@ -270,8 +276,8 @@ export interface RivalProfile {
    * gives. Old snapshots only. */
   meddle?: string;
   snipe?: string;
-  /** How often each uninvited appearance comes, as weights. */
-  style: { ambush: number; meddle: number; snipe: number };
+  /** How often each uninvited appearance comes, as weights (0 to 9). */
+  style: Partial<Record<RivalVerb, number>>;
   /** The ballad's third line, by how it ended (at most 44 characters). */
   verse: { joined?: string; beaten: string; ahead: string };
 }
@@ -288,6 +294,9 @@ export type RivalVerb =
   | "squat"
   | "invoice"
   | "curse";
+/** How the rival cuts in on the card in play (an ambush replaces it
+ * instead). */
+export type RivalCut = Exclude<RivalVerb, "ambush">;
 /** A rival's lines (at most 80 characters each); `{item}` names the
  * satchel items in play. */
 export type RivalLines = Partial<Record<RivalVerb, string>> & {
@@ -713,10 +722,26 @@ export interface PartyState {
     took: Loot[];
     won: number;
     lost: number;
-    cut?: "meddle" | "snipe";
-    cuts?: { ambush?: number; meddle?: number; snipe?: number };
+    cut?: RivalCut;
+    /** Uninvited appearances of each kind, and the cuts the party paid
+     * off (`paid`, Rivals Phase 2). */
+    cuts?: Partial<Record<RivalVerb | "paid", number>>;
     seen?: number;
-    news?: { took?: Loot[]; back?: Loot[] };
+    /** What changed hands on the card just put aside: taken onto their
+     * ledger, handed back, given away for good (a hand-off, or what they
+     * fled with), and an ally they poached (its card ID). */
+    news?: { took?: Loot[]; back?: Loot[]; gone?: Loot[]; poached?: string };
+    /** Rivals Phase 2: the Do-Over spent on the card in play (the roll
+     * after it stands). */
+    redone?: true;
+    /** Do-Overs made, all run. */
+    redos?: number;
+    /** Allies they poached, by card ID. */
+    poached?: string[];
+    /** The duel's tricks already played: their Lucky Coin's Do-Over, their
+     * potion's heal, and whether the first swing has been swung (their
+     * Smoke Bomb works only on it). */
+    arsenal?: { coin?: true; draught?: true; swung?: true };
   };
   /** The Quest 2.1: a coin just flipped off a card (2 heads, 1 tails): a
    * Lucky Coin (`luck`: heads gives this card's reroll the edge) or a road
