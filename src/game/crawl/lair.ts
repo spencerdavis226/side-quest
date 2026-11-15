@@ -104,7 +104,12 @@ export function nextDuel(
   const need = hitsNeeded(quest, card);
   // Heroic mode (The Quest 2.0 Phase 7): enraged from the first round, so
   // there is no contest.
-  const enraged = !!quest.heroic || !!before?.enraged || !!before?.contest;
+  // Rivals Phase 4: a rival who went into the lair first woke it angry.
+  const enraged =
+    !!quest.heroic ||
+    !!quest.party?.deeds?.includes("rival-went-first") ||
+    !!before?.enraged ||
+    !!before?.contest;
   const swings = before ? before.swings + (before.contest ? 0 : 1) : 0;
   const prev = before ? roundOf(before) : undefined;
   if (!enraged && hits >= Math.ceil(need / 2))

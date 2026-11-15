@@ -167,6 +167,11 @@ const bradley = rival(
       redo: "'Champ, that didn't count. Again.' Roll it again; the new roll stands.",
     },
     style: { ambush: 1, redo: 4, snipe: 6 },
+    // Rivals Phase 4: on the team when the dragon falls, he slew it.
+    credit: {
+      line: "and Sir Chad slew {dragon}. Allegedly.",
+      short: "and Sir Chad slew it. Allegedly.",
+    },
     verse: {
       joined: "with Sir Chad taking all the credit,",
       beaten: "left Sir Chad crying in a ditch,",
@@ -265,10 +270,14 @@ const mirabel = rival(
       swipe:
         "Lady Fingerbang was here. Check your pockets. Your newest item is gone.",
       poach: "Lady Fingerbang winks at your ally. Your ally winks back.",
+      turned:
+        "Lady Fingerbang turns on you. Everyone who voted to take her drinks 3.",
       snipe:
         "Whatever this gives is already down Lady Fingerbang's top. 'Mine.'",
     },
     style: { swipe: 4, ambush: 3, snipe: 2, poach: 1 },
+    // Rivals Phase 4: the more she was beaten, the likelier she turns.
+    betray: { base: 0.25, perWin: 0.15, does: "satchel" },
     verse: {
       joined: "with Fingerbang's hand in their pocket,",
       beaten: "took it all back from Fingerbang,",
@@ -374,6 +383,8 @@ const tutt = rival(
     verse: {
       beaten: "passed Sensei Saggynuts' final exam,",
       ahead: "to Sensei Saggynuts' lasting shame,",
+      saved: "and carried Sensei home at last,",
+      left: "and left Sensei to the dragon,",
     },
   },
   {
@@ -658,8 +669,35 @@ const queef = rival(
       snipe: "Dame Queefington sings for whatever this gives. It's hers now.",
       meddle:
         "Dame Queefington plays during your swing. Roll twice, keep the worse.",
+      turned:
+        "Dame Queefington sings for the dragon now. Everyone who voted yes drinks 3.",
     },
     style: { curse: 5, snipe: 2, meddle: 2 },
+    betray: { base: 0.2, perWin: 0.1, does: "song" },
+    // Rivals Phase 4: she writes the ballad, kindly or not.
+    ballad: {
+      kind: {
+        lines: [
+          "Hear now of heroes, bold and true,",
+          "who crossed the realm with swords held high,",
+          "with Dame Queefington to light the way,",
+          "and every foe they met, they slew,",
+        ],
+        won: "and slew the dragon. Bravo. Encore.",
+        lost: "and fell, but oh, how well they fell.",
+      },
+      vicious: {
+        lines: [
+          "Here's a song of fools who tried,",
+          "who tripped through every dungeon door,",
+          "who wouldn't hire a better bard,",
+          "and blamed the dice for all of it,",
+        ],
+        won: "and won, somehow. Nobody knows how.",
+        lost: "and died. The end. Applause, please.",
+      },
+      sign: "signed, Dame Queefington",
+    },
     verse: {
       joined: "sung well by Dame Queefington,",
       beaten: "silenced Dame Queefington's lute,",
@@ -732,9 +770,36 @@ const queef = rival(
 );
 
 export const rivals: Rival[] = [bradley, mirabel, tutt, chuck, gary, queef];
+
+/** Rivals Phase 4: Sensei beaten twice (the deed `rival-won-twice`) is pinned
+ * under the dragon's claw at the door instead of setting his exam. Saved
+ * (a heart), he joins for one swing at the dragon, then dies. */
+export const senseiPinned: CardDefinition = {
+  ...card(
+    "rival-tutt-pinned",
+    "Pinned!",
+    "group",
+    "Sensei Saggynuts, pinned under a claw: 'I was wrong about you.' Save him, or leave him.",
+  ),
+  ribbon: "The Lair's Door · Rival",
+  ribbonTone: "crimson",
+  encounter: "shrine",
+  offers: [
+    { label: "Save him", cost: 1, recruit: true, deed: "rival-saved" },
+    { label: "Leave him", deed: "rival-abandoned" },
+  ],
+  ally: {
+    name: "Sensei Saggynuts",
+    calling: ["boss"],
+    bonus: 4,
+    once: true,
+    ritual: "Everyone bows when Sensei swings.",
+  },
+  rival: { who: "tutt" },
+};
 export const rivalIntros = rivals.map((r) => r.intro);
 export const rivalFights = rivals.flatMap((r) => r.fights);
-export const rivalPleas = rivals.map((r) => r.plea);
+export const rivalPleas = [...rivals.map((r) => r.plea), senseiPinned];
 export const rivalDuels = rivals.map((r) => r.duel);
 export const rivalCards: CardDefinition[] = [
   ...rivalIntros,

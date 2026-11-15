@@ -47,6 +47,12 @@ export const RIVAL_CAP: Record<RivalVerb, number> = {
 };
 /** Uninvited appearances of every kind together in one run, at most. */
 export const RIVAL_TOTAL = 7;
+/** Swings lost in the rival's duel before they go into the lair first
+ * (Rivals Phase 4). */
+export const DUEL_LOSSES = 2;
+/** Hearts a party needs before a joined rival turns on it (Rivals Phase
+ * 4): they wait for the dramatic moment, never the last heart. */
+export const BETRAY_HEARTS = 3;
 /** Drinks that keep a poached ally or kick a squatter out. */
 export const RIVAL_DRINKS = 4;
 export const RIVAL_VERBS = Object.keys(RIVAL_CAP) as RivalVerb[];
@@ -272,6 +278,8 @@ export function settleRival(
     // A fight of several swings is settled when it falls (`rivalFalls`).
     if (fight && !card.hits && outcome === "won") {
       rival.won += 1;
+      // Rivals Phase 4: beaten twice, Sensei is pinned at the door.
+      if (rival.won === 2) next = addDeed(next, "rival-won-twice");
       if (mine.returns) {
         const given = handBack(next, rival, quest, mine.returns);
         ({ party: next, rival, back } = given);
@@ -370,11 +378,35 @@ export function duelTricks(
   quest: QuestState,
   outcome: Outcome | null,
   landed: number,
-): { party: PartyState; landed: number; fled: boolean } {
+): { party: PartyState; landed: number; fled: boolean; first?: true } {
   const tricks = rivalArsenal({ ...quest, party }, card);
   const rival = party.rival;
   if (!tricks || !rival) return { party, landed, fled: false };
   const arsenal = { ...rival.arsenal, swung: true as const };
+  // Rivals Phase 4: two lost swings and they go into the lair first: the
+  // ledger is gone for good, and the dragon starts a scale down.
+  const duelLost = (rival.duelLost ?? 0) + (outcome === "lost" ? 1 : 0);
+  if (outcome === "lost" && !tricks.smoke && duelLost >= DUEL_LOSSES) {
+    const gone = rival.took;
+    const next = addDeed(
+      {
+        ...party,
+        rival: {
+          ...rival,
+          took: [],
+          arsenal,
+          duelLost,
+          news: {
+            ...rival.news,
+            ...(gone.length ? { gone } : {}),
+            first: true,
+          },
+        },
+      },
+      "rival-went-first",
+    );
+    return { party: next, landed: 0, fled: true, first: true };
+  }
   if (tricks.smoke && outcome === "lost") {
     const gone = rival.took;
     const next = addDeed(
@@ -396,7 +428,10 @@ export function duelTricks(
     landed -= 1;
   }
   return {
-    party: { ...party, rival: { ...rival, arsenal } },
+    party: {
+      ...party,
+      rival: { ...rival, arsenal, ...(duelLost ? { duelLost } : {}) },
+    },
     landed,
     fled: false,
   };
@@ -677,3 +712,74 @@ export function hush(s: SessionState): SessionState {
  * at least 1 and at most 6. Spoken; nothing is counted. */
 export const settleDrinks = (quest: QuestState | undefined) =>
   Math.min(6, Math.max(1, quest?.party?.rival?.took.length ?? 0));
+
+/** Rivals Phase 4: a rival joined at the door may turn on the party. The
+ * round they turn on is decided once, as they join (`turnsAt`, a dragon
+ * swing 0 to 2), with the chance `base + perWin × meetings won`: the more
+ * they were beaten, the more they hate you. */
+export function decideBetrayal(
+  party: PartyState,
+  quest: QuestState,
+  random: Random,
+): PartyState {
+  const rival = party.rival;
+  const betray = rivalProfile({ ...quest, party })?.profile.betray;
+  if (!rival || !betray) return party;
+  if (random() >= betray.base + betray.perWin * rival.won) return party;
+  return {
+    ...party,
+    rival: { ...rival, turnsAt: Math.floor(random() * 3) },
+  };
+}
+/** The dragon's round just dealt, as a joined rival sees it: on their
+ * round (or the first after it with `BETRAY_HEARTS` hearts or more, never
+ * a contest), they turn. Lady Fingerbang walks off with the satchel; Dame
+ * Queefington sings the dragon's song, so this round's swing is 2 harder.
+ * Either way they leave the team. */
+export function betrayal(party: PartyState, quest: QuestState): PartyState {
+  const rival = party.rival;
+  const duel = party.duel;
+  if (
+    !rival ||
+    !duel ||
+    rival.turnsAt === undefined ||
+    rival.turned ||
+    duel.contest ||
+    duel.swings < rival.turnsAt ||
+    party.hearts < BETRAY_HEARTS
+  )
+    return party;
+  const id = (party.team ?? []).find(
+    (m) => finaleCard(quest, m)?.rival?.who === rival.who,
+  );
+  const betray = rivalProfile({ ...quest, party })?.profile.betray;
+  if (!id || !betray) return party;
+  let next: PartyState = betray.does === "satchel" ? turnCoat(party) : party;
+  const team = (next.team ?? []).filter((m) => m !== id);
+  next = {
+    ...next,
+    team,
+    ...(betray.does === "song"
+      ? { duel: { ...duel, sung: true as const } }
+      : {}),
+    rival: {
+      ...next.rival!,
+      turned: true,
+      news: { ...next.rival!.news, turned: true },
+    },
+  };
+  if (!team.length) delete next.team;
+  return addDeed(next, "rival-turned");
+}
+/** Rivals Phase 4 (Sensei, saved): an ally that lives for one swing at the
+ * dragon dies after it, sent in or not. */
+export function spendOnce(party: PartyState, quest: QuestState): PartyState {
+  const gone = (party.team ?? []).filter(
+    (m) => finaleCard(quest, m)?.ally?.once,
+  );
+  if (!gone.length) return party;
+  const team = party.team!.filter((m) => !gone.includes(m));
+  const next: PartyState = { ...party, team };
+  if (!team.length) delete next.team;
+  return addDeed(next, "ally-fell");
+}

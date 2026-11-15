@@ -1,7 +1,7 @@
 import type { SessionState } from "./types";
 import { previousCard } from "./engine";
 import { omenForm } from "./crawl/party";
-import { questRecord } from "./crawl/stages";
+import { finaleCard, questRecord } from "./crawl/stages";
 import { natural } from "./crawl/discard";
 import { runNames } from "./crawl/names";
 import { rivalProfile } from "./crawl/rival";
@@ -77,22 +77,47 @@ export function ballad(s: SessionState): string[] {
   // 3. Who went with them. Allies and deeds come later; until then the
   // Company of one.
   // The rival (2026-11-15) has the line when the run had one.
-  const verse = rivalProfile(q)?.profile.verse;
+  const profile = rivalProfile(q)?.profile;
+  const verse = profile?.verse;
   const deeds = party.deeds ?? [];
+  const joined =
+    deeds.includes("rival-joined") && !deeds.includes("rival-turned");
+  // Rivals Phase 4: Dame Queefington writes the whole ballad, kindly if
+  // she was taken in or beaten in her duel, viciously otherwise.
+  if (profile?.ballad) {
+    const set =
+      joined || deeds.includes("rival-beaten")
+        ? profile.ballad.kind
+        : profile.ballad.vicious;
+    return [...set.lines, record.won ? set.won : set.lost, profile.ballad.sign];
+  }
   lines.push(
     !verse
       ? "alone, as heroes go,"
-      : deeds.includes("rival-joined") &&
-          !deeds.includes("rival-turned") &&
-          verse.joined
-        ? verse.joined
-        : deeds.includes("rival-beaten")
-          ? verse.beaten
-          : verse.ahead,
+      : deeds.includes("rival-saved") && verse.saved
+        ? verse.saved
+        : deeds.includes("rival-abandoned") && verse.left
+          ? verse.left
+          : joined && verse.joined
+            ? verse.joined
+            : deeds.includes("rival-beaten")
+              ? verse.beaten
+              : verse.ahead,
   );
 
-  // 4. The end.
-  if (record.won) {
+  // 4. The end. Rivals Phase 4: Sir Chad, on the team to the end, takes
+  // the credit.
+  const credit =
+    joined &&
+    profile?.credit &&
+    (party.team ?? []).some(
+      (id) => finaleCard(q, id)?.rival?.who === q.party!.rival?.who,
+    )
+      ? profile.credit
+      : undefined;
+  if (record.won && credit)
+    lines.push(fit(credit.line.replace("{dragon}", dragon), credit.short));
+  else if (record.won) {
     const last = previousCard(s);
     const blow = last ? natural(last, s.previousRoll) === 20 : false;
     const fool = BALLAD_FOOLS.includes(party.omen ?? "");

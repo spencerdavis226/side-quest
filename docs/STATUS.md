@@ -2,9 +2,25 @@
 
 Updated 2026-11-15. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Next task (2026-11-15): the Rivals, Phase 4 (betrayal and the door as a real choice)
+## Next task (2026-11-15): the Rivals, Phase 5 (presentation)
 
-Build Phase 4 of `docs/RIVALS_PLAN.md`: the betrayal roll at join (Lady Fingerbang, Dame Queefington), Sir Chad's credit, Sensei pinned (`rival-won-2`), Dame Queefington's ballad sets, the refusal's stakes (a lost duel means they go in first), and the check that joined runs win less than a duel won (Phase 2 measured joined 40%, duel won 41%; Phase 3 joined 45%, duel won 40%: today the join is the better bet). Phase 8 of The Quest 2.0 (the owner's table) still waits on the owner.
+Build Phase 5 of `docs/RIVALS_PLAN.md`: a medallion and colour per rival (`profile.mark`, `profile.colour`, emblems through `scripts/quest-art.ts`, lazy chunks only), the moments (`rival-enter`, `rival-takes`, `rival-gives`, `redo`, `betrayal`, `chad-credit`), the rival's token on the map, the end screen's Nemesis panel, and every new moment in `?moments=1`. Phase 8 of The Quest 2.0 (the owner's table) still waits on the owner.
+
+## Done 2026-11-15: the Rivals, Phase 4 (betrayal and the door as a real choice)
+
+Built from Phase 4 of `docs/RIVALS_PLAN.md`; all new state optional, schema v2 unchanged. Card total 1,948 (Realms 660).
+
+- **Betrayal** (`RivalProfile.betray`, `decideBetrayal`, `betrayal` in `src/game/crawl/rival.ts`): decided once as a rival joins (`base + perWin × meetings won`; Lady Fingerbang 0.25 + 0.15, Dame Queefington 0.20 + 0.10), saved as `rival.turnsAt` (the dragon swing, 0 to 2) and never re-rolled. They turn as that round is dealt (or the first after it at `BETRAY_HEARTS` 3 hearts or more, never a contest: the plan's open question, answered "they wait for the dramatic moment"). Lady Fingerbang walks off with the satchel; Dame Queefington sings the dragon's song (`duel.sung`: that swing 2 harder in `rollBonus`). Either way they leave the team (`rival.turned`, deed `rival-turned`, `news.turned`; the news banner reads their `turned` line, "Everyone who voted to take her drinks 3"; spoken, no tracking).
+- **Sir Chad's credit** (`RivalProfile.credit`): on the team when the dragon falls, the ballad's last line is "and Sir Chad slew {dragon}. Allegedly." (a short form for long names). The Chronicle's `slainBy` is Phase 6.
+- **Sensei pinned** (`senseiPinned`, `dungeon.rival-tutt-pinned`): two meetings won set the deed `rival-won-twice` (the plan's `rival-won-2`; deed names take no digits); the door's variant for it deals "Pinned!" in place of his exam (his exam is now the stage's `fallback` variant). "Save him" costs a heart and he joins at +4 against bosses for one swing at the dragon, sent in or not (`ally.once`, `spendOnce`, deed `ally-fell`); "Leave him" (`rival-abandoned`). The ballad has `verse.saved` and `verse.left`.
+- **Dame Queefington's ballad** (`RivalProfile.ballad`): she writes the whole verse, four lines and an ending by outcome, signed: kind when she joined (and stayed) or her duel was won, vicious otherwise.
+- **The refusal's stakes**: the duel is now losable. Two lost swings (`DUEL_LOSSES`, `rival.duelLost`) and they go into the lair first: the ledger is gone for good (`news.gone`, `news.first`, deed `rival-went-first`), the dragon starts a scale down (`party.hits` 1) and **enraged from its first round** (`nextDuel` reads the deed). The plan said only the scale; with the scale alone, going in first won 47%, more than joining (44%), so it woke the dragon angry as well.
+- **The Mimic**: the duel stopped being a place to wipe, which left the Mimic at exactly 1.00% (its floor is over 1%); `RIVAL_MERCY` 5 did not move it, so the Mimic starts with 4 fewer hearts (was 5) at every rank.
+- **Balance** (4,000 runs): won **30.9%**, a won run **59.9 draws**; each rival 29% to 36%; 65% reach the dragon (the duel wipes 1% of runs, was 8%); the door: joined 41%, duelled 42%, settled 11%, skipped 6%; runs won: **went in first 39% < joined 44% < duel won 46%** (now checked); **betrayed 31%** of joined turncoats at the dragon (band 20% to 45%, now checked); 1.4 items held at the door (the measure moved there: the door now settles most ledgers, so "at the end" stopped measuring the rival); Do-Overs 0.70; jokes 2% to 3%; Heroic 13.8%.
+- **Fixtures** (7): `2026-11-15-realms-rival-turns-at-saved`, `-turned`, `-chad-credit`, `-sensei-pinned`, `-sensei-saved`, `-ballad-queef`, `-went-in-first`. 128 fixtures load.
+- **Tests**: `tests/rival.test.ts` (38): the betrayal decided and saved, each kind of turn, the hearts guard, Sir Chad's credit, Sensei pinned and saved for one swing, the losable duel, Dame Queefington's two ballads, malformed Phase 4 state; `crawl.spec.ts`: the pinned door.
+- **Checked**: `npm test` 626 passed; lint; typecheck; `cards:review` (1,948); build (budgets pass: runtime 5,264 KiB of 6,144, initial 162.0 KiB gzip); `tests/dungeon.balance.test.ts` 8 of 8 at 4,000 runs; Chromium `test:e2e` 184 of 184 (before the pinned-door test, then it alone); Chromium `test:sweep` 12 of 12; the pinned door screenshotted at 390x844.
+- **Not run**: WebKit (CI runs it), the League balance file (nothing the League reads changed; `nextDuel` reads a Realms deed only), a phone.
 
 ## Done 2026-11-15: the Rivals, Phase 3 (rivals four to six)
 

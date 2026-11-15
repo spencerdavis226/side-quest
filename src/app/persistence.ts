@@ -441,7 +441,15 @@ function badRival(s: SessionState, rival: NonNullable<PartyState["rival"]>) {
         (news.back !== undefined && !items(news.back)) ||
         (news.gone !== undefined && !items(news.gone)) ||
         (news.poached !== undefined && !ally(news.poached)) ||
-        (news.left !== undefined && !ally(news.left)))) ||
+        (news.left !== undefined && !ally(news.left)) ||
+        (news.turned !== undefined && news.turned !== true) ||
+        (news.first !== undefined && news.first !== true))) ||
+    // Rivals Phase 4: the swing they turn on, that they turned, and the
+    // duel's swings lost.
+    (rival.turnsAt !== undefined &&
+      (!whole(rival.turnsAt) || rival.turnsAt > 2)) ||
+    (rival.turned !== undefined && rival.turned !== true) ||
+    (rival.duelLost !== undefined && !whole(rival.duelLost)) ||
     // Rivals Phase 3: Chuck's coin, and Gary's Whistle blown.
     (rival.joinFace !== undefined &&
       rival.joinFace !== 1 &&
@@ -499,6 +507,8 @@ function badDuel(s: SessionState, duel: NonNullable<PartyState["duel"]>) {
     (duel.enraged !== undefined && duel.enraged !== true) ||
     (duel.staggered !== undefined &&
       (duel.staggered !== true || !!duel.contest)) ||
+    // Rivals Phase 4: a turned bard's song, on a swing only.
+    (duel.sung !== undefined && (duel.sung !== true || !!duel.contest)) ||
     (duel.prev !== undefined && !round(duel.prev))
   );
 }

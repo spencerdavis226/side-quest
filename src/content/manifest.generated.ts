@@ -3027,6 +3027,7 @@ export const packs: PackDefinition[] = [
                   "dungeon.rival-chuck-door",
                   "dungeon.rival-gary-door",
                   "dungeon.rival-queef-door",
+                  "dungeon.rival-tutt-pinned",
                 ],
                 variants: [
                   {
@@ -3040,6 +3041,7 @@ export const packs: PackDefinition[] = [
                   {
                     deeds: ["rival-tutt"],
                     cardIds: ["dungeon.rival-tutt-door"],
+                    fallback: true,
                   },
                   {
                     deeds: ["rival-chuck"],
@@ -3052,6 +3054,10 @@ export const packs: PackDefinition[] = [
                   {
                     deeds: ["rival-queef"],
                     cardIds: ["dungeon.rival-queef-door"],
+                  },
+                  {
+                    deeds: ["rival-tutt", "rival-won-twice"],
+                    cardIds: ["dungeon.rival-tutt-pinned"],
                   },
                 ],
               },
@@ -3247,6 +3253,7 @@ export const packs: PackDefinition[] = [
                   "dungeon.rival-chuck-door",
                   "dungeon.rival-gary-door",
                   "dungeon.rival-queef-door",
+                  "dungeon.rival-tutt-pinned",
                 ],
                 variants: [
                   {
@@ -3260,6 +3267,7 @@ export const packs: PackDefinition[] = [
                   {
                     deeds: ["rival-tutt"],
                     cardIds: ["dungeon.rival-tutt-door"],
+                    fallback: true,
                   },
                   {
                     deeds: ["rival-chuck"],
@@ -3272,6 +3280,10 @@ export const packs: PackDefinition[] = [
                   {
                     deeds: ["rival-queef"],
                     cardIds: ["dungeon.rival-queef-door"],
+                  },
+                  {
+                    deeds: ["rival-tutt", "rival-won-twice"],
+                    cardIds: ["dungeon.rival-tutt-pinned"],
                   },
                 ],
               },
@@ -3464,6 +3476,7 @@ export const packs: PackDefinition[] = [
                   "dungeon.rival-chuck-door",
                   "dungeon.rival-gary-door",
                   "dungeon.rival-queef-door",
+                  "dungeon.rival-tutt-pinned",
                 ],
                 variants: [
                   {
@@ -3477,6 +3490,7 @@ export const packs: PackDefinition[] = [
                   {
                     deeds: ["rival-tutt"],
                     cardIds: ["dungeon.rival-tutt-door"],
+                    fallback: true,
                   },
                   {
                     deeds: ["rival-chuck"],
@@ -3489,6 +3503,10 @@ export const packs: PackDefinition[] = [
                   {
                     deeds: ["rival-queef"],
                     cardIds: ["dungeon.rival-queef-door"],
+                  },
+                  {
+                    deeds: ["rival-tutt", "rival-won-twice"],
+                    cardIds: ["dungeon.rival-tutt-pinned"],
                   },
                 ],
               },

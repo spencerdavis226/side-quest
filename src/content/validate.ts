@@ -37,6 +37,8 @@ const RIVAL_LINES = [
   "back",
   "lostTo",
   "beaten",
+  "turned",
+  "first",
   "ambush",
   "meddle",
   "snipe",
@@ -48,6 +50,40 @@ const RIVAL_LINES = [
   "invoice",
   "curse",
 ];
+
+/** Rivals Phase 4: a profile's betrayal (chances from 0 to 1), credit line
+ * and ballad sets (four lines and two endings, each at most 44). */
+function badRivalPhase4(p: RivalProfile): boolean {
+  const line = (t: unknown, max: number) =>
+    typeof t === "string" && !!t.trim() && t.length <= max;
+  const chance = (n: unknown) =>
+    typeof n === "number" && Number.isFinite(n) && n >= 0 && n <= 1;
+  const set = (v: unknown) => {
+    const x = v as { lines?: unknown; won?: unknown; lost?: unknown } | null;
+    return (
+      !!x &&
+      Array.isArray(x.lines) &&
+      x.lines.length === 4 &&
+      x.lines.every((l) => line(l, 44)) &&
+      line(x.won, 44) &&
+      line(x.lost, 44)
+    );
+  };
+  return (
+    (p.betray !== undefined &&
+      (!p.betray ||
+        !chance(p.betray.base) ||
+        !chance(p.betray.perWin) ||
+        (p.betray.does !== "satchel" && p.betray.does !== "song"))) ||
+    (p.credit !== undefined &&
+      (!p.credit || !line(p.credit.line, 60) || !line(p.credit.short, 44))) ||
+    (p.ballad !== undefined &&
+      (!p.ballad ||
+        !set(p.ballad.kind) ||
+        !set(p.ballad.vicious) ||
+        !line(p.ballad.sign, 44)))
+  );
+}
 
 // Structural validation for cards and packs. Kept apart from `catalog.ts` so
 // saved-session parsing can use it without pulling card content into the
@@ -351,7 +387,13 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
             !line(r.profile.verse.beaten, 44) ||
             !line(r.profile.verse.ahead, 44) ||
             (r.profile.verse.joined !== undefined &&
-              !line(r.profile.verse.joined, 44)))))
+              !line(r.profile.verse.joined, 44)) ||
+            (["saved", "left"] as const).some(
+              (k) =>
+                r.profile!.verse[k] !== undefined &&
+                !line(r.profile!.verse[k], 44),
+            ) ||
+            badRivalPhase4(r.profile))))
     )
       fail(`Invalid rival: ${c.id}`);
     if (
@@ -360,6 +402,8 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
     )
       fail(`Invalid ally: ${c.id}`);
     if (c.ally?.grudge !== undefined && (c.ally.grudge !== true || !c.rival))
+      fail(`Invalid ally: ${c.id}`);
+    if (c.ally?.once !== undefined && (c.ally.once !== true || !c.rival))
       fail(`Invalid ally: ${c.id}`);
     if (c.offers?.some((o) => o?.restore !== undefined && o.restore !== true))
       fail(`Invalid offers: ${c.id}`);

@@ -458,19 +458,21 @@ export const classes: CardDefinition[] = [
     "mimic",
     "The Mimic",
     "A very confused chest.",
-    { hearts: -5, satchel: 5, roll: { all: -1 } },
+    // Rivals Phase 4: -4 hearts (was -5) at every rank, to keep the Mimic
+    // over its 1% floor once the rival's duel stopped being a place to die.
+    { hearts: -4, satchel: 5, roll: { all: -1 } },
     [
       {
         title: "Bigger Chest",
-        omen: { hearts: -5, satchel: 5, roll: { all: -1 } },
+        omen: { hearts: -4, satchel: 5, roll: { all: -1 } },
       },
       {
         title: "Storage Unit",
-        omen: { hearts: -5, satchel: 5, roll: { all: -1 } },
+        omen: { hearts: -4, satchel: 5, roll: { all: -1 } },
       },
       {
         title: "Treasure Vault",
-        omen: { hearts: -5, satchel: 5, roll: { all: -2 } },
+        omen: { hearts: -4, satchel: 5, roll: { all: -2 } },
       },
     ],
   ),
