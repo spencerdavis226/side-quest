@@ -783,3 +783,40 @@ export function spendOnce(party: PartyState, quest: QuestState): PartyState {
   if (!team.length) delete next.team;
   return addDeed(next, "ally-fell");
 }
+
+/** Rivals Phase 6: a new run, as the Chronicle remembers its rivals. The
+ * nemesis (who got the better of the table last run) is twice as likely as
+ * any other at the Your Rival stage: picked plainly one time in n, they are
+ * swapped in one time in n + 1 more, which comes to 2 in n + 1. A rival the
+ * table has met before comes back for more (the deed `nemesis-<who>`,
+ * which picks their returning introduction from the stage's variants).
+ * Draws randomness only with a nemesis named, so other runs never move. */
+export function rememberRivals(
+  quest: QuestState,
+  { nemesis, met = [] }: { nemesis?: string; met?: readonly string[] },
+  random: Random,
+): QuestState {
+  if (!quest.party || (!nemesis && !met.length)) return quest;
+  const step = quest.finale.findIndex((id) =>
+    quest.stages.some((st) =>
+      st.cards.some((c) => c.id === id && !!c.rival?.profile),
+    ),
+  );
+  if (step < 0) return quest;
+  const stage = quest.stages[finaleStage(quest, step).stage];
+  const intros = stage.cards.filter((c) => c.rival?.profile);
+  let finale = quest.finale;
+  const target = intros.find((c) => c.rival!.who === nemesis);
+  if (target && finale[step] !== target.id) {
+    if (random() < 1 / (intros.length + 1)) {
+      finale = [...finale];
+      finale[step] = target.id;
+    }
+  }
+  const who = intros.find((c) => c.id === finale[step])?.rival?.who;
+  const party =
+    who && met.includes(who)
+      ? addDeed(quest.party, `nemesis-${who}`)
+      : quest.party;
+  return { ...quest, finale, party };
+}

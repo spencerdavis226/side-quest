@@ -4,6 +4,7 @@ import { finaleCard, finaleStage } from "./crawl/stages";
 import { runNames } from "./crawl/names";
 import { omenForm } from "./crawl/party";
 import { teamMember } from "./crawl/team";
+import { rivalProfile } from "./crawl/rival";
 
 // The Chronicle (The Quest 2.0 Phase 7, 2026-11-14): The Quest's record
 // across runs, kept under its own storage key (`side-quest.chronicle.v1`)
@@ -41,6 +42,23 @@ export interface Chronicle {
   /** The Pokémon League's record (2026-11-14), optional so a Chronicle
    * kept before it still loads. A malformed one is dropped alone. */
   league?: LeagueRecord;
+  /** Rivals Phase 6: each rival's record across runs, by key, and the one
+   * who got the better of the table last run (twice as likely next time).
+   * Optional; a malformed one is dropped alone. */
+  rivals?: Record<string, RivalRecord>;
+  nemesis?: string;
+}
+
+/** A rival's record across runs (Rivals Phase 6): runs met, duels won
+ * against them, meetings lost to them, runs they joined, betrayals, and
+ * dragons they "slew". */
+export interface RivalRecord {
+  met: number;
+  beaten: number;
+  lostTo: number;
+  joined: number;
+  betrayed: number;
+  slainBy: number;
 }
 
 /** The Pokémon League's record across runs. Names, not card IDs, so the
@@ -139,6 +157,29 @@ export const FEATS: { key: string; name: string; line: string }[] = [
   },
   { key: "full-house", name: "Full House", line: "See every landmark." },
   { key: "collector", name: "Collector", line: "See every rare." },
+  // Rivals Phase 6.
+  {
+    key: "paid-in-full",
+    name: "Paid in Full",
+    line: "Beat your rival's duel holding nothing of yours.",
+  },
+  { key: "et-tu", name: "Et Tu", line: "Be betrayed." },
+  {
+    key: "just-watching",
+    name: "Just Watching",
+    line: "Win with a useless Chuck on the team.",
+  },
+  {
+    key: "allegedly",
+    name: "Allegedly",
+    line: "Win with Sir Chad on the team.",
+  },
+  { key: "audited", name: "Audited", line: "Settle Gary's debt in drinks." },
+  {
+    key: "bad-reviews",
+    name: "Bad Reviews",
+    line: "Lose to Dame Queefington's vicious ballad.",
+  },
 ];
 
 /** How many landmarks and rares there are to see (Full House, Collector). */
@@ -221,6 +262,13 @@ export function unlocks(c: Chronicle): Set<string> {
   if (slain.includes(DRAGON_KING)) out.add("gold-mark");
   return out;
 }
+
+/** What a new run of The Quest remembers of the rivals (Rivals Phase 6):
+ * the nemesis, and every rival met before (`createSession`'s `rivals`). */
+export const rivalMemory = (c: Chronicle) => ({
+  ...(c.nemesis ? { nemesis: c.nemesis } : {}),
+  met: Object.keys(c.rivals ?? {}).filter((who) => c.rivals![who].met > 0),
+});
 
 /** A run's key: its picks and its adventurer, hashed. */
 export function runKey(s: SessionState): string {
@@ -354,6 +402,57 @@ export function recordRun(
   if (won && deeds.includes("quest-walked")) earned.push("straight-there");
   if (next.landmarks.length >= LANDMARK_COUNT) earned.push("full-house");
   if (next.rares.length >= RARE_COUNT) earned.push("collector");
+  // Rivals Phase 6: the run's rival, their record and the feats.
+  const rival = party.rival;
+  if (rival) {
+    const has = (d: string) => deeds.includes(d);
+    const joined = has("rival-joined") && !has("rival-turned");
+    const onTeam = (party.team ?? []).some(
+      (id) => finaleCard(q, id)?.rival?.who === rival.who,
+    );
+    const credit = won && joined && onTeam && !!rivalProfile(q)?.profile.credit;
+    const was = c.rivals?.[rival.who] ?? {
+      met: 0,
+      beaten: 0,
+      lostTo: 0,
+      joined: 0,
+      betrayed: 0,
+      slainBy: 0,
+    };
+    next = {
+      ...next,
+      rivals: {
+        ...c.rivals,
+        [rival.who]: {
+          met: was.met + 1,
+          beaten: was.beaten + (has("rival-beaten") ? 1 : 0),
+          lostTo: was.lostTo + rival.lost,
+          joined: was.joined + (has("rival-joined") ? 1 : 0),
+          betrayed: was.betrayed + (has("rival-turned") ? 1 : 0),
+          slainBy: was.slainBy + (credit ? 1 : 0),
+        },
+      },
+    };
+    // They got the better of the table: still holding its things, turned
+    // on it, or went into the lair first.
+    const nemesis =
+      rival.took.length > 0 || has("rival-turned") || has("rival-went-first");
+    if (nemesis) next.nemesis = rival.who;
+    else delete next.nemesis;
+    if (has("rival-beaten") && has("rival-clean")) earned.push("paid-in-full");
+    if (has("rival-turned")) earned.push("et-tu");
+    if (won && onTeam && rival.who === "chuck" && rival.joinFace === 1)
+      earned.push("just-watching");
+    if (credit) earned.push("allegedly");
+    if (has("rival-settled") && rival.who === "gary") earned.push("audited");
+    if (
+      !won &&
+      !!rivalProfile(q)?.profile.ballad &&
+      !joined &&
+      !has("rival-beaten")
+    )
+      earned.push("bad-reviews");
+  }
   return { ...next, feats: add(c.feats, earned) };
 }
 
@@ -512,9 +611,40 @@ export function readChronicle(raw: unknown): Chronicle | null {
     )
   )
     return null;
-  if (c.league === undefined) return c;
-  const league = readLeague(c.league);
-  if (league) return c;
-  const { league: _bad, ...rest } = c;
+  // Rivals Phase 6: a malformed rival record or nemesis is dropped alone.
+  let out: Chronicle = c;
+  if (c.rivals !== undefined && !readRivals(c.rivals)) {
+    const { rivals: _bad, ...rest } = out;
+    out = rest;
+  }
+  if (
+    c.nemesis !== undefined &&
+    (typeof c.nemesis !== "string" || !/^[a-z]{2,12}$/.test(c.nemesis))
+  ) {
+    const { nemesis: _bad, ...rest } = out;
+    out = rest;
+  }
+  if (out.league === undefined) return out;
+  const league = readLeague(out.league);
+  if (league) return out;
+  const { league: _bad, ...rest } = out;
   return rest;
+}
+/** A stored rival record, checked (Rivals Phase 6). */
+function readRivals(raw: unknown): boolean {
+  const whole = (n: unknown) => Number.isSafeInteger(n) && (n as number) >= 0;
+  return (
+    !!raw &&
+    typeof raw === "object" &&
+    !Array.isArray(raw) &&
+    Object.entries(raw as Record<string, RivalRecord>).every(
+      ([who, r]) =>
+        /^[a-z]{2,12}$/.test(who) &&
+        !!r &&
+        typeof r === "object" &&
+        [r.met, r.beaten, r.lostTo, r.joined, r.betrayed, r.slainBy].every(
+          whole,
+        ),
+    )
+  );
 }

@@ -410,7 +410,7 @@ Each phase is one session and one pull request. Each ends with: `npm test`, lint
 
 **Checks:** Chromium screenshots of each moment frame by frame at 390x844; `tests/moments.test.ts` for detection (never on resume, undo or the same state).
 
-### Phase 6: the Chronicle's nemesis
+### Phase 6: the Chronicle's nemesis (built 2026-11-15; see `docs/STATUS.md`)
 
 **Goal:** the hate carries between nights.
 

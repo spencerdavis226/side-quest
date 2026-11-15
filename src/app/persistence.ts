@@ -409,7 +409,13 @@ function badRival(s: SessionState, rival: NonNullable<PartyState["rival"]>) {
   if (!rival || typeof rival !== "object" || typeof rival.who !== "string")
     return true;
   const dealt = q.finale.slice(0, q.step + 1);
-  const intro = rivalProfile(q)?.card;
+  // Introduced by a card of theirs already dealt: their introduction, or
+  // (Rivals Phase 6) their returning one.
+  const intro =
+    rivalProfile(q) &&
+    dealt
+      .map((id) => finaleCard(q, id))
+      .find((c) => c?.rival?.profile && c.rival.who === rival.who);
   const cuts = rival.cuts;
   const news = rival.news;
   // An ally's card of this run.
@@ -417,7 +423,6 @@ function badRival(s: SessionState, rival: NonNullable<PartyState["rival"]>) {
     typeof id === "string" && !!finaleCard(q, id)?.ally;
   return (
     !intro ||
-    !dealt.includes(intro.id) ||
     !items(rival.took) ||
     !whole(rival.won) ||
     !whole(rival.lost) ||

@@ -100,3 +100,38 @@ test("a malformed Chronicle resets alone", async ({ page }) => {
     await page.evaluate((c) => localStorage.getItem(c), CHRONICLE),
   ).toBeNull();
 });
+
+test("the Chronicle keeps each rival's record, and names the nemesis", async ({
+  page,
+}, info) => {
+  // Rivals Phase 6.
+  await seedStorage(page, {
+    [SETTINGS]: quest,
+    [CHRONICLE]: JSON.stringify({
+      ...record,
+      rivals: {
+        mirabel: {
+          met: 2,
+          beaten: 0,
+          lostTo: 3,
+          joined: 1,
+          betrayed: 1,
+          slainBy: 0,
+        },
+      },
+      nemesis: "mirabel",
+    }),
+  });
+  await page.getByRole("button", { name: /Chronicle/ }).click();
+  const book = page.getByRole("dialog", { name: "Chronicle" });
+  const rivals = book.locator(".chronicle-rivals");
+  await expect(rivals.locator("li")).toHaveCount(6);
+  const her = rivals.locator("li.met");
+  await expect(her).toContainText("Lady Fingerbang");
+  await expect(her).toContainText("Nemesis");
+  await expect(her).toContainText(
+    "met 2 · beaten 0 · lost to 3 · joined 1 · betrayed you 1",
+  );
+  await rivals.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: info.outputPath("rivals.png") });
+});
