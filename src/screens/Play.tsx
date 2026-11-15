@@ -592,6 +592,7 @@ export function Play({
                     roll={session.roll}
                     shown={session.phase === "revealed" ? actions.shown : null}
                     party={session.quest?.party}
+                    quest={session.quest}
                     hits={hitsNeeded(session.quest, card)}
                     target={
                       session.quest?.party ? rollTarget(session, card) : null
@@ -710,6 +711,7 @@ export function Play({
                     onTake={onOffer}
                     theme={crawl}
                     debt={settleDrinks(session.quest)}
+                    quest={session.quest}
                   />
                 ),
               )}
@@ -734,6 +736,7 @@ export function Play({
                     onTake={onOffer}
                     theme={crawl}
                     debt={settleDrinks(session.quest)}
+                    quest={session.quest}
                     branch={branch}
                   />
                 ),

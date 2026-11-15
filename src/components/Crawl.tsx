@@ -26,6 +26,8 @@ import {
   TEAM_SIZE,
   canUseLoot,
   assistBonus,
+  healAmount,
+  offerHeal,
   cardMatchup,
   finaleCard,
   teamMember,
@@ -563,6 +565,7 @@ export function everyoneStands(
 export function CardStakes({
   card,
   party,
+  quest,
   hits = 0,
   theme,
   strike,
@@ -570,6 +573,8 @@ export function CardStakes({
 }: {
   card: CardDefinition;
   party: PartyState;
+  /** The run, for a heal's net value (the run's heal bonus applied). */
+  quest?: QuestState;
   hits?: number;
   theme: CrawlTheme;
   /** The roll to beat (`rollTarget`): a gem in the foot's right corner
@@ -583,6 +588,9 @@ export function CardStakes({
     ? strike === "disadvantage" && card.damage
     : card.battle && card.damage;
   const gain = card.reward?.loot ?? (card.reward?.heal ? "heal" : null);
+  // Every heal shows what it brings back with the run's bonus (owner,
+  // 2026-11-15).
+  const heal = card.reward?.heal ? healAmount(card.reward.heal, quest) : 0;
   // Tonight's omen is a boon too, but its card says so in words; a boss or
   // an elite offers its spoils.
   const trinket = card.spoils?.length
@@ -709,9 +717,9 @@ export function CardStakes({
         {gain === "heal" ? (
           <span
             className="stake stake-heal"
-            aria-label={`Heals ${card.reward!.heal} ${theme.words.hearts}`}
+            aria-label={`Heals ${heal} ${theme.words.hearts}`}
           >
-            <b>+{card.reward!.heal}</b>
+            <b>+{heal}</b>
             <CrawlIcon name="heart" theme={theme} />
           </span>
         ) : gain ? (
@@ -797,12 +805,15 @@ export function OfferPlaque({
   theme,
   branch,
   debt,
+  quest,
 }: {
   offer: Offer;
   index: number;
   can: boolean;
   onTake: (index: number, branch?: number) => void;
   theme: CrawlTheme;
+  /** The run, for the heal's net value (`offerHeal`). */
+  quest?: QuestState;
   /** Gary's debt in drinks, for his "Pay up" plaque (Rivals Phase 3). */
   debt?: number;
   /** One of a branching starter's forms, on its own evolve plaque. */
@@ -813,10 +824,11 @@ export function OfferPlaque({
   // and its mark already says it evolves. A heal says how many hearts it
   // brings back.
   const price = branch ? offer.label.split(" · ")[1] : undefined;
+  const heal = offerHeal(quest, offer, branch?.index);
   const under = branch
     ? (price ?? offer.label)
     : offer.heal
-      ? `+${heartCount(theme, offer.heal)}`
+      ? `+${heartCount(theme, heal)}`
       : offer.settle
         ? `drink ${debt ?? 1}`
         : offer.coinJoin
@@ -864,7 +876,7 @@ export function OfferPlaque({
                       ? `${theme.words.grows.who} ${theme.words.grows.verb} into ${branch.name}`
                       : `${theme.words.grows.who} ${theme.words.grows.verb}`
                   : offer.heal
-                    ? `${offer.heal} ${theme.words.hearts} back`
+                    ? `${heal} ${theme.words.hearts} back`
                     : "nothing";
   return (
     <button

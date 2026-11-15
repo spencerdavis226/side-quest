@@ -1,9 +1,4 @@
-import type {
-  CardDefinition,
-  Loot,
-  QuestState,
-  SessionState,
-} from "../types";
+import type { CardDefinition, Loot, QuestState, SessionState } from "../types";
 import { rollWins } from "../dice";
 import { currentCard, type Random } from "../engine";
 import { evolve, healAmount, omenForm } from "./party";

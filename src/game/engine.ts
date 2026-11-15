@@ -34,6 +34,7 @@ export {
 } from "./crawl/stages";
 export {
   formEffect,
+  healAmount,
   isLasting,
   omenEffect,
   omenForm,
@@ -61,6 +62,7 @@ export {
   canTakeOffer,
   cashOut,
   pressOn,
+  offerHeal,
   takeOffer,
 } from "./crawl/offers";
 export {

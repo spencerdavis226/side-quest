@@ -1,6 +1,11 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ballWords } from "./BallThrow";
-import type { CardDefinition, DiceRoll, PartyState } from "../game/types";
+import type {
+  CardDefinition,
+  DiceRoll,
+  PartyState,
+  QuestState,
+} from "../game/types";
 import { CardStakes, everyoneStands } from "./Crawl";
 import type { CrawlTheme } from "./crawlTheme";
 import { diceResultText } from "../presentation/dice/result-text";
@@ -32,6 +37,7 @@ export function CardFace({
   roll = null,
   shown = null,
   party,
+  quest,
   hits = 0,
   crawl,
   target,
@@ -47,6 +53,8 @@ export function CardFace({
   shown?: "secret" | "end" | null;
   /** A crawl's party: the card shows what it puts on the line. */
   party?: PartyState;
+  /** The crawl's run, for a heal seal's net value. */
+  quest?: QuestState;
   /** Swings a crawl boss or ambush needs (`hitsNeeded`); 0 for others. */
   hits?: number;
   /** The crawl's words and marks, with `party`. */
@@ -444,6 +452,7 @@ export function CardFace({
             <CardStakes
               card={card}
               party={party}
+              quest={quest}
               hits={hits}
               theme={crawl}
               strike={card.strike ? strikeEdge : undefined}
