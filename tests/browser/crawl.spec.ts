@@ -16,6 +16,15 @@ import {
   PARTY_HEARTS as H,
 } from "../../src/content/dungeon/shared";
 import { STEP, crawlAt } from "./sessions";
+
+/** The choice sheet (2026-11-15): open it from the card's Choose plaque,
+ * and its rows, one a way. */
+async function choices(page: Page) {
+  await page.locator(".choice-plaque").click();
+  const rows = page.locator(".choice-sheet .choice-row");
+  await expect(rows.first()).toBeVisible();
+  return rows;
+}
 const reveal = (s: SessionState) => advance(s);
 const rolled = (s: SessionState, face: number) =>
   returnToCard(rollDice(s, () => (face - 0.5) / currentCard(s).dice!.sides));
@@ -404,9 +413,8 @@ test("a Cleric's inn rest says it heals one more", async ({ page }) => {
       ),
     ),
   );
-  const rest = page.locator(".card-choice.offers .card-choice-option").nth(0);
-  await expect(rest).toHaveAccessibleName("Rest: 4 hearts back");
-  await expect(rest.locator(".offer-price")).toHaveText(/\+4/);
+  const rest = (await choices(page)).nth(0);
+  await expect(rest).toHaveAccessibleName(/^Rest: 4 hearts back/);
 });
 
 // Realms (2026-11-03): an inn rests or stocks up; ranks come from bosses.
@@ -426,14 +434,17 @@ test("an inn rests or stocks up, and its plaques read at 320px", async ({
       ),
     ),
   );
-  const plaques = page.locator(".card-choice.offers .card-choice-option");
+  // The choice sheet (2026-11-15): one Choose plaque on the card, a row
+  // for each way saying what it costs and brings.
+  const plaques = await choices(page);
   await expect(plaques).toHaveCount(3);
-  await expect(plaques.nth(0)).toHaveAccessibleName("Rest: 3 hearts back");
-  await expect(plaques.nth(0).locator(".offer-price")).toHaveText(/\+3/);
-  await expect(plaques.nth(1)).toHaveAccessibleName(/^Stock up · drink 3/);
+  await expect(plaques.nth(0)).toHaveAccessibleName(/^Rest: 3 hearts back/);
+  await expect(plaques.nth(1)).toHaveAccessibleName(/^Stock up, drink 3: A /);
   // The first inn hires a blade (Phase 4).
-  await expect(plaques.nth(2)).toHaveAccessibleName("Hire · drink 3: an ally");
-  // Every plaque's name and line fit, and each is a full touch target.
+  await expect(plaques.nth(2)).toHaveAccessibleName(
+    /^Hire, drink 3: .* joins as an ally/,
+  );
+  // Every row fits the phone, and each is a full touch target.
   for (let i = 0; i < 3; i++) {
     const box = (await plaques.nth(i).boundingBox())!;
     expect(box.height).toBeGreaterThanOrEqual(44);
@@ -441,11 +452,11 @@ test("an inn rests or stocks up, and its plaques read at 320px", async ({
     expect(box.x + box.width).toBeLessThanOrEqual(320);
     const clipped = await plaques
       .nth(i)
-      .locator(".offer-name, .offer-price")
+      .locator("*")
       .evaluateAll((els) =>
         els.some((el) => el.scrollWidth > el.clientWidth + 1),
       );
-    expect(clipped, `plaque ${i}`).toBe(false);
+    expect(clipped, `row ${i}`).toBe(false);
   }
   await page.screenshot({ path: info.outputPath("inn-320.png") });
   await plaques.nth(0).click();
@@ -490,7 +501,7 @@ test("a region's boss ranks the adventurer up, and a side quest can be walked pa
       crawlAt("dungeon.quest-goat", STEP.plea, {}, { adventurer: "rogue" }),
     ),
   );
-  const plaques = page.locator(".card-choice.offers .card-choice-option");
+  const plaques = await choices(page);
   await expect(plaques).toHaveCount(2);
   await expect(plaques.nth(0)).toHaveAccessibleName(/^Take the quest/);
   await expect(plaques.nth(1)).toHaveAccessibleName(/^Walk on/);
@@ -755,14 +766,14 @@ test("a landmark is named as it is dealt, and its plaques choose", async ({
   await expect(page.locator(".stage-banner")).toContainText("Landmark");
   await expect(page.locator(".stage-banner")).toContainText("The Toll Keep");
   await page.locator(".game-card").click();
-  const plaques = page.locator(".offer-plaque");
-  await expect(plaques).toHaveCount(3);
   await expect(page.locator(".game-card .card-ribbon")).toHaveText(
     "King's Road · Landmark",
   );
   await expect(page.locator(".game-card")).toHaveAccessibleName(
     /The Toll Keep/,
   );
+  const plaques = await choices(page);
+  await expect(plaques).toHaveCount(3);
   await page.screenshot({ path: info.outputPath("landmark.png") });
   // Sneak round: the loud door, so the region's next card is an elite.
   await plaques.nth(1).click();
@@ -930,18 +941,19 @@ test("a merchant sells on plaques, and a price in hearts needs a spare heart", a
 }, info) => {
   const at = STEP.floor1 + 1;
   await seed(page, reveal(crawlAt("dungeon.rat-fence", at, { hearts: 1 })));
-  const plaques = page.locator(".card-choice.offers .card-choice-option");
-  await expect(plaques).toHaveCount(3);
-  await expect(plaques.nth(1)).toBeDisabled();
-  // Greyed but solid: the frame must not show through.
-  await expect(plaques.nth(1)).toHaveCSS("opacity", "1");
-  await expect(plaques.nth(0)).toHaveAccessibleName(
-    "Haggle · drink 3: a Healing Potion",
-  );
-  await page.screenshot({ path: info.outputPath("merchant.png") });
-  // A stray tap on the card does nothing; the plaques decide.
+  // A stray tap on the card does nothing; the choice decides.
   await page.locator(".game-card").click({ force: true });
   expect((await saved(page)).quest.step).toBe(at);
+  const plaques = await choices(page);
+  await expect(plaques).toHaveCount(3);
+  await expect(plaques.nth(1)).toBeDisabled();
+  // Greyed but solid, with the reason it can't be taken.
+  await expect(plaques.nth(1)).toHaveCSS("opacity", "1");
+  await expect(plaques.nth(1)).toContainText("or more");
+  await expect(plaques.nth(0)).toHaveAccessibleName(
+    /^Haggle, drink 3: A Healing Potion/,
+  );
+  await page.screenshot({ path: info.outputPath("merchant.png") });
   await plaques.nth(0).click();
   await expect(page.locator(".tag-satchel")).toHaveAccessibleName(
     "Satchel: Healing Potion",
@@ -962,7 +974,12 @@ test("a fork's loud door deals one of the floor's elites, which drops a trinket"
     "Old Forest · Fork",
   );
   await page.screenshot({ path: info.outputPath("fork.png") });
-  await page.getByRole("button", { name: /^The shortcut/ }).click();
+  // The choice sheet (2026-11-15): the loud door says what it brings.
+  const doors = await choices(page);
+  await expect(doors.nth(1)).toHaveAccessibleName(
+    /^The shortcut: The next fight is an elite/,
+  );
+  await doors.nth(1).click();
   await page.locator(".game-card").click();
   await expect(page.locator(".game-card .card-ribbon")).toHaveText(
     "Old Forest · Elite",
@@ -1004,12 +1021,11 @@ test("the lair's door: the rival asks, and the table answers", async ({
   await expect(page.locator(".game-card .card-ribbon")).toHaveText(
     "The Lair's Door · Rival",
   );
-  await expect(page.locator(".offer-plaque")).toHaveCount(2);
-  await expect(page.locator(".offer-plaque").first()).toContainText("Take him");
-  await expect(page.locator(".offer-plaque").nth(1)).toContainText(
-    "Kick his ass",
-  );
   await expect(page.locator(".game-card")).toContainText("Sir Chad");
+  const rows = await choices(page);
+  await expect(rows).toHaveCount(2);
+  await expect(rows.first()).toContainText("Take him");
+  await expect(rows.nth(1)).toContainText("Kick his ass");
   await page.screenshot({ path: info.outputPath("door.png") });
 });
 
@@ -1135,10 +1151,10 @@ test("Gary's door: settle the debt in drinks, or be audited", async ({
   finale[STEP.rival] = "dungeon.rival-gary";
   s = reveal({ ...s, quest: { ...s.quest!, finale } });
   await seed(page, s);
-  const plaques = page.locator(".offer-plaque");
+  const plaques = await choices(page);
   await expect(plaques).toHaveCount(2);
   await expect(plaques.first()).toHaveAccessibleName(
-    "Pay up: drink 3 and everything comes back",
+    /^Pay up, drink 3: Everything they took comes back/,
   );
   await expect(plaques.nth(1)).toContainText("Refuse");
   await page.screenshot({ path: info.outputPath("gary-door.png") });
@@ -1159,7 +1175,7 @@ test("Sensei beaten twice is pinned at the door: save him for a heart", async ({
   s = reveal({ ...s, quest: { ...s.quest!, finale } });
   await seed(page, s);
   await expect(page.locator(".game-card")).toContainText("Pinned!");
-  const plaques = page.locator(".offer-plaque");
+  const plaques = await choices(page);
   await expect(plaques).toHaveCount(2);
   await expect(plaques.first()).toContainText("Save him");
   await expect(plaques.first().locator(".offer-cost")).toContainText("1");

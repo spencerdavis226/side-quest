@@ -25,8 +25,14 @@ import { cards, packs } from "../../src/content/catalog";
 import { league, leagueAt } from "./sessions";
 const reveal = (s: SessionState) => advance(s);
 const meter = (page: Page) => page.locator(".crawl-meter");
-const plaques = (page: Page) =>
-  page.locator(".card-choice.offers .card-choice-option");
+/** The choice sheet (2026-11-15): open it from the card's Choose plaque,
+ * and its rows, one a way. */
+async function choices(page: Page) {
+  await page.locator(".choice-plaque").click();
+  const rows = page.locator(".choice-sheet .choice-row");
+  await expect(rows.first()).toBeVisible();
+  return rows;
+}
 
 // Play a seeded League run through the engine, always evolving, walking
 // past every other offer, cashing out of every push-your-luck cast and
@@ -130,14 +136,15 @@ test("a starter evolves on a route, and the banner says what changed", async ({
     page,
     reveal(leagueAt("pokemon.route-rare-candy-1", { hearts: 9 })),
   );
-  await expect(plaques(page)).toHaveCount(2);
-  // The plaque names the form it brings.
-  await expect(plaques(page).nth(0)).toHaveAccessibleName(
-    "Charmeleon · drink 3: your starter evolves into Charmeleon",
-  );
-  await expect(plaques(page).nth(1)).toHaveAccessibleName("Press B: 1 HP back");
   await page.screenshot({ path: info.outputPath("evolution-card.png") });
-  await plaques(page).nth(0).click();
+  const rows = await choices(page);
+  await expect(rows).toHaveCount(2);
+  // The row names the form it brings, and what it changes.
+  await expect(rows.nth(0)).toHaveAccessibleName(
+    /^Charmeleon, drink 3: Your starter evolves into Charmeleon\. Max HP 16 → 17\./,
+  );
+  await expect(rows.nth(1)).toHaveAccessibleName(/^Press B: 1 HP back/);
+  await rows.nth(0).click();
   const banner = page.locator(".still-plaque");
   await expect(banner).toHaveText(
     /What\? Charmander is evolving!\s*Charmeleon\s*Max HP 16 → 17\.$/,
@@ -192,31 +199,24 @@ test("Eevee's evolution lets the table pick its form", async ({
       ),
     ),
   );
-  // Never more than three plaques (2026-10-31): the three forms fold into
-  // one Evolve plaque beside Press B, and it opens a sheet of forms.
-  await expect(plaques(page)).toHaveCount(2);
-  await expect(plaques(page).nth(0)).toHaveAccessibleName(
-    "Evolve, drink 3: pick one of 3",
-  );
-  await expect(plaques(page).nth(1)).toHaveAccessibleName("Press B: 1 HP back");
-  for (const spilled of await plaques(page).evaluateAll((els) =>
+  // The choice sheet (2026-11-15): a row for each form, then Press B.
+  const rows = await choices(page);
+  await expect(rows).toHaveCount(4);
+  await expect(rows.locator("strong")).toHaveText([
+    "Vaporeon",
+    "Jolteon",
+    "Flareon",
+    "Press B",
+  ]);
+  for (const spilled of await rows.evaluateAll((els) =>
     els.map((e) => [
       e.scrollHeight - e.clientHeight,
       e.scrollWidth - e.clientWidth,
     ]),
   ))
     expect(Math.max(...spilled)).toBeLessThanOrEqual(1);
-  await page.screenshot({ path: info.outputPath("eevee-320.png") });
-  await plaques(page).nth(0).click();
-  const forms = page.getByRole("dialog", { name: "Evolve into" });
-  await expect(forms.locator(".extras-row")).toHaveCount(3);
-  await expect(forms.locator(".extras-row strong")).toHaveText([
-    "Vaporeon",
-    "Jolteon",
-    "Flareon",
-  ]);
   await page.screenshot({ path: info.outputPath("eevee-forms-320.png") });
-  await forms.locator(".extras-row").nth(1).click();
+  await rows.nth(1).click();
   await expect(page.locator(".still-plaque")).toHaveText(
     /What\? Eevee is evolving!\s*Jolteon/,
   );
@@ -261,11 +261,12 @@ test("a fully evolved starter can only press B", async ({ page }) => {
     page,
     reveal(leagueAt("pokemon.route-rare-candy-1", { form: 2, hearts: 9 })),
   );
-  await expect(plaques(page).nth(0)).toBeDisabled();
-  await expect(plaques(page).nth(0)).toHaveAccessibleName(
-    "Evolve · drink 3: your starter is fully evolved",
+  const rows = await choices(page);
+  await expect(rows.nth(0)).toBeDisabled();
+  await expect(rows.nth(0)).toHaveAccessibleName(
+    /^Evolve, drink 3: Your starter is fully evolved/,
   );
-  await plaques(page).nth(1).click();
+  await rows.nth(1).click();
   expect((await saved(page)).quest.party).toMatchObject({
     hearts: 10,
     form: 2,

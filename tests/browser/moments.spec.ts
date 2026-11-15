@@ -328,6 +328,8 @@ test("a side quest's secret way in swings open; a tap on the card skips it and t
       ),
     ),
   );
+  // The choice sheet (2026-11-15): Choose, then the quest's row.
+  await page.locator(".choice-plaque").click();
   await page.getByRole("button", { name: /^Take the quest/ }).click();
   const door = page.locator(".moment-door");
   await expect(door).toBeVisible();
@@ -380,7 +382,9 @@ test("a League evolution holds on its new form until the table taps", async ({
     page,
     advance(leagueAt("pokemon.route-rare-candy-1", { hearts: 9 })),
   );
-  await page.locator(".card-choice.offers .card-choice-option").first().click();
+  // The choice sheet (2026-11-15): Choose, then the evolution's row.
+  await page.locator(".choice-plaque").click();
+  await page.locator(".choice-sheet .choice-row").first().click();
   const moment = page.locator(".moment-evolution");
   await expect(moment).toBeVisible();
   const hint = moment.locator(".evo-hint");
