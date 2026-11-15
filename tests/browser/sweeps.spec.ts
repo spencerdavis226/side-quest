@@ -43,10 +43,23 @@ async function spills(page: Page, session: SessionState, ready?: string) {
     await expect(rules).toHaveAttribute("data-overflow", "none", {
       timeout: 2000,
     });
-    return false;
   } catch {
     return true;
   }
+  return plaquesSpill(page);
+}
+
+/** Whether any plaque's words spill out of their box (2026-11-15, owner:
+ * "Follo / w them"): a plaque never breaks inside a word, so a name too
+ * long for its plaque shows here, not at the table. */
+function plaquesSpill(page: Page) {
+  return page.evaluate(() =>
+    [...document.querySelectorAll(".card-choice-option")].some((plaque) =>
+      [plaque, ...plaque.querySelectorAll("*")].some(
+        (el) => el.clientWidth > 0 && el.scrollWidth > el.clientWidth + 1,
+      ),
+    ),
+  );
 }
 
 // Every Dungeon night card (about 575), each at its stage's first step on
