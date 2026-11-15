@@ -40,7 +40,7 @@ export const taproom: FloorCards = {
       {
         roll: () =>
           flip(
-            "Tails. Nothing, and he keeps your boots. Drink 5.",
+            "Tails. Nothing, and he keeps your underpants. Drink 5.",
             "Heads. Double! He pays in seaweed. Give 5.",
             true,
           ),
@@ -90,7 +90,7 @@ export const taproom: FloorCards = {
       "Monster",
       "piranha-shots",
       "The Piranha Pool",
-      "Piranhas in the tide pool. On three, everyone points at who'd swim anyway. Most fingers: drink 3.",
+      "Piranhas in the tide pool. On three, point at who'd skinny-dip anyway. Most fingers: drink 3.",
     ),
     // A table duel.
     trial(
@@ -102,8 +102,8 @@ export const taproom: FloorCards = {
     monster(
       2,
       "text-them-eel",
-      "The Whispering Eel",
-      "An eel whispers: write them a letter. Sit on your hands, then roll d20.",
+      "The Ex-Letter Eel",
+      "An eel whispers: write your ex a letter. Sit on your hands, then roll d20.",
       "You write it. Drink 4, then tell the table what it said.",
       "You bite the eel first. Give 5.",
       { crit: "You send the eel instead. It never writes back. Give 10." },
@@ -153,7 +153,7 @@ export const taproom: FloorCards = {
       2,
       "sea-shanty",
       "Sea Shanty",
-      "Lead the table in a sea shanty. If nobody joins in by the second line, drink 5.",
+      "Lead the table in the filthiest shanty you know. If nobody joins by the second line, drink 5.",
     ),
     trap(
       2,
@@ -191,14 +191,14 @@ export const taproom: FloorCards = {
       "happy-hour-eels",
       "The Shock Eels",
       "Two eels circle your boots, sparking. They are not here to talk. Roll d20.",
-      "Zapped, twice. Drink 4.",
+      "Zapped twice, in the nipples. Drink 4.",
       "You tie them in a knot. Give 4.",
     ),
     ambush(
       2,
       "mermaid-hens",
       "The Merfolk Wedding",
-      "A merfolk wedding, out of wine, and you're the nearest guests. Toast the bride, then roll d20.",
+      "A merfolk wedding, out of wine. Nobody knows how they'll consummate. Toast, then roll d20.",
       "They take yours. Drink 4.",
       "You find them wine. They cry. Give 4.",
     ),
@@ -277,7 +277,7 @@ export const taproom: FloorCards = {
       "The Wreck's Chest",
       "A chest in a shipwreck, chained shut, still dry inside. Pry it open, or leave it.",
       13,
-      "Eels. Drink 5.",
+      "Eels. In your pants. Drink 5.",
       "Bone dry, and worth it. Give 5, pirate voice.",
       ["Leave it", "Pry it open"],
       { loot: "shield" },
@@ -297,7 +297,7 @@ export const taproom: FloorCards = {
       2,
       "message-bottle",
       "Message in a Bottle",
-      "A note inside says DRINK ME. Read it aloud in a pirate voice.",
+      "A note inside says SEND NUDES. Read it aloud in a pirate voice.",
       "draught",
     ),
     treasure(
@@ -317,7 +317,7 @@ export const taproom: FloorCards = {
       2,
       "dry-booth",
       "The Last Dry Rock",
-      "One rock the tide never reached. Sit. Breathe. Everyone toasts dry socks.",
+      "One rock the tide never reached. Sit. Breathe. Everyone toasts dry balls.",
     ),
     merchant(
       2,
@@ -345,7 +345,7 @@ export const taproom: FloorCards = {
       2,
       "two-taps",
       "The Dare",
-      "The sailors bet you won't swim out to the wreck at high tide. They're already counting.",
+      "The sailors bet you won't swim out naked to the wreck at high tide. They're already counting.",
       ["Not tonight", "Swim for it"],
     ),
     fork(

@@ -2,6 +2,13 @@
 
 Updated 2026-11-15. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Done 2026-11-15: Realms voice pass, Phases 3 and 4 (the middle regions and the lairs' regions)
+
+Copy only, one pull request for both (each was small). Phase 3: `catacombs.ts` (15: Left on Read, The Virgin Hunter, Die a Virgin...), `sewers.ts` (11: Virgin Adventurers, The Kobold Dealer, the turd in the flooded shaft...), `freezer.ts` (8: The Love Potion, The Pickup Spell...), three boss beats and three landmarks. Phase 4: `taproom.ts` (10: The Ex-Letter Eel, SEND NUDES in a bottle...), `kitchen.ts` (5: The Fart Ghost...), `rooftop.ts` (6). The lair regions' landmarks and Approaches keep their menace unchanged. The later regions are lighter on purpose (the plan's rationing).
+
+- **Checked**: `npm test` 633 passed; lint; build (budgets pass); `cards:review`; Chromium `crawl.spec.ts` 41 of 41; Chromium `test:sweep` 12 of 12.
+- **Next**: Phase 5 (dragons, the Lair's Door, side quests and keepers, rares, hidden results, echoes, moments) and a consistency pass.
+
 ## Done 2026-11-15: Realms voice pass, Phase 2 (King's Road, Old Forest, Marsh)
 
 Copy only (`docs/REALMS_VOICE_PLAN.md`): 64 cards rewritten across `cellar.ts` (17), `wine.ts` (27) and `brewery.ts` (20) (titles such as The Horny Oak, Deez Nuts, Morning Wood, Wacky Tobacky, Nice Pecker, Swamp Farts, Crabs, The One-Eyed Snake; the Drowned Lich's curse is Moist), six boss beats (`phases.ts`), six curses across all regions (`jinxes.ts`: Pricked, Daddy, Dragon Breath, Shrinkage, Dragon Crush, the horny zombie) and two landmarks. Bosses and elites keep their menace; every drink number is unchanged.
