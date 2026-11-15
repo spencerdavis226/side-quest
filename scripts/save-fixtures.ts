@@ -29,6 +29,7 @@ import {
   awaitingSpoils,
   partyBoons,
   replaces,
+  rivalProfile,
   thrownBall,
 } from "../src/game/engine";
 import { nextMove, seeded } from "./table-play";
@@ -512,11 +513,7 @@ const situations: [string, GameConfig, Find][] = [
       !currentCard(s).hits &&
       !!currentCard(s).battle,
   ],
-  [
-    "realms-rival-handed-back",
-    crawl,
-    (s) => !!party(s).rival?.news?.back,
-  ],
+  ["realms-rival-handed-back", crawl, (s) => !!party(s).rival?.news?.back],
   [
     "realms-rival-at-the-door",
     crawl,
@@ -547,6 +544,16 @@ const situations: [string, GameConfig, Find][] = [
       !!party(s).deeds?.includes("rival-beaten") &&
       party(s).hits === 0 &&
       s.phase === "hidden",
+  ],
+  // Rivals Phase 1 (2026-11-15): a profile with its own lines, just after a
+  // lost meeting that cost an item.
+  [
+    "realms-rival-voiced",
+    crawl,
+    (s) =>
+      !!rivalProfile(s.quest)?.profile.lines &&
+      !!party(s).rival?.news?.took &&
+      party(s).rival!.lost > 0,
   ],
   ["crawl-wiped", crawl, (s) => party(s).wiped],
   ["crawl-survived", crawl, (s) => s.phase === "complete" && !party(s).wiped],

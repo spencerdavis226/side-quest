@@ -321,7 +321,7 @@ interface RivalState {
 
 Each phase is one session and one pull request. Each ends with: `npm test`, lint, typecheck, `npm run cards:review`, `BASE_PATH=/side-quest/ npm run build`, `npm run test:balance` (the Quest file; the League file whenever a shared engine path changes), Chromium `test:e2e` and, after any card text change, Chromium `test:sweep`. Add fixtures for every new saved state (`npm run fixtures:saves <date> <name>`), and write the `docs/STATUS.md` entry.
 
-### Phase 1: names and voice (content only)
+### Phase 1: names and voice (content only) (built 2026-11-15; see `docs/STATUS.md`)
 
 **Goal:** the three built rivals become Sir Chad Thundercock, Lady Fingerbang and Sensei Saggynuts, with every line rewritten in the crude CABIIN voice. No engine change except the profile's `lines`.
 

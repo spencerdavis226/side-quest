@@ -128,8 +128,8 @@ export const FEATS: { key: string; name: string; line: string }[] = [
   },
   {
     key: "bradley",
-    name: "Well Done, Bradley",
-    line: "Sir Bradley falls at the dragon.",
+    name: "Nice One, Chad",
+    line: "Sir Chad falls at the dragon.",
   },
   { key: "long-way", name: "The Long Way", line: "Take a side quest and win." },
   {

@@ -12,6 +12,7 @@ import {
   RIVAL_CAP,
   RIVAL_GAP,
   rivalCut,
+  rivalLine,
   rivalProfile,
   sendIn,
   settleBattle,
@@ -200,7 +201,7 @@ describe("the rival", () => {
       news: { back: ["shield"] },
     });
     roundTrip(won);
-    // Lady Mirabel takes two and no hearts.
+    // Lady Fingerbang takes two and no hearts.
     const robbed = fight(
       place(
         met("mirabel", STEP.crossroads, { loot: ["draught", "smoke", "die"] }),
@@ -225,11 +226,11 @@ describe("the rival", () => {
     expect(cardEdge(s.quest, currentCard(s))).toBe("disadvantage");
     expect(rivalCut(s.quest)).toMatchObject({
       kind: "meddle",
-      name: "Master Tutt",
+      name: "Sensei Saggynuts",
     });
     const card = currentCard(s);
     expect(card).toMatchObject({
-      ribbon: "Master Tutt · Meddling",
+      ribbon: "Sensei Saggynuts · Meddling",
       ribbonTone: "crimson",
     });
     // The card in play is one object from read to read.
@@ -260,7 +261,7 @@ describe("the rival", () => {
     const s = at(place(base, STEP.floor2 + 2, find.id), STEP.floor2 + 2, {
       rival: { who: "bradley", took: [], won: 0, lost: 0, cut: "snipe" },
     });
-    expect(currentCard(s).ribbon).toBe("Sir Bradley · Sniping");
+    expect(currentCard(s).ribbon).toBe("Sir Chad · Sniping");
     const after = advance(advance(s), seeded(3));
     expect(party(after).loot).toEqual([]);
     expect(party(after).rival).toMatchObject({
@@ -336,7 +337,7 @@ describe("the rival", () => {
     }
   });
 
-  it("Lady Mirabel gives it all back to come along, and walks out on a loss", () => {
+  it("Lady Fingerbang gives it all back to come along, and walks out on a loss", () => {
     const loot: Loot[] = ["die", "smoke"];
     const door = advance(
       place(
@@ -370,7 +371,12 @@ describe("the rival", () => {
     for (const r of rivals) {
       const door = advance(
         place(
-          met(r.who, STEP.door, { loot: ["draught"] }, { took: ["die", "smoke"] }),
+          met(
+            r.who,
+            STEP.door,
+            { loot: ["draught"] },
+            { took: ["die", "smoke"] },
+          ),
           STEP.door,
           r.plea.id,
         ),
@@ -392,7 +398,7 @@ describe("the rival", () => {
       expect(party(s).deeds).toContain("rival-beaten");
       roundTrip(s);
     }
-    // Master Tutt's exam can be skipped: he keeps what he took.
+    // Sensei Saggynuts' exam can be skipped: he keeps what he took.
     const tutt = rivals.find((r) => r.who === "tutt")!;
     const skipped = takeOffer(
       advance(
@@ -413,14 +419,73 @@ describe("the rival", () => {
   it("every rival has a name of their own and lines that fit", () => {
     expect(new Set(rivals.map((r) => r.name)).size).toBe(rivals.length);
     for (const r of rivals) {
-      const { verse } = r.intro.rival!.profile!;
+      const profile = r.intro.rival!.profile!;
+      const { verse } = profile;
       for (const line of [verse.joined, verse.beaten, verse.ahead])
         if (line) expect(line.length).toBeLessThanOrEqual(BALLAD_WIDTH);
       expect(r.fights).toHaveLength(4);
-      // Their name is on every card of theirs.
+      // Their name is on every card of theirs: the surname, or the whole
+      // short name ("Sir Chad").
+      const known = new RegExp(r.name.split(" ").pop()!);
       for (const c of [r.intro, ...r.fights, r.plea, r.duel])
-        expect(c.rules, c.id).toMatch(/Bradley|Mirabel|Tutt/);
+        expect(c.rules, c.id).toMatch(known);
     }
+  });
+
+  it("speaks in their own voice (Phase 1)", () => {
+    expect(rivals.map((r) => r.name)).toEqual([
+      "Sir Chad",
+      "Lady Fingerbang",
+      "Sensei Saggynuts",
+    ]);
+    const old = /Bradley|Mirabel|Tutt|Aldous/;
+    for (const r of rivals) {
+      const profile = r.intro.rival!.profile!;
+      // Lines replace the old meddle and snipe fields.
+      expect(profile.meddle).toBeUndefined();
+      expect(profile.snipe).toBeUndefined();
+      const lines = profile.lines!;
+      for (const key of ["took", "back", "lostTo", "beaten"] as const)
+        expect(lines[key], `${r.who} ${key}`).toBeTruthy();
+      // A line for every verb they are weighted to use.
+      for (const [verb, weight] of Object.entries(profile.style))
+        if (weight)
+          expect(lines[verb as "meddle"], `${r.who} ${verb}`).toBeTruthy();
+      for (const line of Object.values(lines))
+        expect(line!.length, line).toBeLessThanOrEqual(80);
+      expect(profile.ritual.length).toBeLessThanOrEqual(110);
+      expect(lines.took).toContain("{item}");
+      expect(lines.back).toContain("{item}");
+      // No old name is left on any card or line of theirs.
+      for (const c of [r.intro, ...r.fights, r.plea, r.duel]) {
+        const text = JSON.stringify({
+          ...c,
+          rival: { ...c.rival, who: "" },
+        }).replaceAll(c.id, "");
+        expect(text, c.id).not.toMatch(old);
+        for (const o of c.offers ?? [])
+          expect(o.label.length, o.label).toBeLessThanOrEqual(18);
+      }
+      if (r.plea.ally) expect(r.plea.ally.name.length).toBeLessThanOrEqual(22);
+    }
+  });
+
+  it("fills {item} with the items' names, and falls back for an old profile", () => {
+    const chad = rivals[0].intro.rival!.profile!;
+    expect(rivalLine(chad, "took", ["Tower Shield", "Draught"])).toBe(
+      "Sir Chad pockets your Tower Shield and Draught. 'For the highlight reel, Champ.'",
+    );
+    expect(rivalLine(chad, "meddle")).toBe(chad.lines!.meddle);
+    // A profile frozen before Phase 1: its two lines, nothing else.
+    const old = {
+      ...chad,
+      lines: undefined,
+      meddle: "Old meddle.",
+      snipe: "Old snipe.",
+    };
+    expect(rivalLine(old, "meddle")).toBe("Old meddle.");
+    expect(rivalLine(old, "snipe")).toBe("Old snipe.");
+    expect(rivalLine(old, "took", ["Draught"])).toBeUndefined();
   });
 
   it("a malformed rival is rejected", () => {

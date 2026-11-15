@@ -13,6 +13,7 @@ import {
   finaleStage,
   questStages,
   rivalCut,
+  rivalLine,
   rivalProfile,
   wantedBoss,
 } from "../game/engine";
@@ -121,7 +122,7 @@ function stageBanner(session: SessionState) {
         : "is in your way",
       tone: "crimson" as const,
       art: undefined,
-      wanted: cut?.line,
+      wanted: cut ? cut.line : rivalLine(ambush!, "ambush"),
       wantedWord: undefined,
     };
   if (stage.index !== 0) return null;
@@ -187,10 +188,14 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
   const party = quest?.party;
   const passed = party?.passed;
   const seen = useRef(passed);
-  // What the rival just took or handed back (2026-11-15), once per card.
-  const news = party?.rival?.news;
-  const rivalName = rivalProfile(quest)?.profile.name;
-  const newsKey = news ? `rival-${session.discarded}` : null;
+  // What the rival just took or handed back (2026-11-15), once per card,
+  // or how a meeting with them went (Rivals Phase 1): in their own words.
+  const rival = party?.rival;
+  const news = rival?.news;
+  const profile = rivalProfile(quest)?.profile;
+  const record = rival ? `${rival.won}:${rival.lost}` : undefined;
+  const seenRecord = useRef(record);
+  const newsKey = rival ? `rival-${session.discarded}` : null;
   const seenNews = useRef(newsKey);
   const [shown, setShown] = useState<{
     key: string;
@@ -216,30 +221,51 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
   }, [passed, quest, party]);
   useEffect(() => {
     const before = seenNews.current;
+    const was = seenRecord.current;
     seenNews.current = newsKey;
-    if (!quest || !news || !rivalName || newsKey === before) return;
+    seenRecord.current = record;
+    if (!quest || !rival || !profile || !newsKey || newsKey === before) return;
+    // A first sight (a resume, or the introduction) is no meeting.
+    const [won, lost] = (was ?? "0:0").split(":").map(Number);
+    const beat = was !== undefined && rival.won > won;
+    const lostTo = was !== undefined && rival.lost > lost;
     const names = (items: string[] = []) =>
-      items
-        .map((item) => crawlTheme(quest.packId).loot[item as "die"].name)
-        .join(" and ");
-    setShown(
-      news.took?.length
-        ? {
-            key: newsKey!,
-            kicker: rivalName,
-            title: `took your ${names(news.took)}`,
-            line: "Beat them to take one back.",
-            tone: "crimson",
-          }
-        : {
-            key: newsKey!,
-            kicker: rivalName,
-            title: `gave back your ${names(news.back)}`,
-            line: "",
-            tone: "gold",
-          },
-    );
-  }, [newsKey, news, rivalName, quest]);
+      items.map((item) => crawlTheme(quest.packId).loot[item as "die"].name);
+    const said = (
+      key: "took" | "back" | "lostTo" | "beaten",
+      items?: string[],
+    ) => rivalLine(profile, key, names(items)) ?? "";
+    if (news?.took?.length)
+      setShown({
+        key: newsKey,
+        kicker: profile.name,
+        title: `took your ${names(news.took).join(" and ")}`,
+        line: lostTo
+          ? said("lostTo") || "Beat them to take one back."
+          : said("took", news.took) || "Beat them to take one back.",
+        tone: "crimson",
+      });
+    else if (news?.back?.length)
+      setShown({
+        key: newsKey,
+        kicker: profile.name,
+        title: `gave back your ${names(news.back).join(" and ")}`,
+        line: said("back", news.back),
+        tone: "gold",
+      });
+    else if (beat || lostTo) {
+      const line = said(beat ? "beaten" : "lostTo");
+      // A profile from before Phase 1 has nothing to say here.
+      if (line)
+        setShown({
+          key: newsKey,
+          kicker: profile.name,
+          title: beat ? "is beaten, for now" : "got the better of you",
+          line,
+          tone: beat ? "gold" : "crimson",
+        });
+    }
+  }, [newsKey, news, record, rival, profile, quest]);
   const clear = useCallback(() => setShown(null), []);
   // Held while a moment plays (a boss's spoils and its jinx lifted land
   // together): the banner sweeps once the moment is done.

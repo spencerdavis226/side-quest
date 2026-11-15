@@ -936,9 +936,10 @@ function Gate({ m, scale, onDone }: ViewProps<"entrance">) {
     >
       <span className="gate-shade" />
       <span className="gate-bars" />
-      {m.kicker === "Sir Bradley" && (
+      {/^Sir (Chad|Bradley)$/.test(m.kicker ?? "") && (
         // The Quest 2.1 (M13): three gold pennants drop in, a cape on
-        // each, before the sign.
+        // each, before the sign. Sir Bradley is Sir Chad in a save from
+        // before the Rivals Phase 1 rename (its snapshot keeps the name).
         <div className="company-pennants" aria-hidden="true">
           {[0, 1, 2].map((i) => (
             <span
@@ -1343,7 +1344,8 @@ const ALLY_MARK: [RegExp, QuestArt][] = [
   [/Hatchling/, "hatchling"],
   [/Chester/, "chester"],
   [/Bard/, "bard"],
-  [/Bradley/, "bradley"],
+  // Sir Bradley: an ally in a save from before the 2026-11-15 rename.
+  [/Chad|Bradley/, "bradley"],
   [/Blade|Sword/, "blade"],
 ];
 const allyMark = (name: string): QuestArt =>

@@ -325,7 +325,7 @@ export const innRares: CardDefinition[] = [
     ribbon: "Inn · Rare",
     offers: [
       { label: "Take a potion", loot: "draught" },
-      { label: "Draw on Bradley", deed: "drew-on-bradley" },
+      { label: "Draw on Chad", deed: "drew-on-bradley" },
     ],
   },
 ];

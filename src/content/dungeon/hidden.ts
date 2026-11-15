@@ -70,7 +70,7 @@ const HIDDEN: Record<string, Hidden> = {
   // The rival's own (2026-11-15; the city gate's charter held it before).
   "dungeon.rival-bradley-spar": {
     face: 20,
-    line: "He drops his charter.",
+    line: "He drops his bar tab, still open.",
     reward: { loot: "round" },
   },
 };

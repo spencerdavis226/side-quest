@@ -262,15 +262,44 @@ export interface RivalProfile {
   name: string;
   /** A spoken rule the table keeps whenever the rival shows up. */
   ritual: string;
-  /** Read when the rival meddles in a fight (the d20 is rolled twice and
-   * the worse kept) and when they snipe what a card gives. */
-  meddle: string;
-  snipe: string;
+  /** What they say, in their own voice (Rivals Phase 1, 2026-11-15). A
+   * profile from before it has `meddle` and `snipe` only. */
+  lines?: RivalLines;
+  /** Before `lines`: read when the rival meddles in a fight (the d20 is
+   * rolled twice and the worse kept) and when they snipe what a card
+   * gives. Old snapshots only. */
+  meddle?: string;
+  snipe?: string;
   /** How often each uninvited appearance comes, as weights. */
   style: { ambush: number; meddle: number; snipe: number };
   /** The ballad's third line, by how it ended (at most 44 characters). */
   verse: { joined?: string; beaten: string; ahead: string };
 }
+/** A rival's way of turning up uninvited (`stalk`). Phase 1 deals the
+ * first three; the rest are planned in `docs/RIVALS_PLAN.md`. */
+export type RivalVerb =
+  | "ambush"
+  | "meddle"
+  | "snipe"
+  | "redo"
+  | "swipe"
+  | "handoff"
+  | "poach"
+  | "squat"
+  | "invoice"
+  | "curse";
+/** A rival's lines (at most 80 characters each); `{item}` names the
+ * satchel items in play. */
+export type RivalLines = Partial<Record<RivalVerb, string>> & {
+  /** News: they took something ("Sir Chad pockets your {item}."). */
+  took: string;
+  /** News: they handed something back. */
+  back: string;
+  /** After the party loses a meeting with them. */
+  lostTo: string;
+  /** After the party wins one. */
+  beaten: string;
+};
 /** A dragon's move for one round of its battle (`lairFight`). */
 export interface DragonMove {
   /** Shown on the ribbon; at most 18 characters. */

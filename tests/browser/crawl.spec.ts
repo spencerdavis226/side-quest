@@ -1020,9 +1020,11 @@ test("the lair's door: the rival asks, and the table answers", async ({
     "The Lair's Door · Rival",
   );
   await expect(page.locator(".offer-plaque")).toHaveCount(2);
-  await expect(page.locator(".offer-plaque").first()).toContainText(
-    "Take him",
+  await expect(page.locator(".offer-plaque").first()).toContainText("Take him");
+  await expect(page.locator(".offer-plaque").nth(1)).toContainText(
+    "Kick his ass",
   );
+  await expect(page.locator(".game-card")).toContainText("Sir Chad");
   await page.screenshot({ path: info.outputPath("door.png") });
 });
 
@@ -1047,18 +1049,35 @@ test("the rival: a chip on the strip, a ledger, and a cut-in on the card", async
   s = reveal({ ...s, quest: { ...s.quest!, finale } });
   await seed(page, s);
   await expect(page.locator(".game-card .card-ribbon")).toHaveText(
-    "Sir Bradley · Meddling",
+    "Sir Chad · Meddling",
   );
   const chip = page.locator(".tag-rival");
   await expect(chip).toHaveAccessibleName(
-    "Your rival, Sir Bradley: holding 1 of your items",
+    "Your rival, Sir Chad: holding 1 of your items",
   );
   await chip.click();
   const dialog = page.getByRole("dialog", { name: "Your rival" });
-  await expect(dialog).toContainText("everyone salutes");
+  await expect(dialog).toContainText("everyone flexes");
   await expect(dialog).toContainText("Roll twice, keep the worse.");
   await expect(dialog.locator(".rival-ledger")).toContainText("Tower Shield");
   await page.screenshot({ path: info.outputPath("rival.png") });
+});
+
+test("the rival's news banner speaks in their own voice", async ({ page }) => {
+  // Rivals Phase 1: the introduction takes the newest item, and the
+  // banner reads Sir Chad's own line with the item's name filled in.
+  const s = reveal(
+    crawlAt("dungeon.rival-bradley", STEP.rival, {
+      loot: ["draught", "shield"],
+    }),
+  );
+  await seed(page, s);
+  await page.locator(".game-card").click();
+  const banner = page.locator(".news-banner");
+  await expect(banner).toContainText("took your Tower Shield");
+  await expect(banner).toContainText(
+    "Sir Chad pockets your Tower Shield. 'For the highlight reel, Champ.'",
+  );
 });
 
 test("the omen is kept in the party dialog", async ({ page }, info) => {
