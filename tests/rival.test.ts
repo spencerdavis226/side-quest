@@ -319,7 +319,9 @@ describe("the rival", () => {
     expect(kinds.ambush).toBeGreaterThan(10);
     expect(kinds.meddle).toBeGreaterThan(10);
     expect(kinds.snipe).toBeGreaterThan(10);
-  });
+    // 80 seeded runs played card by card: about 5 s here, more on a CI
+    // runner beside the other files, so it has the harness's 30 s.
+  }, 30_000);
 
   it("leaves a party on its last few hearts alone", () => {
     for (let seed = 1; seed <= 40; seed++) {
