@@ -2316,6 +2316,20 @@ export const packs: PackDefinition[] = [
             "dungeon.rival-gary",
             "dungeon.rival-queef",
           ],
+          variants: [
+            {
+              deeds: ["nemesis-bradley"],
+              cardIds: ["dungeon.rival-bradley-back"],
+            },
+            {
+              deeds: ["nemesis-mirabel"],
+              cardIds: ["dungeon.rival-mirabel-back"],
+            },
+            { deeds: ["nemesis-tutt"], cardIds: ["dungeon.rival-tutt-back"] },
+            { deeds: ["nemesis-chuck"], cardIds: ["dungeon.rival-chuck-back"] },
+            { deeds: ["nemesis-gary"], cardIds: ["dungeon.rival-gary-back"] },
+            { deeds: ["nemesis-queef"], cardIds: ["dungeon.rival-queef-back"] },
+          ],
         },
         {
           label: "A Dragon Sign",

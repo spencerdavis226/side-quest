@@ -18,6 +18,7 @@ import {
 } from "../game/engine";
 import { loadPackCards } from "../content/loaders";
 import { Button } from "../components/UI";
+import RivalMedal, { RIVAL_COLOURS } from "../components/RivalMedal";
 import "./chronicle.css";
 
 // The Chronicle (The Quest 2.0 Phase 7): The Quest's record across runs.
@@ -228,6 +229,37 @@ function QuestBook({
           </div>
         ))}
       </dl>
+      {/* Rivals Phase 6: each rival's record, the nemesis marked. */}
+      <h3>Rivals</h3>
+      <ul className="chronicle-rivals">
+        {Object.keys(RIVAL_COLOURS).map((who) => {
+          const r = c.rivals?.[who];
+          const met = !!r && r.met > 0;
+          const bits = met
+            ? [
+                `met ${r.met}`,
+                `beaten ${r.beaten}`,
+                `lost to ${r.lostTo}`,
+                ...(r.joined ? [`joined ${r.joined}`] : []),
+                ...(r.betrayed ? [`betrayed you ${r.betrayed}`] : []),
+                ...(r.slainBy ? [`"slew" ${r.slainBy}`] : []),
+              ]
+            : [];
+          return (
+            <li key={who} className={met ? "met" : undefined}>
+              <RivalMedal
+                who={met ? who : undefined}
+                className="rival-row-medal"
+              />
+              <strong>
+                {met ? (titles[`dungeon.rival-${who}`] ?? "A rival") : "?"}
+                {c.nemesis === who && <em> · Nemesis</em>}
+              </strong>
+              {met && <small>{bits.join(" · ")}</small>}
+            </li>
+          );
+        })}
+      </ul>
       <h3>Feats</h3>
       <ul className="chronicle-feats">
         {FEATS.map((f) => {

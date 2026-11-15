@@ -17,6 +17,7 @@ import {
   RARE_COUNT,
   readChronicle,
   recordRun,
+  rememberRivals,
   runNames,
   SECRET_COUNT,
   secretKind,
@@ -164,7 +165,7 @@ describe("the Chronicle", () => {
         ),
     );
     expect(rares.size).toBe(RARE_COUNT);
-    expect(FEATS).toHaveLength(12);
+    expect(FEATS).toHaveLength(18);
   });
 
   it("survives a reload, and a malformed one resets alone", () => {
@@ -260,7 +261,9 @@ describe("unlocks in a run", () => {
     const hard = count(heroic);
     expect(hard).toBeGreaterThan(70);
     expect(hard).toBeLessThan(130);
-  }, 60_000);
+    // 2,000 whole sessions: about 43 s here, over 60 s on a busy CI runner
+    // (2026-11-15), so it has the balance files' 120 s.
+  }, 120_000);
 });
 
 describe("Heroic mode", () => {
@@ -364,5 +367,136 @@ describe("the League's record", () => {
     const read = readChronicle(bad)!;
     expect(read.played).toBe(3);
     expect(read.league).toBeUndefined();
+  });
+});
+
+// Rivals Phase 6: the Chronicle's nemesis.
+describe("the Chronicle's rivals", () => {
+  const withRival = (
+    s: SessionState,
+    rival: NonNullable<NonNullable<SessionState["quest"]>["party"]>["rival"],
+    deeds: string[] = [],
+  ): SessionState => ({
+    ...s,
+    quest: {
+      ...s.quest!,
+      party: { ...s.quest!.party!, rival, deeds },
+    },
+  });
+  const base = { took: [], won: 0, lost: 0 };
+
+  it("keeps each rival's record, and the one who got the better of you", () => {
+    const s = createSession(crawl, cards, packs, seeded(1));
+    // Lost to Lady Fingerbang, still holding the shield.
+    const first = recordRun(
+      emptyChronicle(),
+      ended(
+        withRival(s, { ...base, who: "mirabel", took: ["shield"], lost: 2 }),
+        false,
+      ),
+      "2026-11-15T20:00:00Z",
+    );
+    expect(first.rivals?.mirabel).toEqual({
+      met: 1,
+      beaten: 0,
+      lostTo: 2,
+      joined: 0,
+      betrayed: 0,
+      slainBy: 0,
+    });
+    expect(first.nemesis).toBe("mirabel");
+    // Next run: Sensei, beaten in his duel. No nemesis now.
+    const t = createSession(crawl, cards, packs, seeded(2));
+    const second = recordRun(
+      first,
+      ended(withRival(t, { ...base, who: "tutt", won: 3 }, ["rival-beaten"])),
+      "2026-11-16T20:00:00Z",
+    );
+    expect(second.rivals?.tutt).toMatchObject({ met: 1, beaten: 1 });
+    expect(second.nemesis).toBeUndefined();
+    expect(readChronicle(JSON.parse(JSON.stringify(second)))).toEqual(second);
+  });
+
+  it("earns the rivals' feats", () => {
+    const s = createSession(crawl, cards, packs, seeded(3));
+    const feats = (
+      rival: Parameters<typeof withRival>[1],
+      deeds: string[],
+      won = true,
+    ) =>
+      recordRun(emptyChronicle(), ended(withRival(s, rival, deeds), won), "x")
+        .feats;
+    expect(
+      feats({ ...base, who: "tutt" }, [
+        "rival-refused",
+        "rival-clean",
+        "rival-beaten",
+      ]),
+    ).toContain("paid-in-full");
+    expect(
+      feats({ ...base, who: "mirabel" }, ["rival-joined", "rival-turned"]),
+    ).toContain("et-tu");
+    expect(feats({ ...base, who: "gary" }, ["rival-settled"])).toContain(
+      "audited",
+    );
+    expect(
+      feats({ ...base, who: "queef" }, ["rival-refused"], false),
+    ).toContain("bad-reviews");
+    for (const key of [
+      "paid-in-full",
+      "et-tu",
+      "just-watching",
+      "allegedly",
+      "audited",
+      "bad-reviews",
+    ])
+      expect(
+        FEATS.some((f) => f.key === key),
+        key,
+      ).toBe(true);
+  });
+
+  it("drops a malformed rival record or nemesis alone", () => {
+    const good = { ...emptyChronicle(), played: 2 };
+    const bad = {
+      ...good,
+      rivals: { mirabel: { met: -1 } },
+      nemesis: "Not A Key",
+    };
+    const read = readChronicle(bad)!;
+    expect(read.played).toBe(2);
+    expect(read.rivals).toBeUndefined();
+    expect(read.nemesis).toBeUndefined();
+  });
+
+  it("the nemesis is twice as likely, and a rival met before comes back", () => {
+    const intro = (s: SessionState) =>
+      s.quest!.finale.find((id) => /^dungeon\.rival-[a-z]+$/.test(id))!;
+    // Without a memory, no draw moves: the same seed, the same run.
+    expect(
+      createSession(crawl, cards, packs, seeded(9), new Set(), {}).quest,
+    ).toEqual(createSession(crawl, cards, packs, seeded(9)).quest);
+    // Picked plainly 1 time in 6; swapped in 1 time in 7 more when not:
+    // 1/6 + (5/6)(1/7) = 2/7, twice any other rival's 5/42 each.
+    const s = createSession(crawl, cards, packs, seeded(1));
+    const other = ["bradley", "mirabel", "tutt", "chuck", "queef"].find(
+      (w) => intro(s) !== `dungeon.rival-${w}`,
+    )!;
+    const swap = (r: number) =>
+      intro({
+        ...s,
+        quest: rememberRivals(s.quest!, { nemesis: other }, () => r),
+      });
+    expect(swap(1 / 7 - 0.001)).toBe(`dungeon.rival-${other}`);
+    expect(swap(1 / 7 + 0.001)).toBe(intro(s));
+    // Met before: the deed that deals their returning introduction.
+    const back = createSession(crawl, cards, packs, seeded(4), new Set(), {
+      nemesis: "gary",
+      met: ["gary", "chuck"],
+    });
+    const who = intro(back).replace("dungeon.rival-", "");
+    expect(back.quest!.party!.deeds).toEqual(
+      ["gary", "chuck"].includes(who) ? [`nemesis-${who}`] : undefined,
+    );
   });
 });

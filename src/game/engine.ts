@@ -13,7 +13,12 @@ import { awaitingCatch } from "./crawl/team";
 import { awaitingVerdict, discard } from "./crawl/discard";
 import { withNames, withSecret } from "./crawl/names";
 import { atRound, roundOf } from "./crawl/lair";
-import { awaitingInvoice, awaitingRedo, withRival } from "./crawl/rival";
+import {
+  awaitingInvoice,
+  awaitingRedo,
+  rememberRivals,
+  withRival,
+} from "./crawl/rival";
 // The engine's public entry (Quest 2.0 Phase 0, 2026-11-13): the crawl's
 // pieces live in `./crawl/` and are re-exported here, so every import of
 // `engine` keeps working. Modules outside `src/game` import from here only.
@@ -130,6 +135,7 @@ export {
   payOff,
   payOffItem,
   redoRoll,
+  rememberRivals,
   rivalArsenal,
   settleDrinks,
   rivalCut,
@@ -162,8 +168,10 @@ export {
   STARTER_COUNT,
   readChronicle,
   recordRun,
+  rivalMemory,
   unlocks,
   type Chronicle,
+  type RivalRecord,
   type ChronicleNews,
   type LeagueRecord,
 } from "./chronicle";
@@ -249,6 +257,10 @@ export function createSession(
   /** What the Chronicle has earned (The Quest 2.0 Phase 7): a card with an
    * `unlock` not in it is never dealt. */
   unlocked: ReadonlySet<string> = new Set(),
+  /** What the Chronicle remembers of the rivals (Rivals Phase 6): the one
+   * who got the better of the table last run (twice as likely), and every
+   * rival it has met (who come back for more). */
+  rivals: { nemesis?: string; met?: readonly string[] } = {},
 ): SessionState {
   if (
     !validConfig(config) ||
@@ -366,6 +378,7 @@ export function createSession(
       ...(config.heroic && rules.party ? { heroic: true as const } : {}),
       ...(rules.party?.coin ? { coin: true as const } : {}),
     };
+    quest = rememberRivals(quest, rivals, random);
   }
   return {
     version: 2,

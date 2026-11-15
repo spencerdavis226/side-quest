@@ -45,6 +45,9 @@ interface Rival {
   /** The short name, on ribbons and in the ledger. */
   name: string;
   intro: CardDefinition;
+  /** Rivals Phase 6: their introduction to a table that met them before
+   * (the Chronicle remembers): they take two this time. */
+  back: CardDefinition;
   fights: CardDefinition[];
   plea: CardDefinition;
   duel: CardDefinition;
@@ -58,7 +61,7 @@ const ribbon = (name: string) => ({
 function rival(
   who: string,
   profile: RivalProfile,
-  intro: { title: string; rules: string },
+  intro: { title: string; rules: string; back: [title: string, rules: string] },
   /** What a lost confrontation costs: items, hearts, or both. */
   stakes: Stakes,
   fights: Fight[],
@@ -91,6 +94,13 @@ function rival(
       ribbonTone: "crimson",
       encounter: "shrine",
       rival: { who, profile, takes: stakes.intro ?? 1 },
+    },
+    back: {
+      ...card(`rival-${who}-back`, intro.back[0], "group", intro.back[1]),
+      ribbon: "Your Rival · Again",
+      ribbonTone: "crimson",
+      encounter: "shrine",
+      rival: { who, profile, takes: 2 },
     },
     fights: fights.map(([id, title, rules, fight, curse]) => ({
       ...card(
@@ -182,6 +192,10 @@ const bradley = rival(
     title: "Sir Chad Thundercock",
     rules:
       "Sir Chad Thundercock arrives once the boss is dead. Everyone flexes; the weakest drinks 2.",
+    back: [
+      "Chad Is Back",
+      "Sir Chad is back. 'Remember me, Champ?' He takes two this time. Weakest flex drinks 2.",
+    ],
   },
   { takes: 1, damage: 1 },
   [
@@ -288,6 +302,10 @@ const mirabel = rival(
     title: "Lady Fingerbang",
     rules:
       "Lady Fingerbang admires your things. 'Mine,' she says. Everyone covers a drink; last drinks 2.",
+    back: [
+      "Fingerbang Returns",
+      "Lady Fingerbang is back. She remembers your pockets, and takes two. Last to cover a drink drinks 2.",
+    ],
   },
   // She steals two at a time, from the start (Rivals Phase 2).
   { takes: 2, intro: 2 },
@@ -391,6 +409,10 @@ const tutt = rival(
     title: "Sensei Saggynuts",
     rules:
       "Sensei Saggynuts inspects your work. 'Hm. No.' Everyone sits up straight; slouchers drink 2.",
+    back: [
+      "Sensei Returns",
+      "Sensei Saggynuts is back. 'You again. Still slouching.' He confiscates two. Slouchers drink 2.",
+    ],
   },
   { damage: 1 },
   [
@@ -483,6 +505,10 @@ const chuck = rival(
     title: "Chuck the Cuck",
     rules:
       "Chuck the Cuck appoints himself your squire. He keeps one of your things. Eye contact: drink 2.",
+    back: [
+      "Chuck Is Back",
+      "Chuck the Cuck is back to watch, with a notebook. He keeps two of your things. Eye contact: drink 2.",
+    ],
   },
   { takes: 1 },
   [
@@ -586,6 +612,10 @@ const gary = rival(
     title: "Gary Shitwhistle",
     rules:
       "Gary Shitwhistle, Royal Auditor, fines you an item. He blows his whistle; first to move drinks 2.",
+    back: [
+      "Gary's Follow-Up",
+      "Gary Shitwhistle is back. Your file is thicker. He fines you two items. First to move drinks 2.",
+    ],
   },
   { takes: 1, damage: 1 },
   [
@@ -708,6 +738,10 @@ const queef = rival(
     title: "Dame Queefington",
     rules:
       "Dame Queefington has a song about your last fight. It rhymes 'hero' with 'zero'. Everyone hums.",
+    back: [
+      "The Sequel",
+      "Dame Queefington is back with a sequel about you. It's worse. She takes two. Everyone hums.",
+    ],
   },
   { damage: 1 },
   [
@@ -798,11 +832,13 @@ export const senseiPinned: CardDefinition = {
   rival: { who: "tutt" },
 };
 export const rivalIntros = rivals.map((r) => r.intro);
+export const rivalBacks = rivals.map((r) => r.back);
 export const rivalFights = rivals.flatMap((r) => r.fights);
 export const rivalPleas = [...rivals.map((r) => r.plea), senseiPinned];
 export const rivalDuels = rivals.map((r) => r.duel);
 export const rivalCards: CardDefinition[] = [
   ...rivalIntros,
+  ...rivalBacks,
   ...rivalFights,
   ...rivalPleas,
   ...rivalDuels,

@@ -313,7 +313,15 @@ export const dungeonPack: PackDefinition = {
       },
       // The rival walks in (2026-11-15): the first region's boss has just
       // fallen, and they help themselves.
-      one("Your Rival", "Someone got here first", rivalIntros),
+      // Rivals Phase 6: a rival the Chronicle remembers comes back for
+      // more (the deed `nemesis-<who>`, set at the start of the run).
+      {
+        ...one("Your Rival", "Someone got here first", rivalIntros),
+        variants: rivals.map((r) => ({
+          deeds: [`nemesis-${r.who}`],
+          cardIds: [r.back.id],
+        })),
+      },
       // A dragon sign (The Quest 2.0 Phase 3): the dragon passes over. No
       // banner: its shadow crosses the card instead.
       { label: "A Dragon Sign", pick: 1, cardIds: ids(signCards) },

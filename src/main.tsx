@@ -12,6 +12,7 @@ import {
   replaySession,
   singleBlow,
   unlocks,
+  rivalMemory,
   type Chronicle,
   type ChronicleNews,
 } from "./game/engine";
@@ -200,7 +201,14 @@ function App() {
     const game = crawl ? { ...config, packIds: [crawl] } : config;
     const ready = loadedPackCards(game.packIds);
     const fresh = (cards: Parameters<typeof createSession>[1]) =>
-      createSession(game, cards, packs, Math.random, open);
+      createSession(
+        game,
+        cards,
+        packs,
+        Math.random,
+        open,
+        rivalMemory(chronicleRef.current),
+      );
     if (ready) return controller.start(fresh(ready));
     setStarting(true);
     setLoadFailed(false);
@@ -224,6 +232,7 @@ function App() {
         packs,
         Math.random,
         unlocks(chronicleRef.current),
+        rivalMemory(chronicleRef.current),
       );
     if (ready) return controller.start(fresh(ready));
     setStarting(true);

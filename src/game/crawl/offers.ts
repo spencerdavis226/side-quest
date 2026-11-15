@@ -107,6 +107,10 @@ export function takeOffer(
     party = { ...party, rival: { ...party.rival, joinFace } };
   // The Quest 2.0 Phase 6: a choice the road remembers.
   if (offer.deed) party = addDeed(party, offer.deed);
+  // Rivals Phase 6: a duel refused while they hold nothing of yours (the
+  // Chronicle's Paid in Full).
+  if (offer.deed === "rival-refused" && party.rival && !party.rival.took.length)
+    party = addDeed(party, "rival-clean");
   let finale = q.finale;
   // The loud door: the next room on this floor becomes one of its elites.
   if (offer.elite) {
