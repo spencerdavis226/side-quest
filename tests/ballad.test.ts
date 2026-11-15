@@ -9,13 +9,14 @@ import {
   settleBattle,
   singleBlow,
   type Random,
+  takeOffer,
 } from "../src/game/engine";
 import { BALLAD_FOOLS } from "../src/game/ballad";
 import { returnToCard, rollDice } from "../src/game/dice";
 import { cards, packs } from "../src/content/catalog";
 import { JOKE_CLASSES, classes } from "../src/content/dungeon/classes";
 import { lairs } from "../src/content/dungeon/dragons";
-import { CLOSING_HITS, DRAGON_HEALTH } from "../src/content/dungeon/shared";
+import { DRAGON_HEALTH } from "../src/content/dungeon/shared";
 import type { GameConfig, SessionState } from "../src/game/types";
 import { takeRoads } from "./roads";
 
@@ -35,7 +36,7 @@ const seeded = (seed: number): Random => {
 };
 // With both roads taken (The Quest 2.0 Phase 5).
 const CLOSING = 41;
-const BOSS1 = 13;
+const BOSS1 = 12;
 const BOSS2 = 29;
 const rollTo = (s: SessionState, face: number) => {
   const sides = currentCard(s).dice!.sides;
@@ -55,7 +56,6 @@ function atDoor(seed = 1, hearts = 30, cls = "dungeon.class-barbarian") {
   const was = finale.indexOf(cls);
   if (was >= 0) finale[was] = finale[0];
   finale[0] = cls;
-  finale[CLOSING] = "dungeon.closing-last-table";
   s = advance(advance({ ...s, quest: { ...q, finale } }), seeded(seed));
   return {
     ...s,
@@ -64,20 +64,17 @@ function atDoor(seed = 1, hearts = 30, cls = "dungeon.class-barbarian") {
     quest: {
       ...s.quest!,
       step: CLOSING,
-      // One swing already landed on the door (three since Phase 6).
-      party: {
-        ...s.quest!.party!,
-        hits: CLOSING_HITS - 2,
-        max: hearts,
-        hearts,
-      },
+      party: { ...s.quest!.party!, max: hearts, hearts },
     },
   };
 }
+/** Through the door by its second plaque. */
+const pass = (s: SessionState) => takeOffer(advance(s), 1, seeded(7));
 /** Felled at the door with one natural 20, then the dragon struck with
  * `faces` until the run ends. */
 function play(s: SessionState, faces: number[]) {
-  if (s.quest!.step === CLOSING) s = fight(s, 20);
+  // The door's second plaque: no rival was met, so no duel follows.
+  if (s.quest!.step === CLOSING) s = takeOffer(advance(s), 1, seeded(7));
   for (const face of faces) {
     if (s.phase === "complete") break;
     // The enrage contest has no die: it is won (a high face) or lost.
@@ -116,7 +113,7 @@ describe("the ballad", () => {
   });
 
   it("a natural 20 on the last swing is a single blow", () => {
-    const s = fight(atDoor(2, 30), 20);
+    const s = pass(atDoor(2, 30));
     s.quest!.party!.hits = DRAGON_HEALTH - 1;
     s.quest!.party!.duel = { move: 0, swings: 3, enraged: true };
     const won = play(s, [20]);
@@ -131,7 +128,7 @@ describe("the ballad", () => {
       Array(DRAGON_HEALTH + 2).fill(19),
     );
     expect(ballad(fool).at(-1)).toMatch(/^and the fool slew /);
-    const thin = fight(atDoor(4, 30), 20);
+    const thin = pass(atDoor(4, 30));
     thin.quest!.party!.hits = DRAGON_HEALTH - 1;
     thin.quest!.party!.duel = { move: 0, swings: 3, enraged: true };
     thin.quest!.party!.hearts = 1;
@@ -149,9 +146,21 @@ describe("the ballad", () => {
     expect(ballad(at).at(-1)).toMatch(
       new RegExp(`^and ${dragon} sleeps on( under ${lair})?\\.$`),
     );
-    // Wiped at the door.
+    // Wiped at the crossroads, by the rival.
     const door = atDoor(6, 1);
-    const early = fight(door, 2);
+    const finale = [...door.quest!.finale];
+    const spar = "dungeon.rival-bradley-spar";
+    if (finale.includes(spar)) finale[finale.indexOf(spar)] = finale[31];
+    finale[31] = spar;
+    const early = fight(
+      {
+        ...door,
+        discarded: 31,
+        previousId: finale[30],
+        quest: { ...door.quest!, finale, step: 31 },
+      },
+      2,
+    );
     expect(early.quest!.party!.wiped).toBe(true);
     expect(ballad(early).at(-1)).toBe(
       `and never saw ${lair && runNames(early.quest!).lair}.`,

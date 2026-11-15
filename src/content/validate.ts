@@ -270,6 +270,48 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
           !c.dice?.outcomes?.some((o) => o.reward?.ally)))
     )
       fail(`Invalid ally: ${c.id}`);
+    // The rival (2026-11-15): a short key; an introduction's profile (a
+    // name, a ritual, the two lines, weights and the ballad's lines); what
+    // the card takes and hands back.
+    const line = (t: unknown, max: number) =>
+      typeof t === "string" && !!t.trim() && t.length <= max;
+    const r = c.rival;
+    if (
+      r !== undefined &&
+      (!r ||
+        typeof r.who !== "string" ||
+        !/^[a-z]{2,12}$/.test(r.who) ||
+        (r.takes !== undefined && !count(r.takes, 3)) ||
+        (r.returns !== undefined &&
+          r.returns !== "all" &&
+          !count(r.returns, 3)) ||
+        (r.profile !== undefined &&
+          (!r.profile ||
+            !line(r.profile.name, 22) ||
+            !line(r.profile.ritual, 110) ||
+            !line(r.profile.meddle, 80) ||
+            !line(r.profile.snipe, 80) ||
+            !r.profile.style ||
+            (["ambush", "meddle", "snipe"] as const).some(
+              (k) =>
+                !Number.isSafeInteger(r.profile!.style[k]) ||
+                r.profile!.style[k] < 0 ||
+                r.profile!.style[k] > 9,
+            ) ||
+            !r.profile.verse ||
+            !line(r.profile.verse.beaten, 44) ||
+            !line(r.profile.verse.ahead, 44) ||
+            (r.profile.verse.joined !== undefined &&
+              !line(r.profile.verse.joined, 44)))))
+    )
+      fail(`Invalid rival: ${c.id}`);
+    if (
+      c.ally?.turncoat !== undefined &&
+      (c.ally.turncoat !== true || !c.rival)
+    )
+      fail(`Invalid ally: ${c.id}`);
+    if (c.offers?.some((o) => o?.restore !== undefined && o.restore !== true))
+      fail(`Invalid offers: ${c.id}`);
     // A merchant's wares or a fork's doors: two or three plaques, on a card
     // with no other way to be put aside.
     if (
@@ -803,7 +845,19 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
             badInserts(stage) ||
             badExtras(stage) ||
             (stage.elite !== undefined &&
-              (!crawl || !Array.isArray(stage.elite) || !stage.elite.length)),
+              (!crawl || !Array.isArray(stage.elite) || !stage.elite.length)) ||
+            // The rivals' confrontations (2026-11-15): the stage's own
+            // cards, each a rival's fight.
+            (stage.ambush !== undefined &&
+              (!crawl ||
+                !Array.isArray(stage.ambush) ||
+                !stage.ambush.length ||
+                stage.ambush.some(
+                  (id) =>
+                    !stage.cardIds.includes(id) ||
+                    !cs.find((c) => c.id === id)?.rival ||
+                    !cs.find((c) => c.id === id)?.battle,
+                ))),
         ) ||
         badChoice ||
         repeatsInARun(slots) ||

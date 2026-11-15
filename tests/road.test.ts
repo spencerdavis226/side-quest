@@ -31,7 +31,7 @@ const seeded = (seed: number): Random => {
 };
 const DEPTH1 = ["The King's Road", "The Old Forest", "The Marsh"];
 const DEPTH2 = ["The Haunted Crypt", "The Goblin Mines", "The Wizard's Tower"];
-const ROAD = 4;
+const ROAD = 3;
 const roundTrip = (s: SessionState) =>
   expect(parseSession(JSON.stringify(s))).toEqual(s);
 /** The run at its choice card at step `step`, face up. */

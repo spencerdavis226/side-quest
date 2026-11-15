@@ -345,6 +345,9 @@ export function cardEdge(
   const duel = party?.duel;
   // The Quest 2.1: a Lucky Coin that came up heads.
   if (party?.coin?.for === "luck" && party.coin.face === 2) return "advantage";
+  // The rival meddling in this fight (2026-11-15): rolled twice, the worse
+  // kept.
+  if (party?.rival?.cut === "meddle" && card.battle) return "disadvantage";
   if (
     card.lairFight &&
     duel &&

@@ -936,7 +936,7 @@ function Gate({ m, scale, onDone }: ViewProps<"entrance">) {
     >
       <span className="gate-shade" />
       <span className="gate-bars" />
-      {m.kicker === "The Gilded Company" && (
+      {m.kicker === "Sir Bradley" && (
         // The Quest 2.1 (M13): three gold pennants drop in, a cape on
         // each, before the sign.
         <div className="company-pennants" aria-hidden="true">

@@ -16,9 +16,15 @@ import {
   validConfig,
   emptyChronicle,
   readChronicle,
+  rivalProfile,
   type Chronicle,
 } from "../game/engine";
-import type { GameConfig, PartyState, SessionState } from "../game/types";
+import type {
+  GameConfig,
+  Loot,
+  PartyState,
+  SessionState,
+} from "../game/types";
 import { LOOT } from "../game/types";
 import { IS_PREVIEW, KEY_PREFIX } from "./channel";
 export const SAVE_KEY = `${KEY_PREFIX}session.v1`;
@@ -158,6 +164,9 @@ function validateQuest(s: SessionState) {
   // The finale is each stage's picks, in stage order, with no repeats; a
   // crawl floor's fork may have swapped one of its later rooms for an elite.
   let at = 0;
+  const ambushes = q.stages.flatMap((st) =>
+    Array.isArray(st?.ambush) ? st.ambush : [],
+  );
   for (const stage of q.stages) {
     const picks = q.finale.slice(at, at + stage.pick);
     const elite = stage.elite;
@@ -191,10 +200,18 @@ function validateQuest(s: SessionState) {
       picks.length !== stage.pick ||
       (elite !== undefined &&
         (!q.party || !Array.isArray(elite) || !elite.length)) ||
+      // The rivals' confrontations (2026-11-15): each a rival's card.
+      (stage.ambush !== undefined &&
+        (!q.party ||
+          !Array.isArray(stage.ambush) ||
+          !stage.ambush.length ||
+          stage.ambush.some((c) => typeof c?.rival?.who !== "string"))) ||
       picks.some(
         (id, i) =>
           !stage.cards.some((c) => c.id === id) &&
           !(i > 0 && elite?.some((c) => c.id === id)) &&
+          // The rival's ambush in a room's place (2026-11-15).
+          !(i > 0 && stage.pick > 1 && ambushes.some((c) => c.id === id)) &&
           !inserts?.some(
             (ins) => ins.at === i && ins.cards.some((c) => c.id === id),
           ) &&
@@ -310,6 +327,8 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
         ))) ||
     // Dragon lore (The Quest 2.0 Phase 4): one to three.
     (p.lore !== undefined && (!whole(p.lore, 1) || p.lore > 3)) ||
+    // The rival (2026-11-15).
+    (p.rival !== undefined && badRival(s, p.rival)) ||
     // The Quest 2.1: a coin just flipped.
     (p.coin !== undefined &&
       (!p.coin ||
@@ -375,6 +394,45 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
         p.form > (omenForm(s.quest)?.forms ?? 0)))
   )
     throw Error("Invalid party");
+}
+/** Whether a saved rival is malformed: introduced by a card already
+ * dealt, a ledger of items, counts, and a cut only on a card in play. */
+function badRival(s: SessionState, rival: NonNullable<PartyState["rival"]>) {
+  const q = s.quest!;
+  const whole = (n: unknown): n is number =>
+    Number.isSafeInteger(n) && (n as number) >= 0;
+  const items = (list: unknown) =>
+    Array.isArray(list) &&
+    list.length <= 40 &&
+    list.every((item) => LOOT.includes(item as Loot));
+  if (!rival || typeof rival !== "object" || typeof rival.who !== "string")
+    return true;
+  const dealt = q.finale.slice(0, q.step + 1);
+  const intro = rivalProfile(q)?.card;
+  const cuts = rival.cuts;
+  const news = rival.news;
+  return (
+    !intro ||
+    !dealt.includes(intro.id) ||
+    !items(rival.took) ||
+    !whole(rival.won) ||
+    !whole(rival.lost) ||
+    (rival.seen !== undefined && !whole(rival.seen)) ||
+    (rival.cut !== undefined &&
+      ((rival.cut !== "meddle" && rival.cut !== "snipe") ||
+        s.phase === "complete")) ||
+    (cuts !== undefined &&
+      (!cuts ||
+        typeof cuts !== "object" ||
+        Object.entries(cuts).some(
+          ([k, n]) => !["ambush", "meddle", "snipe"].includes(k) || !whole(n),
+        ))) ||
+    (news !== undefined &&
+      (!news ||
+        typeof news !== "object" ||
+        (news.took !== undefined && !items(news.took)) ||
+        (news.back !== undefined && !items(news.back))))
+  );
 }
 /** Whether a saved dragon battle is malformed or out of place. */
 function badDuel(s: SessionState, duel: NonNullable<PartyState["duel"]>) {

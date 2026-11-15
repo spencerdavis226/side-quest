@@ -23,6 +23,7 @@ import {
   teamMember,
   runNames,
   wantedBoss,
+  rivalProfile,
 } from "../../game/engine";
 import { hiddenReward, rollWins } from "../../game/dice";
 import { describeChange } from "../../game/omenText";
@@ -366,12 +367,13 @@ export function entranceFor(s: SessionState) {
         ? "final"
         : "boss";
   const theme = crawlTheme(q.packId);
-  // The Company's own cards (The Quest 2.0 Phase 6, M13).
-  const company = !league && / · Rival$/.test(card.ribbon ?? "");
+  // The rival's own fights (2026-11-15; the Company's before): their
+  // name over the entrance.
+  const company = !league && card.rival ? rivalProfile(q)?.profile.name : "";
   const kicker = card.lairFight
     ? "It's awake"
     : company
-      ? "The Gilded Company"
+      ? company
       : style === "elite"
         ? `Elite Four · ${at.index + 1} of ${at.size}`
         : style === "rival"
@@ -770,7 +772,10 @@ export function momentsBetween(
       const fallen = teamMember(q, party.fainted);
       if (fallen?.ally) {
         const stand = party.fainted !== was.assist;
-        const line = "Pour one out. The drawer drinks 2.";
+        // The rival, joined, walks out with the satchel (2026-11-15).
+        const line = fallen.ally.turncoat
+          ? "Gone, and the satchel with them. The drawer drinks 2."
+          : "Pour one out. The drawer drinks 2.";
         out.push({
           kind: "fallen",
           key: `fallen:${party.fainted}:${after.discarded}`,

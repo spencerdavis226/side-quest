@@ -10,7 +10,7 @@ import {
   takeOffer,
   type Random,
 } from "../src/game/engine";
-import { returnToCard, rollDice, rollTarget } from "../src/game/dice";
+import { returnToCard, rollDice } from "../src/game/dice";
 import { parseSession } from "../src/app/persistence";
 import { cards, packs } from "../src/content/catalog";
 import { echoes } from "../src/content/dungeon/echoes";
@@ -36,7 +36,7 @@ const seeded = (seed: number): Random => {
 };
 // With both roads taken: the city gate, the last card of the third region,
 // the echo, the Lair's Door.
-const GATE = 3;
+const GATE = 3; // The Road Out now; any early step does.
 const REGION3_LAST = 39;
 const ECHO = 40;
 const roundTrip = (s: SessionState) =>
@@ -83,15 +83,6 @@ const pass = (s: SessionState) => {
 };
 
 describe("deeds", () => {
-  it("the city gate records how the Company fight went", () => {
-    const s = at(run(2), GATE);
-    const won = advance(returnToCard(rollDice(s, () => 0.95)));
-    expect(won.quest!.party!.deeds).toEqual(["gate-won"]);
-    const lost = advance(returnToCard(rollDice(s, () => 0.06)));
-    expect(lost.quest!.party!.deeds).toEqual(["gate-lost"]);
-    roundTrip(lost);
-  });
-
   it("a plaque sets its deed once", () => {
     const s = run(3);
     const plea = s.quest!.stages.findIndex((st) => st.label === "A Side Quest");
@@ -138,28 +129,23 @@ describe("echoes and the Lair's Door", () => {
     roundTrip(slipped);
   });
 
-  it("beaten at the gate and the crossroads, Sir Bradley comes to beg", () => {
+  it("the door deals the run's rival, and the duel only when refused", () => {
     const s = run(7);
-    const won = pass(at(s, REGION3_LAST, ["gate-won", "crossroads-won"]));
-    expect(won.quest!.finale[won.quest!.step]).toBe(
-      "dungeon.closing-bradley-begs",
+    const door = pass(at(s, REGION3_LAST, ["rival-bradley"]));
+    expect(door.quest!.finale[door.quest!.step]).toBe(
+      "dungeon.rival-bradley-door",
     );
-    roundTrip(won);
-  });
-
-  it("beaten by them twice, the door's fight is a point harder", () => {
-    const s = run(8);
-    const lost = pass(at(s, REGION3_LAST, ["gate-lost", "crossroads-lost"]));
-    const q = lost.quest!;
-    expect(q.stages[finaleStage(q).stage].harder).toBe(1);
-    const door = advance(lost);
-    // The same card without the extra need.
-    const plain = structuredClone(door);
-    delete plain.quest!.stages[finaleStage(plain.quest!).stage].harder;
-    const target = (t: SessionState) => rollTarget(t, currentCard(t));
-    // The extra need is a d20's (Phase 6): a d6 door card reads as written.
-    if (target(plain)?.count === 1 && target(plain)?.sides === 20)
-      expect(target(door)!.target).toBe(target(plain)!.target + 1);
-    roundTrip(lost);
+    roundTrip(door);
+    // Taken in: the duel leaves the run.
+    const joined = takeOffer(advance(door), 0);
+    expect(finaleStage(joined.quest!).label).toBe("The Dragon's Lair");
+    expect(joined.quest!.party!.team).toEqual(["dungeon.rival-bradley-door"]);
+    roundTrip(joined);
+    // Refused: their own duel is dealt.
+    const refused = takeOffer(advance(door), 1);
+    expect(refused.quest!.finale[refused.quest!.step]).toBe(
+      "dungeon.rival-bradley-duel",
+    );
+    roundTrip(refused);
   });
 });

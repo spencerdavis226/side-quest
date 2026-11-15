@@ -227,13 +227,49 @@ export interface CardDefinition {
     calling: (Encounter | "any")[];
     bonus: number;
     ritual?: string;
+    /** The rival, joined (2026-11-15): lose a fight she is sent into and
+     * she leaves with the whole satchel (it goes back on the rival's
+     * ledger) in place of dying, and she never makes the last stand. */
+    turncoat?: true;
   };
+  /** The rival (2026-11-15): a card of the run's rival. See `RivalCard`. */
+  rival?: RivalCard;
   /** The Quest 2.0 Phase 6: a deed set when this battle is put aside, by
    * how it went (`party.deeds`). */
   deed?: { won?: string; lost?: string };
   /** The Quest 2.0 Phase 7: never dealt unless the Chronicle has earned
    * this unlock (`createSession`'s `unlocked`). */
   unlock?: string;
+}
+/** The rival (2026-11-15, owner: "a specific random rival every time ...
+ * that same rival follows you throughout the whole quest"). One of a run's
+ * rivals is introduced by a card with a `profile`; from then on that
+ * rival's other cards are the only ones dealt, and they turn up uninvited
+ * on other cards (`party.rival.cut`) or in place of a room (an ambush). */
+export interface RivalCard {
+  /** Which rival: a short key ("bradley"). */
+  who: string;
+  /** The introduction: putting this card aside names the run's rival. */
+  profile?: RivalProfile;
+  /** Satchel items the rival takes, newest first: when the card is put
+   * aside (the introduction), or when its battle is lost. */
+  takes?: number;
+  /** Items the rival hands back, oldest first, when the battle is won (a
+   * fight of several swings: when it falls); `all` is everything. */
+  returns?: number | "all";
+}
+export interface RivalProfile {
+  name: string;
+  /** A spoken rule the table keeps whenever the rival shows up. */
+  ritual: string;
+  /** Read when the rival meddles in a fight (the d20 is rolled twice and
+   * the worse kept) and when they snipe what a card gives. */
+  meddle: string;
+  snipe: string;
+  /** How often each uninvited appearance comes, as weights. */
+  style: { ambush: number; meddle: number; snipe: number };
+  /** The ballad's third line, by how it ended (at most 44 characters). */
+  verse: { joined?: string; beaten: string; ahead: string };
 }
 /** A dragon's move for one round of its battle (`lairFight`). */
 export interface DragonMove {
@@ -358,6 +394,8 @@ export interface Offer {
   recruit?: true;
   /** The Quest 2.0 Phase 6: a deed the run remembers (`party.deeds`). */
   deed?: string;
+  /** The rival hands back everything they hold (2026-11-15). */
+  restore?: true;
   /** The Quest 2.0 Phase 5: the road chosen (0 or 1) on a `choose` slot's
    * card; the other road's stages leave the run. */
   route?: 0 | 1;
@@ -440,6 +478,9 @@ export interface QuestStage {
   /** Pub Crawl: the floor's elites, dealt only through a fork's loud door
    * (never picked, never in `cardIds`). */
   elite?: string[];
+  /** The rivals' confrontations (2026-11-15), every rival's: never picked;
+   * one of the run's rival's replaces a room when they ambush the party. */
+  ambush?: string[];
   /** The Quest 2.0 Phase 3 (2026-11-14): a card dealt at a fixed place
    * among the picks (a region's landmark, fifth). `at` counts from 0; one
    * card of each pool is picked when the game starts. */
@@ -527,6 +568,8 @@ export interface QuestState {
     cards: CardDefinition[];
     /** A crawl floor's elites (`QuestStage.elite`); older saves omit it. */
     elite?: CardDefinition[];
+    /** The rivals' confrontations (`QuestStage.ambush`). */
+    ambush?: CardDefinition[];
     /** Cards dealt at a fixed place (`QuestStage.inserts`); older saves
      * omit it. */
     inserts?: { at: number; cards: CardDefinition[] }[];
@@ -630,6 +673,22 @@ export interface PartyState {
    * is the enrage contest, whether the dragon is enraged, the swings made
    * so far, and the round just put aside for Previous Card. When the
    * dragon falls or the party wipes, `prev` is that last round. */
+  /** The run's rival (2026-11-15), once introduced: who, what they hold
+   * (oldest first), the confrontations won and lost, how they cut in on
+   * the card in play (`meddle`: its d20 is rolled twice and the worse
+   * kept; `snipe`: the item it gives goes to them), how many of each
+   * uninvited appearance there have been, the draw they last showed up
+   * on, and what changed hands on the card just put aside (news). */
+  rival?: {
+    who: string;
+    took: Loot[];
+    won: number;
+    lost: number;
+    cut?: "meddle" | "snipe";
+    cuts?: { ambush?: number; meddle?: number; snipe?: number };
+    seen?: number;
+    news?: { took?: Loot[]; back?: Loot[] };
+  };
   /** The Quest 2.1: a coin just flipped off a card (2 heads, 1 tails): a
    * Lucky Coin (`luck`: heads gives this card's reroll the edge) or a road
    * card's "Flip for it" (`road`: news until the next put-aside). */

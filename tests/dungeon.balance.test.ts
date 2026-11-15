@@ -56,9 +56,9 @@ const STEP = {
   adventurer: 0,
   omen: 1,
   summons: 2,
-  queue: 3,
-  floor1: 4,
-  boss1: 12,
+  floor1: 3,
+  boss1: 11,
+  rival: 12,
   sign: 13,
   landing1: 14,
   plea: 15,
@@ -126,6 +126,9 @@ function playRun(seed: number, adventurer?: string, heroic = false) {
       // The road (Phase 5): a coin flip between the two regions offered.
       if (offers.some((o) => o.route !== undefined))
         pick = random() < 0.5 ? 0 : 1;
+      // The rival at the door (2026-11-15): a healthy table duels them;
+      // a hurt one takes them in, or skips the exam.
+      else if (card.rival) pick = p.hearts > 6 ? 1 : 0;
       else if (card.encounter === "fork") pick = p.hearts > 6 ? 1 : 0;
       else if (offers.some((o) => o.skip)) pick = p.hearts > 6 ? 0 : 1;
       // A landmark or a dragon sign (The Quest 2.0 Phase 3): gear, then an
@@ -210,7 +213,13 @@ function playRun(seed: number, adventurer?: string, heroic = false) {
       for (const m of partyTeam(s.quest)) {
         if (!m.ally || !canSendIn(s, m.id)) continue;
         const need = rollTarget(s, card)?.target ?? 21;
-        if (card.lairFight || need - m.ally.bonus <= 10) {
+        // Lady Mirabel walks out with the satchel on a loss: only on a
+        // roll she makes likely.
+        if (
+          m.ally.turncoat
+            ? need - m.ally.bonus <= 7
+            : card.lairFight || need - m.ally.bonus <= 10
+        ) {
           s = sendIn(s, m.id);
           break;
         }
@@ -255,6 +264,8 @@ function playRun(seed: number, adventurer?: string, heroic = false) {
 const lairSwings = { all: 0, hit: 0 };
 // For tuning: QUEST_RUNS=1000 plays fewer runs (the bands then wobble).
 const RUNS = Number(process.env.QUEST_RUNS ?? 4000);
+// For tuning: QUEST_JOKES=3000 reads the joke classes' thin rates closer.
+const JOKE_RUNS = Number(process.env.QUEST_JOKES ?? 600);
 // The tests below read thousands of runs; beside the other harness in a
 // full parallel `npm test` they can pass the 5 s default, so each has 30 s.
 // A finished run is kept without its deck snapshot (`cards`, a clone of
@@ -317,7 +328,7 @@ it("a crawl is hard: the party wins about a quarter of its runs", () => {
   // Lair's Door (Phase 6), so 65.
   expect(mean).toBeLessThan(65);
   // Nearly every run gets through the gate and the first region.
-  const early = ["The City Gate", "Region 1"].reduce(
+  const early = ["Your Rival", "Region 1"].reduce(
     (n, l) => n + (wipes.get(l) ?? 0),
     0,
   );
@@ -371,6 +382,43 @@ it("the dragon battle is the run's last hard fight, never a wall", () => {
     expect(r, name).toBeGreaterThan(0.12);
     expect(r, name).toBeLessThan(0.45);
   }
+});
+
+it("every rival is a nuisance, none a wall (2026-11-15)", () => {
+  // Runs that met a rival, by who: each within the crawl's own band, and
+  // each turning up between three and seven times a run that reaches the
+  // door (their introduction, the crossroads, the door and what came
+  // uninvited between).
+  const met = runs.filter((s) => party(s).rival);
+  const who = by((s) => party(s).rival?.who ?? "none").filter(
+    ([n]) => n !== "none",
+  );
+  const mean = (f: (s: SessionState) => number, of: SessionState[]) =>
+    of.map(f).reduce((a, b) => a + b, 0) / Math.max(1, of.length);
+  const uninvited = (s: SessionState) =>
+    Object.values(party(s).rival?.cuts ?? {}).reduce((a, b) => a + b, 0);
+  const far = met.filter((s) =>
+    (party(s).deeds ?? []).some((d) =>
+      ["rival-joined", "rival-refused", "rival-skipped"].includes(d),
+    ),
+  );
+  const ended = (deed: string) =>
+    far.filter((s) => party(s).deeds!.includes(deed)).length / far.length;
+  console.log(
+    `rivals: ${who.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}; ` +
+      `${pct(met.length / RUNS)} of runs meet one, ${pct(far.length / RUNS)} reach the door ` +
+      `(joined ${pct(ended("rival-joined"))}, duelled ${pct(ended("rival-refused"))}, skipped ${pct(ended("rival-skipped"))}); ` +
+      `uninvited ${mean(uninvited, far).toFixed(1)} times a run that got there; ` +
+      `confrontations won ${mean((s) => party(s).rival!.won, far).toFixed(1)}, lost ${mean((s) => party(s).rival!.lost, far).toFixed(1)}; ` +
+      `still holding ${mean((s) => party(s).rival!.took.length, far).toFixed(1)} items at the end`,
+  );
+  expect(who).toHaveLength(3);
+  for (const [name, r] of who) {
+    expect(r, name).toBeGreaterThan(0.1);
+    expect(r, name).toBeLessThan(0.5);
+  }
+  expect(mean(uninvited, far)).toBeGreaterThan(1.5);
+  expect(mean(uninvited, far)).toBeLessThan(5);
 });
 
 it("no road is the easy one (The Quest 2.0 Phase 5)", () => {
@@ -470,7 +518,7 @@ it("the joke classes are the worst adventurers, and still win now and then", () 
   const jokes = JOKE_CLASSES.map((id) => {
     const name = id.replace("dungeon.class-", "");
     const r = rate(
-      Array.from({ length: 600 }, (_, i) => ({
+      Array.from({ length: JOKE_RUNS }, (_, i) => ({
         ...playRun(i + 1, name),
         cards: [],
       })),
@@ -478,7 +526,7 @@ it("the joke classes are the worst adventurers, and still win now and then", () 
     return [name, r] as const;
   });
   console.log(
-    `jokes (600 runs each): ${jokes.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}; next worst ${pct(worst)}`,
+    `jokes (${JOKE_RUNS} runs each): ${jokes.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}; next worst ${pct(worst)}`,
   );
   for (const [name, r] of jokes) {
     expect(r, name).toBeGreaterThan(0.01);

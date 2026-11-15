@@ -84,14 +84,14 @@ test("@release The Quest opens on an adventurer, the omen and the summons, then 
   await page.screenshot({ path: info.outputPath("summons.png") });
   await page.locator(".game-card").click();
   await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
-    "The City Gate",
+    "The Road Out",
   );
   await expect(page.locator(".stage-banner")).toHaveText(
-    /The Quest\s*The Company pushes past/,
+    /The Quest\s*Which way\?/,
   );
   // The Summons named the dragon and its lair aloud (Phase 3, M2).
   await expect(spoken).toContainText(`Wanted: ${dragon.title}.`);
-  await expect(spoken).toContainText("The Quest. The Company pushes past");
+  await expect(spoken).toContainText("The Quest. Which way?");
   const s = await saved(page);
   expect(s.config.packIds).toEqual(["dungeon"]);
   expect(s.quest.party.omen).toBe(s.quest.finale[0]);
@@ -500,7 +500,7 @@ test("a region's boss ranks the adventurer up, and a side quest can be walked pa
   );
   await page.screenshot({ path: info.outputPath("rank-up.png") });
   await expect.poll(async () => (await saved(page)).quest.party.form).toBe(1);
-  expect((await saved(page)).quest.step).toBe(STEP.sign);
+  expect((await saved(page)).quest.step).toBe(STEP.rival);
   // The side quest's plea: walk on, and its dungeon leaves the run.
   await seed(
     page,
@@ -670,15 +670,13 @@ test("losing the last heart wipes the party", async ({ page }, info) => {
   await expect(page.locator(".crawl-verdict")).toHaveText(
     "Everyone finishes their drink.",
   );
-  // The gate, three regions and the side quest, the crossroads, the lair's
-  // door, the dragon (the summons is no fight, so it is not listed).
+  // Three regions (the third closed by its dragon), the side quest and
+  // the crossroads (the summons, the rival's introduction and their card
+  // at the door are no fights, so they are not listed).
   await expect(page.locator(".crawl-floors li").first()).toContainText(
-    "The City Gate",
-  );
-  await expect(page.locator(".crawl-floors li").nth(1)).toContainText(
     "The King's Road",
   );
-  await expect(page.locator(".crawl-floors li")).toHaveCount(8);
+  await expect(page.locator(".crawl-floors li")).toHaveCount(5);
   await page.screenshot({ path: info.outputPath("wiped.png") });
   await page.getByRole("button", { name: "Play again" }).click();
   await expect(meter(page)).toHaveAccessibleName(full);
@@ -837,6 +835,7 @@ for (const width of [320, 390])
     await seed(page, s);
     await page.locator(".game-card").click();
     const wall = page.locator(".trophy-wall");
+    // The seeded run still holds the rival's duel, so it hangs too.
     await expect(wall).toHaveAccessibleName("Trophies: 5 of 5");
     await expect(wall.locator("li.won")).toHaveCount(5);
     await expect(wall.locator("li").first()).toContainText("The Bridge Troll");
@@ -878,13 +877,10 @@ test("a wiped run's wall shows the bosses felled and empty sockets", async ({
   await page.locator(".game-card").click();
   await expect(page.locator(".crawl-end.wiped h1")).toBeVisible();
   const wall = page.locator(".trophy-wall");
-  // The King's Road's boss and the side quest's keeper fell; three wait.
-  await expect(wall).toHaveAccessibleName("Trophies: 2 of 5");
-  await expect(wall.locator("li.empty .trophy-name")).toHaveText([
-    "?",
-    "?",
-    "?",
-  ]);
+  // The King's Road's boss and the side quest's keeper fell; two wait
+  // (the rival's duel hangs only once it has been fought).
+  await expect(wall).toHaveAccessibleName("Trophies: 2 of 4");
+  await expect(wall.locator("li.empty .trophy-name")).toHaveText(["?", "?"]);
 });
 
 for (const width of [320, 390])
@@ -1016,18 +1012,53 @@ test("an ambush shows its two swings in the medallion", async ({
   await page.screenshot({ path: info.outputPath("ambush.png") });
 });
 
-test("the lair's door: the rival party, beaten three times", async ({
+test("the lair's door: the rival asks, and the table answers", async ({
   page,
 }, info) => {
-  await seed(page, reveal(crawlAt("dungeon.closing-last-table", STEP.closing)));
-  await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
-    // Three swings since The Quest 2.0 Phase 6.
-    "Ambush, The Lair's Door: 0 of 3 hits",
-  );
+  await seed(page, reveal(crawlAt("dungeon.rival-bradley-door", STEP.closing)));
   await expect(page.locator(".game-card .card-ribbon")).toHaveText(
     "The Lair's Door · Rival",
   );
-  await page.screenshot({ path: info.outputPath("closing.png") });
+  await expect(page.locator(".offer-plaque")).toHaveCount(2);
+  await expect(page.locator(".offer-plaque").first()).toContainText(
+    "Take him",
+  );
+  await page.screenshot({ path: info.outputPath("door.png") });
+});
+
+test("the rival: a chip on the strip, a ledger, and a cut-in on the card", async ({
+  page,
+}, info) => {
+  let s = crawlAt("dungeon.bachelor-ghosts", STEP.floor2, {
+    deeds: ["rival-bradley"],
+    rival: {
+      who: "bradley",
+      took: ["shield"],
+      won: 0,
+      lost: 1,
+      cut: "meddle",
+    },
+  });
+  // Their introduction was dealt after the first boss.
+  const finale = [...s.quest!.finale];
+  const was = finale.indexOf("dungeon.rival-bradley");
+  if (was >= 0) finale[was] = finale[STEP.rival];
+  finale[STEP.rival] = "dungeon.rival-bradley";
+  s = reveal({ ...s, quest: { ...s.quest!, finale } });
+  await seed(page, s);
+  await expect(page.locator(".game-card .card-ribbon")).toHaveText(
+    "Sir Bradley · Meddling",
+  );
+  const chip = page.locator(".tag-rival");
+  await expect(chip).toHaveAccessibleName(
+    "Your rival, Sir Bradley: holding 1 of your items",
+  );
+  await chip.click();
+  const dialog = page.getByRole("dialog", { name: "Your rival" });
+  await expect(dialog).toContainText("everyone salutes");
+  await expect(dialog).toContainText("Roll twice, keep the worse.");
+  await expect(dialog.locator(".rival-ledger")).toContainText("Tower Shield");
+  await page.screenshot({ path: info.outputPath("rival.png") });
 });
 
 test("the omen is kept in the party dialog", async ({ page }, info) => {
@@ -1081,7 +1112,7 @@ test("a boss's next beat is a duel, and its felling win brings spoils", async ({
   await sheet.locator(".spoils-row").first().click();
   const s = await saved(page);
   expect(s.quest.party.boons).toContain("dungeon.keg-golem#0");
-  expect(s.quest.step).toBe(STEP.sign);
+  expect(s.quest.step).toBe(STEP.rival);
 });
 
 // Lore and allies (The Quest 2.0 Phase 4): the strip's runes open the lore

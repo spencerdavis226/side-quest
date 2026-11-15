@@ -39,7 +39,6 @@ import { cards, packs } from "../src/content/catalog";
 import type { GameConfig, Loot, SessionState } from "../src/game/types";
 import {
   BOSS_NEED,
-  CLOSING_HITS,
   DRAGON_HEALTH,
   PARTY_HEARTS,
 } from "../src/content/dungeon/shared";
@@ -101,11 +100,12 @@ const STEP = {
   adventurer: 0,
   omen: 1,
   summons: 2,
-  queue: 3,
   // The Road Out and the Signpost (The Quest 2.0 Phase 5).
-  road: 4,
-  floor1: 5,
-  boss1: 13,
+  road: 3,
+  floor1: 4,
+  boss1: 12,
+  // The rival walks in (2026-11-15).
+  rival: 13,
   // A dragon sign (The Quest 2.0 Phase 3) after the first boss.
   sign: 14,
   landing1: 15,
@@ -122,7 +122,9 @@ const STEP = {
   // reached (none held: it leaves the run).
   echo: 40,
   closing: 41,
-  lastCall: 42,
+  // The rival's duel, until the door is settled.
+  duel: 42,
+  lastCall: 43,
 };
 // The run past the door, with no adventurer or omen: the King's Road's first
 // room.
@@ -181,10 +183,10 @@ describe("Pub Crawl", () => {
       ["Your adventurer", 1],
       ["The omen", 1],
       ["The King's Summons", 1],
-      ["The City Gate", 1],
       ["The Road Out", 1],
       ["The King's Road", 8],
       ["King's Road boss", 1],
+      ["Your Rival", 1],
       ["A Dragon Sign", 1],
       ["The Inn", 1],
       ["A Side Quest", 1],
@@ -198,9 +200,10 @@ describe("Pub Crawl", () => {
       ["The Sunken Coast", 8],
       ["An Echo", 1],
       ["The Lair's Door", 1],
+      ["The Duel", 1],
       ["The Dragon's Lair", 1],
     ]);
-    expect(s.quest!.finale).toHaveLength(43);
+    expect(s.quest!.finale).toHaveLength(44);
     expect(currentCard(s).omen).toBeDefined();
     const at = (step: number) => findCard(s, s.quest!.finale[step])!;
     expect(at(STEP.hidden).ribbon).toBe("Witch's Cottage · Guard");
@@ -216,9 +219,10 @@ describe("Pub Crawl", () => {
     expect(at(STEP.keeper)).toMatchObject({ encounter: "boss", hits: 2 });
     expect(at(STEP.keeper).spoils).toHaveLength(2);
     expect(at(STEP.omen).boon).toBeDefined();
-    expect(at(STEP.queue)).toMatchObject({ encounter: "ambush", battle: true });
-    expect(at(STEP.queue).hits).toBeUndefined();
-    // The Quarter-Zips again on the stairs, one fight (2026-10-25).
+    // The rival (2026-11-15): introduced after the first boss, one fight
+    // at the crossroads, their own card at the door and a duel behind it.
+    expect(at(STEP.rival).rival?.profile).toBeDefined();
+    expect(at(STEP.rival).battle).toBeUndefined();
     expect(at(STEP.stairs)).toMatchObject({
       encounter: "ambush",
       battle: true,
@@ -236,10 +240,8 @@ describe("Pub Crawl", () => {
       // The Quest 2.0 Phase 4).
       ["boss", DRAGON_HEALTH],
     ]);
-    expect(at(STEP.closing)).toMatchObject({
-      encounter: "ambush",
-      hits: CLOSING_HITS,
-    });
+    expect(at(STEP.closing).offers).toHaveLength(2);
+    expect(at(STEP.duel)).toMatchObject({ encounter: "ambush", hits: 2 });
     for (const step of [STEP.landing1, STEP.landing2])
       expect(at(step).encounter).toBe("rest");
     // The first two floors' bosses offer two trinkets; Last Call nothing.
@@ -256,7 +258,6 @@ describe("Pub Crawl", () => {
       "King's Road boss",
       "Witch's Cottage boss",
       "Haunted Crypt boss",
-      "The Lair's Door",
       "The Dragon's Lair",
     ]);
     roundTrip(s);
@@ -264,10 +265,10 @@ describe("Pub Crawl", () => {
       "Your adventurer",
       "The omen",
       "The King's Summons",
-      "The City Gate",
       "The Road Out",
       "The Old Forest",
       "Old Forest boss",
+      "Your Rival",
       "A Dragon Sign",
       "The Inn",
       "A Side Quest",
@@ -281,6 +282,7 @@ describe("Pub Crawl", () => {
       "The Fire Caverns",
       "An Echo",
       "The Lair's Door",
+      "The Duel",
       "The Dragon's Lair",
     ]);
     roundTrip(make(OTHER));
@@ -289,10 +291,10 @@ describe("Pub Crawl", () => {
       "Your adventurer",
       "The omen",
       "The King's Summons",
-      "The City Gate",
       "The Road Out",
       "The Marsh",
       "Marsh boss",
+      "Your Rival",
       "A Dragon Sign",
       "The Inn",
       "A Side Quest",
@@ -306,6 +308,7 @@ describe("Pub Crawl", () => {
       "The Frozen Pass",
       "An Echo",
       "The Lair's Door",
+      "The Duel",
       "The Dragon's Lair",
     ]);
     roundTrip(fresh);
@@ -648,14 +651,15 @@ describe("Pub Crawl", () => {
       title: "Berserker",
       next: "Warlord",
     });
-    expect(b.quest!.step).toBe(STEP.sign);
+    expect(b.quest!.step).toBe(STEP.rival);
     roundTrip(b);
-    // The Peasant ranks up into nothing better.
+    // The Peasant ranks up into nothing better (a rank shrank its satchel
+    // to 2 until the rival, 2026-11-15, took it under its 1% floor).
     let p = adventure("plus-one", undefined, STEP.boss1);
     p = deal(p, "dungeon.keg-golem");
     p = settleBattle(advance(fight(p, 18)), true, Math.random, 1);
     expect(party(p)).toMatchObject({ max: H - 3, form: 1 });
-    expect(satchelSize(p.quest)).toBe(2);
+    expect(satchelSize(p.quest)).toBe(3);
     expect(omenForm(p.quest)!.title).toBe("The Angry Peasant");
   });
 
@@ -945,22 +949,6 @@ describe("Pub Crawl", () => {
     expect(wantedBoss(fromStep(s, STEP.floor3).quest!)).toBeUndefined();
   });
 
-  it("the queue is one fight against the rival party; a loss can jinx", () => {
-    let s = fromStep(make(), STEP.queue);
-    s = fight(deal(s, "dungeon.queue-group-name"), 2);
-    expect(party(s)).toMatchObject({
-      hearts: H - 1,
-      jinx: "dungeon.queue-group-name",
-    });
-    expect(s.quest!.step).toBe(STEP.road);
-    roundTrip(s);
-    const won = fight(
-      deal(fromStep(make(), STEP.queue), "dungeon.queue-group-name"),
-      15,
-    );
-    expect(party(won)).toMatchObject({ hearts: H, loot: ["die"] });
-  });
-
   it("a merchant sells for drinks or hearts, never the last heart", () => {
     const s = advance(deal(start(), "dungeon.rat-fence"));
     expect(awaitingOffer(s)).toBe(true);
@@ -1050,8 +1038,7 @@ describe("Pub Crawl", () => {
           c.offers ||
           c.omen ||
           c.encounter === "omen" ||
-          c.id.includes("queue-") ||
-          c.id.includes("stairs-"),
+          c.id.includes("rival-"),
       ),
     ).toBe(false);
     // A trial is put aside with a tap, no verdict; a jinx card plays plain.

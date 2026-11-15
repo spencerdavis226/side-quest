@@ -595,6 +595,6 @@ describe("moments", () => {
     const firstBoss = c.quest!.stages.find((st) => / boss$/.test(st.label))!;
     expect(crawlFinish(firstBoss.label)).toBe("silver");
     expect(crawlFinish("Your adventurer")).toBeNull();
-    expect(crawlFinish("The City Gate")).toBeNull();
+    expect(crawlFinish("Your Rival")).toBeNull();
   });
 });

@@ -69,20 +69,21 @@ export function leagueAt(
 }
 
 // Where a run is, step by step (Realms, 2026-11-03): the adventurer, the
-// omen, the King's Summons, the city gate, the first region's eight
-// encounters and its boss, an inn, a side quest's plea, guards and keeper,
+// omen, the King's Summons, the first region's eight encounters and its
+// boss, the rival (2026-11-15), an inn, a side quest's plea, guards and keeper,
 // the second region and its boss, an inn, the crossroads, the third region,
 // the lair's door, the dragon.
 export const STEP = {
   adventurer: 0,
   omen: 1,
   summons: 2,
-  queue: 3,
   // The Road Out and the Signpost (The Quest 2.0 Phase 5), both roads
   // taken by `crawlAt`.
-  road: 4,
-  floor1: 5,
-  boss1: 13,
+  road: 3,
+  floor1: 4,
+  boss1: 12,
+  // The rival walks in (2026-11-15).
+  rival: 13,
   // A dragon sign (The Quest 2.0 Phase 3) after the first boss.
   sign: 14,
   landing1: 15,
@@ -98,7 +99,9 @@ export const STEP = {
   // An echo before the Lair's Door (The Quest 2.0 Phase 6), until reached.
   echo: 40,
   closing: 41,
-  lastCall: 42,
+  // The rival's duel, until the door is settled.
+  duel: 42,
+  lastCall: 43,
 };
 
 // A Quest seeded at `step` with `id` in play, the party as given. The

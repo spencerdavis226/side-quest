@@ -30,7 +30,8 @@ function trophyMark(card: {
   ribbon?: string;
 }): QuestArt | null {
   if (card.lairFight) return "dragon";
-  if (/ · Rival$/.test(card.ribbon ?? "")) return "capes";
+  // The rival's duel (2026-11-15) hangs their capes.
+  if (/ · (Rival|Duel)$/.test(card.ribbon ?? "")) return "capes";
   return TROPHY_MARKS.find(([re]) => re.test(card.title))?.[1] ?? null;
 }
 

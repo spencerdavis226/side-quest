@@ -181,7 +181,8 @@ function QuestBook({
     ["Classes won with", c.classesWon.length, CLASS_COUNT],
     ["Allies met", c.allies.length],
     ["Allies lost", c.alliesLost.length],
-    ["Rare things seen", c.rares.length, RARE_COUNT],
+    // Two rares left with the Gilded Company's door (2026-11-15).
+    ["Rare things seen", Math.min(c.rares.length, RARE_COUNT), RARE_COUNT],
     ["Landmarks seen", c.landmarks.length, LANDMARK_COUNT],
     ["Echoes heard", c.echoes.length, ECHO_COUNT],
     ["Hidden results", c.secrets.length, SECRET_COUNT],

@@ -11,12 +11,13 @@ import { applyPhases } from "./dungeon/phases";
 import { applyJinxes } from "./dungeon/jinxes";
 import { floorMoments } from "./dungeon/moments";
 import {
-  bradleyBegs,
-  closingCards,
-  doorRares,
-  queueCards,
-  stairsCards,
-} from "./dungeon/lastcall";
+  rivalCards,
+  rivalDuels,
+  rivalFights,
+  rivalIntros,
+  rivalPleas,
+  rivals,
+} from "./dungeon/rivals";
 import {
   dragons as lastCallBosses,
   lairs,
@@ -123,17 +124,14 @@ export const dungeonCards: CardDefinition[] = applyPhases([
   ...innRares,
   lastInnRare,
   ...Object.values(echoes),
-  bradleyBegs,
-  ...doorRares,
+  // The rival (2026-11-15): one of three follows a run.
+  ...rivalCards,
   // The Quest 2.0 Phase 7: the Chronicle's dragons (Quest-only, locked).
   ...unlockedDragons,
   ...Object.values(landmarks).flat(),
   ...classes,
   ...upperLandings,
   ...lowerLandings,
-  ...queueCards,
-  ...stairsCards,
-  ...closingCards,
   ...hiddenRoomCards,
 ]).map(withNaturals);
 // Curses became jinxes (2026-10-25): one spoken system, not two.
@@ -189,20 +187,28 @@ const lair = (region: ReturnType<typeof floor>, dragons: CardDefinition[]) => [
       ...(deed.startsWith("quest-") ? { fallback: true as const } : {}),
     })),
   },
+  // The rival's end (2026-11-15): their own card at the door, and the
+  // duel only when the table refused them.
   {
     label: "The Lair's Door",
-    intro: "At the lair's door",
+    intro: "{rival} is at the door",
     pick: 1,
-    cardIds: ids(closingCards),
-    variants: [
-      { deeds: ["gate-won", "crossroads-won"], cardIds: [bradleyBegs.id] },
-      {
-        deeds: ["gate-lost", "crossroads-lost"],
-        cardIds: ids(closingCards),
-        harder: 1,
-      },
-    ],
-    rare: { cardIds: ids(doorRares), odds: 0.1 },
+    cardIds: ids(rivalPleas),
+    variants: rivals.map((r) => ({
+      deeds: [`rival-${r.who}`],
+      cardIds: [r.plea.id],
+    })),
+  },
+  {
+    label: "The Duel",
+    intro: "{rival} draws",
+    pick: 1,
+    cardIds: ids(rivalDuels),
+    optional: true as const,
+    variants: rivals.map((r) => ({
+      deeds: [`rival-${r.who}`, "rival-refused"],
+      cardIds: [r.duel.id],
+    })),
   },
   // The Chronicle's dragons (The Quest 2.0 Phase 7), once unlocked.
   {
@@ -255,7 +261,6 @@ export const dungeonPack: PackDefinition = {
         ...one("The King's Summons", "The king needs a hero", summonsCards),
         rare: { cardIds: [summonsRare.id], odds: 0.05 },
       },
-      one("The City Gate", "The Company pushes past", queueCards),
       // The road (The Quest 2.0 Phase 5): the table chooses two of three
       // regions at each of the first two depths.
       {
@@ -299,6 +304,9 @@ export const dungeonPack: PackDefinition = {
           ],
         },
       },
+      // The rival walks in (2026-11-15): the first region's boss has just
+      // fallen, and they help themselves.
+      one("Your Rival", "Someone got here first", rivalIntros),
       // A dragon sign (The Quest 2.0 Phase 3): the dragon passes over. No
       // banner: its shadow crosses the card instead.
       { label: "A Dragon Sign", pick: 1, cardIds: ids(signCards) },
@@ -358,7 +366,16 @@ export const dungeonPack: PackDefinition = {
         ...one("The Last Inn", "One last night's sleep", lowerLandings),
         rare: { cardIds: [lastInnRare.id], odds: 0.08 },
       },
-      one("The Crossroads", "The Gilded Company is ahead", stairsCards),
+      // The rival holds the crossroads: one of their four confrontations.
+      // The same cards are the pool an ambush draws from.
+      {
+        ...one("The Crossroads", "{rival} is waiting", rivalFights),
+        ambush: ids(rivalFights),
+        variants: rivals.map((r) => ({
+          deeds: [`rival-${r.who}`],
+          cardIds: ids(r.fights),
+        })),
+      },
       // The lair (The Quest 2.0, 2026-11-13): the dragon picks the third
       // region, its own, so each route is that region, the Company at its
       // door and one of its three dragons. The door is the same in every

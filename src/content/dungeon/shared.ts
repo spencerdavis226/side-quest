@@ -61,19 +61,14 @@ export const ELITE_NEED = [10, 12, 14] as const;
 export const ELITE_HURT = [2, 3, 3] as const;
 /** An ambush is beaten twice, each loss a little cheaper than a room's. */
 export const AMBUSH_HURT = [1, 1, 2] as const;
-/** The rival party: in the queue at the door, and again at closing time,
- * when they have to be beaten twice. */
-export const QUEUE_NEED = 8;
-export const QUEUE_HURT = 1;
-export const CLOSING_NEED = 12;
-export const CLOSING_HURT = 3;
-/** The Lair's Door's swings (two before The Quest 2.0 Phase 6). */
-export const CLOSING_HITS = 3;
-/** The rival party on the stairs, between the second landing and the third
- * floor (2026-10-25): one fight, between the door's odds and closing
- * time's. */
-export const STAIRS_NEED = 10;
-export const STAIRS_HURT = 2;
+/** The rival (2026-11-15): a confrontation's d20 (the owner: "a very
+ * difficult challenge (like d15+)"), and the duel at the lair's door: its
+ * need, its swings and what a missed one costs. What a lost confrontation
+ * costs is each rival's own (`dungeon/rivals.ts`). */
+export const RIVAL_NEED = 15;
+export const DUEL_NEED = 14;
+export const DUEL_HITS = 2;
+export const DUEL_HURT = 2;
 /** A push-your-luck room's first pull, depth by depth; each pull after is
  * 2 harder (`PRESS_STEP` in the engine). */
 export const GAMBLE_NEED = [7, 8, 9] as const;
@@ -700,78 +695,6 @@ export const hire = (inn: CardDefinition): CardDefinition => ({
 export const ask = (inn: CardDefinition): CardDefinition => ({
   ...inn,
   offers: [...inn.offers!, { label: `Ask · drink ${HIRE_DRINK}`, ...LORE }],
-});
-
-/** The rival party in the queue at the door: one fight, and the winner
- * goes in first with whatever the loser dropped. Pub Crawl only. */
-export const queue = (
-  id: string,
-  title: string,
-  rules: string,
-  fight: Roll | null,
-  more: Stakes = {},
-): CardDefinition => ({
-  ...card(
-    `queue-${id}`,
-    title,
-    "challenge",
-    rules,
-    fight ? fight(QUEUE_NEED) : undefined,
-  ),
-  ribbon: "The City Gate · Rival",
-  ribbonTone: "crimson",
-  encounter: "ambush",
-  battle: true,
-  damage: QUEUE_HURT,
-  // The Lair's Door reads how it went (The Quest 2.0 Phase 6).
-  deed: { won: "gate-won", lost: "gate-lost" },
-  ...stakes(more),
-});
-
-/** The rival party on the stairs (2026-10-25): one fight, or a trial the
- * table calls (`null`), and the winner gets whatever they dropped. Pub
- * Crawl only. */
-export const stairs = (
-  id: string,
-  title: string,
-  rules: string,
-  fight: Roll | null,
-  more: Stakes = {},
-): CardDefinition => ({
-  ...card(
-    `stairs-${id}`,
-    title,
-    "challenge",
-    rules,
-    fight ? fight(STAIRS_NEED) : undefined,
-  ),
-  ribbon: "The Crossroads · Rival",
-  ribbonTone: "crimson",
-  encounter: "ambush",
-  battle: true,
-  damage: STAIRS_HURT,
-  deed: { won: "crossroads-won", lost: "crossroads-lost" },
-  ...stakes(more),
-});
-
-/** The rival party at closing time: dealt again until beaten twice. */
-export const closing = (
-  id: string,
-  title: string,
-  rules: string,
-  fight: Roll,
-  more: { jinx?: Jinx } = {},
-): CardDefinition => ({
-  ...card(`closing-${id}`, title, "challenge", rules, fight(CLOSING_NEED)),
-  ribbon: "The Lair's Door · Rival",
-  ribbonTone: "crimson",
-  encounter: "ambush",
-  battle: true,
-  // Three swings since The Quest 2.0 Phase 6 (2026-11-14): a run that
-  // beat the Company twice, or slipped inside, skips this fight now.
-  hits: CLOSING_HITS,
-  damage: CLOSING_HURT,
-  ...stakes(more),
 });
 
 /** A d20 at the need, for the rival's fights. */

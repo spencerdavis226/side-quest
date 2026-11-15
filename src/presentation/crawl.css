@@ -481,6 +481,36 @@
   color: #f1d58c;
 }
 
+/* The run's rival (2026-11-15): crimson, and lit while they cut in on the
+   card in play. */
+.tag-rival {
+  border-color: #a8322c;
+  background: linear-gradient(180deg, #5c1512, #280807);
+  color: #ffd9cf;
+}
+.tag-rival b {
+  min-width: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: #ffd9cf;
+  color: #4a0d0a;
+  font-size: 0.8em;
+  text-align: center;
+}
+.tag-rival.cutting {
+  border-color: #ff8a70;
+  box-shadow: 0 0 10px rgb(255 96 64 / 0.7);
+}
+.crawl-rival {
+  display: grid;
+  gap: 10px;
+}
+.rival-cut {
+  margin: 0;
+  padding: 8px 12px;
+  border-left: 3px solid #ff8a70;
+  background: rgb(90 20 12 / 0.4);
+}
 .tag-jinx {
   border-color: #b5426b;
   background: linear-gradient(180deg, #6b1e3c, #2e0b19);

@@ -2024,21 +2024,6 @@ export const packs: PackDefinition[] = [
           rare: { cardIds: ["dungeon.summons-dragon-writes"], odds: 0.05 },
         },
         {
-          label: "The City Gate",
-          intro: "The Company pushes past",
-          pick: 1,
-          cardIds: [
-            "dungeon.queue-knows-the-owner",
-            "dungeon.queue-fake-id",
-            "dungeon.queue-were-together",
-            "dungeon.queue-group-name",
-            "dungeon.queue-the-list",
-            "dungeon.queue-cover-charge",
-            "dungeon.queue-hand-stamp",
-            "dungeon.queue-rock-paper-brad",
-          ],
-        },
-        {
           choose: {
             card: [
               {
@@ -2318,6 +2303,16 @@ export const packs: PackDefinition[] = [
               ],
             ],
           },
+        },
+        {
+          label: "Your Rival",
+          intro: "Someone got here first",
+          pick: 1,
+          cardIds: [
+            "dungeon.rival-bradley",
+            "dungeon.rival-mirabel",
+            "dungeon.rival-tutt",
+          ],
         },
         {
           label: "A Dragon Sign",
@@ -2782,14 +2777,64 @@ export const packs: PackDefinition[] = [
         },
         {
           label: "The Crossroads",
-          intro: "The Gilded Company is ahead",
+          intro: "{rival} is waiting",
           pick: 1,
           cardIds: [
-            "dungeon.stairs-service-elevator",
-            "dungeon.stairs-group-photo",
-            "dungeon.stairs-pep-talk",
-            "dungeon.stairs-leaderboard",
-            "dungeon.stairs-recruitment",
+            "dungeon.rival-bradley-autograph",
+            "dungeon.rival-bradley-verse",
+            "dungeon.rival-bradley-shortcut",
+            "dungeon.rival-bradley-spar",
+            "dungeon.rival-mirabel-inventory",
+            "dungeon.rival-mirabel-trade",
+            "dungeon.rival-mirabel-keepers",
+            "dungeon.rival-mirabel-toll",
+            "dungeon.rival-tutt-quiz",
+            "dungeon.rival-tutt-demonstration",
+            "dungeon.rival-tutt-posture",
+            "dungeon.rival-tutt-in-my-day",
+          ],
+          ambush: [
+            "dungeon.rival-bradley-autograph",
+            "dungeon.rival-bradley-verse",
+            "dungeon.rival-bradley-shortcut",
+            "dungeon.rival-bradley-spar",
+            "dungeon.rival-mirabel-inventory",
+            "dungeon.rival-mirabel-trade",
+            "dungeon.rival-mirabel-keepers",
+            "dungeon.rival-mirabel-toll",
+            "dungeon.rival-tutt-quiz",
+            "dungeon.rival-tutt-demonstration",
+            "dungeon.rival-tutt-posture",
+            "dungeon.rival-tutt-in-my-day",
+          ],
+          variants: [
+            {
+              deeds: ["rival-bradley"],
+              cardIds: [
+                "dungeon.rival-bradley-autograph",
+                "dungeon.rival-bradley-verse",
+                "dungeon.rival-bradley-shortcut",
+                "dungeon.rival-bradley-spar",
+              ],
+            },
+            {
+              deeds: ["rival-mirabel"],
+              cardIds: [
+                "dungeon.rival-mirabel-inventory",
+                "dungeon.rival-mirabel-trade",
+                "dungeon.rival-mirabel-keepers",
+                "dungeon.rival-mirabel-toll",
+              ],
+            },
+            {
+              deeds: ["rival-tutt"],
+              cardIds: [
+                "dungeon.rival-tutt-quiz",
+                "dungeon.rival-tutt-demonstration",
+                "dungeon.rival-tutt-posture",
+                "dungeon.rival-tutt-in-my-day",
+              ],
+            },
           ],
         },
         {
@@ -2919,39 +2964,52 @@ export const packs: PackDefinition[] = [
               },
               {
                 label: "The Lair's Door",
-                intro: "At the lair's door",
+                intro: "{rival} is at the door",
                 pick: 1,
                 cardIds: [
-                  "dungeon.closing-last-table",
-                  "dungeon.closing-the-boys-toast",
-                  "dungeon.closing-last-round",
-                  "dungeon.closing-dance-off",
-                  "dungeon.closing-the-rematch",
+                  "dungeon.rival-bradley-door",
+                  "dungeon.rival-mirabel-door",
+                  "dungeon.rival-tutt-door",
                 ],
                 variants: [
                   {
-                    deeds: ["gate-won", "crossroads-won"],
-                    cardIds: ["dungeon.closing-bradley-begs"],
+                    deeds: ["rival-bradley"],
+                    cardIds: ["dungeon.rival-bradley-door"],
                   },
                   {
-                    deeds: ["gate-lost", "crossroads-lost"],
-                    cardIds: [
-                      "dungeon.closing-last-table",
-                      "dungeon.closing-the-boys-toast",
-                      "dungeon.closing-last-round",
-                      "dungeon.closing-dance-off",
-                      "dungeon.closing-the-rematch",
-                    ],
-                    harder: 1,
+                    deeds: ["rival-mirabel"],
+                    cardIds: ["dungeon.rival-mirabel-door"],
+                  },
+                  {
+                    deeds: ["rival-tutt"],
+                    cardIds: ["dungeon.rival-tutt-door"],
                   },
                 ],
-                rare: {
-                  cardIds: [
-                    "dungeon.closing-singed-capes",
-                    "dungeon.closing-bard",
-                  ],
-                  odds: 0.1,
-                },
+              },
+              {
+                label: "The Duel",
+                intro: "{rival} draws",
+                pick: 1,
+                cardIds: [
+                  "dungeon.rival-bradley-duel",
+                  "dungeon.rival-mirabel-duel",
+                  "dungeon.rival-tutt-duel",
+                ],
+                optional: true,
+                variants: [
+                  {
+                    deeds: ["rival-bradley", "rival-refused"],
+                    cardIds: ["dungeon.rival-bradley-duel"],
+                  },
+                  {
+                    deeds: ["rival-mirabel", "rival-refused"],
+                    cardIds: ["dungeon.rival-mirabel-duel"],
+                  },
+                  {
+                    deeds: ["rival-tutt", "rival-refused"],
+                    cardIds: ["dungeon.rival-tutt-duel"],
+                  },
+                ],
               },
               {
                 label: "The Dragon's Lair",
@@ -3096,39 +3154,52 @@ export const packs: PackDefinition[] = [
               },
               {
                 label: "The Lair's Door",
-                intro: "At the lair's door",
+                intro: "{rival} is at the door",
                 pick: 1,
                 cardIds: [
-                  "dungeon.closing-last-table",
-                  "dungeon.closing-the-boys-toast",
-                  "dungeon.closing-last-round",
-                  "dungeon.closing-dance-off",
-                  "dungeon.closing-the-rematch",
+                  "dungeon.rival-bradley-door",
+                  "dungeon.rival-mirabel-door",
+                  "dungeon.rival-tutt-door",
                 ],
                 variants: [
                   {
-                    deeds: ["gate-won", "crossroads-won"],
-                    cardIds: ["dungeon.closing-bradley-begs"],
+                    deeds: ["rival-bradley"],
+                    cardIds: ["dungeon.rival-bradley-door"],
                   },
                   {
-                    deeds: ["gate-lost", "crossroads-lost"],
-                    cardIds: [
-                      "dungeon.closing-last-table",
-                      "dungeon.closing-the-boys-toast",
-                      "dungeon.closing-last-round",
-                      "dungeon.closing-dance-off",
-                      "dungeon.closing-the-rematch",
-                    ],
-                    harder: 1,
+                    deeds: ["rival-mirabel"],
+                    cardIds: ["dungeon.rival-mirabel-door"],
+                  },
+                  {
+                    deeds: ["rival-tutt"],
+                    cardIds: ["dungeon.rival-tutt-door"],
                   },
                 ],
-                rare: {
-                  cardIds: [
-                    "dungeon.closing-singed-capes",
-                    "dungeon.closing-bard",
-                  ],
-                  odds: 0.1,
-                },
+              },
+              {
+                label: "The Duel",
+                intro: "{rival} draws",
+                pick: 1,
+                cardIds: [
+                  "dungeon.rival-bradley-duel",
+                  "dungeon.rival-mirabel-duel",
+                  "dungeon.rival-tutt-duel",
+                ],
+                optional: true,
+                variants: [
+                  {
+                    deeds: ["rival-bradley", "rival-refused"],
+                    cardIds: ["dungeon.rival-bradley-duel"],
+                  },
+                  {
+                    deeds: ["rival-mirabel", "rival-refused"],
+                    cardIds: ["dungeon.rival-mirabel-duel"],
+                  },
+                  {
+                    deeds: ["rival-tutt", "rival-refused"],
+                    cardIds: ["dungeon.rival-tutt-duel"],
+                  },
+                ],
               },
               {
                 label: "The Dragon's Lair",
@@ -3270,39 +3341,52 @@ export const packs: PackDefinition[] = [
               },
               {
                 label: "The Lair's Door",
-                intro: "At the lair's door",
+                intro: "{rival} is at the door",
                 pick: 1,
                 cardIds: [
-                  "dungeon.closing-last-table",
-                  "dungeon.closing-the-boys-toast",
-                  "dungeon.closing-last-round",
-                  "dungeon.closing-dance-off",
-                  "dungeon.closing-the-rematch",
+                  "dungeon.rival-bradley-door",
+                  "dungeon.rival-mirabel-door",
+                  "dungeon.rival-tutt-door",
                 ],
                 variants: [
                   {
-                    deeds: ["gate-won", "crossroads-won"],
-                    cardIds: ["dungeon.closing-bradley-begs"],
+                    deeds: ["rival-bradley"],
+                    cardIds: ["dungeon.rival-bradley-door"],
                   },
                   {
-                    deeds: ["gate-lost", "crossroads-lost"],
-                    cardIds: [
-                      "dungeon.closing-last-table",
-                      "dungeon.closing-the-boys-toast",
-                      "dungeon.closing-last-round",
-                      "dungeon.closing-dance-off",
-                      "dungeon.closing-the-rematch",
-                    ],
-                    harder: 1,
+                    deeds: ["rival-mirabel"],
+                    cardIds: ["dungeon.rival-mirabel-door"],
+                  },
+                  {
+                    deeds: ["rival-tutt"],
+                    cardIds: ["dungeon.rival-tutt-door"],
                   },
                 ],
-                rare: {
-                  cardIds: [
-                    "dungeon.closing-singed-capes",
-                    "dungeon.closing-bard",
-                  ],
-                  odds: 0.1,
-                },
+              },
+              {
+                label: "The Duel",
+                intro: "{rival} draws",
+                pick: 1,
+                cardIds: [
+                  "dungeon.rival-bradley-duel",
+                  "dungeon.rival-mirabel-duel",
+                  "dungeon.rival-tutt-duel",
+                ],
+                optional: true,
+                variants: [
+                  {
+                    deeds: ["rival-bradley", "rival-refused"],
+                    cardIds: ["dungeon.rival-bradley-duel"],
+                  },
+                  {
+                    deeds: ["rival-mirabel", "rival-refused"],
+                    cardIds: ["dungeon.rival-mirabel-duel"],
+                  },
+                  {
+                    deeds: ["rival-tutt", "rival-refused"],
+                    cardIds: ["dungeon.rival-tutt-duel"],
+                  },
+                ],
               },
               {
                 label: "The Dragon's Lair",
