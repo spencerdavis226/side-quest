@@ -513,11 +513,7 @@ const situations: [string, GameConfig, Find][] = [
       !currentCard(s).hits &&
       !!currentCard(s).battle,
   ],
-  [
-    "realms-rival-handed-back",
-    crawl,
-    (s) => !!party(s).rival?.news?.back,
-  ],
+  ["realms-rival-handed-back", crawl, (s) => !!party(s).rival?.news?.back],
   [
     "realms-rival-at-the-door",
     crawl,

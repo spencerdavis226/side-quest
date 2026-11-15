@@ -1020,9 +1020,7 @@ test("the lair's door: the rival asks, and the table answers", async ({
     "The Lair's Door · Rival",
   );
   await expect(page.locator(".offer-plaque")).toHaveCount(2);
-  await expect(page.locator(".offer-plaque").first()).toContainText(
-    "Take him",
-  );
+  await expect(page.locator(".offer-plaque").first()).toContainText("Take him");
   await expect(page.locator(".offer-plaque").nth(1)).toContainText(
     "Kick his ass",
   );
@@ -1065,9 +1063,7 @@ test("the rival: a chip on the strip, a ledger, and a cut-in on the card", async
   await page.screenshot({ path: info.outputPath("rival.png") });
 });
 
-test("the rival's news banner speaks in their own voice", async ({
-  page,
-}) => {
+test("the rival's news banner speaks in their own voice", async ({ page }) => {
   // Rivals Phase 1: the introduction takes the newest item, and the
   // banner reads Sir Chad's own line with the item's name filled in.
   const s = reveal(

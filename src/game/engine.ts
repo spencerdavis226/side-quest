@@ -401,10 +401,7 @@ export function currentCard(s: SessionState) {
     s.quest,
     withNames(
       s,
-      withSecret(
-        s,
-        card.phases ? atBeat(card, bossBeat(s.quest, card)) : card,
-      ),
+      withSecret(s, card.phases ? atBeat(card, bossBeat(s.quest, card)) : card),
     ),
   );
 }
