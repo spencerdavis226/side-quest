@@ -10,6 +10,15 @@ Owner's asks: (1) the opening of a run (starter, adventurer, omen, Summons, road
 - **Phase B, the League's prologue** (done, PR #99): the starter shown in a scene of its own (no card, no top bar), then the handoff ("Pass the phone"), then the first card on the table. Display only: the engine deals and saves exactly as before.
 - **Phase C, the Quest's prologue** (done): the adventurer, the omen, the King's Summons and the Road Out in the same scene language (the road's plaques as a choice on the scene), then the same handoff.
 
+## Done 2026-11-15: plaques never break a word
+
+Owner, on the Droppings sign's "Follo / w them" beside its heart seal: "I feel like this is a common issue. How can we handle instances like this more elegantly". Three rules for every offer plaque (`OfferPlaque` in `Crawl.tsx`, `crawl.css`):
+
+- **No word breaks.** `.offer-label` is `overflow-wrap: normal` (was `anywhere`) with `text-wrap: balance`: a long name wraps between its words, evenly.
+- **The name's row is the mark and the name only.** The heart seal moved from beside the mark to the price line under the name, first, then what the plaque asks or brings; the line is dimmed by colour so the seal stays solid.
+- **A price in a label goes to the price line.** "Search · drink 2" shows "Search" over "drink 2" (the accessible name keeps the whole label), the way a branch plaque already did.
+- **Guarded**: the sweeps (`sweeps.spec.ts`, every crawl and League card with its plaques at 393x640) now fail a card when any plaque's text spills its box. Checked: Chromium `test:sweep` 12 of 12 with the new check; `crawl`, `quest`, `moments`, `prologue`, `coin` specs 84 of 84; `npm test`; lint; typecheck; build.
+
 ## Done 2026-11-15: Chuck's stare-down names who plays
 
 Owner, on Chuck the Cuck's "Eye contact: drink 2": "eye contact with who here?" Chuck is no one at the table, so the drawer now plays him: his introduction ("Chuck the Cuck is your squire now. Drawer, stare someone down as him. First to look away drinks 2."), its returning version, his ritual and his ally's ritual all set a stare-down between the drawer and someone they pick. The item he keeps is still on the card's seal and the scene (other rivals' introductions never said it). Copy only, `dungeon/rivals.ts`; old saves keep their snapshot. Checked: `npm test` 641 passed; `cards:review`; build.

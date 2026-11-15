@@ -825,8 +825,14 @@ export function OfferPlaque({
   // brings back.
   const price = branch ? offer.label.split(" · ")[1] : undefined;
   const heal = offerHeal(quest, offer, branch?.index);
-  const under = branch
-    ? (price ?? offer.label)
+  // A label with its price in it ("Search · drink 2") shows the price on
+  // the line under the name, like every other price (2026-11-15): the name
+  // alone wraps cleanly, never "Search · / drink 2".
+  const [said, tag] = branch
+    ? [undefined, undefined]
+    : (offer.label.split(" · ", 2) as [string, string?]);
+  const extra = branch
+    ? undefined
     : offer.heal
       ? `+${heartCount(theme, heal)}`
       : offer.settle
@@ -834,6 +840,9 @@ export function OfferPlaque({
         : offer.coinJoin
           ? "flip a coin"
           : undefined;
+  const under = branch
+    ? (price ?? offer.label)
+    : [tag, extra].filter(Boolean).join(" · ") || undefined;
   // Plaques that do more (The Quest 2.0 Phases 3 and 4): gear, a dragon
   // lore, an ally; a plaque's curse names itself in its label's seal.
   const icon: CrawlIconName | null = offer.settle
@@ -892,15 +901,23 @@ export function OfferPlaque({
         ) : (
           <CrawlIcon name="door" theme={theme} className="offer-plain" />
         )}
-        {offer.cost ? (
-          <span className="offer-cost">
-            <CrawlIcon name="heart" theme={theme} />−{offer.cost}
-          </span>
-        ) : null}
       </span>
       <span className="offer-label">
-        <span className="offer-name">{branch ? branch.name : offer.label}</span>
-        {under && <small className="offer-price">{under}</small>}
+        <span className="offer-name">{branch ? branch.name : said}</span>
+        {/* The price line (2026-11-15): what it costs in hearts, then what
+            it asks or brings, under the name, so the name's row is only
+            its mark and its words (owner: "Follo / w them" beside a heart
+            seal). */}
+        {(under || offer.cost) && (
+          <small className="offer-price">
+            {offer.cost ? (
+              <span className="offer-cost">
+                <CrawlIcon name="heart" theme={theme} />−{offer.cost}
+              </span>
+            ) : null}
+            {under}
+          </small>
+        )}
       </span>
     </button>
   );

@@ -763,9 +763,15 @@
   width: max(13px, 2.8cqw);
   height: max(13px, 2.8cqw);
 }
+/* A plaque's words never break inside a word (2026-11-15, owner: "Follo /
+   w them"); a long name wraps between its words, evenly. The sweeps fail a
+   plaque whose text spills (`sweeps.spec.ts`). */
 .offer-label {
   max-width: 100%;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: manual;
+  text-wrap: balance;
   text-align: center;
   font-size: 0.82em;
   line-height: 1;
@@ -791,11 +797,20 @@
   font-size: clamp(11px, 3.6cqw, max(16px, 3.4cqw));
   overflow-wrap: normal;
 }
+/* The price line: the heart seal first, then what it asks or brings. */
 .offer-price {
-  display: block;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1px max(4px, 1cqw);
   margin-top: 2px;
   font-size: max(13px, 0.78em);
-  opacity: 0.85;
+  /* Dimmed by colour, not opacity, so the heart seal stays solid. */
+  color: color-mix(in srgb, currentColor 85%, transparent);
+}
+.offer-price .offer-cost {
+  font-size: 1em;
 }
 
 /* A price the party can't pay: solid (the frame must not show through), but
@@ -836,6 +851,7 @@
   font-size: 0.96em;
   line-height: 1;
   text-align: left;
+  text-wrap: balance;
 }
 .card-choice:not(.plaques-3, .plaques-4)
   :is(.offer-goods, .send-plaque > .type-mark) {
