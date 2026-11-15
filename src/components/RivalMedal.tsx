@@ -1,5 +1,8 @@
 import type { CSSProperties } from "react";
 import { questArt, type QuestArt } from "../presentation/quest-art.generated";
+import { RIVAL_COLOURS } from "../presentation/rival-colors";
+
+export { RIVAL_COLOURS };
 
 // The rivals' medallions (Rivals Phase 5, 2026-11-15): each rival's emblem
 // from the vendored game-icons set, struck on a disc in their own colour.
@@ -8,15 +11,6 @@ import { questArt, type QuestArt } from "../presentation/quest-art.generated";
 // strip chip and the end screen load this lazily; the moments' views
 // (already a lazy chunk) import it directly.
 
-/** Each rival's colour: a light face and a deep rim. */
-export const RIVAL_COLOURS: Record<string, { light: string; deep: string }> = {
-  bradley: { light: "#f2c94c", deep: "#8a5a10" },
-  mirabel: { light: "#e58bd0", deep: "#6a1f5c" },
-  tutt: { light: "#d9c7a3", deep: "#5c4a2a" },
-  chuck: { light: "#9fd3e8", deep: "#1f5468" },
-  gary: { light: "#b8c4a0", deep: "#3f4a2a" },
-  queef: { light: "#f29a7a", deep: "#7a2a1a" },
-};
 const FALLBACK = { light: "#e07a6a", deep: "#5a1410" };
 
 /** A rival's colours as CSS variables, `--rival` and `--rival-deep`. */
