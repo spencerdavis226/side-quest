@@ -234,6 +234,12 @@ export interface CardDefinition {
     /** The rival, joined (Rivals Phase 2): one more to the bonus for each
      * meeting the party lost to them, up to 2. */
     grudge?: true;
+    /** Rivals Phase 3 (Chuck): the bonus is `bonus` on heads and 0 on
+     * tails of the coin flipped when he joined (`rival.joinFace`). */
+    coin?: true;
+    /** Rivals Phase 3 (Chuck): at this many hearts or fewer he leaves the
+     * team to watch the dragon instead (`rival.news.left`). */
+    leavesAt?: number;
   };
   /** The rival (2026-11-15): a card of the run's rival. See `RivalCard`. */
   rival?: RivalCard;
@@ -434,6 +440,13 @@ export interface Offer {
   deed?: string;
   /** The rival hands back everything they hold (2026-11-15). */
   restore?: true;
+  /** Rivals Phase 3: Chuck's door. The card's ally joins and a coin is
+   * flipped for how good he is (`party.rival.joinFace`, 2 heads). */
+  coinJoin?: true;
+  /** Rivals Phase 3: Gary's door. The drawer drinks one for every item
+   * the rival holds (at least 1, at most 6, spoken) and everything comes
+   * back. */
+  settle?: true;
   /** The Quest 2.0 Phase 5: the road chosen (0 or 1) on a `choose` slot's
    * card; the other road's stages leave the run. */
   route?: 0 | 1;
@@ -467,6 +480,9 @@ export interface OmenEffect {
   reroll20?: true;
   /** An item back in the bag each time a gym (a badge boss) falls. */
   restock?: Loot;
+  /** Rivals Phase 3 (Gary's Whistle): once a region, the rival's cut on
+   * the card in play can be cancelled (`hush`). */
+  hush?: true;
 }
 /** Pub Crawl items, carried in the party's satchel (at most three).
  * `draught`: drink 4 to heal two hearts (one when only one is missing). `shield`: the next
@@ -730,7 +746,18 @@ export interface PartyState {
     /** What changed hands on the card just put aside: taken onto their
      * ledger, handed back, given away for good (a hand-off, or what they
      * fled with), and an ally they poached (its card ID). */
-    news?: { took?: Loot[]; back?: Loot[]; gone?: Loot[]; poached?: string };
+    news?: {
+      took?: Loot[];
+      back?: Loot[];
+      gone?: Loot[];
+      poached?: string;
+      /** Rivals Phase 3: the joined rival who left the team (card ID). */
+      left?: string;
+    };
+    /** Rivals Phase 3: Chuck's coin at the door (2 heads, 1 tails). */
+    joinFace?: 1 | 2;
+    /** Rivals Phase 3: Gary's Whistle blown since the last region boss. */
+    hushed?: true;
     /** Rivals Phase 2: the Do-Over spent on the card in play (the roll
      * after it stands). */
     redone?: true;
@@ -746,7 +773,7 @@ export interface PartyState {
   /** The Quest 2.1: a coin just flipped off a card (2 heads, 1 tails): a
    * Lucky Coin (`luck`: heads gives this card's reroll the edge) or a road
    * card's "Flip for it" (`road`: news until the next put-aside). */
-  coin?: { face: 1 | 2; for: "luck" | "road" };
+  coin?: { face: 1 | 2; for: "luck" | "road" | "join" };
   duel?: {
     move: number;
     swings: number;

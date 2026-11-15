@@ -1,5 +1,6 @@
 import type {
   CardDefinition,
+  Jinx,
   Offer,
   OmenEffect,
   RivalProfile,
@@ -16,7 +17,8 @@ import {
 } from "./shared";
 
 // The rival (2026-11-15, owner: "a specific random rival every time ...
-// make it so you hate this guy"). One of three follows a run. They walk in
+// make it so you hate this guy"). One of six follows a run (three since
+// Rivals Phase 3). They walk in
 // right after the first region boss falls and help themselves; from then on
 // they hold the crossroads, turn up in a room's place (an ambush), meddle
 // in a fight (the d20 rolled twice, the worse kept) and snipe what a card
@@ -27,6 +29,15 @@ import {
 /** What a lost confrontation costs (items, hearts or both), and how many
  * items their introduction takes (1 unless said). */
 type Stakes = { takes?: number; damage?: number; intro?: number };
+/** One confrontation: its ID, title, rules and roll, and (Rivals Phase 3)
+ * the curse a lost one lays, which is also the curse they cut in with. */
+type Fight = [
+  id: string,
+  title: string,
+  rules: string,
+  fight: Roll,
+  curse?: Jinx,
+];
 
 /** A rival: every card of theirs, and what each kind of meeting costs. */
 interface Rival {
@@ -50,7 +61,7 @@ function rival(
   intro: { title: string; rules: string },
   /** What a lost confrontation costs: items, hearts, or both. */
   stakes: Stakes,
-  fights: [id: string, title: string, rules: string, fight: Roll][],
+  fights: Fight[],
   plea: {
     title: string;
     rules: string;
@@ -62,6 +73,12 @@ function rival(
     rules: string;
     fight: Roll;
     prize: [name: string, effect: OmenEffect];
+    /** The prize's words, when its numbers cannot say it. */
+    prizeRules?: string;
+    /** Swings to land (Gary's audit takes three). */
+    hits?: number;
+    /** A dragon lore when they fall (Dame Queefington's lute). */
+    lore?: true;
   },
 ): Rival {
   const name = profile.name;
@@ -75,7 +92,7 @@ function rival(
       encounter: "shrine",
       rival: { who, profile, takes: stakes.intro ?? 1 },
     },
-    fights: fights.map(([id, title, rules, fight]) => ({
+    fights: fights.map(([id, title, rules, fight, curse]) => ({
       ...card(
         `rival-${who}-${id}`,
         title,
@@ -87,10 +104,12 @@ function rival(
       encounter: "ambush" as const,
       battle: true as const,
       ...(stakes.damage ? { damage: stakes.damage } : {}),
+      ...(curse ? { jinx: curse } : {}),
       rival: {
         who,
         ...(stakes.takes ? { takes: stakes.takes } : {}),
         returns: 1,
+        ...(curse ? { curse: true as const } : {}),
       },
     })),
     plea: {
@@ -114,10 +133,14 @@ function rival(
       ribbonTone: "crimson",
       encounter: "ambush",
       battle: true,
-      hits: DUEL_HITS,
+      hits: duel.hits ?? DUEL_HITS,
       damage: DUEL_HURT,
       deed: { won: "rival-beaten" },
-      boon: trinket(...duel.prize),
+      boon: {
+        ...trinket(...duel.prize),
+        ...(duel.prizeRules ? { rules: duel.prizeRules } : {}),
+      },
+      ...(duel.lore ? { reward: { lore: true as const } } : {}),
       rival: { who, returns: "all" },
     },
   };
@@ -418,7 +441,297 @@ const tutt = rival(
   },
 );
 
-export const rivals: Rival[] = [bradley, mirabel, tutt];
+/** Chuck the Cuck (Rivals Phase 3): the squire who just likes to watch.
+ * He "helps" with your rolls, holds your things for strangers, and joins
+ * on a coin: heads, secretly excellent; tails, useless. */
+const chuck = rival(
+  "chuck",
+  {
+    name: "Chuck the Cuck",
+    ritual:
+      "When Chuck the Cuck shows up, he just watches. Anyone who makes eye contact drinks 1.",
+    lines: {
+      took: "Chuck the Cuck holds your {item} for you. He keeps holding it.",
+      back: "Chuck the Cuck hands back your {item}. It's a bit damp.",
+      lostTo: "Chuck the Cuck claps. Not for you.",
+      beaten: "Chuck the Cuck says he liked watching that, actually.",
+      redo: "Chuck the Cuck 'helps' you with that roll. Again. The new roll stands.",
+      meddle:
+        "Chuck the Cuck holds your sword for you. Roll twice, keep the worse.",
+      handoff:
+        "Chuck the Cuck lends your {item} to a nice stranger. It's gone.",
+    },
+    style: { redo: 6, meddle: 3, handoff: 2 },
+    verse: {
+      joined: "with Chuck the Cuck just watching,",
+      beaten: "sent Chuck the Cuck home to watch,",
+      ahead: "while Chuck the Cuck just watched,",
+    },
+  },
+  {
+    title: "Chuck the Cuck",
+    rules:
+      "Chuck the Cuck appoints himself your squire. He keeps one of your things. Eye contact: drink 2.",
+  },
+  { takes: 1 },
+  [
+    [
+      "watches",
+      "Chuck Just Watches",
+      "Chuck the Cuck pulls up a chair to watch you work. Roll d20 to make him leave.",
+      vs(
+        "He stays. He's breathing loudly. Drink 3.",
+        "He leaves, slowly, still watching. Give 3.",
+      ),
+    ],
+    [
+      "ale",
+      "Chuck Holds Your Ale",
+      "Chuck the Cuck 'holds' your drink. It's half gone. Roll d20 to get it back.",
+      vs(
+        "Finish what he left you. Drink 3.",
+        "You take yours back, and his. Give 3.",
+      ),
+    ],
+    [
+      "cheering",
+      "Chuck's Cheering",
+      "Chuck the Cuck cheers for the monster. Loudly. Roll d20 to shut him up.",
+      vs("He gets louder. Drink 3.", "He switches sides, to you. Give 3."),
+    ],
+    [
+      "notes",
+      "Chuck Takes Notes",
+      "Chuck the Cuck writes down everything you do 'for later'. Roll d20 for the notebook.",
+      vs(
+        "He reads one out. Drink 3.",
+        "You read his. It's all about you. Give 3.",
+      ),
+    ],
+  ],
+  {
+    title: "Chuck Begs to Serve",
+    rules:
+      "Chuck the Cuck, on his knees, begs to serve you. He'll just watch. Take him and flip a coin.",
+    offers: [
+      {
+        label: "Take him · drink 2",
+        recruit: true,
+        coinJoin: true,
+        deed: "rival-joined",
+      },
+      { label: "Duel him", deed: "rival-refused" },
+    ],
+    ally: {
+      name: "Chuck the Cuck",
+      calling: ["any"],
+      // Heads (Rivals Phase 3): +4 (the plan's +5 had joined runs winning
+      // over 45%: the table always takes him).
+      bonus: 4,
+      coin: true,
+      leavesAt: 2,
+      ritual: "Anyone who makes eye contact with Chuck drinks 1.",
+    },
+  },
+  {
+    title: "Chuck Stops Watching",
+    rules:
+      "Chuck the Cuck finally picks up a sword. Yours. Duel him at the door. Roll d20.",
+    fight: vs(
+      "He's actually good at this. Drink 4.",
+      "He drops it and goes back to watching. Give 4.",
+    ),
+    prize: ["Chuck's Notebook", { heal: 1 }],
+  },
+);
+
+/** Gary Shitwhistle (Rivals Phase 3): the king's auditor. Everything he
+ * takes comes with a receipt; he invoices, squats in your bed at the inn,
+ * and never joins. Settle his debt in drinks at the door, or be audited. */
+const gary = rival(
+  "gary",
+  {
+    name: "Gary Shitwhistle",
+    ritual:
+      "When Gary Shitwhistle shows up, he blows his whistle. Everyone freezes; first to move drinks 1.",
+    lines: {
+      took: "Gary Shitwhistle confiscates your {item}. You'll get a receipt.",
+      back: "Gary returns your {item}, with a receipt for the return.",
+      lostTo: "Gary Shitwhistle stamps something. It says 'DENIED'.",
+      beaten:
+        "Gary Shitwhistle files a complaint. Against you. It takes weeks.",
+      ambush:
+        "Gary Shitwhistle steps out with a clipboard. 'A moment of your time.'",
+      invoice: "Gary Shitwhistle presents an invoice. Pay a heart or an item.",
+      squat: "Gary is in your bed. 'Audit,' he says. Rest heals 1 less.",
+    },
+    style: { invoice: 6, squat: 2, ambush: 2 },
+    verse: {
+      beaten: "audited the auditor, Gary Shitwhistle,",
+      ahead: "owing Gary Shitwhistle a fortune,",
+    },
+  },
+  {
+    title: "Gary Shitwhistle",
+    rules:
+      "Gary Shitwhistle, Royal Auditor, fines you an item. He blows his whistle; first to move drinks 2.",
+  },
+  { takes: 1, damage: 1 },
+  [
+    [
+      "receipts",
+      "Receipts, Please",
+      "Gary Shitwhistle wants receipts for every drink tonight. Roll d20 to produce them.",
+      vs(
+        "You have none. Drink 3.",
+        "You hand him a fistful of napkins. Give 3.",
+      ),
+    ],
+    [
+      "whistle",
+      "The Whistle",
+      "Gary Shitwhistle blows his whistle at your stance. Roll d20 to stand legally.",
+      vs(
+        "Illegal stance. Drink 3.",
+        "He checks the rulebook. You're fine. Give 3.",
+      ),
+    ],
+    [
+      "form",
+      "Form 27-B",
+      "Gary Shitwhistle needs form 27-B in triplicate. Everyone signs a napkin. Roll d20.",
+      vs("Wrong napkin. Drink 3.", "Stamped and approved. Give 3."),
+    ],
+    [
+      "taxes",
+      "Back Taxes",
+      "Gary Shitwhistle has calculated your back taxes. Roll d20 to dispute them.",
+      vs("Plus interest. Drink 3.", "He forgot to carry the one. Give 3."),
+    ],
+  ],
+  {
+    title: "Settle the Debt",
+    rules:
+      "Gary Shitwhistle tallies your debt at the door. It's itemised. Pay in drinks, or refuse.",
+    offers: [
+      { label: "Pay up", settle: true, deed: "rival-settled" },
+      { label: "Refuse", deed: "rival-refused" },
+    ],
+  },
+  {
+    title: "The Audit",
+    rules:
+      "Gary Shitwhistle opens a full audit at the door. Three rounds. Roll d20.",
+    fight: vs("He finds something. Drink 4.", "You find his expenses. Give 4."),
+    prize: ["Gary's Whistle", { hush: true }],
+    prizeRules: "Once a region, blow it to call off your rival.",
+    hits: 3,
+  },
+);
+
+/** Her two curses, laid by a lost meeting or when she cuts in to curse. */
+const BACKING_VOCALS: Jinx = {
+  name: "Backing Vocals",
+  rule: "The cursed player hums after every drink. Forgets: drink 1.",
+};
+const RHYME_TIME: Jinx = {
+  name: "Rhyme Time",
+  rule: "The cursed player speaks only in rhyme. Slips: drink 1.",
+};
+
+/** Dame Queefington (Rivals Phase 3): the rival bard, on the wind
+ * instrument nobody asked for. She sings your failures and lays curses in
+ * song; a lost meeting costs a heart and lays her curse. */
+const queef = rival(
+  "queef",
+  {
+    name: "Dame Queefington",
+    ritual:
+      "When Dame Queefington plays, everyone hums along. Anyone who laughs drinks 1.",
+    lines: {
+      took: "Dame Queefington takes your {item} as payment for the song.",
+      back: "Dame Queefington tosses back your {item}. 'Encore.'",
+      lostTo: "Dame Queefington adds a verse about that. It rhymes.",
+      beaten: "Dame Queefington hits a bum note and storms off.",
+      curse:
+        "Dame Queefington writes a song about you. It's catchy. You're cursed.",
+      snipe: "Dame Queefington sings for whatever this gives. It's hers now.",
+      meddle:
+        "Dame Queefington plays during your swing. Roll twice, keep the worse.",
+    },
+    style: { curse: 5, snipe: 2, meddle: 2 },
+    verse: {
+      joined: "sung well by Dame Queefington,",
+      beaten: "silenced Dame Queefington's lute,",
+      ahead: "to Dame Queefington's mocking tune,",
+    },
+  },
+  {
+    title: "Dame Queefington",
+    rules:
+      "Dame Queefington has a song about your last fight. It rhymes 'hero' with 'zero'. Everyone hums.",
+  },
+  { damage: 1 },
+  [
+    [
+      "diss",
+      "The Diss Track",
+      "Dame Queefington drops a diss track about you. Roll d20 to drop one back.",
+      vs("It charts. Drink 3.", "Yours goes platinum. Give 3."),
+      BACKING_VOCALS,
+    ],
+    [
+      "encore",
+      "The Encore",
+      "Dame Queefington is doing an encore nobody asked for. Roll d20 to pull the plug.",
+      vs("She does two more. Drink 3.", "Silence. Beautiful silence. Give 3."),
+      BACKING_VOCALS,
+    ],
+    [
+      "requests",
+      "Requests",
+      "Dame Queefington takes requests. Yours is 'stop'. Roll d20 to make her.",
+      vs("She plays it louder. Drink 3.", "She stops, mid-note. Give 3."),
+      RHYME_TIME,
+    ],
+    [
+      "open-mic",
+      "The Open Mic",
+      "Dame Queefington hands you the lute. Sing for 10 seconds, then roll d20.",
+      vs("She critiques it. Drink 3.", "Standing ovation. Give 3."),
+      RHYME_TIME,
+    ],
+  ],
+  {
+    title: "Your Ballad, Half Done",
+    rules:
+      "Dame Queefington has your ballad half written. How it ends depends on you. Vote.",
+    offers: [
+      { label: "Take her", recruit: true, deed: "rival-joined" },
+      { label: "Duel her", deed: "rival-refused" },
+    ],
+    ally: {
+      name: "Dame Queefington",
+      calling: ["any"],
+      bonus: 2,
+      ritual: "Everyone hums along whenever she plays.",
+    },
+  },
+  {
+    title: "The Final Verse",
+    rules:
+      "Dame Queefington wants the last verse. Duel her for the pen. Roll d20.",
+    fight: vs(
+      "She sings your defeat. Drink 4.",
+      "You snap her lute string. Give 4.",
+    ),
+    prize: ["Queefington's Lute", { roll: { monster: 1 } }],
+    prizeRules: "Comes with a dragon lore. +1 to every monster fight's d20.",
+    lore: true,
+  },
+);
+
+export const rivals: Rival[] = [bradley, mirabel, tutt, chuck, gary, queef];
 export const rivalIntros = rivals.map((r) => r.intro);
 export const rivalFights = rivals.flatMap((r) => r.fights);
 export const rivalPleas = rivals.map((r) => r.plea);

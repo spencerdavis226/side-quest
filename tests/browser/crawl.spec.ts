@@ -1135,6 +1135,29 @@ test("the rival's duel shows the tricks they will fight with", async ({
   await page.screenshot({ path: info.outputPath("arsenal.png") });
 });
 
+test("Gary's door: settle the debt in drinks, or be audited", async ({
+  page,
+}, info) => {
+  // Rivals Phase 3: Gary holds three items; paying costs a drink each.
+  let s = crawlAt("dungeon.rival-gary-door", STEP.closing, {
+    deeds: ["rival-gary"],
+    rival: { who: "gary", took: ["die", "smoke", "shield"], won: 0, lost: 0 },
+  });
+  const finale = [...s.quest!.finale];
+  const was = finale.indexOf("dungeon.rival-gary");
+  if (was >= 0) finale[was] = finale[STEP.rival];
+  finale[STEP.rival] = "dungeon.rival-gary";
+  s = reveal({ ...s, quest: { ...s.quest!, finale } });
+  await seed(page, s);
+  const plaques = page.locator(".offer-plaque");
+  await expect(plaques).toHaveCount(2);
+  await expect(plaques.first()).toHaveAccessibleName(
+    "Pay up: drink 3 and everything comes back",
+  );
+  await expect(plaques.nth(1)).toContainText("Refuse");
+  await page.screenshot({ path: info.outputPath("gary-door.png") });
+});
+
 test("the omen is kept in the party dialog", async ({ page }, info) => {
   let s = reveal(crawlAt("dungeon.omen-lock-in", STEP.omen));
   s = advance(s);

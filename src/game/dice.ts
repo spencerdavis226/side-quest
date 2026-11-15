@@ -231,6 +231,8 @@ export function rollDice(
   const card = currentCard(session);
   const dice = card.dice;
   if (!dice || session.phase !== "revealed" || session.roll) return session;
+  // Rivals Phase 3: an unpaid invoice holds the card's roll.
+  if (session.quest?.party?.rival?.cut === "invoice") return session;
   const sample = () => {
     const n = random();
     if (!Number.isFinite(n) || n < 0 || n >= 1)

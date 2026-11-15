@@ -85,7 +85,8 @@ export function badEffect(o: OmenEffect): boolean {
     !step(o.crit, 17, 20) ||
     !step(o.fumble, 1, 3) ||
     (o.reroll20 !== undefined && o.reroll20 !== true) ||
-    (o.restock !== undefined && !LOOT.includes(o.restock))
+    (o.restock !== undefined && !LOOT.includes(o.restock)) ||
+    (o.hush !== undefined && o.hush !== true)
   );
 }
 export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
@@ -362,6 +363,26 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
       fail(`Invalid ally: ${c.id}`);
     if (c.offers?.some((o) => o?.restore !== undefined && o.restore !== true))
       fail(`Invalid offers: ${c.id}`);
+    // Rivals Phase 3: Chuck's coin joins the card's ally; Gary's settle is
+    // on a rival's card.
+    if (
+      c.offers?.some(
+        (o) =>
+          (o?.coinJoin !== undefined &&
+            (o.coinJoin !== true || !o.recruit || !c.ally?.coin)) ||
+          (o?.settle !== undefined && (o.settle !== true || !c.rival)),
+      )
+    )
+      fail(`Invalid offers: ${c.id}`);
+    if (
+      (c.ally?.coin !== undefined && (c.ally.coin !== true || !c.rival)) ||
+      (c.ally?.leavesAt !== undefined &&
+        (!Number.isSafeInteger(c.ally.leavesAt) ||
+          c.ally.leavesAt < 1 ||
+          c.ally.leavesAt > 5 ||
+          !c.rival))
+    )
+      fail(`Invalid ally: ${c.id}`);
     // A merchant's wares or a fork's doors: two or three plaques, on a card
     // with no other way to be put aside.
     if (

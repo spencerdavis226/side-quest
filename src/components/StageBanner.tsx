@@ -244,7 +244,28 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
       key: "took" | "back" | "lostTo" | "beaten",
       items?: string[],
     ) => rivalLine(profile, key, names(items)) ?? "";
-    if (news?.took?.length)
+    // Rivals Phase 3: Chuck's coin as he joins, and Chuck walking off.
+    const joinCoin = party?.coin?.for === "join" ? party.coin.face : null;
+    if (joinCoin)
+      setShown({
+        key: newsKey,
+        kicker: profile.name,
+        title: joinCoin === 2 ? "Heads: secretly excellent" : "Tails: useless",
+        line:
+          joinCoin === 2
+            ? "+4 to any fight he is sent into."
+            : "+0 to any fight. His ritual still stands.",
+        tone: joinCoin === 2 ? "gold" : "crimson",
+      });
+    else if (news?.left)
+      setShown({
+        key: newsKey,
+        kicker: profile.name,
+        title: "went to watch the dragon instead",
+        line: "He left the team. He'll be watching.",
+        tone: "crimson",
+      });
+    else if (news?.took?.length)
       setShown({
         key: newsKey,
         kicker: profile.name,
@@ -267,7 +288,9 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
         key: newsKey,
         kicker: profile.name,
         title: `${names(news.gone).join(" and ")}: gone for good`,
-        line: rivalLine(profile, "handoff") ?? "Nobody is getting that back.",
+        line:
+          rivalLine(profile, "handoff", names(news.gone)) ??
+          "Nobody is getting that back.",
         tone: "crimson",
       });
     else if (news?.poached)
@@ -292,7 +315,7 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
           tone: beat ? "gold" : "crimson",
         });
     }
-  }, [newsKey, news, record, rival, profile, quest]);
+  }, [newsKey, news, record, rival, profile, quest, party?.coin]);
   const clear = useCallback(() => setShown(null), []);
   // Held while a moment plays (a boss's spoils and its jinx lifted land
   // together): the banner sweeps once the moment is done.

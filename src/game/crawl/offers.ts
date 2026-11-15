@@ -80,8 +80,13 @@ export function takeOffer(
   if (offer.lore) party = addLore(party);
   if (offer.recruit && currentCard(s).ally)
     party = joinTeam(party, currentCard(s).id);
-  // The rival hands back what they hold (2026-11-15).
-  if (offer.restore) party = restoreAll(party, { ...q, party });
+  // The rival hands back what they hold (2026-11-15); Gary's debt settled
+  // in drinks does the same (Rivals Phase 3).
+  if (offer.restore || offer.settle) party = restoreAll(party, { ...q, party });
+  // Chuck's coin (Rivals Phase 3): heads, he is secretly excellent.
+  const joinFace = offer.coinJoin ? (random() < 0.5 ? 1 : 2) : undefined;
+  if (joinFace && party.rival)
+    party = { ...party, rival: { ...party.rival, joinFace } };
   // The Quest 2.0 Phase 6: a choice the road remembers.
   if (offer.deed) party = addDeed(party, offer.deed);
   let finale = q.finale;
@@ -121,7 +126,20 @@ export function takeOffer(
         }
       : after;
   }
-  return discard({ ...s, quest: next }, random);
+  const after = discard({ ...s, quest: next }, random);
+  // The coin stays as news until the next card is put aside.
+  return joinFace && after.quest?.party
+    ? {
+        ...after,
+        quest: {
+          ...after.quest,
+          party: {
+            ...after.quest.party,
+            coin: { face: joinFace, for: "join" },
+          },
+        },
+      }
+    : after;
 }
 /** Each pull on a push-your-luck card rolls this much lower. */
 export const PRESS_STEP = 2;

@@ -75,6 +75,7 @@ export function stackEffects(
       out.fumble = Math.max(out.fumble ?? 1, b.fumble);
     if (b.reroll20) out.reroll20 = true;
     out.restock ??= b.restock;
+    if (b.hush) out.hush = true;
     satchel += (b.satchel ?? 3) - 3;
   }
   out.satchel = Math.max(1, satchel);

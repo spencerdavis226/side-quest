@@ -41,6 +41,7 @@ import {
   awaitingInvoice,
   canPayInvoice,
   payOffItem,
+  canHush,
   RIVAL_DRINKS,
   rivalProfile,
   replaces,
@@ -789,12 +790,15 @@ export function OfferPlaque({
   onTake,
   theme,
   branch,
+  debt,
 }: {
   offer: Offer;
   index: number;
   can: boolean;
   onTake: (index: number, branch?: number) => void;
   theme: CrawlTheme;
+  /** Gary's debt in drinks, for his "Pay up" plaque (Rivals Phase 3). */
+  debt?: number;
   /** One of a branching starter's forms, on its own evolve plaque. */
   branch?: { name: string; index: number };
 }) {
@@ -807,47 +811,55 @@ export function OfferPlaque({
     ? (price ?? offer.label)
     : offer.heal
       ? `+${heartCount(theme, offer.heal)}`
-      : undefined;
+      : offer.settle
+        ? `drink ${debt ?? 1}`
+        : offer.coinJoin
+          ? "flip a coin"
+          : undefined;
   // Plaques that do more (The Quest 2.0 Phases 3 and 4): gear, a dragon
   // lore, an ally; a plaque's curse names itself in its label's seal.
-  const icon: CrawlIconName | null = offer.loot
-    ? offer.loot
-    : offer.route !== undefined
-      ? "door"
-      : offer.boon
-        ? gearIcon(offer.boon)
-        : offer.lore
-          ? "lore"
-          : offer.recruit
-            ? "ally"
-            : offer.elite
-              ? "elite"
-              : offer.evolve
-                ? "adventurer"
-                : offer.heal
-                  ? "heart"
-                  : null;
-  const brings = offer.loot
-    ? `a ${theme.loot[offer.loot].name}`
-    : offer.route !== undefined
-      ? `the road to ${offer.label.replace(/^The /, "the ")}`
-      : offer.boon
-        ? offer.boon.name
-        : offer.lore
-          ? "a dragon lore"
-          : offer.recruit
-            ? "an ally"
-            : offer.elite
-              ? theme.words.elite
-              : offer.evolve
-                ? !can
-                  ? `${theme.words.grows.who} is ${theme.words.grows.done}`
-                  : branch
-                    ? `${theme.words.grows.who} ${theme.words.grows.verb} into ${branch.name}`
-                    : `${theme.words.grows.who} ${theme.words.grows.verb}`
-                : offer.heal
-                  ? `${offer.heal} ${theme.words.hearts} back`
-                  : "nothing";
+  const icon: CrawlIconName | null = offer.settle
+    ? "satchel"
+    : offer.loot
+      ? offer.loot
+      : offer.route !== undefined
+        ? "door"
+        : offer.boon
+          ? gearIcon(offer.boon)
+          : offer.lore
+            ? "lore"
+            : offer.recruit
+              ? "ally"
+              : offer.elite
+                ? "elite"
+                : offer.evolve
+                  ? "adventurer"
+                  : offer.heal
+                    ? "heart"
+                    : null;
+  const brings = offer.settle
+    ? `drink ${debt ?? 1} and everything comes back`
+    : offer.loot
+      ? `a ${theme.loot[offer.loot].name}`
+      : offer.route !== undefined
+        ? `the road to ${offer.label.replace(/^The /, "the ")}`
+        : offer.boon
+          ? offer.boon.name
+          : offer.lore
+            ? "a dragon lore"
+            : offer.recruit
+              ? "an ally"
+              : offer.elite
+                ? theme.words.elite
+                : offer.evolve
+                  ? !can
+                    ? `${theme.words.grows.who} is ${theme.words.grows.done}`
+                    : branch
+                      ? `${theme.words.grows.who} ${theme.words.grows.verb} into ${branch.name}`
+                      : `${theme.words.grows.who} ${theme.words.grows.verb}`
+                  : offer.heal
+                    ? `${offer.heal} ${theme.words.hearts} back`
+                    : "nothing";
   return (
     <button
       className={`card-choice-option offer-plaque ${offer.elite ? "offer-loud" : icon ? "offer-buy" : "offer-pass"}`}
@@ -1014,27 +1026,34 @@ export function SendInPlaque({
 export interface RivalCounter {
   pay?: Loot;
   drink?: "poach" | "squat";
+  /** Gary's Whistle (Rivals Phase 3). */
+  hush?: true;
   run: () => void;
 }
 /** The counter for the card in play, if any. */
 export function rivalCounter(
   session: SessionState,
-  onRival: (answer: "pay" | "drink") => void,
+  onRival: (answer: "pay" | "drink" | "hush") => void,
 ): RivalCounter | undefined {
   const cut = session.quest?.party?.rival?.cut;
-  if (session.phase !== "revealed" || !cut || cut === "redo") return undefined;
+  if (session.phase !== "revealed" || !cut) return undefined;
+  // Gary's Whistle is free: blown first, once a region.
+  if (canHush(session)) return { hush: true, run: () => onRival("hush") };
+  if (cut === "redo") return undefined;
   if (cut === "poach" || cut === "squat")
     return { drink: cut, run: () => onRival("drink") };
   const pay = payOffItem(session);
   return pay ? { pay, run: () => onRival("pay") } : undefined;
 }
 const counterWords = (counter: RivalCounter, theme: CrawlTheme) =>
-  counter.pay
-    ? { name: "Pay off", does: `give ${theme.loot[counter.pay].name}` }
-    : {
-        name: `Drink ${RIVAL_DRINKS}`,
-        does: counter.drink === "poach" ? "keep your ally" : "kick them out",
-      };
+  counter.hush
+    ? { name: "Whistle", does: "call them off" }
+    : counter.pay
+      ? { name: "Pay off", does: `give ${theme.loot[counter.pay].name}` }
+      : {
+          name: `Drink ${RIVAL_DRINKS}`,
+          does: counter.drink === "poach" ? "keep your ally" : "kick them out",
+        };
 function RivalCounterPlaque({
   counter,
   theme,
@@ -1049,7 +1068,10 @@ function RivalCounterPlaque({
       aria-label={`${words.name}: ${words.does}`}
       onClick={counter.run}
     >
-      <CrawlIcon name={counter.pay ?? "ambush"} theme={theme} />
+      <CrawlIcon
+        name={counter.pay ?? (counter.hush ? "trinket" : "ambush")}
+        theme={theme}
+      />
       <span className="offer-label">
         <span className="offer-name">{words.name}</span>
         <small className="offer-price">{words.does}</small>
@@ -1232,7 +1254,12 @@ export function buildExtras(
       long: false,
       name: words.name,
       does: words.does,
-      mark: <CrawlIcon name={counter.pay ?? "ambush"} theme={theme} />,
+      mark: (
+        <CrawlIcon
+          name={counter.pay ?? (counter.hush ? "trinket" : "ambush")}
+          theme={theme}
+        />
+      ),
       run: counter.run,
       plaque: (
         <RivalCounterPlaque

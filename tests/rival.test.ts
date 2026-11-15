@@ -14,6 +14,9 @@ import {
   RIVAL_TOTAL,
   RIVAL_VERBS,
   assistBonus,
+  canHush,
+  hush,
+  settleDrinks,
   awaitingInvoice,
   awaitingRedo,
   canKickOut,
@@ -420,9 +423,12 @@ describe("the rival", () => {
       let s = takeOffer(door, refuse, seeded(5));
       expect(s.quest!.finale[s.quest!.step]).toBe(r.duel.id);
       roundTrip(s);
-      // Two swings land.
-      s = fight(s, 18);
-      expect(s.quest!.step).toBe(STEP.duel);
+      // Every swing but the last lands, then the last (Gary's audit takes
+      // three).
+      for (let i = 1; i < r.duel.hits!; i++) {
+        s = fight(s, 18);
+        expect(s.quest!.step).toBe(STEP.duel);
+      }
       s = fight(s, 18);
       expect(finaleStage(s.quest!).label).toBe("The Dragon's Lair");
       expect(party(s).loot).toEqual(["draught", "round", "revive"]);
@@ -470,6 +476,9 @@ describe("the rival", () => {
       "Sir Chad",
       "Lady Fingerbang",
       "Sensei Saggynuts",
+      "Chuck the Cuck",
+      "Gary Shitwhistle",
+      "Dame Queefington",
     ]);
     const old = /Bradley|Mirabel|Tutt|Aldous/;
     for (const r of rivals) {
@@ -836,5 +845,156 @@ describe("the rival, Phase 2", () => {
     bad((r) => (r.arsenal = { coin: false as unknown as true }));
     bad((r) => (r.cuts = { paid: 1.5 }));
     bad((r) => (r.news = { gone: ["gold" as Loot] }));
+  });
+});
+
+// Rivals Phase 3: Chuck the Cuck, Gary Shitwhistle, Dame Queefington.
+describe("the rival, Phase 3", () => {
+  const atDoor = (who: string, more: Partial<PartyState> = {}, rival = {}) => {
+    const r = rivals.find((x) => x.who === who)!;
+    return advance(
+      place(met(who, STEP.door, more, rival), STEP.door, r.plea.id),
+    );
+  };
+
+  it("Chuck joins on a coin: heads +4, tails +0, and the coin is news", () => {
+    const chuck = rivals.find((r) => r.who === "chuck")!;
+    for (const [draw, face, bonus] of [
+      [0.9, 2, 4],
+      [0.1, 1, 0],
+    ] as const) {
+      const joined = takeOffer(atDoor("chuck"), 0, () => draw);
+      expect(party(joined).team).toEqual([chuck.plea.id]);
+      expect(party(joined).rival?.joinFace).toBe(face);
+      expect(party(joined).coin).toEqual({ face, for: "join" });
+      expect(assistBonus(chuck.plea, joined.quest)).toBe(bonus);
+      roundTrip(joined);
+      // The coin is news for one put-aside only.
+      expect(
+        party(advance(rollTo(advance(joined), 2), seeded(1))).coin,
+      ).toBeUndefined();
+    }
+  });
+
+  it("Chuck leaves a party at 2 hearts or fewer, to watch the dragon", () => {
+    const chuck = rivals.find((r) => r.who === "chuck")!;
+    const joined = takeOffer(atDoor("chuck", { hearts: 3 }), 0, () => 0.9);
+    // A swing at the dragon that misses and costs a heart or more.
+    let s = advance(joined);
+    for (
+      let i = 0;
+      i < 6 && party(s).team?.length && s.phase !== "complete";
+      i++
+    )
+      s = advance(rollTo(advance(s), 2), seeded(i));
+    expect(party(s).team).toBeUndefined();
+    expect(party(s).deeds).toContain("rival-left");
+    const left = party(s).rival?.news?.left;
+    if (left) expect(left).toBe(chuck.plea.id);
+    if (s.phase !== "complete") roundTrip(s);
+  });
+
+  it("Gary is settled in drinks, or audited over three swings", () => {
+    const gary = rivals.find((r) => r.who === "gary")!;
+    const door = atDoor(
+      "gary",
+      { loot: [] },
+      { took: ["die", "smoke", "shield"] },
+    );
+    expect(settleDrinks(door.quest)).toBe(3);
+    const settled = takeOffer(door, 0, seeded(2));
+    expect(party(settled).loot).toEqual(["die", "smoke", "shield"]);
+    expect(party(settled).rival?.took).toEqual([]);
+    expect(party(settled).deeds).toContain("rival-settled");
+    expect(finaleStage(settled.quest!).label).toBe("The Dragon's Lair");
+    roundTrip(settled);
+    // At least one drink, at most six.
+    expect(settleDrinks(atDoor("gary").quest)).toBe(1);
+    // Refused: The Audit.
+    const audit = takeOffer(atDoor("gary"), 1, seeded(2));
+    expect(audit.quest!.finale[audit.quest!.step]).toBe(gary.duel.id);
+    expect(gary.duel.hits).toBe(3);
+    roundTrip(audit);
+  });
+
+  it("Gary's Whistle calls off a cut once a region", () => {
+    const gary = rivals.find((r) => r.who === "gary")!;
+    const base = met("tutt", STEP.floor2 + 2);
+    // The whistle won from Gary's audit, carried here by its card ID.
+    const q = structuredClone(base.quest!);
+    const audit = structuredClone(gary.duel);
+    q.stages[0].cards.push(audit);
+    q.finale[0] = audit.id;
+    const room = roomOf(base, STEP.floor2 + 2, plainFight);
+    const s = advance(
+      at(
+        place({ ...base, quest: q }, STEP.floor2 + 2, room.id),
+        STEP.floor2 + 2,
+        {
+          boons: [audit.id],
+          rival: { who: "tutt", took: [], won: 0, lost: 0, cut: "meddle" },
+        },
+      ),
+    );
+    expect(canHush(s)).toBe(true);
+    const hushed = hush(s);
+    expect(party(hushed).rival).toMatchObject({ hushed: true });
+    expect(party(hushed).rival?.cut).toBeUndefined();
+    expect(cardEdge(hushed.quest, currentCard(hushed))).not.toBe(
+      "disadvantage",
+    );
+    // Not again until a region boss falls.
+    const again = {
+      ...hushed,
+      quest: {
+        ...hushed.quest!,
+        party: {
+          ...party(hushed),
+          rival: { ...party(hushed).rival!, cut: "meddle" as const },
+        },
+      },
+    };
+    expect(canHush(again)).toBe(false);
+  });
+
+  it("Dame Queefington's lost meetings lay her curse, and she curses by song", () => {
+    const queef = rivals.find((r) => r.who === "queef")!;
+    for (const f of queef.fights) {
+      expect(f.jinx).toBeTruthy();
+      expect(f.rival?.curse).toBe(true);
+      expect(f.jinx!.rule).toMatch(/^The cursed player /);
+    }
+    const lost = fight(
+      place(met("queef", STEP.crossroads), STEP.crossroads, queef.fights[0].id),
+      2,
+    );
+    expect(party(lost).jinx).toBe(queef.fights[0].id);
+    expect(party(lost).hearts).toBe(29);
+    roundTrip(lost);
+    // Cutting in: the curse lands with a plain room.
+    const cursed = advance(
+      cutOn("queef", STEP.floor2 + 2, plainRoom, "curse"),
+      seeded(3),
+    );
+    expect(finaleCard(cursed.quest!, party(cursed).jinx!)?.rival?.who).toBe(
+      "queef",
+    );
+    roundTrip(cursed);
+  });
+
+  it("every rival's door ends their own way, and the stage pools hold all six", () => {
+    const run1 = run(1);
+    const door = run1.quest!.stages.find(
+      (st) => st.label === "The Lair's Door",
+    )!;
+    expect(door.variants).toHaveLength(6);
+    const crossroads = run1.quest!.stages.find(
+      (st) => st.label === "The Crossroads",
+    )!;
+    expect(crossroads.ambush).toHaveLength(24);
+    for (const r of rivals) {
+      const offers = r.plea.offers!;
+      expect(offers.some((o) => o.deed === "rival-refused")).toBe(true);
+    }
   });
 });

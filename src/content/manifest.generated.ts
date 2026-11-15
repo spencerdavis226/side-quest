@@ -2312,6 +2312,9 @@ export const packs: PackDefinition[] = [
             "dungeon.rival-bradley",
             "dungeon.rival-mirabel",
             "dungeon.rival-tutt",
+            "dungeon.rival-chuck",
+            "dungeon.rival-gary",
+            "dungeon.rival-queef",
           ],
         },
         {
@@ -2792,6 +2795,18 @@ export const packs: PackDefinition[] = [
             "dungeon.rival-tutt-demonstration",
             "dungeon.rival-tutt-posture",
             "dungeon.rival-tutt-in-my-day",
+            "dungeon.rival-chuck-watches",
+            "dungeon.rival-chuck-ale",
+            "dungeon.rival-chuck-cheering",
+            "dungeon.rival-chuck-notes",
+            "dungeon.rival-gary-receipts",
+            "dungeon.rival-gary-whistle",
+            "dungeon.rival-gary-form",
+            "dungeon.rival-gary-taxes",
+            "dungeon.rival-queef-diss",
+            "dungeon.rival-queef-encore",
+            "dungeon.rival-queef-requests",
+            "dungeon.rival-queef-open-mic",
           ],
           ambush: [
             "dungeon.rival-bradley-autograph",
@@ -2806,6 +2821,18 @@ export const packs: PackDefinition[] = [
             "dungeon.rival-tutt-demonstration",
             "dungeon.rival-tutt-posture",
             "dungeon.rival-tutt-in-my-day",
+            "dungeon.rival-chuck-watches",
+            "dungeon.rival-chuck-ale",
+            "dungeon.rival-chuck-cheering",
+            "dungeon.rival-chuck-notes",
+            "dungeon.rival-gary-receipts",
+            "dungeon.rival-gary-whistle",
+            "dungeon.rival-gary-form",
+            "dungeon.rival-gary-taxes",
+            "dungeon.rival-queef-diss",
+            "dungeon.rival-queef-encore",
+            "dungeon.rival-queef-requests",
+            "dungeon.rival-queef-open-mic",
           ],
           variants: [
             {
@@ -2833,6 +2860,33 @@ export const packs: PackDefinition[] = [
                 "dungeon.rival-tutt-demonstration",
                 "dungeon.rival-tutt-posture",
                 "dungeon.rival-tutt-in-my-day",
+              ],
+            },
+            {
+              deeds: ["rival-chuck"],
+              cardIds: [
+                "dungeon.rival-chuck-watches",
+                "dungeon.rival-chuck-ale",
+                "dungeon.rival-chuck-cheering",
+                "dungeon.rival-chuck-notes",
+              ],
+            },
+            {
+              deeds: ["rival-gary"],
+              cardIds: [
+                "dungeon.rival-gary-receipts",
+                "dungeon.rival-gary-whistle",
+                "dungeon.rival-gary-form",
+                "dungeon.rival-gary-taxes",
+              ],
+            },
+            {
+              deeds: ["rival-queef"],
+              cardIds: [
+                "dungeon.rival-queef-diss",
+                "dungeon.rival-queef-encore",
+                "dungeon.rival-queef-requests",
+                "dungeon.rival-queef-open-mic",
               ],
             },
           ],
@@ -2970,6 +3024,9 @@ export const packs: PackDefinition[] = [
                   "dungeon.rival-bradley-door",
                   "dungeon.rival-mirabel-door",
                   "dungeon.rival-tutt-door",
+                  "dungeon.rival-chuck-door",
+                  "dungeon.rival-gary-door",
+                  "dungeon.rival-queef-door",
                 ],
                 variants: [
                   {
@@ -2984,6 +3041,18 @@ export const packs: PackDefinition[] = [
                     deeds: ["rival-tutt"],
                     cardIds: ["dungeon.rival-tutt-door"],
                   },
+                  {
+                    deeds: ["rival-chuck"],
+                    cardIds: ["dungeon.rival-chuck-door"],
+                  },
+                  {
+                    deeds: ["rival-gary"],
+                    cardIds: ["dungeon.rival-gary-door"],
+                  },
+                  {
+                    deeds: ["rival-queef"],
+                    cardIds: ["dungeon.rival-queef-door"],
+                  },
                 ],
               },
               {
@@ -2994,6 +3063,9 @@ export const packs: PackDefinition[] = [
                   "dungeon.rival-bradley-duel",
                   "dungeon.rival-mirabel-duel",
                   "dungeon.rival-tutt-duel",
+                  "dungeon.rival-chuck-duel",
+                  "dungeon.rival-gary-duel",
+                  "dungeon.rival-queef-duel",
                 ],
                 optional: true,
                 variants: [
@@ -3008,6 +3080,18 @@ export const packs: PackDefinition[] = [
                   {
                     deeds: ["rival-tutt", "rival-refused"],
                     cardIds: ["dungeon.rival-tutt-duel"],
+                  },
+                  {
+                    deeds: ["rival-chuck", "rival-refused"],
+                    cardIds: ["dungeon.rival-chuck-duel"],
+                  },
+                  {
+                    deeds: ["rival-gary", "rival-refused"],
+                    cardIds: ["dungeon.rival-gary-duel"],
+                  },
+                  {
+                    deeds: ["rival-queef", "rival-refused"],
+                    cardIds: ["dungeon.rival-queef-duel"],
                   },
                 ],
               },
@@ -3160,6 +3244,9 @@ export const packs: PackDefinition[] = [
                   "dungeon.rival-bradley-door",
                   "dungeon.rival-mirabel-door",
                   "dungeon.rival-tutt-door",
+                  "dungeon.rival-chuck-door",
+                  "dungeon.rival-gary-door",
+                  "dungeon.rival-queef-door",
                 ],
                 variants: [
                   {
@@ -3174,6 +3261,18 @@ export const packs: PackDefinition[] = [
                     deeds: ["rival-tutt"],
                     cardIds: ["dungeon.rival-tutt-door"],
                   },
+                  {
+                    deeds: ["rival-chuck"],
+                    cardIds: ["dungeon.rival-chuck-door"],
+                  },
+                  {
+                    deeds: ["rival-gary"],
+                    cardIds: ["dungeon.rival-gary-door"],
+                  },
+                  {
+                    deeds: ["rival-queef"],
+                    cardIds: ["dungeon.rival-queef-door"],
+                  },
                 ],
               },
               {
@@ -3184,6 +3283,9 @@ export const packs: PackDefinition[] = [
                   "dungeon.rival-bradley-duel",
                   "dungeon.rival-mirabel-duel",
                   "dungeon.rival-tutt-duel",
+                  "dungeon.rival-chuck-duel",
+                  "dungeon.rival-gary-duel",
+                  "dungeon.rival-queef-duel",
                 ],
                 optional: true,
                 variants: [
@@ -3198,6 +3300,18 @@ export const packs: PackDefinition[] = [
                   {
                     deeds: ["rival-tutt", "rival-refused"],
                     cardIds: ["dungeon.rival-tutt-duel"],
+                  },
+                  {
+                    deeds: ["rival-chuck", "rival-refused"],
+                    cardIds: ["dungeon.rival-chuck-duel"],
+                  },
+                  {
+                    deeds: ["rival-gary", "rival-refused"],
+                    cardIds: ["dungeon.rival-gary-duel"],
+                  },
+                  {
+                    deeds: ["rival-queef", "rival-refused"],
+                    cardIds: ["dungeon.rival-queef-duel"],
                   },
                 ],
               },
@@ -3347,6 +3461,9 @@ export const packs: PackDefinition[] = [
                   "dungeon.rival-bradley-door",
                   "dungeon.rival-mirabel-door",
                   "dungeon.rival-tutt-door",
+                  "dungeon.rival-chuck-door",
+                  "dungeon.rival-gary-door",
+                  "dungeon.rival-queef-door",
                 ],
                 variants: [
                   {
@@ -3361,6 +3478,18 @@ export const packs: PackDefinition[] = [
                     deeds: ["rival-tutt"],
                     cardIds: ["dungeon.rival-tutt-door"],
                   },
+                  {
+                    deeds: ["rival-chuck"],
+                    cardIds: ["dungeon.rival-chuck-door"],
+                  },
+                  {
+                    deeds: ["rival-gary"],
+                    cardIds: ["dungeon.rival-gary-door"],
+                  },
+                  {
+                    deeds: ["rival-queef"],
+                    cardIds: ["dungeon.rival-queef-door"],
+                  },
                 ],
               },
               {
@@ -3371,6 +3500,9 @@ export const packs: PackDefinition[] = [
                   "dungeon.rival-bradley-duel",
                   "dungeon.rival-mirabel-duel",
                   "dungeon.rival-tutt-duel",
+                  "dungeon.rival-chuck-duel",
+                  "dungeon.rival-gary-duel",
+                  "dungeon.rival-queef-duel",
                 ],
                 optional: true,
                 variants: [
@@ -3385,6 +3517,18 @@ export const packs: PackDefinition[] = [
                   {
                     deeds: ["rival-tutt", "rival-refused"],
                     cardIds: ["dungeon.rival-tutt-duel"],
+                  },
+                  {
+                    deeds: ["rival-chuck", "rival-refused"],
+                    cardIds: ["dungeon.rival-chuck-duel"],
+                  },
+                  {
+                    deeds: ["rival-gary", "rival-refused"],
+                    cardIds: ["dungeon.rival-gary-duel"],
+                  },
+                  {
+                    deeds: ["rival-queef", "rival-refused"],
+                    cardIds: ["dungeon.rival-queef-duel"],
                   },
                 ],
               },
