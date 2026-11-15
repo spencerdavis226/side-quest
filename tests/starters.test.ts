@@ -18,7 +18,7 @@ import {
   describeOmen,
   leagueOmenWords,
 } from "../src/game/omenText";
-import { crawlTheme } from "../src/components/crawlTheme";
+import { crawlTheme, lootDoes } from "../src/components/crawlTheme";
 import type { GameConfig, SessionState } from "../src/game/types";
 
 // The starter pass (owner, 2026-10-17): every starter its own power, every
@@ -88,6 +88,25 @@ describe("League starters", () => {
         17,
       ),
     ).toBe("Max HP 15 → 17. Gets a Potion.");
+  });
+
+  it("a Potion heals 2 and the starter's heal bonus, and says so", () => {
+    let s = withStarter("bulbasaur");
+    const theme = crawlTheme("pokemon");
+    s.quest!.party!.loot = ["draught"];
+    s.quest!.party!.hearts = party(s).max - 6;
+    expect(lootDoes(theme, "draught", s.quest)).toBe("Drink 4: +4 HP");
+    s = spendLoot(s, "draught");
+    expect(party(s)).toMatchObject({ hearts: party(s).max - 2, loot: [] });
+    // Never past the maximum.
+    s.quest!.party!.loot = ["draught"];
+    s = spendLoot(s, "draught");
+    expect(party(s).hearts).toBe(party(s).max);
+    // A starter without a heal bonus: the plain 2.
+    expect(lootDoes(theme, "draught", withStarter("froakie").quest)).toBe(
+      "Drink 4: +2 HP",
+    );
+    expect(parseSession(JSON.stringify(s))).toEqual(s);
   });
 
   it("a Rare Candy evolves the starter from the bag", () => {

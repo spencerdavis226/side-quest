@@ -2,6 +2,16 @@
 
 Updated 2026-11-15. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## In progress (2026-11-15): potions take the heal bonus; Realms voice pass planned
+
+Owner: "Every heal heals 1 more" must include potions, in both crawls, "that's the deal if you have that perk".
+
+- **Built**: `healAmount(base, quest)` in `src/game/crawl/party.ts` applies the run's `heal` bonus (never below 0) on every heal: plaques, rewards, League catches, hidden results (also missing it) and the potion (`draughtHeal` in `loot.ts`, exported from the engine). The bag's potion text fills `{heal}` through `lootDoes` in `crawlTheme.ts`. Revive (half max) is unchanged. No save field changed.
+- **Checked**: `npm test` 628 passed; lint; typecheck. `tests/league.balance.test.ts` passes.
+- **Failing**: `tests/dungeon.balance.test.ts`, 2 of 8: the dragon is reached in 67% of runs (ceiling 65%) and joined runs win 48% (ceiling 45%); the win rate is 34.5% (was 30.9%). Every class gains (trinkets and omens with a heal bonus now boost potions too); trimming only the heal classes barely moved it. Measured and reverted: the dragon's need 15 (won 29.9%; only the reach ceiling fails, 67%); that and inn rests of 2 (the Squire 0.8%, under its floor); that and the Squire a heart more (reach 65.08%, the Squire 1.00%).
+- **Waiting on the owner**: A, raise the two ceilings (reach 70%, door 50%); or B (recommended), `BOSS_NEED[2]` 15 and the reach ceiling 70%.
+- **Then**: the Realms voice pass, `docs/REALMS_VOICE_PLAN.md`, starting with Phase 0's samples for approval. The Rivals Phase 6 below follows.
+
 ## Next task (2026-11-15): the Rivals, Phase 6 (the Chronicle's nemesis)
 
 Build Phase 6 of `docs/RIVALS_PLAN.md`: `Chronicle.rivals` folded in by `recordRun` (met, beaten, lost to, joined, betrayed, slain by), the nemesis weighting at `createSession` (a rival who beat you last run twice as likely), the returning introductions (`nemesis-<who>` deeds), the six feats, the Chronicle screen's Rivals section, and the owner's call on "The Ex". Phase 8 of The Quest 2.0 (the owner's table) still waits on the owner.

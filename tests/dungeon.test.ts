@@ -727,6 +727,16 @@ describe("Pub Crawl", () => {
     expect(
       party(advance(advance(deal(s, "dungeon.wishing-drain")))).hearts,
     ).toBe(9);
+    // A potion is a heal too (owner, 2026-11-15): 2 and the bonus; the
+    // Intern's worse heals make it 1.
+    s.quest!.party!.loot = ["draught"];
+    s = spendLoot(s, "draught");
+    expect(party(s)).toMatchObject({ hearts: 9, loot: [] });
+    roundTrip(s);
+    const intern = adventure("intern");
+    intern.quest!.party!.loot = ["draught"];
+    intern.quest!.party!.hearts = 2;
+    expect(party(spendLoot(intern, "draught")).hearts).toBe(3);
     // A longer boss fight; an ambush is not a boss.
     s = tonight("lock-in");
     expect(hitsNeeded(s.quest, findCard(s, "dungeon.final-tab")!)).toBe(

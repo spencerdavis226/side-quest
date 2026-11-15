@@ -14,6 +14,7 @@ import {
   addLore,
   evolve,
   gainBoon,
+  healAmount,
   hurt,
   omenEffect,
   satchelSize,
@@ -180,7 +181,13 @@ function takeHidden(
   if (hidden.loot && next.loot.length < satchelSize({ ...quest, party: next }))
     next = { ...next, loot: [...next.loot, hidden.loot] };
   if (hidden.heal)
-    next = { ...next, hearts: Math.min(next.max, next.hearts + hidden.heal) };
+    next = {
+      ...next,
+      hearts: Math.min(
+        next.max,
+        next.hearts + healAmount(hidden.heal, { ...quest, party: next }),
+      ),
+    };
   if (hidden.lore) next = addLore(next);
   if (hidden.ally && card.ally) next = joinTeam(next, card.id);
   if (!next.found?.includes(card.id))

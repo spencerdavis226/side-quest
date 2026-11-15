@@ -98,6 +98,7 @@ export {
   DRAUGHT_DRINKS,
   DRAUGHT_HEAL,
   canUseLoot,
+  draughtHeal,
   spendLoot,
 } from "./crawl/loot";
 export {

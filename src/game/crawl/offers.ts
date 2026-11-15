@@ -7,7 +7,7 @@ import {
   addLore,
   evolve,
   gainBoon,
-  omenEffect,
+  healAmount,
   omenForm,
   satchelSize,
 } from "./party";
@@ -64,8 +64,7 @@ export function takeOffer(
   if (offer.heal)
     party.hearts = Math.min(
       party.max,
-      // A worse heal (a joke class's) never turns a heal into harm.
-      party.hearts + Math.max(0, offer.heal + (omenEffect(now)?.heal ?? 0)),
+      party.hearts + healAmount(offer.heal, now),
     );
   if (offer.loot && party.loot.length < satchelSize(now))
     party.loot = [...party.loot, offer.loot];

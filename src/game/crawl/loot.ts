@@ -1,7 +1,12 @@
-import type { CardDefinition, Loot, SessionState } from "../types";
+import type {
+  CardDefinition,
+  Loot,
+  QuestState,
+  SessionState,
+} from "../types";
 import { rollWins } from "../dice";
 import { currentCard, type Random } from "../engine";
-import { evolve, omenForm } from "./party";
+import { evolve, healAmount, omenForm } from "./party";
 import { discard } from "./discard";
 // The satchel's items.
 /** A lost fight's roll is on the card. */
@@ -14,6 +19,10 @@ const lostRoll = (s: SessionState, card: CardDefinition) =>
 /** What a draught (Potion) heals, and what it costs the drawer. */
 export const DRAUGHT_HEAL = 2;
 export const DRAUGHT_DRINKS = 4;
+/** What the party's potion heals now: `DRAUGHT_HEAL` and the run's heal
+ * bonus, like every other heal. */
+export const draughtHeal = (quest: QuestState | undefined) =>
+  healAmount(DRAUGHT_HEAL, quest);
 /** Whether the party can use the satchel's item `item` now. */
 export function canUseLoot(s: SessionState, item: Loot): boolean {
   const party = s.quest?.party;
@@ -70,10 +79,11 @@ export function spendLoot(
   const used = { ...s, quest: { ...s.quest!, party: { ...party, loot } } };
   switch (item) {
     case "draught":
-      // Drink 4, heal 2 (owner, 2026-10-25), never past the maximum.
+      // Drink 4, heal 2 (owner, 2026-10-25) and the heal bonus (owner,
+      // 2026-11-15), never past the maximum.
       used.quest.party.hearts = Math.min(
         party.max,
-        party.hearts + DRAUGHT_HEAL,
+        party.hearts + draughtHeal(s.quest),
       );
       return used;
     case "die":

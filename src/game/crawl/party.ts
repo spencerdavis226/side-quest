@@ -93,6 +93,17 @@ export function omenEffect(
   if (!boons.length) return form;
   return stackEffects(form ?? {}, boons);
 }
+/** What a heal of `base` hearts restores with the run's heal bonus
+ * ("Every heal heals 1 more") applied. Every heal goes through it: plaques,
+ * rewards, catches, hidden results and the potion (owner, 2026-11-15: a
+ * potion is a heal). A worse heal (a joke class's) never turns a heal into
+ * harm. */
+export function healAmount(
+  base: number,
+  quest: QuestState | undefined,
+): number {
+  return Math.max(0, base + (omenEffect(quest)?.heal ?? 0));
+}
 /** Tonight's omen as it stands: its card, the current form's name and
  * rules, and the forms still to come. */
 export function omenForm(quest: QuestState | undefined) {
@@ -277,7 +288,7 @@ export function settleParty(
         ...next,
         hearts: Math.min(
           next.max,
-          next.hearts + Math.max(0, heal + (omen?.heal ?? 0)) * times,
+          next.hearts + healAmount(heal, quest) * times,
         ),
       };
   }

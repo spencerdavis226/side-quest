@@ -10,7 +10,7 @@ import { rollWins } from "../dice";
 import { matchup, type Matchup } from "../matchup";
 import { currentCard, type Random } from "../engine";
 import { finaleCard } from "./stages";
-import { omenEffect } from "./party";
+import { healAmount } from "./party";
 import { awaitingOffer, canTakeOffer } from "./offers";
 import { discard } from "./discard";
 // The League: types and matchups, the team, catching and sending in.
@@ -236,11 +236,7 @@ export function settleThrow(s: SessionState): SessionState {
     if (heal)
       next.hearts = Math.min(
         next.max,
-        next.hearts +
-          Math.max(
-            0,
-            heal + (omenEffect({ ...s.quest!, party: next })?.heal ?? 0),
-          ),
+        next.hearts + healAmount(heal, { ...s.quest!, party: next }),
       );
   }
   return { ...s, quest: { ...s.quest!, party: next } };

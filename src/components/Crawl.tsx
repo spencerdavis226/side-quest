@@ -57,6 +57,7 @@ import {
   crawlIconPath,
   crawlTheme,
   heartCount,
+  lootDoes,
   type CrawlIconName,
   type CrawlTheme,
 } from "./crawlTheme";
@@ -913,7 +914,7 @@ export function LootPlaque({
   return (
     <button
       className={`card-choice-option loot-plaque loot-${item}`}
-      aria-label={`Use the ${theme.loot[item].name}: ${theme.loot[item].does}`}
+      aria-label={`Use the ${theme.loot[item].name}: ${lootDoes(theme, item, undefined)}`}
       onClick={() => onUse(item)}
     >
       <CrawlIcon name={item} theme={theme} />
@@ -1219,7 +1220,7 @@ export function buildExtras(
     key: `item-${item}`,
     long: false,
     name: theme.loot[item].name,
-    does: theme.loot[item].does,
+    does: lootDoes(theme, item, quest),
     mark: <CrawlIcon name={item} theme={theme} />,
     run: () => onSpend?.(item),
     plaque: (
@@ -2098,7 +2099,7 @@ export function CrawlRecord({
                     key={i}
                     mark={<CrawlIcon name={item} theme={theme} />}
                     name={theme.loot[item].name}
-                    detail={theme.loot[item].does}
+                    detail={lootDoes(theme, item, session?.quest)}
                     use={
                       usable
                         ? {
