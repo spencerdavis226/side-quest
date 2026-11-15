@@ -6,4 +6,6 @@
 - `Setup.tsx` also lists quest modes (one per row, with `quest.mark`); choosing a crawl replaces the pack picker with the crawl in brief, since it plays its own pack alone.
 - `GameDialogs.tsx`: install, pause menu, previous card, end game, and the quest badge case (opened from the meter). In a crawl the hearts stud opens `party` and the League's badges chip opens `badges` (its own dialog). A dialog stays mounted for its exit animation (`EXIT_MS`), with a timer fallback so it can never stick. The Install copy describes Add to Home Screen steps.
 
+- `Prologue.tsx` (2026-11-15, lazy, styles `presentation/prologue.css`): the opening of a crawl shown apart from the table (`components/prologue.ts` says when: the stages in `PROLOGUE_STAGES`, by label). No card or top bar: a step track, one scene per opening card (the League's starter medallion; the Quest's class mark, omen, Summons and road choices), a "Keep the phone here" line, then the handoff ("Now pass the phone", "Deal the first card"). `main.tsx` turns each prologue card for the table as it arrives and drives the same controller calls as the table (`tap`, `offer`), so saves are unchanged; `dealt` (memory only) hides the handoff once answered.
+
 Screens receive state and callbacks; game decisions live in `src/game` and `src/presentation/controller.ts`, not here.

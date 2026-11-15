@@ -87,19 +87,15 @@ test("@release Pokémon League opens on a starter, then the first route", async 
   );
   await page.screenshot({ path: info.outputPath("setup-320.png") });
   await page.getByRole("button", { name: "Play", exact: true }).click();
-  await expect(meter(page)).toHaveAccessibleName(/^Team HP: 16 of 16/);
-  await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
-    "Your starter",
-  );
-  await expect(page.locator(".stage-banner")).toHaveText(
-    /Pokémon League\s*A starter chooses you/,
-  );
-  await page.locator(".game-card").click();
-  await expect(page.locator(".game-card .card-ribbon")).toHaveText(
-    "Your starter",
-  );
+  // The prologue (2026-11-15): the starter in a scene of its own, not on
+  // the table, then the handoff.
+  const scene = page.locator(".prologue");
+  await expect(scene.locator(".pro-kicker")).toHaveText("Your partner");
+  await expect(page.locator(".game-card")).toHaveCount(0);
   await page.screenshot({ path: info.outputPath("starter-320.png") });
-  await page.locator(".game-card").click();
+  await page.getByRole("button", { name: "Set out" }).click();
+  await page.getByRole("button", { name: "Deal the first card" }).click();
+  await expect(meter(page)).toHaveAccessibleName(/^Team HP: (\d+) of \1/);
   await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
     "Battle 1 of 4, Route 1",
   );
@@ -240,6 +236,8 @@ test("a Rare Candy evolves the starter from the bag", async ({ page }) => {
       "pokemon.starter-froakie",
     ),
   );
+  // The first route card face down is the prologue's handoff (2026-11-15).
+  await page.getByRole("button", { name: "Deal the first card" }).click();
   // The bag chip on the strip opens the bag.
   await page.locator(".tag-satchel").click();
   const bag = page.getByRole("dialog", { name: "Bag" });
@@ -634,6 +632,8 @@ test("every card of a League game wears the Ancient Mew pair", async ({
     page,
     playLeague((s) => s.discarded === 1 && s.phase === "hidden"),
   );
+  // The first route card face down is the prologue's handoff (2026-11-15).
+  await page.getByRole("button", { name: "Deal the first card" }).click();
   expect(await bg(".card-back")).toContain("card-back-league");
   expect(await bg(".deck-under")).toContain("card-back-league");
   expect(await bg(".card-stage", "::before")).toContain("card-back-league");

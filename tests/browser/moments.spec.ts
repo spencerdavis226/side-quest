@@ -23,20 +23,19 @@ test("@release the League's starter turns over with a ball; a tap skips it, a re
     rng("moments starter"),
   );
   await seed(page, s);
-  await page.locator(".game-card").click();
+  // The prologue (2026-11-15) turns the starter for the table at once.
   const moment = page.locator(".moment-omen");
   await expect(moment).toBeVisible();
   await expect(moment.locator(".omen-name small")).toHaveText("Your starter");
-  // The tap that skips it never reaches the card. Tap at once: waiting for
-  // the stage to read as "stable" can outlast a 2.6 s moment on a slow
-  // runner (WebKit in CI).
+  // Tap at once: waiting for the stage to read as "stable" can outlast a
+  // 2.6 s moment on a slow runner (WebKit in CI).
   await moment.click({ force: true });
   await expect(moment).toHaveCount(0);
   const after = await saved(page);
   expect(after.phase).toBe("revealed");
   expect(after.discarded).toBe(0);
   await page.reload();
-  await expect(page.locator(".game-card")).toBeVisible();
+  await expect(page.locator(".prologue")).toBeVisible();
   await expect(page.locator(".moment")).toHaveCount(0);
 });
 
