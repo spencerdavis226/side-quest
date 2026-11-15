@@ -19,31 +19,31 @@ export const summonsCards: CardDefinition[] = [
   summons(
     "proclamation",
     "The King's Decree",
-    "{dragon} has woken under {lair}. Everyone raises a glass to the king.",
+    "{dragon} woke under {lair}, horny. Everyone toasts the king's tiny balls.",
   ),
   summons(
     "burned-village",
     "A Burned Village",
-    "A village in ashes; {dragon} flew home to {lair}. Everyone drinks 1 for it.",
+    "Your hometown, torched by {dragon}. Your ex made it out, sadly. Everyone drinks 1.",
   ),
   summons(
     "wanted-poster",
     "The Bounty",
-    "WANTED: {dragon}. LAST SEEN: {lair}. Everyone toasts the reward.",
+    "WANTED: {dragon}. REWARD: gold, and a handy from the mayor. Everyone toasts the reward.",
   ),
   summons(
     "prophecy",
     "The Prophecy",
-    "A fool will slay {dragon}. Everyone points at the fool; most fingers drinks 2.",
+    "A dumbass will slay {dragon}. Everyone points at the dumbass; most fingers drinks 2.",
   ),
   summons(
     "princess",
     "A Princess Writes",
-    "'{dragon} took me to {lair}. Bring cake.' The drawer reads it aloud, sobbing.",
+    "'{dragon} took me to {lair}. Bring wine.' The drawer reads it, sobbing.",
   ),
   summons(
     "survivor",
     "The Last Survivor",
-    "A singed knight gasps '{dragon}... {lair}...' and faints. Everyone toasts him.",
+    "A singed knight gasps '{dragon}... {lair}...' and shits. Everyone toasts him.",
   ),
 ];

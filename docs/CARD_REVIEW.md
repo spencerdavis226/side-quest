@@ -1449,24 +1449,24 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Group Portrait | `dungeon.rooftop-pigeon` | group | Everyone squeezes into one pose for the painter. Anyone cut off or blinking drinks 2. |  |
 | ☐ | Fresh Air | `dungeon.rooftop-fresh-air` | group | Everyone takes a deep breath of fresh air. Then a sip. |  |
 | ☐ | First Down | `dungeon.rooftop-first-to-post` | group | On three, everyone points at who'll be first down the mountain. Most fingers: give 3. |  |
-| ☐ | The King's Decree | `dungeon.summons-proclamation` | group | {dragon} has woken under {lair}. Everyone raises a glass to the king. |  |
-| ☐ | A Burned Village | `dungeon.summons-burned-village` | group | A village in ashes; {dragon} flew home to {lair}. Everyone drinks 1 for it. |  |
-| ☐ | The Bounty | `dungeon.summons-wanted-poster` | group | WANTED: {dragon}. LAST SEEN: {lair}. Everyone toasts the reward. |  |
-| ☐ | The Prophecy | `dungeon.summons-prophecy` | group | A fool will slay {dragon}. Everyone points at the fool; most fingers drinks 2. |  |
-| ☐ | A Princess Writes | `dungeon.summons-princess` | group | '{dragon} took me to {lair}. Bring cake.' The drawer reads it aloud, sobbing. |  |
-| ☐ | The Last Survivor | `dungeon.summons-survivor` | group | A singed knight gasps '{dragon}... {lair}...' and faints. Everyone toasts him. |  |
-| ☐ | The Shadow | `dungeon.sign-shadow` | group | A shadow crosses the sun: {dragon}. Everyone ducks. Last head down drinks 2. |  |
-| ☐ | A Fallen Scale | `dungeon.sign-scale` | group | A scale the size of a shield, still warm, fallen from {dragon}. Everyone touches it. |  |
-| ☐ | The Fleeing Knights | `dungeon.sign-knights` | group | Knights gallop past the wrong way, shouting '{dragon}!' Everyone shouts it too. |  |
-| ☐ | The Burned Mill | `dungeon.sign-mill` | group | A mill, still smoking. {dragon} was here an hour ago. Everyone pours out a sip. |  |
-| ☐ | Tracks | `dungeon.sign-tracks` | group | One footprint, big enough to sit in. Everyone sits in it. Last down drinks 2. |  |
-| ☐ | The Old Song | `dungeon.sign-song` | group | A shepherd sings the old song about {dragon}. Everyone hums along. Nobody knows it. |  |
-| ☐ | The Road Out | `dungeon.road-out-parade` | group | The King's Road is closed for a parade. Forest or marsh? Everyone votes; the drawer decides. |  |
-| ☐ | The Road Out | `dungeon.road-out-elves` | group | The forest is shut: the elves are sulking. Road or marsh? Everyone votes; the drawer decides. |  |
-| ☐ | The Road Out | `dungeon.road-out-flood` | group | The marsh is flooded to the eaves. Road or forest? Everyone votes; the drawer decides. |  |
-| ☐ | The Signpost | `dungeon.road-sign-full` | group | The crypt is full. Mines or tower? Everyone votes; the drawer decides. |  |
-| ☐ | The Signpost | `dungeon.road-sign-strike` | group | The mines are on strike. Crypt or tower? Everyone votes; the drawer decides. |  |
-| ☐ | The Signpost | `dungeon.road-sign-moved` | group | The tower has moved again. Crypt or mines? Everyone votes; the drawer decides. |  |
+| ☐ | The King's Decree | `dungeon.summons-proclamation` | group | {dragon} woke under {lair}, horny. Everyone toasts the king's tiny balls. |  |
+| ☐ | A Burned Village | `dungeon.summons-burned-village` | group | Your hometown, torched by {dragon}. Your ex made it out, sadly. Everyone drinks 1. |  |
+| ☐ | The Bounty | `dungeon.summons-wanted-poster` | group | WANTED: {dragon}. REWARD: gold, and a handy from the mayor. Everyone toasts the reward. |  |
+| ☐ | The Prophecy | `dungeon.summons-prophecy` | group | A dumbass will slay {dragon}. Everyone points at the dumbass; most fingers drinks 2. |  |
+| ☐ | A Princess Writes | `dungeon.summons-princess` | group | '{dragon} took me to {lair}. Bring wine.' The drawer reads it, sobbing. |  |
+| ☐ | The Last Survivor | `dungeon.summons-survivor` | group | A singed knight gasps '{dragon}... {lair}...' and shits. Everyone toasts him. |  |
+| ☐ | The Shadow | `dungeon.sign-shadow` | group | A shadow crosses the sun: {dragon}. Everyone ducks and clenches. Last head down drinks 2. |  |
+| ☐ | A Fallen Scale | `dungeon.sign-scale` | group | A warm, sticky scale off {dragon}. Don't ask why it's sticky. Everyone touches it anyway. |  |
+| ☐ | The Fleeing Knights | `dungeon.sign-knights` | group | Knights gallop past the wrong way, crying '{dragon}!' Everyone shouts it too, crying. |  |
+| ☐ | The Burned Mill | `dungeon.sign-mill` | group | A mill, still smoking. {dragon} took a dump on it an hour ago. Everyone pours out a sip. |  |
+| ☐ | Droppings | `dungeon.sign-tracks` | group | A dragon turd, big enough to sit in. Nobody sits in it. Last to say 'nope' drinks 2. |  |
+| ☐ | The Old Song | `dungeon.sign-song` | group | A shepherd sings a filthy song about {dragon}. Everyone hums along. Nobody knows it. |  |
+| ☐ | The Road Out | `dungeon.road-out-parade` | group | The King's Road is closed for the naked parade. Forest or marsh? Everyone votes; the drawer decides. |  |
+| ☐ | The Road Out | `dungeon.road-out-elves` | group | The forest is shut: the elves are having an orgy. Road or marsh? Everyone votes; the drawer decides. |  |
+| ☐ | The Road Out | `dungeon.road-out-flood` | group | The marsh flooded, and it smells like a fart. Road or forest? Everyone votes; the drawer decides. |  |
+| ☐ | The Signpost | `dungeon.road-sign-full` | group | The crypt is full of horny skeletons. Mines or tower? Everyone votes; the drawer decides. |  |
+| ☐ | The Signpost | `dungeon.road-sign-strike` | group | The goblins are on strike for dental. Crypt or tower? Everyone votes; the drawer decides. |  |
+| ☐ | The Signpost | `dungeon.road-sign-moved` | group | The tower moved again; the wizard's wasted. Crypt or mines? Everyone votes; the drawer decides. |  |
 | ☐ | A Unicorn | `dungeon.rare-unicorn` | group | A unicorn drinks from the stream. Whoever speaks first drinks 3. |  |
 | ☐ | The Sleeping Giant | `dungeon.rare-sleeping-giant` | group | A giant asleep across the path, snoring. Everyone holds their breath. | Jinx Tiptoe: The cursed player whispers. Speaks up: drink 1. |
 | ☐ | The Wishing Frog | `dungeon.rare-wishing-frog` | group | A frog in a crown offers three wishes, but you only get one. The drawer chooses. |  |
@@ -1534,21 +1534,21 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | The Bell Reef | `dungeon.landmark-bell-reef` | group | Ships' bells hung on the reef by {dragon}. Everyone clinks a glass; last clink drinks 2. |  |
 | ☐ | The Drowned Town | `dungeon.landmark-drowned-town` | group | Roofs under clear water, and a lamp still lit. Everyone holds their breath to look. |  |
 | ☐ | The Last Lighthouse | `dungeon.landmark-last-lighthouse` | group | The keeper is leaving before {dragon} comes back. Last to wave him goodbye drinks 2. |  |
-| ☐ | The Sleeping Goat | `dungeon.landing-stairwell` | group | A fat cat on every chair. Everyone gives the cat on their left a noble name. |  |
-| ☐ | The Crooked Lantern | `dungeon.landing-smoking-area` | group | A crooked inn with a straight fire. Everyone names their best moment of the quest so far. |  |
-| ☐ | A Hayloft | `dungeon.landing-coat-check` | group | A barn's hayloft, warm and itchy. Everyone names the animal they'd ride into battle. |  |
-| ☐ | The Ferry House | `dungeon.landing-bathroom-line` | group | The ferryman's inn, and everyone's soaked. Everyone hypes their left neighbor like a herald. |  |
-| ☐ | A Shepherd's Hut | `dungeon.landing-loading-dock` | group | A shepherd shares his bread and his opinions. Everyone names a snack worth fighting for. |  |
-| ☐ | The Pilgrims' Rest | `dungeon.landing-phone-booth` | group | A shrine by the door and a bell that rings itself. Everyone says one thing they'd pray for. |  |
-| ☐ | The Drunken Dwarf | `dungeon.landing-mop-closet` | group | The dwarf who runs it arm-wrestles every guest. Everyone gives their left neighbor a dwarf name. |  |
-| ☐ | A Painted Wagon | `dungeon.landing-photo-booth` | group | Traveling players let you sleep in their wagon. Everyone strikes a heroic pose on three. |  |
+| ☐ | The Sloppy Goat | `dungeon.landing-stairwell` | group | Sticky floors, stickier sheets. Everyone gives their left neighbor a tavern-wench name. |  |
+| ☐ | The Crooked Lantern | `dungeon.landing-smoking-area` | group | A crooked inn, a straight fire, a one-toothed barmaid. Everyone names their best moment so far. |  |
+| ☐ | A Hayloft | `dungeon.landing-coat-check` | group | A warm hayloft, and the farmer's kid keeps checking on you. Everyone names their battle mount. |  |
+| ☐ | The Ferry House | `dungeon.landing-bathroom-line` | group | Everyone's soaked to the taint. Everyone hypes their left neighbor like a herald. |  |
+| ☐ | A Shepherd's Hut | `dungeon.landing-loading-dock` | group | A shepherd shares his bread and his theories about the queen. Everyone names a snack to kill for. |  |
+| ☐ | The Pilgrims' Rest | `dungeon.landing-phone-booth` | group | Monks who brew, and brew hard. Everyone confesses one thing they'd never tell their mother. |  |
+| ☐ | The Drunken Dwarf | `dungeon.landing-mop-closet` | group | The dwarf who runs it arm-wrestles every guest, naked. Everyone gives their left a dwarf name. |  |
+| ☐ | A Painted Wagon | `dungeon.landing-photo-booth` | group | Actors let you sleep in their wagon. It smells like sex. Everyone strikes a heroic pose on three. |  |
 | ☐ | The Last Warm Fire | `dungeon.landing-boiler-room` | group | Past here, only {dragon}. Everyone warms their hands and names one thing they'll miss. |  |
-| ☐ | A Campfire | `dungeon.landing-campfire` | group | A fire under the stars. Everyone tells the scariest thing they've heard about {dragon}. |  |
-| ☐ | The Monastery | `dungeon.landing-staff-room` | group | Monks who pray against {dragon}. Everyone stays silent a minute. First sound drinks 2. |  |
+| ☐ | A Campfire | `dungeon.landing-campfire` | group | A fire under the stars. Everyone tells the dirtiest rumor they've heard about {dragon}. |  |
+| ☐ | The Monastery | `dungeon.landing-staff-room` | group | Monks sworn to silence and to wine. Everyone stays silent a minute. First sound drinks 2. |  |
 | ☐ | The Watchtower | `dungeon.landing-fire-escape` | group | A ruined tower; far off, smoke from {dragon}. Everyone toasts how far you've come. |  |
-| ☐ | The Hermit's Cave | `dungeon.landing-service-stairs` | group | A hermit who once met {dragon}. Everyone tells him one piece of gossip. |  |
+| ☐ | The Hermit's Cave | `dungeon.landing-service-stairs` | group | A hermit met {dragon} and won't say what happened. Everyone tells him some gossip. |  |
 | ☐ | The Empty Fort | `dungeon.landing-the-bunker` | group | A fort abandoned when {dragon} woke. Everyone names who they'd want on its walls. |  |
-| ☐ | The Hot Springs | `dungeon.landing-laundry-room` | group | Springs warm as {dragon}'s breath. Everyone confesses one secret to the party. |  |
+| ☐ | The Hot Springs | `dungeon.landing-laundry-room` | group | Naked hot springs. Someone definitely peed. Everyone confesses one secret to the party. |  |
 | ☐ | The Haunted Inn | `dungeon.landing-stuck-elevator` | group | The innkeeper is a ghost; {dragon} got him. Everyone hums his song on three. |  |
 | ☐ | The Miller's Plea | `dungeon.quest-goat` | group | A miller begs: a witch took his goat, and the goat is his best friend. Everyone says 'baa' once. |  |
 | ☐ | The Merchant's Plea | `dungeon.quest-strongbox` | group | A merchant, robbed blind, wants his strongbox back. Everyone checks their own pockets, loudly. |  |
@@ -1850,15 +1850,15 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | The Yeti King | `dungeon.gargoyle-king` | challenge | The biggest yeti there is. Every other yeti on the mountain just turned to look. Roll d20. | 1d20 — 1-1: Natural 1! Fur fist. Drink 12. 2-13: Fur fist. Drink 6. 14-19: You crown yourself. Give 6, split among your subjects. 20-20: Natural 20! You crown yourself. Give 12, split among your subjects. |
 | ☐ | The Storm Giant | `dungeon.storm-chaser` | challenge | He throws lightning for fun, and tonight he brought you some. Roll d20. | 1d20 — 1-1: Natural 1! Struck. Drink 12. 2-13: Struck. Drink 6. 14-19: You ground him. Touch someone's shoulder, zap; they drink 6. 20-20: Natural 20! You ground him. Touch someone's shoulder, zap; they drink 12. |
 | ☐ | The Griffin Rider | `dungeon.helicopter-pilot` | challenge | He landed on the pass and won't leave until somebody pays. Roll d20. | 1d20 — 1-1: Natural 1! You're paying. Drink 12. 2-13: You're paying. Drink 6. 14-19: Free ride. Pick a co-pilot; you both give 6. 20-20: Natural 20! Free ride. Pick a co-pilot; you both give 12. |
-| ☐ | Emberfang | `dungeon.last-call-lich` | challenge | A red dragon uncoils from a hill of gold, and the air catches fire. Roll d20. | 1d20 — 1-1: Natural 1! It sits on you. Drink 6. 2-13: Fire, everywhere. Drink 3. 14-19: Your blade finds a loose scale. Give 4. 20-20: Natural 20! You cut a wing. Everyone else drinks 4. |
-| ☐ | Gorgrath the Hungry | `dungeon.two-am-kebab` | challenge | It has eaten three knights today, and it's still hungry. It's looking at you. Roll d20. | 1d20 — 1-1: Natural 1! It swallows you whole, then spits you out. Drink 6. 2-13: A bite. Drink 3. 14-19: You jam a spear in its jaw. Give 4. 20-20: Natural 20! It chokes on the spear. Everyone else drinks 4. |
-| ☐ | Ashmaw the Ancient | `dungeon.the-morning-after` | challenge | The oldest dragon there is, and it has been waiting for you in particular. Roll d20. | 1d20 — 1-1: Natural 1! It yawns, and you fall in. Drink 6 and a glass of water. 2-13: It remembers you. Drink 3. 14-19: You surprise it, and nothing surprises it. Give 4. 20-20: Natural 20! It laughs, and you strike its throat. Everyone else drinks 4. |
-| ☐ | Rimeclaw | `dungeon.bartender-below` | challenge | A white dragon in the frozen dark, with eyes like old ice. Roll d20. | 1d20 — 1-1: Natural 1! Frozen to the floor. Drink 6. 2-13: Frostbite. Drink 3. 14-19: You chip a claw. Give 4. 20-20: Natural 20! Its breath freezes its own jaw shut. Everyone else drinks 4. |
-| ☐ | Stormcrown | `dungeon.surge-pricing` | challenge | A blue dragon riding its own storm, crackling with every breath. Roll d20. | 1d20 — 1-1: Natural 1! You were holding your sword up. Drink 6. 2-13: Struck by lightning. Drink 3. 14-19: You ground it with your sword. Give 4. 20-20: Natural 20! Its own lightning finds it. Everyone else drinks 4. · Jinx Thunderstruck: The cursed player shouts 'boom' after every drink. Forgets: drink 1. |
-| ☐ | Glimmerwing | `dungeon.house-lights` | challenge | A golden dragon who wants to be admired first and fought second. Roll d20. | 1d20 — 1-1: Natural 1! You stop to admire yourself in its scales. Drink 6. 2-13: Blinded by the shine. Drink 3. 14-19: You call it ugly. It staggers. Give 4. 20-20: Natural 20! You show it a mirror. Everyone else drinks 4. · Jinx Dazzled: The cursed player compliments the dragon before every sip. Forgets: drink 1. |
-| ☐ | Old Mother Brine | `dungeon.final-tab` | challenge | Older than the sea and twice as wet. She has eaten heroes for lunch. Roll d20. | 1d20 — 1-1: Natural 1! She tucks you in, under the sea. Drink 6. 2-13: Swallowed, then spat out. Drink 3. 14-19: You tangle her in the kelp. Give 4. 20-20: Natural 20! She chokes on your boot. Everyone else drinks 4. |
-| ☐ | The Whispering Wyrm | `dungeon.the-group-chat` | challenge | A dragon that speaks in your own voice and tells your secrets. Roll d20. | 1d20 — 1-1: Natural 1! It tells all of yours. Drink 6. 2-13: It tells one. Drink 3. 14-19: You talk louder. Give 4. 20-20: Natural 20! You tell its secrets. Everyone else drinks 4. · Jinx Tongue-Tied: The cursed player can only mime. Say a word: drink 1. |
-| ☐ | Tidewrack | `dungeon.dragon-tidewrack` | challenge | A sea dragon hung with the bells of every ship it sank. They all ring. Roll d20. | 1d20 — 1-1: Natural 1! You're hung on the reef like a bell. Drink 6. 2-13: A wave of bells breaks over you. Drink 3. 14-19: You cut a bell loose. It sinks. Give 4. 20-20: Natural 20! It rings its own bell and goes deaf. Everyone else drinks 4. |
+| ☐ | Emberfang | `dungeon.last-call-lich` | challenge | A red dragon uncoils from a hill of gold, and the air catches fire. Roll d20. | 1d20 — 1-1: Natural 1! It sits on you. Drink 6. 2-14: Fire, everywhere. Drink 3. 15-19: Your blade finds a loose scale. Give 4. 20-20: Natural 20! You cut a wing. Everyone else drinks 4. |
+| ☐ | Gorgrath the Hungry | `dungeon.two-am-kebab` | challenge | It has eaten three knights today, and it's still hungry. It's looking at you. Roll d20. | 1d20 — 1-1: Natural 1! It swallows you whole, then spits you out. Drink 6. 2-14: A bite. Drink 3. 15-19: You jam a spear in its jaw. Give 4. 20-20: Natural 20! It chokes on the spear. Everyone else drinks 4. |
+| ☐ | Ashmaw the Ancient | `dungeon.the-morning-after` | challenge | The oldest dragon there is, and it has been waiting for you in particular. Roll d20. | 1d20 — 1-1: Natural 1! It yawns, and you fall in. Drink 6 and a glass of water. 2-14: It remembers you. Drink 3. 15-19: You surprise it, and nothing surprises it. Give 4. 20-20: Natural 20! It laughs, and you strike its throat. Everyone else drinks 4. |
+| ☐ | Rimeclaw | `dungeon.bartender-below` | challenge | A white dragon in the frozen dark, with eyes like old ice. Roll d20. | 1d20 — 1-1: Natural 1! Frozen to the floor. Drink 6. 2-14: Frostbite. Drink 3. 15-19: You chip a claw. Give 4. 20-20: Natural 20! Its breath freezes its own jaw shut. Everyone else drinks 4. |
+| ☐ | Stormcrown | `dungeon.surge-pricing` | challenge | A blue dragon riding its own storm, crackling with every breath. Roll d20. | 1d20 — 1-1: Natural 1! You were holding your sword up. Drink 6. 2-14: Struck by lightning. Drink 3. 15-19: You ground it with your sword. Give 4. 20-20: Natural 20! Its own lightning finds it. Everyone else drinks 4. · Jinx Thunderstruck: The cursed player shouts 'boom' after every drink. Forgets: drink 1. |
+| ☐ | Glimmerwing | `dungeon.house-lights` | challenge | A golden dragon who wants to be admired first and fought second. Roll d20. | 1d20 — 1-1: Natural 1! You stop to admire yourself in its scales. Drink 6. 2-14: Blinded by the shine. Drink 3. 15-19: You call it ugly. It staggers. Give 4. 20-20: Natural 20! You show it a mirror. Everyone else drinks 4. · Jinx Dazzled: The cursed player compliments the dragon before every sip. Forgets: drink 1. |
+| ☐ | Old Mother Brine | `dungeon.final-tab` | challenge | Older than the sea and twice as wet. She has eaten heroes for lunch. Roll d20. | 1d20 — 1-1: Natural 1! She tucks you in, under the sea. Drink 6. 2-14: Swallowed, then spat out. Drink 3. 15-19: You tangle her in the kelp. Give 4. 20-20: Natural 20! She chokes on your boot. Everyone else drinks 4. |
+| ☐ | The Whispering Wyrm | `dungeon.the-group-chat` | challenge | A dragon that speaks in your own voice and tells your secrets. Roll d20. | 1d20 — 1-1: Natural 1! It tells all of yours. Drink 6. 2-14: It tells one. Drink 3. 15-19: You talk louder. Give 4. 20-20: Natural 20! You tell its secrets. Everyone else drinks 4. · Jinx Tongue-Tied: The cursed player can only mime. Say a word: drink 1. |
+| ☐ | Tidewrack | `dungeon.dragon-tidewrack` | challenge | A sea dragon hung with the bells of every ship it sank. They all ring. Roll d20. | 1d20 — 1-1: Natural 1! You're hung on the reef like a bell. Drink 6. 2-14: A wave of bells breaks over you. Drink 3. 15-19: You cut a bell loose. It sinks. Give 4. 20-20: Natural 20! It rings its own bell and goes deaf. Everyone else drinks 4. |
 | ☐ | A Chest in the Road | `dungeon.mimic-cooler` | challenge | An unlocked chest sits in the middle of the road. Nobody is around. Open it, or walk on. | 1d20 — 1-1: Natural 1! It was a mimic. Drink 8. 2-10: It was a mimic. Drink 4. 11-19: Gold, and something useful. Flip someone a coin; they drink 3. 20-20: Natural 20! Gold, and something useful. Flip someone a coin; they drink 6. |
 | ☐ | The Lucky Stone | `dungeon.mimic-keg` | challenge | A talking stone pays a coin every rub, until it bites. Cash out or rub again. Roll d20. | 1d20 — 1-1: Natural 1! It bites. Drink 6. It follows you home. 2-6: It bites. Drink 3. 7-19: It coughs up a prize. Give 2. 20-20: Natural 20! It coughs up a prize. Give 4. |
 | ☐ | The Shell Game | `dungeon.one-armed-bandit` | challenge | Three cups, one pea, a man who never loses. Win, then walk away or play again. Roll d20. | 1d20 — 1-1: Natural 1! Wrong cup. Drink 6. 2-6: Wrong cup. Drink 3. 7-19: Found it. Give 2. 20-20: Natural 20! Found it. Give 4. |
@@ -1938,8 +1938,8 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Chuck Stops Watching | `dungeon.rival-chuck-duel` | challenge | Chuck the Cuck finally picks up a sword. Yours. Duel him at the door. Roll d20. | 1d20 — 1-1: Natural 1! He's actually good at this. Drink 8. 2-13: He's actually good at this. Drink 4. 14-19: He drops it and goes back to watching. Give 4. 20-20: Natural 20! He drops it and goes back to watching. Give 8. |
 | ☐ | The Audit | `dungeon.rival-gary-duel` | challenge | Gary Shitwhistle opens a full audit at the door. Three rounds. Roll d20. | 1d20 — 1-1: Natural 1! He finds something. Drink 8. 2-13: He finds something. Drink 4. 14-19: You find his expenses. Give 4. 20-20: Natural 20! You find his expenses. Give 8. |
 | ☐ | The Final Verse | `dungeon.rival-queef-duel` | challenge | Dame Queefington wants the last verse. Duel her for the pen. Roll d20. | 1d20 — 1-1: Natural 1! She sings your defeat. Drink 8. 2-13: She sings your defeat. Drink 4. 14-19: You snap her lute string. Give 4. 20-20: Natural 20! You snap her lute string. Give 8. |
-| ☐ | Bartholomew | `dungeon.dragon-bartholomew` | challenge | A dragon looks up from a cup of tea. It sighs. It would rather talk about this. Roll d20. | 1d20 — 1-1: Natural 1! It sits on you, apologizing. Drink 6. 2-13: It explains why you're wrong, at length. Drink 3. 14-19: You land a blow while it's mid-sentence. Give 4. 20-20: Natural 20! It loses its train of thought. Everyone else drinks 4. |
-| ☐ | The Dragon King | `dungeon.dragon-king` | challenge | Every dragon you've heard of bows to this one. It has been waiting for you. Roll d20. | 1d20 — 1-1: Natural 1! It ignores you completely. Drink 6. 2-13: Fire, teeth and ice at once. Drink 4. 14-19: One scale cracks. Give 5. 20-20: Natural 20! It roars in pain for the first time in an age. Everyone else drinks 5. |
+| ☐ | Bartholomew | `dungeon.dragon-bartholomew` | challenge | A dragon looks up from a cup of tea. It sighs. It would rather talk about this. Roll d20. | 1d20 — 1-1: Natural 1! It sits on you, apologizing. Drink 6. 2-14: It explains why you're wrong, at length. Drink 3. 15-19: You land a blow while it's mid-sentence. Give 4. 20-20: Natural 20! It loses its train of thought. Everyone else drinks 4. |
+| ☐ | The Dragon King | `dungeon.dragon-king` | challenge | Every dragon you've heard of bows to this one. It has been waiting for you. Roll d20. | 1d20 — 1-1: Natural 1! It ignores you completely. Drink 6. 2-14: Fire, teeth and ice at once. Drink 4. 15-19: One scale cracks. Give 5. 20-20: Natural 20! It roars in pain for the first time in an age. Everyone else drinks 5. |
 | ☐ | The Gingerbread Door | `dungeon.peephole` | challenge | A gingerbread door wants a password. Invent one in 5 seconds and sell it. Table says no: drink 3. |  |
 | ☐ | The Witch's Cat | `dungeon.flapper-fran` | challenge | A black cat blocks the path and judges you. Do your best cat for 5 seconds, then roll d20. | 1d20 — 1-1: Natural 1! It's not impressed. Drink 6. 2-7: It's not impressed. Drink 3. 8-19: It purrs and lets you by. Scratch someone behind the ears; they drink 3. 20-20: Natural 20! It purrs and lets you by. Scratch someone behind the ears; they drink 6. |
 | ☐ | The Cauldron | `dungeon.bathtub-gin` | challenge | A cauldron of something green, and a ladle. Roll d6. | 1d6 — 1-1: It tastes like feet. Drink 3. 2-2: You turn green for a minute. Drink 3. 3-3: Smooth, somehow. Give 2. 4-4: You ladle out a round. Give 3. 5-5: You find the witch's recipe book. Give 3. 6-6: You bottle it and sell it. Everyone else drinks 1. |
@@ -1960,45 +1960,45 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | The Rune Door | `dungeon.the-ref` | challenge | A door covered in runes that change when you look away. Roll d20. | 1d20 — 1-1: Natural 1! The runes bite. Drink 6. 2-7: The runes bite. Drink 3. 8-19: It swings open. Hold the door for someone; they drink 3. 20-20: Natural 20! It swings open. Hold the door for someone; they drink 6. |
 | ☐ | The Cave Troll | `dungeon.the-undercard` | challenge | A young cave troll, warming up on you. Roll d6. | 1d6 — 1-1: Club, club, club. Drink 3. 2-2: Headlock. Drink 3. 3-3: You slip the club. Give 2. 4-4: You counter. Give 3. 5-5: You knock it down the stairs. Give 3. 6-6: The dwarves cheer. Everyone else drinks 1. |
 | ☐ | The Deep Worm | `dungeon.the-undefeated` | challenge | A worm the size of a hall, coiled around the dwarf's gold. Roll d20. | 1d20 — 1-1: Natural 1! It swallows you and spits you out. Finish your drink. 2-9: It flattens you. Drink 4. 10-19: You hit it with a dwarf's hammer. Give 4. 20-20: Natural 20! You hit it with a dwarf's hammer. Give 8. · Beat 2: It coils for another strike. Arm-wrestle your left neighbor. Lose: drink 4. (Won/Lost) · Jinx Deep Silence: Nobody says the word 'gold'. Slip: drink 1. |
-| ☐ | A Week of Rain | `dungeon.omen-flooded-stairs` | rule | Last to say 'squelch' as a region opens drinks 1. Traps hurt 1 more. Take a Smoke Bomb. |  |
-| ☐ | Harvest Festival | `dungeon.omen-happy-hour` | rule | Feasts in every village: whoever drinks picks someone to drink with them. Heals heal 1 more. |  |
-| ☐ | The King's Advance | `dungeon.omen-running-a-tab` | rule | The king pays up front: drink 1. Start two hearts short, with a Tower Shield and a Healing Potion. |  |
-| ☐ | Curfew | `dungeon.omen-lock-in` | rule | Ask to leave your seat, or drink 2. Bosses take an extra hit. Take a Lucky Coin and a shield. |  |
-| ☐ | A Bottomless Bag | `dungeon.omen-cargo-shorts` | rule | A bag bigger on the inside: drink 3. One more satchel slot. |  |
-| ☐ | Butterfingers | `dungeon.omen-butterfingers` | rule | Anyone who drops anything drinks 2. One satchel slot fewer, but two more hearts. |  |
+| ☐ | Swamp Ass | `dungeon.omen-flooded-stairs` | rule | Last to say 'moist' as a region opens drinks 1. Traps hurt 1 more. Take a Smoke Bomb. |  |
+| ☐ | Harvest Orgy | `dungeon.omen-happy-hour` | rule | Every village is one big orgy: whoever drinks picks a partner to drink with. Heals heal 1 more. |  |
+| ☐ | Hush Money | `dungeon.omen-running-a-tab` | rule | Hush money from the king: drink 1. Start two hearts short, with a Tower Shield and a Healing Potion. |  |
+| ☐ | Grounded | `dungeon.omen-lock-in` | rule | Ask Mom to leave your seat, or drink 2. Bosses take an extra hit. Take a Lucky Coin and shield. |  |
+| ☐ | A Bag of Holding | `dungeon.omen-cargo-shorts` | rule | Bigger on the inside, like your mom: drink 3. One more satchel slot. |  |
+| ☐ | Butterfingers | `dungeon.omen-butterfingers` | rule | Drop anything: drink 2, and you're Butterdick. One satchel slot fewer, but two more hearts. |  |
 | ☐ | Blood Moon | `dungeon.omen-blood-moon` | rule | Everyone howls at the red moon; last to howl drinks 2. Fights cost a heart more; two more hearts. |  |
-| ☐ | The Oath | `dungeon.omen-lefty-night` | rule | Everyone swears to drink only with their off hand all quest. Caught using the other: drink 1. |  |
-| ☐ | Battle Hymns | `dungeon.omen-karaoke-night` | rule | Before every boss swing, the drawer sings one line of a battle hymn. Refuse: drink 2. |  |
-| ☐ | The Town Cheers | `dungeon.omen-the-regulars` | rule | The whole town sees you off. Everyone toasts the person on their left. Two more hearts. |  |
-| ☐ | A Sleeping Giant | `dungeon.omen-thin-walls` | rule | A giant sleeps nearby: everyone whispers. Trials cost a heart more; heals heal one more. |  |
-| ☐ | The Farewell Toast | `dungeon.omen-cold-open` | rule | Everyone drinks 1 at the city gate. Start a heart short, with a Lucky Coin and a Tower Shield. |  |
-| ☐ | A Treasure Map | `dungeon.omen-payday` | rule | A treasure map, maybe a fake. Gambles and relics roll 2 higher. Start a heart short. |  |
-| ☐ | The Village Healer | `dungeon.omen-designated-driver` | rule | The village healer packs you a potion. One more satchel slot, but bosses cost a heart more. |  |
-| ☐ | A Black Cat | `dungeon.omen-friday-13th` | rule | A black cat crossed your path, twice. Natural 1s land on a 2 too, natural 20s on a 19. |  |
+| ☐ | Wank Hand | `dungeon.omen-lefty-night` | rule | Your good hand is for wanking now. Drink with the other one all quest. Caught: drink 1. |  |
+| ☐ | Battle Moans | `dungeon.omen-karaoke-night` | rule | Before every boss swing, the drawer moans one line of a battle hymn. Refuse: drink 2. |  |
+| ☐ | The Town Cheers | `dungeon.omen-the-regulars` | rule | The whole town is glad to see you go. Everyone toasts the person on their left. Two more hearts. |  |
+| ☐ | Thin Walls | `dungeon.omen-thin-walls` | rule | The innkeeper is banging next door: everyone whispers. Trials cost a heart more; heals heal 1 more. |  |
+| ☐ | The Farewell Shot | `dungeon.omen-cold-open` | rule | Everyone drinks 1 at the gate and pukes. Start a heart short, with a Lucky Coin and a Tower Shield. |  |
+| ☐ | A Treasure Map | `dungeon.omen-payday` | rule | A treasure map, drawn on a napkin by a drunk. Gambles and relics roll 2 higher. Start a heart short. |  |
+| ☐ | The Village Quack | `dungeon.omen-designated-driver` | rule | The village quack packs you a potion. One more satchel slot, but bosses cost a heart more. |  |
+| ☐ | A Black Cat | `dungeon.omen-friday-13th` | rule | A black cat shat in your path. Natural 1s land on a 2 too, natural 20s on a 19. |  |
 | ☐ | The Riddling Moon | `dungeon.omen-trivia-night` | rule | Before each boss, the drawer answers the table's riddle, or drinks 2. Trials cost less, traps more. |  |
-| ☐ | Bandit Season | `dungeon.omen-brads-birthday` | rule | It's bandit season, and they've been practicing. Ambushes cost a heart more. Take a Tower Shield. |  |
-| ☐ | The Royal Wedding | `dungeon.omen-open-bar` | rule | A royal wedding, and the wine is free. Take two Healing Potions, but one satchel slot fewer. |  |
-| ☐ | Heroic Names | `dungeon.omen-name-tags` | rule | Everyone picks a heroic name at the gate and answers only to it. Wrong name: drink 1. |  |
-| ☐ | A Falling Star | `dungeon.omen-lucky-penny` | rule | Everyone wished on a falling star. Every d20 fight rolls 1 higher, but start two hearts short. |  |
-| ☐ | Barbarian | `dungeon.class-barbarian` | rule | Rage first. Questions never. +1 to monster d20s. +2 to boss d20s. Traps hurt 1 more. |  |
-| ☐ | Rogue | `dungeon.class-rogue` | rule | Took that. +2 to trap and relic d20s. +1 to ambush d20s. +1 satchel slot. Starts with a Smoke Bomb. |  |
-| ☐ | Cleric | `dungeon.class-cleric` | rule | Blesses every drink, loudly. +1 max heart. Every heal heals 1 more. |  |
-| ☐ | Wizard | `dungeon.class-wizard` | rule | Smells of burnt eyebrows. −1 max heart. Starts with a Lucky Coin. |  |
-| ☐ | Bard | `dungeon.class-bard` | rule | Brought a lute. Nobody asked. +1 max heart. Natural 20 on a 19 or 20. Every heal heals 1 more. |  |
-| ☐ | Paladin | `dungeon.class-paladin` | rule | Sworn to protect, loudly. +1 max heart. +1 to boss d20s. Starts with a Tower Shield. |  |
-| ☐ | Ranger | `dungeon.class-ranger` | rule | Hasn't slept indoors in years. +2 to monster d20s. +1 to ambush d20s. Bosses hurt 1 more. |  |
-| ☐ | Drunken Monk | `dungeon.class-monk` | rule | Starts drunk. Gets better. −1 max heart. Natural 1 on a 1 or 2. |  |
-| ☐ | Necromancer | `dungeon.class-necromancer` | rule | Has died twice this week already. −3 max hearts. +1 to boss d20s. Starts with a Phoenix Feather. |  |
-| ☐ | Alchemist | `dungeon.class-alchemist` | rule | Has a flask for every flask. +1 max heart. +1 satchel slot. Starts with 2 Healing Potions. |  |
-| ☐ | Warlock | `dungeon.class-warlock` | rule | Read none of the pact. −2 max hearts. +2 to every battle d20. |  |
-| ☐ | Knight | `dungeon.class-bouncer` | rule | Mentions the armor daily. +2 max hearts. +1 to monster d20s. Ambushes hurt 1 less. |  |
-| ☐ | Innkeeper | `dungeon.class-bartender` | rule | Knows every rumor. +1 max heart. +1 satchel slot. Starts with a Hired Sword and a Healing Potion. |  |
-| ☐ | Sellsword | `dungeon.class-mercenary` | rule | Will fight anything for coin. +1 max heart. +1 to monster d20s. +3 to elite d20s. |  |
-| ☐ | Druid | `dungeon.class-druid` | rule | Talks to the trees. The trees talk back. +1 max heart. +2 to trap d20s. Every heal heals 1 more. |  |
-| ☐ | The Peasant | `dungeon.class-plus-one` | rule | Brought dad's pitchfork. −3 max hearts. −1 to boss d20s. Every 20 is rerolled. |  |
-| ☐ | The Squire | `dungeon.class-intern` | rule | Drops things. −2 max hearts. Natural 1 on a 1 or 2. Every heal heals 1 less. −2 satchel slots. |  |
-| ☐ | The Mimic | `dungeon.class-mimic` | rule | A very confused chest. −4 max hearts. −1 to every battle d20. −1 to monster d20s. +2 satchel slots. |  |
-| ☐ | The Dragonslayer | `dungeon.class-dragonslayer` | rule | Has done this before. Knows a weak scale. +1 to boss d20s. |  |
+| ☐ | Bandit Season | `dungeon.omen-brads-birthday` | rule | It's bandit season, and they're horny. Ambushes cost a heart more. Take a Tower Shield. |  |
+| ☐ | The Royal Wedding | `dungeon.omen-open-bar` | rule | Free wine at a royal wedding, and the bride's flirting. Two Healing Potions, one satchel slot fewer. |  |
+| ☐ | Porn Names | `dungeon.omen-name-tags` | rule | Everyone picks a porn name at the gate and answers only to it. Wrong name: drink 1. |  |
+| ☐ | A Falling Star | `dungeon.omen-lucky-penny` | rule | Everyone wished for sex on a falling star. Every d20 fight rolls 1 higher; start two hearts short. |  |
+| ☐ | Barbarian | `dungeon.class-barbarian` | rule | Hasn't worn a shirt since puberty. +1 to monster d20s. +2 to boss d20s. Traps hurt 1 more. |  |
+| ☐ | Rogue | `dungeon.class-rogue` | rule | Licked it. +2 to trap and relic d20s. +1 to ambush d20s. +1 satchel slot. Starts with a Smoke Bomb. |  |
+| ☐ | Cleric | `dungeon.class-cleric` | rule | Prays loudly. Sins quietly. +1 max heart. Every heal heals 1 more. |  |
+| ☐ | Wizard | `dungeon.class-wizard` | rule | Virgin. Says it's for the magic. −1 max heart. Starts with a Lucky Coin. |  |
+| ☐ | Bard | `dungeon.class-bard` | rule | Fucked a dragon. Twice. +1 max heart. Natural 20 on a 19 or 20. Every heal heals 1 more. |  |
+| ☐ | Paladin | `dungeon.class-paladin` | rule | Sworn to chastity. Lying about it. +1 max heart. +1 to boss d20s. Starts with a Tower Shield. |  |
+| ☐ | Ranger | `dungeon.class-ranger` | rule | Hasn't showered in years. You can tell. +2 to monster d20s. +1 to ambush d20s. Bosses hurt 1 more. |  |
+| ☐ | Drunken Monk | `dungeon.class-monk` | rule | Starts drunk. Gets drunker. Fights better. −1 max heart. Natural 1 on a 1 or 2. |  |
+| ☐ | Necromancer | `dungeon.class-necromancer` | rule | Died twice this week. Still came out. −3 max hearts. +1 to boss d20s. Starts with a Phoenix Feather. |  |
+| ☐ | Alchemist | `dungeon.class-alchemist` | rule | Cooks in a wagon. Don't ask what. +1 max heart. +1 satchel slot. Starts with 2 Healing Potions. |  |
+| ☐ | Warlock | `dungeon.class-warlock` | rule | Sold his soul for a bigger dick. Got neither. −2 max hearts. +2 to every battle d20. |  |
+| ☐ | Knight | `dungeon.class-bouncer` | rule | Mentions the armor daily. Compensating. +2 max hearts. +1 to monster d20s. Ambushes hurt 1 less. |  |
+| ☐ | Innkeeper | `dungeon.class-bartender` | rule | Knows who's banging. +1 max heart. +1 satchel slot. Starts with a Hired Sword and a Healing Potion. |  |
+| ☐ | Sellsword | `dungeon.class-mercenary` | rule | Will fight anything for coin. Or a handy. +1 max heart. +1 to monster d20s. +3 to elite d20s. |  |
+| ☐ | Druid | `dungeon.class-druid` | rule | Talks to trees. Eats the mushrooms. +1 max heart. +2 to trap d20s. Every heal heals 1 more. |  |
+| ☐ | The Peasant | `dungeon.class-plus-one` | rule | Brought dad's pitchfork. Already shat himself. −3 max hearts. −1 to boss d20s. Every 20 is rerolled. |  |
+| ☐ | The Squire | `dungeon.class-intern` | rule | Drops trou. −2 max hearts. Natural 1 on a 1 or 2. Every heal heals 1 less. −2 satchel slots. |  |
+| ☐ | The Mimic | `dungeon.class-mimic` | rule | Licks everything. −4 max hearts. −1 to every battle d20. −1 to monster d20s. +2 satchel slots. |  |
+| ☐ | The Dragonslayer | `dungeon.class-dragonslayer` | rule | Has done this before. Won't shut up about it. +1 to boss d20s. |  |
 
 ## Notes for review
 

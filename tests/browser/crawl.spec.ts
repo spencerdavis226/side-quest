@@ -516,7 +516,7 @@ test("a region's boss ranks the adventurer up, and a side quest can be walked pa
   await sheet.locator(".spoils-row").nth(1).click();
   const spoken = page.locator("#banner-announcer");
   await expect(spoken).toContainText(
-    "Barbarian ranks up! Berserker. +2 max hearts. +1 to monster d20s. +2 to elite and boss d20s. Everyone roars.",
+    "Barbarian ranks up! Roid Rager. +2 max hearts. +1 to monster d20s. +2 to elite and boss d20s. Everyone rips off an invisible shirt and roars.",
   );
   await page.screenshot({ path: info.outputPath("rank-up.png") });
   await expect.poll(async () => (await saved(page)).quest.party.form).toBe(1);
@@ -775,7 +775,7 @@ test("the dragon battle: a round's move, the scales, the kill and the wipe", asy
     /The party\s*has fallen\./,
   );
   await expect(page.locator(".crawl-ballad span").last()).toContainText(
-    `${dragon.title} sleeps on`,
+    `${dragon.title} picks its teeth`,
   );
 });
 
@@ -861,8 +861,8 @@ for (const width of [320, 390])
     await expect(wall.locator("li").first()).toContainText("The Bridge Troll");
     await expect(wall.locator("li").last()).toContainText("Old Mother Brine");
     const tab = page.locator(".run-tab");
-    await expect(tab).toContainText("Barbarian → Berserker → Warlord");
-    await expect(tab).toContainText("Harvest Festival");
+    await expect(tab).toContainText("Barbarian → Roid Rager → Warlord");
+    await expect(tab).toContainText("Harvest Orgy");
     await expect(tab).toContainText("Troll Hide");
     // No trophy's name breaks inside a word.
     const broken = await wall
@@ -1229,11 +1229,11 @@ test("the omen is kept in the party dialog", async ({ page }, info) => {
   await seed(page, s);
   await meter(page).click();
   const dialog = page.getByRole("dialog", { name: "The party" });
-  await expect(dialog.locator(".crawl-boons")).toContainText("Curfew");
+  await expect(dialog.locator(".crawl-boons")).toContainText("Grounded");
   await expect(dialog.locator(".crawl-boons")).toContainText(
     "Bosses take 1 more hit.",
   );
-  // Curfew's Lucky Coin and shield are in the satchel, on the strip.
+  // Grounded's Lucky Coin and shield are in the satchel, on the strip.
   await expect(page.locator(".tag-satchel")).toHaveAccessibleName(
     "Satchel: Lucky Coin, Tower Shield",
   );

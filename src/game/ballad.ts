@@ -93,7 +93,7 @@ export function ballad(s: SessionState): string[] {
   }
   lines.push(
     !verse
-      ? "alone, as heroes go,"
+      ? "alone, since nobody else would come,"
       : deeds.includes("rival-saved") && verse.saved
         ? verse.saved
         : deeds.includes("rival-abandoned") && verse.left
@@ -134,7 +134,7 @@ export function ballad(s: SessionState): string[] {
               `and the fool slew ${dragon}.`,
             )
           : n === 1
-            ? `and slew ${dragon} by a thread.`
+            ? `and slew ${dragon} by a pube.`
             : fit(
                 `and slew ${dragon} with ${n} hearts to spare.`,
                 `and slew ${dragon}, ${n} hearts left.`,
@@ -143,10 +143,18 @@ export function ballad(s: SessionState): string[] {
     );
   } else if (previousCard(s)?.lairFight) {
     lines.push(
-      fit(`and ${dragon} sleeps on under ${lair}.`, `and ${dragon} sleeps on.`),
+      fit(
+        `and ${dragon} picks its teeth with them.`,
+        `and ${dragon} picks its teeth.`,
+      ),
     );
   } else {
-    lines.push(fit(`and never saw ${lair}.`, "and never saw the lair."));
+    lines.push(
+      fit(
+        `and crapped out short of ${lair}.`,
+        "and crapped out short of the lair.",
+      ),
+    );
   }
   return lines;
 }

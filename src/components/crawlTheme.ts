@@ -236,25 +236,36 @@ const dungeon: CrawlTheme = {
   drink: "Drink",
   omenWords: dungeonOmenWords,
   rankLines: {
-    "dungeon.class-barbarian": "Everyone roars.",
-    "dungeon.class-rogue": "Everyone pats their purse to be sure.",
-    "dungeon.class-cleric": "Everyone bows their head for a blessing.",
-    "dungeon.class-wizard": "Everyone wiggles their fingers and says a spell.",
-    "dungeon.class-bard": "Everyone hums a fanfare.",
-    "dungeon.class-paladin": "Everyone salutes.",
-    "dungeon.class-ranger": "Everyone howls once.",
-    "dungeon.class-monk": "Everyone takes one calm sip.",
-    "dungeon.class-necromancer": "Everyone plays dead for three seconds.",
-    "dungeon.class-alchemist": "Everyone clinks glasses: to science.",
-    "dungeon.class-warlock": "Everyone signs an invisible contract.",
-    "dungeon.class-bouncer": "Everyone kneels to be knighted.",
-    "dungeon.class-bartender": "Everyone taps the table twice.",
-    "dungeon.class-mercenary": "Everyone rubs finger and thumb: coin.",
-    "dungeon.class-druid": "Everyone makes a bird noise.",
-    "dungeon.class-plus-one": "Nobody claps. The Peasant claps alone.",
-    "dungeon.class-intern": "Everyone gives the Squire a thumbs up.",
+    "dungeon.class-barbarian":
+      "Everyone rips off an invisible shirt and roars.",
+    "dungeon.class-rogue":
+      "Everyone pats down their pockets, then their underwear.",
+    "dungeon.class-cleric":
+      "Everyone bows their head while the Cleric fakes a prayer.",
+    "dungeon.class-wizard": "Everyone wiggles their fingers and moans a spell.",
+    "dungeon.class-bard":
+      "Everyone hums a fanfare. The drawer winks at someone.",
+    "dungeon.class-paladin": "Everyone salutes, then confesses one sin.",
+    "dungeon.class-ranger": "Everyone sniffs their own armpit and howls.",
+    "dungeon.class-monk": "Everyone takes one calm sip, then burps.",
+    "dungeon.class-necromancer":
+      "Everyone plays dead for three seconds. Stiffly.",
+    "dungeon.class-alchemist":
+      "Everyone clinks glasses: to science, and to not asking.",
+    "dungeon.class-warlock": "Everyone signs an invisible contract in spit.",
+    "dungeon.class-bouncer":
+      "Everyone kneels to be knighted. Shoulder, not crotch.",
+    "dungeon.class-bartender":
+      "Everyone taps the table twice and whispers a rumor.",
+    "dungeon.class-mercenary":
+      "Everyone rubs finger and thumb: coin. Or a nipple.",
+    "dungeon.class-druid": "Everyone makes a bird noise, high as hell.",
+    "dungeon.class-plus-one":
+      "Nobody claps. The Peasant claps alone, sticky-handed.",
+    "dungeon.class-intern": "Everyone gives the Squire a pity thumbs up.",
     "dungeon.class-dragonslayer": "Everyone bares their teeth at the sky.",
-    "dungeon.class-mimic": "Everyone opens and shuts their mouth like a lid.",
+    "dungeon.class-mimic":
+      "Everyone opens and shuts their mouth like a lid. Tongue out.",
   },
   equipment: {
     slots: { weapon: "Weapon", armor: "Armor", trinket: "Trinket" },
