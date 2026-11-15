@@ -2,9 +2,23 @@
 
 Updated 2026-11-15. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Next task (2026-11-15): the Rivals, Phase 5 (presentation)
+## Next task (2026-11-15): the Rivals, Phase 6 (the Chronicle's nemesis)
 
-Build Phase 5 of `docs/RIVALS_PLAN.md`: a medallion and colour per rival (`profile.mark`, `profile.colour`, emblems through `scripts/quest-art.ts`, lazy chunks only), the moments (`rival-enter`, `rival-takes`, `rival-gives`, `redo`, `betrayal`, `chad-credit`), the rival's token on the map, the end screen's Nemesis panel, and every new moment in `?moments=1`. Phase 8 of The Quest 2.0 (the owner's table) still waits on the owner.
+Build Phase 6 of `docs/RIVALS_PLAN.md`: `Chronicle.rivals` folded in by `recordRun` (met, beaten, lost to, joined, betrayed, slain by), the nemesis weighting at `createSession` (a rival who beat you last run twice as likely), the returning introductions (`nemesis-<who>` deeds), the six feats, the Chronicle screen's Rivals section, and the owner's call on "The Ex". Phase 8 of The Quest 2.0 (the owner's table) still waits on the owner.
+
+## Done 2026-11-15: the Rivals, Phase 5 (presentation)
+
+Built from Phase 5 of `docs/RIVALS_PLAN.md`. Display only: no engine rule, save field or card changed.
+
+- **Medallions** (`src/components/RivalMedal.tsx`): each rival's emblem from the vendored game-icons set (`scripts/quest-art.ts`: biceps, grab, meditation, binoculars, whistle, trumpet; 120 emblems, still in lazy chunks only), struck on a disc in their own colour (`RIVAL_COLOURS`, `rivalVars`, keyed by the rival's key so old saves read the same; a colour map in the presentation layer, not `profile.colour`, so no card changed). On the strip chip and in the rival dialog (lazy, the old mark as the fallback), on the map, in their moments and in the Nemesis panel. A joined rival's ally medallion carries their mark.
+- **Moments** (`moments/detect.ts`, `views.tsx`, `moments.css`): `rival` with three beats: `enter` (the medallion slams down, the name spelled out letter by letter, the ritual under it, 3 s), `redo` (a DO-OVER stamp in their colour and a shake, 1.5 s), `betrayal` (cracks run out over the table, the medallion turns over cracked, "Et tu?" sweeps across, 2.8 s); `rivalfly` (ambient: what they took flies from the satchel chip to theirs, what they gave back the other way; the news banner keeps the words). Each has a still plaque under Reduced Motion (the fly has none), and none plays on a resume or an undo.
+- **The map** (`QuestMap.tsx`): the rival's medallion a step behind the party's token.
+- **The end screen** (`NemesisPanel` in `Crawl.tsx`, rendered by `Completion.tsx` with the run's quest): the medallion (cracked if they turned), how it ended (joined, betrayed, beaten in the duel, went in first, fled, settled, saved, left, skipped, still out there), the record and what they still hold; Sir Chad's credit stamped under it, "Slain by Sir Chad Thundercock (allegedly)" (the ally card's full name). The plan put the stamp over the dragon's trophy; it sits under the Nemesis panel instead, beside the rest of the rival's story.
+- **Workshop**: `?moments=1` has `rival-enter`, `rival-redo`, `rival-betrayal` and `rival-takes`.
+- **Fixed on the way**: the rival dialog read a cut's rule twice when the rival's line already said it.
+- **Tests**: `tests/moments.test.ts` (the four beats, once, never on resume or undo); `crawl.spec.ts`: the Nemesis panel and the credit stamp from the `-chad-credit` fixture.
+- **Checked**: `npm test` 627 passed; lint; typecheck; build (budgets pass: runtime 5,287 KiB of 6,144, initial 162.8 KiB gzip; the medallion is its own 0.6 KiB lazy chunk); Chromium `test:e2e` 186 of 186; `test:workshop` (Chromium) 6 of 6; the entrance, Do-Over and betrayal moments screenshotted mid-play at 390x844 (the entrance's backdrop was darkened and the Do-Over's line moved out from under its stamp after the first look), the Nemesis panel, the rival dialog.
+- **Not run**: the balance files (no engine change), the sweep (no card text changed), WebKit (CI), a phone. The moments' timing and feel in the hand are unverified.
 
 ## Done 2026-11-15: the Rivals, Phase 4 (betrayal and the door as a real choice)
 

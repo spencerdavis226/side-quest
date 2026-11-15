@@ -6665,3 +6665,236 @@
     transform: scale(0.85);
   }
 }
+
+/* The rival (Rivals Phase 5): their medallion in their own colour
+   (`--rival`, `--rival-deep` from `RivalMedal.tsx`), on the strip chip, in
+   the dialog and in their moments: walking in, a Do-Over, a betrayal, and
+   what changes hands flying between the satchel and their chip. */
+.rival-medal {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.rival-medal .rival-medal-rim {
+  fill: var(--rival-deep, #5a1410);
+  stroke: var(--rival, #e07a6a);
+  stroke-width: 3;
+}
+.rival-medal .rival-medal-field {
+  fill: var(--rival, #e07a6a);
+  stroke: var(--rival-deep, #5a1410);
+  stroke-width: 3;
+}
+.rival-medal .rival-medal-mark {
+  fill: var(--rival-deep, #5a1410);
+}
+.rival-medal .rival-medal-crack {
+  fill: none;
+  stroke: #0a0a0c;
+  stroke-width: 4;
+  stroke-linejoin: round;
+}
+.rival-medal.cracked .rival-medal-field {
+  filter: saturate(0.4) brightness(0.8);
+}
+.hud-chip .chip-medal {
+  width: 1.35em;
+  height: 1.35em;
+  flex: none;
+}
+.moment-rival {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 12px;
+  padding: 0 24px;
+  text-align: center;
+  background: radial-gradient(
+    circle at 50% 42%,
+    color-mix(in srgb, var(--rival-deep, #5a1410) 60%, #000),
+    rgb(0 0 0 / 0.94)
+  );
+  animation: wanted-night var(--len) ease both;
+}
+.rival-medal-wrap {
+  position: relative;
+  width: min(38vw, 160px);
+  filter: drop-shadow(0 0 26px var(--rival, #e07a6a));
+}
+.rival-enter .rival-medal-wrap {
+  animation: medal-strike 700ms cubic-bezier(0.2, 1.6, 0.4, 1) both;
+}
+.rival-kicker {
+  color: #f1dcc8;
+  font: 700 clamp(13px, 3.6vw, 17px) / 1 var(--font-tavern);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  animation: wanted-in 400ms 300ms ease both;
+}
+.rival-name {
+  color: var(--rival, #e07a6a);
+  font: 800 clamp(30px, 9vw, 52px) / 1.05 var(--font-card-title);
+  text-shadow:
+    0 3px 0 var(--rival-deep, #5a1410),
+    0 0 26px var(--rival, #e07a6a);
+}
+.rival-name span {
+  display: inline-block;
+  white-space: pre;
+  animation: wanted-in 220ms calc(500ms + var(--i) * 45ms) ease both;
+}
+.rival-line {
+  max-width: 30ch;
+  color: #f1e3c4;
+  font: 500 clamp(15px, 4.2vw, 19px) / 1.35 var(--font-tavern);
+  animation: wanted-in 500ms 1300ms ease both;
+}
+.rival-shade {
+  position: absolute;
+  inset: 0;
+  background: repeating-conic-gradient(
+    from 0deg,
+    color-mix(in srgb, var(--rival, #e07a6a) 10%, transparent) 0deg 6deg,
+    transparent 6deg 18deg
+  );
+  mask: radial-gradient(circle at 50% 38%, #000 10%, transparent 60%);
+  animation: rays-turn var(--len) linear both;
+}
+/* A Do-Over: a stamp slams across the table, and the screen shakes. */
+.rival-redo {
+  background: rgb(0 0 0 / 0.55);
+  animation:
+    wanted-night var(--len) ease both,
+    redo-shake 320ms 160ms ease-in-out both;
+}
+.rival-redo .rival-line {
+  margin-top: 26px;
+  padding: 6px 14px;
+  border-radius: 10px;
+  background: rgb(0 0 0 / 0.72);
+  animation-delay: 280ms;
+}
+.redo-stamp {
+  display: grid;
+  justify-items: center;
+  padding: 10px 26px 14px;
+  border: 5px solid var(--rival, #e07a6a);
+  border-radius: 12px;
+  color: var(--rival, #e07a6a);
+  rotate: -8deg;
+  text-transform: uppercase;
+  box-shadow: 0 0 30px color-mix(in srgb, var(--rival) 50%, transparent);
+  animation: redo-slam 380ms cubic-bezier(0.2, 1.6, 0.4, 1) both;
+}
+.redo-stamp small {
+  font: 700 clamp(12px, 3.4vw, 15px) / 1.2 var(--font-tavern);
+  letter-spacing: 0.24em;
+}
+.redo-stamp strong {
+  font: 900 clamp(40px, 13vw, 72px) / 1 var(--font-card-title);
+  letter-spacing: 0.04em;
+}
+@keyframes redo-slam {
+  0% {
+    opacity: 0;
+    transform: scale(2.6);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes redo-shake {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  25% {
+    translate: -8px 3px;
+  }
+  50% {
+    translate: 7px -2px;
+  }
+  75% {
+    translate: -4px 1px;
+  }
+}
+/* A betrayal: cracks run out over the table, the medallion turns over
+   cracked, and "Et tu?" sweeps across. */
+.rival-betrayal {
+  background: radial-gradient(
+    circle at 50% 45%,
+    rgb(70 6 4 / 0.82),
+    rgb(0 0 0 / 0.92)
+  );
+}
+.betrayal-cracks {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.betrayal-cracks path {
+  fill: none;
+  stroke: rgb(255 220 210 / 0.75);
+  stroke-width: 0.35;
+  stroke-dasharray: 120;
+  stroke-dashoffset: 120;
+  animation: crack-run 420ms calc(var(--i) * 30ms) ease-out forwards;
+}
+@keyframes crack-run {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.betrayal-medal {
+  animation: betrayal-flip 900ms 200ms ease-in-out both;
+}
+@keyframes betrayal-flip {
+  0% {
+    opacity: 0;
+    transform: rotateY(180deg) scale(0.8);
+  }
+  60% {
+    opacity: 1;
+    transform: rotateY(-12deg) scale(1.05);
+  }
+  100% {
+    transform: none;
+  }
+}
+.betrayal-words {
+  color: #ffd9cf;
+  font: 900 clamp(40px, 13vw, 72px) / 1 var(--font-card-title);
+  text-shadow:
+    0 3px 0 #3a0402,
+    0 0 30px #c0281a;
+  animation: betrayal-sweep 700ms 600ms cubic-bezier(0.2, 1.2, 0.4, 1) both;
+}
+@keyframes betrayal-sweep {
+  0% {
+    opacity: 0;
+    transform: translateX(-60vw) skewX(-12deg);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+/* What changed hands: the item lifts off one chip and flies to the other. */
+.moment-rivalfly {
+  pointer-events: none;
+}
+.rival-fly-items {
+  position: fixed;
+  display: flex;
+  gap: 4px;
+  width: 40px;
+  height: 40px;
+  translate: -50% -50%;
+  color: var(--rival, #ffe7a8);
+}
+.rival-fly-items.gone {
+  opacity: 0;
+}

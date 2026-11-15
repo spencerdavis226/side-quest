@@ -39,6 +39,13 @@ const picks: Record<string, string> = {
   chester: "mimic-chest",
   bard: "lyre",
   bradley: "black-knight-helm",
+  // The rivals' medallions (Rivals Phase 5), by key.
+  "rival-bradley": "delapouite/biceps",
+  "rival-mirabel": "lorc/grab",
+  "rival-tutt": "lorc/meditation",
+  "rival-chuck": "delapouite/binoculars",
+  "rival-gary": "delapouite/whistle",
+  "rival-queef": "delapouite/trumpet",
   // Map terrain and stops.
   gate: "castle",
   road: "mountain-road",

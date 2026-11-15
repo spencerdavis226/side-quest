@@ -24,6 +24,7 @@ import {
   runNames,
   wantedBoss,
   rivalProfile,
+  rivalLine,
 } from "../../game/engine";
 import { hiddenReward, rollWins } from "../../game/dice";
 import { describeChange } from "../../game/omenText";
@@ -214,6 +215,19 @@ export type Moment = {
     }
   /** A deed set (M23): "This is remembered." */
   | { kind: "deed" }
+  /** The rival (Rivals Phase 5): they walk in (their medallion slams
+   * down, their name spelled out, their ritual under it), call a Do-Over
+   * (a stamp over the dice), or turn on the party ("Et tu?"). */
+  | {
+      kind: "rival";
+      beat: "enter" | "redo" | "betrayal";
+      who: string;
+      name: string;
+      line: string;
+    }
+  /** What the rival took flies from the satchel to their chip; what they
+   * gave back, the other way (ambient: the news banner has the words). */
+  | { kind: "rivalfly"; who: string; items: Loot[]; to: "rival" | "satchel" }
   /** A jinx laid (its name and rule) or lifted (the boss fell). */
   | {
       kind: "jinx";
@@ -230,6 +244,7 @@ export type MomentKind = Moment["kind"];
  * (the natural burst always let the next tap put the card aside; a type
  * clash must never eat the tap that rolls). */
 export const AMBIENT: ReadonlySet<MomentKind> = new Set([
+  "rivalfly",
   "dragonmove",
   "swing",
   "shadow",
@@ -702,6 +717,67 @@ export function momentsBetween(
           say: `${evolving(from)} ${now.title}. ${change}${line ? ` ${line}` : ""}`,
         });
       }
+    }
+
+    // The rival (Rivals Phase 5): walks in, calls a Do-Over, turns, and
+    // what changes hands flies between the satchel and their chip.
+    const rival = party.rival;
+    const profile = rival ? rivalProfile(q)?.profile : undefined;
+    if (rival && profile) {
+      const base = { who: rival.who, name: profile.name };
+      if (!was.rival)
+        out.push({
+          kind: "rival",
+          key: `rival:enter:${rival.who}`,
+          beat: "enter",
+          ...base,
+          line: profile.ritual,
+          say: `Your rival: ${profile.name}. ${profile.ritual}`,
+        });
+      if ((rival.redos ?? 0) > (was.rival?.redos ?? 0)) {
+        const line =
+          rivalLine(profile, "redo") ?? "Roll it again. The new roll stands.";
+        out.push({
+          kind: "rival",
+          key: `rival:redo:${rival.redos}`,
+          beat: "redo",
+          ...base,
+          line,
+          say: `${profile.name}: Do-Over. ${line}`,
+        });
+      }
+      if (rival.news?.turned && !was.rival?.news?.turned) {
+        const line =
+          rivalLine(profile, "turned") ??
+          "Everyone who voted to take them drinks 3.";
+        out.push({
+          kind: "rival",
+          key: `rival:betrayal:${after.discarded}`,
+          beat: "betrayal",
+          ...base,
+          line,
+          say: `${profile.name} turns on you. ${line}`,
+        });
+      }
+      const moved = after.discarded !== before.discarded;
+      if (moved && rival.news?.took?.length)
+        out.push({
+          kind: "rivalfly",
+          key: `rival:took:${after.discarded}`,
+          who: rival.who,
+          items: rival.news.took,
+          to: "rival",
+          say: "",
+        });
+      if (moved && rival.news?.back?.length)
+        out.push({
+          kind: "rivalfly",
+          key: `rival:back:${after.discarded}`,
+          who: rival.who,
+          items: rival.news.back,
+          to: "satchel",
+          say: "",
+        });
     }
 
     // A caught Pokémon sent into the fight.

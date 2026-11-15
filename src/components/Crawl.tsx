@@ -66,6 +66,9 @@ const QuestMap = lazy(() =>
   import("./QuestMap").then((m) => ({ default: m.QuestMap })),
 );
 const TrophyMark = lazy(() => import("./TrophyMark"));
+// Rivals Phase 5: the rival's medallion, lazy like the trophies (its
+// emblems stay out of the first-load chunk).
+const RivalMedal = lazy(() => import("./RivalMedal"));
 import { dragonStyle } from "../presentation/dragon-colors";
 import {
   BadgeCase,
@@ -506,7 +509,9 @@ export function CrawlStrip({
           `Your rival, ${rival.name}: holding ${party.rival!.took.length} of your items`,
           "rival",
           <>
-            <CrawlIcon name="ambush" theme={theme} />
+            <Suspense fallback={<CrawlIcon name="ambush" theme={theme} />}>
+              <RivalMedal who={party.rival?.who} className="chip-medal" />
+            </Suspense>
             <span className="chip-name">{rival.name}</span>
             {party.rival!.took.length > 0 && <b>{party.rival!.took.length}</b>}
           </>,
@@ -1560,14 +1565,16 @@ function RivalPanel({
   return (
     <section className="crawl-rival">
       <p className="crawl-curse crawl-jinx">
-        <CrawlIcon name="ambush" theme={theme} />
+        <Suspense fallback={<CrawlIcon name="ambush" theme={theme} />}>
+          <RivalMedal who={rival.who} className="dialog-medal" />
+        </Suspense>
         <strong>{profile.name}</strong>
         <span>{profile.ritual}</span>
       </p>
       {cut && (
         <p className="rival-cut">
           <strong>{cut.word}:</strong> {cut.line}
-          {cut.line !== cut.rule && <small> {cut.rule}</small>}
+          {!cut.line.includes(cut.rule) && <small> {cut.rule}</small>}
         </p>
       )}
       <h3 className="bag-heading">
@@ -1594,6 +1601,78 @@ function RivalPanel({
         Beaten {rival.won}, lost to {rival.lost}. A lost meeting hands them what
         its card shows; a won one takes an item back.
       </p>
+    </section>
+  );
+}
+
+/** How the rival's story ended, from the run's deeds (Rivals Phase 5). */
+function rivalEnding(deeds: string[], who: string): string {
+  const has = (d: string) => deeds.includes(d);
+  if (has("rival-turned")) return "Betrayed you";
+  if (has("rival-left")) return "Went to watch the dragon";
+  if (has("rival-saved")) return "Saved from the dragon";
+  if (has("rival-abandoned")) return "Left to the dragon";
+  if (has("rival-joined")) return "Joined the party";
+  if (has("rival-beaten")) return "Beaten in the duel";
+  if (has("rival-went-first")) return "Went into the lair first";
+  if (has("rival-fled")) return "Fled with your things";
+  if (has("rival-settled")) return "Debt settled in drinks";
+  if (has("rival-skipped"))
+    return who === "tutt" ? "Exam skipped" : "Walked past";
+  return "Still out there";
+}
+/** The end screen's Nemesis panel (Rivals Phase 5): the rival's medallion,
+ * the record, what they still hold, how it ended, and Sir Chad's stamp
+ * over a dragon he "slew". */
+export function NemesisPanel({
+  quest,
+  won,
+}: {
+  quest: QuestState;
+  won: boolean;
+}) {
+  const rival = quest.party?.rival;
+  const profile = rivalProfile(quest)?.profile;
+  if (!rival || !profile) return null;
+  const theme = crawlTheme(quest.packId);
+  const deeds = quest.party?.deeds ?? [];
+  const joined =
+    deeds.includes("rival-joined") && !deeds.includes("rival-turned");
+  // Sir Chad (`profile.credit`), still on the team when the dragon fell:
+  // the stamp reads his ally card's full name.
+  const creditor =
+    won && joined && profile.credit
+      ? (quest.party?.team ?? [])
+          .map((id) => finaleCard(quest, id))
+          .find((c) => c?.rival?.who === rival.who)?.ally?.name
+      : undefined;
+  return (
+    <section className="nemesis" aria-label="Your nemesis">
+      <h3 className="bag-heading">Nemesis</h3>
+      <div className="nemesis-row">
+        <Suspense fallback={<CrawlIcon name="ambush" theme={theme} />}>
+          <RivalMedal
+            who={rival.who}
+            cracked={deeds.includes("rival-turned")}
+            className="nemesis-medal"
+          />
+        </Suspense>
+        <p className="nemesis-words">
+          <strong>{profile.name}</strong>
+          <span>{rivalEnding(deeds, rival.who)}</span>
+          <small>
+            Beaten {rival.won}, lost to {rival.lost}
+            {rival.took.length
+              ? `; still holding ${rival.took.map((i) => theme.loot[i].name).join(", ")}`
+              : ""}
+          </small>
+        </p>
+      </div>
+      {creditor && (
+        <p className="nemesis-credit" role="note">
+          Slain by {creditor} <em>(allegedly)</em>
+        </p>
+      )}
     </section>
   );
 }

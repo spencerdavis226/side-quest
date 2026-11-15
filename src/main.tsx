@@ -330,6 +330,7 @@ function App() {
           <Completion
             count={display.discarded}
             record={questRecord(display)}
+            quest={display.quest}
             ballad={ballad(display)}
             singleBlow={singleBlow(display)}
             dragon={

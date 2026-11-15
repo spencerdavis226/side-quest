@@ -2,7 +2,8 @@ import { dragonStyle } from "../presentation/dragon-colors";
 import { Button, Artwork } from "../components/UI";
 import { asset } from "../presentation/theme";
 import { QuestRecord } from "../components/QuestRecord";
-import { CrawlIcon, CrawlRecord } from "../components/Crawl";
+import { CrawlIcon, CrawlRecord, NemesisPanel } from "../components/Crawl";
+import type { QuestState } from "../game/types";
 import { crawlTheme } from "../components/crawlTheme";
 import type { ChronicleNews, questRecord } from "../game/engine";
 import { reducedMotion } from "../presentation/motion";
@@ -49,7 +50,10 @@ export function Completion({
   onSetup,
   onFinish,
   onUndo,
+  quest,
 }: {
+  /** The Quest's run, for its rival's Nemesis panel (Rivals Phase 5). */
+  quest?: QuestState;
   count: number;
   record: ReturnType<typeof questRecord>;
   /** The Quest's verse (The Quest 2.0 Phase 3): empty for any other game. */
@@ -204,6 +208,8 @@ export function Completion({
               </p>
             )}
             <CrawlRecord record={record} theme={look} />
+            {/* Rivals Phase 5: the run's rival, and how it ended. */}
+            {quest && <NemesisPanel quest={quest} won={!!record?.won} />}
           </>
         ) : record?.won ? (
           <>
