@@ -1,6 +1,8 @@
-# Realms voice pass (plan)
+# Realms voice pass (plan; done 2026-11-15)
 
 Owner, 2026-11-15: give The Quest (the `dungeon` pack, Realms) the crude CABIIN voice the rivals introduced, across most of its cards, and keep it distinct from the League.
+
+Status: all phases shipped on 2026-11-15 (PRs #94 to #97; Phases 3 and 4 shared one). See `docs/STATUS.md`.
 
 ## Owner decisions
 
@@ -27,13 +29,13 @@ Owner, 2026-11-15: give The Quest (the `dungeon` pack, Realms) the crude CABIIN 
 
 ## Phases (one pull request each)
 
-| Phase | Scope | About |
-| --- | --- | --- |
-| 0 | A Realms section in `docs/CARD_VOICE_REFERENCE.md`: the targets above and before/after samples. Shipped with Phase 1 (the owner asked to pursue the plan and merge without stopping). | 0 cards |
-| 1 | Run framing: classes and rank names, omens, the King's Summons, roads, inns, signs, crawl-theme words, ballad lines | ~100 |
-| 2 | King's Road, Old Forest, Marsh: rooms, landmarks, bosses, phases, jinxes | ~150 |
-| 3 | Haunted Crypt, Goblin Mines, Wizard's Tower | ~150 |
-| 4 | Sunken Coast, Fire Caverns, Frozen Pass | ~150 |
-| 5 | Dragons (moves, swings, lore), the Lair's Door, side quests and keepers, rares, hidden results, echoes, moments; a consistency pass over all of it | ~110 |
+| Phase | Scope                                                                                                                                                                                 | About   |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| 0     | A Realms section in `docs/CARD_VOICE_REFERENCE.md`: the targets above and before/after samples. Shipped with Phase 1 (the owner asked to pursue the plan and merge without stopping). | 0 cards |
+| 1     | Run framing: classes and rank names, omens, the King's Summons, roads, inns, signs, crawl-theme words, ballad lines                                                                   | ~100    |
+| 2     | King's Road, Old Forest, Marsh: rooms, landmarks, bosses, phases, jinxes                                                                                                              | ~150    |
+| 3     | Haunted Crypt, Goblin Mines, Wizard's Tower                                                                                                                                           | ~150    |
+| 4     | Sunken Coast, Fire Caverns, Frozen Pass                                                                                                                                               | ~150    |
+| 5     | Dragons (moves, swings, lore), the Lair's Door, side quests and keepers, rares, hidden results, echoes, moments; a consistency pass over all of it                                    | ~110    |
 
 Each phase: `npm test`, `npm run cards:review`, a build, Chromium `test:sweep` (longer titles risk the two-line band), and 390×844 screenshots of anything near a limit.

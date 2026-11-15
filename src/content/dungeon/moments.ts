@@ -12,8 +12,8 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
     moment(
       0,
       "cellar-roll-call",
-      "Road Stories",
-      "Everyone tells their worst trip ever. The table picks the worst; they drink 2.",
+      "Road Head",
+      "Everyone tells their worst hookup on the road. The table picks the worst; they drink 2.",
     ),
     moment(
       0,
@@ -25,7 +25,7 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
       0,
       "cellar-spider-check",
       "Tick Check",
-      "Everyone checks their legs for ticks, loudly. The last to finish drinks 1.",
+      "Everyone checks their crotch for ticks, loudly. The last to finish drinks 1.",
     ),
     moment(
       0,
@@ -190,7 +190,7 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
       7,
       "freezer-cold-take",
       "Prophecy",
-      "Everyone makes a prophecy about their left neighbor. The table picks the best; they give 3.",
+      "Everyone prophesies their left neighbor's sex life. The table picks the best; they give 3.",
     ),
     moment(
       7,
@@ -224,7 +224,7 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
       2,
       "taproom-message-bottle",
       "SOS",
-      "Everyone says what they'd write in a message in a bottle. The saddest one drinks 2.",
+      "Everyone says the drunk letter they'd bottle and send their ex. The saddest one drinks 2.",
     ),
     moment(
       2,
@@ -312,7 +312,7 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
       8,
       "rooftop-first-to-post",
       "First Down",
-      "On three, everyone points at who'll be first down the mountain. Most fingers: give 3.",
+      "On three, everyone points at who'll puke first on the way down. Most fingers: give 3.",
     ),
   ],
 };

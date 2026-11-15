@@ -72,7 +72,7 @@ export const dragons: CardDefinition[] = [
         ),
         move(
           "Mocking Laugh",
-          "Everyone laughs like a dragon. Weakest laugh, by vote, drinks 3.",
+          "It laughs at your tiny sword. Everyone laughs like a dragon; weakest laugh, by vote, drinks 3.",
         ),
         move(
           "Counts Its Gold",
@@ -125,8 +125,8 @@ export const dragons: CardDefinition[] = [
           "The drawer gives their left neighbor a sip from their glass. Spill any: drink 3.",
         ),
         move(
-          "Belly Rumble",
-          "The floor shakes. Last to grab the table drinks 3.",
+          "Dragon Fart",
+          "The cave shakes, then stinks. Last to hold their nose drinks 3.",
           ONE,
         ),
       ],
@@ -405,8 +405,8 @@ export const dragons: CardDefinition[] = [
       calm: [
         move("Dazzle", "Everyone shields their eyes. Last to drinks 2.", ONE),
         move(
-          "Compliment Me",
-          "The drawer compliments it. If the table boos, the drawer drinks 3.",
+          "Flirt With Me",
+          "The drawer flirts with it. If the table boos, the drawer drinks 3.",
         ),
         move(
           "Pose",
@@ -493,7 +493,7 @@ export const dragons: CardDefinition[] = [
         ),
         move(
           "Mother Knows",
-          "Everyone points at who needs a nap. Most fingers drinks 3.",
+          "Everyone points at who still lives with their mom. Most fingers drinks 3.",
         ),
         move("Tidal Slap", "The drawer's two neighbors drink 2.", ONE),
       ],
@@ -554,7 +554,7 @@ export const dragons: CardDefinition[] = [
         ),
         move(
           "A Secret",
-          "The drawer whispers a secret to their left neighbor, who rates it. Dull: drink 3.",
+          "The drawer whispers a dirty secret to their left neighbor, who rates it. Tame: drink 3.",
         ),
         move(
           "Coil",
@@ -579,7 +579,7 @@ export const dragons: CardDefinition[] = [
         ),
         move(
           "Confession",
-          "Everyone confesses one small thing. Refuse: drink 3.",
+          "Everyone confesses one filthy thing. Refuse: drink 3.",
           ONE,
         ),
         move(
@@ -718,7 +718,7 @@ export const unlockedDragons: CardDefinition[] = [
           ),
           move(
             "Strong Opinions",
-            "It has views on the drawer's boots. This swing is 2 harder.",
+            "It has views on the drawer's mother. This swing is 2 harder.",
             HARDER,
           ),
           move(

@@ -280,7 +280,7 @@ export const hiddenRooms: HiddenRoom[] = [
     plea: plea(
       "vault",
       "The Dwarf's Plea",
-      "A dwarf says something big took his family's vault. Everyone strokes an imaginary beard.",
+      "Something big took a dwarf's family vault. Everyone strokes an imaginary beard, suggestively.",
     ),
     guards: [
       guard(

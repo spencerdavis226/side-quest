@@ -1374,9 +1374,9 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | The Bard's Grave | `dungeon.dead-jukebox` | group | A bard buried by a jealous husband. Everyone sings the chorus, whatever they think it is. |  |
 | ☐ | The Fork in the Road | `dungeon.two-hatches` | group | The road splits. One way is quiet. The other way has smoke, and shouting. |  |
 | ☐ | A Cry for Help | `dungeon.staff-only` | group | Someone screams for help in the trees off the road. Or you keep walking. |  |
-| ☐ | Road Stories | `dungeon.cellar-roll-call` | group | Everyone tells their worst trip ever. The table picks the worst; they drink 2. |  |
+| ☐ | Road Head | `dungeon.cellar-roll-call` | group | Everyone tells their worst hookup on the road. The table picks the worst; they drink 2. |  |
 | ☐ | Mystery Potion | `dungeon.cellar-mystery-bottle` | group | A potion with no label. Everyone guesses what it does; the drawer's favorite guess gives 2. |  |
-| ☐ | Tick Check | `dungeon.cellar-spider-check` | group | Everyone checks their legs for ticks, loudly. The last to finish drinks 1. |  |
+| ☐ | Tick Check | `dungeon.cellar-spider-check` | group | Everyone checks their crotch for ticks, loudly. The last to finish drinks 1. |  |
 | ☐ | Trail Rations | `dungeon.cellar-dry-storage` | group | Hard bread from the saddlebags. Everyone eats a bite of something or drinks 1. |  |
 | ☐ | The Last Room | `dungeon.cellar-last-glass` | group | One room left at the inn. Bid sips clockwise until all pass. Top bid drinks them and toasts. |  |
 | ☐ | The Elf Feast | `dungeon.tasting-room` | group | An elf feast, left out for travelers. It's all salad. Everyone toasts the cook, sadly. |  |
@@ -1411,7 +1411,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | The Dare | `dungeon.two-taps` | group | The sailors bet you won't swim out naked to the wreck at high tide. They're already counting. |  |
 | ☐ | The Wreck | `dungeon.the-trapdoor` | group | The cliff path, or through the wreck's hull, with bubbles coming up out of it. |  |
 | ☐ | Bottoms Up or Hold | `dungeon.taproom-shanty` | group | Glasses up. The drawer calls 'Bottoms up!' or 'Hold!' three times. Anyone who sips on Hold drinks 2. |  |
-| ☐ | SOS | `dungeon.taproom-message-bottle` | group | Everyone says what they'd write in a message in a bottle. The saddest one drinks 2. |  |
+| ☐ | SOS | `dungeon.taproom-message-bottle` | group | Everyone says the drunk letter they'd bottle and send their ex. The saddest one drinks 2. |  |
 | ☐ | Man Overboard | `dungeon.taproom-man-overboard` | group | The drawer shouts 'man overboard'; everyone grabs their drink. The last to grab it drinks 2. |  |
 | ☐ | Land Ho | `dungeon.taproom-dry-land` | group | Everyone shouts 'Land ho!', takes a deep breath, then a sip. |  |
 | ☐ | The Fish Tale | `dungeon.taproom-shanty-round` | group | Clockwise, everyone shows with their hands a fish bigger than the last. First who can't drinks 2. |  |
@@ -1436,7 +1436,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | The Shortcut | `dungeon.two-shelves` | group | A teleport circle chalked on the floor, half rubbed out. It might go up. |  |
 | ☐ | The Mirrors | `dungeon.the-meat-hooks` | group | Walk past the dark mirrors, or step through the one with a naked you in it, waving. |  |
 | ☐ | The Wizard Walk | `dungeon.freezer-penguin-walk` | group | The drawer walks like a very old wizard to the nearest wall and back. Refuse: drink 3. |  |
-| ☐ | Prophecy | `dungeon.freezer-cold-take` | group | Everyone makes a prophecy about their left neighbor. The table picks the best; they give 3. |  |
+| ☐ | Prophecy | `dungeon.freezer-cold-take` | group | Everyone prophesies their left neighbor's sex life. The table picks the best; they give 3. |  |
 | ☐ | The Ritual | `dungeon.freezer-huddle` | group | Everyone holds hands for the ritual. Anyone who won't drinks 2. |  |
 | ☐ | Spellcraft | `dungeon.freezer-hot-cocoa` | group | Everyone wiggles their fingers like a wizard casting, then takes a slow sip. |  |
 | ☐ | Fireball Fight | `dungeon.freezer-cold-takes` | group | On three, everyone throws a mime fireball at someone. Whoever is hit most drinks 2. |  |
@@ -1448,7 +1448,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Shooting Star | `dungeon.rooftop-shooting-star` | group | The drawer makes a wish out loud. If the table thinks it's lame, the drawer drinks 2. |  |
 | ☐ | Group Portrait | `dungeon.rooftop-pigeon` | group | Everyone squeezes into one pose for the painter. Anyone cut off or blinking drinks 2. |  |
 | ☐ | Fresh Air | `dungeon.rooftop-fresh-air` | group | Everyone takes a deep breath of fresh air. Then a sip. |  |
-| ☐ | First Down | `dungeon.rooftop-first-to-post` | group | On three, everyone points at who'll be first down the mountain. Most fingers: give 3. |  |
+| ☐ | First Down | `dungeon.rooftop-first-to-post` | group | On three, everyone points at who'll puke first on the way down. Most fingers: give 3. |  |
 | ☐ | The King's Decree | `dungeon.summons-proclamation` | group | {dragon} woke under {lair}, horny. Everyone toasts the king's tiny balls. |  |
 | ☐ | A Burned Village | `dungeon.summons-burned-village` | group | Your hometown, torched by {dragon}. Your ex made it out, sadly. Everyone drinks 1. |  |
 | ☐ | The Bounty | `dungeon.summons-wanted-poster` | group | WANTED: {dragon}. REWARD: gold, and a handy from the mayor. Everyone toasts the reward. |  |
@@ -1471,12 +1471,12 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | The Sleeping Giant | `dungeon.rare-sleeping-giant` | group | A giant asleep across the path, snoring. Everyone holds their breath. | Jinx Tiptoe: The cursed player whispers. Speaks up: drink 1. |
 | ☐ | The Wishing Frog | `dungeon.rare-wishing-frog` | group | A frog in a crown offers three wishes, but you only get one. The drawer chooses. |  |
 | ☐ | The Will-o'-Wisp | `dungeon.rare-wisp` | group | A blue light bobs off the path, singing your name. Everyone hums along. |  |
-| ☐ | The Wizard Is Home | `dungeon.rare-wizard-home` | group | The wizard is in, in slippers, and delighted to have guests. Everyone compliments the tower. |  |
+| ☐ | The Wizard Is Home | `dungeon.rare-wizard-home` | group | The wizard's home, in slippers and nothing else, and delighted. Everyone compliments the tower. |  |
 | ☐ | The Oldest Apprentice | `dungeon.rare-old-apprentice` | group | An apprentice of ninety, still sweeping. The drawer asks what he has learned. |  |
 | ☐ | A Mermaid's Kiss | `dungeon.rare-mermaid-kiss` | group | A mermaid kisses the drawer, who may not speak until their next turn. |  |
 | ☐ | The Forge of Kings | `dungeon.rare-forge-kings` | group | The forge where the old kings' swords were made, still burning. Everyone feels the heat. |  |
 | ☐ | The Yeti's Tea Party | `dungeon.rare-yeti-tea` | group | A yeti pours tea for everyone. Everyone pours for their left neighbor. |  |
-| ☐ | The Old Dragonslayer | `dungeon.rare-old-slayer` | group | An old dragonslayer on a rock, missing an arm. Everyone asks him one question. |  |
+| ☐ | The Old Dragonslayer | `dungeon.rare-old-slayer` | group | An old dragonslayer on a rock, missing an arm and one ball. Everyone asks him one question. |  |
 | ☐ | A Letter | `dungeon.summons-dragon-writes` | group | '{dragon} here. Stop sending heroes. I'm out of room.' The drawer reads it as the dragon. |  |
 | ☐ | The Company's Table | `dungeon.landing-company-table` | group | The Gilded Company, asleep at the inn's best table. Everyone tiptoes. |  |
 | ☐ | The Slayer's Widow | `dungeon.landing-widow` | group | She keeps the inn now, and her husband's sword over the fire. Everyone raises a glass to him. |  |
@@ -1554,7 +1554,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | The Merchant's Plea | `dungeon.quest-strongbox` | group | A merchant, robbed blind, wants his strongbox back. Everyone checks their own pockets, loudly. |  |
 | ☐ | The Gravedigger's Plea | `dungeon.quest-barrow` | group | The gravedigger says the dead won't stay down. Everyone shows their best zombie face on three. |  |
 | ☐ | The Fisherman's Plea | `dungeon.quest-nets` | group | A fisherman says the old shrine sings at night and his nets come up empty. Everyone hums low. |  |
-| ☐ | The Dwarf's Plea | `dungeon.quest-vault` | group | A dwarf says something big took his family's vault. Everyone strokes an imaginary beard. |  |
+| ☐ | The Dwarf's Plea | `dungeon.quest-vault` | group | Something big took a dwarf's family vault. Everyone strokes an imaginary beard, suggestively. |  |
 | ☐ | Highwaymen | `dungeon.gelatinous-shot` | challenge | Three masked riders block the road. Your money or your life. Hands up, then roll d20. | 1d20 — 1-1: Natural 1! They take the money and your pants. Drink 6, hands still up. 2-6: They take the money. Drink 3, hands still up. 7-19: You take their horses. Give 3. 20-20: Natural 20! You take their horses and their masks. Give 6. |
 | ☐ | The Toll Gate | `dungeon.rat-trench-coat` | challenge | Papers, or a peek. Left neighbor plays the guard: talk your way past in 10 seconds, or drink 3. |  |
 | ☐ | Wolf Pack | `dungeon.mold-elemental` | challenge | Eyes in the trees, then teeth. Howl at them, then roll d20. | 1d20 — 1-1: Natural 1! They drag you off the road. Drink 6, then howl at your left neighbor. 2-6: They circle and bite. Drink 3, and howl once more. 7-19: They scatter into the trees. Give 3. 20-20: Natural 20! The alpha rolls over. Everyone else howls; the quietest drinks 6. |
@@ -1898,7 +1898,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Sled Racing | `dungeon.paper-planes` | challenge | Bet on the sled races down the slope. Win, then cash out or bet again. Roll d20. | 1d20 — 1-1: Natural 1! Yours flips. Drink 10. 2-8: Yours flips. Drink 5. 9-19: Yours wins. Give 4. 20-20: Natural 20! Yours wins. Give 8. |
 | ☐ | Mimic Snowdrift | `dungeon.mimic-planter` | challenge | A snowdrift that grows prizes until it bites. Cash out or dig again. Roll d20. | 1d20 — 1-1: Natural 1! It bites. Drink 10. It follows you home. 2-8: It bites. Drink 5. 9-19: Something glints. Give 4. 20-20: Natural 20! Something glints. Give 8. |
 | ☐ | The King in Disguise | `dungeon.rare-king-disguise` | challenge | A beggar who is plainly the king. The drawer chats for 20 seconds; no bowing, no saying 'king'. |  |
-| ☐ | The Sword in the Stone | `dungeon.rare-sword-stone` | challenge | A sword in a stone, and a queue of failed knights. The drawer may pull. Roll d20. | 1d20 — 1-1: Natural 1! Stuck. The knights laugh. Drink 6. 2-16: Stuck. The knights laugh. Drink 3. 17-19: It slides out. Everyone kneels to the drawer. 20-20: Natural 20! It slides out like it was waiting. The knights weep. Everyone else drinks 3. |
+| ☐ | The Sword in the Stone | `dungeon.rare-sword-stone` | challenge | A sword in a stone, and a queue of failed knights, all compensating. The drawer may pull. Roll d20. | 1d20 — 1-1: Natural 1! Stuck. The knights laugh. Drink 6. 2-16: Stuck. The knights laugh. Drink 3. 17-19: It slides out. Everyone kneels to the drawer. 20-20: Natural 20! It slides out like it was waiting. The knights weep. Everyone else drinks 3. |
 | ☐ | Death, Playing Chess | `dungeon.rare-death-chess` | challenge | Death challenges the table's champion to rock-paper-scissors, best of three. |  |
 | ☐ | The Mother Lode | `dungeon.rare-mother-lode` | challenge | A seam of gold that goes on forever. The drawer digs. Roll d20. | 1d20 — 1-1: Natural 1! The tunnel caves. Drink 8. 2-7: The tunnel caves. Drink 4. 8-19: Gold! Dig again, or walk away rich. 20-20: Natural 20! A nugget the size of a head! Everyone else drinks 3. |
 | ☐ | The Thing Below | `dungeon.rare-thing-below` | challenge | Something huge moves under the mine. The drawer goes down to meet it. Roll d20. | 1d20 — 1-1: Natural 1! It goes back to sleep on you. Drink 10. 2-11: It goes back to sleep on you. Drink 5. 12-19: It flees deeper. Give 5. 20-20: Natural 20! It flees deeper. Give 10. |

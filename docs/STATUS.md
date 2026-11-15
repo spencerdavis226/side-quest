@@ -2,12 +2,20 @@
 
 Updated 2026-11-15. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Done 2026-11-15: Realms voice pass, Phase 5 (the end of the run) — the pass is complete
+
+Copy only. Table moments (`moments.ts`: Road Head, the crotch tick check, a prophecy of your neighbor's sex life, the drunk letter to your ex, who pukes first), dragon moves in `dragons.ts` (Emberfang laughs at your tiny sword, Gorgrath's Dragon Fart, Glimmerwing's Flirt With Me, Old Mother Brine asks who still lives with their mom, the Whispering Wyrm's dirty secrets and filthy confessions, Bartholomew's views on the drawer's mother), three rares (`rares.ts`) and one side-quest plea (`bookcase.ts`). The dragons' swings, the lair Approaches, keepers, echoes and hidden results keep their menace, as planned.
+
+- **The pass in total** (Phases 0 to 5, PRs #94 to #97): about 230 cards and lines across the classes, omens, framing cards, all nine regions, bosses, curses, landmarks and the dragons; the League untouched; no ID, number or rule changed, so balance is unchanged (CI's balance jobs passed each time).
+- **Checked**: `npm test` 633 passed; lint; build (budgets pass); `cards:review`; Chromium `test:e2e` 188 of 188; Chromium `test:sweep` 12 of 12.
+- **Not checked**: how it plays at a real table, and on a phone. The owner's read on where the line sits is the open question.
+
 ## Done 2026-11-15: Realms voice pass, Phases 3 and 4 (the middle regions and the lairs' regions)
 
 Copy only, one pull request for both (each was small). Phase 3: `catacombs.ts` (15: Left on Read, The Virgin Hunter, Die a Virgin...), `sewers.ts` (11: Virgin Adventurers, The Kobold Dealer, the turd in the flooded shaft...), `freezer.ts` (8: The Love Potion, The Pickup Spell...), three boss beats and three landmarks. Phase 4: `taproom.ts` (10: The Ex-Letter Eel, SEND NUDES in a bottle...), `kitchen.ts` (5: The Fart Ghost...), `rooftop.ts` (6). The lair regions' landmarks and Approaches keep their menace unchanged. The later regions are lighter on purpose (the plan's rationing).
 
 - **Checked**: `npm test` 633 passed; lint; build (budgets pass); `cards:review`; Chromium `crawl.spec.ts` 41 of 41; Chromium `test:sweep` 12 of 12.
-- **Next**: Phase 5 (dragons, the Lair's Door, side quests and keepers, rares, hidden results, echoes, moments) and a consistency pass.
+- **Next**: Phase 5 (done below).
 
 ## Done 2026-11-15: Realms voice pass, Phase 2 (King's Road, Old Forest, Marsh)
 
