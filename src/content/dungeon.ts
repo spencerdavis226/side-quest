@@ -16,6 +16,7 @@ import {
   rivalFights,
   rivalIntros,
   rivalPleas,
+  senseiPinned,
   rivals,
 } from "./dungeon/rivals";
 import {
@@ -194,10 +195,16 @@ const lair = (region: ReturnType<typeof floor>, dragons: CardDefinition[]) => [
     intro: "{rival} is at the door",
     pick: 1,
     cardIds: ids(rivalPleas),
-    variants: rivals.map((r) => ({
-      deeds: [`rival-${r.who}`],
-      cardIds: [r.plea.id],
-    })),
+    variants: [
+      // Rivals Phase 4: Sensei beaten twice is pinned instead (his exam is
+      // the fallback, dealt only when the pinned card is not).
+      ...rivals.map((r) => ({
+        deeds: [`rival-${r.who}`],
+        cardIds: [r.plea.id],
+        ...(r.who === "tutt" ? { fallback: true as const } : {}),
+      })),
+      { deeds: ["rival-tutt", "rival-won-twice"], cardIds: [senseiPinned.id] },
+    ],
   },
   {
     label: "The Duel",

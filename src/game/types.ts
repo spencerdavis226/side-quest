@@ -231,6 +231,9 @@ export interface CardDefinition {
      * she leaves with the whole satchel (it goes back on the rival's
      * ledger) in place of dying, and she never makes the last stand. */
     turncoat?: true;
+    /** Rivals Phase 4 (Sensei, saved): he dies after one swing at the
+     * dragon, sent in or not. */
+    once?: true;
     /** The rival, joined (Rivals Phase 2): one more to the bonus for each
      * meeting the party lost to them, up to 2. */
     grudge?: true;
@@ -284,8 +287,33 @@ export interface RivalProfile {
   snipe?: string;
   /** How often each uninvited appearance comes, as weights (0 to 9). */
   style: Partial<Record<RivalVerb, number>>;
-  /** The ballad's third line, by how it ended (at most 44 characters). */
-  verse: { joined?: string; beaten: string; ahead: string };
+  /** The ballad's third line, by how it ended (at most 44 characters):
+   * joined, beaten, still ahead; and (Rivals Phase 4) pinned at the door
+   * and saved, or left to the dragon. */
+  verse: {
+    joined?: string;
+    beaten: string;
+    ahead: string;
+    saved?: string;
+    left?: string;
+  };
+  /** Rivals Phase 4: the chance they turn on the party once joined (`base`
+   * plus `perWin` for each meeting the party won), decided at join, and
+   * what they do: walk off with the satchel, or sing the dragon's song
+   * (that round's swing 2 harder). */
+  betray?: { base: number; perWin: number; does: "satchel" | "song" };
+  /** Rivals Phase 4 (Sir Chad): on the team when the dragon falls, they
+   * take the credit: the ballad's last line (`{dragon}` filled; `short`
+   * when that runs past 44 characters). */
+  credit?: { line: string; short: string };
+  /** Rivals Phase 4 (Dame Queefington): she writes the ballad. Four lines
+   * and an ending by outcome, flattering when she joined or her duel was
+   * won, vicious otherwise (each at most 44 characters). */
+  ballad?: {
+    kind: { lines: string[]; won: string; lost: string };
+    vicious: { lines: string[]; won: string; lost: string };
+    sign: string;
+  };
 }
 /** A rival's way of turning up uninvited (`stalk`). Phase 1 deals the
  * first three; the rest are planned in `docs/RIVALS_PLAN.md`. */
@@ -314,6 +342,10 @@ export type RivalLines = Partial<Record<RivalVerb, string>> & {
   lostTo: string;
   /** After the party wins one. */
   beaten: string;
+  /** Rivals Phase 4: as they turn on the party, and as they go into the
+   * lair first. */
+  turned?: string;
+  first?: string;
 };
 /** A dragon's move for one round of its battle (`lairFight`). */
 export interface DragonMove {
@@ -753,11 +785,21 @@ export interface PartyState {
       poached?: string;
       /** Rivals Phase 3: the joined rival who left the team (card ID). */
       left?: string;
+      /** Rivals Phase 4: they turned on the party, or went in first. */
+      turned?: true;
+      first?: true;
     };
     /** Rivals Phase 3: Chuck's coin at the door (2 heads, 1 tails). */
     joinFace?: 1 | 2;
     /** Rivals Phase 3: Gary's Whistle blown since the last region boss. */
     hushed?: true;
+    /** Rivals Phase 4: the dragon swing (0, 1 or 2) a joined rival turns
+     * on, decided when they joined; and that they turned. */
+    turnsAt?: number;
+    turned?: true;
+    /** Rivals Phase 4: swings the party lost in their duel (two, and they
+     * go into the lair first). */
+    duelLost?: number;
     /** Rivals Phase 2: the Do-Over spent on the card in play (the roll
      * after it stands). */
     redone?: true;
@@ -783,6 +825,9 @@ export interface PartyState {
      * left it instead; this round's swing is rolled twice, the better
      * kept. */
     staggered?: true;
+    /** Rivals Phase 4: a joined Dame Queefington turned and sang the
+     * dragon's song this round: its swing is 2 harder. */
+    sung?: true;
     prev?: { move: number; enraged?: true } | "contest";
   };
 }

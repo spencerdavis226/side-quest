@@ -24,7 +24,9 @@ import { bossBeat, hitsNeeded, isBossCard, spoilsOnWin } from "./bosses";
 import { joinTeam, settleThrow, strikeOutcome } from "./team";
 import { moveOf, nextDuel, roundOf } from "./lair";
 import {
+  betrayal,
   duelTricks,
+  spendOnce,
   leaveLow,
   rivalFalls,
   settleRival,
@@ -74,8 +76,7 @@ export function awaitingVerdict(s: SessionState) {
   );
 }
 /** Rivals Phase 3: an unpaid invoice holds the card until it is paid. */
-const invoiced = (s: SessionState) =>
-  s.quest?.party?.rival?.cut === "invoice";
+const invoiced = (s: SessionState) => s.quest?.party?.rival?.cut === "invoice";
 /** Take the no-roll option of a choice card: it is put aside unrolled (a
  * battle walked away from is neither won nor lost). */
 export function skipRoll(
@@ -255,6 +256,8 @@ function discardCard(
     if (raw && duel) {
       const move = moveOf(raw, roundOf(duel));
       if (move?.damage) next = hurt(next, move.damage);
+      // Rivals Phase 4: an ally that lives for one swing (Sensei, saved).
+      if (!duel.contest) next = spendOnce(next, q);
       const swing = outcome === "won" ? (nat === 20 ? 2 : 1) : 0;
       if (
         swing &&
@@ -322,6 +325,9 @@ function discardCard(
       outcome === "won" ? (nat === 20 ? 2 : 1) : 0,
     );
     next = tricks.party;
+    // Rivals Phase 4: out of the duel without felling them (fled, or gone
+    // in first: the dragon then starts a scale down).
+    if (tricks.fled) next = { ...next, hits: tricks.first ? 1 : 0 };
     if (need && outcome !== "fled" && !tricks.fled) {
       let hits = Math.min(need, next.hits + tricks.landed);
       // The Quest 2.1: the dragon never falls to its contest. A won
@@ -339,15 +345,19 @@ function discardCard(
           quest: {
             ...q,
             ...(lost ? { lost: lostCount } : {}),
-            party: {
-              ...next,
-              hits,
-              rounds: next.rounds + (outcome === "won" ? 1 : 0),
-              // The dragon's next round, and its move, dealt with it.
-              ...(raw?.lairFight
-                ? { duel: nextDuel(q, raw, duel, hits, random, staggered) }
-                : {}),
-            },
+            // A joined rival may turn as the round is dealt (Phase 4).
+            party: betrayal(
+              {
+                ...next,
+                hits,
+                rounds: next.rounds + (outcome === "won" ? 1 : 0),
+                // The dragon's next round, and its move, dealt with it.
+                ...(raw?.lairFight
+                  ? { duel: nextDuel(q, raw, duel, hits, random, staggered) }
+                  : {}),
+              },
+              q,
+            ),
           },
         };
       // The floor's boss falls, and the jinx lifts with it (and Gary's
@@ -437,10 +447,13 @@ function discardCard(
     const coming = finaleCard(q, q.finale[q.step + 1]);
     const party =
       coming?.lairFight && q.party
-        ? {
-            ...q.party,
-            duel: nextDuel(q, coming, undefined, q.party.hits, random),
-          }
+        ? betrayal(
+            {
+              ...q.party,
+              duel: nextDuel(q, coming, undefined, q.party.hits, random),
+            },
+            q,
+          )
         : q.party;
     return {
       ...s,

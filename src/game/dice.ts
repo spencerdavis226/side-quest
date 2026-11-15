@@ -194,7 +194,9 @@ export function rollBonus(session: SessionState, card: CardDefinition): number {
     // The dragon's move can make this round's swing harder or easier.
     (lairMove(session.quest, card)?.harder ?? 0) -
     // A variant dealt harder (The Quest 2.0 Phase 6: the Company, sour).
-    stageHarder(session, card)
+    stageHarder(session, card) -
+    // Rivals Phase 4: a turned bard sings the dragon's song this round.
+    (card.lairFight && party.duel?.sung ? 2 : 0)
   );
 }
 /** The extra need of the card in play, from its stage's variant, and on

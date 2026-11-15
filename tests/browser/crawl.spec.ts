@@ -1158,6 +1158,28 @@ test("Gary's door: settle the debt in drinks, or be audited", async ({
   await page.screenshot({ path: info.outputPath("gary-door.png") });
 });
 
+test("Sensei beaten twice is pinned at the door: save him for a heart", async ({
+  page,
+}, info) => {
+  // Rivals Phase 4: the door's pinned variant.
+  let s = crawlAt("dungeon.rival-tutt-pinned", STEP.closing, {
+    deeds: ["rival-tutt", "rival-won-twice"],
+    rival: { who: "tutt", took: [], won: 2, lost: 0 },
+  });
+  const finale = [...s.quest!.finale];
+  const was = finale.indexOf("dungeon.rival-tutt");
+  if (was >= 0) finale[was] = finale[STEP.rival];
+  finale[STEP.rival] = "dungeon.rival-tutt";
+  s = reveal({ ...s, quest: { ...s.quest!, finale } });
+  await seed(page, s);
+  await expect(page.locator(".game-card")).toContainText("Pinned!");
+  const plaques = page.locator(".offer-plaque");
+  await expect(plaques).toHaveCount(2);
+  await expect(plaques.first()).toContainText("Save him");
+  await expect(plaques.first().locator(".offer-cost")).toContainText("1");
+  await page.screenshot({ path: info.outputPath("pinned.png") });
+});
+
 test("the omen is kept in the party dialog", async ({ page }, info) => {
   let s = reveal(crawlAt("dungeon.omen-lock-in", STEP.omen));
   s = advance(s);

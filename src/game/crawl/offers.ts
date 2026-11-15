@@ -13,7 +13,7 @@ import {
 } from "./party";
 import { joinTeam, throwAt } from "./team";
 import { discard } from "./discard";
-import { restoreAll } from "./rival";
+import { decideBetrayal, restoreAll } from "./rival";
 // Plaques (merchants, forks, inns, pleas) and push-your-luck pulls.
 /** A revealed merchant or fork in a crawl: one of its offers puts it aside. */
 export function awaitingOffer(s: SessionState) {
@@ -78,8 +78,11 @@ export function takeOffer(
     party = { ...party, jinx: currentCard(s).id };
   // The Quest 2.0 Phase 4: dragon lore, and an ally hired or freed.
   if (offer.lore) party = addLore(party);
-  if (offer.recruit && currentCard(s).ally)
+  if (offer.recruit && currentCard(s).ally) {
     party = joinTeam(party, currentCard(s).id);
+    // Rivals Phase 4: a rival joined decides now whether they will turn.
+    if (currentCard(s).rival) party = decideBetrayal(party, q, random);
+  }
   // The rival hands back what they hold (2026-11-15); Gary's debt settled
   // in drinks does the same (Rivals Phase 3).
   if (offer.restore || offer.settle) party = restoreAll(party, { ...q, party });

@@ -108,6 +108,9 @@ const deal = (s: SessionState, id: string): SessionState => {
 /** What the party brought to the dragon (Phase 4): its lore and its
  * living allies, by run seed, for the main runs only. */
 const atDragon = new Map<number, { lore: number; allies: number }>();
+/** What the rival held when the party reached their door (Rivals Phase
+ * 4), by run seed, for the main runs only. */
+const atDoorLedger = new Map<number, number>();
 function playRun(seed: number, adventurer?: string, heroic = false) {
   const random = seeded(seed);
   let s = createSession(
@@ -147,6 +150,14 @@ function playRun(seed: number, adventurer?: string, heroic = false) {
     )
       s = kickOut(s);
     const card = currentCard(s);
+    if (
+      !adventurer &&
+      !heroic &&
+      card.rival &&
+      card.offers?.length &&
+      !atDoorLedger.has(seed)
+    )
+      atDoorLedger.set(seed, party(s).rival?.took.length ?? 0);
     if (!adventurer && !heroic && card.lairFight && !atDragon.has(seed))
       atDragon.set(seed, {
         lore: party(s).lore ?? 0,
@@ -166,6 +177,9 @@ function playRun(seed: number, adventurer?: string, heroic = false) {
       // Rivals Phase 3: Chuck is always taken; Gary is paid when he holds
       // two items or fewer.
       else if (card.rival?.who === "chuck") pick = 0;
+      // Rivals Phase 4: Sensei, pinned, is saved above 3 hearts.
+      else if (card.id === "dungeon.rival-tutt-pinned")
+        pick = p.hearts > 3 ? 0 : 1;
       else if (card.rival?.who === "gary")
         pick = (p.rival?.took.length ?? 0) <= 2 ? 0 : 1;
       else if (card.rival) pick = p.hearts > 6 ? 1 : 0;
@@ -437,9 +451,9 @@ it("the dragon battle is the run's last hard fight, never a wall", () => {
 it("every rival is a nuisance, none a wall (Rivals Phase 2)", () => {
   // Runs that met a rival, by who: each within the crawl's band and within
   // 12 points of each other; between 3 and 6 uninvited appearances and 0.5
-  // to 2 Do-Overs a run that reaches the door; 1 to 3 items still theirs
-  // at the end of a run whose ledger was never settled; joined and refused
-  // runs both between 15% and 45%.
+  // to 2 Do-Overs a run that reaches the door; 1 to 3 items theirs as the
+  // party reaches their door; joined and refused runs both between 15% and
+  // 45%.
   const met = runs.filter((s) => party(s).rival);
   const who = by((s) => party(s).rival?.who ?? "none").filter(
     ([n]) => n !== "none",
@@ -467,21 +481,28 @@ it("every rival is a nuisance, none a wall (Rivals Phase 2)", () => {
   const joined = far.filter((s) => has(s, "rival-joined"));
   const refused = far.filter((s) => has(s, "rival-refused"));
   const duelWon = refused.filter((s) => has(s, "rival-beaten"));
-  // Runs whose ledger was never settled at the door: not beaten in the
-  // duel, not fled with it (their Smoke Bomb), not settled with Gary in
-  // drinks, and not handed back by Lady Fingerbang to join.
-  const notWon = far.filter(
+  // Rivals Phase 4: a refused rival who won two swings went in first.
+  const duelLost = refused.filter((s) => has(s, "rival-went-first"));
+  // Betrayal, among joined runs that reached the dragon with a rival who
+  // can turn (Lady Fingerbang, Dame Queefington).
+  const turncoats = joined.filter(
     (s) =>
-      !has(s, "rival-beaten") &&
-      !has(s, "rival-fled") &&
-      !has(s, "rival-settled") &&
-      !(party(s).rival!.who === "mirabel" && has(s, "rival-joined")),
+      !!rivalProfile(s.quest)?.profile.betray &&
+      finaleStage(s.quest!).label === "The Dragon's Lair",
   );
+  const betrayed =
+    turncoats.filter((s) => has(s, "rival-turned")).length /
+    Math.max(1, turncoats.length);
+  // Rivals Phase 4: what the rival holds as the party reaches their door
+  // (the ledger the door decides about: settled, restored, duelled for or
+  // lost for good), by run seed.
+  const doorLedgers = [...atDoorLedger.values()];
+  const holding =
+    doorLedgers.reduce((a, b) => a + b, 0) / Math.max(1, doorLedgers.length);
   const kinds = new Map<string, number>();
   for (const s of far)
     for (const [k, n] of Object.entries(party(s).rival?.cuts ?? {}))
       kinds.set(k, (kinds.get(k) ?? 0) + n!);
-  const holding = mean((s) => party(s).rival!.took.length, notWon);
   // Do-Overs, over runs against a rival who uses them (Rivals Phase 3:
   // three of the six do).
   const redos = mean(
@@ -496,8 +517,9 @@ it("every rival is a nuisance, none a wall (Rivals Phase 2)", () => {
       `(${[...kinds].map(([k, n]) => `${k} ${(n / far.length).toFixed(2)}`).join(", ")}); ` +
       `Do-Overs ${redos.toFixed(2)} (rivals who make them); ` +
       `confrontations won ${mean((s) => party(s).rival!.won, far).toFixed(1)}, lost ${mean((s) => party(s).rival!.lost, far).toFixed(1)}; ` +
-      `holding ${holding.toFixed(1)} items at the end (ledger never settled); ` +
-      `won: joined ${pct(rate(joined))}, refused ${pct(rate(refused))}, duel won ${pct(rate(duelWon))}; ` +
+      `holding ${holding.toFixed(1)} items at the door; ` +
+      `won: joined ${pct(rate(joined))}, refused ${pct(rate(refused))}, duel won ${pct(rate(duelWon))}, went in first ${pct(rate(duelLost))} (${duelLost.length}); ` +
+      `betrayed ${pct(betrayed)} of ${turncoats.length} joined turncoats at the dragon; ` +
       `joined by rival: ${["bradley", "mirabel", "chuck", "queef"].map((w) => `${w} ${pct(rate(joined.filter((s) => party(s).rival!.who === w)))}`).join(", ")}`,
   );
   expect(who).toHaveLength(6);
@@ -517,8 +539,13 @@ it("every rival is a nuisance, none a wall (Rivals Phase 2)", () => {
     expect(rate(group)).toBeGreaterThan(0.15);
     expect(rate(group)).toBeLessThan(0.45);
   }
-  // That joined runs win less than a duel won is Phase 4's door (its
-  // stakes for refusing), not checked here.
+  // Rivals Phase 4: the door is a real choice. Joining wins less than a
+  // duel won and more than one lost (they went in first); a joinable
+  // turncoat turns in 20% to 45% of the joined runs that reach the dragon.
+  expect(rate(joined)).toBeLessThan(rate(duelWon));
+  expect(rate(joined)).toBeGreaterThan(rate(duelLost));
+  expect(betrayed).toBeGreaterThan(0.2);
+  expect(betrayed).toBeLessThan(0.45);
 });
 
 it("no road is the easy one (The Quest 2.0 Phase 5)", () => {

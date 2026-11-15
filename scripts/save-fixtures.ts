@@ -638,6 +638,49 @@ const situations: [string, GameConfig, Find][] = [
       prev.discarded !== s.discarded &&
       !!party(s).jinx,
   ],
+  // Rivals Phase 4 (2026-11-15): a betrayal decided and played, Sir
+  // Chad's credit, Sensei pinned and saved, Dame Queefington's ballad, and
+  // a rival gone into the lair first.
+  [
+    "realms-rival-turns-at-saved",
+    crawl,
+    (s) =>
+      party(s).rival?.turnsAt !== undefined &&
+      !party(s).rival?.turned &&
+      s.phase === "hidden",
+  ],
+  ["realms-rival-turned", crawl, (s) => !!party(s).rival?.news?.turned],
+  [
+    "realms-rival-chad-credit",
+    crawl,
+    (s) =>
+      s.phase === "complete" &&
+      !party(s).wiped &&
+      party(s).rival?.who === "bradley" &&
+      !!party(s).team?.includes("dungeon.rival-bradley-door"),
+  ],
+  [
+    "realms-rival-sensei-pinned",
+    crawl,
+    (s) =>
+      s.phase === "revealed" &&
+      currentCard(s).id === "dungeon.rival-tutt-pinned",
+  ],
+  [
+    "realms-rival-sensei-saved",
+    crawl,
+    (s) => !!party(s).team?.includes("dungeon.rival-tutt-pinned"),
+  ],
+  [
+    "realms-rival-ballad-queef",
+    crawl,
+    (s) => s.phase === "complete" && party(s).rival?.who === "queef",
+  ],
+  [
+    "realms-rival-went-in-first",
+    crawl,
+    (s) => !!party(s).rival?.news?.first && s.phase === "hidden",
+  ],
   ["crawl-wiped", crawl, (s) => party(s).wiped],
   ["crawl-survived", crawl, (s) => s.phase === "complete" && !party(s).wiped],
 ];

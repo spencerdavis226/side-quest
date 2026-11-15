@@ -27,6 +27,7 @@ import {
   payOffItem,
   redoRoll,
   rivalArsenal,
+  questRecord,
   rivalCut,
   rivalLine,
   rivalProfile,
@@ -35,10 +36,11 @@ import {
   takeOffer,
   type Random,
 } from "../src/game/engine";
-import { returnToCard, rollDice } from "../src/game/dice";
+import { returnToCard, rollBonus, rollDice } from "../src/game/dice";
+import { ballad } from "../src/game/ballad";
 import { parseSession } from "../src/app/persistence";
 import { cards, packs } from "../src/content/catalog";
-import { rivals } from "../src/content/dungeon/rivals";
+import { rivals, senseiPinned } from "../src/content/dungeon/rivals";
 import { RIVAL_NEED } from "../src/content/dungeon/shared";
 import type {
   CardDefinition,
@@ -382,7 +384,8 @@ describe("the rival", () => {
         "dungeon.rival-mirabel-door",
       ),
     );
-    const joined = takeOffer(door, 0, seeded(2));
+    // A draw that keeps her loyal (Phase 4's betrayal is tested below).
+    const joined = takeOffer(door, 0, () => 0.99);
     expect(party(joined)).toMatchObject({
       loot,
       team: ["dungeon.rival-mirabel-door"],
@@ -987,7 +990,8 @@ describe("the rival, Phase 3", () => {
     const door = run1.quest!.stages.find(
       (st) => st.label === "The Lair's Door",
     )!;
-    expect(door.variants).toHaveLength(6);
+    // Six rivals' doors, and Sensei pinned (Phase 4).
+    expect(door.variants).toHaveLength(7);
     const crossroads = run1.quest!.stages.find(
       (st) => st.label === "The Crossroads",
     )!;
@@ -996,5 +1000,175 @@ describe("the rival, Phase 3", () => {
       const offers = r.plea.offers!;
       expect(offers.some((o) => o.deed === "rival-refused")).toBe(true);
     }
+  });
+});
+
+// Rivals Phase 4: betrayal, the credit, Sensei pinned, the losable duel
+// and Dame Queefington's ballad.
+describe("the rival, Phase 4", () => {
+  const door = (who: string, more: Partial<PartyState> = {}, rival = {}) => {
+    const r = rivals.find((x) => x.who === who)!;
+    return advance(
+      place(met(who, STEP.door, more, rival), STEP.door, r.plea.id),
+    );
+  };
+  /** Win the dragon's round face up: its top face (the contest's coin is
+   * heads). */
+  const winRound = (s: SessionState, i: number) =>
+    advance(rollTo(s, currentCard(s).dice!.sides), seeded(i));
+  /** Join with draws in order (the betrayal's chance, then its swing). */
+  const join = (s: SessionState, draws: number[]) => {
+    const queue = [...draws];
+    return takeOffer(s, 0, () => queue.shift() ?? 0.99);
+  };
+
+  it("decides at join whether they turn, and on which swing", () => {
+    // Lady Fingerbang: 25%, and 15% more for each meeting won.
+    const loyal = join(door("mirabel", {}, { won: 0 }), [0.3]);
+    expect(party(loyal).rival?.turnsAt).toBeUndefined();
+    const hated = join(door("mirabel", {}, { won: 1 }), [0.3, 0.5]);
+    expect(party(hated).rival?.turnsAt).toBe(1);
+    roundTrip(hated);
+    // Never decided again: the swing is saved.
+    expect(party(advance(hated)).rival?.turnsAt).toBe(1);
+  });
+
+  it("Lady Fingerbang turns on her swing and walks off with the satchel", () => {
+    const loot: Loot[] = ["die", "smoke"];
+    const joined = join(door("mirabel", { loot: [] }, { took: loot }), [0, 0]);
+    // She turns as the dragon's first round is dealt (swing 0).
+    expect(party(joined).rival).toMatchObject({
+      turnsAt: 0,
+      turned: true,
+      took: loot,
+      news: { turned: true },
+    });
+    expect(party(joined).loot).toEqual([]);
+    expect(party(joined).team).toBeUndefined();
+    expect(party(joined).deeds).toContain("rival-turned");
+    roundTrip(joined);
+  });
+
+  it("waits for a party with 3 hearts or more", () => {
+    const low = join(door("mirabel", { hearts: 2 }, { took: ["die"] }), [0, 0]);
+    expect(party(low).rival?.turned).toBeUndefined();
+    expect(party(low).team).toEqual(["dungeon.rival-mirabel-door"]);
+  });
+
+  it("Dame Queefington sings the dragon's song: that swing is 2 harder", () => {
+    const joined = join(door("queef"), [0, 0]);
+    expect(party(joined).duel?.sung).toBe(true);
+    expect(party(joined).rival?.turned).toBe(true);
+    const dragon = advance(joined);
+    const card = currentCard(dragon);
+    const quiet = {
+      ...dragon,
+      quest: {
+        ...dragon.quest!,
+        party: { ...party(dragon), duel: { ...party(dragon).duel! } },
+      },
+    };
+    delete quiet.quest.party.duel.sung;
+    expect(rollBonus(dragon, card)).toBe(rollBonus(quiet, card) - 2);
+    roundTrip(dragon);
+  });
+
+  it("Sir Chad on the team when the dragon falls takes the credit", () => {
+    const chad = rivals.find((r) => r.who === "bradley")!;
+    const joined = join(door("bradley"), [0.99]);
+    let s = advance(joined);
+    for (let i = 0; i < 20 && s.phase !== "complete"; i++)
+      s = winRound(advance(s), i);
+    expect(questRecord(s)?.won).toBe(true);
+    expect(party(s).team).toContain(chad.plea.id);
+    expect(ballad(s).at(-1)).toMatch(/^and Sir Chad slew .*Allegedly\.$/);
+  });
+
+  it("Sensei beaten twice is pinned at the door: saved for a heart, he lasts one swing", () => {
+    // Two meetings won: the deed that pins him.
+    let s = met("tutt", STEP.crossroads, {}, { won: 1 });
+    const tutt = rivals.find((r) => r.who === "tutt")!;
+    s = fight(place(s, STEP.crossroads, tutt.fights[0].id), 19);
+    expect(party(s).deeds).toContain("rival-won-twice");
+    // The door's variant is the pinned card.
+    const stage = s.quest!.stages.find((st) => st.label === "The Lair's Door")!;
+    const pinned = stage.variants!.find((v) =>
+      v.deeds.includes("rival-won-twice"),
+    )!;
+    expect(pinned.cards.map((c) => c.id)).toEqual([senseiPinned.id]);
+    const at = advance(
+      place(met("tutt", STEP.door, {}, { won: 2 }), STEP.door, senseiPinned.id),
+    );
+    const saved = takeOffer(at, 0, seeded(1));
+    expect(party(saved).hearts).toBe(29);
+    expect(party(saved).team).toEqual([senseiPinned.id]);
+    expect(party(saved).deeds).toContain("rival-saved");
+    roundTrip(saved);
+    // One swing at the dragon, and he is gone.
+    const after = advance(rollTo(advance(saved), 2), seeded(2));
+    expect(party(after).team).toBeUndefined();
+    expect(party(after).deeds).toContain("ally-fell");
+    roundTrip(after);
+  });
+
+  it("a refused rival who wins two swings of the duel goes into the lair first", () => {
+    const r = rivals.find((x) => x.who === "bradley")!;
+    let s = takeOffer(
+      door("bradley", {}, { took: ["die", "shield"] }),
+      1,
+      seeded(3),
+    );
+    expect(currentCard(s).id).toBe(r.duel.id);
+    s = fight(s, 2);
+    expect(currentCard(s).id).toBe(r.duel.id);
+    expect(party(s).rival?.duelLost).toBe(1);
+    roundTrip(s);
+    s = fight(s, 2);
+    expect(finaleStage(s.quest!).label).toBe("The Dragon's Lair");
+    expect(party(s).hits).toBe(1);
+    expect(party(s).rival).toMatchObject({
+      took: [],
+      news: { gone: ["die", "shield"], first: true },
+    });
+    expect(party(s).deeds).toContain("rival-went-first");
+    expect(party(s).deeds).not.toContain("rival-beaten");
+    roundTrip(s);
+  });
+
+  it("Dame Queefington writes the ballad: kind when taken in, vicious when not", () => {
+    const end = (s: SessionState) => {
+      for (let i = 0; i < 30 && s.phase !== "complete"; i++)
+        s = winRound(advance(s), i);
+      return s;
+    };
+    const kind = end(join(door("queef"), [0.99]));
+    const kindLines = ballad(kind);
+    expect(kindLines[0]).toBe("Hear now of heroes, bold and true,");
+    expect(kindLines.at(-1)).toBe("signed, Dame Queefington");
+    expect(kindLines.at(-2)).toBe("and slew the dragon. Bravo. Encore.");
+    // Skipped past without a duel won: vicious. The door's refusal deals
+    // her duel; a party that wipes in it gets her vicious verse.
+    const queef = rivals.find((x) => x.who === "queef")!;
+    let s = takeOffer(door("queef", { hearts: 2, max: 30 }), 1, seeded(4));
+    expect(currentCard(s).id).toBe(queef.duel.id);
+    s = fight(s, 2);
+    expect(s.phase).toBe("complete");
+    expect(ballad(s)[0]).toBe("Here's a song of fools who tried,");
+    expect(ballad(s).at(-2)).toBe("and died. The end. Applause, please.");
+    for (const line of [...kindLines, ...ballad(s)])
+      expect(line.length).toBeLessThanOrEqual(BALLAD_WIDTH);
+  });
+
+  it("rejects a malformed Phase 4 rival", () => {
+    const s = join(door("mirabel", {}, { won: 1 }), [0.3, 0.5]);
+    roundTrip(s);
+    const bad = (change: (r: Rival) => void) => {
+      const next = structuredClone(s);
+      change(next.quest!.party!.rival!);
+      expect(() => parseSession(JSON.stringify(next))).toThrow();
+    };
+    bad((r) => (r.turnsAt = 3));
+    bad((r) => (r.turned = false as unknown as true));
+    bad((r) => (r.duelLost = -1));
   });
 });

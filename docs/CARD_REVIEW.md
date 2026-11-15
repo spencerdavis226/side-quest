@@ -1329,7 +1329,7 @@ the Review column is intentionally blank so you can mark it up.
 
 ## Realms (`dungeon`)
 
-659 cards · 37 sip · 178 group · 0 category · 405 challenge · 39 rule · 296 dice
+660 cards · 37 sip · 179 group · 0 category · 405 challenge · 39 rule · 296 dice
 
 | Review | Title | ID | Cat | Rules | Dice, secret or timer |
 | --- | --- | --- | --- | --- | --- |
@@ -1500,6 +1500,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Chuck Begs to Serve | `dungeon.rival-chuck-door` | group | Chuck the Cuck, on his knees, begs to serve you. He'll just watch. Take him and flip a coin. |  |
 | ☐ | Settle the Debt | `dungeon.rival-gary-door` | group | Gary Shitwhistle tallies your debt at the door. It's itemised. Pay in drinks, or refuse. |  |
 | ☐ | Your Ballad, Half Done | `dungeon.rival-queef-door` | group | Dame Queefington has your ballad half written. How it ends depends on you. Vote. |  |
+| ☐ | Pinned! | `dungeon.rival-tutt-pinned` | group | Sensei Saggynuts, pinned under a claw: 'I was wrong about you.' Save him, or leave him. |  |
 | ☐ | The Gallows Tree | `dungeon.landmark-gallows-tree` | group | A man on the gallows swears he's innocent. Everyone votes: guilty or not. |  |
 | ☐ | The Tourney Field | `dungeon.landmark-tourney-field` | group | A joust, and they need one more fool. Everyone points at the drawer. |  |
 | ☐ | The Toll Keep | `dungeon.landmark-toll-keep` | group | A baron's keep across the road, and the toll is due. The drawer counts their coins aloud. |  |
@@ -1990,7 +1991,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Druid | `dungeon.class-druid` | rule | Talks to the trees. The trees talk back. +1 max heart. +2 to trap d20s. Every heal heals 1 more. |  |
 | ☐ | The Peasant | `dungeon.class-plus-one` | rule | Brought dad's pitchfork. −3 max hearts. −1 to boss d20s. Every 20 is rerolled. |  |
 | ☐ | The Squire | `dungeon.class-intern` | rule | Drops things. −2 max hearts. Natural 1 on a 1 or 2. Every heal heals 1 less. −2 satchel slots. |  |
-| ☐ | The Mimic | `dungeon.class-mimic` | rule | A very confused chest. −5 max hearts. −1 to every battle d20. −1 to monster d20s. +2 satchel slots. |  |
+| ☐ | The Mimic | `dungeon.class-mimic` | rule | A very confused chest. −4 max hearts. −1 to every battle d20. −1 to monster d20s. +2 satchel slots. |  |
 | ☐ | The Dragonslayer | `dungeon.class-dragonslayer` | rule | Has done this before. Knows a weak scale. +1 to boss d20s. |  |
 
 ## Notes for review

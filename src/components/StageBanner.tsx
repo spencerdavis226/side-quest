@@ -246,7 +246,28 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
     ) => rivalLine(profile, key, names(items)) ?? "";
     // Rivals Phase 3: Chuck's coin as he joins, and Chuck walking off.
     const joinCoin = party?.coin?.for === "join" ? party.coin.face : null;
-    if (joinCoin)
+    // Rivals Phase 4: a joined rival turns, or a refused one went in first.
+    if (news?.turned)
+      setShown({
+        key: newsKey,
+        kicker: profile.name,
+        title: "turns on you",
+        line:
+          rivalLine(profile, "turned") ??
+          "Everyone who voted to take them drinks 3.",
+        tone: "crimson",
+      });
+    else if (news?.first)
+      setShown({
+        key: newsKey,
+        kicker: profile.name,
+        title: "went into the lair first",
+        line:
+          rivalLine(profile, "first") ??
+          "They softened it up. Allegedly. Your things went with them.",
+        tone: "crimson",
+      });
+    else if (joinCoin)
       setShown({
         key: newsKey,
         kicker: profile.name,

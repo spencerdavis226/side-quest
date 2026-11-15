@@ -369,7 +369,7 @@ Each phase is one session and one pull request. Each ends with: `npm test`, lint
 
 **Fixtures:** `-rival-chuck-joined-heads`, `-rival-chuck-joined-tails`, `-rival-gary-settled`, `-rival-gary-audit`, `-rival-queef-jinx`.
 
-### Phase 4: betrayal and the door as a real choice
+### Phase 4: betrayal and the door as a real choice (built 2026-11-15; see `docs/STATUS.md`)
 
 **Goal:** joining is a gamble you remember; refusing costs something real.
 
@@ -385,7 +385,7 @@ Each phase is one session and one pull request. Each ends with: `npm test`, lint
    The turn happens when `nextDuel` deals round `turnsAt`. Write it in `discardCard`'s lair branch, set `rival.turned`, and save the move change on `party.duel` so it never re-rolls.
 2. **The betrayal moment** (Phase 5 draws it; Phase 4 sets the news): "Lady Fingerbang turns on you. Everyone who voted to take her drinks 3." Make the vote count by telling the table in the door card's rules that "Dissenters drink 2" and the betrayal line "Everyone who voted yes drinks 3". These are spoken, no tracking.
 3. **Sir Chad's credit:** if the run is won with him on the team (`rival-joined`, not turned), `chronicle.slainBy` records Chad, and the ballad's last line becomes "and Sir Chad slew {dragon}. Allegedly." (fits 44 with short names; give a short form).
-4. **Sensei pinned:** the door's variants gain one for `rival-tutt` + `rival-won-2`. Add a deed `rival-won-2` set in `settleRival` when `won` reaches 2. The card is "Pinned!": "Save him · lose 1 heart" or "Leave him". Saved, he joins at +4 with `calling: ["boss"]` and dies after one swing, sent or not (`ally.once`). Left, the ballad says "and left Sensei to the dragon,".
+4. **Sensei pinned:** the door's variants gain one for `rival-tutt` + `rival-won-twice`. Add a deed `rival-won-twice` set in `settleRival` when `won` reaches 2. The card is "Pinned!": "Save him · lose 1 heart" or "Leave him". Saved, he joins at +4 with `calling: ["boss"]` and dies after one swing, sent or not (`ally.once`). Left, the ballad says "and left Sensei to the dragon,".
 5. **Dame Queefington's ballad:** `ballad.ts` gains a rival override. Joined or duel won: her flattering set; otherwise her vicious set. Both are sets of five lines (draft them with the 44-character limit), signed "Dame Queefington".
 6. **The duel's refusal stakes:** refusing any rival and losing the duel means they walk into the lair first. The dragon starts with `hits: 1` already landed by them ("They softened it up. Allegedly."), they take the credit, and the ledger is lost for good. Winning returns everything and a trophy (built).
 7. **Ally balance:** the joined rival's grudge bonus (Phase 2) makes the most hated rival the strongest ally. Check that "joined" runs win more than "refused and lost" runs, but fewer than "refused and won" runs, so each choice has a cost.
