@@ -28,7 +28,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   // The King's Road (was the Cellar).
   "keg-golem": [
     duel(
-      "He climbs back up, dripping. Arm-wrestle your left neighbor, playing the troll. Lose: drink 3.",
+      "He climbs back up, loincloth gone. Arm-wrestle your left neighbor, playing the troll. Lose: drink 3.",
     ),
   ],
   "rat-king": [
@@ -38,7 +38,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "the-landlord": [
     roll(
-      "He gets up and swings a tree at you. Roll 2d6.",
+      "He swings a tree at you. It might be his dick. Roll 2d6.",
       pair(
         "The tree connects. Drink 4.",
         "You duck it. Give 4.",
@@ -73,13 +73,13 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "cask-queen": [
     duel(
-      "She demands a toast. Give her one, ten seconds, no ums; the table judges. Fail: drink 3.",
+      "She demands a dirty toast. Give her one, ten seconds, no ums; the table judges. Fail: drink 3.",
     ),
   ],
   "chateau-ghoul": [
     roll(
-      "He sniffs you for honey. Roll 2d6 to prove you have none.",
-      pair("You have honey on you. Drink 4.", "Empty-handed. Give 4."),
+      "He sniffs your crotch for honey. Roll 2d6 to prove you have none.",
+      pair("He finds some. Don't ask where. Drink 4.", "Empty-handed. Give 4."),
     ),
   ],
   "the-sommelier": [
@@ -131,7 +131,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
     roll(
       "He offers you a job at the manor. Roll d6 to negotiate.",
       moves(
-        ["Stable hand. Drink 4.", "Paid in turnips. Drink 3."],
+        ["Stable hand: you shovel shit. Drink 4.", "Paid in turnips. Drink 3."],
         [
           "A room and a horse. Give 3.",
           "A title. Give 3.",

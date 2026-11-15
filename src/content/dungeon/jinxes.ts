@@ -15,8 +15,8 @@ const jinxes: Readonly<Record<string, Jinx>> = {
     rule: "The cursed player screams whenever anyone says 'head'. Misses one: drink 1.",
   },
   "vinegar-vampire": {
-    name: "Thorny",
-    rule: "The cursed player says 'ouch' before every sip. Forgets: drink 1.",
+    name: "Pricked",
+    rule: "The cursed player says 'ouch, my prick' before every sip. Forgets: drink 1.",
   },
   "count-corkula": {
     name: "Howler",
@@ -36,7 +36,7 @@ const jinxes: Readonly<Record<string, Jinx>> = {
   },
   "the-lich-lord": {
     name: "Undead",
-    rule: "The cursed player groans like a zombie before every sip. Forgets: drink 1.",
+    rule: "The cursed player moans like a horny zombie before every sip. Forgets: drink 1.",
   },
   "the-ghost-of-closing": {
     name: "Last Rites",
@@ -63,12 +63,12 @@ const jinxes: Readonly<Record<string, Jinx>> = {
     rule: "The cursed player gasps like a fish after every sip. Forgets: drink 1.",
   },
   "text-them-eel": {
-    name: "My Dearest",
-    rule: "The cursed player starts every sentence with 'My dearest'. Forgets: drink 1.",
+    name: "Daddy",
+    rule: "The cursed player calls everyone 'Daddy'. Slip: drink 1.",
   },
   "garlic-wraith": {
-    name: "Smoky",
-    rule: "The cursed player covers their mouth to talk. Forgets: drink 1.",
+    name: "Dragon Breath",
+    rule: "The cursed player's breath is rank: they cover their mouth to talk. Forgets: drink 1.",
   },
   "sour-mash-witch": {
     name: "Hag-Ridden",
@@ -87,8 +87,8 @@ const jinxes: Readonly<Record<string, Jinx>> = {
     rule: "The cursed player may not smile. Caught smiling: drink 1.",
   },
   "hypothermia-hal": {
-    name: "Totally Fine",
-    rule: "The cursed player says 'I'm totally fine' before every sip. Forgets: drink 1.",
+    name: "Shrinkage",
+    rule: "The cursed player says 'it's the cold' before every sip. Forgets: drink 1.",
   },
   "the-snow-bartender": {
     name: "Bubbles",
@@ -107,8 +107,8 @@ const jinxes: Readonly<Record<string, Jinx>> = {
     rule: "The cursed player sits perfectly still while anyone else rolls. Moves: drink 1.",
   },
   "house-lights": {
-    name: "Dazzled",
-    rule: "The cursed player compliments the dragon before every sip. Forgets: drink 1.",
+    name: "Dragon Crush",
+    rule: "The cursed player flirts with the dragon before every sip. Forgets: drink 1.",
   },
   "surge-pricing": {
     name: "Thunderstruck",

@@ -2,6 +2,13 @@
 
 Updated 2026-11-15. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Done 2026-11-15: Realms voice pass, Phase 2 (King's Road, Old Forest, Marsh)
+
+Copy only (`docs/REALMS_VOICE_PLAN.md`): 64 cards rewritten across `cellar.ts` (17), `wine.ts` (27) and `brewery.ts` (20) (titles such as The Horny Oak, Deez Nuts, Morning Wood, Wacky Tobacky, Nice Pecker, Swamp Farts, Crabs, The One-Eyed Snake; the Drowned Lich's curse is Moist), six boss beats (`phases.ts`), six curses across all regions (`jinxes.ts`: Pricked, Daddy, Dragon Breath, Shrinkage, Dragon Crush, the horny zombie) and two landmarks. Bosses and elites keep their menace; every drink number is unchanged.
+
+- **Checked**: `npm test` 633 passed; lint; build (budgets pass); `cards:review`; Chromium `crawl.spec.ts` 41 of 41; Chromium `test:sweep` 12 of 12.
+- **Next**: Phase 3 (Haunted Crypt, Goblin Mines, Wizard's Tower).
+
 ## Done 2026-11-15: Realms voice pass, Phases 0 and 1 (the run's framing)
 
 Owner: crude CABIIN humor across The Quest, "don't be timid", evergreen, no inside jokes; the League stays clean. Plan: `docs/REALMS_VOICE_PLAN.md`; the voice and its samples: "Realms: the crude voice" in `docs/CARD_VOICE_REFERENCE.md` (Phase 0, shipped here: the owner asked to pursue the plan and merge without stopping). Copy only: no ID, number or rule changed.

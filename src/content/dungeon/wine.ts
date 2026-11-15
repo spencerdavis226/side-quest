@@ -34,23 +34,23 @@ export const wine: FloorCards = {
     monster(
       3,
       "boxed-wine-golem",
-      "The Talking Oak",
-      "An old oak asks why you're in its forest. Give it a reason, then roll d20.",
-      "It isn't convinced, and drops a branch on you. Drink 3.",
-      "It laughs, and the branches part. Give 3.",
-      { crit: "It laughs so hard it drops every acorn it has. Give 6." },
+      "The Horny Oak",
+      "An old oak keeps calling you 'sweet sapling'. Turn it down gently, then roll d20.",
+      "It drops a branch on your head out of spite. Drink 3.",
+      "It cries sap and lets you pass. Give 3.",
+      { crit: "It sobs so hard it drops every acorn it has. Give 6." },
     ),
     monster(
       3,
       "cork-imp",
       "Pixie Swarm",
-      "A swarm of pixies, giggling and pulling your hair. Roll d6.",
+      "Pixies, giggling and pulling your arm hair. And other hair. Roll d6.",
       "",
       "",
       {
         roll: moves(
           [
-            "One gets in your ear. Drink 3, head tilted.",
+            "One flies up your nose. Drink 3, head tilted.",
             "They tie your laces together. Drink 3.",
           ],
           [
@@ -78,19 +78,19 @@ export const wine: FloorCards = {
     trial(
       3,
       "wine-mom-banshee",
-      "The Howling Hag",
-      "Howl at the moon against your left neighbor. The table calls the quieter: drink 3.",
+      "The Moaning Hag",
+      "Moan like a hag in heat against your left neighbor. The table calls the quieter: drink 3.",
     ),
     monster(
       3,
       "rose-slime",
       "The Fairy Ring",
-      "A ring of red mushrooms, and you're standing in it. Dance a little, then roll d20.",
-      "The fairies make you keep dancing. Drink 3.",
+      "A ring of red mushrooms, and you ate some. Dance a little, then roll d20.",
+      "You're tripping balls and can't stop dancing. Drink 3.",
       "You dance out of the ring. A puff of spores follows you. Give 2.",
       {
         loot: "smoke",
-        fumble: "You dance until dawn. Drink 6.",
+        fumble: "You dance naked until dawn. Drink 6.",
       },
     ),
     // 2d6, and doubles are a better win.
@@ -103,7 +103,7 @@ export const wine: FloorCards = {
       "",
       {
         roll: pair(
-          "You follow it into a bog. Drink 3, and say 'which way?'",
+          "You follow it into a bog, nuts deep. Drink 3, and say 'which way?'",
           "You blow it out like a candle. Give 3 to whoever looks most lost.",
           "It leads someone else astray. Everyone else drinks 3.",
         ),
@@ -118,7 +118,7 @@ export const wine: FloorCards = {
       "Monster",
       "barrel-mimic",
       "The Hollow Log",
-      "On three, everyone points at who'd hide in a hollow log first. Most fingers: drink 2.",
+      "On three, everyone points at who'd fuck a hollow log first. Most fingers: drink 2.",
     ),
     mishap(
       3,
@@ -131,15 +131,15 @@ export const wine: FloorCards = {
     trial(
       3,
       "sangria-sprite",
-      "The Acorn Sprite",
-      "Your right neighbor throws a mimed acorn. Catch it in your mouth. Booed: drink 3.",
+      "Deez Nuts",
+      "Your right neighbor throws you a mimed nut. Catch it in your mouth. Booed: drink 3.",
     ),
     monster(
       3,
       "vinegar-vampire",
       "The Bramble Witch",
-      "A witch made of thorns, sure you trampled her garden. Roll d20.",
-      "You did trample it. Drink 3, and say sorry to a plant.",
+      "A witch made of thorns, sure you pissed in her garden. Roll d20.",
+      "You did piss in it. Drink 3, and say sorry to a plant.",
       "You compliment her roses. She blushes thorns. Give 3.",
     ),
     trial(
@@ -163,15 +163,15 @@ export const wine: FloorCards = {
     trial(
       3,
       "the-toast",
-      "Ode to an Oak",
-      "Praise your right neighbor like an ancient tree for 20 seconds. Anyone laughs: you drink 3.",
+      "Morning Wood",
+      "Praise your right neighbor's wood like an ancient oak for 20 seconds. Anyone laughs: you drink 3.",
     ),
     trap(
       3,
       "falling-rack",
       "Falling Branches",
       "A storm in the canopy, and the branches start coming down. Roll d20.",
-      "Bonked. Drink 3.",
+      "Bonked in the nuts. Drink 3.",
       "You catch the last one. Give 2, and hand someone your 'branch'.",
     ),
     trap(
@@ -179,7 +179,7 @@ export const wine: FloorCards = {
       "merlot-stairs",
       "The Mossy Slope",
       "A slope of wet moss, and the path is at the bottom. Stand up, then roll d20.",
-      "Down on your backside, in green. Drink 2 standing up.",
+      "Down on your ass, and your pants are green now. Drink 2 standing up.",
       "Not a smudge on you. Give 2.",
       { crit: "You slide down it like a sled. Give 4." },
     ),
@@ -189,7 +189,7 @@ export const wine: FloorCards = {
       "cork-mines",
       "Snares",
       "Hunters' snares all over the path. Some of them twitch. Roll d20.",
-      "Snap. Hung up by one ankle. Drink 2.",
+      "Snap. Hung upside down, shirt over your face, nipples out. Drink 2.",
       "You tiptoe through. Give 2 to whoever walks loudest.",
     ),
     ambush(
@@ -197,14 +197,14 @@ export const wine: FloorCards = {
       "fruit-fly-swarm",
       "Midge Cloud",
       "A cloud of midges off the pond, and they brought friends. Roll d20.",
-      "In your mouth. Drink 2 with a hand over your glass.",
+      "In your mouth. You swallow. Drink 2 with a hand over your glass.",
       "Swatted. Give 2.",
     ),
     ambush(
       3,
       "book-club",
       "The Elf Patrol",
-      "Four elves who find humans adorable. Name a song you'd sing them, then roll d20.",
+      "Four elves who think humans are hot in a gross way. Name a song you'd sing them, then roll d20.",
       "They pat you on the head. Drink 2.",
       "They're charmed and wave you on. Give 2.",
     ),
@@ -212,7 +212,7 @@ export const wine: FloorCards = {
       3,
       "Monster",
       "cork-goblin",
-      "The Woodpecker",
+      "Nice Pecker",
       "A woodpecker goes to work on the tree beside you. Everyone does a woodpecker; the worst drinks 2.",
     ),
     mishap(
@@ -226,12 +226,12 @@ export const wine: FloorCards = {
       3,
       "tannin-troll",
       "The Moss Troll",
-      "A troll covered in moss, and very itchy about it. Roll 2d6.",
+      "A troll with moss where moss shouldn't grow. Very itchy. Roll 2d6.",
       "",
       "",
       {
         roll: pair(
-          "It scratches on you. Drink 3, then say 'moss troll' five times fast.",
+          "It scratches its crotch on you. Drink 3, then say 'moss troll' five times fast.",
           "You scratch its back for it. Give 3.",
           "A pair! It scratches itself to sleep. Everyone else drinks 2.",
         ),
@@ -248,7 +248,7 @@ export const wine: FloorCards = {
       "sediment-pit",
       "The Sinkhole",
       "Leaves over a hole, and the hole is full of mud. Roll d20.",
-      "You wade through. Drink 2, and squelch.",
+      "You wade through. It isn't all mud. Drink 2, and squelch.",
       "You vault it. Give 2.",
     ),
     ambush(
@@ -265,9 +265,9 @@ export const wine: FloorCards = {
       3,
       "wine-roulette",
       "Mushroom Roulette",
-      "Six mushrooms, one of them poison. Win, then cash out or eat again, harder. Roll d20.",
-      "Poison. Drink 3.",
-      "Delicious. Give 2.",
+      "Six mushrooms: five get you high, one kills. Win, then cash out or eat again. Roll d20.",
+      "Poison. You shit yourself. Drink 3.",
+      "You see God. Give 2.",
       ["draught", "draught", "shield"],
     ),
     relic(
@@ -302,21 +302,21 @@ export const wine: FloorCards = {
       3,
       "cellar-masters-coat",
       "A Hunter's Pack",
-      "A pack hung on a branch: rope, jerky and a smoke bomb. Chew some pretend jerky, loudly.",
+      "A pack on a branch: rope, jerky and a smoke bomb. Chew the pretend jerky, loudly and sexually.",
       "smoke",
     ),
     treasure(
       3,
       "the-magnum",
-      "Healing Herbs",
-      "A patch of healing herbs in a sunbeam. Sniff your drink like a healer, and brew a potion.",
+      "Wacky Tobacky",
+      "A patch of 'healing herbs'. Everyone takes a pretend hit and coughs. Brew a potion.",
       "draught",
     ),
     shrine(
       3,
       "tasting-room",
       "The Elf Feast",
-      "An elf feast, left out for travelers. Everyone toasts the cook.",
+      "An elf feast, left out for travelers. It's all salad. Everyone toasts the cook, sadly.",
     ),
     shrine(
       3,
@@ -334,7 +334,7 @@ export const wine: FloorCards = {
       3,
       "the-vintner",
       "The Mushroom Man",
-      "An old man with a basket swears every mushroom is safe. He insists you taste one.",
+      "An old man with huge pupils swears every mushroom is safe. He's been tripping since spring.",
       [
         { label: "Taste · drink 3", loot: "draught" },
         { label: "Eat the red one", cost: 2, loot: "candy" },
@@ -352,7 +352,7 @@ export const wine: FloorCards = {
       3,
       "the-bung-hole",
       "The Hollow Tree",
-      "A hollow tree to crawl through, or the long way round. Something inside giggles.",
+      "A hollow tree to crawl through, or the long way round. Something inside moans.",
       ["Long way round", "The hollow tree"],
     ),
     gamble(
@@ -371,7 +371,7 @@ export const wine: FloorCards = {
       "wine-snob",
       "The Elf Archer",
       "She has never missed, and she's very polite about it. Roll d20.",
-      "An arrow through your hat. Drink 4, and tip it.",
+      "An arrow through your codpiece. Drink 4, and check.",
       "You hide behind a tree she can't see around. Give 4.",
       [
         trinket("Elven Arrow", { roll: { boss: 1 } }),
@@ -394,7 +394,7 @@ export const wine: FloorCards = {
       3,
       "cellar-master",
       "The Woodcutter",
-      "He knows every tree in this forest, and you broke one. Roll d20.",
+      "He knows every tree in this forest, and you pissed on his favorite. Roll d20.",
       "He makes you stack wood. Drink 4.",
       "You blame a beaver. He believes you. Give 4.",
       [
@@ -423,7 +423,7 @@ export const wine: FloorCards = {
       `He means to eat you first. ${SIDE_BETS} Roll d20.`,
       d20(
         BOSS_NEED[0],
-        "He takes a bite. Drink 4.",
+        "He takes a bite out of your ass. Drink 4.",
         "You knock out a fang. Give 5.",
         { crit: "He runs off yelping. Everyone else drinks 3." },
       ),
@@ -463,7 +463,7 @@ export const wine: FloorCards = {
       "A bear older than the forest, woken from a very long nap. Roll d20.",
       d20(
         BOSS_NEED[0],
-        "He sits on you. Drink 4.",
+        "He sits on your face. Drink 4.",
         "You hand him honey, and he wanders off. Give 5.",
         { crit: "He falls back asleep on the spot. Everyone else drinks 3." },
       ),

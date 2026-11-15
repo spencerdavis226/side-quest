@@ -47,20 +47,20 @@ export const brewery: FloorCards = {
       6,
       "Monster",
       "yeast-beast",
-      "Swamp Gas",
-      "A bubble of swamp gas rises from the mud. Everyone puffs their cheeks; first to laugh drinks 2.",
+      "Swamp Farts",
+      "The swamp farts. Then it farts again. Everyone puffs their cheeks; first to laugh drinks 2.",
     ),
     monster(
       6,
       "craft-bro",
       "The Frog Prince",
-      "A frog insists he's a prince, and he would like a kiss. Roll d6.",
+      "A frog insists he's a prince, and he'd like a kiss. With tongue. Roll d6.",
       "",
       "",
       {
         roll: moves(
           [
-            "You kiss him. Still a frog. Drink 3.",
+            "You kiss him. Tongue. Still a frog. Drink 3.",
             "You kiss him again, to be sure. Drink 3.",
           ],
           [
@@ -83,7 +83,7 @@ export const brewery: FloorCards = {
       6,
       "brewers-ghost",
       "The Bog Body",
-      "A body preserved in peat sits up and asks how it looks. Look it over, nod slowly, then roll d20.",
+      "A bog body sits up and asks if it's still hot. Look it over, nod slowly, then roll d20.",
       "You tell it the truth. Drink 3.",
       "You lie beautifully. Give 3, then lie to someone about their outfit.",
       {
@@ -121,7 +121,7 @@ export const brewery: FloorCards = {
       6,
       "keg-ninja",
       "The Lizard Warrior",
-      "A lizardfolk warrior, fast as a snake and twice as rude. Roll 2d6.",
+      "A lizardfolk warrior, fast as a snake, in a loincloth that's losing the fight. Roll 2d6.",
       "",
       "",
       {
@@ -137,15 +137,15 @@ export const brewery: FloorCards = {
     trial(
       6,
       "bottle-cap-crab",
-      "The Giant Crab",
-      "A giant crab guards the boardwalk. Flick a coaster to the far edge, two tries. Miss: drink 3.",
+      "Crabs",
+      "A giant crab. Now you've all got crabs. Flick a coaster to the edge, two tries. Miss: drink 3.",
     ),
     mishap(
       6,
       "Monster",
       "gruit-druid",
       "The Toad Auction",
-      "A toad auctions a jar of glowing swamp water. Bid sips clockwise; top bid drinks them.",
+      "A toad auctions a jar of glowing swamp piss. Bid sips clockwise; top bid drinks them.",
     ),
     trial(
       6,
@@ -157,7 +157,7 @@ export const brewery: FloorCards = {
       6,
       "the-perfect-pour",
       "The Ferryman's Song",
-      "Pole a mime boat across the marsh, singing, for 15 seconds. Anyone laughs: you drink 3.",
+      "Pole a mime boat across the marsh, singing a filthy shanty, 15 seconds. Anyone laughs: you drink 3.",
     ),
     trial(
       6,
@@ -176,7 +176,7 @@ export const brewery: FloorCards = {
       "bottle-bombs",
       "Popping Pods",
       "A field of seed pods, ripe and ready to burst. Roll d20.",
-      "Seeds everywhere. Drink 2.",
+      "Seed everywhere. Drink 2.",
       "You dive behind a log. Give 2 to whoever got splashed.",
     ),
     trap(
@@ -193,7 +193,7 @@ export const brewery: FloorCards = {
       "hot-wort",
       "Quicksand",
       "The path turns to quicksand under your boots. Roll d20.",
-      "Down to your knees. Drink 2.",
+      "Down on your knees, and everyone's staring. Drink 2.",
       "You moonwalk across. Moonwalk to your seat, then give 2.",
     ),
     ambush(
@@ -208,9 +208,9 @@ export const brewery: FloorCards = {
       6,
       "bottle-gnomes",
       "Bog Imps",
-      "Two bog imps stealing boots saw you see them. Whistle innocently, then roll d20.",
+      "Two bog imps humping in the reeds saw you see them. Whistle innocently, then roll d20.",
       "Hush money. Drink 2.",
-      "You take a cut. Give 2.",
+      "They pay you to forget. Give 2.",
     ),
     mishap(
       6,
@@ -224,7 +224,7 @@ export const brewery: FloorCards = {
       "hazy-wraith",
       "The Fog Wraith",
       "A ghost made of marsh fog. You can't see through it, or around it. Roll d20.",
-      "It gets in your lungs. Drink 3.",
+      "It smells like a fart. It is one. Drink 3.",
       "You wave it away. Give 3 to whoever looks foggiest right now.",
     ),
     monster(
@@ -255,7 +255,7 @@ export const brewery: FloorCards = {
     trap(
       6,
       "loose-hose",
-      "The Water Snake",
+      "The One-Eyed Snake",
       "A water snake whips across the path. Roll d20 to jump it.",
       "It wraps your ankles. Drink 2.",
       "You leap it. Give 2 to whoever jumped.",
@@ -285,7 +285,7 @@ export const brewery: FloorCards = {
       "The Glowing Pool",
       "A pool of water glowing green. Drink from it, or leave it.",
       11,
-      "It was mostly frog. Drink 4.",
+      "It was mostly frog piss. Drink 4.",
       "It's incredible. Name the pool, then give 3.",
       ["Leave it", "Drink it"],
       { loot: "draught" },
@@ -319,7 +319,7 @@ export const brewery: FloorCards = {
       6,
       "beer-garden",
       "The Fireflies",
-      "A clearing full of fireflies. Everyone toasts their left neighbor.",
+      "Fireflies, blinking in pairs. They're fucking. Everyone toasts their left neighbor.",
     ),
     merchant(
       6,
@@ -336,7 +336,7 @@ export const brewery: FloorCards = {
       6,
       "hop-dealer",
       "The Eel Seller",
-      "He sells eels out of his coat, and wants you to agree they're the best eels.",
+      "He sells eels out of his trench coat. One isn't an eel. Agree they're the best eels.",
       [
         { label: "Agree · drink 2", loot: "round" },
         { label: "Wrestle an eel", cost: 2, loot: "candy" },
@@ -418,7 +418,7 @@ export const brewery: FloorCards = {
       "head-brewer",
       "The Leech Queen",
       "She's fed on every traveler since 1098, and she likes your type. Roll d20.",
-      "She takes a sip of you. Drink 4.",
+      "She sucks your neck. Enjoy the hickey. Drink 4.",
       "She asks your blood type. Make one up out loud, then give 4.",
       [
         trinket("Queen's Fang", { hearts: 1, roll: { boss: 1 } }),
@@ -431,7 +431,7 @@ export const brewery: FloorCards = {
       6,
       "the-fermenter",
       "The Bog Hydra",
-      "Five heads, all hungry, and two of them are arguing. Roll d20.",
+      "Five heads, all hungry, and two of them are making out. Roll d20.",
       d20(
         BOSS_NEED[0],
         "A head gets you. Drink 4.",
@@ -452,7 +452,7 @@ export const brewery: FloorCards = {
       `A cart-sized frog in a crown. ${SIDE_BETS} Roll d20.`,
       d20(
         BOSS_NEED[0],
-        "He sits on you. Drink 4.",
+        "He sits on you, naked. Drink 4.",
         "You knock his crown into the bog. Give 5.",
         { fumble: "He swallows you. Finish your drink." },
       ),
@@ -476,8 +476,8 @@ export const brewery: FloorCards = {
       ),
       {
         jinx: {
-          name: "Damp",
-          rule: "Nobody says 'wet'; it's 'damp'. Slip: drink 1.",
+          name: "Moist",
+          rule: "Nobody says 'wet'; it's 'moist'. Slip: drink 1.",
         },
         drops: [
           trinket("Lich's Rosary", { heal: 1 }),
@@ -507,10 +507,10 @@ export const brewery: FloorCards = {
       6,
       "brewery-owner",
       "The Baron of the Bog",
-      "He just drained half the marsh for a manor, and he's celebrating on you. Roll d20.",
+      "He drained half the marsh for a manor, and he's pissing on you to celebrate. Roll d20.",
       d20(
         BOSS_NEED[0],
-        "He sprays you with bog water. Drink 4.",
+        "He sprays you. It isn't bog water. Drink 4.",
         "You read his deed. The marsh owns him. Give 5.",
         { crit: "You flood the manor. Everyone else drinks 3." },
       ),
