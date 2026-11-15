@@ -69,7 +69,7 @@ export const regionRares: Record<string, CardDefinition[]> = {
         "rare-sword-stone",
         "The Sword in the Stone",
         "challenge",
-        "A sword in a stone, and a queue of failed knights. The drawer may pull. Roll d20.",
+        "A sword in a stone, and a queue of failed knights, all compensating. The drawer may pull. Roll d20.",
         {
           ...d20(
             17,
@@ -185,7 +185,7 @@ export const regionRares: Record<string, CardDefinition[]> = {
       7,
       "rare-wizard-home",
       "The Wizard Is Home",
-      "The wizard is in, in slippers, and delighted to have guests. Everyone compliments the tower.",
+      "The wizard's home, in slippers and nothing else, and delighted. Everyone compliments the tower.",
       [
         { label: "Tea · drink 4", loot: "candy" },
         { label: "An argument", elite: true },
@@ -277,7 +277,7 @@ export const regionRares: Record<string, CardDefinition[]> = {
       8,
       "rare-old-slayer",
       "The Old Dragonslayer",
-      "An old dragonslayer on a rock, missing an arm. Everyone asks him one question.",
+      "An old dragonslayer on a rock, missing an arm and one ball. Everyone asks him one question.",
       [
         { label: "Listen · drink 3", ...LORE },
         { label: "Spar", elite: true },

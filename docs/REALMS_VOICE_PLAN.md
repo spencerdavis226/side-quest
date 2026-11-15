@@ -1,6 +1,8 @@
-# Realms voice pass (plan)
+# Realms voice pass (plan; done 2026-11-15)
 
 Owner, 2026-11-15: give The Quest (the `dungeon` pack, Realms) the crude CABIIN voice the rivals introduced, across most of its cards, and keep it distinct from the League.
+
+Status: all phases shipped on 2026-11-15 (PRs #94 to #97; Phases 3 and 4 shared one). See `docs/STATUS.md`.
 
 ## Owner decisions
 
