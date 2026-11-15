@@ -261,7 +261,9 @@ describe("unlocks in a run", () => {
     const hard = count(heroic);
     expect(hard).toBeGreaterThan(70);
     expect(hard).toBeLessThan(130);
-  }, 60_000);
+    // 2,000 whole sessions: about 43 s here, over 60 s on a busy CI runner
+    // (2026-11-15), so it has the balance files' 120 s.
+  }, 120_000);
 });
 
 describe("Heroic mode", () => {

@@ -17,8 +17,8 @@ Built from Phase 6 of `docs/RIVALS_PLAN.md`; card total 1,954 (Realms 666).
 - **The Chronicle screen**: a Rivals section, each rival's medallion and record, the nemesis marked, an unmet rival a "?".
 - **Saves**: `badRival` now accepts any dealt introduction of the rival (their returning one included). Fixture `2026-11-15-realms-rival-back` (a run the Chronicle had met every rival in, past the returning introduction). 136 fixtures load.
 - **Not built**: "The Ex" (left to the owner, as the plan says).
-- **Tests**: `tests/chronicle.test.ts` (22): the rival record and nemesis kept and cleared, the six feats, a malformed rival record dropped alone, the nemesis swap's threshold and the returning deed, and a run without memory dealing exactly as before; `chronicle.spec.ts`: the Rivals section.
-- **Checked**: `npm test` 632 passed; lint; typecheck; `cards:review` (1,954); build (budgets pass: runtime 5,292 KiB of 6,144, initial 163.8 KiB gzip); `tests/dungeon.balance.test.ts` 8 of 8 at 4,000 runs (unchanged); Chromium `test:sweep` 12 of 12; Chromium `test:e2e` 187 of 187; the Chronicle's Rivals section screenshotted at 390x844.
+- **Tests**: `tests/chronicle.test.ts` (18): the rival record and nemesis kept and cleared, the six feats, a malformed rival record dropped alone, the nemesis swap's threshold and the returning deed, and a run without memory dealing exactly as before; `chronicle.spec.ts`: the Rivals section.
+- **Checked**: `npm test` 632 passed; lint; typecheck; `cards:review` (1,954); build (budgets pass: runtime 5,292 KiB of 6,144, initial 163.8 KiB gzip); `tests/dungeon.balance.test.ts` 8 of 8 at 4,000 runs (unchanged); Chromium `test:sweep` 12 of 12; the slow "dragons are rare" test (2,000 whole sessions, 43 s here and on `main`) timed out at 60 s on CI and now has 120 s; Chromium `test:e2e` 187 of 187; the Chronicle's Rivals section screenshotted at 390x844.
 - **Not run**: WebKit (CI runs it), the League balance file (nothing the League reads changed), a phone.
 
 ## Done 2026-11-15: the Rivals, Phase 5 (presentation)
