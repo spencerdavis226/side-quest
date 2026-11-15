@@ -115,6 +115,7 @@ export function finaleCardIds(rules: PackQuest): string[] {
       questStages(rules).flatMap((stage) => [
         ...stage.cardIds,
         ...(stage.elite ?? []),
+        ...(stage.ambush ?? []),
         ...(stage.inserts ?? []).flatMap((i) => i.cardIds),
         // The Quest 2.0 Phase 6: rares and variants.
         ...(stage.rare?.cardIds ?? []),
@@ -261,8 +262,13 @@ export function questRecord(s: SessionState) {
     // A fight dealt again until it falls (a boss, closing time's rival):
     // a trophy on Pub Crawl's end screen (2026-10-25).
     // An echo (optional, Phase 6) is not a trophy even when it is a fight.
+    // The rival's duel (2026-11-15) is optional too, and a trophy once it
+    // has been fought and won.
     const trophy =
-      stage.pick === 1 && !stage.optional && stage.cards.some((c) => !!c.hits);
+      stage.pick === 1 &&
+      (stage.optional
+        ? cards.some((c) => !!c.rival && !!c.hits)
+        : stage.cards.some((c) => !!c.hits));
     // Whether the stage can deal a fight at all, read from its whole pool
     // (a lone card with none, such as a summons or a dragon sign, is not a
     // floor on the end screen, reached or not).
@@ -345,6 +351,7 @@ export const stageCards = (
   uniqueIds([
     ...(Array.isArray(stage?.cards) ? stage.cards : []),
     ...(Array.isArray(stage?.elite) ? stage.elite : []),
+    ...(Array.isArray(stage?.ambush) ? stage.ambush : []),
     ...(Array.isArray(stage?.inserts)
       ? stage.inserts.flatMap((i) => (Array.isArray(i?.cards) ? i.cards : []))
       : []),
@@ -378,6 +385,7 @@ export function finaleCard(
     const card =
       find(stage?.cards) ??
       find(stage?.elite) ??
+      find(stage?.ambush) ??
       (Array.isArray(stage?.inserts)
         ? stage.inserts.reduce<CardDefinition | undefined>(
             (got, i) => got ?? find(i?.cards),

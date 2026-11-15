@@ -36,7 +36,9 @@ const kits: Readonly<Record<string, OmenEffect>> = {
   bouncer: { roll: { monster: 1 } }, // Family Sword
   mercenary: { hearts: 1 }, // Chainmail Vest
   druid: { heal: 1 }, // Pet Ferret
-  "plus-one": { hurt: { trap: 1 } }, // Smock
+  // The Smock cost a heart on every trap until the rival (2026-11-15)
+  // took the Peasant under its 1% floor.
+  "plus-one": {}, // Smock
   intern: { heal: -1 }, // Oversized Helmet
   mimic: { roll: { monster: -1 } }, // Its Own Lid
 };
@@ -417,15 +419,15 @@ export const classes: CardDefinition[] = [
     [
       {
         title: "The Angry Peasant",
-        omen: { hearts: -3, roll: { boss: -1 }, reroll20: true, satchel: 2 },
+        omen: { hearts: -3, roll: { boss: -1 }, reroll20: true },
       },
       {
         title: "The Angry Mob",
-        omen: { hearts: -3, roll: { boss: -1 }, reroll20: true, satchel: 2 },
+        omen: { hearts: -3, reroll20: true },
       },
       {
         title: "The Peasant Revolt",
-        omen: { hearts: -3, roll: { boss: -1 }, reroll20: true, satchel: 2 },
+        omen: { hearts: -3, reroll20: true },
       },
     ],
   ),
@@ -464,7 +466,7 @@ export const classes: CardDefinition[] = [
       },
       {
         title: "Storage Unit",
-        omen: { hearts: -5, satchel: 5, roll: { all: -2 } },
+        omen: { hearts: -5, satchel: 5, roll: { all: -1 } },
       },
       {
         title: "Treasure Vault",

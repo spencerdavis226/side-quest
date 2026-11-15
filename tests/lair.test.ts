@@ -9,12 +9,12 @@ import {
   questRecord,
   settleBattle,
   type Random,
+  takeOffer,
 } from "../src/game/engine";
 import { returnToCard, rollDice, rollTarget } from "../src/game/dice";
 import { parseSession } from "../src/app/persistence";
 import { cards, packs, validateCatalog } from "../src/content/catalog";
 import {
-  CLOSING_HITS,
   DRAGON_HEALTH,
   ENRAGE_HURT,
 } from "../src/content/dungeon/shared";
@@ -54,26 +54,23 @@ const fight = (s: SessionState, face: number, random = seeded(7)) =>
 const dragonOf = (s: SessionState) =>
   finaleCard(s.quest!, s.quest!.finale[LAIR])!;
 
-/** A run at the Lair's Door, the Company felled with one natural 20 so the dragon's first round is dealt the way a game deals it. */
+/** A run at the Lair's Door, passed by its second plaque (no rival was
+ * met, so no duel follows), so the dragon's first round is dealt the way a
+ * game deals it. */
 function atDragon(seed = 1, hearts = 30): SessionState {
   let s = takeRoads(createSession(crawl, cards, packs, seeded(seed)));
   const q = s.quest!;
-  const finale = [...q.finale];
-  finale[CLOSING] = "dungeon.closing-last-table";
   s = {
     ...s,
     discarded: CLOSING,
-    previousId: finale[CLOSING - 1],
+    previousId: q.finale[CLOSING - 1],
     quest: {
       ...q,
-      finale,
       step: CLOSING,
-      // One swing already landed on the door (three since Phase 6).
-      party: { ...q.party!, hits: CLOSING_HITS - 2, max: hearts, hearts },
+      party: { ...q.party!, max: hearts, hearts },
     },
   };
-  // A natural 20 lands both of its hits on its own d20 beat.
-  s = fight(s, 20, seeded(seed));
+  s = takeOffer(advance(s), 1, seeded(seed));
   expect(s.quest!.step).toBe(LAIR);
   return s;
 }

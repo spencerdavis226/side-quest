@@ -1,5 +1,5 @@
 import type { CardDefinition, Phase } from "../../game/types";
-import { CLOSING_NEED, d20, moves, pair, type Roll } from "./shared";
+import { d20, moves, pair, type Roll } from "./shared";
 
 // Boss phases (2026-10-25): a boss's later beats, so a fight dealt again is
 // a different fight. Each card's own d20 opens it; each hit landed moves it
@@ -253,33 +253,6 @@ const beats: Readonly<Record<string, Beat[]>> = {
       "He asks what he missed. Name three new things in ten seconds. Fall short: drink 4.",
     ),
   ],
-  // The lair's door: the Gilded Company again.
-  "closing-last-table": [
-    duel(
-      "Bradley wants the doorway. On go, you and he (left neighbor) stand, spin, sit. Last down: drink 4.",
-    ),
-  ],
-  "closing-the-boys-toast": [
-    duel(
-      "Your turn: toast the Gilded Company, sincerely, for ten seconds. Laugh: drink 4.",
-    ),
-  ],
-  "closing-last-round": [
-    roll(
-      "Chadwick grabs the potion back. Roll 2d6.",
-      pair("He spills it on you. Drink 4.", "It's yours. Give 4."),
-    ),
-  ],
-  "closing-dance-off": [
-    duel(
-      "Round two: you and Thaddeus (left neighbor) dance, no music. The table votes. He wins: drink 4.",
-    ),
-  ],
-  "closing-the-rematch": [
-    duel(
-      "Thumb war with Chadwick (your left neighbor), best of three. Lose: drink 4.",
-    ),
-  ],
   // The side quests' keepers (Realms, 2026-11-03).
   "the-proprietor": [
     duel(
@@ -308,12 +281,10 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
 };
 
-/** The d20 a boss's opener needs: its later rolls take the same odds.
- * Closing time can open on another roll; it fights at `CLOSING_NEED`. */
+/** The d20 a boss's opener needs: its later rolls take the same odds. */
 const needOf = (card: CardDefinition) => {
   const win = card.dice?.outcomes?.find((o) => o.win);
   if (card.dice?.count === 1 && card.dice.sides === 20 && win) return win.min;
-  if (card.id.startsWith("dungeon.closing-")) return CLOSING_NEED;
   throw new Error(`A phased boss opens on a d20: ${card.id}`);
 };
 

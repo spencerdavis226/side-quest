@@ -67,9 +67,10 @@ const HIDDEN: Record<string, Hidden> = {
     line: "He tells you about the dragon.",
     reward: { lore: true },
   },
-  "dungeon.queue-knows-the-owner": {
+  // The rival's own (2026-11-15; the city gate's charter held it before).
+  "dungeon.rival-bradley-spar": {
     face: 20,
-    line: "The charter was yours all along.",
+    line: "He drops his charter.",
     reward: { loot: "round" },
   },
 };

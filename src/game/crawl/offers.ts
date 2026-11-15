@@ -13,6 +13,7 @@ import {
 } from "./party";
 import { joinTeam, throwAt } from "./team";
 import { discard } from "./discard";
+import { restoreAll } from "./rival";
 // Plaques (merchants, forks, inns, pleas) and push-your-luck pulls.
 /** A revealed merchant or fork in a crawl: one of its offers puts it aside. */
 export function awaitingOffer(s: SessionState) {
@@ -79,6 +80,8 @@ export function takeOffer(
   if (offer.lore) party = addLore(party);
   if (offer.recruit && currentCard(s).ally)
     party = joinTeam(party, currentCard(s).id);
+  // The rival hands back what they hold (2026-11-15).
+  if (offer.restore) party = restoreAll(party, { ...q, party });
   // The Quest 2.0 Phase 6: a choice the road remembers.
   if (offer.deed) party = addDeed(party, offer.deed);
   let finale = q.finale;

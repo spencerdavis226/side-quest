@@ -149,15 +149,10 @@ const situations: [string, GameConfig, Find][] = [
     (s) => party(s).hits > 0 && isBossCard(currentCard(s)),
   ],
 
-  // A class at its last level (one line since 2026-10-31); and the
-  // Quarter-Zips on the stairs.
+  // A class at its last level (one line since 2026-10-31). The
+  // Quarter-Zips on the stairs keep their 2026-10-25 fixture; the rival
+  // (2026-11-15) replaced them.
   ["crawl-last-level", crawl, (s) => (party(s).form ?? 0) >= 2],
-  [
-    "crawl-rival-on-the-stairs",
-    crawl,
-    (s) =>
-      s.phase === "revealed" && currentCard(s).id.startsWith("dungeon.stairs-"),
-  ],
   // Equipment (2026-10-25): gear worn in two slots, and spoils waiting that
   // would replace a piece.
   [
@@ -357,14 +352,6 @@ const situations: [string, GameConfig, Find][] = [
     crawl,
     (s) => s.phase === "revealed" && currentCard(s).ribbon === "An Echo",
   ],
-  [
-    "realms-door-humbled",
-    crawl,
-    (s) =>
-      s.phase === "revealed" &&
-      s.quest!.stages.some((st) => st.harder !== undefined) &&
-      currentCard(s).id.startsWith("dungeon.closing-"),
-  ],
   // Heroic mode (The Quest 2.0 Phase 7): a run past its first region.
   [
     "realms-heroic-mid",
@@ -490,6 +477,76 @@ const situations: [string, GameConfig, Find][] = [
     "league-legendary-caught",
     league,
     (s) => !!party(s).team?.some((id) => id.startsWith("pokemon.legendary-")),
+  ],
+  // The rival (2026-11-15): just met with something taken, cutting in on
+  // a fight and on a find, standing in a room's place, an item handed
+  // back, at the door, taken in, walked out with the satchel, and the duel
+  // mid-fight and won.
+  [
+    "realms-rival-met",
+    crawl,
+    (s) => !!party(s).rival?.news?.took && party(s).rival!.won === 0,
+  ],
+  [
+    "realms-rival-meddling",
+    crawl,
+    (s) => party(s).rival?.cut === "meddle" && s.phase === "revealed",
+  ],
+  [
+    "realms-rival-meddled-roll",
+    crawl,
+    (s) => party(s).rival?.cut === "meddle" && !!s.roll?.returned,
+  ],
+  [
+    "realms-rival-sniping",
+    crawl,
+    (s) => party(s).rival?.cut === "snipe" && s.phase === "hidden",
+  ],
+  [
+    "realms-rival-ambush",
+    crawl,
+    (s) =>
+      s.phase === "revealed" &&
+      !!currentCard(s).rival &&
+      (party(s).rival?.cuts?.ambush ?? 0) > 0 &&
+      !currentCard(s).hits &&
+      !!currentCard(s).battle,
+  ],
+  [
+    "realms-rival-handed-back",
+    crawl,
+    (s) => !!party(s).rival?.news?.back,
+  ],
+  [
+    "realms-rival-at-the-door",
+    crawl,
+    (s) =>
+      s.phase === "revealed" &&
+      !!currentCard(s).rival &&
+      !!currentCard(s).offers,
+  ],
+  [
+    "realms-rival-joined",
+    crawl,
+    (s) =>
+      !!party(s).team?.some((id) => /rival-.*-door$/.test(id)) &&
+      s.phase === "revealed",
+  ],
+  [
+    "realms-rival-duel",
+    crawl,
+    (s) =>
+      s.phase === "revealed" &&
+      /rival-.*-duel$/.test(currentCard(s).id) &&
+      party(s).hits > 0,
+  ],
+  [
+    "realms-rival-beaten",
+    crawl,
+    (s) =>
+      !!party(s).deeds?.includes("rival-beaten") &&
+      party(s).hits === 0 &&
+      s.phase === "hidden",
   ],
   ["crawl-wiped", crawl, (s) => party(s).wiped],
   ["crawl-survived", crawl, (s) => s.phase === "complete" && !party(s).wiped],

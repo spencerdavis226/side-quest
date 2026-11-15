@@ -164,7 +164,7 @@ describe("landmarks", () => {
     };
     expect(check(() => {})).not.toThrow();
     const region = (p: typeof dungeon) => {
-      const slot = p.quest!.finale[4];
+      const slot = p.quest!.finale[3];
       return (
         "oneOf" in slot
           ? slot.oneOf[0][0]

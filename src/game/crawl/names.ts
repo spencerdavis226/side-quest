@@ -1,5 +1,6 @@
 import type { CardDefinition, QuestState, SessionState } from "../types";
 import { finaleCard, stageKind } from "./stages";
+import { rivalProfile } from "./rival";
 // Text filled at display time and never saved.
 /** `{dragon}` names the run's dragon (Realms, 2026-11-03): the dragon is
  * picked when the game starts, so the King's Summons can name it and the
@@ -9,7 +10,9 @@ export const DRAGON = "{dragon}";
  * "The" lowered ("the Fire Caverns"); authors use it mid-sentence only (The
  * Quest 2.0 Phase 3, 2026-11-14). */
 export const LAIR = "{lair}";
-const PLACEHOLDER = /\{(dragon|lair)\}/;
+/** `{rival}` names the run's rival (2026-11-15), once introduced. */
+export const RIVAL = "{rival}";
+const PLACEHOLDER = /\{(dragon|lair|rival)\}/;
 /** The run's dragon and its lair. The dragon is the card in the run with a
  * lair fight, else (a save from before the battle) the last finale card;
  * the lair is the last region of rooms before the dragon's stage. */
@@ -41,15 +44,17 @@ export function runNames(quest: QuestState | undefined) {
     lair: lairStage?.label.replace(/^The /, "the "),
     /** The dragon's card ID (its colours). */
     id: dragon?.id,
+    rival: rivalProfile(quest)?.profile.name,
   };
 }
 /** A line with the run's names filled in. */
 export function fillNames(quest: QuestState | undefined, text: string) {
   if (!PLACEHOLDER.test(text)) return text;
-  const { dragon, lair } = runNames(quest);
+  const { dragon, lair, rival } = runNames(quest);
   let out = text;
   if (dragon) out = out.split(DRAGON).join(dragon);
   if (lair) out = out.split(LAIR).join(lair);
+  if (rival) out = out.split(RIVAL).join(rival);
   return out;
 }
 /** Whether any line a card shows holds a placeholder: its rules, dice
@@ -80,12 +85,13 @@ export function withNames(
 ): CardDefinition {
   if (!s.quest || !named(card)) return card;
   const json = JSON.stringify(card);
-  const { dragon, lair } = runNames(s.quest);
+  const { dragon, lair, rival } = runNames(s.quest);
   // Names are plain words; written into JSON they keep it well formed.
   const safe = (name: string) => JSON.stringify(name).slice(1, -1);
   let out = json;
   if (dragon) out = out.split(DRAGON).join(safe(dragon));
   if (lair) out = out.split(LAIR).join(safe(lair));
+  if (rival) out = out.split(RIVAL).join(safe(rival));
   return JSON.parse(out) as CardDefinition;
 }
 /** A card with a `secretPool` holds one of them for the whole game: picked by

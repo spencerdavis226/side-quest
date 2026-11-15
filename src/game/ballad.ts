@@ -4,6 +4,7 @@ import { omenForm } from "./crawl/party";
 import { questRecord } from "./crawl/stages";
 import { natural } from "./crawl/discard";
 import { runNames } from "./crawl/names";
+import { rivalProfile } from "./crawl/rival";
 
 // The ballad (The Quest 2.0 Phase 3, 2026-11-14): the end screen writes the
 // run as a short verse. Pure, so the Chronicle (Phase 7) can keep a copy.
@@ -75,7 +76,20 @@ export function ballad(s: SessionState): string[] {
 
   // 3. Who went with them. Allies and deeds come later; until then the
   // Company of one.
-  lines.push("alone, as heroes go,");
+  // The rival (2026-11-15) has the line when the run had one.
+  const verse = rivalProfile(q)?.profile.verse;
+  const deeds = party.deeds ?? [];
+  lines.push(
+    !verse
+      ? "alone, as heroes go,"
+      : deeds.includes("rival-joined") &&
+          !deeds.includes("rival-turned") &&
+          verse.joined
+        ? verse.joined
+        : deeds.includes("rival-beaten")
+          ? verse.beaten
+          : verse.ahead,
+  );
 
   // 4. The end.
   if (record.won) {

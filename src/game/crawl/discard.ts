@@ -23,6 +23,7 @@ import {
 import { bossBeat, hitsNeeded, isBossCard, spoilsOnWin } from "./bosses";
 import { joinTeam, settleThrow, strikeOutcome } from "./team";
 import { moveOf, nextDuel, roundOf } from "./lair";
+import { rivalFalls, settleRival, stalk, turnCoat } from "./rival";
 // Putting a card aside: the verdict, the party settled, the next card dealt.
 /** The rest of a run, re-paced so the badges still missing keep the run's
  * pace from `from` (the next draw) on. */
@@ -135,9 +136,12 @@ export function discard(
     team,
     fainted: after.fainted ?? sent,
   };
-  // The road remembers an ally's death (The Quest 2.0 Phase 6).
-  if (s.quest && finaleCard(s.quest, sent)?.ally)
-    fallen = addDeed(fallen, "ally-fell");
+  // The rival, joined, does not die for anyone (2026-11-15): she walks out
+  // with the satchel. Any other ally's death the road remembers (The
+  // Quest 2.0 Phase 6).
+  const ally = s.quest ? finaleCard(s.quest, sent)?.ally : undefined;
+  if (ally?.turncoat) fallen = addDeed(turnCoat(fallen), "rival-turned");
+  else if (ally) fallen = addDeed(fallen, "ally-fell");
   if (!team.length) delete fallen.team;
   return { ...next, quest: { ...next.quest!, party: fallen } };
 }
@@ -196,7 +200,24 @@ function discardCard(
   if (s.quest?.due && party) {
     const q = s.quest;
     const nat = natural(card, s.roll);
-    let next = settleParty(party, card, outcome, q, nat, spoil);
+    // The rival sniping this card (2026-11-15): the item it gives goes on
+    // their ledger, never into the satchel, and its hearts are not healed.
+    const snipe =
+      party.rival?.cut === "snipe" &&
+      !card.hits &&
+      (outcome === null || outcome === "won");
+    const sniped = snipe ? card.reward?.loot : undefined;
+    let next = settleParty(
+      party,
+      snipe && card.reward
+        ? { ...card, reward: { ...card.reward, loot: undefined, heal: 0 } }
+        : card,
+      outcome,
+      q,
+      nat,
+      spoil,
+    );
+    next = settleRival(next, card, outcome, q, discarded, sniped);
     // A hidden result (The Quest 2.0 Phase 6): the face rolled brings what
     // its outcome holds, and the run remembers the card.
     const hidden =
@@ -240,9 +261,10 @@ function discardCard(
     // oldest living ally dies in the party's place (never one sent in and
     // lost on this card: it is already gone) and the party stands on one.
     if (next.hearts === 0) {
-      const stand = (next.team ?? []).find(
-        (id) => id !== sent && !!finaleCard(q, id)?.ally,
-      );
+      const stand = (next.team ?? []).find((id) => {
+        const ally = finaleCard(q, id)?.ally;
+        return id !== sent && !!ally && !ally.turncoat;
+      });
       if (stand) {
         const team = next.team!.filter((id) => id !== stand);
         next = addDeed(
@@ -307,6 +329,8 @@ function discardCard(
       // The Quest 2.0 Phase 4: a keeper's ally joins, and its lore is told.
       if (card.ally) next = joinTeam(next, card.id);
       if (card.reward?.lore) next = addLore(next);
+      // The rival's duel falls: what they held comes back (2026-11-15).
+      next = rivalFalls(next, card, { ...q, party: next });
       // A badge restocks the starter's item, room permitting; in a crawl
       // without badges (Pub Crawl), any boss does.
       const restock = omenEffect(q)?.restock;
@@ -368,6 +392,8 @@ function discardCard(
       q = next;
       if (!dropped) break;
     }
+    // The rival may turn up on the card about to be dealt (2026-11-15).
+    q = stalk(q, discarded, random, card);
     const coming = finaleCard(q, q.finale[q.step + 1]);
     const party =
       coming?.lairFight && q.party

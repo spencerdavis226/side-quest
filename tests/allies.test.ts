@@ -35,7 +35,7 @@ const seeded = (seed: number): Random => {
   };
 };
 // With both roads taken (Phase 5): the Road Out at 4, the Signpost at 20.
-const STEP = { floor1: 5, landing1: 15, keeper: 19, floor2: 21 };
+const STEP = { floor1: 4, landing1: 15, keeper: 19, floor2: 21 };
 const party = (s: SessionState) => s.quest!.party!;
 const roundTrip = (s: SessionState) =>
   expect(parseSession(JSON.stringify(s))).toEqual(s);

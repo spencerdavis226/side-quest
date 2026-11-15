@@ -143,7 +143,7 @@ export const FEATS: { key: string; name: string; line: string }[] = [
 
 /** How many landmarks and rares there are to see (Full House, Collector). */
 export const LANDMARK_COUNT = 27;
-export const RARE_COUNT = 24;
+export const RARE_COUNT = 22;
 /** The rest of the Chronicle's "of n": classes (the joke ones too, the
  * Dragonslayer not), echoes and hidden results. */
 export const CLASS_COUNT = 18;
@@ -344,7 +344,11 @@ export function recordRun(
   if (singleBlow(s)) earned.push("one-blow");
   if (won && party.hearts === 1) earned.push("by-a-thread");
   if (won && !party.jinx) earned.push("untouched");
-  if (atDragon && party.fainted === "dungeon.closing-bradley-begs")
+  if (
+    atDragon &&
+    (party.fainted === "dungeon.closing-bradley-begs" ||
+      party.fainted === "dungeon.rival-bradley-door")
+  )
     earned.push("bradley");
   if (won && deeds.includes("quest-taken")) earned.push("long-way");
   if (won && deeds.includes("quest-walked")) earned.push("straight-there");

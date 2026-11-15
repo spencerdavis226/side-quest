@@ -128,7 +128,7 @@ describe("the names a run fills in", () => {
       const dragon = q.stages
         .flatMap((st) => st.cards)
         .find((c) => c.id === q.finale.at(-1))!;
-      const region = q.stages.at(-4)!;
+      const region = q.stages.at(-5)!;
       expect(runNames(q)).toEqual({
         id: dragon.id,
         dragon: dragon.title,
@@ -179,7 +179,7 @@ describe("the names a run fills in", () => {
     expect(runNames(q)).toEqual({
       id: last.id,
       dragon: last.title,
-      lair: q.stages.at(-4)!.label.replace(/^The /, "the "),
+      lair: q.stages.at(-5)!.label.replace(/^The /, "the "),
     });
   });
 });

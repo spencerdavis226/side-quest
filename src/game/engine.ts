@@ -13,6 +13,7 @@ import { awaitingCatch } from "./crawl/team";
 import { awaitingVerdict, discard } from "./crawl/discard";
 import { withNames, withSecret } from "./crawl/names";
 import { atRound, roundOf } from "./crawl/lair";
+import { withRival } from "./crawl/rival";
 // The engine's public entry (Quest 2.0 Phase 0, 2026-11-13): the crawl's
 // pieces live in `./crawl/` and are re-exported here, so every import of
 // `engine` keeps working. Modules outside `src/game` import from here only.
@@ -107,6 +108,12 @@ export {
   skipRoll,
 } from "./crawl/discard";
 export { DRAGON, LAIR, fillNames, runNames } from "./crawl/names";
+export {
+  RIVAL_CAP,
+  RIVAL_GAP,
+  rivalCut,
+  rivalProfile,
+} from "./crawl/rival";
 export {
   atRound,
   isLairFight,
@@ -266,6 +273,7 @@ export function createSession(
           pick,
           cardIds,
           elite,
+          ambush,
           inserts,
           route,
           rare,
@@ -280,6 +288,7 @@ export function createSession(
         ...(route !== undefined ? { route } : {}),
         cards: snapshot(cardIds),
         ...(elite?.length ? { elite: snapshot(elite) } : {}),
+        ...(ambush?.length ? { ambush: snapshot(ambush) } : {}),
         ...(inserts?.length
           ? {
               inserts: inserts.map(({ at, cardIds }) => ({
@@ -385,10 +394,17 @@ export function currentCard(s: SessionState) {
   const duel = s.quest.party?.duel;
   if (card.lairFight && duel)
     return withNames(s, withSecret(s, atRound(card, roundOf(duel))));
-  // A boss with phases reads the beat its hits have reached.
-  return withNames(
-    s,
-    withSecret(s, card.phases ? atBeat(card, bossBeat(s.quest, card)) : card),
+  // A boss with phases reads the beat its hits have reached. A card the
+  // rival cuts in on wears their name (2026-11-15).
+  return withRival(
+    s.quest,
+    withNames(
+      s,
+      withSecret(
+        s,
+        card.phases ? atBeat(card, bossBeat(s.quest, card)) : card,
+      ),
+    ),
   );
 }
 /** The card put aside last, as it read then: a boss's beat (`party.beat`). */

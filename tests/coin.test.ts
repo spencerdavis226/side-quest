@@ -21,7 +21,7 @@ import { parseSession } from "../src/app/persistence";
 import { cards, packs } from "../src/content/catalog";
 import { flip } from "../src/content/author";
 import { echoes } from "../src/content/dungeon/echoes";
-import { CLOSING_HITS, DRAGON_HEALTH } from "../src/content/dungeon/shared";
+import { DRAGON_HEALTH } from "../src/content/dungeon/shared";
 import type { GameConfig, SessionState } from "../src/game/types";
 import { takeRoads } from "./roads";
 
@@ -41,7 +41,7 @@ const seeded = (seed: number): Random => {
     return (seed - 1) / 2147483646;
   };
 };
-const ROAD = 4;
+const ROAD = 3;
 const REGION3_LAST = 39;
 const ECHO = 40;
 const CLOSING = 41;
@@ -69,14 +69,9 @@ const at = (s: SessionState, step: number, more: object = {}) => ({
 });
 function atDragon(seed = 1, hearts = 30): SessionState {
   let s = takeRoads(createSession(crawl, cards, packs, seeded(seed)));
-  const finale = [...s.quest!.finale];
-  finale[CLOSING] = "dungeon.closing-last-table";
-  s = at({ ...s, quest: { ...s.quest!, finale } }, CLOSING, {
-    hits: CLOSING_HITS - 2,
-    max: hearts,
-    hearts,
-  });
-  s = fight(s, 20, seeded(seed));
+  s = at(s, CLOSING, { max: hearts, hearts });
+  // The door's second plaque: no rival was met, so no duel follows.
+  s = takeOffer(advance(s), 1, seeded(seed));
   expect(s.quest!.step).toBe(LAIR);
   return s;
 }

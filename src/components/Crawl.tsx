@@ -37,6 +37,8 @@ import {
   partyTeam,
   runNames,
   questRecord,
+  rivalCut,
+  rivalProfile,
   replaces,
   stageKind,
   wantedBoss,
@@ -316,7 +318,9 @@ export type StripDialog =
   | "jinx"
   | "matchup"
   // The Quest 2.0 Phase 4: the dragon lore found.
-  | "lore";
+  | "lore"
+  // The run's rival and what they hold (2026-11-15).
+  | "rival";
 
 /** The strip under the top row in a crawl (2026-10-17): what the table acts
  * on, each a chip that opens its own dialog. The League's type edge on the
@@ -338,6 +342,7 @@ export function CrawlStrip({
   const { words } = theme;
   const jinx = party.jinx ? finaleCard(quest, party.jinx)?.jinx : undefined;
   const locked = badgesLocked(session, theme);
+  const rival = rivalProfile(quest)?.profile;
   const caught = partyTeam(quest);
   const gear = record.boons.filter((b) => !isOmenBoon(b));
   const bagEmpty = !party.loot.length && !caught.length && !gear.length;
@@ -488,6 +493,21 @@ export function CrawlStrip({
           </>,
           locked,
         )}
+      {/* The rival (2026-11-15): their name, and how many of the party's
+          items they hold; lit while they cut in on the card in play. */}
+      {rival &&
+        chip(
+          `tag-rival${party.rival?.cut && session.phase !== "complete" ? " cutting" : ""}`,
+          `Your rival, ${rival.name}: holding ${party.rival!.took.length} of your items`,
+          "rival",
+          <>
+            <CrawlIcon name="ambush" theme={theme} />
+            <span className="chip-name">{rival.name}</span>
+            {party.rival!.took.length > 0 && (
+              <b>{party.rival!.took.length}</b>
+            )}
+          </>,
+        )}
       {jinx &&
         words.jinx &&
         chip(
@@ -562,6 +582,9 @@ export function CardStakes({
       ? card.boon?.name
       : undefined;
   const jinx = card.jinx;
+  // The rival's card (2026-11-15): the items a loss (or the card itself)
+  // hands them.
+  const takes = card.rival?.takes;
   const prizes = card.press?.prizes;
   // The dragon's move this round (The Quest 2.0): its own heart cost, win
   // or lose, read from the move the card's rules came from.
@@ -580,6 +603,7 @@ export function CardStakes({
     !hits &&
     !trinket &&
     !jinx &&
+    !takes &&
     !prizes &&
     !target &&
     !joins
@@ -608,6 +632,15 @@ export function CardStakes({
           >
             <b>−{move.damage}</b>
             <CrawlIcon name="heart" theme={theme} />
+          </span>
+        ) : null}
+        {takes ? (
+          <span
+            className="stake stake-loss stake-takes"
+            aria-label={`${card.battle ? "Losing hands your rival" : "Your rival takes"} ${takes} of your items`}
+          >
+            <b>−{takes}</b>
+            <CrawlIcon name="satchel" theme={theme} />
           </span>
         ) : null}
         {jinx && (
@@ -1287,6 +1320,58 @@ export function SpoilsSheet({
   );
 }
 
+/** The rival's dialog (2026-11-15): who they are, the rule the table keeps
+ * when they show up, how they are cutting in right now, what they hold and
+ * how the meetings have gone. */
+function RivalPanel({
+  quest,
+  theme,
+}: {
+  quest: QuestState;
+  theme: CrawlTheme;
+}) {
+  const rival = quest.party?.rival;
+  const profile = rivalProfile(quest)?.profile;
+  if (!rival || !profile) return null;
+  const cut = rivalCut(quest);
+  return (
+    <section className="crawl-rival">
+      <p className="crawl-curse crawl-jinx">
+        <CrawlIcon name="ambush" theme={theme} />
+        <strong>{profile.name}</strong>
+        <span>{profile.ritual}</span>
+      </p>
+      {cut && (
+        <p className="rival-cut">
+          <strong>{cut.kind === "meddle" ? "Meddling" : "Sniping"}:</strong>{" "}
+          {cut.line}
+        </p>
+      )}
+      <h3 className="bag-heading">
+        Holding <small>{rival.took.length}</small>
+      </h3>
+      {rival.took.length ? (
+        <ul className="bag-list rival-ledger" aria-label="What your rival holds">
+          {rival.took.map((item, i) => (
+            <BagRow
+              key={i}
+              mark={<CrawlIcon name={item} theme={theme} />}
+              name={theme.loot[item].name}
+              detail="Yours. Beat them to take one back."
+            />
+          ))}
+        </ul>
+      ) : (
+        <p className="bag-hint">Nothing of yours. Yet.</p>
+      )}
+      <p className="bag-hint">
+        Beaten {rival.won}, lost to {rival.lost}. A lost meeting hands them
+        what its card shows; a won one takes an item back.
+      </p>
+    </section>
+  );
+}
+
 /** An ally's calling and ritual, in one line (The Quest 2.0 Phase 4). */
 export const allyLine = (ally: NonNullable<CardDefinition["ally"]>) => {
   const calling = ally.calling.includes("any")
@@ -1573,6 +1658,7 @@ export function CrawlRecord({
           </span>
         </p>
       )}
+      {part === "rival" && quest && <RivalPanel quest={quest} theme={theme} />}
       {show("lore") && lore && (
         <section className="crawl-lore">
           <p className="bag-hint">

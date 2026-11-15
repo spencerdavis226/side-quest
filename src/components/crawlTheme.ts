@@ -175,7 +175,7 @@ const SCENES: [RegExp, string][] = [
   [/Frozen Pass/, "frost"],
   [/Fire Caverns/, "fire"],
   [/Sunken Coast/, "coast"],
-  [/City Gate|Crossroads|Lair.s Door/, "rival"],
+  [/City Gate|Crossroads|Lair.s Door|Your Rival|The Duel/, "rival"],
   // A dragon sign (The Quest 2.0 Phase 3) is a glimpse of the lair's light.
   [/Dragon.s Lair|Dragon Sign|An Echo/, "lair"],
   [/Inn\b/, "inn"],

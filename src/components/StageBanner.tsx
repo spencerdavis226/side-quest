@@ -9,8 +9,11 @@ import {
 import type { SessionState } from "../game/types";
 import {
   fillNames,
+  finaleCard,
   finaleStage,
   questStages,
+  rivalCut,
+  rivalProfile,
   wantedBoss,
 } from "../game/engine";
 import { crawlTheme } from "./crawlTheme";
@@ -36,7 +39,10 @@ export function StageBanner({ session }: { session: SessionState }) {
       ? [
           banner.mode,
           banner.intro,
-          banner.wanted && `${banner.wantedWord}: ${banner.wanted}`,
+          banner.wanted &&
+            (banner.wantedWord
+              ? `${banner.wantedWord}: ${banner.wanted}`
+              : banner.wanted),
         ]
           .filter(Boolean)
           .join(". ")
@@ -63,7 +69,8 @@ export function StageBanner({ session }: { session: SessionState }) {
         <strong>{intro}</strong>
         {wanted && (
           <span className="banner-wanted">
-            {wantedWord}: {wanted}
+            {wantedWord ? `${wantedWord}: ` : ""}
+            {wanted}
           </span>
         )}
       </div>
@@ -94,6 +101,29 @@ function stageBanner(session: SessionState) {
       landmark: mark.title,
     };
   }
+  // The rival, uninvited (2026-11-15): cutting in on the card being dealt,
+  // or standing in a room's place.
+  const cut = rivalCut(quest);
+  const dealt = finaleCard(quest, quest.finale[quest.step]);
+  const ambush =
+    !cut && stage.size > 1 && dealt?.rival
+      ? rivalProfile(quest)?.profile
+      : undefined;
+  if ((cut || ambush) && !entranceFor(session))
+    return {
+      key: `rival:${session.discarded}`,
+      stage: `rival:${session.discarded}`,
+      mode: cut?.name ?? ambush!.name,
+      intro: cut
+        ? cut.kind === "meddle"
+          ? "is meddling"
+          : "wants what this gives"
+        : "is in your way",
+      tone: "crimson" as const,
+      art: undefined,
+      wanted: cut?.line,
+      wantedWord: undefined,
+    };
   if (stage.index !== 0) return null;
   // A Quest region's road-so-far moment (M4, The Quest 2.0 Phase 5)
   // plays instead of its banner.
@@ -157,6 +187,11 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
   const party = quest?.party;
   const passed = party?.passed;
   const seen = useRef(passed);
+  // What the rival just took or handed back (2026-11-15), once per card.
+  const news = party?.rival?.news;
+  const rivalName = rivalProfile(quest)?.profile.name;
+  const newsKey = news ? `rival-${session.discarded}` : null;
+  const seenNews = useRef(newsKey);
   const [shown, setShown] = useState<{
     key: string;
     kicker: string;
@@ -179,6 +214,32 @@ export function PartyNewsBanner({ session }: { session: SessionState }) {
       });
     }
   }, [passed, quest, party]);
+  useEffect(() => {
+    const before = seenNews.current;
+    seenNews.current = newsKey;
+    if (!quest || !news || !rivalName || newsKey === before) return;
+    const names = (items: string[] = []) =>
+      items
+        .map((item) => crawlTheme(quest.packId).loot[item as "die"].name)
+        .join(" and ");
+    setShown(
+      news.took?.length
+        ? {
+            key: newsKey!,
+            kicker: rivalName,
+            title: `took your ${names(news.took)}`,
+            line: "Beat them to take one back.",
+            tone: "crimson",
+          }
+        : {
+            key: newsKey!,
+            kicker: rivalName,
+            title: `gave back your ${names(news.back)}`,
+            line: "",
+            tone: "gold",
+          },
+    );
+  }, [newsKey, news, rivalName, quest]);
   const clear = useCallback(() => setShown(null), []);
   // Held while a moment plays (a boss's spoils and its jinx lifted land
   // together): the banner sweeps once the moment is done.
