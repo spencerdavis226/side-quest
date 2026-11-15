@@ -333,7 +333,9 @@ function validateParty(s: SessionState, p: PartyState | undefined) {
       (!p.coin ||
         typeof p.coin !== "object" ||
         (p.coin.face !== 1 && p.coin.face !== 2) ||
-        (p.coin.for !== "luck" && p.coin.for !== "road"))) ||
+        (p.coin.for !== "luck" &&
+          p.coin.for !== "road" &&
+          p.coin.for !== "join"))) ||
     // Deeds (Phase 6): short names, each once; found: cards already dealt.
     (p.deeds !== undefined &&
       (!Array.isArray(p.deeds) ||
@@ -438,7 +440,13 @@ function badRival(s: SessionState, rival: NonNullable<PartyState["rival"]>) {
         (news.took !== undefined && !items(news.took)) ||
         (news.back !== undefined && !items(news.back)) ||
         (news.gone !== undefined && !items(news.gone)) ||
-        (news.poached !== undefined && !ally(news.poached)))) ||
+        (news.poached !== undefined && !ally(news.poached)) ||
+        (news.left !== undefined && !ally(news.left)))) ||
+    // Rivals Phase 3: Chuck's coin, and Gary's Whistle blown.
+    (rival.joinFace !== undefined &&
+      rival.joinFace !== 1 &&
+      rival.joinFace !== 2) ||
+    (rival.hushed !== undefined && rival.hushed !== true) ||
     // Rivals Phase 2: a Do-Over spent only on a card they cut in on; a
     // count of Do-Overs; allies they poached; the duel's tricks played.
     (rival.redone !== undefined &&

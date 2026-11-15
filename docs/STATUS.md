@@ -2,9 +2,25 @@
 
 Updated 2026-11-15. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Next task (2026-11-15): the Rivals, Phase 3 (rivals four to six)
+## Next task (2026-11-15): the Rivals, Phase 4 (betrayal and the door as a real choice)
 
-Build Phase 3 of `docs/RIVALS_PLAN.md`: Chuck the Cuck, Gary Shitwhistle and Dame Queefington (21 cards), their door endings, Gary's Whistle, and the three fixtures Phase 2 could not capture from seeded play (a squat, an invoice waiting, a curse laid: no built rival uses those verbs, so they wait for Gary and Dame Queefington; the engine and unit tests for all three are in). Phase 8 of The Quest 2.0 (the owner's table) still waits on the owner.
+Build Phase 4 of `docs/RIVALS_PLAN.md`: the betrayal roll at join (Lady Fingerbang, Dame Queefington), Sir Chad's credit, Sensei pinned (`rival-won-2`), Dame Queefington's ballad sets, the refusal's stakes (a lost duel means they go in first), and the check that joined runs win less than a duel won (Phase 2 measured joined 40%, duel won 41%; Phase 3 joined 45%, duel won 40%: today the join is the better bet). Phase 8 of The Quest 2.0 (the owner's table) still waits on the owner.
+
+## Done 2026-11-15: the Rivals, Phase 3 (rivals four to six)
+
+Built from Phase 3 of `docs/RIVALS_PLAN.md`: six rivals, 42 cards (21 new; card total 1,947, Realms 659). All new state optional; schema v2 unchanged.
+
+- **Chuck the Cuck** (`chuck`; Do-Over 6, meddle 3, hand-off 2; a lost meeting costs an item): his door is a coin (`Offer.coinJoin`): joined, a coin is flipped (`rival.joinFace`, `party.coin` `{ for: "join" }` as news) and his ally is +4 on heads and +0 on tails (`ally.coin`; the plan said +5, which had joined runs winning over the 45% ceiling because the table always takes him); he walks off a party at 2 hearts or fewer (`ally.leavesAt`, `leaveLow`, deed `rival-left`, `news.left`). Prize: Chuck's Notebook (+1 to every heal).
+- **Gary Shitwhistle** (`gary`; invoice 6, squat 2, ambush 2; a loss costs a heart and an item): never joins. His door (`Offer.settle`): "Pay up" (drink one an item he holds, at least 1, at most 6, `settleDrinks`; the plaque says how many) hands everything back (deed `rival-settled`); "Refuse" deals The Audit, a duel of three swings (`duel.hits`). Prize: **Gary's Whistle** (`OmenEffect.hush`): once a region, a plaque calls off the rival's cut (`canHush`/`hush`, `rival.hushed`, cleared when a region boss falls); it is free, so it comes before a pay-off.
+- **Dame Queefington** (`queef`; curse 5, snipe 2, meddle 2; a loss costs a heart and lays her curse): her confrontations carry Backing Vocals or Rhyme Time (`rival.curse` with `jinx`), the curses she lays when she cuts in. Joined: +2 to any fight. Prize: Queefington's Lute (a dragon lore at her fall, `duel.lore`, and +1 to monster fights; a trinket with no lasting effect is not worn, so the plan's lore-only lute would have hung no trophy).
+- **An invoice may now hold any room** (a fight included): `rollDice`, `awaitingChoice`, `awaitingVerdict` and `canUseLoot` (but the potion) wait on it. Gary's invoices went from 0.08 to 0.30 a run.
+- **The builder** (`rival()`): a confrontation may carry a curse; a duel takes `hits`, `lore` and `prizeRules`. The stages need nothing new: the Your Rival, Crossroads, door and duel pools all read `rivals`.
+- **Balance** (4,000 runs): won **29.5%**, a won run **60.5 draws**; each rival **29% to 37%** (chuck 37, mirabel 33, tutt 33, queef 30, gary 29, bradley 29); 66% reach the door (joined 40%, duelled 41%, skipped 8%, settled 11%, fled 2%, Chuck left 5%); 3.2 uninvited appearances (invoice 0.30, curse 0.26, squat 0.07, hand-off 0.16); **0.72 Do-Overs** a run against the three rivals who make them (measured over those runs since Phase 3; the plan's band read over all six would halve it); 1.0 items still theirs; won: joined 45%, refused 36%, duel won 40% (joined by rival: Sir Chad 40, Lady Fingerbang 44, Chuck 50, Dame Queefington 38). Jokes 1% to 3%; Heroic 10.2%.
+- **Fixtures** (8): `2026-11-15-realms-rival-chuck-joined-heads`, `-chuck-joined-tails`, `-gary-settled`, `-gary-audit`, `-queef-jinx`, and Phase 2's `-squat`, `-invoice-waiting`, `-curse-laid`. 121 fixtures load.
+- **Tests**: `tests/rival.test.ts` (29): Chuck's coin and its bonus, Chuck leaving, Gary settled and audited, the Whistle once a region, Dame Queefington's curses, six rivals in the door and Crossroads pools; `crawl.spec.ts`: Gary's door names its drinks.
+- **Checked**: `npm test` 610 passed; lint; typecheck; `cards:review` (1,947); build (budgets pass: runtime 5,259 KiB of 6,144, initial 161.0 KiB gzip); `tests/dungeon.balance.test.ts` 8 of 8 at 4,000 runs; Chromium `test:e2e` 184 of 184; Chromium `test:sweep` 12 of 12; Gary's door screenshotted at 390x844.
+- **Not run**: WebKit (CI runs it), the League balance file (nothing the League reads changed), a phone.
+- **Not built**: a "Clean names" switch (the plan leaves it to the owner).
 
 ## Done 2026-11-15: the Rivals, Phase 2 (maximum frustration)
 

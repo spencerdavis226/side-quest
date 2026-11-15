@@ -355,7 +355,7 @@ Each phase is one session and one pull request. Each ends with: `npm test`, lint
 
 **Fixtures:** `-rival-redo-waiting`, `-rival-redone`, `-rival-paid-off`, `-rival-swipe`, `-rival-poach-waiting`, `-rival-squat`, `-rival-invoice-waiting`, `-rival-curse-laid`, `-rival-duel-arsenal`.
 
-### Phase 3: rivals four to six
+### Phase 3: rivals four to six (built 2026-11-15; see `docs/STATUS.md`)
 
 **Goal:** Chuck the Cuck, Gary Shitwhistle and Dame Queefington, 21 cards, and their door endings.
 

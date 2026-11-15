@@ -265,7 +265,10 @@ export function assistBonus(
   // to two.
   if (member?.ally)
     return (
-      member.ally.bonus +
+      // Chuck (Rivals Phase 3): nothing at all if his coin came up tails.
+      (member.ally.coin && quest?.party?.rival?.joinFace === 1
+        ? 0
+        : member.ally.bonus) +
       (member.ally.grudge ? Math.min(2, quest?.party?.rival?.lost ?? 0) : 0)
     );
   if (!member?.catchRate) return 1;

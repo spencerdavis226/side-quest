@@ -26,6 +26,7 @@ import {
   awaitingInvoice,
   awaitingRedo,
   kickOut,
+  hush,
   payInvoice,
   payOff,
   redoRoll,
@@ -362,7 +363,7 @@ export class PresentationController {
   }
   /** Pay the rival off with the newest item, or drink to call off a poach
    * or a squat, or pay their invoice: the card stays in play. */
-  rival(answer: "pay" | "drink" | "heart" | "item") {
+  rival(answer: "pay" | "drink" | "hush" | "heart" | "item") {
     const { session, motion } = this.state;
     if (!session || motion) return;
     const next =
@@ -370,7 +371,9 @@ export class PresentationController {
         ? payOff(session)
         : answer === "drink"
           ? kickOut(session)
-          : payInvoice(session, answer);
+          : answer === "hush"
+            ? hush(session)
+            : payInvoice(session, answer);
     if (next === session) return;
     this.mark(session);
     this.persist(next);

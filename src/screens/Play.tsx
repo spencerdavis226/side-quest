@@ -20,6 +20,7 @@ import {
   awaitingPress,
   awaitingInvoice,
   awaitingRedo,
+  settleDrinks,
   awaitingSpoils,
   fellingSwing,
   fellingVerdict,
@@ -146,7 +147,7 @@ export function Play({
   /** Rivals Phase 2: the rival's Do-Over, and the table's answers to them
    * (pay off, drink, or pay an invoice with a heart or an item). */
   onRedo?: () => void;
-  onRival?: (answer: "pay" | "drink" | "heart" | "item") => void;
+  onRival?: (answer: "pay" | "drink" | "hush" | "heart" | "item") => void;
   onRevealRoll: () => void;
   onFinish: (id: number) => void;
   renderFace?: (card: CardDefinition) => ReactNode;
@@ -708,6 +709,7 @@ export function Play({
                     can={canTakeOffer(session, i)}
                     onTake={onOffer}
                     theme={crawl}
+                    debt={settleDrinks(session.quest)}
                   />
                 ),
               )}
@@ -731,6 +733,7 @@ export function Play({
                     can={canTakeOffer(session, i)}
                     onTake={onOffer}
                     theme={crawl}
+                    debt={settleDrinks(session.quest)}
                     branch={branch}
                   />
                 ),

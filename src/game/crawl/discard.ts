@@ -23,7 +23,14 @@ import {
 import { bossBeat, hitsNeeded, isBossCard, spoilsOnWin } from "./bosses";
 import { joinTeam, settleThrow, strikeOutcome } from "./team";
 import { moveOf, nextDuel, roundOf } from "./lair";
-import { duelTricks, rivalFalls, settleRival, stalk, turnCoat } from "./rival";
+import {
+  duelTricks,
+  leaveLow,
+  rivalFalls,
+  settleRival,
+  stalk,
+  turnCoat,
+} from "./rival";
 // Putting a card aside: the verdict, the party settled, the next card dealt.
 /** The rest of a run, re-paced so the badges still missing keep the run's
  * pace from `from` (the next draw) on. */
@@ -48,13 +55,27 @@ function repace(
 }
 /** A revealed choice card whose option has not been picked yet. */
 export function awaitingChoice(s: SessionState) {
-  return s.phase === "revealed" && !s.roll && !!currentCard(s).dice?.choice;
+  return (
+    s.phase === "revealed" &&
+    !s.roll &&
+    !!currentCard(s).dice?.choice &&
+    !invoiced(s)
+  );
 }
 /** A revealed quest battle without dice: the table says whether it won. */
 export function awaitingVerdict(s: SessionState) {
   const card = currentCard(s);
-  return !!s.quest && s.phase === "revealed" && !!card.battle && !card.dice;
+  return (
+    !!s.quest &&
+    s.phase === "revealed" &&
+    !!card.battle &&
+    !card.dice &&
+    !invoiced(s)
+  );
 }
+/** Rivals Phase 3: an unpaid invoice holds the card until it is paid. */
+const invoiced = (s: SessionState) =>
+  s.quest?.party?.rival?.cut === "invoice";
 /** Take the no-roll option of a choice card: it is put aside unrolled (a
  * battle walked away from is neither won nor lost). */
 export function skipRoll(
@@ -274,6 +295,9 @@ function discardCard(
         if (!team.length) delete next.team;
       }
     }
+    // Rivals Phase 3: a joined rival who leaves a party this low (Chuck
+    // goes to watch the dragon instead).
+    if (next.hearts > 0) next = leaveLow(next, q);
     // The hearts ran out: the party wipes and the game ends on this card.
     if (next.hearts === 0)
       return {
@@ -326,9 +350,17 @@ function discardCard(
             },
           },
         };
-      // The floor's boss falls, and the jinx lifts with it.
+      // The floor's boss falls, and the jinx lifts with it (and Gary's
+      // Whistle can be blown again, Rivals Phase 3).
       next = endDuel({ ...next, hits: 0 });
-      if (isBossCard(card)) delete next.jinx;
+      if (isBossCard(card)) {
+        delete next.jinx;
+        if (next.rival?.hushed) {
+          const rival = { ...next.rival };
+          delete rival.hushed;
+          next = { ...next, rival };
+        }
+      }
       next = gainBoon(next, card, q, spoil);
       // Realms (2026-11-03): a lieutenant's fall levels the adventurer up.
       if (card.levelUp) next = evolve(next, { ...q, party: next });

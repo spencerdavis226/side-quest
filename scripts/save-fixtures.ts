@@ -32,6 +32,7 @@ import {
   rivalProfile,
   thrownBall,
   awaitingRedo,
+  awaitingInvoice,
 } from "../src/game/engine";
 import { nextMove, seeded } from "./table-play";
 import { parseSession } from "../src/app/persistence";
@@ -587,6 +588,55 @@ const situations: [string, GameConfig, Find][] = [
       s.phase !== "complete" &&
       !!party(s).rival?.arsenal &&
       /rival-.*-duel$/.test(currentCard(s).id),
+  ],
+  // Rivals Phase 3 (2026-11-15): Chuck joined on heads and on tails,
+  // Gary settled and his audit under way, Dame Queefington's curse laid,
+  // and the three cuts Phase 2 could not reach (a squat, an invoice
+  // waiting, a curse laid as the card went).
+  [
+    "realms-rival-chuck-joined-heads",
+    crawl,
+    (s) => party(s).rival?.joinFace === 2 && s.phase === "hidden",
+  ],
+  [
+    "realms-rival-chuck-joined-tails",
+    crawl,
+    (s) => party(s).rival?.joinFace === 1 && s.phase === "hidden",
+  ],
+  [
+    "realms-rival-gary-settled",
+    crawl,
+    (s) => !!party(s).deeds?.includes("rival-settled") && s.phase === "hidden",
+  ],
+  [
+    "realms-rival-gary-audit",
+    crawl,
+    (s) =>
+      s.phase === "revealed" &&
+      currentCard(s).id === "dungeon.rival-gary-duel" &&
+      party(s).hits > 0,
+  ],
+  [
+    "realms-rival-queef-jinx",
+    crawl,
+    (s) =>
+      !!party(s).jinx?.startsWith("dungeon.rival-queef-") &&
+      s.phase === "hidden",
+  ],
+  [
+    "realms-rival-squat",
+    crawl,
+    (s) => party(s).rival?.cut === "squat" && s.phase === "revealed",
+  ],
+  ["realms-rival-invoice-waiting", crawl, (s) => awaitingInvoice(s)],
+  [
+    "realms-rival-curse-laid",
+    crawl,
+    (s, prev) =>
+      !!prev &&
+      party(prev).rival?.cut === "curse" &&
+      prev.discarded !== s.discarded &&
+      !!party(s).jinx,
   ],
   ["crawl-wiped", crawl, (s) => party(s).wiped],
   ["crawl-survived", crawl, (s) => s.phase === "complete" && !party(s).wiped],

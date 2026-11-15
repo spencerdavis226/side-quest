@@ -37,6 +37,8 @@ import {
   payOff,
   payOffItem,
   redoRoll,
+  assistBonus,
+  rivalProfile,
 } from "../src/game/engine";
 import { returnToCard, rollDice, rollTarget, rollWins } from "../src/game/dice";
 import { parseSession } from "../src/app/persistence";
@@ -161,6 +163,11 @@ function playRun(seed: number, adventurer?: string, heroic = false) {
         pick = random() < 0.5 ? 0 : 1;
       // The rival at the door (2026-11-15): a healthy table duels them;
       // a hurt one takes them in, or skips the exam.
+      // Rivals Phase 3: Chuck is always taken; Gary is paid when he holds
+      // two items or fewer.
+      else if (card.rival?.who === "chuck") pick = 0;
+      else if (card.rival?.who === "gary")
+        pick = (p.rival?.took.length ?? 0) <= 2 ? 0 : 1;
       else if (card.rival) pick = p.hearts > 6 ? 1 : 0;
       else if (card.encounter === "fork") pick = p.hearts > 6 ? 1 : 0;
       else if (offers.some((o) => o.skip)) pick = p.hearts > 6 ? 0 : 1;
@@ -248,10 +255,11 @@ function playRun(seed: number, adventurer?: string, heroic = false) {
         const need = rollTarget(s, card)?.target ?? 21;
         // Lady Mirabel walks out with the satchel on a loss: only on a
         // roll she makes likely.
+        const bonus = assistBonus(m, s.quest);
         if (
           m.ally.turncoat
-            ? need - m.ally.bonus <= 7
-            : card.lairFight || need - m.ally.bonus <= 10
+            ? need - bonus <= 7
+            : card.lairFight || need - bonus <= 10
         ) {
           s = sendIn(s, m.id);
           break;
@@ -444,7 +452,12 @@ it("every rival is a nuisance, none a wall (Rivals Phase 2)", () => {
       .reduce((a, [, b]) => a + b!, 0);
   const far = met.filter((s) =>
     (party(s).deeds ?? []).some((d) =>
-      ["rival-joined", "rival-refused", "rival-skipped"].includes(d),
+      [
+        "rival-joined",
+        "rival-refused",
+        "rival-skipped",
+        "rival-settled",
+      ].includes(d),
     ),
   );
   const has = (s: SessionState, deed: string) =>
@@ -455,12 +468,13 @@ it("every rival is a nuisance, none a wall (Rivals Phase 2)", () => {
   const refused = far.filter((s) => has(s, "rival-refused"));
   const duelWon = refused.filter((s) => has(s, "rival-beaten"));
   // Runs whose ledger was never settled at the door: not beaten in the
-  // duel, not fled with it (their Smoke Bomb), and not handed back by
-  // Lady Fingerbang to join.
+  // duel, not fled with it (their Smoke Bomb), not settled with Gary in
+  // drinks, and not handed back by Lady Fingerbang to join.
   const notWon = far.filter(
     (s) =>
       !has(s, "rival-beaten") &&
       !has(s, "rival-fled") &&
+      !has(s, "rival-settled") &&
       !(party(s).rival!.who === "mirabel" && has(s, "rival-joined")),
   );
   const kinds = new Map<string, number>();
@@ -468,19 +482,25 @@ it("every rival is a nuisance, none a wall (Rivals Phase 2)", () => {
     for (const [k, n] of Object.entries(party(s).rival?.cuts ?? {}))
       kinds.set(k, (kinds.get(k) ?? 0) + n!);
   const holding = mean((s) => party(s).rival!.took.length, notWon);
-  const redos = mean((s) => party(s).rival!.redos ?? 0, far);
+  // Do-Overs, over runs against a rival who uses them (Rivals Phase 3:
+  // three of the six do).
+  const redos = mean(
+    (s) => party(s).rival!.redos ?? 0,
+    far.filter((s) => (rivalProfile(s.quest)?.profile.style.redo ?? 0) > 0),
+  );
   console.log(
     `rivals: ${who.map(([n, r]) => `${n} ${pct(r)}`).join(", ")}; ` +
       `${pct(met.length / RUNS)} of runs meet one, ${pct(far.length / RUNS)} reach the door ` +
-      `(joined ${pct(ended("rival-joined"))}, duelled ${pct(ended("rival-refused"))}, skipped ${pct(ended("rival-skipped"))}, fled ${pct(ended("rival-fled"))}); ` +
+      `(joined ${pct(ended("rival-joined"))}, duelled ${pct(ended("rival-refused"))}, skipped ${pct(ended("rival-skipped"))}, settled ${pct(ended("rival-settled"))}, fled ${pct(ended("rival-fled"))}, left ${pct(ended("rival-left"))}); ` +
       `uninvited ${mean(uninvited, far).toFixed(1)} times a run that got there ` +
       `(${[...kinds].map(([k, n]) => `${k} ${(n / far.length).toFixed(2)}`).join(", ")}); ` +
-      `Do-Overs ${redos.toFixed(2)}; ` +
+      `Do-Overs ${redos.toFixed(2)} (rivals who make them); ` +
       `confrontations won ${mean((s) => party(s).rival!.won, far).toFixed(1)}, lost ${mean((s) => party(s).rival!.lost, far).toFixed(1)}; ` +
       `holding ${holding.toFixed(1)} items at the end (ledger never settled); ` +
-      `won: joined ${pct(rate(joined))}, refused ${pct(rate(refused))}, duel won ${pct(rate(duelWon))}`,
+      `won: joined ${pct(rate(joined))}, refused ${pct(rate(refused))}, duel won ${pct(rate(duelWon))}; ` +
+      `joined by rival: ${["bradley", "mirabel", "chuck", "queef"].map((w) => `${w} ${pct(rate(joined.filter((s) => party(s).rival!.who === w)))}`).join(", ")}`,
   );
-  expect(who).toHaveLength(3);
+  expect(who).toHaveLength(6);
   for (const [name, r] of who) {
     expect(r, name).toBeGreaterThan(0.1);
     expect(r, name).toBeLessThan(0.5);

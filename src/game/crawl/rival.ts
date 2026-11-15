@@ -12,7 +12,7 @@ import type { Random } from "../engine";
 import { currentCard } from "../engine";
 import { rollWins } from "../dice";
 import { finaleCard, finaleStage, stageCards } from "./stages";
-import { addDeed, satchelSize, type Outcome } from "./party";
+import { addDeed, omenEffect, satchelSize, type Outcome } from "./party";
 import { joinTeam } from "./team";
 // The rival (2026-11-15): one named antagonist a run. Introduced by a card
 // with a profile, they keep a ledger of what they took, turn up uninvited
@@ -586,10 +586,8 @@ export function stalk(
   const dice = coming.dice;
   const room = stage.pick >= 2 && !coming.hits && !coming.offers?.length;
   // A room with no fight: a poach lands when it is put aside, so it may
-  // roll dice; an invoice holds the card, so only on one with nothing to
-  // roll or time.
+  // roll dice.
   const calm = room && !coming.battle && !coming.strike && !coming.press;
-  const plain = calm && !dice && !coming.timer && !coming.secret;
   const d20 =
     !!coming.battle &&
     dice?.count === 1 &&
@@ -607,7 +605,8 @@ export function stalk(
     handoff: room && party.loot.length > 0,
     poach: calm && poachable(party, quest).length > 0,
     squat: coming.encounter === "rest" && !!coming.offers?.some((o) => o.heal),
-    invoice: plain,
+    // An invoice holds the card (its roll, its Won and Lost) until paid.
+    invoice: room && !coming.press && !coming.timer && !coming.secret,
     curse: room && !coming.jinx && !party.jinx && !!curseCard(quest, rival.who),
   };
   const weight = (k: RivalVerb) => profile.style[k] ?? 0;
@@ -633,3 +632,48 @@ export function stalk(
     party: { ...party, rival: { ...rival, cut: kind, cuts: counted } },
   };
 }
+
+/** A joined rival with `leavesAt` walks off a party at that many hearts or
+ * fewer (Rivals Phase 3: Chuck goes to watch the dragon instead). */
+export function leaveLow(party: PartyState, quest: QuestState): PartyState {
+  const id = (party.team ?? []).find((m) => {
+    const at = finaleCard(quest, m)?.ally?.leavesAt;
+    return at !== undefined && party.hearts <= at;
+  });
+  if (!id || !party.rival) return party;
+  const team = party.team!.filter((m) => m !== id);
+  const next: PartyState = {
+    ...party,
+    team,
+    rival: { ...party.rival, news: { ...party.rival.news, left: id } },
+  };
+  if (!team.length) delete next.team;
+  return addDeed(next, "rival-left");
+}
+
+/** Gary's Whistle (Rivals Phase 3): a cut on the card in play, and the
+ * whistle not yet blown since the last region boss fell. */
+export function canHush(s: SessionState): boolean {
+  const party = s.quest?.party;
+  const rival = party?.rival;
+  if (!rival?.cut || rival.hushed || s.phase !== "revealed") return false;
+  if (rival.cut === "redo" && rival.redone) return false;
+  return !!omenEffect(s.quest)?.hush;
+}
+/** Blow the whistle: the cut is cancelled, once a region. */
+export function hush(s: SessionState): SessionState {
+  if (!canHush(s)) return s;
+  const party = s.quest!.party!;
+  const rival: Rival = {
+    ...party.rival!,
+    hushed: true,
+    seen: s.discarded + 1,
+  };
+  delete rival.cut;
+  return { ...s, quest: { ...s.quest!, party: { ...party, rival } } };
+}
+
+/** Gary's debt in drinks (Rivals Phase 3): one for every item he holds,
+ * at least 1 and at most 6. Spoken; nothing is counted. */
+export const settleDrinks = (quest: QuestState | undefined) =>
+  Math.min(6, Math.max(1, quest?.party?.rival?.took.length ?? 0));

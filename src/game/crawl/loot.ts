@@ -19,6 +19,8 @@ export function canUseLoot(s: SessionState, item: Loot): boolean {
   const party = s.quest?.party;
   if (!party || s.phase === "complete") return false;
   if (!party.loot.includes(item) || party.throw) return false;
+  // Rivals Phase 3: nothing is used past an unpaid invoice but a potion.
+  if (party.rival?.cut === "invoice" && item !== "draught") return false;
   const card = currentCard(s);
   switch (item) {
     case "draught":
