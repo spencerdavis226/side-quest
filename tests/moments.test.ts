@@ -377,6 +377,51 @@ describe("moments", () => {
     });
   });
 
+  it("the rival walks in, calls a Do-Over, turns, and takes (Rivals Phase 5)", () => {
+    const c = createSession(crawl, cards, packs, seeded(8));
+    const shown = {
+      ...atStep(c, stepOf(c, "The Last Inn")),
+      phase: "revealed" as const,
+    };
+    const rival = { who: "bradley", took: [], won: 0, lost: 0 };
+    // Walks in: once, when they are first named.
+    const met = withParty(shown, { rival });
+    const enter = momentsBetween(shown, met).find((m) => m.kind === "rival");
+    expect(enter).toMatchObject({ beat: "enter", who: "bradley" });
+    expect(enter?.say).toMatch(/^Your rival: Sir Chad\./);
+    expect(
+      momentsBetween(met, met).filter((m) => m.kind === "rival"),
+    ).toHaveLength(0);
+    // A Do-Over: when the count of them rises.
+    const redo = momentsBetween(
+      met,
+      withParty(met, {
+        rival: { ...rival, redos: 1, cut: "redo", redone: true },
+      }),
+    ).find((m) => m.kind === "rival");
+    expect(redo).toMatchObject({ beat: "redo" });
+    // A betrayal: when they turn.
+    const turned = momentsBetween(
+      met,
+      withParty(met, {
+        rival: { ...rival, turned: true, news: { turned: true } },
+      }),
+    ).find((m) => m.kind === "rival");
+    expect(turned).toMatchObject({ beat: "betrayal" });
+    // What they took flies to their chip, once the card has gone.
+    const took = momentsBetween(met, {
+      ...withParty(met, {
+        rival: { ...rival, took: ["shield"], news: { took: ["shield"] } },
+      }),
+      discarded: met.discarded + 1,
+    }).find((m) => m.kind === "rivalfly");
+    expect(took).toMatchObject({ items: ["shield"], to: "rival" });
+    expect(AMBIENT.has("rivalfly")).toBe(true);
+    // Never on a resume or an undo.
+    expect(momentsBetween(null, met)).toEqual([]);
+    expect(momentsBetween(shown, met, true)).toEqual([]);
+  });
+
   it("catches a Legendary on its last beat as a join, never a ball's catch", () => {
     const at = atStep(s, stepOf(s, "Legendary"));
     const legendary = currentCard(at);

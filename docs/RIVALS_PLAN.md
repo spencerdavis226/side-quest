@@ -392,7 +392,7 @@ Each phase is one session and one pull request. Each ends with: `npm test`, lint
 
 **Fixtures:** `-rival-turns-at-saved`, `-rival-turned`, `-rival-chad-credit`, `-rival-sensei-pinned`, `-rival-sensei-saved`, `-rival-ballad-queef`, `-rival-went-in-first`.
 
-### Phase 5: presentation
+### Phase 5: presentation (built 2026-11-15; see `docs/STATUS.md`)
 
 **Goal:** you can see the rival's face, watch them take your things, and feel the Do-Over.
 

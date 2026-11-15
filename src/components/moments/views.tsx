@@ -30,6 +30,7 @@ import { TypeMark } from "../LeagueMarks";
 import { CrawlIcon } from "../Crawl";
 import { QUEST_MAP, crawlTheme } from "../crawlTheme";
 import { QuestMap } from "../QuestMap";
+import RivalMedal, { RIVAL_COLOURS, rivalVars } from "../RivalMedal";
 
 // The moments themselves (2026-11-01; styles in `presentation/moments.css`).
 // A lazy chunk: the director (`Director.tsx`) loads it when a game starts.
@@ -77,7 +78,11 @@ const LENGTH: Record<Moment["kind"], number> = {
   echo: 2000,
   hidden: 1500,
   deed: 1200,
+  rival: 3000,
+  rivalfly: 1000,
 };
+/** The rival's beats run their own lengths (Rivals Phase 5). */
+const RIVAL_BEAT = { enter: 3000, redo: 1500, betrayal: 2800 } as const;
 /** A lifted jinx reads less than a laid one: only its name burns away. */
 const LIFTED = 2000;
 
@@ -151,6 +156,16 @@ export default function MomentView({
       return <Press m={moment} scale={scale} onDone={onDone} />;
     case "thread":
       return <Thread m={moment} scale={scale} onDone={onDone} />;
+    case "rival":
+      return moment.beat === "enter" ? (
+        <RivalEnter m={moment} scale={scale} onDone={onDone} />
+      ) : moment.beat === "redo" ? (
+        <RivalRedo m={moment} scale={scale} onDone={onDone} />
+      ) : (
+        <RivalBetrayal m={moment} scale={scale} onDone={onDone} />
+      );
+    case "rivalfly":
+      return <RivalFly m={moment} scale={scale} onDone={onDone} />;
     case "jinx":
       return moment.lifted ? (
         <JinxLifted m={moment} scale={scale} onDone={onDone} />
@@ -414,6 +429,12 @@ function caption(m: Moment): [string, string, string] {
       return ["Something else happens", m.line, ""];
     case "deed":
       return ["", "This is remembered.", ""];
+    case "rival":
+      return m.beat === "enter"
+        ? ["Your rival", m.name, m.line]
+        : m.beat === "redo"
+          ? [m.name, "Do-Over", m.line]
+          : [m.name, "Et tu?", m.line];
     default:
       return ["", "", ""];
   }
@@ -1343,9 +1364,15 @@ const ALLY_MARK: [RegExp, QuestArt][] = [
   [/Frozen Knight/, "frozen-knight"],
   [/Hatchling/, "hatchling"],
   [/Chester/, "chester"],
+  // The rivals, joined (Rivals Phase 5): their own medallions' marks.
+  [/Chad/, "rival-bradley"],
+  [/Fingerbang/, "rival-mirabel"],
+  [/Saggynuts/, "rival-tutt"],
+  [/Chuck/, "rival-chuck"],
+  [/Queefington/, "rival-queef"],
   [/Bard/, "bard"],
   // Sir Bradley: an ally in a save from before the 2026-11-15 rename.
-  [/Chad|Bradley/, "bradley"],
+  [/Bradley/, "bradley"],
   [/Blade|Sword/, "blade"],
 ];
 const allyMark = (name: string): QuestArt =>
@@ -2263,6 +2290,168 @@ function Thread({ m, scale, onDone }: ViewProps<"thread">) {
         <strong>By a thread</strong>
         <span>{m.line}</span>
       </p>
+    </Stage>
+  );
+}
+
+/* --- The rival (Rivals Phase 5) ------------------------------------------ */
+
+/** The rival walks in: their medallion slams down in their colour, their
+ * name spelled out letter by letter, their ritual underneath. */
+function RivalEnter({ m, scale, onDone }: ViewProps<"rival">) {
+  const medal = useRef<HTMLDivElement>(null);
+  const c = RIVAL_COLOURS[m.who];
+  useTimeline(
+    [
+      [
+        360,
+        () =>
+          at(medal.current, "shards", {
+            count: 26,
+            colors: c ? [c.light, c.deep, "#ffffff"] : undefined,
+          }),
+      ],
+    ],
+    scale,
+  );
+  return (
+    <Stage
+      kind="rival"
+      className="rival-enter"
+      length={RIVAL_BEAT.enter}
+      scale={scale}
+      onDone={onDone}
+      style={rivalVars(m.who) as Record<string, string>}
+    >
+      <span className="rival-shade" />
+      <div className="rival-medal-wrap" ref={medal}>
+        <RivalMedal who={m.who} />
+      </div>
+      <small className="rival-kicker">Your rival</small>
+      <strong className="rival-name">
+        {[...m.name].map((ch, i) => (
+          <span key={i} style={{ "--i": i } as React.CSSProperties}>
+            {ch}
+          </span>
+        ))}
+      </strong>
+      <span className="rival-line">{m.line}</span>
+    </Stage>
+  );
+}
+
+/** A Do-Over: a stamp across the dice in the rival's colour, a shake. */
+function RivalRedo({ m, scale, onDone }: ViewProps<"rival">) {
+  return (
+    <Stage
+      kind="rival"
+      className="rival-redo"
+      length={RIVAL_BEAT.redo}
+      scale={scale}
+      onDone={onDone}
+      style={rivalVars(m.who) as Record<string, string>}
+    >
+      <div className="redo-stamp">
+        <small>{m.name}</small>
+        <strong>Do-Over</strong>
+      </div>
+      <span className="rival-line">{m.line}</span>
+    </Stage>
+  );
+}
+
+/** A betrayal: the screen cracks, their medallion turns over cracked, and
+ * "Et tu?" sweeps across. */
+function RivalBetrayal({ m, scale, onDone }: ViewProps<"rival">) {
+  const medal = useRef<HTMLDivElement>(null);
+  useTimeline(
+    [
+      [
+        420,
+        () =>
+          at(medal.current, "shards", {
+            count: 30,
+            colors: ["#5a0a06", "#2a0402", "#8a1a10"],
+          }),
+      ],
+    ],
+    scale,
+  );
+  return (
+    <Stage
+      kind="rival"
+      className="rival-betrayal"
+      length={RIVAL_BEAT.betrayal}
+      scale={scale}
+      onDone={onDone}
+      style={rivalVars(m.who) as Record<string, string>}
+    >
+      <svg
+        className="betrayal-cracks"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        {CRACKS.map((d, i) => (
+          <path key={i} d={d} style={{ "--i": i } as React.CSSProperties} />
+        ))}
+      </svg>
+      <div className="rival-medal-wrap betrayal-medal" ref={medal}>
+        <RivalMedal who={m.who} cracked />
+      </div>
+      <strong className="betrayal-words">Et tu?</strong>
+      <small className="rival-kicker">{m.name}</small>
+      <span className="rival-line">{m.line}</span>
+    </Stage>
+  );
+}
+
+/** What changed hands with the rival flies between the satchel chip and
+ * theirs (ambient; the news banner has the words). */
+function RivalFly({ m, scale, onDone }: ViewProps<"rivalfly">) {
+  const items = useRef<HTMLDivElement>(null);
+  const [gone, setGone] = useState(false);
+  const [from] = useState(() => {
+    const chip = document
+      .querySelector(`[data-fly="${m.to === "rival" ? "satchel" : "rival"}"]`)
+      ?.getBoundingClientRect();
+    return chip && chip.width > 0
+      ? { left: chip.left + chip.width / 2, top: chip.top + chip.height / 2 }
+      : null;
+  });
+  useTimeline(
+    [
+      [
+        140,
+        () => {
+          void flyTo(items.current, m.to, { duration: 600 * scale });
+          setGone(true);
+        },
+      ],
+    ],
+    scale,
+  );
+  return (
+    <Stage
+      kind="rivalfly"
+      length={LENGTH.rivalfly}
+      scale={scale}
+      onDone={onDone}
+      ambient
+    >
+      <div
+        className={`rival-fly-items${gone ? " gone" : ""}`}
+        ref={items}
+        style={
+          from
+            ? { left: `${from.left}px`, top: `${from.top}px` }
+            : { left: "50%", top: "40%" }
+        }
+      >
+        {m.items.map((item, i) => (
+          <CrawlIcon key={i} name={item} theme={crawlTheme("dungeon")} />
+        ))}
+      </div>
     </Stage>
   );
 }

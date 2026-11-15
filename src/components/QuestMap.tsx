@@ -1,3 +1,4 @@
+import { rivalMark, rivalVars } from "./RivalMedal";
 import { useId } from "react";
 import type { QuestState } from "../game/types";
 import { finaleStage, runNames } from "../game/engine";
@@ -140,6 +141,9 @@ export function QuestMap({
     token = LAIR;
   }
   const legs = path.slice(1).map((p, i) => curve(path[i], p));
+  // The rival (Rivals Phase 5), once met, a step behind the party.
+  const rival = quest.party?.rival?.who;
+  const behind = path.length > 1 ? path[path.length - 2] : token;
   const summary = state.regions
     .flat()
     .filter((r) => r.inRun)
@@ -300,6 +304,22 @@ export function QuestMap({
           </text>
         )}
       </g>
+      {/* Rivals Phase 5: the rival's medallion, a step behind the party. */}
+      {rival && (
+        <g
+          className="map-rival"
+          transform={`translate(${behind.x - 15} ${behind.y - 14})`}
+          style={rivalVars(rival)}
+        >
+          <title>Your rival</title>
+          <circle className="map-rival-rim" r="9" />
+          <path
+            className="map-rival-mark"
+            d={questArt[rivalMark(rival)]}
+            transform="translate(-6.5 -6.5) scale(0.0254)"
+          />
+        </g>
+      )}
       {/* The party, where the run stands. */}
       <g
         className="map-token"

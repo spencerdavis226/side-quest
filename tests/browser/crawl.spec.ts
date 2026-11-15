@@ -1,4 +1,5 @@
 import { type Page } from "@playwright/test";
+import { readFileSync } from "node:fs";
 import { test, expect, seed, reseed, saved, rng } from "./support";
 import {
   advance,
@@ -1178,6 +1179,29 @@ test("Sensei beaten twice is pinned at the door: save him for a heart", async ({
   await expect(plaques.first()).toContainText("Save him");
   await expect(plaques.first().locator(".offer-cost")).toContainText("1");
   await page.screenshot({ path: info.outputPath("pinned.png") });
+});
+
+test("the end screen's Nemesis panel: Sir Chad slew it, allegedly", async ({
+  page,
+}, info) => {
+  // Rivals Phase 5: a won run with Sir Chad on the team (a frozen save).
+  const won = JSON.parse(
+    readFileSync(
+      "tests/fixtures/saves/2026-11-15-realms-rival-chad-credit.json",
+      "utf8",
+    ),
+  ) as SessionState;
+  await seed(page, won);
+  const panel = page.getByRole("region", { name: "Your nemesis" });
+  await expect(panel).toContainText("Sir Chad");
+  await expect(panel).toContainText("Joined the party");
+  await expect(panel.locator(".nemesis-credit")).toHaveText(
+    "Slain by Sir Chad Thundercock (allegedly)",
+  );
+  // The medallion (a lazy chunk) is struck in.
+  await expect(panel.locator("svg.nemesis-medal")).toBeVisible();
+  await panel.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: info.outputPath("nemesis.png") });
 });
 
 test("the omen is kept in the party dialog", async ({ page }, info) => {
