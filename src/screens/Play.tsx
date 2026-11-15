@@ -67,6 +67,12 @@ import {
 } from "../components/Crawl";
 import { crawlTheme } from "../components/crawlTheme";
 import { extrasLayout, foldBranches } from "../components/extras";
+import {
+  ChoicePlaque,
+  ChoiceSheet,
+  choiceRows,
+  choosesInSheet,
+} from "../components/ChoiceSheet";
 import { TypeMark } from "../components/LeagueMarks";
 import { BallThrowStage } from "../components/BallThrow";
 import { CrawlIcon } from "../components/Crawl";
@@ -360,6 +366,12 @@ export function Play({
   const evolveAt = (offers ?? []).findIndex((o) => o.evolve);
   const fold = foldBranches(plaques.length, branches?.length ?? 0);
   const [fanning, setFanning] = useState<number | null>(null);
+  // The choice sheet (2026-11-15): a card whose plaques do something is
+  // chosen from a sheet that says what each way costs and brings.
+  const sheetChoice = !!offers && choosesInSheet(card);
+  const choices = sheetChoice ? choiceRows(session, crawl) : [];
+  const [choosingAt, setChoosingAt] = useState<number | null>(null);
+  const choiceOpen = sheetChoice && choosingAt === session.discarded;
   const fanSheet = fold && fanning === session.discarded;
   const branchRows =
     fold && form && evolveAt >= 0
@@ -689,7 +701,20 @@ export function Play({
               />
             </div>
           )}
-          {offers && fold && (
+          {sheetChoice && (
+            <div
+              ref={choiceRef}
+              className="card-choice offers choose plaques-1"
+              role="group"
+              aria-label="Your choice"
+            >
+              <ChoicePlaque
+                rows={choices}
+                onOpen={() => setChoosingAt(session.discarded)}
+              />
+            </div>
+          )}
+          {offers && !sheetChoice && fold && (
             <div
               ref={choiceRef}
               className={`card-choice offers plaques-${offers.length}`}
@@ -722,7 +747,7 @@ export function Play({
               )}
             </div>
           )}
-          {offers && !fold && (
+          {offers && !sheetChoice && !fold && (
             <div
               ref={choiceRef}
               className={`card-choice offers plaques-${plaques.length}`}
@@ -875,6 +900,18 @@ export function Play({
             row.run();
           }}
           onClose={() => setPicking(null)}
+        />
+      )}
+      {choiceOpen && (
+        <ChoiceSheet
+          title={card.title}
+          rows={choices}
+          theme={crawl}
+          onTake={(row) => {
+            setChoosingAt(null);
+            onOffer?.(row.index, row.branch);
+          }}
+          onClose={() => setChoosingAt(null)}
         />
       )}
       {fanSheet && (

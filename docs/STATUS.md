@@ -10,6 +10,15 @@ Owner's asks: (1) the opening of a run (starter, adventurer, omen, Summons, road
 - **Phase B, the League's prologue** (done, PR #99): the starter shown in a scene of its own (no card, no top bar), then the handoff ("Pass the phone"), then the first card on the table. Display only: the engine deals and saves exactly as before.
 - **Phase C, the Quest's prologue** (done): the adventurer, the omen, the King's Summons and the Road Out in the same scene language (the road's plaques as a choice on the scene), then the same handoff.
 
+## Done 2026-11-15: the choice sheet
+
+Owner, on an inn's three plaques ("Sit by the fire", "Stock up · drink 3", "Hire · drink 3"): "SO close to clipping. Can we work in a new elegant system for choosing loot? Like maybe a nice popup that shows exactly what you're picking and getting into ... If somethings are simple taps to accept ... we can leave the button below, but most people wouldn't even know what these buttons do".
+
+- **When** (`choosesInSheet`, `src/components/ChoiceSheet.tsx`): a card whose plaques cost, bring or change anything (merchants, inns, forks, signs, landmarks, side quests, the rival's door, a League evolution or Pokémon Center) shows one **Choose** plaque at its foot: its ways' marks in small medallions, "Choose", "N ways". A plain pair (`plainOffers`: at most two ways that only lead on, no price in a label) keeps its plaques; a League catch keeps its own ball flow.
+- **The sheet** (`ChoiceSheet`, a `Modal` titled with the card's name, "Pick one. The card goes aside with it."): a full row per way: its mark, its name, its price as seals (♥−N, a drink pill), what it brings in sentences (`choiceRows`: "A Healing Potion. Drink 4: +2 hearts."; "3 hearts back." with "You have 6 of 9."; "A dragon lore rune: one swing at the dragon is rolled twice, the better counts (1 of 3)."; an ally's bonus and calling; the elite door; the road and its region's words; the curse a plaque lays; an evolution and what it changes), a quiet note when it would be wasted (full hearts, a full satchel), and, when it can't be taken, greyed with the reason ("Needs 2 hearts or more."). A branching evolution gives a row per form (Eevee's own fan sheet is no longer reached). A row calls the same `onOffer(index, branch)`: no engine or save change.
+- **Tests**: `tests/choice-sheet.test.ts`; `crawl.spec.ts`, `quest.spec.ts` and `moments.spec.ts` choose through the sheet (`choices(page)`).
+- **Checked**: `npm test` 644 passed; typecheck; lint; build (budgets pass); Chromium `test:e2e` 191 of 193 on the first run, the two left (the fork's loud door, the side quest's door moment) tapped old plaques and pass through the sheet; Chromium `test:sweep` 12 of 12 (with the plaque-spill check). Screens reviewed at 390 px: an inn, a dragon sign, a League evolution. Not checked: a phone.
+
 ## Done 2026-11-15: plaques never break a word
 
 Owner, on the Droppings sign's "Follo / w them" beside its heart seal: "I feel like this is a common issue. How can we handle instances like this more elegantly". Three rules for every offer plaque (`OfferPlaque` in `Crawl.tsx`, `crawl.css`):
