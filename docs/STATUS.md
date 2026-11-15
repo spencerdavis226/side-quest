@@ -2,15 +2,16 @@
 
 Updated 2026-11-15. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## In progress (2026-11-15): potions take the heal bonus; Realms voice pass planned
+## Done 2026-11-15: every heal takes the heal bonus (potions too); Realms voice pass planned
 
-Owner: "Every heal heals 1 more" must include potions, in both crawls, "that's the deal if you have that perk".
+Owner: "Every heal heals 1 more" must include potions, in both crawls, "that's the deal if you have that perk"; every heal shown is its net value.
 
-- **Built**: `healAmount(base, quest)` in `src/game/crawl/party.ts` applies the run's `heal` bonus (never below 0) on every heal: plaques, rewards, League catches, hidden results (also missing it) and the potion (`draughtHeal` in `loot.ts`, exported from the engine). The bag's potion text fills `{heal}` through `lootDoes` in `crawlTheme.ts`. Revive (half max) is unchanged. No save field changed. Every heal shown is its net value (owner, same day): the card's +hearts seal (`CardStakes`, `healAmount`) and a heal plaque's line and label (`OfferPlaque`, `offerHeal`, read after the plaque's evolution), so a Cleric's inn reads "Rest: 4 hearts back".
-- **Checked**: `npm test` 628 passed; lint; typecheck; build (budgets pass); Chromium `crawl.spec.ts` inn tests (3, one new: the Cleric's rest). `tests/league.balance.test.ts` passes.
-- **Failing**: `tests/dungeon.balance.test.ts`, 2 of 8: the dragon is reached in 67% of runs (ceiling 65%) and joined runs win 48% (ceiling 45%); the win rate is 34.5% (was 30.9%). Every class gains (trinkets and omens with a heal bonus now boost potions too); trimming only the heal classes barely moved it. Measured and reverted: the dragon's need 15 (won 29.9%; only the reach ceiling fails, 67%); that and inn rests of 2 (the Squire 0.8%, under its floor); that and the Squire a heart more (reach 65.08%, the Squire 1.00%).
-- **Waiting on the owner**: A, raise the two ceilings (reach 70%, door 50%); or B (recommended), `BOSS_NEED[2]` 15 and the reach ceiling 70%.
-- **Then**: the Realms voice pass, `docs/REALMS_VOICE_PLAN.md`, starting with Phase 0's samples for approval. The Rivals Phase 6 below follows.
+- **Engine**: `healAmount(base, quest)` in `src/game/crawl/party.ts` applies the run's `heal` bonus (never below 0) on every heal: plaques, rewards, League catches, hidden results (also missing it) and the potion (`draughtHeal` in `loot.ts`). Revive (half max) is unchanged. No save field changed.
+- **Display**: the potion's line (`lootDoes`, `{heal}` in `crawlTheme.ts`), the card's +hearts seal (`CardStakes`) and a heal plaque's line and label (`OfferPlaque`, `offerHeal`, read after the plaque's evolution): a Cleric's inn reads "Rest: 4 hearts back".
+- **Balance** (owner chose B): the dragon's need 15 (`BOSS_NEED[2]`, was 14), and the dragon-reached ceiling 70% (was 65%). 4,000 runs: won **29.9%** (30.9% before the fix, 34.5% with it alone), the dragon reached 67% and won 45% there; joined 41%, refused 40%; Alchemist 39%, Cleric 29%, Innkeeper 32%, Bard 43%; the jokes 2%, 2%, 1% (the Mimic close to its 1% floor); Heroic 12.4%. Measured and rejected: the two ceilings raised alone (won 34.5%), inn rests of 2 (the Squire under its floor). League balance passes unchanged.
+- **Checked**: `npm test` 628 passed; lint; typecheck; build (budgets pass); `tests/dungeon.balance.test.ts` 8 of 8; `tests/league.balance.test.ts` passes (with the potion change); Chromium `crawl.spec.ts` inn tests (3, one new).
+- **Not run**: WebKit (CI), the full e2e and sweep (no card text changed), a phone.
+- **Next**: the Realms voice pass, `docs/REALMS_VOICE_PLAN.md`, starting with Phase 0's samples for the owner's approval. The Rivals Phase 6 below follows.
 
 ## Next task (2026-11-15): the Rivals, Phase 6 (the Chronicle's nemesis)
 
