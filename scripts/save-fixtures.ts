@@ -31,6 +31,7 @@ import {
   replaces,
   rivalProfile,
   thrownBall,
+  awaitingRedo,
 } from "../src/game/engine";
 import { nextMove, seeded } from "./table-play";
 import { parseSession } from "../src/app/persistence";
@@ -554,6 +555,38 @@ const situations: [string, GameConfig, Find][] = [
       !!rivalProfile(s.quest)?.profile.lines &&
       !!party(s).rival?.news?.took &&
       party(s).rival!.lost > 0,
+  ],
+  // Rivals Phase 2 (2026-11-15): a Do-Over waiting and spent, a cut paid
+  // off, a swipe just landed, a poach on the card, and the duel with a
+  // trick of theirs played. A squat, an invoice and a curse come with the
+  // rivals who use them (Phase 3).
+  ["realms-rival-redo-waiting", crawl, (s) => awaitingRedo(s)],
+  ["realms-rival-redone", crawl, (s) => !!party(s).rival?.redone],
+  [
+    "realms-rival-paid-off",
+    crawl,
+    (s) => (party(s).rival?.cuts?.paid ?? 0) > 0 && s.phase === "revealed",
+  ],
+  [
+    "realms-rival-swipe",
+    crawl,
+    (s, prev) =>
+      !!prev &&
+      party(prev).rival?.cut === "swipe" &&
+      !!party(s).rival?.news?.took,
+  ],
+  [
+    "realms-rival-poach-waiting",
+    crawl,
+    (s) => party(s).rival?.cut === "poach" && s.phase === "revealed",
+  ],
+  [
+    "realms-rival-duel-arsenal",
+    crawl,
+    (s) =>
+      s.phase !== "complete" &&
+      !!party(s).rival?.arsenal &&
+      /rival-.*-duel$/.test(currentCard(s).id),
   ],
   ["crawl-wiped", crawl, (s) => party(s).wiped],
   ["crawl-survived", crawl, (s) => s.phase === "complete" && !party(s).wiped],

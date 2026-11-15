@@ -1080,6 +1080,61 @@ test("the rival's news banner speaks in their own voice", async ({ page }) => {
   );
 });
 
+test("the rival's Do-Over holds a won roll: roll again, or pay them off", async ({
+  page,
+}, info) => {
+  // Rivals Phase 2: Sir Chad cuts in with a Do-Over and the table wins.
+  let s = crawlAt("dungeon.bachelor-ghosts", STEP.floor2, {
+    deeds: ["rival-bradley"],
+    loot: ["shield"],
+    rival: { who: "bradley", took: [], won: 0, lost: 0, cut: "redo" },
+  });
+  const finale = [...s.quest!.finale];
+  const was = finale.indexOf("dungeon.rival-bradley");
+  if (was >= 0) finale[was] = finale[STEP.rival];
+  finale[STEP.rival] = "dungeon.rival-bradley";
+  s = rolled(reveal({ ...s, quest: { ...s.quest!, finale } }), 20);
+  await seed(page, s);
+  await expect(page.locator(".game-card .card-ribbon")).toHaveText(
+    "Sir Chad · Do-Over",
+  );
+  const hold = page.getByRole("group", { name: "Your rival" });
+  await expect(hold.locator(".card-choice-option")).toHaveCount(2);
+  await expect(hold).toContainText("Ugh, again");
+  await expect(hold).toContainText("Pay off");
+  await expect(hold).toContainText("give Tower Shield");
+  await page.screenshot({ path: info.outputPath("redo.png") });
+  // Rolled again: the card waits for a new roll, with no pay-off left.
+  await hold.getByRole("button", { name: /^Ugh, again/ }).click();
+  await expect(hold).toHaveCount(0);
+  await expect
+    .poll(async () => (await saved(page))?.quest?.party?.rival?.redone)
+    .toBe(true);
+});
+
+test("the rival's duel shows the tricks they will fight with", async ({
+  page,
+}, info) => {
+  // Rivals Phase 2: Sensei holds a Tower Shield (a swing more), a Lucky
+  // Coin and a Smoke Bomb.
+  let s = crawlAt("dungeon.rival-tutt-duel", STEP.duel, {
+    deeds: ["rival-tutt", "rival-refused"],
+    rival: { who: "tutt", took: ["shield", "die", "smoke"], won: 0, lost: 0 },
+  });
+  const finale = [...s.quest!.finale];
+  const was = finale.indexOf("dungeon.rival-tutt");
+  if (was >= 0) finale[was] = finale[STEP.rival];
+  finale[STEP.rival] = "dungeon.rival-tutt";
+  s = reveal({ ...s, quest: { ...s.quest!, finale } });
+  await seed(page, s);
+  await expect(page.locator(".stake-arsenal")).toHaveAccessibleName(
+    "They fight with your Lucky Coin, Smoke Bomb",
+  );
+  // Two swings to land, and one more for the shield.
+  await expect(page.locator(".stake-hits .stake-pips i")).toHaveCount(3);
+  await page.screenshot({ path: info.outputPath("arsenal.png") });
+});
+
 test("the omen is kept in the party dialog", async ({ page }, info) => {
   let s = reveal(crawlAt("dungeon.omen-lock-in", STEP.omen));
   s = advance(s);

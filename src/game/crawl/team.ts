@@ -256,9 +256,18 @@ export function letGo(
  * owner: "power groups"): the harder it was to catch, the more, from +1 (a
  * Caterpie, caught on a 5) to +4 (a Gyarados, on a 15). One caught before
  * catch numbers (2026-10-27) adds 1. */
-export function assistBonus(member: CardDefinition | undefined): number {
-  // An ally's own bonus (The Quest 2.0 Phase 4).
-  if (member?.ally) return member.ally.bonus;
+export function assistBonus(
+  member: CardDefinition | undefined,
+  quest?: QuestState,
+): number {
+  // An ally's own bonus (The Quest 2.0 Phase 4); a joined rival's grudge
+  // (Rivals Phase 2) adds one for each meeting the party lost to them, up
+  // to two.
+  if (member?.ally)
+    return (
+      member.ally.bonus +
+      (member.ally.grudge ? Math.min(2, quest?.party?.rival?.lost ?? 0) : 0)
+    );
   if (!member?.catchRate) return 1;
   const bonus = Math.max(1, Math.min(5, Math.round(member.catchRate / 4)));
   // Normal has no super-effective type, so it is sent into any fight that is

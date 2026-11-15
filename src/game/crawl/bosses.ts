@@ -2,6 +2,7 @@ import type { CardDefinition, QuestState, SessionState } from "../types";
 import { rollWins } from "../dice";
 import { currentCard, type Random } from "../engine";
 import { omenEffect } from "./party";
+import { rivalArsenal } from "./rival";
 import { awaitingVerdict, discard, natural } from "./discard";
 // Bosses: hits, phases and spoils.
 /** A crawl boss. An ambush also has `hits`; cards saved before encounters
@@ -44,7 +45,10 @@ export function hitsNeeded(
     card.hits +
       (isBossCard(card) ? (omenEffect(quest)?.bossHits ?? 0) : 0) +
       // Heroic mode (The Quest 2.0 Phase 7): the dragon has one more scale.
-      (quest?.heroic && card.lairFight ? 1 : 0),
+      (quest?.heroic && card.lairFight ? 1 : 0) +
+      // Rivals Phase 2: each Tower Shield the rival took is a swing more
+      // in their duel.
+      (rivalArsenal(quest, card)?.shields ?? 0),
   );
 }
 /** A crawl fight just won whose spoils wait to be picked: an elite's win,

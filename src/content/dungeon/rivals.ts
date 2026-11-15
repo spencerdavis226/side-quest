@@ -24,7 +24,9 @@ import {
 // won. At the lair's door each ends their own way. The Gilded Company's
 // gate, crossroads and door cards were retired for this. The Quest only.
 
-type Stakes = { takes?: number; damage?: number };
+/** What a lost confrontation costs (items, hearts or both), and how many
+ * items their introduction takes (1 unless said). */
+type Stakes = { takes?: number; damage?: number; intro?: number };
 
 /** A rival: every card of theirs, and what each kind of meeting costs. */
 interface Rival {
@@ -71,7 +73,7 @@ function rival(
       ribbon: "Your Rival",
       ribbonTone: "crimson",
       encounter: "shrine",
-      rival: { who, profile, takes: 1 },
+      rival: { who, profile, takes: stakes.intro ?? 1 },
     },
     fights: fights.map(([id, title, rules, fight]) => ({
       ...card(
@@ -139,8 +141,9 @@ const bradley = rival(
         "'Let me show you, Champ.' Sir Chad grabs your arm. Roll twice, keep the worse.",
       snipe:
         "Sir Chad poses with your loot. 'Great teamwork, Champ.' It's his now.",
+      redo: "'Champ, that didn't count. Again.' Roll it again; the new roll stands.",
     },
-    style: { ambush: 1, meddle: 2, snipe: 6 },
+    style: { ambush: 1, redo: 4, snipe: 6 },
     verse: {
       joined: "with Sir Chad taking all the credit,",
       beaten: "left Sir Chad crying in a ditch,",
@@ -203,6 +206,7 @@ const bradley = rival(
       name: "Sir Chad Thundercock",
       calling: ["boss"],
       bonus: 3,
+      grudge: true,
       ritual: "Everyone says 'nice one, Chad' after every swing.",
     },
   },
@@ -235,10 +239,13 @@ const mirabel = rival(
         "Lady Fingerbang blocks the way, licking her fingers. 'Hello, you.'",
       meddle:
         "Her hand is in your pocket mid-swing. Roll twice, keep the worse.",
+      swipe:
+        "Lady Fingerbang was here. Check your pockets. Your newest item is gone.",
+      poach: "Lady Fingerbang winks at your ally. Your ally winks back.",
       snipe:
         "Whatever this gives is already down Lady Fingerbang's top. 'Mine.'",
     },
-    style: { ambush: 2, meddle: 2, snipe: 4 },
+    style: { swipe: 4, ambush: 3, snipe: 2, poach: 1 },
     verse: {
       joined: "with Fingerbang's hand in their pocket,",
       beaten: "took it all back from Fingerbang,",
@@ -250,7 +257,8 @@ const mirabel = rival(
     rules:
       "Lady Fingerbang admires your things. 'Mine,' she says. Everyone covers a drink; last drinks 2.",
   },
-  { takes: 2 },
+  // She steals two at a time, from the start (Rivals Phase 2).
+  { takes: 2, intro: 2 },
   [
     [
       "inventory",
@@ -336,9 +344,10 @@ const tutt = rival(
       ambush:
         "Sensei Saggynuts sits cross-legged in your path. Don't look down.",
       meddle: "'Elbow.' Sensei corrects your form. Roll twice, keep the worse.",
+      redo: "'Lucky. Again.' Sensei makes you redo it. The new roll stands.",
       snipe: "Whatever this gives, Sensei confiscates. 'You are not ready.'",
     },
-    style: { ambush: 2, meddle: 6, snipe: 1 },
+    style: { ambush: 2, meddle: 5, redo: 5 },
     verse: {
       beaten: "passed Sensei Saggynuts' final exam,",
       ahead: "to Sensei Saggynuts' lasting shame,",

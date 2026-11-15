@@ -23,7 +23,7 @@ import {
 import { bossBeat, hitsNeeded, isBossCard, spoilsOnWin } from "./bosses";
 import { joinTeam, settleThrow, strikeOutcome } from "./team";
 import { moveOf, nextDuel, roundOf } from "./lair";
-import { rivalFalls, settleRival, stalk, turnCoat } from "./rival";
+import { duelTricks, rivalFalls, settleRival, stalk, turnCoat } from "./rival";
 // Putting a card aside: the verdict, the party settled, the next card dealt.
 /** The rest of a run, re-paced so the badges still missing keep the run's
  * pace from `from` (the next draw) on. */
@@ -287,11 +287,19 @@ function discardCard(
     // A boss (or an ambush) is dealt again, to the next drawer, until it
     // falls.
     const need = hitsNeeded(q, card);
-    if (need && outcome !== "fled") {
-      let hits = Math.min(
-        need,
-        next.hits + (outcome === "won" ? (nat === 20 ? 2 : 1) : 0),
-      );
+    // Rivals Phase 2: the rival's duel is fought with what they took (a
+    // potion takes back a landed swing; a Smoke Bomb flees a lost first
+    // swing with everything, and the duel is over).
+    const tricks = duelTricks(
+      next,
+      card,
+      q,
+      outcome,
+      outcome === "won" ? (nat === 20 ? 2 : 1) : 0,
+    );
+    next = tricks.party;
+    if (need && outcome !== "fled" && !tricks.fled) {
+      let hits = Math.min(need, next.hits + tricks.landed);
       // The Quest 2.1: the dragon never falls to its contest. A won
       // contest that would break the last scale leaves it, and the next
       // swing is rolled twice (`duel.staggered`).

@@ -11,6 +11,19 @@ import {
   finaleStage,
   RIVAL_CAP,
   RIVAL_GAP,
+  RIVAL_TOTAL,
+  RIVAL_VERBS,
+  assistBonus,
+  awaitingInvoice,
+  awaitingRedo,
+  canKickOut,
+  canPayInvoice,
+  kickOut,
+  payInvoice,
+  payOff,
+  payOffItem,
+  redoRoll,
+  rivalArsenal,
   rivalCut,
   rivalLine,
   rivalProfile,
@@ -29,6 +42,7 @@ import type {
   GameConfig,
   Loot,
   PartyState,
+  RivalVerb,
   SessionState,
 } from "../src/game/types";
 import { takeRoads } from "./roads";
@@ -134,15 +148,18 @@ describe("the rival", () => {
         loot: ["draught", "shield"],
       });
       const after = advance(advance(s));
+      // Lady Fingerbang takes two from the start (Phase 2), newest first.
+      const took: Loot[] =
+        r.who === "mirabel" ? ["shield", "draught"] : ["shield"];
       expect(party(after).rival).toEqual({
         who: r.who,
-        took: ["shield"],
+        took,
         won: 0,
         lost: 0,
-        news: { took: ["shield"] },
+        news: { took },
         seen: STEP.rival + 1,
       });
-      expect(party(after).loot).toEqual(["draught"]);
+      expect(party(after).loot).toEqual(r.who === "mirabel" ? [] : ["draught"]);
       expect(party(after).deeds).toEqual([`rival-${r.who}`]);
       expect(rivalProfile(after.quest)?.profile.name).toBe(r.name);
       roundTrip(after);
@@ -272,13 +289,18 @@ describe("the rival", () => {
   });
 
   it("turns up uninvited: spaced out, capped, and only with their own cards", () => {
-    const kinds = { ambush: 0, meddle: 0, snipe: 0 };
+    const zero = () =>
+      Object.fromEntries(RIVAL_VERBS.map((k) => [k, 0])) as Record<
+        RivalVerb,
+        number
+      >;
+    const kinds = zero();
     for (let seed = 1; seed <= 80; seed++) {
       const random = seeded(seed);
       const who = rivals[seed % rivals.length];
       let s = met(who.who, STEP.floor2, { loot: ["draught", "die"] }, {}, seed);
       let last = -99;
-      const seen = { ambush: 0, meddle: 0, snipe: 0 };
+      const seen = zero();
       for (let guard = 0; guard < 200 && s.quest!.step < STEP.door; guard++) {
         if (s.phase === "complete") break;
         if (s.phase === "hidden") {
@@ -296,30 +318,41 @@ describe("the rival", () => {
           if (cut || raw.rival) last = s.discarded + 1;
         }
         s = advance(s, random);
+        if (awaitingInvoice(s)) s = payInvoice(s, "heart");
         const card = currentCard(s);
         if (card.offers?.length)
           s = takeOffer(s, card.offers.length - 1, random);
         else if (card.battle && !card.dice) s = settleBattle(s, true, random);
         else if (card.dice) {
           const sides = card.dice.sides;
-          const rolled = returnToCard(
+          let rolled = returnToCard(
             rollDice(s, () => (Math.min(19, sides) - 0.5) / sides),
           );
+          if (awaitingRedo(rolled))
+            rolled = returnToCard(
+              rollDice(
+                redoRoll(rolled),
+                () => (Math.min(19, sides) - 0.5) / sides,
+              ),
+            );
           s = awaitingPress(rolled)
             ? cashOut(rolled, random)
             : advance(rolled, random);
         } else s = advance(s, random);
       }
-      for (const k of ["ambush", "meddle", "snipe"] as const) {
+      // No more than the run's total.
+      expect(
+        RIVAL_VERBS.reduce((n, k) => n + (party(s).rival?.cuts?.[k] ?? 0), 0),
+      ).toBeLessThanOrEqual(RIVAL_TOTAL);
+      for (const k of RIVAL_VERBS) {
         expect(seen[k]).toBeLessThanOrEqual(RIVAL_CAP[k]);
         expect(party(s).rival?.cuts?.[k] ?? 0).toBe(seen[k]);
         kinds[k] += seen[k];
       }
     }
-    // Every kind happens.
-    expect(kinds.ambush).toBeGreaterThan(10);
-    expect(kinds.meddle).toBeGreaterThan(10);
-    expect(kinds.snipe).toBeGreaterThan(10);
+    // Every kind the three rivals use happens.
+    for (const k of ["ambush", "meddle", "snipe", "redo", "swipe"] as const)
+      expect(kinds[k], k).toBeGreaterThan(2);
     // 80 seeded runs played card by card: about 5 s here, more on a CI
     // runner beside the other files, so it has the harness's 30 s.
   }, 30_000);
@@ -375,7 +408,7 @@ describe("the rival", () => {
             r.who,
             STEP.door,
             { loot: ["draught"] },
-            { took: ["die", "smoke"] },
+            { took: ["round", "revive"] },
           ),
           STEP.door,
           r.plea.id,
@@ -392,7 +425,7 @@ describe("the rival", () => {
       expect(s.quest!.step).toBe(STEP.duel);
       s = fight(s, 18);
       expect(finaleStage(s.quest!).label).toBe("The Dragon's Lair");
-      expect(party(s).loot).toEqual(["draught", "die", "smoke"]);
+      expect(party(s).loot).toEqual(["draught", "round", "revive"]);
       expect(party(s).rival).toMatchObject({ took: [], won: 1 });
       expect(party(s).boons).toContain(r.duel.id);
       expect(party(s).deeds).toContain("rival-beaten");
@@ -504,5 +537,304 @@ describe("the rival", () => {
     // Named before their introduction was dealt.
     const early = structuredClone(at(s, STEP.rival - 2));
     expect(() => parseSession(JSON.stringify(early))).toThrow();
+  });
+});
+
+// Rivals Phase 2 (maximum frustration): the Do-Over, the new verbs, the
+// counters the table can choose, and the duel fought with their ledger.
+const plainRoom = (c: CardDefinition) =>
+  !c.dice &&
+  !c.battle &&
+  !c.offers &&
+  !c.hits &&
+  !c.strike &&
+  !c.timer &&
+  !c.secret &&
+  !c.jinx &&
+  !c.reward;
+/** `who` met, the card `want` finds dealt at `step`, revealed, with the cut
+ * `cut` on it. */
+const cutOn = (
+  who: string,
+  step: number,
+  want: (c: CardDefinition) => boolean,
+  cut: Rival["cut"],
+  more: Partial<PartyState> = {},
+  rival: Partial<Rival> = {},
+) => {
+  const base = met(who, step);
+  const room = roomOf(base, step, want);
+  return advance(
+    at(place(base, step, room.id), step, {
+      ...more,
+      rival: { who, took: [], won: 0, lost: 0, cut, ...rival },
+    }),
+  );
+};
+const winAt = (s: SessionState) => rollTo(s, 19);
+
+describe("the rival, Phase 2", () => {
+  it("the Do-Over: a won roll is rolled again, and the new roll stands", () => {
+    const s = cutOn("tutt", STEP.floor2 + 2, plainFight, "redo");
+    expect(currentCard(s).ribbon).toBe("Sensei Saggynuts · Do-Over");
+    expect(rivalCut(s.quest)?.line).toContain("Lucky. Again.");
+    // A lost first roll is left alone.
+    const lost = rollTo(s, 2);
+    expect(awaitingRedo(lost)).toBe(false);
+    // A won one waits: the card cannot be put aside.
+    const won = winAt(s);
+    expect(awaitingRedo(won)).toBe(true);
+    expect(advance(won, seeded(1))).toBe(won);
+    roundTrip(won);
+    const again = redoRoll(won);
+    expect(again.roll).toBeNull();
+    expect(party(again).rival).toMatchObject({ redone: true, redos: 1 });
+    roundTrip(again);
+    // The new roll stands, win or lose.
+    const after = rollTo(again, 2);
+    expect(awaitingRedo(after)).toBe(false);
+    expect(awaitingRedo(winAt(again))).toBe(false);
+    const put = advance(after, seeded(2));
+    expect(put.discarded).toBe(after.discarded + 1);
+    expect(party(put).rival?.redone).toBeUndefined();
+    expect(party(put).rival?.redos).toBe(1);
+    roundTrip(put);
+  });
+
+  it("pays them off with the newest item: the cut is cancelled", () => {
+    // A Do-Over, once the win is on the card.
+    const s = cutOn("tutt", STEP.floor2 + 2, plainFight, "redo", {
+      loot: ["draught", "shield"],
+    });
+    expect(payOffItem(s)).toBeUndefined();
+    const won = winAt(s);
+    expect(payOffItem(won)).toBe("shield");
+    const paid = payOff(won);
+    expect(party(paid).loot).toEqual(["draught"]);
+    expect(party(paid).rival).toMatchObject({
+      took: ["shield"],
+      cuts: { paid: 1 },
+    });
+    expect(party(paid).rival?.cut).toBeUndefined();
+    expect(awaitingRedo(paid)).toBe(false);
+    expect(currentCard(paid).ribbon).not.toContain("Do-Over");
+    roundTrip(paid);
+    // A meddle, before the roll only.
+    const meddle = cutOn("tutt", STEP.floor2 + 2, plainFight, "meddle", {
+      loot: ["die"],
+    });
+    expect(payOffItem(meddle)).toBe("die");
+    expect(payOffItem(winAt(meddle))).toBeUndefined();
+    expect(
+      cardEdge(payOff(meddle).quest, currentCard(payOff(meddle))),
+    ).not.toBe("disadvantage");
+    // Nothing to pay with: no pay-off.
+    const broke = cutOn("tutt", STEP.floor2 + 2, plainFight, "meddle");
+    expect(payOff(broke)).toBe(broke);
+  });
+
+  it("swipes or hands off the newest item when the card goes", () => {
+    for (const cut of ["swipe", "handoff"] as const) {
+      const s = cutOn("mirabel", STEP.floor2 + 2, plainRoom, cut, {
+        loot: ["draught", "shield"],
+      });
+      expect(payOffItem(s)).toBeUndefined();
+      const after = advance(s, seeded(3));
+      expect(party(after).loot).toEqual(["draught"]);
+      if (cut === "swipe")
+        expect(party(after).rival).toMatchObject({
+          took: ["shield"],
+          news: { took: ["shield"] },
+        });
+      else
+        expect(party(after).rival).toMatchObject({
+          took: [],
+          news: { gone: ["shield"] },
+        });
+      roundTrip(after);
+    }
+  });
+
+  it("poaches an ally unless the table drinks, and the duel brings it home", () => {
+    const base = met("mirabel", STEP.floor2 + 2);
+    // The first inn's hired blade, dealt before the second region.
+    const ally = base
+      .quest!.finale.slice(0, STEP.floor2)
+      .map((id) => finaleCard(base.quest!, id)!)
+      .find((c) => c.ally && !c.rival)!;
+    const s = cutOn("mirabel", STEP.floor2 + 2, plainRoom, "poach", {
+      team: [ally.id],
+    });
+    expect(canKickOut(s)).toBe(true);
+    // Kept, for drinks.
+    const kept = advance(kickOut(s), seeded(3));
+    expect(party(kept).team).toEqual([ally.id]);
+    expect(party(kept).rival?.cuts?.paid).toBe(1);
+    // Taken.
+    const taken = advance(s, seeded(3));
+    expect(party(taken).team).toBeUndefined();
+    expect(party(taken).rival).toMatchObject({
+      poached: [ally.id],
+      news: { poached: ally.id },
+    });
+    roundTrip(taken);
+    // The duel falls: the ally comes back with everything.
+    const mirabel = rivals.find((r) => r.who === "mirabel")!;
+    let duel = advance(
+      at(place(taken, STEP.duel, mirabel.duel.id), STEP.duel, {
+        hearts: 30,
+        loot: [],
+      }),
+    );
+    duel = fight(duel, 18);
+    duel = fight(duel, 18);
+    expect(party(duel).team).toEqual([ally.id]);
+    expect(party(duel).rival?.poached).toBeUndefined();
+    roundTrip(duel);
+  });
+
+  it("squats in an inn: its rests heal 1 less, unless kicked out", () => {
+    // The second inn (its rare, the widow, has no rest): the first seed
+    // whose run has one with a rest after the second region.
+    const innAt = (b: SessionState) =>
+      b.quest!.finale.findIndex(
+        (id, i) =>
+          i > STEP.floor2 &&
+          !!finaleCard(b.quest!, id)?.offers?.some((o) => o.heal),
+      );
+    let base = met("bradley", STEP.floor2);
+    for (let seed = 2; innAt(base) < 0; seed++)
+      base = met("bradley", STEP.floor2, {}, {}, seed);
+    const step = innAt(base);
+    const inn = finaleCard(base.quest!, base.quest!.finale[step])!;
+    const rest = inn.offers!.findIndex((o) => o.heal);
+    const s = advance(
+      at(base, step, {
+        hearts: 5,
+        max: 30,
+        rival: { who: "bradley", took: [], won: 0, lost: 0, cut: "squat" },
+      }),
+    );
+    expect(currentCard(s).offers![rest].heal).toBe(inn.offers![rest].heal! - 1);
+    roundTrip(s);
+    const rested = takeOffer(s, rest, seeded(2));
+    const kicked = takeOffer(kickOut(s), rest, seeded(2));
+    expect(party(kicked).hearts - party(rested).hearts).toBe(1);
+  });
+
+  it("an invoice holds the card until it is paid with a heart or an item", () => {
+    const s = cutOn("bradley", STEP.floor2 + 2, plainRoom, "invoice", {
+      loot: ["draught"],
+    });
+    expect(awaitingInvoice(s)).toBe(true);
+    expect(advance(s, seeded(1))).toBe(s);
+    roundTrip(s);
+    const heart = payInvoice(s, "heart");
+    expect(party(heart).hearts).toBe(29);
+    expect(awaitingInvoice(heart)).toBe(false);
+    const item = payInvoice(s, "item");
+    expect(party(item)).toMatchObject({ hearts: 30, loot: [] });
+    expect(party(item).rival?.took).toEqual(["draught"]);
+    expect(advance(item, seeded(1)).discarded).toBe(s.discarded + 1);
+    // No item: only a heart.
+    const broke = cutOn("bradley", STEP.floor2 + 2, plainRoom, "invoice");
+    expect(canPayInvoice(broke, "item")).toBe(false);
+    expect(payInvoice(broke, "item")).toBe(broke);
+  });
+
+  it("a curse lands with the card, from a card of theirs never dealt", () => {
+    const withJinx = cards.find((c) => c.jinx)!;
+    const base = met("tutt", STEP.floor2 + 2);
+    const id = base
+      .quest!.stages.flatMap((st) => st.ambush ?? [])
+      .find((c) => c.rival?.who === "tutt")!.id;
+    const s = structuredClone(
+      cutOn("tutt", STEP.floor2 + 2, plainRoom, "curse"),
+    );
+    // Every copy of that card carries their curse (Phase 3's bard's do).
+    for (const st of s.quest!.stages)
+      for (const c of [...st.cards, ...(st.ambush ?? [])])
+        if (c.id === id) {
+          c.jinx = withJinx.jinx;
+          c.rival!.curse = true;
+        }
+    const theirs = { id };
+    const cursed = advance(s);
+    expect(party(cursed).jinx).toBe(theirs.id);
+    roundTrip(cursed);
+  });
+
+  it("the duel is fought with what they took", () => {
+    const tutt = rivals.find((r) => r.who === "tutt")!;
+    const duelWith = (took: Loot[]) =>
+      advance(
+        place(met("tutt", STEP.duel, {}, { took }), STEP.duel, tutt.duel.id),
+      );
+    // Each Tower Shield is a swing more.
+    const shields = duelWith(["shield", "shield"]);
+    expect(rivalArsenal(shields.quest, currentCard(shields))?.shields).toBe(2);
+    let s = shields;
+    for (let i = 0; i < 3; i++) s = fight(s, 18);
+    expect(finaleStage(s.quest!).label).toBe("The Duel");
+    s = fight(s, 18);
+    expect(finaleStage(s.quest!).label).toBe("The Dragon's Lair");
+    // Their Lucky Coin: the party's first won swing is a Do-Over.
+    const coin = winAt(duelWith(["die"]));
+    expect(awaitingRedo(coin)).toBe(true);
+    const redone = redoRoll(coin);
+    expect(party(redone).rival?.arsenal).toEqual({ coin: true });
+    roundTrip(redone);
+    expect(awaitingRedo(winAt(redone))).toBe(false);
+    // Their potion: the first landed swing does not count.
+    let potion = fight(duelWith(["draught"]), 18);
+    expect(party(potion).hits).toBe(0);
+    expect(party(potion).rival?.arsenal).toEqual({
+      draught: true,
+      swung: true,
+    });
+    roundTrip(potion);
+    potion = fight(potion, 18);
+    expect(party(potion).hits).toBe(1);
+    // Their Smoke Bomb: a lost first swing and they flee with everything.
+    const smoke = duelWith(["smoke", "shield"]);
+    const fled = fight(smoke, 2);
+    expect(finaleStage(fled.quest!).label).toBe("The Dragon's Lair");
+    expect(party(fled).rival?.took).toEqual([]);
+    expect(party(fled).rival?.news?.gone).toEqual(["smoke", "shield"]);
+    expect(party(fled).deeds).toContain("rival-fled");
+    expect(party(fled).boons ?? []).not.toContain(tutt.duel.id);
+    roundTrip(fled);
+    // Won first, the bomb is spent.
+    const late = fight(fight(smoke, 18), 2);
+    expect(finaleStage(late.quest!).label).toBe("The Duel");
+  });
+
+  it("a joined rival's grudge: one more for each meeting lost, up to two", () => {
+    const chad = rivals.find((r) => r.who === "bradley")!;
+    expect(chad.plea.ally!.grudge).toBe(true);
+    const q = met("bradley", STEP.door, {}, { lost: 5 }).quest!;
+    expect(assistBonus(chad.plea, q)).toBe(chad.plea.ally!.bonus + 2);
+    const q1 = met("bradley", STEP.door, {}, { lost: 1 }).quest!;
+    expect(assistBonus(chad.plea, q1)).toBe(chad.plea.ally!.bonus + 1);
+  });
+
+  it("rejects a malformed Phase 2 rival", () => {
+    const s = cutOn("tutt", STEP.floor2 + 2, plainFight, "redo");
+    roundTrip(s);
+    const bad = (change: (r: Rival) => void) => {
+      const next = structuredClone(s);
+      change(next.quest!.party!.rival!);
+      expect(() => parseSession(JSON.stringify(next))).toThrow();
+    };
+    bad((r) => (r.cut = "dance" as "redo"));
+    bad((r) => {
+      r.cut = "meddle";
+      r.redone = true;
+    });
+    bad((r) => (r.redos = -1));
+    bad((r) => (r.poached = ["dungeon.nobody"]));
+    bad((r) => (r.arsenal = { coin: false as unknown as true }));
+    bad((r) => (r.cuts = { paid: 1.5 }));
+    bad((r) => (r.news = { gone: ["gold" as Loot] }));
   });
 });
