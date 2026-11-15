@@ -1,4 +1,11 @@
-import React, { useEffect, useRef, useState, type CSSProperties } from "react";
+import React, {
+  Suspense,
+  lazy,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 import { createRoot } from "react-dom/client";
 import { packs } from "./content/manifest.generated";
 import { loadedPackCards, loadPackCards } from "./content/loaders";
@@ -60,12 +67,17 @@ import { PartyNewsBanner, StageBanner } from "./components/StageBanner";
 import { PartyPulse } from "./components/Crawl";
 import { MomentDirector } from "./components/moments/Director";
 import { Announcer } from "./components/Announcer";
+import { prologue, runKey } from "./components/prologue";
 import { IS_PREVIEW } from "./app/channel";
 import "./style.css";
 import "./presentation/theme.css";
 import "./presentation/card-front.css";
 import "./presentation/crawl.css";
 import "./presentation/moments.css";
+
+// The opening of a crawl, shown apart from the table (2026-11-15). Lazy: it
+// brings the Quest's art.
+const Prologue = lazy(() => import("./screens/Prologue"));
 
 // The app started: every module above loaded and ran. `index.html` shows
 // "Side Quest needs iOS 26 or newer" on load when this never runs.
@@ -132,6 +144,23 @@ function App() {
   );
   const display = outgoing ?? session;
   const active = !!display && display.phase !== "complete";
+  // The prologue (2026-11-15, `components/prologue.ts`): the opening cards
+  // in a scene of their own, then a handoff, before the table appears.
+  // `dealt` is the run whose handoff was answered, for this visit only: a
+  // reload at the handoff asks again, which is harmless.
+  const [dealt, setDealt] = useState<string | null>(null);
+  const opening = prologue(display);
+  const inPrologue =
+    !!opening && !(opening.at === opening.length && dealt === runKey(display!));
+  // A prologue card is turned for the table as it arrives: the scene shows
+  // it, and the omen's reveal moment plays over it.
+  useEffect(() => {
+    if (!inPrologue || motion || !opening || opening.at === opening.length)
+      return;
+    if (session?.phase !== "hidden") return;
+    controller.tap();
+    controller.settleAll();
+  }, [inPrologue, motion, opening, session, controller]);
   useWakeLock(active);
   useEffect(requestPersistence, []);
   // An evolution (a Rare Candy from the bag, 2026-11-01) plays over the
@@ -284,7 +313,7 @@ function App() {
               </svg>
             </IconButton>
           )}
-        {active && (
+        {active && !inPrologue && (
           <TopBar
             session={display}
             disabled={!!motion}
@@ -367,6 +396,24 @@ function App() {
             onFinish={() => finish(transition)}
             onUndo={undoable ? () => controller.undo() : undefined}
           />
+        ) : inPrologue ? (
+          <Suspense fallback={null}>
+            <Prologue
+              session={display}
+              at={opening!}
+              busy={!!motion}
+              onContinue={() => {
+                controller.tap();
+                controller.settleAll();
+              }}
+              onOffer={(index) => {
+                controller.offer(index);
+                controller.settleAll();
+              }}
+              onDeal={() => setDealt(runKey(display))}
+              onMenu={() => setModal("menu")}
+            />
+          </Suspense>
         ) : (
           <>
             <Play

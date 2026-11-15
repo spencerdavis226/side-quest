@@ -6,9 +6,20 @@ Updated 2026-11-15. **Single authoritative handoff.** Read `AGENTS.md` first. Ol
 
 Owner's asks: (1) the opening of a run (starter, adventurer, omen, Summons, roads) must not be the card-flip table: a separate scene with its own look, ending in one clear handoff, because tables start passing the phone during setup; (2) colour the title area by Pokémon type, region and boss, across both games; (3) the boss foil "looks really cheap ... too saturated": start with only the title area foiled. The owner chose the recommendations: the rival's introduction stays mid-run (its own scene language, not moved into setup); art is procedural and in-repo; three pull requests in this order:
 
-- **Phase A, the title band and foil** (done, below).
+- **Phase A, the title band and foil** (done, below; PR #98).
 - **Phase B, the League's prologue**: the starter shown in a scene of its own (no card, no top bar), then the handoff ("Pass the phone"), then the first card on the table. Display only: the engine deals and saves exactly as before.
 - **Phase C, the Quest's prologue**: the adventurer, the omen, the King's Summons and the Road Out in the same scene language (the road's plaques as a choice on the scene), then the same handoff.
+
+## Done 2026-11-15: visual overhaul, Phase B (the League's prologue)
+
+- **When** (`src/components/prologue.ts`): `prologue(session)` reads the run alone: a crawl whose first stages are in `PROLOGUE_STAGES` (the League's "Your starter"; the Quest's four from Phase C) is in its prologue while one of their cards is in play, then at the handoff (the prologue put aside, the first card face down). No save field: an old save mid-opening shows the scene too.
+- **The scene** (`src/screens/Prologue.tsx`, lazy; `src/presentation/prologue.css`): no card, no top bar, no table. Dawn light in the starter's colours, a turning ring round its type medallion, its name, type, perks and line of forms, "Everyone, look together. Keep the phone here.", a step track and a menu button. The handoff: "Off to Route 1", three numbered lines on how a turn goes, "Now pass the phone. One card each, round the table.", **Deal the first card**. The omen moment (the ball) still plays as the starter is turned.
+- **Wiring** (`main.tsx`): a prologue card is turned for the table as it arrives (`controller.tap()`, settled at once); Continue and a road are the table's own `tap` and `offer`; `dealt` (memory only, by `runKey`) hides the handoff once answered, so a reload at the handoff asks again.
+- **The starter's kit** no longer plays a Bag moment as the starter is put aside (`detect.ts`: items from an omen card are told on its card and scene).
+- **Tests**: `tests/prologue.test.ts`; `tests/browser/prologue.spec.ts`; the @release League opening (`quest.spec.ts`) and starter moment (`moments.spec.ts`) now go through the scene; two League tests that seed the first route card face down answer the handoff first.
+- **Checked**: `npm test` 639 passed; typecheck; lint; build (budgets pass; the scene is a 2.3 KB gzip lazy chunk); Chromium `test:e2e` 185 of 190 on the first run (the four tests updated above, and the jinx-scroll moment, the load flake noted 2026-11-15), then `quest`, `moments` and `prologue` specs 38 of 38. Screens reviewed at 390 px in Chromium.
+- **Not checked**: WebKit locally (CI), a phone.
+- **Next**: Phase C.
 
 ## Done 2026-11-15: visual overhaul, Phase A (the title band and its foil)
 

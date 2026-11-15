@@ -31,6 +31,7 @@ import { CrawlIcon } from "../Crawl";
 import { QUEST_MAP, crawlTheme } from "../crawlTheme";
 import { QuestMap } from "../QuestMap";
 import RivalMedal, { RIVAL_COLOURS, rivalVars } from "../RivalMedal";
+import { classMark } from "../classMark";
 
 // The moments themselves (2026-11-01; styles in `presentation/moments.css`).
 // A lazy chunk: the director (`Director.tsx`) loads it when a game starts.
@@ -603,30 +604,6 @@ function Evolution({ m, scale, onDone }: ViewProps<"evolution">) {
 /** Pub Crawl's level up: the class's name on an iron plate heats from cold
  * to white under three hammer strikes, sparks flying off each, and the new
  * level stamps over it in gold. */
-/** A class's mark (The Quest 2.1), by its card. */
-const CLASS_MARK: Record<string, QuestArt> = {
-  barbarian: "class-barbarian",
-  rogue: "class-rogue",
-  wizard: "class-wizard",
-  bard: "class-bard",
-  paladin: "class-paladin",
-  ranger: "class-ranger",
-  monk: "class-monk",
-  necromancer: "class-necromancer",
-  alchemist: "class-alchemist",
-  warlock: "class-warlock",
-  bouncer: "class-knight",
-  bartender: "class-innkeeper",
-  mercenary: "class-sellsword",
-  druid: "class-druid",
-  "plus-one": "class-peasant",
-  intern: "class-squire",
-  mimic: "class-mimic",
-  dragonslayer: "class-dragonslayer",
-};
-const classMark = (id: string): QuestArt =>
-  CLASS_MARK[id.replace("dungeon.class-", "")] ?? "shield";
-
 function LevelUp({ m, scale, onDone }: ViewProps<"evolution">) {
   const plate = useRef<HTMLDivElement>(null);
   const strike = (n: number) => () =>

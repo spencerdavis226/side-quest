@@ -643,7 +643,12 @@ export function momentsBetween(
         !isOmenBoon(b) &&
         b.card.encounter !== "omen",
     );
-    const items = evolved ? [] : gained(was.loot, party.loot);
+    // The kit a starter or adventurer brings is told on its own card (and
+    // in the prologue's scene, 2026-11-15): no Bag moment for it.
+    const fromOmen =
+      after.discarded > before.discarded &&
+      currentCard(before).encounter === "omen";
+    const items = evolved || fromOmen ? [] : gained(was.loot, party.loot);
     if (newBoon) {
       const from = newBoon.card;
       out.push({
