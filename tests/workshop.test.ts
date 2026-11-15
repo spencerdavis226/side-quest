@@ -92,7 +92,7 @@ test("each supplied sheet row lands in the Core deck (House or CABIIN IDs) or VI
   expect(vip.cardIds.slice(-4)).toEqual(
     [3, 4, 5, 6].map((row) => `vip.sheet-${String(row).padStart(3, "0")}`),
   );
-  expect(cards).toHaveLength(1948); // 106 core (10 coin cards, The Quest 2.1) + 94 house + 16 vip + 120 Pokémon (+72 League-only gym leaders, 79 gauntlet cards, 35 starters, 239 route, Victory Road and rival cards, 36 hideout cards) + 85 cabin + 250 likely + 156 secrets + 660 Realms (304 fights, elites and bosses; 153 Quest finds, gambles, merchants, forks and table moments; 20 omens, 19 adventurers (the Dragonslayer locked), 2 locked dragons, 6 summons, 6 dragon signs, 6 road choices, 27 landmarks, 22 rares, 11 echoes, 16 inns, 43 rival cards (six rivals of seven since Rivals Phase 3, and Sensei pinned since Phase 4; the Gilded Company's 21 gate, crossroads and door cards cut) and 25 side-quest cards)
+  expect(cards).toHaveLength(1954); // 106 core (10 coin cards, The Quest 2.1) + 94 house + 16 vip + 120 Pokémon (+72 League-only gym leaders, 79 gauntlet cards, 35 starters, 239 route, Victory Road and rival cards, 36 hideout cards) + 85 cabin + 250 likely + 156 secrets + 666 Realms (304 fights, elites and bosses; 153 Quest finds, gambles, merchants, forks and table moments; 20 omens, 19 adventurers (the Dragonslayer locked), 2 locked dragons, 6 summons, 6 dragon signs, 6 road choices, 27 landmarks, 22 rares, 11 echoes, 16 inns, 49 rival cards (six rivals of seven since Rivals Phase 3, Sensei pinned since Phase 4 and six returning introductions since Phase 6; the Gilded Company's 21 gate, crossroads and door cards cut) and 25 side-quest cards)
 });
 
 test("League gyms come in eight tiers, one leader per region in each", () => {

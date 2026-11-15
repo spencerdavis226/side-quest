@@ -46,7 +46,16 @@ const only = process.argv[3];
 /** Every state a seeded game passes through, as the app would save it. */
 function* play(config: GameConfig, seed: number) {
   const random = seeded(seed);
-  let s = createSession(config, cards, packs, random);
+  // Rivals Phase 6: a run started with the Chronicle's memory of every
+  // rival (they come back for more).
+  let s = createSession(
+    config,
+    cards,
+    packs,
+    random,
+    new Set(),
+    config === remembered ? REMEMBERED : {},
+  );
   yield s;
   for (let guard = 0; guard < 3000 && s.phase !== "complete"; guard++) {
     s = nextMove(s, random);
@@ -64,6 +73,11 @@ const plain = config(["core", "vip", "likely"], null);
 const secrets = config(["core", "secrets"], null);
 const league = config(["pokemon"], null, "pokemon");
 const crawl = config(["dungeon"], null, "dungeon");
+/** The Quest, as a table whose Chronicle has met every rival. */
+const remembered = config(["dungeon"], null, "dungeon");
+const REMEMBERED = {
+  met: ["bradley", "mirabel", "tutt", "chuck", "gary", "queef"],
+};
 
 /** A situation, read from a state and the one before it. */
 type Find = (s: SessionState, prev?: SessionState) => boolean;
@@ -680,6 +694,15 @@ const situations: [string, GameConfig, Find][] = [
     "realms-rival-went-in-first",
     crawl,
     (s) => !!party(s).rival?.news?.first && s.phase === "hidden",
+  ],
+  // Rivals Phase 6 (2026-11-15): a rival met before, back for more.
+  [
+    "realms-rival-back",
+    remembered,
+    (s) =>
+      s.phase === "hidden" &&
+      !!party(s).deeds?.some((d) => d.startsWith("nemesis-")) &&
+      !!party(s).rival,
   ],
   ["crawl-wiped", crawl, (s) => party(s).wiped],
   ["crawl-survived", crawl, (s) => s.phase === "complete" && !party(s).wiped],

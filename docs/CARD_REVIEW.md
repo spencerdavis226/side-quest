@@ -1329,7 +1329,7 @@ the Review column is intentionally blank so you can mark it up.
 
 ## Realms (`dungeon`)
 
-660 cards · 37 sip · 179 group · 0 category · 405 challenge · 39 rule · 296 dice
+666 cards · 37 sip · 185 group · 0 category · 405 challenge · 39 rule · 296 dice
 
 | Review | Title | ID | Cat | Rules | Dice, secret or timer |
 | --- | --- | --- | --- | --- | --- |
@@ -1494,6 +1494,12 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Chuck the Cuck | `dungeon.rival-chuck` | group | Chuck the Cuck appoints himself your squire. He keeps one of your things. Eye contact: drink 2. |  |
 | ☐ | Gary Shitwhistle | `dungeon.rival-gary` | group | Gary Shitwhistle, Royal Auditor, fines you an item. He blows his whistle; first to move drinks 2. |  |
 | ☐ | Dame Queefington | `dungeon.rival-queef` | group | Dame Queefington has a song about your last fight. It rhymes 'hero' with 'zero'. Everyone hums. |  |
+| ☐ | Chad Is Back | `dungeon.rival-bradley-back` | group | Sir Chad is back. 'Remember me, Champ?' He takes two this time. Weakest flex drinks 2. |  |
+| ☐ | Fingerbang Returns | `dungeon.rival-mirabel-back` | group | Lady Fingerbang is back. She remembers your pockets, and takes two. Last to cover a drink drinks 2. |  |
+| ☐ | Sensei Returns | `dungeon.rival-tutt-back` | group | Sensei Saggynuts is back. 'You again. Still slouching.' He confiscates two. Slouchers drink 2. |  |
+| ☐ | Chuck Is Back | `dungeon.rival-chuck-back` | group | Chuck the Cuck is back to watch, with a notebook. He keeps two of your things. Eye contact: drink 2. |  |
+| ☐ | Gary's Follow-Up | `dungeon.rival-gary-back` | group | Gary Shitwhistle is back. Your file is thicker. He fines you two items. First to move drinks 2. |  |
+| ☐ | The Sequel | `dungeon.rival-queef-back` | group | Dame Queefington is back with a sequel about you. It's worse. She takes two. Everyone hums. |  |
 | ☐ | Sir Chad Begs | `dungeon.rival-bradley-door` | group | Sir Chad, cape on fire, wants in. He keeps what he took, and the credit. Everyone votes. |  |
 | ☐ | Fingerbang's Offer | `dungeon.rival-mirabel-door` | group | Lady Fingerbang gives it all back if she can come. She crosses her heart, with your hand. Vote. |  |
 | ☐ | The Final Exam | `dungeon.rival-tutt-door` | group | Sensei Saggynuts blocks the door. 'One last lesson.' He's not coming along. Everyone groans. |  |

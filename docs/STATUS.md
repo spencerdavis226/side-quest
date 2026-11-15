@@ -2,9 +2,24 @@
 
 Updated 2026-11-15. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Next task (2026-11-15): the Rivals, Phase 6 (the Chronicle's nemesis)
+## Next task (2026-11-15): the Rivals, Phase 7 (the owner's table)
 
-Build Phase 6 of `docs/RIVALS_PLAN.md`: `Chronicle.rivals` folded in by `recordRun` (met, beaten, lost to, joined, betrayed, slain by), the nemesis weighting at `createSession` (a rival who beat you last run twice as likely), the returning introductions (`nemesis-<who>` deeds), the six feats, the Chronicle screen's Rivals section, and the owner's call on "The Ex". Phase 8 of The Quest 2.0 (the owner's table) still waits on the owner.
+Not code. Phase 7 of `docs/RIVALS_PLAN.md`: the owner plays at least three runs on a phone (one where the rival is joined, one refused, one Heroic) and answers the plan's five questions (do you hate them by the door; is the Do-Over funny or infuriating in a bad way; do pay-offs get used; is the betrayal a story or a cheat; does any name land flat), recorded in `docs/DEVICE_CHECKLIST.md`, then tune from them. Also for the owner: the alternate names, a clean-names switch, and whether "The Ex" (a seventh rival unlocked by beating all six duels) ships. Phase 8 of The Quest 2.0 (the owner's table) still waits on the owner too.
+
+## Done 2026-11-15: the Rivals, Phase 6 (the Chronicle's nemesis)
+
+Built from Phase 6 of `docs/RIVALS_PLAN.md`; card total 1,954 (Realms 666).
+
+- **The record** (`Chronicle.rivals`, `RivalRecord` in `src/game/chronicle.ts`; optional under the same key `side-quest.chronicle.v1`): for each rival, runs met, duels won against them, meetings lost to them, runs they joined, betrayals and dragons they "slew", counted by `recordRun` as a run ends. `Chronicle.nemesis`: the rival who got the better of the table last run (still holding its things, turned on it, or went into the lair first), cleared by a run that settled with them. `readChronicle` drops a malformed record or nemesis alone.
+- **The nemesis pick** (`rememberRivals` in `src/game/crawl/rival.ts`, `createSession`'s new `rivals` argument, `rivalMemory` from `main.tsx`): the nemesis is twice as likely as any other rival at the Your Rival stage (picked plainly 1 time in n, swapped in 1 time in n + 1 more: 2 in n + 1). It draws randomness only when a nemesis is named, so a run without Chronicle memory deals exactly as before (the balance file is unchanged: won 30.9%, 8 of 8).
+- **Returning introductions** (`rivalBacks`, `dungeon.rival-<who>-back`, six cards: "Chad Is Back", "Fingerbang Returns", "Sensei Returns", "Chuck Is Back", "Gary's Follow-Up", "The Sequel"; each takes two items): the Your Rival stage's variants, keyed by the deed `nemesis-<who>`, which `rememberRivals` sets at the start of a run only for the rival picked and only if the Chronicle has met them; `resolveStage` swaps the card in as the stage is reached. The plan set the deed for every rival met; setting it for the one picked keeps the nemesis weighting (a deed for each would let the variant pick override it).
+- **Feats** (18 now): Paid in Full (beat their duel when they held nothing of yours; the deed `rival-clean`, set as the table refuses them with an empty ledger), Et Tu, Just Watching, Allegedly, Audited, Bad Reviews.
+- **The Chronicle screen**: a Rivals section, each rival's medallion and record, the nemesis marked, an unmet rival a "?".
+- **Saves**: `badRival` now accepts any dealt introduction of the rival (their returning one included). Fixture `2026-11-15-realms-rival-back` (a run the Chronicle had met every rival in, past the returning introduction). 136 fixtures load.
+- **Not built**: "The Ex" (left to the owner, as the plan says).
+- **Tests**: `tests/chronicle.test.ts` (22): the rival record and nemesis kept and cleared, the six feats, a malformed rival record dropped alone, the nemesis swap's threshold and the returning deed, and a run without memory dealing exactly as before; `chronicle.spec.ts`: the Rivals section.
+- **Checked**: `npm test` 632 passed; lint; typecheck; `cards:review` (1,954); build (budgets pass: runtime 5,292 KiB of 6,144, initial 163.8 KiB gzip); `tests/dungeon.balance.test.ts` 8 of 8 at 4,000 runs (unchanged); Chromium `test:sweep` 12 of 12; Chromium `test:e2e` 187 of 187; the Chronicle's Rivals section screenshotted at 390x844.
+- **Not run**: WebKit (CI runs it), the League balance file (nothing the League reads changed), a phone.
 
 ## Done 2026-11-15: the Rivals, Phase 5 (presentation)
 

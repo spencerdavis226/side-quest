@@ -153,3 +153,31 @@
 .chronicle-loading {
   text-align: center;
 }
+
+/* Rivals Phase 6: each rival's record, a medallion beside it. */
+.chronicle-rivals {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.chronicle-rivals li {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 2px 10px;
+  align-items: center;
+  opacity: 0.55;
+}
+.chronicle-rivals li.met {
+  opacity: 1;
+}
+.chronicle-rivals .rival-row-medal {
+  grid-row: span 2;
+  width: 40px;
+  height: 40px;
+}
+.chronicle-rivals em {
+  color: #e07a6a;
+  font-style: normal;
+}
