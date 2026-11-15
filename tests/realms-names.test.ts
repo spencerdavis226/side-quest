@@ -163,7 +163,7 @@ describe("the names a run fills in", () => {
       },
     };
     expect(currentCard(advance(decree)).rules).toBe(
-      `${dragon} has woken under ${lair}. Everyone raises a glass to the king.`,
+      `${dragon} woke under ${lair}, horny. Everyone toasts the king's tiny balls.`,
     );
     expect(fillNames(q, "No names here.")).toBe("No names here.");
     expect(fillNames(q, "{lair} and {dragon}")).toBe(`${lair} and ${dragon}`);

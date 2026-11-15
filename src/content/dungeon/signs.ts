@@ -23,13 +23,13 @@ export const signCards: CardDefinition[] = [
   sign(
     "shadow",
     "The Shadow",
-    "A shadow crosses the sun: {dragon}. Everyone ducks. Last head down drinks 2.",
+    "A shadow crosses the sun: {dragon}. Everyone ducks and clenches. Last head down drinks 2.",
     [{ label: "Watch it · drink 2", ...LORE }, { label: "Stay down" }],
   ),
   sign(
     "scale",
     "A Fallen Scale",
-    "A scale the size of a shield, still warm, fallen from {dragon}. Everyone touches it.",
+    "A warm, sticky scale off {dragon}. Don't ask why it's sticky. Everyone touches it anyway.",
     [
       { label: "Study it · drink 2", ...LORE },
       { label: "Wear it", loot: "shield" },
@@ -38,13 +38,13 @@ export const signCards: CardDefinition[] = [
   sign(
     "knights",
     "The Fleeing Knights",
-    "Knights gallop past the wrong way, shouting '{dragon}!' Everyone shouts it too.",
+    "Knights gallop past the wrong way, crying '{dragon}!' Everyone shouts it too, crying.",
     [{ label: "Stop one", cost: 1, ...LORE }, { label: "Let them run" }],
   ),
   sign(
     "mill",
     "The Burned Mill",
-    "A mill, still smoking. {dragon} was here an hour ago. Everyone pours out a sip.",
+    "A mill, still smoking. {dragon} took a dump on it an hour ago. Everyone pours out a sip.",
     [
       { label: "Search · drink 2", ...LORE },
       { label: "Fill a flask", loot: "draught" },
@@ -52,14 +52,14 @@ export const signCards: CardDefinition[] = [
   ),
   sign(
     "tracks",
-    "Tracks",
-    "One footprint, big enough to sit in. Everyone sits in it. Last down drinks 2.",
+    "Droppings",
+    "A dragon turd, big enough to sit in. Nobody sits in it. Last to say 'nope' drinks 2.",
     [{ label: "Follow them", cost: 1, ...LORE }, { label: "Go around" }],
   ),
   sign(
     "song",
     "The Old Song",
-    "A shepherd sings the old song about {dragon}. Everyone hums along. Nobody knows it.",
+    "A shepherd sings a filthy song about {dragon}. Everyone hums along. Nobody knows it.",
     [
       { label: "Learn it · drink 2", ...LORE },
       { label: "Tip him", heal: 1 },

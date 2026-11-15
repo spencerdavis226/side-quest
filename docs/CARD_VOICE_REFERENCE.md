@@ -52,7 +52,7 @@ Do not assume or recommend these unless the current game design changes explicit
 
 Nothing in the source needs softening. Keep supplied shots, chugs, gendered splits, mixed drinks, slapstick dares and crude call-outs as written; the table decides what anyone actually consumes.
 
-Dice *are* supported in this game (one to four d6/d20; total, doubles, or per-die amounts), so the source's dice ideas are welcome. Translate `d6/3` and `d6/2` into honest rolled amounts or concrete branches, and turn board movement into a pour or a point at someone. Never leave odds/evens or an "otherwise" branch for the table to work out: every roll must resolve to one exact instruction.
+Dice _are_ supported in this game (one to four d6/d20; total, doubles, or per-die amounts), so the source's dice ideas are welcome. Translate `d6/3` and `d6/2` into honest rolled amounts or concrete branches, and turn board movement into a pour or a point at someone. Never leave odds/evens or an "otherwise" branch for the table to work out: every roll must resolve to one exact instruction.
 
 These exclusions are mechanical constraints, not a request to sanitize the personality. Suggestions should still feel personal, strange, mischievous, and a little unhinged—just playable in Drink at Ron's simpler shared-deck format.
 
@@ -79,3 +79,25 @@ A strong suggestion should answer yes to most of these:
 - Does it fit the current one-card rules and consumption boundaries in `GAME_DESIGN.md`?
 
 If a personal reference is missing context, preserve a clear placeholder or ask Spencer for the story behind it instead of inventing lore.
+
+## Realms: the crude voice (owner, 2026-11-15)
+
+The Quest (the `dungeon` pack) speaks the CABIIN voice at full volume: adult, brash and crude, and not timid inside its borders. The League stays playful and clean. The plan and its phases are in `docs/REALMS_VOICE_PLAN.md`.
+
+- **Fair game:** sex, bodily functions, swearing, drugs and drinking, and roasting the players ("like your mom").
+- **Off-limits:** slurs, jokes at real groups (race, religion, sexuality, gender), anything sexual without consent (no kidnapped-princess sex jokes, no bestiality), and inside jokes or real names. Every card works for any table.
+- **The world plays it straight; its people don't.** The fantasy is real, but everyone in it is horny, hungover, cowardly or petty. A troll is still a troll; he just has opinions about your mom.
+- **Rationing:** about a third of the cards fully crude, a third brash or dry, the rest touched lightly. A crude word that isn't the joke gets cut.
+- **Menace kept:** bosses, the dragon and the last inns stay a threat that also insults you.
+- **The rivals are the loudest thing in the game.** Nothing else outdoes Sir Chad Thundercock.
+
+| Was                                             | Now                                                                                   |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Bard: "Brought a lute. Nobody asked."           | "Has fucked a dragon. Won't shut up about it."                                        |
+| Warlock: "Read none of the pact."               | "Sold his soul for a bigger dick. Got neither."                                       |
+| Omen "The Oath": drink with your off hand       | "Wank Hand": "Your good hand is for wanking now. Drink with the other one all quest." |
+| Omen "Heroic Names"                             | "Porn Names": everyone answers only to their porn name                                |
+| Summons: "Everyone raises a glass to the king." | "{dragon} woke under {lair}, horny. Everyone toasts the king's tiny balls."           |
+| Sign "Tracks": everyone sits in a footprint     | "Droppings": "A dragon turd, big enough to sit in. Nobody sits in it."                |
+| Ballad: "and never saw the lair."               | "and crapped out short of the lair."                                                  |
+| Rank "Grand Magus"                              | "Grand Wankmage"                                                                      |

@@ -88,11 +88,11 @@ export const classes: CardDefinition[] = [
   adventurer(
     "barbarian",
     "Barbarian",
-    "Rage first. Questions never.",
+    "Hasn't worn a shirt since puberty.",
     { roll: { boss: 2 }, hurt: { trap: 1 } },
     [
       {
-        title: "Berserker",
+        title: "Roid Rager",
         omen: { hearts: 2, roll: { boss: 2, elite: 2 }, hurt: { trap: 1 } },
       },
       {
@@ -100,7 +100,7 @@ export const classes: CardDefinition[] = [
         omen: { hearts: 3, roll: { boss: 3, elite: 2 } },
       },
       {
-        title: "Destroyer",
+        title: "Absolute Unit",
         omen: { hearts: 3, roll: { boss: 3, elite: 3, monster: 1 } },
       },
     ],
@@ -109,7 +109,7 @@ export const classes: CardDefinition[] = [
   adventurer(
     "rogue",
     "Rogue",
-    "Took that.",
+    "Licked it.",
     { satchel: 4, loot: ["smoke"], roll: { trap: 2, relic: 2 } },
     [
       {
@@ -121,7 +121,7 @@ export const classes: CardDefinition[] = [
         },
       },
       {
-        title: "Shadow",
+        title: "Sneaky Bastard",
         omen: { satchel: 5, roll: { trap: 3, relic: 3, monster: 2 } },
       },
       {
@@ -134,13 +134,13 @@ export const classes: CardDefinition[] = [
     ],
   ),
   // Every heal heals more.
-  adventurer("cleric", "Cleric", "Blesses every drink, loudly.", { heal: 1 }, [
+  adventurer("cleric", "Cleric", "Prays loudly. Sins quietly.", { heal: 1 }, [
     {
       title: "Priest",
       omen: { hearts: 1, heal: 1 },
     },
     {
-      title: "High Priest",
+      title: "Very High Priest",
       omen: { hearts: 1, heal: 2 },
     },
     {
@@ -152,7 +152,7 @@ export const classes: CardDefinition[] = [
   adventurer(
     "wizard",
     "Wizard",
-    "Smells of burnt eyebrows.",
+    "Virgin. Says it's for the magic.",
     // One Lucky Coin to start since The Quest 2.0 Phase 5 (2026-11-14): 54%
     // with two.
     { hearts: -2, loot: ["die"] },
@@ -166,7 +166,7 @@ export const classes: CardDefinition[] = [
         omen: { roll: { all: 1 }, restock: "die" },
       },
       {
-        title: "Grand Magus",
+        title: "Grand Wankmage",
         // A heart less since The Quest 2.0 Phase 3 (2026-11-14), when the
         // signs and landmarks brought more Lucky Coins: 50%.
         // +1 since The Quest 2.0 Phase 5 (2026-11-14): 50% at +2.
@@ -178,7 +178,7 @@ export const classes: CardDefinition[] = [
   adventurer(
     "bard",
     "Bard",
-    "Brought a lute. Nobody asked.",
+    "Fucked a dragon. Twice.",
     { hearts: 1, crit: 19 },
     [
       {
@@ -186,7 +186,7 @@ export const classes: CardDefinition[] = [
         omen: { hearts: 1, crit: 18 },
       },
       {
-        title: "Troubadour",
+        title: "Horny Troubadour",
         omen: { hearts: 2, crit: 18, roll: { all: 1 } },
       },
       {
@@ -201,7 +201,7 @@ export const classes: CardDefinition[] = [
   adventurer(
     "paladin",
     "Paladin",
-    "Sworn to protect, loudly.",
+    "Sworn to chastity. Lying about it.",
     { hearts: 1, loot: ["shield"] },
     [
       {
@@ -209,7 +209,7 @@ export const classes: CardDefinition[] = [
         omen: { hearts: 2 },
       },
       {
-        title: "Templar",
+        title: "Holy Narc",
         omen: { hearts: 2, roll: { boss: 1 } },
       },
       {
@@ -222,7 +222,7 @@ export const classes: CardDefinition[] = [
   adventurer(
     "ranger",
     "Ranger",
-    "Hasn't slept indoors in years.",
+    "Hasn't showered in years. You can tell.",
     { roll: { monster: 2 }, hurt: { boss: 1 } },
     [
       {
@@ -234,7 +234,7 @@ export const classes: CardDefinition[] = [
         omen: { hearts: 2, roll: { monster: 3, ambush: 2 } },
       },
       {
-        title: "Warden of the Wild",
+        title: "Feral Gremlin",
         omen: { hearts: 2, roll: { monster: 3, ambush: 3, boss: 1 } },
       },
     ],
@@ -243,11 +243,11 @@ export const classes: CardDefinition[] = [
   adventurer(
     "monk",
     "Drunken Monk",
-    "Starts drunk. Gets better.",
+    "Starts drunk. Gets drunker. Fights better.",
     { hearts: -1, fumble: 2 },
     [
       {
-        title: "Brawler",
+        title: "Bar Brawler",
         omen: { roll: { all: 1 } },
       },
       {
@@ -255,7 +255,7 @@ export const classes: CardDefinition[] = [
         omen: { hearts: 1, roll: { all: 2 }, crit: 19 },
       },
       {
-        title: "Grandmaster",
+        title: "Blackout Grandmaster",
         omen: { hearts: 2, roll: { all: 2 }, crit: 18 },
       },
     ],
@@ -264,11 +264,11 @@ export const classes: CardDefinition[] = [
   adventurer(
     "necromancer",
     "Necromancer",
-    "Has died twice this week already.",
+    "Died twice this week. Still came out.",
     { hearts: -3, loot: ["revive"] },
     [
       {
-        title: "Bone Caller",
+        title: "Boner Caller",
         omen: { hearts: -3, roll: { boss: 1 } },
       },
       {
@@ -285,7 +285,7 @@ export const classes: CardDefinition[] = [
   adventurer(
     "alchemist",
     "Alchemist",
-    "Has a flask for every flask.",
+    "Cooks in a wagon. Don't ask what.",
     { hearts: 1, satchel: 4, loot: ["draught", "draught"] },
     [
       {
@@ -293,7 +293,7 @@ export const classes: CardDefinition[] = [
         omen: { hearts: 1, satchel: 4, heal: 1, loot: ["draught"] },
       },
       {
-        title: "Master Alchemist",
+        title: "Master Cook",
         omen: { hearts: 1, satchel: 5, heal: 1, restock: "draught" },
       },
       {
@@ -306,7 +306,7 @@ export const classes: CardDefinition[] = [
   adventurer(
     "warlock",
     "Warlock",
-    "Read none of the pact.",
+    "Sold his soul for a bigger dick. Got neither.",
     { hearts: -3, roll: { all: 2 } },
     [
       {
@@ -318,7 +318,7 @@ export const classes: CardDefinition[] = [
         omen: { hearts: -2, roll: { all: 2 }, crit: 19 },
       },
       {
-        title: "Soul Broker",
+        title: "Soul Pimp",
         // A heart dearer since The Quest 2.0 Phase 3 (2026-11-14): 52%.
         omen: { hearts: -3, roll: { all: 3 }, crit: 19 },
       },
@@ -328,7 +328,7 @@ export const classes: CardDefinition[] = [
   adventurer(
     "bouncer",
     "Knight",
-    "Mentions the armor daily.",
+    "Mentions the armor daily. Compensating.",
     { hearts: 2, hurt: { ambush: -1 } },
     [
       {
@@ -349,7 +349,7 @@ export const classes: CardDefinition[] = [
   adventurer(
     "bartender",
     "Innkeeper",
-    "Knows every rumor.",
+    "Knows who's banging.",
     { hearts: 1, satchel: 4, loot: ["round", "draught"] },
     [
       {
@@ -370,7 +370,7 @@ export const classes: CardDefinition[] = [
   adventurer(
     "mercenary",
     "Sellsword",
-    "Will fight anything for coin.",
+    "Will fight anything for coin. Or a handy.",
     { roll: { elite: 3, monster: 1 } },
     [
       {
@@ -391,7 +391,7 @@ export const classes: CardDefinition[] = [
   adventurer(
     "druid",
     "Druid",
-    "Talks to the trees. The trees talk back.",
+    "Talks to trees. Eats the mushrooms.",
     { hearts: 1, roll: { trap: 2 } },
     [
       {
@@ -399,11 +399,11 @@ export const classes: CardDefinition[] = [
         omen: { hearts: 1, roll: { trap: 2, monster: 1, ambush: 1 } },
       },
       {
-        title: "Archdruid",
+        title: "Arch-Stoner",
         omen: { hearts: 2, roll: { trap: 2, monster: 2, ambush: 2 } },
       },
       {
-        title: "Voice of the Wild",
+        title: "Mushroom Prophet",
         omen: { hearts: 3, roll: { trap: 3, monster: 2, ambush: 2 } },
       },
     ],
@@ -414,7 +414,7 @@ export const classes: CardDefinition[] = [
   adventurer(
     "plus-one",
     "The Peasant",
-    "Brought dad's pitchfork.",
+    "Brought dad's pitchfork. Already shat himself.",
     { hearts: -3, roll: { boss: -1 }, reroll20: true },
     [
       {
@@ -435,7 +435,7 @@ export const classes: CardDefinition[] = [
   adventurer(
     "intern",
     "The Squire",
-    "Drops things.",
+    "Drops trou.",
     { hearts: -2, satchel: 1, fumble: 2 },
     [
       {
@@ -447,7 +447,7 @@ export const classes: CardDefinition[] = [
         omen: { hearts: -2, satchel: 1, fumble: 3 },
       },
       {
-        title: "The Eternal Squire",
+        title: "Forty-Year-Old Squire",
         omen: { hearts: -2, satchel: 1, fumble: 3 },
       },
     ],
@@ -457,7 +457,7 @@ export const classes: CardDefinition[] = [
   adventurer(
     "mimic",
     "The Mimic",
-    "A very confused chest.",
+    "Licks everything.",
     // Rivals Phase 4: -4 hearts (was -5) at every rank, to keep the Mimic
     // over its 1% floor once the rival's duel stopped being a place to die.
     { hearts: -4, satchel: 5, roll: { all: -1 } },
@@ -483,7 +483,7 @@ export const classes: CardDefinition[] = [
     ...adventurer(
       "dragonslayer",
       "The Dragonslayer",
-      "Has done this before. Knows a weak scale.",
+      "Has done this before. Won't shut up about it.",
       { roll: { boss: 1 } },
       [
         {
@@ -513,49 +513,49 @@ export const JOKE_CLASSES = ["plus-one", "intern", "mimic"].map(
 // Each rank's dice (2026-10-17): the enamel, then the metal.
 const PALETTES: Record<string, [primary: string, secondary: string]> = {
   Barbarian: ["#8c2f1e", "#d9a441"],
-  Berserker: ["#a3241c", "#e2c290"],
+  "Roid Rager": ["#a3241c", "#e2c290"],
   Warlord: ["#5e1914", "#c9a227"],
-  Destroyer: ["#3a0f0c", "#e8b04a"],
+  "Absolute Unit": ["#3a0f0c", "#e8b04a"],
   Rogue: ["#2d3a33", "#9fb8a2"],
   Cutpurse: ["#25302b", "#c7b273"],
-  Shadow: ["#1b1d26", "#8a90a8"],
+  "Sneaky Bastard": ["#1b1d26", "#8a90a8"],
   Guildmaster: ["#141a16", "#e2b84a"],
   Cleric: ["#e8e0c8", "#b08a2e"],
   Priest: ["#d8cfa8", "#6f5a2a"],
-  "High Priest": ["#f2ead2", "#c4972f"],
+  "Very High Priest": ["#f2ead2", "#c4972f"],
   Saint: ["#fbf6e8", "#e0b040"],
   Wizard: ["#2e2a6e", "#c7b8f0"],
   Sorcerer: ["#3d1f6b", "#e0a8ff"],
   Archmage: ["#18234f", "#f2d47a"],
-  "Grand Magus": ["#0e1638", "#ffe08a"],
+  "Grand Wankmage": ["#0e1638", "#ffe08a"],
   Bard: ["#7a2f5e", "#f0c27a"],
   Minstrel: ["#8f3b6e", "#b8e0d2"],
-  Troubadour: ["#5e1f4a", "#ffd166"],
+  "Horny Troubadour": ["#5e1f4a", "#ffd166"],
   "Living Legend": ["#3a1030", "#ffe9a0"],
   Paladin: ["#2f5a8c", "#e6d29a"],
   Crusader: ["#25497a", "#f0f0f0"],
-  Templar: ["#1e3c66", "#d4af37"],
+  "Holy Narc": ["#1e3c66", "#d4af37"],
   Lightbringer: ["#f0e8c8", "#2f5a8c"],
   Ranger: ["#3e5e2c", "#c9b27a"],
   Tracker: ["#4a6b34", "#8a5a2e"],
   Beastmaster: ["#2e4a22", "#d98e3a"],
-  "Warden of the Wild": ["#1e3a16", "#e8c060"],
+  "Feral Gremlin": ["#1e3a16", "#e8c060"],
   "Drunken Monk": ["#b85c1e", "#f5d76e"],
-  Brawler: ["#9e4a1a", "#3a2a1a"],
+  "Bar Brawler": ["#9e4a1a", "#3a2a1a"],
   "Drunken Master": ["#c96a12", "#7a1f1f"],
-  Grandmaster: ["#e8d8b0", "#a03a12"],
+  "Blackout Grandmaster": ["#e8d8b0", "#a03a12"],
   Necromancer: ["#2a2f2a", "#7fd18a"],
-  "Bone Caller": ["#1f2a24", "#e8e4d0"],
+  "Boner Caller": ["#1f2a24", "#e8e4d0"],
   Lich: ["#14201a", "#56e0b0"],
   "Lord of Bones": ["#0c1410", "#c8f0d8"],
   Alchemist: ["#3a6b5e", "#e3b04b"],
   Apothecary: ["#2f5f6b", "#d9e6b0"],
-  "Master Alchemist": ["#5a3a1a", "#e8c14a"],
+  "Master Cook": ["#5a3a1a", "#e8c14a"],
   Philosopher: ["#1a3a34", "#ffd870"],
   Warlock: ["#4a1030", "#e04a4a"],
   Hexblade: ["#3a0d2a", "#b44ae0"],
   Archfiend: ["#26071a", "#ff7a3a"],
-  "Soul Broker": ["#2a0a2a", "#c0e0a0"],
+  "Soul Pimp": ["#2a0a2a", "#c0e0a0"],
   Knight: ["#5a6470", "#e0e4ea"],
   "Knight Errant": ["#46505c", "#d4af37"],
   "Knight Commander": ["#2a3440", "#f0e060"],
@@ -570,8 +570,8 @@ const PALETTES: Record<string, [primary: string, secondary: string]> = {
   "Captain of Blades": ["#1a1408", "#f0e0a0"],
   Druid: ["#2f4a2a", "#a8c890"],
   Shapeshifter: ["#4a3a22", "#c8a070"],
-  Archdruid: ["#1e3a1a", "#e0d080"],
-  "Voice of the Wild": ["#24401e", "#f0e0b0"],
+  "Arch-Stoner": ["#1e3a1a", "#e0d080"],
+  "Mushroom Prophet": ["#24401e", "#f0e0b0"],
   "The Peasant": ["#9a9a8e", "#5a5a52"],
   "The Angry Peasant": ["#a08a6e", "#5a4a3a"],
   "The Angry Mob": ["#8a5a3a", "#e07a2a"],
@@ -579,7 +579,7 @@ const PALETTES: Record<string, [primary: string, secondary: string]> = {
   "The Squire": ["#c8c0b0", "#6a6a6a"],
   "Senior Squire": ["#bab2a2", "#5e5e5e"],
   "Squire of the Year": ["#a8a090", "#d4af37"],
-  "The Eternal Squire": ["#8a8a90", "#4a4a50"],
+  "Forty-Year-Old Squire": ["#8a8a90", "#4a4a50"],
   "The Mimic": ["#7a5a2a", "#c8a050"],
   "Bigger Chest": ["#8a6a3a", "#b89a60"],
   "Storage Unit": ["#8a8a80", "#e07a2a"],

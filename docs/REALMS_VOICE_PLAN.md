@@ -29,7 +29,7 @@ Owner, 2026-11-15: give The Quest (the `dungeon` pack, Realms) the crude CABIIN 
 
 | Phase | Scope | About |
 | --- | --- | --- |
-| 0 | A Realms section in `docs/CARD_VOICE_REFERENCE.md`: the targets above and 10 before/after samples. The owner approves these before Phase 1. | 0 cards |
+| 0 | A Realms section in `docs/CARD_VOICE_REFERENCE.md`: the targets above and before/after samples. Shipped with Phase 1 (the owner asked to pursue the plan and merge without stopping). | 0 cards |
 | 1 | Run framing: classes and rank names, omens, the King's Summons, roads, inns, signs, crawl-theme words, ballad lines | ~100 |
 | 2 | King's Road, Old Forest, Marsh: rooms, landmarks, bosses, phases, jinxes | ~150 |
 | 3 | Haunted Crypt, Goblin Mines, Wizard's Tower | ~150 |

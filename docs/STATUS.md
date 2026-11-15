@@ -2,6 +2,18 @@
 
 Updated 2026-11-15. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Done 2026-11-15: Realms voice pass, Phases 0 and 1 (the run's framing)
+
+Owner: crude CABIIN humor across The Quest, "don't be timid", evergreen, no inside jokes; the League stays clean. Plan: `docs/REALMS_VOICE_PLAN.md`; the voice and its samples: "Realms: the crude voice" in `docs/CARD_VOICE_REFERENCE.md` (Phase 0, shipped here: the owner asked to pursue the plan and merge without stopping). Copy only: no ID, number or rule changed.
+
+- **Classes** (`classes.ts`): every flavor line, 16 rank names (Roid Rager, Absolute Unit, Sneaky Bastard, Very High Priest, Grand Wankmage, Horny Troubadour, Holy Narc, Feral Gremlin, Bar Brawler, Blackout Grandmaster, Boner Caller, Soul Pimp, Arch-Stoner, Mushroom Prophet, Master Cook, Forty-Year-Old Squire), `PALETTES` keyed to match. A base class's rules are its flavor plus the generated perks, so six flavors are short to stay under 100 characters and 20 words.
+- **Omens** (`omens.ts`): 15 of 19 retitled or rewritten (Swamp Ass, Harvest Orgy, Hush Money, Grounded, A Bag of Holding, Wank Hand, Battle Moans, Thin Walls, Porn Names...); every mechanic sentence unchanged.
+- **Summons, roads, signs, inns**: all six summons, all six road cards, the six dragon signs (Tracks is Droppings), 12 of 19 inns. The Last Warm Fire, the Watchtower, the Empty Fort and the Haunted Inn keep their menace.
+- **Rank-up lines** (`rankLines` in `crawlTheme.ts`) and four **ballad** lines (`ballad.ts`: "alone, since nobody else would come,", "by a pube.", "and {dragon} picks its teeth with them.", "and crapped out short of {lair}.").
+- **Tests** updated for the new words (`dungeon.test.ts`, `realms-names.test.ts`, `ballad.test.ts`, `crawl.spec.ts`).
+- **Checked**: `npm test` 633 passed; lint; typecheck; build (budgets pass); `cards:review`; Chromium `test:sweep` 12 of 12; Chromium `test:e2e` 186 of 188 in one run: two moments tests (a gym badge, a jinx scroll) failed under the full suite's load, then passed alone, on `main` and 32 of 32 in `moments.spec.ts` repeated twice at 3 workers; not reproduced.
+- **Next**: Phase 2 (King's Road, Old Forest, Marsh).
+
 ## Done 2026-11-15: every heal takes the heal bonus (potions too); Realms voice pass planned
 
 Owner: "Every heal heals 1 more" must include potions, in both crawls, "that's the deal if you have that perk"; every heal shown is its net value.

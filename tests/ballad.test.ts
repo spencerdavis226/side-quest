@@ -122,7 +122,7 @@ describe("the ballad", () => {
     expect(ballad(won).at(-1)).toMatch(/single blow\.$|in one blow\.$/);
   });
 
-  it("a fool's win was foretold; one heart left is by a thread", () => {
+  it("a fool's win was foretold; one heart left is by a pube", () => {
     const fool = play(
       atDoor(3, 30, "dungeon.class-intern"),
       Array(DRAGON_HEALTH + 2).fill(19),
@@ -135,16 +135,16 @@ describe("the ballad", () => {
     // A swing that wins on the last heart keeps it.
     const won = play(thin, [19]);
     expect(won.quest!.party!.hearts).toBe(1);
-    expect(ballad(won).at(-1)).toMatch(/by a thread\.$/);
+    expect(ballad(won).at(-1)).toMatch(/by a pube\.$/);
   });
 
-  it("a wipe at the dragon leaves it sleeping; a wipe before never saw the lair", () => {
+  it("a wipe at the dragon leaves it picking its teeth; a wipe before falls short of the lair", () => {
     const lost = atDoor(5, 2);
     const at = play(lost, [2, 2, 2, 2, 2]);
     expect(at.quest!.party!.wiped).toBe(true);
     const { dragon, lair } = runNames(at.quest!);
     expect(ballad(at).at(-1)).toMatch(
-      new RegExp(`^and ${dragon} sleeps on( under ${lair})?\\.$`),
+      new RegExp(`^and ${dragon} picks its teeth( with them)?\\.$`),
     );
     // Wiped at the crossroads, by the rival.
     const door = atDoor(6, 1);
@@ -163,7 +163,7 @@ describe("the ballad", () => {
     );
     expect(early.quest!.party!.wiped).toBe(true);
     expect(ballad(early).at(-1)).toBe(
-      `and never saw ${lair && runNames(early.quest!).lair}.`,
+      `and crapped out short of ${lair && runNames(early.quest!).lair}.`,
     );
   });
 

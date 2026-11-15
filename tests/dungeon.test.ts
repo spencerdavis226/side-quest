@@ -608,7 +608,7 @@ describe("Pub Crawl", () => {
       title: "Paladin",
       next: "Crusader",
       branches: null,
-      line: ["Paladin", "Crusader", "Templar", "Lightbringer"],
+      line: ["Paladin", "Crusader", "Holy Narc", "Lightbringer"],
       palette: { primary: "#2f5a8c" },
     });
     roundTrip(s);
@@ -650,7 +650,7 @@ describe("Pub Crawl", () => {
     b = settleBattle(advance(b), true, Math.random, 1);
     expect(party(b)).toMatchObject({ form: 1, max: H + 2 });
     expect(omenForm(b.quest)).toMatchObject({
-      title: "Berserker",
+      title: "Roid Rager",
       next: "Warlord",
     });
     expect(b.quest!.step).toBe(STEP.rival);
@@ -681,7 +681,7 @@ describe("Pub Crawl", () => {
     expect(omenForm(arch.quest)!.title).toBe("Archmage");
     arch.quest!.party!.loot = [...party(arch).loot.slice(0, 2), "candy"];
     const grand = spendLoot(arch, "candy");
-    expect(omenForm(grand.quest)!.title).toBe("Grand Magus");
+    expect(omenForm(grand.quest)!.title).toBe("Grand Wankmage");
     expect(
       canUseLoot(
         {
