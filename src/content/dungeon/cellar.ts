@@ -33,7 +33,7 @@ export const cellar: FloorCards = {
       "You take their horses. Give 3.",
       {
         crit: "You take their horses and their masks. Give 6.",
-        fumble: "They take the money and your boots. Drink 6, hands still up.",
+        fumble: "They take the money and your pants. Drink 6, hands still up.",
       },
     ),
     // A table duel: the left neighbor plays the guard and calls it.
@@ -41,7 +41,7 @@ export const cellar: FloorCards = {
       0,
       "rat-trench-coat",
       "The Toll Gate",
-      "A gate guard wants papers. Left neighbor plays him: talk your way past in 10 seconds, or drink 3.",
+      "Papers, or a peek. Left neighbor plays the guard: talk your way past in 10 seconds, or drink 3.",
     ),
     monster(
       0,
@@ -75,7 +75,7 @@ export const cellar: FloorCards = {
       "Monster",
       "skeleton-barback",
       "Wanted Poster",
-      "A wanted poster on a tree looks like one of you. On three, everyone points. Most fingers: drink 2.",
+      "Wanted, for public indecency: one of you. On three, everyone points. Most fingers: drink 2.",
     ),
     mishap(
       0,
@@ -108,8 +108,8 @@ export const cellar: FloorCards = {
       0,
       "goblin-shaman",
       "Hedge Witch",
-      "A woman in a hat of twigs is cursing travelers for fun. Roll d20.",
-      "The curse lands. Drink 3.",
+      "A woman in a hat of twigs is cursing travelers' privates, for fun. Roll d20.",
+      "Something of yours shrinks. Drink 3.",
       "You knock her hat off. Give 3 to whoever looks most cursed.",
       {
         jinx: {
@@ -151,7 +151,7 @@ export const cellar: FloorCards = {
       0,
       "stuck-door",
       "The Stuck Cart",
-      "A cart is stuck in the mud. Push it: wall-sit for 30 seconds. Stand early: drink 3.",
+      "A cart stuck in the mud. Push it, push it real good: wall-sit for 30 seconds. Stand early: drink 3.",
     ),
     trial(
       0,
@@ -175,7 +175,7 @@ export const cellar: FloorCards = {
       "christmas-lights",
       "Tripwire",
       "Bandits strung a wire across the road at shin height. Roll d20.",
-      "You eat the road. Drink 2.",
+      "You eat shit. Literally: it's a horse road. Drink 2.",
       "You hop it. Give 2 to the clumsiest player here.",
     ),
     trap(
@@ -191,7 +191,7 @@ export const cellar: FloorCards = {
       "Trap",
       "falling-taps",
       "Falling Acorns",
-      "An acorn bonks you on the head, and you're Thumb Master now. Drink 1, then use it.",
+      "An acorn bonks you in the nuts, and you're Thumb Master now. Drink 1, then use it.",
       {
         jinx: {
           name: "Thumb Master",
@@ -211,7 +211,7 @@ export const cellar: FloorCards = {
       0,
       "rat-pack",
       "Wandering Minstrels",
-      "Three minstrels sing at you for coin. Sing them a line back, then roll d20.",
+      "Three minstrels sing about your mom, for coin. Sing them a line back, then roll d20.",
       "They follow you for a mile. Drink 2.",
       "You out-sing them. Give 2.",
     ),
@@ -267,8 +267,8 @@ export const cellar: FloorCards = {
       0,
       "stag-party",
       "The Wedding Party",
-      "A whole wedding party on the road, and they're one guest short. Roll d20.",
-      "Invited. Drink 2, then give a toast to the couple.",
+      "A wedding party on the road, and the groom's already cheating. Roll d20.",
+      "Invited. Drink 2, then toast the couple without mentioning the bridesmaid.",
       "You send them the long way round. Give 2.",
     ),
   ],
@@ -279,7 +279,7 @@ export const cellar: FloorCards = {
       "A Chest in the Road",
       "An unlocked chest sits in the middle of the road. Nobody is around. Open it, or walk on.",
       11,
-      "It was a mimic. Drink 4.",
+      "It was a mimic, and it French-kissed you. Drink 4.",
       "Gold, and something useful. Flip someone a coin; they drink 3.",
       ["Walk on", "Open it"],
       { loot: "draught" },
@@ -295,20 +295,20 @@ export const cellar: FloorCards = {
       0,
       "tip-jar",
       "The Fallen Knight",
-      "A knight's bones by a milestone. His lucky die is still in his glove. Everyone bows their head.",
+      "A knight's bones by a milestone, pants down. He died doing what he loved. Everyone bows their head.",
       "die",
     ),
     shrine(
       0,
       "wishing-drain",
       "Wishing Well",
-      "A mossy well full of old coins. Everyone makes a wish out loud and toasts it.",
+      "A mossy well full of old coins. Everyone makes a dirty wish out loud and toasts it.",
     ),
     shrine(
       0,
       "dead-jukebox",
       "The Bard's Grave",
-      "A bard is buried here, and he left one song. Everyone sings the chorus, whatever they think it is.",
+      "A bard buried by a jealous husband. Everyone sings the chorus, whatever they think it is.",
     ),
     merchant(
       0,
@@ -325,7 +325,7 @@ export const cellar: FloorCards = {
       0,
       "the-regular",
       "The Old Soldier",
-      "He's walked this road for fifty years. He'll trade a story for a story.",
+      "He's walked this road fifty years, and every story is about a brothel. He'll trade one for one.",
       [
         { label: "Tell one · drink 2", loot: "round" },
         { label: "His war diary", cost: 2, loot: "candy" },
@@ -406,7 +406,7 @@ export const cellar: FloorCards = {
       "keg-mimic-queen",
       "The Bandit Queen",
       "Every bandit in the woods answers to her, and they're all here. Roll d20.",
-      "Robbed blind. Drink 4.",
+      "Robbed blind. She keeps your underwear as a trophy. Drink 4.",
       "You take her crown, and her gang scatters. Give 4.",
       [
         trinket("Bandit Queen's Crown", { hearts: 1, heal: 1 }),
@@ -477,7 +477,7 @@ export const cellar: FloorCards = {
       "An ogre blocks the road. Side bets: thumbs up or down on you; wrong bets drink 1. Roll d20.",
       d20(
         BOSS_NEED[0],
-        "He takes a bite. Drink 4.",
+        "He licks you first. Then the bite. Drink 4.",
         "You trick him into a sack. Give 5.",
         { fumble: "He eats your lunch, then you. Finish your drink." },
       ),
@@ -492,7 +492,7 @@ export const cellar: FloorCards = {
       0,
       "big-cheese",
       "The Great Boar",
-      "A cart-sized boar. Side bets: thumbs up or down on you; wrong bets drink 1. Roll d20.",
+      "A boar with balls like a cart's wheels. Side bets: thumbs up or down; wrong bets drink 1. Roll d20.",
       d20(BOSS_NEED[0], "Gored. Drink 4.", "You bring it down. Give 5.", {
         crit: "You bring it down, and dinner is served. Everyone else drinks 3.",
       }),

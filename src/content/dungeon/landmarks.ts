@@ -42,7 +42,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       0,
       "gallows-tree",
       "The Gallows Tree",
-      "A man on the gallows swears he's innocent. Everyone votes: guilty or not.",
+      "A man on the gallows swears he banged the duke's wife only once. Everyone votes: guilty or not.",
       [
         { label: "Free him", cost: 1, deed: "freed" },
         { label: "Ride on", deed: "rode-on" },
@@ -90,7 +90,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       3,
       "oldest-tree",
       "The Oldest Tree",
-      "It has watched every hero pass, and it has notes. The drawer reads them aloud.",
+      "It has watched every hero pass, and rated their junk. The drawer reads the notes aloud.",
       [
         { label: "Listen · drink 2", ...LORE },
         { label: "Carve your names", heal: 1 },
