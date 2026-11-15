@@ -10,6 +10,14 @@ Owner's asks: (1) the opening of a run (starter, adventurer, omen, Summons, road
 - **Phase B, the League's prologue** (done, PR #99): the starter shown in a scene of its own (no card, no top bar), then the handoff ("Pass the phone"), then the first card on the table. Display only: the engine deals and saves exactly as before.
 - **Phase C, the Quest's prologue** (done): the adventurer, the omen, the King's Summons and the Road Out in the same scene language (the road's plaques as a choice on the scene), then the same handoff.
 
+## Done 2026-11-15: Chuck's stare-down names who plays
+
+Owner, on Chuck the Cuck's "Eye contact: drink 2": "eye contact with who here?" Chuck is no one at the table, so the drawer now plays him: his introduction ("Chuck the Cuck is your squire now. Drawer, stare someone down as him. First to look away drinks 2."), its returning version, his ritual and his ally's ritual all set a stare-down between the drawer and someone they pick. The item he keeps is still on the card's seal and the scene (other rivals' introductions never said it). Copy only, `dungeon/rivals.ts`; old saves keep their snapshot. Checked: `npm test` 641 passed; `cards:review`; build.
+
+## Done 2026-11-15: the reveal plays before its scene
+
+Owner: the class draw "kinda clashes and happens at the same time as the 'your adventurer' scene". A prologue step whose card has its own reveal (the class's tarot draw, the starter's ball, the Summons' Wanted poster, the rival walking in) now holds its scene until that moment ends (`useRevealFirst` in `Prologue.tsx`): only the backdrop and step track show under it, then the scene comes in. A step with no moment (a reload) shows after 450 ms. New test in `prologue.spec.ts` (with motion). Checked: `npm test` 641 passed; lint; typecheck; build; Chromium `prologue`, `moments`, `crawl`, `quest`, `chronicle` specs 84 of 84 before the new test.
+
 ## Done 2026-11-15: visual overhaul, Phase C (the Quest's prologue and the rival's scene); the overhaul is complete
 
 - **The Quest's prologue** (`PROLOGUE_STAGES.dungeon`): the adventurer (its class mark struck on iron, perks, line of ranks), tonight's omen (a tarot plate under a moon), the King's Summons (a letter under the King's wax seal; the Wanted moment still plays as it turns) and the Road Out (a brass compass, the two roads as large choices with their marks and words, "Flip for it" under them), then the handoff on the region taken ("The King's Road", "First stop on the way to {dragon}", how a turn goes, "Now pass the phone", Deal the first card). Candle and iron instead of the League's dawn.

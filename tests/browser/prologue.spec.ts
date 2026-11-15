@@ -1,4 +1,4 @@
-import { test, expect, seed, rng } from "./support";
+import { test, expect, seed, rng, withMotion } from "./support";
 import { advance, createSession } from "../../src/game/engine";
 import { cards, packs } from "../../src/content/catalog";
 import { STEP, crawlAt, league } from "./sessions";
@@ -110,4 +110,25 @@ test("the rival's introduction takes the scene, then the table comes back", asyn
       ),
     )
     .toBe("mirabel");
+});
+
+test("the class is drawn alone, then its scene comes in", async ({ page }) => {
+  // Owner, 2026-11-15: the tarot draw "happens at the same time as the
+  // 'your adventurer' scene". The scene waits for its reveal to end.
+  await withMotion(page);
+  await seed(
+    page,
+    createSession(
+      { version: 1, packIds: ["dungeon"], limit: null, quest: "dungeon" },
+      cards,
+      packs,
+      rng("reveal first"),
+    ),
+  );
+  await expect(page.locator(".moment-omen")).toBeVisible();
+  await expect(page.locator(".prologue .pro-stage")).toHaveCount(0);
+  await expect(page.locator(".moment")).toHaveCount(0, { timeout: 8000 });
+  await expect(page.locator(".prologue .pro-kicker")).toHaveText(
+    "Your adventurer",
+  );
 });

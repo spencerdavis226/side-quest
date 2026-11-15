@@ -1,4 +1,5 @@
-import type { CSSProperties, ReactNode } from "react";
+import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
+import { useMoments } from "../components/moments/Director";
 import {
   awaitingOffer,
   currentCard,
@@ -123,6 +124,12 @@ export default function Prologue({
   const type =
     starter?.type && starter.type in pokemonTypes ? starter.type : undefined;
   const rival = card?.rival?.who ? RIVAL_COLOURS[card.rival.who] : undefined;
+  // A step whose card has its own reveal (the class drawn from the tarot,
+  // the starter's ball, the Wanted poster, the rival walking in) waits for
+  // it: the reveal plays alone, then the scene comes in (owner, 2026-11-15:
+  // the draw "happens at the same time as the 'your adventurer' scene").
+  const stageKey = `${at?.at ?? "rival"}-${card?.id ?? ""}`;
+  const held = useRevealFirst(stageKey, !!card && REVEALS.has(kind));
   const tint = type
     ? ({
         "--pro-light": pokemonTypes[type].light,
@@ -172,80 +179,126 @@ export default function Prologue({
           </svg>
         </IconButton>
       </header>
-      <div className="pro-stage" key={`${at?.at ?? "rival"}-${card?.id ?? ""}`}>
-        <p className="pro-kicker">{HEAD[kind].kicker}</p>
-        {handoff ? (
-          <Handoff session={session} league={league} />
-        ) : card ? (
-          <Scene kind={kind} card={card} league={league} />
-        ) : null}
-      </div>
-      <footer className="pro-foot">
-        {handoff ? (
-          <>
-            <p className="pro-hold pro-pass">
-              <PassIcon />
-              Now pass the phone. One card each, round the table.
-            </p>
-            <Button className="pro-go" disabled={busy} onClick={onDeal}>
-              {HEAD[kind].go}
-            </Button>
-          </>
-        ) : (
-          <>
-            <p className="pro-hold">
-              <EyesIcon />
-              {kind === "rival"
-                ? "Everyone, meet your rival. They follow you all quest."
-                : "Everyone, look together. Keep the phone here."}
-            </p>
-            {offers ? (
-              <div className="pro-roads">
-                {offers.map((offer, i) =>
-                  offer.flip ? (
-                    <Button
-                      key={i}
-                      variant="text-button"
-                      className="pro-flip"
-                      disabled={busy}
-                      onClick={() => onOffer(i)}
-                    >
-                      {offer.label}
-                    </Button>
-                  ) : (
-                    <button
-                      key={i}
-                      type="button"
-                      className="pro-road"
-                      disabled={busy}
-                      onClick={() => onOffer(i)}
-                    >
-                      <Mark
-                        art={TERRAIN[offer.label] ?? "compass"}
-                        className="pro-road-mark"
-                      />
-                      <strong>{offer.label}</strong>
-                      {REGION_WORDS[offer.label] && (
-                        <small>{REGION_WORDS[offer.label]}</small>
-                      )}
-                    </button>
-                  ),
-                )}
-              </div>
+      {held ? (
+        <div className="pro-wait" aria-hidden="true" />
+      ) : (
+        <>
+          <div className="pro-stage" key={stageKey}>
+            <p className="pro-kicker">{HEAD[kind].kicker}</p>
+            {handoff ? (
+              <Handoff session={session} league={league} />
+            ) : card ? (
+              <Scene kind={kind} card={card} league={league} />
+            ) : null}
+          </div>
+          <footer className="pro-foot">
+            {handoff ? (
+              <>
+                <p className="pro-hold pro-pass">
+                  <PassIcon />
+                  Now pass the phone. One card each, round the table.
+                </p>
+                <Button className="pro-go" disabled={busy} onClick={onDeal}>
+                  {HEAD[kind].go}
+                </Button>
+              </>
             ) : (
-              <Button
-                className="pro-go"
-                disabled={busy || !card}
-                onClick={onContinue}
-              >
-                {HEAD[kind].go}
-              </Button>
+              <>
+                <p className="pro-hold">
+                  <EyesIcon />
+                  {kind === "rival"
+                    ? "Everyone, meet your rival. They follow you all quest."
+                    : "Everyone, look together. Keep the phone here."}
+                </p>
+                {offers ? (
+                  <div className="pro-roads">
+                    {offers.map((offer, i) =>
+                      offer.flip ? (
+                        <Button
+                          key={i}
+                          variant="text-button"
+                          className="pro-flip"
+                          disabled={busy}
+                          onClick={() => onOffer(i)}
+                        >
+                          {offer.label}
+                        </Button>
+                      ) : (
+                        <button
+                          key={i}
+                          type="button"
+                          className="pro-road"
+                          disabled={busy}
+                          onClick={() => onOffer(i)}
+                        >
+                          <Mark
+                            art={TERRAIN[offer.label] ?? "compass"}
+                            className="pro-road-mark"
+                          />
+                          <strong>{offer.label}</strong>
+                          {REGION_WORDS[offer.label] && (
+                            <small>{REGION_WORDS[offer.label]}</small>
+                          )}
+                        </button>
+                      ),
+                    )}
+                  </div>
+                ) : (
+                  <Button
+                    className="pro-go"
+                    disabled={busy || !card}
+                    onClick={onContinue}
+                  >
+                    {HEAD[kind].go}
+                  </Button>
+                )}
+              </>
             )}
-          </>
-        )}
-      </footer>
+          </footer>
+        </>
+      )}
     </section>
   );
+}
+
+/** The steps whose card plays a reveal moment as it turns. */
+const REVEALS: ReadonlySet<Kind> = new Set([
+  "starter",
+  "adventurer",
+  "summons",
+  "rival",
+]);
+/** How long a step waits for its reveal to start before showing the scene
+ * anyway (a reload, where no moment plays). */
+const REVEAL_GRACE_MS = 450;
+
+/** True while the step `key` should keep its scene back: from its arrival
+ * until its reveal moment has started and finished, or until the grace
+ * passes with none. A step without a reveal is never held. */
+function useRevealFirst(key: string, reveals: boolean) {
+  const { busy } = useMoments();
+  const [step, setStep] = useState({ key, phase: "wait" });
+  if (step.key !== key) setStep({ key, phase: "wait" });
+  const phase = step.key === key ? step.phase : "wait";
+  useEffect(() => {
+    if (!reveals || phase === "shown") return;
+    if (phase === "wait" && busy) {
+      setStep({ key, phase: "playing" });
+      return;
+    }
+    if (phase === "playing" && !busy) {
+      setStep({ key, phase: "shown" });
+      return;
+    }
+    if (phase === "wait") {
+      const id = setTimeout(
+        () => setStep({ key, phase: "shown" }),
+        REVEAL_GRACE_MS,
+      );
+      return () => clearTimeout(id);
+    }
+  }, [key, reveals, phase, busy]);
+  return reveals && phase !== "shown";
 }
 
 function Scene({

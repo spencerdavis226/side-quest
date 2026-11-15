@@ -482,7 +482,7 @@ const chuck = rival(
   {
     name: "Chuck the Cuck",
     ritual:
-      "When Chuck the Cuck shows up, he just watches. Anyone who makes eye contact drinks 1.",
+      "When Chuck the Cuck shows up, the drawer stares someone down as him. First to look away drinks 1.",
     lines: {
       took: "Chuck the Cuck holds your {item} for you. He keeps holding it.",
       back: "Chuck the Cuck hands back your {item}. It's a bit damp.",
@@ -504,10 +504,10 @@ const chuck = rival(
   {
     title: "Chuck the Cuck",
     rules:
-      "Chuck the Cuck appoints himself your squire. He keeps one of your things. Eye contact: drink 2.",
+      "Chuck the Cuck is your squire now. Drawer, stare someone down as him. First to look away drinks 2.",
     back: [
       "Chuck Is Back",
-      "Chuck the Cuck is back to watch, with a notebook. He keeps two of your things. Eye contact: drink 2.",
+      "Chuck the Cuck is back with a notebook. Drawer, stare someone down as him. Look away first: drink 2.",
     ],
   },
   { takes: 1 },
@@ -567,7 +567,8 @@ const chuck = rival(
       bonus: 4,
       coin: true,
       leavesAt: 2,
-      ritual: "Anyone who makes eye contact with Chuck drinks 1.",
+      ritual:
+        "The drawer stares someone down as Chuck. First to look away drinks 1.",
     },
   },
   {
