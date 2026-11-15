@@ -2,9 +2,22 @@
 
 Updated 2026-11-15. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
-## Next task (2026-11-15): the Rivals, Phase 1 (names and voice)
+## Next task (2026-11-15): the Rivals, Phase 2 (maximum frustration)
 
-Owner, after Phase 0: "All 6 sounds good. Absolutely betrayal is acceptable. Yes rivals can undo rolls. Maximum frustration", and the names must be "way better and funnier ... more crude too like the cabiin game". The whole plan, every phase, is `docs/RIVALS_PLAN.md` (the owner asked for it as its own file; it is the plan for this work, like `QUEST_2_PLAN.md`). Build one phase per session and pull request, starting with Phase 1: rename the three built rivals (Sir Chad Thundercock, Lady Fingerbang, Sensei Saggynuts) and rewrite their text, keeping the internal keys and IDs. Phase 8 of The Quest 2.0 (the owner's table) still waits on the owner.
+Build Phase 2 of `docs/RIVALS_PLAN.md`: the Do-Over, pay-offs, the new verbs (Swipe, Hand-Off, Poach, Squat, Invoice, Curse), the duel reading the rival's ledger, the grudge bonus and the stalk retune, then rebalance (section 7). Profiles already carry `lines` with slots for every verb; add each verb's line as its verb lands. Phase 8 of The Quest 2.0 (the owner's table) still waits on the owner.
+
+## Done 2026-11-15: the Rivals, Phase 1 (names and voice)
+
+Owner: names "way better and funnier ... more crude too like the cabiin game". Content and display only; no tuning, weight or engine rule changed.
+
+- **Renamed** (`src/content/dungeon/rivals.ts`; keys `bradley`, `mirabel`, `tutt` and every card ID unchanged): **Sir Chad Thundercock** (ribbon and chip "Sir Chad"; Chad's Autograph, The Gun Show, Participation Trophy, Chad's Spotter; door "Sir Chad Begs" with "Take him · drink 2" and "Kick his ass"; duel "Chad's Last Pose", prize Chad's Cape), **Lady Fingerbang** (The Pat-Down, A Fair Trade, Finders Keepers, Her Toll Booth; "Fingerbang's Offer"; "Mine, Thanks", Fingerbang's Purse), **Sensei Saggynuts** (Pop Quiz, Wax On, Nuts Off, Posture Check, In My Day; The Final Exam; "Sensei's Last Lesson", Sensei's Stick). Rituals, outcomes and ballad lines rewritten from section 3 of the plan. "Take Chad · drink 2" was 19 characters, over the 18 limit, so the plaque stays "Take him · drink 2".
+- **Voice** (`RivalProfile.lines`, optional; `RivalLines` and `RivalVerb` in `types.ts`): `took`, `back`, `lostTo`, `beaten` and a line per verb they use (`ambush`, `meddle`, `snipe` now), at most 80 characters, `{item}` filled with the items' names by `rivalLine` (`src/game/crawl/rival.ts`, exported from the engine). New profiles drop `meddle` and `snipe`; a snapshot from before keeps them and `rivalLine` reads them (`validateCatalog` accepts either shape). `PartyNewsBanner` reads the took/back line under its title, a lost meeting's `lostTo` when the meeting cost items, and now also sweeps a banner for a won or lost meeting that moved no items (`beaten`/`lostTo`; detected from the record changing between cards, never on a resume; an old profile has no such line and shows nothing). The ambush banner reads `lines.ambush`.
+- **Other old names**: the echo "Chad's Moustache", the Company's Table plaque "Draw on Chad" (deed `drew-on-bradley` kept), the spar's hidden result line, the Chronicle feat "Nice One, Chad" (key `bradley` kept), the workshop's entrance. The entrance's pennants and the ally medallion still match "Sir Bradley" too, for old saves whose snapshots keep that name; those are the only "Bradley" strings left in `src/` outside keys and IDs.
+- **Fixture**: `2026-11-15-realms-rival-voiced` (a profile with `lines`, just after a lost meeting cost an item). 107 fixtures load.
+- **Tests**: `tests/rival.test.ts` (13): names, every line present and within its limit, no old name on any card, plaque labels at most 18, `{item}` filling and the old-profile fallback; `crawl.spec.ts`: the door's two plaques and Sir Chad on the card, the chip, the dialog's ritual, and a new test that the news banner reads Sir Chad's line.
+- **Checked**: `npm test` 579 passed; lint; typecheck; `cards:review` (1,926 cards); build (budgets pass: runtime 5,237 KiB of 6,144, initial 157.1 KiB gzip); `tests/dungeon.balance.test.ts` 8 of 8 at 4,000 runs (no weight or tuning changed, so the numbers are Phase 0's); Chromium `test:e2e` 180 of 180 before the new banner test, then the rival and door tests (4 of 4) after it; Chromium `test:sweep` 12 of 12; the news banner screenshotted in Chromium at 390x844.
+- **Not run**: WebKit (CI runs it), the League balance file (nothing shared changed), a phone.
+- **Open for the owner**: the alternate names in section 3 of the plan; whether a clean-names toggle is wanted.
 
 ## Done 2026-11-15: the rival, rebuilt (one named rival a run)
 

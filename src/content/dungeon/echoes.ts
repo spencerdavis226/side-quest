@@ -107,8 +107,8 @@ export const echoes: Record<string, CardDefinition> = {
   // The Quest 2.1: the Company's Table, and what the party drew there.
   "drew-on-bradley": scene(
     "moustache",
-    "Bradley's Moustache",
-    "Sir Bradley rides by with an inked moustache he hasn't found yet. Nobody laughs, or drinks 2.",
+    "Chad's Moustache",
+    "Sir Chad rides by with an inked moustache he hasn't found yet. Nobody laughs, or drinks 2.",
     { reward: { heal: 1 } },
   ),
   "ally-fell": scene(

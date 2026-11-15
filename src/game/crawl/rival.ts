@@ -24,7 +24,11 @@ export const RIVAL_GREED = 0.1;
 /** At this many hearts or fewer, they leave the party alone. */
 export const RIVAL_MERCY = 4;
 /** Uninvited appearances of each kind in one run, at most. */
-export const RIVAL_CAP: Record<Cut, number> = { ambush: 2, meddle: 2, snipe: 2 };
+export const RIVAL_CAP: Record<Cut, number> = {
+  ambush: 2,
+  meddle: 2,
+  snipe: 2,
+};
 
 /** The run's rival: the card that introduced them and their profile. */
 export function rivalProfile(
@@ -49,9 +53,24 @@ export function rivalCut(quest: QuestState | undefined) {
   return {
     kind: cut,
     name: profile.name,
-    line: cut === "meddle" ? profile.meddle : profile.snipe,
+    line: rivalLine(profile, cut) ?? "",
     ribbon: `${profile.name} · ${cut === "meddle" ? "Meddling" : "Sniping"}`,
   };
+}
+
+/** One of the rival's lines, with `{item}` filled in from `items` (their
+ * names, joined with "and"). A profile from before Phase 1 has only its
+ * meddle and snipe lines. */
+export function rivalLine(
+  profile: RivalProfile,
+  key: keyof NonNullable<RivalProfile["lines"]>,
+  items: string[] = [],
+): string | undefined {
+  const line =
+    profile.lines?.[key] ??
+    (key === "meddle" ? profile.meddle : key === "snipe" ? profile.snipe : "");
+  if (!line) return undefined;
+  return line.replace(/\{item\}/g, items.join(" and ") || "things");
 }
 
 // One overlaid card per card and ribbon, so the card in play keeps its

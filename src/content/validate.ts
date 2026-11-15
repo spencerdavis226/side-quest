@@ -7,6 +7,7 @@ import type {
   OmenEffect,
   PackDefinition,
   QuestStage,
+  RivalProfile,
 } from "../game/types";
 import {
   ENCOUNTERS,
@@ -16,6 +17,24 @@ import {
   SLOTS,
   type Slot,
 } from "../game/types";
+
+/** The keys a rival's `lines` may hold: the news lines and every verb. */
+const RIVAL_LINES = [
+  "took",
+  "back",
+  "lostTo",
+  "beaten",
+  "ambush",
+  "meddle",
+  "snipe",
+  "redo",
+  "swipe",
+  "handoff",
+  "poach",
+  "squat",
+  "invoice",
+  "curse",
+];
 
 // Structural validation for cards and packs. Kept apart from `catalog.ts` so
 // saved-session parsing can use it without pulling card content into the
@@ -271,10 +290,24 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
     )
       fail(`Invalid ally: ${c.id}`);
     // The rival (2026-11-15): a short key; an introduction's profile (a
-    // name, a ritual, the two lines, weights and the ballad's lines); what
+    // name, a ritual, their lines, weights and the ballad's lines); what
     // the card takes and hands back.
     const line = (t: unknown, max: number) =>
       typeof t === "string" && !!t.trim() && t.length <= max;
+    // Their lines (Rivals Phase 1): the four news lines and any verb's,
+    // each at most 80 characters. A profile from before has a meddle and
+    // a snipe line instead.
+    const rivalLines = (p: RivalProfile) =>
+      p.lines === undefined
+        ? line(p.meddle, 80) && line(p.snipe, 80)
+        : !!p.lines &&
+          typeof p.lines === "object" &&
+          (["took", "back", "lostTo", "beaten"] as const).every((k) =>
+            line(p.lines![k], 80),
+          ) &&
+          Object.entries(p.lines).every(
+            ([k, v]) => RIVAL_LINES.includes(k) && line(v, 80),
+          );
     const r = c.rival;
     if (
       r !== undefined &&
@@ -289,8 +322,7 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
           (!r.profile ||
             !line(r.profile.name, 22) ||
             !line(r.profile.ritual, 110) ||
-            !line(r.profile.meddle, 80) ||
-            !line(r.profile.snipe, 80) ||
+            !rivalLines(r.profile) ||
             !r.profile.style ||
             (["ambush", "meddle", "snipe"] as const).some(
               (k) =>

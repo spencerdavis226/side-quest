@@ -121,34 +121,43 @@ function rival(
   };
 }
 
-/** Sir Bradley the Undefeated, of the Gilded Company: the glory hog. He
- * takes the credit and whatever a room was about to give. */
+/** Sir Chad Thundercock (key `bradley`): the glory hog. He says "the
+ * Undefeated"; he has only ever fought things already dying. He takes the
+ * credit and whatever a room was about to give. */
 const bradley = rival(
   "bradley",
   {
-    name: "Sir Bradley",
-    ritual:
-      "When Sir Bradley shows up, everyone salutes. Last to salute drinks 1.",
-    meddle: "'Let me show you, Champ.' Roll twice, keep the worse.",
-    snipe: "Whatever this gives, Sir Bradley takes. 'For the Company.'",
+    name: "Sir Chad",
+    ritual: "When Sir Chad shows up, everyone flexes. Weakest flex drinks 1.",
+    lines: {
+      took: "Sir Chad pockets your {item}. 'For the highlight reel, Champ.'",
+      back: "Sir Chad drops your {item}. 'I was holding it for you, Champ.'",
+      lostTo: "Sir Chad kisses both biceps at you. 'Unlucky, Champ.'",
+      beaten: "Sir Chad says he let you win. Nobody believes him.",
+      ambush: "Sir Chad steps in front of you, shirt off. 'Spot me, Champ.'",
+      meddle:
+        "'Let me show you, Champ.' Sir Chad grabs your arm. Roll twice, keep the worse.",
+      snipe:
+        "Sir Chad poses with your loot. 'Great teamwork, Champ.' It's his now.",
+    },
     style: { ambush: 1, meddle: 2, snipe: 6 },
     verse: {
-      joined: "with Sir Bradley taking the credit,",
-      beaten: "left Sir Bradley in a ditch,",
-      ahead: "a step behind Sir Bradley,",
+      joined: "with Sir Chad taking all the credit,",
+      beaten: "left Sir Chad crying in a ditch,",
+      ahead: "two steps behind Sir Chad Thundercock,",
     },
   },
   {
-    title: "Sir Bradley Arrives",
+    title: "Sir Chad Thundercock",
     rules:
-      "Sir Bradley the Undefeated says he softened it up for you, Champ. Everyone salutes; last drinks 2.",
+      "Sir Chad Thundercock arrives once the boss is dead. Everyone flexes; the weakest drinks 2.",
   },
   { takes: 1, damage: 1 },
   [
     [
       "autograph",
-      "Bradley's Autograph",
-      "Sir Bradley is signing your gear. Nobody asked. Roll d20 to stop him.",
+      "Chad's Autograph",
+      "Sir Chad is signing your gear with a sharpie shaped like himself. Roll d20 to stop him.",
       vs(
         "He signs your forehead. Drink 3.",
         "You sign his cape instead. Give 3.",
@@ -156,105 +165,112 @@ const bradley = rival(
     ],
     [
       "verse",
-      "The Bard's New Verse",
-      "Sir Bradley's bard sings your last defeat, with gestures. Roll d20 to out-sing her.",
+      "The Gun Show",
+      "Sir Chad is charging admission to his biceps. Out-flex him: roll d20.",
       vs(
-        "It's catchy. You hum it, and drink 3.",
-        "Your verse about his cape lands. Give 3.",
+        "He kisses both guns at you. Drink 3.",
+        "Your flex wins. He sulks. Give 3.",
       ),
     ],
     [
       "shortcut",
-      "Bradley's Shortcut",
-      "Sir Bradley knows a shortcut, and he is standing in it. Roll d20 to push past.",
+      "Participation Trophy",
+      "Sir Chad hands you a trophy: 'Nice Try, Champ'. Roll d20 to shove it up his.",
       vs(
-        "He lets you through, then takes it first. Drink 3.",
-        "He falls in a ditch, cape and all. Give 3.",
+        "You keep it. It's engraved. Drink 3.",
+        "Right where it belongs. Give 3.",
       ),
     ],
     [
       "spar",
-      "A Friendly Spar",
-      "'Friendly spar, Champ?' Sir Bradley has already drawn. Roll d20.",
+      "Chad's Spotter",
+      "Sir Chad needs a spot, on your face. Roll d20 before he finishes his set.",
       vs(
-        "He wins, and bows to nobody in particular. Drink 3.",
-        "You disarm him. He says he let you. Give 3.",
+        "Twelve reps. You counted. Drink 3.",
+        "You tip the bar. He blames the bar. Give 3.",
       ),
     ],
   ],
   {
-    title: "Sir Bradley Begs",
+    title: "Sir Chad Begs",
     rules:
-      "Sir Bradley, cape on fire, asks to join you. He keeps what he took. Everyone pretends to think.",
+      "Sir Chad, cape on fire, wants in. He keeps what he took, and the credit. Everyone votes.",
     offers: [
       { label: "Take him · drink 2", recruit: true, deed: "rival-joined" },
-      { label: "Duel him", deed: "rival-refused" },
+      { label: "Kick his ass", deed: "rival-refused" },
     ],
     ally: {
-      name: "Sir Bradley",
+      name: "Sir Chad Thundercock",
       calling: ["boss"],
       bonus: 3,
-      ritual: "Everyone says 'well done, Bradley' after every swing.",
+      ritual: "Everyone says 'nice one, Chad' after every swing.",
     },
   },
   {
-    title: "Bradley's Last Pose",
+    title: "Chad's Last Pose",
     rules:
-      "Sir Bradley wants the dragon and the credit. Duel him at the door. Roll d20.",
+      "Sir Chad wants the dragon and the credit. Kick his ass at the door. Roll d20.",
     fight: vs(
       "He poses mid-fight and still hits you. Drink 4.",
       "His cape catches fire again. He runs. Give 4.",
     ),
-    prize: ["Bradley's Cape", { roll: { boss: 1 } }],
+    prize: ["Chad's Cape", { roll: { boss: 1 } }],
   },
 );
 
-/** Lady Mirabel de Mine: the thief. Everything is hers; a lost meeting
- * costs two items and no hearts. */
+/** Lady Fingerbang (key `mirabel`): the thief, charming and handsy.
+ * Everything is hers; a lost meeting costs two items and no hearts. */
 const mirabel = rival(
   "mirabel",
   {
-    name: "Lady Mirabel",
+    name: "Lady Fingerbang",
     ritual:
-      "When Lady Mirabel shows up, everyone covers their drink. Last drinks 1.",
-    meddle: "Her hand is in your pocket mid-swing. Roll twice, keep the worse.",
-    snipe: "Whatever this gives is already in her bag. 'Mine.'",
+      "When Lady Fingerbang shows up, everyone guards their drink. Last hand on it drinks 1.",
+    lines: {
+      took: "Lady Fingerbang was here. Check your pockets: your {item}, gone.",
+      back: "Lady Fingerbang hands back your {item}. It's a little warm.",
+      lostTo: "'Mine,' says Lady Fingerbang, already halfway out the door.",
+      beaten: "Lady Fingerbang pouts, then pinches a bum on the way out.",
+      ambush:
+        "Lady Fingerbang blocks the way, licking her fingers. 'Hello, you.'",
+      meddle:
+        "Her hand is in your pocket mid-swing. Roll twice, keep the worse.",
+      snipe:
+        "Whatever this gives is already down Lady Fingerbang's top. 'Mine.'",
+    },
     style: { ambush: 2, meddle: 2, snipe: 4 },
     verse: {
-      joined: "with Mirabel's hand in their pocket,",
-      beaten: "took it all back from Mirabel,",
-      ahead: "lighter by whatever Mirabel took,",
+      joined: "with Fingerbang's hand in their pocket,",
+      beaten: "took it all back from Fingerbang,",
+      ahead: "robbed blind by Lady Fingerbang,",
     },
   },
   {
-    title: "Mirabel de Mine",
+    title: "Lady Fingerbang",
     rules:
-      "Lady Mirabel de Mine admires your things. 'Mine,' she says. Everyone covers a drink; last drinks 2.",
+      "Lady Fingerbang admires your things. 'Mine,' she says. Everyone covers a drink; last drinks 2.",
   },
   { takes: 2 },
   [
     [
       "inventory",
-      "Mirabel's Inventory",
-      "Lady Mirabel is listing your pack out loud, item by item. Roll d20 to get it back.",
-      vs(
-        "She keeps a souvenir. Drink 3.",
-        "You take back yours and one of hers. Give 3.",
-      ),
+      "The Pat-Down",
+      "Lady Fingerbang offers to check you for weapons. Thoroughly. Roll d20 to say no.",
+      vs("She found something. Drink 3.", "You pat her down instead. Give 3."),
     ],
     [
       "trade",
       "A Fair Trade",
-      "Lady Mirabel offers a fair trade: your things for her smile. Roll d20 to refuse.",
+      "Lady Fingerbang will trade your things for a wink. Roll d20 to refuse the wink.",
       vs(
-        "It is a very good smile. Drink 3.",
+        "It was a very good wink. Drink 3.",
         "You keep your things. She pouts. Give 3.",
       ),
     ],
     [
       "keepers",
       "Finders Keepers",
-      "'Finders keepers,' says Lady Mirabel, holding something of yours. Roll d20.",
+      "'Finders keepers,' says Lady Fingerbang, holding your stuff. Roll d20 to get it back.",
       vs(
         "She found it first, fair and square. Drink 3.",
         "You find her purse. Keepers. Give 3.",
@@ -262,18 +278,18 @@ const mirabel = rival(
     ],
     [
       "toll",
-      "Mirabel's Toll",
-      "Lady Mirabel has a toll booth on your road. The toll is 'whatever you have'. Roll d20.",
+      "Her Toll Booth",
+      "Lady Fingerbang charges a toll of 'everything you've got'. Roll d20 to run it.",
       vs(
         "You pay. She gives no change. Drink 3.",
-        "You charge her for the road. Give 3.",
+        "You run it. She blows a kiss. Give 3.",
       ),
     ],
   ],
   {
-    title: "Mirabel's Offer",
+    title: "Fingerbang's Offer",
     rules:
-      "Lady Mirabel will give it all back if she can come. She crosses her heart with your hand. Vote.",
+      "Lady Fingerbang gives it all back if she can come. She crosses her heart, with your hand. Vote.",
     offers: [
       {
         label: "Take her",
@@ -284,7 +300,7 @@ const mirabel = rival(
       { label: "Duel her", deed: "rival-refused" },
     ],
     ally: {
-      name: "Lady Mirabel",
+      name: "Lady Fingerbang",
       calling: ["any"],
       bonus: 3,
       turncoat: true,
@@ -294,60 +310,69 @@ const mirabel = rival(
   {
     title: "Mine, Thanks",
     rules:
-      "Lady Mirabel wants the hoard, all of it, and your boots. Duel her. Roll d20.",
+      "Lady Fingerbang wants the hoard, all of it, and your boots. Duel her. Roll d20.",
     fight: vs(
       "She has your boots now. Drink 4.",
       "You turn her out, pockets and all. Give 4.",
     ),
-    prize: ["Mirabel's Purse", { satchel: 4 }],
+    prize: ["Fingerbang's Purse", { satchel: 4 }],
   },
 );
 
-/** Master Aldous Tutt, your old teacher: never impressed. He confiscates
- * once; after that a lost lesson costs a heart, not items. */
+/** Sensei Saggynuts (key `tutt`), your old master: ancient, cross-legged
+ * in a loincloth that does not cover enough, never impressed. He
+ * confiscates once; after that a lost lesson costs a heart, not items. */
 const tutt = rival(
   "tutt",
   {
-    name: "Master Tutt",
+    name: "Sensei Saggynuts",
     ritual:
-      "When Master Tutt shows up, everyone sits up straight. Last drinks 1.",
-    meddle: "'Elbow.' He corrects your form. Roll twice, keep the worse.",
-    snipe: "Whatever this gives, he confiscates. 'You are not ready.'",
+      "When Sensei Saggynuts shows up, everyone bows. He sees up your nose. Last to bow drinks 1.",
+    lines: {
+      took: "Sensei Saggynuts confiscates your {item}. 'You are not ready.'",
+      back: "Sensei returns your {item}. 'Perhaps you are ready. Perhaps.'",
+      lostTo: "'Again,' says Sensei Saggynuts, adjusting nothing.",
+      beaten: "Sensei Saggynuts nods, once. Best day of your life.",
+      ambush:
+        "Sensei Saggynuts sits cross-legged in your path. Don't look down.",
+      meddle: "'Elbow.' Sensei corrects your form. Roll twice, keep the worse.",
+      snipe: "Whatever this gives, Sensei confiscates. 'You are not ready.'",
+    },
     style: { ambush: 2, meddle: 6, snipe: 1 },
     verse: {
-      beaten: "passed Master Tutt's last exam,",
-      ahead: "to Master Tutt's lasting disappointment,",
+      beaten: "passed Sensei Saggynuts' final exam,",
+      ahead: "to Sensei Saggynuts' lasting shame,",
     },
   },
   {
-    title: "Master Tutt",
+    title: "Sensei Saggynuts",
     rules:
-      "Aldous Tutt, your old master, inspects your work. 'Hm. No.' Everyone sits up; the last drinks 2.",
+      "Sensei Saggynuts inspects your work. 'Hm. No.' Everyone sits up straight; slouchers drink 2.",
   },
   { damage: 1 },
   [
     [
       "quiz",
       "Pop Quiz",
-      "Master Tutt has a pop quiz, and you have no notes. Roll d20 and show your working.",
+      "Sensei Saggynuts has a pop quiz and his loincloth is slipping. Roll d20 without looking down.",
       vs(
-        "'See me after.' Drink 3.",
-        "Full marks. He checks it twice. Give 3.",
+        "You looked. 'See me after.' Drink 3.",
+        "Full marks, eyes up. Give 3.",
       ),
     ],
     [
       "demonstration",
-      "Tutt Demonstrates",
-      "'Watch closely.' Master Tutt demonstrates, on you. Roll d20 to block it.",
+      "Wax On, Nuts Off",
+      "Sensei Saggynuts makes you wax his... floor. Roll d20 to finish before he sits up.",
       vs(
-        "A textbook strike, he says, on you. Drink 3.",
-        "You block it. 'Lucky.' Give 3.",
+        "He sat up. You saw everything. Drink 3.",
+        "Floor done, eyes saved. Give 3.",
       ),
     ],
     [
       "posture",
       "Posture Check",
-      "Master Tutt taps your spine with his stick. 'Slouching.' Roll d20 to stand like a hero.",
+      "Sensei Saggynuts taps your spine with his stick. 'Slouching.' Roll d20 to stand like a hero.",
       vs(
         "He tuts. It echoes. Drink 3.",
         "He finds nothing to fix, and hates it. Give 3.",
@@ -356,7 +381,7 @@ const tutt = rival(
     [
       "in-my-day",
       "In My Day",
-      "'In my day we slew dragons before breakfast.' Roll d20 to out-story Master Tutt.",
+      "'In my day we slew dragons before breakfast.' Roll d20 to out-story Sensei Saggynuts.",
       vs(
         "His story has three more parts. Drink 3.",
         "Yours has a twist he never saw. Give 3.",
@@ -366,21 +391,21 @@ const tutt = rival(
   {
     title: "The Final Exam",
     rules:
-      "Master Tutt blocks the door. 'One last lesson.' He will not be coming along. Everyone groans.",
+      "Sensei Saggynuts blocks the door. 'One last lesson.' He's not coming along. Everyone groans.",
     offers: [
       { label: "Sit the exam", deed: "rival-refused" },
       { label: "Skip it · drink 3", deed: "rival-skipped" },
     ],
   },
   {
-    title: "Tutt's Last Lesson",
+    title: "Sensei's Last Lesson",
     rules:
-      "Master Tutt raises his stick. 'Again.' Pass the final exam. Roll d20.",
+      "Sensei Saggynuts raises his stick. 'Again.' Pass the final exam. Roll d20.",
     fight: vs(
       "'Again.' Drink 4.",
       "He nods, once. Best day of your life. Give 4.",
     ),
-    prize: ["Tutt's Stick", { roll: { all: 1 } }],
+    prize: ["Sensei's Stick", { roll: { all: 1 } }],
   },
 );
 

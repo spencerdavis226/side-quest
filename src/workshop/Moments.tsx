@@ -479,7 +479,7 @@ const QUEST: Moment[] = [
     key: "company",
     style: "boss",
     league: false,
-    kicker: "Sir Bradley",
+    kicker: "Sir Chad",
     title: "The Rematch",
     foe: { name: "The Rematch" },
     hero: { name: "Ranger" },

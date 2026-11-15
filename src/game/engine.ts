@@ -112,6 +112,7 @@ export {
   RIVAL_CAP,
   RIVAL_GAP,
   rivalCut,
+  rivalLine,
   rivalProfile,
 } from "./crawl/rival";
 export {
