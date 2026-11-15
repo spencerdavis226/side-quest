@@ -67,7 +67,7 @@ import { PartyNewsBanner, StageBanner } from "./components/StageBanner";
 import { PartyPulse } from "./components/Crawl";
 import { MomentDirector } from "./components/moments/Director";
 import { Announcer } from "./components/Announcer";
-import { prologue, runKey } from "./components/prologue";
+import { interlude, prologue, runKey } from "./components/prologue";
 import { IS_PREVIEW } from "./app/channel";
 import "./style.css";
 import "./presentation/theme.css";
@@ -152,6 +152,8 @@ function App() {
   const opening = prologue(display);
   const inPrologue =
     !!opening && !(opening.at === opening.length && dealt === runKey(display!));
+  // The rival's introduction, once turned: the same scene language, mid-run.
+  const rivalScene = !inPrologue && !motion && interlude(display);
   // A prologue card is turned for the table as it arrives: the scene shows
   // it, and the omen's reveal moment plays over it.
   useEffect(() => {
@@ -313,7 +315,7 @@ function App() {
               </svg>
             </IconButton>
           )}
-        {active && !inPrologue && (
+        {active && !inPrologue && !rivalScene && (
           <TopBar
             session={display}
             disabled={!!motion}
@@ -396,11 +398,11 @@ function App() {
             onFinish={() => finish(transition)}
             onUndo={undoable ? () => controller.undo() : undefined}
           />
-        ) : inPrologue ? (
+        ) : inPrologue || rivalScene ? (
           <Suspense fallback={null}>
             <Prologue
               session={display}
-              at={opening!}
+              at={inPrologue ? opening! : null}
               busy={!!motion}
               onContinue={() => {
                 controller.tap();
@@ -440,9 +442,12 @@ function App() {
               onFinish={finish}
             />
             <StageBanner session={display} />
-            <PartyNewsBanner session={display} />
           </>
         )}
+        {/* Mounted through the prologue and the rival's scene too, so the
+            news of the card a scene put aside (what the rival took) is
+            seen as the table comes back. */}
+        {active && <PartyNewsBanner session={display} />}
         {!active && !motion && updateReady && (
           <Button
             variant="text-button"

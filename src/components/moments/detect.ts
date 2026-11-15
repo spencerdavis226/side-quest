@@ -30,6 +30,7 @@ import { hiddenReward, rollWins } from "../../game/dice";
 import { describeChange } from "../../game/omenText";
 import { badgeArt } from "../../presentation/league-art";
 import { badgeType } from "../../presentation/pokemon-types";
+import { prologue } from "../prologue";
 import {
   ECHO_OF,
   LAIR_WORDS,
@@ -534,7 +535,9 @@ export function momentsBetween(
 
   // The road (The Quest 2.0 Phase 5): the map opens on a choice (M3), and
   // the road so far shows as each region begins (M4).
-  if (q?.due && q.packId === "dungeon") {
+  // The prologue's own scene (2026-11-15) shows the Road Out's choice and
+  // the first region at the handoff, so neither moment plays over it.
+  if (q?.due && q.packId === "dungeon" && !prologue(after)) {
     if (turned && card.offers?.some((o) => o.route !== undefined))
       out.push({
         kind: "map",

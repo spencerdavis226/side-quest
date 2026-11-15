@@ -434,7 +434,7 @@ test("the Summons reveals the dragon once, and a dragon sign's shadow passes", a
   await withMotion(page);
   const at = crawlAt("dungeon.summons-proclamation", STEP.summons);
   await seed(page, at);
-  await page.locator(".game-card").click();
+  // The prologue (2026-11-15) turns the Summons for the table at once.
   const wanted = page.locator(".moment-wanted");
   await expect(wanted).toBeVisible();
   await expect(wanted.locator(".wanted-kicker")).toHaveText("Wanted");

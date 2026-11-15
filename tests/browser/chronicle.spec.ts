@@ -59,7 +59,8 @@ test("the Chronicle opens from setup, and Heroic starts a harder run", async ({
   await heroic.click();
   await expect(heroic).toHaveAttribute("aria-pressed", "true");
   await play.click();
-  await expect(page.locator(".card-stage")).toBeVisible();
+  // The run opens on its prologue (2026-11-15).
+  await expect(page.locator(".prologue")).toBeVisible();
   const saved = await page.evaluate(
     ([s, c]) => [
       JSON.parse(localStorage.getItem(s)!),
