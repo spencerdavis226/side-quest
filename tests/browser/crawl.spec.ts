@@ -6,6 +6,7 @@ import {
   createSession,
   currentCard,
   finaleStage,
+  takeOffer,
 } from "../../src/game/engine";
 import { returnToCard, rollDice } from "../../src/game/dice";
 import type { SessionState } from "../../src/game/types";
@@ -19,7 +20,6 @@ const reveal = (s: SessionState) => advance(s);
 const rolled = (s: SessionState, face: number) =>
   returnToCard(rollDice(s, () => (face - 0.5) / currentCard(s).dice!.sides));
 const meter = (page: Page) => page.locator(".crawl-meter");
-const full = new RegExp(`^Hearts: ${H} of ${H}`);
 
 test("@release The Quest opens on an adventurer, the omen and the summons, then the gate", async ({
   page,
@@ -33,66 +33,28 @@ test("@release The Quest opens on an adventurer, the omen and the summons, then 
   );
   await page.screenshot({ path: info.outputPath("setup.png") });
   await page.getByRole("button", { name: "Play", exact: true }).click();
-  await expect(meter(page)).toHaveAccessibleName(
-    new RegExp(`^Hearts: ${H} of ${H}\\. Your adventurer`),
-  );
-  await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
-    "Your adventurer",
-  );
-  await expect(page.locator(".stage-banner")).toHaveText(
-    /The Quest\s*Who answers the call\?/,
-  );
-  // The banner is read out through the page's one waiting live region.
-  const spoken = page
-    .getByRole("status")
-    .and(page.locator("#banner-announcer"));
-  await expect(spoken).toHaveText("The Quest. Who answers the call?");
-  await expect(page.locator(".stage-banner")).toHaveAttribute(
-    "aria-hidden",
-    "true",
-  );
-  await page.locator(".game-card").click();
-  await expect(page.locator(".game-card .card-ribbon")).toHaveText(
-    "Your adventurer",
-  );
+  // The prologue (2026-11-15): each opening card in a scene of its own, off
+  // the table, while the phone stays put.
+  const scene = page.locator(".prologue");
+  const kicker = scene.locator(".pro-kicker");
+  await expect(kicker).toHaveText("Your adventurer");
+  await expect(page.locator(".game-card")).toHaveCount(0);
   await page.screenshot({ path: info.outputPath("adventurer.png") });
-  await page.locator(".game-card").click();
-  await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
-    "The omen",
-  );
-  await page.locator(".game-card").click();
-  await expect(page.locator(".game-card .card-ribbon")).toHaveText("The omen");
+  await page.getByRole("button", { name: "Read the omen" }).click();
+  await expect(kicker).toHaveText("Tonight's omen");
   await page.screenshot({ path: info.outputPath("omen.png") });
-  await page.locator(".game-card").click();
+  await page.getByRole("button", { name: "Open the summons" }).click();
   // The King's Summons names the run's dragon (Realms, 2026-11-03).
-  await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
-    "The King's Summons",
-  );
-  await page.locator(".game-card").click();
-  await expect(page.locator(".game-card .card-ribbon")).toHaveText(
-    "The Summons",
-  );
+  await expect(kicker).toHaveText("The King's Summons");
   const run = await saved(page);
   const dragon = cards.find(
     (c) => c.id === run.quest.finale[run.quest.finale.length - 1],
   )!;
-  await expect(page.locator(".game-card")).toHaveAccessibleName(
-    new RegExp(dragon.title),
-  );
-  await expect(page.locator(".game-card")).not.toHaveAccessibleName(
-    /\{dragon\}/,
-  );
+  await expect(scene.locator(".pro-rules")).toContainText(dragon.title);
+  await expect(scene).not.toContainText("{dragon}");
   await page.screenshot({ path: info.outputPath("summons.png") });
-  await page.locator(".game-card").click();
-  await expect(page.locator(".crawl-progress")).toHaveAccessibleName(
-    "The Road Out",
-  );
-  await expect(page.locator(".stage-banner")).toHaveText(
-    /The Quest\s*Which way\?/,
-  );
-  // The Summons named the dragon and its lair aloud (Phase 3, M2).
-  await expect(spoken).toContainText(`Wanted: ${dragon.title}.`);
-  await expect(spoken).toContainText("The Quest. Which way?");
+  await page.getByRole("button", { name: "Take the road" }).click();
+  await expect(kicker).toHaveText("The Road Out");
   const s = await saved(page);
   expect(s.config.packIds).toEqual(["dungeon"]);
   expect(s.quest.party.omen).toBe(s.quest.finale[0]);
@@ -699,7 +661,10 @@ test("losing the last heart wipes the party", async ({ page }, info) => {
   await expect(page.locator(".crawl-floors li")).toHaveCount(5);
   await page.screenshot({ path: info.outputPath("wiped.png") });
   await page.getByRole("button", { name: "Play again" }).click();
-  await expect(meter(page)).toHaveAccessibleName(full);
+  // A new run opens on its prologue (2026-11-15), off the table.
+  await expect(page.locator(".prologue .pro-kicker")).toHaveText(
+    "Your adventurer",
+  );
 });
 
 test("felling the dragon wins the quest", async ({ page }, info) => {
@@ -1092,7 +1057,8 @@ test("the rival's news banner speaks in their own voice", async ({ page }) => {
     }),
   );
   await seed(page, s);
-  await page.locator(".game-card").click();
+  // The introduction is shown in its own scene (2026-11-15).
+  await page.getByRole("button", { name: "Back to the table" }).click();
   const banner = page.locator(".news-banner");
   await expect(banner).toContainText("took your Tower Shield");
   await expect(banner).toContainText(
@@ -1224,9 +1190,13 @@ test("the end screen's Nemesis panel: Sir Chad slew it, allegedly", async ({
 });
 
 test("the omen is kept in the party dialog", async ({ page }, info) => {
+  // Past the prologue (2026-11-15): the summons and the road put aside,
+  // so the party dialog is on the table.
   let s = reveal(crawlAt("dungeon.omen-lock-in", STEP.omen));
-  s = advance(s);
+  s = advance(reveal(advance(s)));
+  s = takeOffer(reveal(s), 0);
   await seed(page, s);
+  await page.getByRole("button", { name: "Deal the first card" }).click();
   await meter(page).click();
   const dialog = page.getByRole("dialog", { name: "The party" });
   await expect(dialog.locator(".crawl-boons")).toContainText("Grounded");
@@ -1348,19 +1318,19 @@ test("the road out: two regions, one taken, the map", async ({
     quest: { ...s.quest!, step: STEP.road },
   };
   await seed(page, reveal(s));
-  const plaques = page.locator(".card-choice.offers .card-choice-option");
-  // Two roads and, since The Quest 2.1, a coin for a split vote.
-  await expect(plaques).toHaveCount(3);
-  await expect(plaques.nth(2)).toHaveAccessibleName(/Flip for it/);
+  // The Road Out is the prologue's last scene (2026-11-15): its two roads
+  // as choices, and since The Quest 2.1 a coin for a split vote.
+  const roads = page.locator(".prologue button.pro-road");
+  await expect(roads).toHaveCount(2);
+  await expect(page.getByRole("button", { name: "Flip for it" })).toBeVisible();
   const first = currentCard(reveal(s)).offers![0].label;
-  await expect(plaques.nth(0)).toHaveAccessibleName(
-    `${first}: the road to ${first.replace(/^The /, "the ")}`,
-  );
+  await expect(roads.nth(0).locator("strong")).toHaveText(first);
   await page.screenshot({ path: info.outputPath("road-out.png") });
-  await plaques.nth(0).click();
+  await roads.nth(0).click();
   await expect
     .poll(async () => (await saved(page)).quest.step)
     .toBe(STEP.road + 1);
+  await page.getByRole("button", { name: "Deal the first card" }).click();
   const after: SessionState = await saved(page);
   expect(after.quest!.dropped).toHaveLength(2);
   expect(after.quest!.stages.some((st) => st.label === first)).toBe(true);

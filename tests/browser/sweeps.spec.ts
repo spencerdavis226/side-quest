@@ -10,6 +10,7 @@ import { advance, UNLOCKS } from "../../src/game/engine";
 import type { SessionState } from "../../src/game/types";
 import { cards, packs } from "../../src/content/catalog";
 import { crawlAt, leagueAt } from "./sessions";
+import { interlude, prologue } from "../../src/components/prologue";
 
 // No service worker: a sweep reloads hundreds of times, and the worker's
 // registration and update check on each load are not what is measured.
@@ -25,6 +26,15 @@ const chunk = <T>(list: T[], part: number, parts: number) =>
  * never does. */
 async function spills(page: Page, session: SessionState, ready?: string) {
   await reseed(page, session);
+  // An opening card (the prologue, 2026-11-15) or the rival's introduction
+  // is shown in its scene, not on a card face: the scene scrolls, so it
+  // must only never spill sideways.
+  if (prologue(session) || interlude(session)) {
+    const scene = page.locator(".prologue .pro-stage");
+    await expect(scene).toBeVisible();
+    await page.evaluate(() => document.fonts.ready);
+    return scene.evaluate((el) => el.scrollWidth > el.clientWidth + 1);
+  }
   const rules = page.locator(".game-card .study-rules");
   await expect(rules).toBeVisible();
   if (ready) await expect(page.locator(ready)).toBeVisible();

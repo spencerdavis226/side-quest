@@ -17,6 +17,12 @@ import type { SessionState } from "../game/types";
 /** The stages that make a pack's prologue, in run order, by label. */
 export const PROLOGUE_STAGES: Readonly<Record<string, readonly string[]>> = {
   pokemon: ["Your starter"],
+  dungeon: [
+    "Your adventurer",
+    "The omen",
+    "The King's Summons",
+    "The Road Out",
+  ],
 };
 
 export interface Prologue {
@@ -53,3 +59,13 @@ export function prologue(s: SessionState | null | undefined): Prologue | null {
  * and undo, so "Deal the first card" is asked once. */
 export const runKey = (s: SessionState) =>
   `${s.quest?.packId}:${s.quest?.finale.join(",")}`;
+
+/** The rival's introduction (2026-11-15; owner chose to keep it mid-run, in
+ * the prologue's own scene language): once its card is turned on the table,
+ * the scene takes over until it is put aside. */
+export const RIVAL_STAGE = "Your Rival";
+export function interlude(s: SessionState | null | undefined): boolean {
+  const q = s?.quest;
+  if (!s || !q?.party || !q.due || s.phase !== "revealed") return false;
+  return finaleStage(q).label === RIVAL_STAGE;
+}

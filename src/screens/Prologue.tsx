@@ -14,6 +14,7 @@ import { QUEST_MAP, LAIR_WORDS } from "../components/crawlTheme";
 import type { Prologue as PrologueAt } from "../components/prologue";
 import { pokemonTypes } from "../presentation/pokemon-types";
 import { questArt, type QuestArt } from "../presentation/quest-art.generated";
+import RivalMedal, { RIVAL_COLOURS } from "../components/RivalMedal";
 import "../presentation/prologue.css";
 
 // The prologue scene (2026-11-15; `components/prologue.ts` says when). Not
@@ -58,10 +59,12 @@ type Kind =
   | "omen"
   | "summons"
   | "road"
+  | "rival"
   | "handoff-league"
   | "handoff-quest";
 
-function kindOf(session: SessionState, at: PrologueAt): Kind {
+function kindOf(session: SessionState, at: PrologueAt | null): Kind {
+  if (!at) return "rival";
   const league = session.quest!.packId === "pokemon";
   if (at.at === at.length) return league ? "handoff-league" : "handoff-quest";
   switch (at.label) {
@@ -85,6 +88,7 @@ const HEAD: Record<Kind, { kicker: string; go: string }> = {
   omen: { kicker: "Tonight's omen", go: "Open the summons" },
   summons: { kicker: "The King's Summons", go: "Take the road" },
   road: { kicker: "The Road Out", go: "" },
+  rival: { kicker: "Your rival", go: "Back to the table" },
   "handoff-league": { kicker: "The League begins", go: "Deal the first card" },
   "handoff-quest": { kicker: "The Quest begins", go: "Deal the first card" },
 };
@@ -99,7 +103,8 @@ export default function Prologue({
   onMenu,
 }: {
   session: SessionState;
-  at: PrologueAt;
+  /** Where the opening is; null for the rival's interlude (mid-run). */
+  at: PrologueAt | null;
   /** A motion or a moment is under way: the buttons wait. */
   busy: boolean;
   onContinue: () => void;
@@ -110,24 +115,30 @@ export default function Prologue({
   const quest = session.quest!;
   const league = quest.packId === "pokemon";
   const kind = kindOf(session, at);
-  const handoff = at.at === at.length;
+  const handoff = !!at && at.at === at.length;
   const card =
     handoff || session.phase !== "revealed" ? null : currentCard(session);
   // The starter's type colours the whole scene, as the Quest's ember does.
   const starter = league ? finaleCard(quest, quest.finale[0]) : undefined;
   const type =
     starter?.type && starter.type in pokemonTypes ? starter.type : undefined;
+  const rival = card?.rival?.who ? RIVAL_COLOURS[card.rival.who] : undefined;
   const tint = type
     ? ({
         "--pro-light": pokemonTypes[type].light,
         "--pro-deep": pokemonTypes[type].deep,
       } as CSSProperties)
-    : undefined;
+    : rival
+      ? ({
+          "--pro-light": rival.light,
+          "--pro-deep": rival.deep,
+        } as CSSProperties)
+      : undefined;
   const offers = card && awaitingOffer(session) ? card.offers! : null;
-  const steps = Array.from({ length: at.length + 1 }, (_, i) => i);
+  const steps = at ? Array.from({ length: at.length + 1 }, (_, i) => i) : [];
   return (
     <section
-      className={`prologue ${league ? "prologue-league" : "prologue-quest"} pro-${kind}`}
+      className={`prologue ${league ? "prologue-league" : "prologue-quest"} pro-is-${kind}`}
       style={tint}
       aria-labelledby="prologue-title"
     >
@@ -137,17 +148,19 @@ export default function Prologue({
         <span className="pro-vignette" />
       </div>
       <header className="pro-head">
-        <ol
-          className="pro-steps"
-          aria-label={`Setting out: ${Math.min(at.at + 1, at.length + 1)} of ${at.length + 1}`}
-        >
-          {steps.map((i) => (
-            <li
-              key={i}
-              className={i < at.at ? "done" : i === at.at ? "here" : ""}
-            />
-          ))}
-        </ol>
+        {at && (
+          <ol
+            className="pro-steps"
+            aria-label={`Setting out: ${at.at + 1} of ${at.length + 1}`}
+          >
+            {steps.map((i) => (
+              <li
+                key={i}
+                className={i < at.at ? "done" : i === at.at ? "here" : ""}
+              />
+            ))}
+          </ol>
+        )}
         <IconButton label="Menu" className="pro-menu" onClick={onMenu}>
           <svg
             className="ui-icon"
@@ -159,7 +172,7 @@ export default function Prologue({
           </svg>
         </IconButton>
       </header>
-      <div className="pro-stage" key={`${at.at}-${card?.id ?? ""}`}>
+      <div className="pro-stage" key={`${at?.at ?? "rival"}-${card?.id ?? ""}`}>
         <p className="pro-kicker">{HEAD[kind].kicker}</p>
         {handoff ? (
           <Handoff session={session} league={league} />
@@ -182,7 +195,9 @@ export default function Prologue({
           <>
             <p className="pro-hold">
               <EyesIcon />
-              Everyone, look together. Keep the phone here.
+              {kind === "rival"
+                ? "Everyone, meet your rival. They follow you all quest."
+                : "Everyone, look together. Keep the phone here."}
             </p>
             {offers ? (
               <div className="pro-roads">
@@ -271,6 +286,12 @@ function Scene({
         </span>
       </div>
     );
+  else if (kind === "rival")
+    art = (
+      <div className="pro-rival-art">
+        <RivalMedal who={card.rival?.who} className="pro-rival-medal" />
+      </div>
+    );
   else if (kind === "road")
     art = (
       <div className="pro-compass">
@@ -288,6 +309,19 @@ function Scene({
         <p className="pro-sub">{pokemonTypes[card.type].name} type</p>
       )}
       <p className="pro-rules">{card.rules}</p>
+      {kind === "rival" && card.rival?.profile && (
+        <p className="pro-ritual">
+          <strong>Whenever they show up</strong>
+          {card.rival.profile.ritual}
+        </p>
+      )}
+      {kind === "rival" && !!card.rival?.takes && (
+        <p className="pro-note">
+          {card.rival.takes === 1
+            ? "They take an item from the bag as they go."
+            : `They take ${card.rival.takes} items from the bag as they go.`}
+        </p>
+      )}
       {forms.length > 0 && (
         <p
           className="pro-line"

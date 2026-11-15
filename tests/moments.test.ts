@@ -297,11 +297,17 @@ describe("moments", () => {
 
   it("the map opens on a road card, and the road so far as a region begins (Phase 5)", () => {
     const c = createSession(crawl, cards, packs, seeded(12));
-    const road = atStep(c, stepOf(c, "The Road Out"));
+    // The Road Out is the prologue's (2026-11-15): its scene shows the
+    // choice, so the map opens on the Signpost, mid-run.
+    const out = atStep(c, stepOf(c, "The Road Out"));
+    expect(
+      momentsBetween(out, { ...out, phase: "revealed" }).map((m) => m.kind),
+    ).not.toContain("map");
+    const road = atStep(c, stepOf(c, "The Signpost"));
     const map = momentsBetween(road, { ...road, phase: "revealed" }).find(
       (m) => m.kind === "map",
     );
-    expect(map).toMatchObject({ title: "The Road Out" });
+    expect(map).toMatchObject({ title: "The Signpost" });
     expect(AMBIENT.has("map")).toBe(true);
     // The road taken: the region's first card dealt face down.
     const shown = { ...road, phase: "revealed" as const };

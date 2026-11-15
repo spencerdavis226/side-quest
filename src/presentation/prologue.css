@@ -157,6 +157,10 @@
   width: 44px;
   height: 44px;
   color: rgb(255 244 220 / 0.7);
+  background: rgb(255 244 220 / 0.06);
+  border: 1px solid rgb(255 244 220 / 0.18);
+  border-radius: 50%;
+  box-shadow: none;
 }
 .pro-menu .ui-icon {
   width: 22px;
@@ -403,6 +407,58 @@
   color: #ffc9a8;
   opacity: 0.85;
 }
+/* The rival (mid-run interlude): their medallion, swinging in. */
+/* The scene itself is `.pro-is-rival`. */
+.pro-rival-art {
+  aspect-ratio: 1;
+  width: clamp(140px, 42vw, 190px);
+  filter: drop-shadow(
+      0 0 30px color-mix(in oklab, var(--pro-light), transparent 45%)
+    )
+    drop-shadow(0 12px 24px rgb(0 0 0 / 0.6));
+  animation: pro-swing 1100ms cubic-bezier(0.2, 1.4, 0.4, 1) 120ms both;
+}
+.pro-rival-medal {
+  width: 100%;
+  height: 100%;
+}
+@keyframes pro-swing {
+  from {
+    opacity: 0;
+    rotate: -24deg;
+    scale: 0.5;
+  }
+}
+.pro-ritual {
+  display: grid;
+  gap: 2px;
+  max-width: 32ch;
+  margin: 6px 0 0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 1.05rem;
+  line-height: 1.35;
+  color: rgb(255 244 220 / 0.85);
+  background: color-mix(in oklab, var(--pro-deep), transparent 55%);
+  box-shadow: inset 0 0 0 1px
+    color-mix(in oklab, var(--pro-light), transparent 60%);
+}
+.pro-ritual strong {
+  font: 700 0.85rem / 1.2 var(--font-tavern);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pro-light);
+}
+.prologue.pro-is-rival .pro-backdrop {
+  background:
+    radial-gradient(
+      90% 60% at 50% 40%,
+      color-mix(in oklab, var(--pro-deep), transparent 30%),
+      transparent 75%
+    ),
+    linear-gradient(180deg, #120a10 0%, #1c0f16 60%, #150b0c 100%);
+}
+
 /* The road out: a brass compass. */
 .pro-compass {
   width: clamp(110px, 32vw, 150px);
