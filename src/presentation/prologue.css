@@ -171,6 +171,11 @@
 }
 
 /* --- The stage ----------------------------------------------------------- */
+/* While a step's reveal plays (the class drawn, the starter's ball), the
+   scene keeps only its backdrop and track; it comes in after. */
+.pro-wait {
+  grid-row: 2 / -1;
+}
 .pro-stage {
   display: flex;
   flex-direction: column;
