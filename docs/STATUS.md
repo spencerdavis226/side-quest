@@ -2,6 +2,17 @@
 
 Updated 2026-11-15. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Done 2026-11-15: every heal takes the heal bonus (potions too); Realms voice pass planned
+
+Owner: "Every heal heals 1 more" must include potions, in both crawls, "that's the deal if you have that perk"; every heal shown is its net value.
+
+- **Engine**: `healAmount(base, quest)` in `src/game/crawl/party.ts` applies the run's `heal` bonus (never below 0) on every heal: plaques, rewards, League catches, hidden results (also missing it) and the potion (`draughtHeal` in `loot.ts`). Revive (half max) is unchanged. No save field changed.
+- **Display**: the potion's line (`lootDoes`, `{heal}` in `crawlTheme.ts`), the card's +hearts seal (`CardStakes`) and a heal plaque's line and label (`OfferPlaque`, `offerHeal`, read after the plaque's evolution): a Cleric's inn reads "Rest: 4 hearts back".
+- **Balance** (owner chose B): the dragon's need 15 (`BOSS_NEED[2]`, was 14), and the dragon-reached ceiling 70% (was 65%). 4,000 runs: won **29.9%** (30.9% before the fix, 34.5% with it alone), the dragon reached 67% and won 45% there; joined 41%, refused 40%; Alchemist 39%, Cleric 29%, Innkeeper 32%, Bard 43%; the jokes 2%, 2%, 1% (the Mimic close to its 1% floor); Heroic 12.4%. Measured and rejected: the two ceilings raised alone (won 34.5%), inn rests of 2 (the Squire under its floor). League balance passes unchanged.
+- **Checked**: `npm test` 628 passed; lint; typecheck; build (budgets pass); `tests/dungeon.balance.test.ts` 8 of 8; `tests/league.balance.test.ts` passes (with the potion change); Chromium `crawl.spec.ts` inn tests (3, one new).
+- **Not run**: WebKit (CI), the full e2e and sweep (no card text changed), a phone.
+- **Next**: the Realms voice pass, `docs/REALMS_VOICE_PLAN.md`, starting with Phase 0's samples for the owner's approval. Rivals Phase 7 (below) is the owner's own playtest.
+
 ## Next task (2026-11-15): the Rivals, Phase 7 (the owner's table)
 
 Not code. Phase 7 of `docs/RIVALS_PLAN.md`: the owner plays at least three runs on a phone (one where the rival is joined, one refused, one Heroic) and answers the plan's five questions (do you hate them by the door; is the Do-Over funny or infuriating in a bad way; do pay-offs get used; is the betrayal a story or a cheat; does any name land flat), recorded in `docs/DEVICE_CHECKLIST.md`, then tune from them. Also for the owner: the alternate names, a clean-names switch, and whether "The Ex" (a seventh rival unlocked by beating all six duels) ships. Phase 8 of The Quest 2.0 (the owner's table) still waits on the owner too.

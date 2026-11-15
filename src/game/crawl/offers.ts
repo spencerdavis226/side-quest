@@ -1,4 +1,4 @@
-import type { QuestState, SessionState } from "../types";
+import type { Offer, QuestState, SessionState } from "../types";
 import { rollWins } from "../dice";
 import { currentCard, type Random } from "../engine";
 import { chooseRoad, dropInto, finaleStage } from "./stages";
@@ -7,7 +7,7 @@ import {
   addLore,
   evolve,
   gainBoon,
-  omenEffect,
+  healAmount,
   omenForm,
   satchelSize,
 } from "./party";
@@ -37,6 +37,22 @@ export function canTakeOffer(s: SessionState, index: number): boolean {
 }
 /** Take a merchant's ware or a fork's door, and put the card aside. An
  * evolution of a branching starter takes `branch`, the form picked. */
+/** The hearts a plaque's heal brings back, as `takeOffer` applies it: with
+ * the run's heal bonus, read after the plaque's evolution (owner,
+ * 2026-11-15: every heal shows its net value). */
+export function offerHeal(
+  quest: QuestState | undefined,
+  offer: Offer,
+  branch = 0,
+): number {
+  if (!offer.heal) return 0;
+  const party = quest?.party;
+  if (!quest || !party) return offer.heal;
+  return healAmount(
+    offer.heal,
+    offer.evolve ? { ...quest, party: evolve(party, quest, branch) } : quest,
+  );
+}
 export function takeOffer(
   s: SessionState,
   index: number,
@@ -64,8 +80,7 @@ export function takeOffer(
   if (offer.heal)
     party.hearts = Math.min(
       party.max,
-      // A worse heal (a joke class's) never turns a heal into harm.
-      party.hearts + Math.max(0, offer.heal + (omenEffect(now)?.heal ?? 0)),
+      party.hearts + healAmount(offer.heal, now),
     );
   if (offer.loot && party.loot.length < satchelSize(now))
     party.loot = [...party.loot, offer.loot];

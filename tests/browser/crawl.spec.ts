@@ -429,6 +429,24 @@ test("with Reduce Motion a moment's plaque fades and goes, and the splat stays c
   await expect(page.locator(".tag-jinx")).toBeVisible();
 });
 
+// Owner, 2026-11-15: a heal shows its net value, the run's heal bonus in.
+test("a Cleric's inn rest says it heals one more", async ({ page }) => {
+  await seed(
+    page,
+    reveal(
+      crawlAt(
+        "dungeon.landing-smoking-area",
+        STEP.landing1,
+        { hearts: H - 5 },
+        { adventurer: "cleric" },
+      ),
+    ),
+  );
+  const rest = page.locator(".card-choice.offers .card-choice-option").nth(0);
+  await expect(rest).toHaveAccessibleName("Rest: 4 hearts back");
+  await expect(rest.locator(".offer-price")).toHaveText(/\+4/);
+});
+
 // Realms (2026-11-03): an inn rests or stocks up; ranks come from bosses.
 // The plaques read at a glance on a 320px phone.
 test("an inn rests or stocks up, and its plaques read at 320px", async ({
@@ -449,6 +467,7 @@ test("an inn rests or stocks up, and its plaques read at 320px", async ({
   const plaques = page.locator(".card-choice.offers .card-choice-option");
   await expect(plaques).toHaveCount(3);
   await expect(plaques.nth(0)).toHaveAccessibleName("Rest: 3 hearts back");
+  await expect(plaques.nth(0).locator(".offer-price")).toHaveText(/\+3/);
   await expect(plaques.nth(1)).toHaveAccessibleName(/^Stock up · drink 3/);
   // The first inn hires a blade (Phase 4).
   await expect(plaques.nth(2)).toHaveAccessibleName("Hire · drink 3: an ally");

@@ -1,7 +1,13 @@
-import type { Loot, QuestStage, SessionState, Slot } from "../game/types";
+import type {
+  Loot,
+  QuestStage,
+  QuestState,
+  SessionState,
+  Slot,
+} from "../game/types";
 import {
   DRAUGHT_DRINKS,
-  DRAUGHT_HEAL,
+  draughtHeal,
   finaleCard,
   finaleStage,
   runNames,
@@ -42,6 +48,16 @@ export interface GuideRow {
   icon: CrawlIconName;
   title: string;
   line: string;
+}
+
+/** What an item does, as the theme words it, with the potion's heal for
+ * this run filled in (`{heal}`: 2 and the heal bonus). */
+export function lootDoes(
+  theme: CrawlTheme,
+  item: Loot,
+  quest: QuestState | undefined,
+): string {
+  return theme.loot[item].does.replace("{heal}", String(draughtHeal(quest)));
 }
 
 export interface CrawlTheme {
@@ -193,7 +209,7 @@ const dungeon: CrawlTheme = {
     // Realms (2026-11-03): the fantasy crawl's kit, same powers.
     draught: {
       name: "Healing Potion",
-      does: `Drink ${DRAUGHT_DRINKS}: +${DRAUGHT_HEAL} hearts`,
+      does: `Drink ${DRAUGHT_DRINKS}: +{heal} hearts`,
     },
     shield: { name: "Tower Shield", does: "Blocks the next heart loss" },
     die: { name: "Lucky Coin", does: "Roll a lost fight again" },
@@ -383,7 +399,7 @@ const league: CrawlTheme = {
   loot: {
     draught: {
       name: "Potion",
-      does: `Drink ${DRAUGHT_DRINKS}: +${DRAUGHT_HEAL} HP`,
+      does: `Drink ${DRAUGHT_DRINKS}: +{heal} HP`,
     },
     shield: { name: "Protect", does: "Blocks the next HP loss" },
     die: { name: "X Attack", does: "Roll a lost battle again" },

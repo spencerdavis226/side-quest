@@ -437,7 +437,9 @@ it("the dragon battle is the run's last hard fight, never a wall", () => {
   // The Quest 2.1: the fight is hits traded, not a wall of misses.
   expect(landed).toBeGreaterThan(0.4);
   expect(atLair.length / RUNS).toBeGreaterThan(0.45);
-  expect(atLair.length / RUNS).toBeLessThan(0.65);
+  // 70% since 2026-11-15 (owner): with every heal taking the heal bonus,
+  // more runs reach the dragon, and the dragon's 15 makes it harder there.
+  expect(atLair.length / RUNS).toBeLessThan(0.7);
   expect(meanLore).toBeGreaterThan(1);
   expect(meanLore).toBeLessThan(2);
   expect(withAlly).toBeGreaterThan(0.6);
