@@ -343,29 +343,34 @@ test("a side quest's secret way in swings open; a tap on the card skips it and t
   await expect(page.locator(".moment")).toHaveCount(0);
 });
 
-test("a boss's foil is one sheet over the whole card, under its text", async ({
+test("a boss's foil is its title band, in its type's colour, under its text", async ({
   page,
 }) => {
   await seed(page, advance(leagueAt("pokemon.gym-byron")));
-  const foil = page.locator(".game-card .card-foil");
-  await expect(foil).toHaveCount(1);
-  // No cut-outs (2026-11-01, owner: they looked janky), and the title and
-  // rules sit above it.
-  const look = await foil.evaluate((el) => {
+  // 2026-11-15 (owner: the whole-card rainbow looked cheap): only the
+  // title band's enamel is foiled, through its mask, in Byron's Steel.
+  const face = page.locator(".game-card .study-face");
+  await expect(face).toHaveClass(/foiled/);
+  await expect(face).toHaveAttribute("data-accent", "type-steel");
+  await expect(page.locator(".game-card .card-foil")).toHaveCount(0);
+  const band = page.locator(".game-card .card-enamel");
+  await expect(band).toHaveCount(1);
+  const look = await band.evaluate((el) => {
     const face = el.parentElement!;
     const z = (sel: string) =>
       Number(getComputedStyle(face.querySelector(sel)!).zIndex);
-    const f = el.getBoundingClientRect();
-    const r = face.getBoundingClientRect();
+    const style = getComputedStyle(el);
     return {
-      mask: getComputedStyle(el).maskImage,
-      covers: f.width === r.width && f.height === r.height,
+      masked: (style.maskImage || style.webkitMaskImage).includes(
+        "title-enamel",
+      ),
+      sheen: el.querySelectorAll(".enamel-sheen").length,
       under:
-        Number(getComputedStyle(el).zIndex) < z(".study-title") &&
-        Number(getComputedStyle(el).zIndex) < z(".study-body"),
+        Number(style.zIndex) < z(".study-title") &&
+        Number(style.zIndex) < z(".study-body"),
     };
   });
-  expect(look).toEqual({ mask: "none", covers: true, under: true });
+  expect(look).toEqual({ masked: true, sheen: 1, under: true });
 });
 
 test("a League evolution holds on its new form until the table taps", async ({

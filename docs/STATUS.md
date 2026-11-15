@@ -2,6 +2,23 @@
 
 Updated 2026-11-15. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Plan 2026-11-15: the visual overhaul (owner: "a visual overhaul for some aspects of both the league and the quest")
+
+Owner's asks: (1) the opening of a run (starter, adventurer, omen, Summons, roads) must not be the card-flip table: a separate scene with its own look, ending in one clear handoff, because tables start passing the phone during setup; (2) colour the title area by Pokémon type, region and boss, across both games; (3) the boss foil "looks really cheap ... too saturated": start with only the title area foiled. The owner chose the recommendations: the rival's introduction stays mid-run (its own scene language, not moved into setup); art is procedural and in-repo; three pull requests in this order:
+
+- **Phase A, the title band and foil** (done, below).
+- **Phase B, the League's prologue**: the starter shown in a scene of its own (no card, no top bar), then the handoff ("Pass the phone"), then the first card on the table. Display only: the engine deals and saves exactly as before.
+- **Phase C, the Quest's prologue**: the adventurer, the omen, the King's Summons and the Road Out in the same scene language (the road's plaques as a choice on the scene), then the same handoff.
+
+## Done 2026-11-15: visual overhaul, Phase A (the title band and its foil)
+
+- **Accents** (`src/components/cardAccent.ts`): `cardAccent(session, card)` names the title band's colour: a card's own first (`ownAccent`: a League card's Pokémon type, a dragon's colours from `dragon-colors.ts`), then the rival while they cut in or at their stages (`RIVAL_COLOURS`, moved to `src/presentation/rival-colors.ts` so the face does not load the emblem art), then the Quest's place (`SCENE_ACCENTS` by `crawlScene`: forest, marsh, mines, crypt, tower, frost, fire, coast, lair, rival, hidden, inn). The King's Road and plain modes keep the frame's teal. Previous Card uses `ownAccent` alone. Display only; nothing saved.
+- **The band** (`card-front.css`, `.card-enamel`): the painted band's enamel recoloured through one alpha mask, `src/presentation/art/title-enamel.webp` (5 KB, written by `scripts/enamel-mask.ts` from the approved front the way `lair-frames.ts` keys its teal): the frame's own texture in grey, multiplied by the accent, so the gold, wood, parchment and rules are untouched. Accented titles are ivory with a dark cut.
+- **Foil**: the whole-card rainbow `.card-foil` sheet is gone. A boss's band is brushed metal in its own colour (banded tint, grain, a soft-light sheen that follows a finger and drifts, paused when hidden); the last boss (`foil-gold`) adds gilt lettering; a rare (`foil-prism`) a quiet iridescent band, and `RareFoil`'s shader is masked to the band at soft-light. The face-down glint is softer.
+- **Checked**: `npm test` 637 passed (new `tests/card-accent.test.ts`); typecheck; lint; build (budgets pass, 5,301 KiB runtime); Chromium `test:e2e` 188 of 188 (the foil test in `moments.spec.ts` now holds the band: masked, in Byron's Steel, under the text); Chromium `test:sweep` 12 of 12. Screenshots of 17 seeded cards (gyms, a Legendary, the Champion, every Realms region, a dragon) reviewed in Chromium.
+- **Not checked**: a phone (the mask's blend and the sheen on WebKit's GPU path), WebKit locally (CI runs it).
+- **Next**: Phase B.
+
 ## Done 2026-11-15: Realms voice pass, Phase 5 (the end of the run) — the pass is complete
 
 Copy only. Table moments (`moments.ts`: Road Head, the crotch tick check, a prophecy of your neighbor's sex life, the drunk letter to your ex, who pukes first), dragon moves in `dragons.ts` (Emberfang laughs at your tiny sword, Gorgrath's Dragon Fart, Glimmerwing's Flirt With Me, Old Mother Brine asks who still lives with their mom, the Whispering Wyrm's dirty secrets and filthy confessions, Bartholomew's views on the drawer's mother), three rares (`rares.ts`) and one side-quest plea (`bookcase.ts`). The dragons' swings, the lair Approaches, keepers, echoes and hidden results keep their menace, as planned.

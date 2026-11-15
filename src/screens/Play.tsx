@@ -73,6 +73,7 @@ import { CrawlIcon } from "../components/Crawl";
 import { BossTally, FelledStamp, useBossReturn } from "../components/Flourish";
 import { useMoments } from "../components/moments/Director";
 import { cardFinish } from "../components/moments/detect";
+import { cardAccent } from "../components/cardAccent";
 import { useAnnounce } from "../components/Announcer";
 import { reducedMotion } from "../presentation/motion";
 // A dice overlay that can't be fetched (offline before it was cached) must
@@ -195,6 +196,9 @@ export function Play({
   const returning = useBossReturn(session, card, !motion);
   // A boss's foil, and the glint its back gives as it is dealt.
   const finish = cardFinish(session, card);
+  // The title band's colour: the type faced, the dragon, the rival, the
+  // region (`cardAccent`).
+  const accent = cardAccent(session, card);
   useEffect(() => {
     if (!felled) return;
     const id = setTimeout(
@@ -602,6 +606,7 @@ export function Play({
                     strike={strikeOutcome(session.quest, card)}
                     ball={ball}
                     finish={finish}
+                    accent={accent}
                   />
                 )}
                 {finish === "prism" && session.phase === "revealed" && (

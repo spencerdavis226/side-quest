@@ -15,6 +15,7 @@ import { badgeArt } from "../presentation/league-art";
 import type { Matchup } from "../game/matchup";
 import { TypeMark } from "./LeagueMarks";
 import { pokemonTypes } from "../presentation/pokemon-types";
+import { type Accent, accentStyle, ownAccent } from "./cardAccent";
 type Overflow = "none" | "top" | "bottom" | "both";
 /** The smallest a rule's text shrinks to fit the card: 26px becomes 20px. */
 const RULES_FIT_MIN = 0.77;
@@ -45,6 +46,7 @@ export function CardFace({
   strike,
   ball = null,
   finish = null,
+  accent = null,
 }: {
   card: CardDefinition;
   packIds?: readonly string[];
@@ -80,6 +82,8 @@ export function CardFace({
   } | null;
   /** A foil over the frame (2026-11-01): gold or silver for a boss. */
   finish?: "gold" | "silver" | "prism" | null;
+  /** The title band's colour (`cardAccent`); the frame's teal without. */
+  accent?: Accent | null;
 }) {
   // A strike reads the line for its matchup (the engine's `strikeText`).
   const outcome =
@@ -238,7 +242,9 @@ export function CardFace({
   }, [resolved, card.id, shown, thrown]);
   return (
     <div
-      className={`study-face${card.ribbon ? ` has-ribbon tone-${card.ribbonTone ?? "gold"}` : ""}${lost ? " battle-lost" : ""}${finish ? ` foiled foil-${finish}` : ""}`}
+      className={`study-face${card.ribbon ? ` has-ribbon tone-${card.ribbonTone ?? "gold"}` : ""}${lost ? " battle-lost" : ""}${finish ? ` foiled foil-${finish}` : ""}${accent ? " accented" : ""}`}
+      style={accentStyle(accent)}
+      data-accent={accent?.source}
       // A drag anywhere on the face (rules or an enlarged title) must scroll or
       // scrub, never activate the card action. A stationary tap still passes.
       onPointerDown={(event) => {
@@ -283,7 +289,15 @@ export function CardFace({
         }
       }}
     >
-      {finish && <span className="card-foil" aria-hidden="true" />}
+      {(accent || finish) && (
+        // The title band's enamel, recoloured (and on a boss, foiled)
+        // through the band's mask: the frame, parchment and rules untouched.
+        <span className="card-enamel" aria-hidden="true">
+          <i className="enamel-ink" />
+          <i className="enamel-tint" />
+          {finish && <i className="enamel-sheen" />}
+        </span>
+      )}
       <div
         ref={titleRef}
         className="study-title"
@@ -489,6 +503,7 @@ export function CardFrame({
         roll={roll}
         matchup={matchup}
         strike={strike}
+        accent={ownAccent(card)}
       />
     </article>
   );
