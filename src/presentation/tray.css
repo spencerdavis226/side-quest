@@ -1,0 +1,544 @@
+/* The tray (2026-11-16): the sheet, its gestures' hooks, the pager and the
+   dock, shared by both skins (`tray-league.css`, `tray-quest.css`). Loaded
+   with the tray's lazy chunk. The skins set the --t-* tokens; the shell
+   uses them. Layout only reads `--app-height` and the safe areas, never raw
+   viewport units (see style.css on the installed app). */
+
+dialog.tray {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-image: none;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  overflow: hidden;
+  color: var(--t-ink, #f4dfb7);
+  animation: none;
+  /* Above the table's banners, under the moments (an evolution plays over
+     it and closes it). */
+  --t-radius: 26px;
+  --t-gutter: 14px;
+}
+dialog.tray::backdrop {
+  background: transparent;
+  animation: none;
+}
+dialog.tray.closing::backdrop {
+  animation: none;
+}
+.tray .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* The table behind: dimmed, and lighter as the sheet is pulled down. */
+.tray-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse at 50% 10%,
+      rgb(20 12 6 / 0.35),
+      rgb(4 2 1 / 0.82) 70%
+    ),
+    rgb(4 2 1 / 0.35);
+  opacity: calc(1 - var(--pull, 0) * 0.9);
+  animation: tray-scrim-in 260ms ease-out both;
+}
+.tray.closing .tray-scrim {
+  animation: tray-scrim-out 200ms ease-in forwards;
+}
+@keyframes tray-scrim-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes tray-scrim-out {
+  to {
+    opacity: 0;
+  }
+}
+
+/* The sheet. `translate` centres it; `transform` is the gesture's (inline,
+   set by gestures.ts) and the rise's. The rise fills backwards only, so it
+   never holds `transform` over the drag. */
+.tray-sheet {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  translate: -50% 0;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  width: min(100%, 760px);
+  height: min(
+    calc(var(--app-height) - max(36px, var(--top-safe) + 18px)),
+    980px
+  );
+  border-radius: var(--t-radius) var(--t-radius) 0 0;
+  background: var(--t-shell, #2a1d14);
+  box-shadow:
+    0 -1px 0 var(--t-rim, rgb(255 255 255 / 0.2)),
+    0 -18px 60px rgb(0 0 0 / 0.55);
+  animation: tray-rise var(--sheet-ms, 520ms) var(--sheet-ease, ease-out)
+    backwards;
+  will-change: transform;
+  overflow: hidden;
+  isolation: isolate;
+}
+@keyframes tray-rise {
+  from {
+    transform: translate3d(0, 100%, 0);
+  }
+}
+.tray.closing:not(.pulled) .tray-sheet {
+  animation: tray-fall 200ms cubic-bezier(0.5, 0, 0.75, 0.4) forwards;
+}
+@keyframes tray-fall {
+  to {
+    transform: translate3d(0, 105%, 0);
+  }
+}
+/* Pulled down: the gesture already took it off screen; hold it there. */
+.tray.pulled .tray-sheet {
+  animation: none;
+}
+/* A decorative layer the skins paint (stitching, gilt, the device's rim). */
+.tray-edge {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* The grabber and the header take the pull; everything in them is still a
+   tap. */
+.tray-grab {
+  display: grid;
+  place-items: center;
+  height: 22px;
+  touch-action: none;
+  cursor: grab;
+}
+.tray-grab i {
+  width: 44px;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--t-grab, rgb(255 255 255 / 0.5));
+}
+.tray-head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 0 var(--t-gutter) 12px;
+  touch-action: none;
+}
+.tray-head > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+.tray-close {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--t-close-edge, rgb(255 255 255 / 0.3));
+  border-radius: 50%;
+  background: var(--t-close, rgb(0 0 0 / 0.35));
+  color: var(--t-close-ink, #fff);
+  cursor: pointer;
+}
+.tray-close .ui-icon {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+.tray-close:active {
+  filter: brightness(1.3);
+}
+
+/* The pages: a row the width of the viewport per page, moved by the page
+   index and the finger's offset. A page scrolls on its own. */
+.tray-viewport {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  touch-action: pan-y;
+}
+.tray-track {
+  display: flex;
+  height: 100%;
+  transform: translate3d(
+    calc(var(--page, 0) * -100% + var(--pager-x, 0px)),
+    0,
+    0
+  );
+  will-change: transform;
+}
+.tray-page {
+  flex: 0 0 100%;
+  min-width: 0;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+.tray-page::-webkit-scrollbar {
+  display: none;
+}
+.tray-page:focus-visible {
+  outline: none;
+}
+/* A page shown for the first time settles its contents in. */
+.tray-page.shown > * {
+  animation: tray-page-in 360ms cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+@keyframes tray-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+.tray.paging .tray-page.shown > * {
+  animation: none;
+}
+
+/* The dock: a tab per page, its lamp gliding under the one shown and
+   following the finger while the pages are swiped. */
+.tray-dock {
+  position: relative;
+  padding: 8px 10px max(10px, var(--bottom-safe));
+  touch-action: none;
+}
+.tray-dock [role="tablist"] {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--pages), minmax(0, 1fr));
+  gap: 4px;
+}
+.dock-lamp {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc((100% - (var(--pages) - 1) * 4px) / var(--pages));
+  transform: translateX(calc(var(--pos, 0) * (100% + 4px)));
+  transition: transform 460ms cubic-bezier(0.25, 1.25, 0.4, 1);
+  pointer-events: none;
+}
+.tray.paging .dock-lamp {
+  transition: none;
+}
+.dock-tab {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 3px;
+  min-width: 0;
+  min-height: 54px;
+  padding: 6px 2px 5px;
+  border: 0;
+  border-radius: 14px;
+  background: none;
+  color: var(--t-tab, rgb(255 255 255 / 0.6));
+  font: inherit;
+  cursor: pointer;
+  transition:
+    color 200ms ease,
+    transform 200ms ease;
+}
+.dock-tab:active {
+  transform: scale(0.94);
+}
+.dock-tab[aria-selected="true"] {
+  color: var(--t-tab-on, #fff);
+}
+.dock-tab:focus-visible {
+  outline: none;
+  filter: brightness(1.25);
+}
+.dock-icon {
+  width: 24px;
+  height: 24px;
+  flex: none;
+}
+.dock-icon.crawl-icon {
+  background: currentColor;
+}
+.tray-emblem {
+  fill: currentColor;
+}
+.dock-label {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  line-height: 1;
+}
+.dock-count {
+  position: absolute;
+  top: 3px;
+  left: calc(50% + 8px);
+  min-width: 18px;
+  padding: 2px 5px;
+  border-radius: 9px;
+  background: var(--t-count, #000a);
+  color: var(--t-count-ink, #fff);
+  font-size: 10.5px;
+  font-weight: 800;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.dock-alert {
+  position: absolute;
+  top: 5px;
+  right: calc(50% + 9px);
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--t-alert, #ff4a3a);
+  box-shadow:
+    0 0 0 2px var(--t-alert-ring, #000),
+    0 0 8px var(--t-alert, #ff4a3a);
+  animation: dock-alert 1.4s ease-in-out infinite;
+}
+@keyframes dock-alert {
+  50% {
+    transform: scale(0.7);
+    opacity: 0.6;
+  }
+}
+
+/* Shared furniture inside the pages. */
+.tray-section {
+  margin-top: 18px;
+}
+.tray-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.tray-heading small {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
+}
+.tray-hint {
+  margin: 10px 0 0;
+  font-size: 15px;
+  line-height: 1.35;
+  opacity: 0.85;
+}
+.tray-btn {
+  font-family: inherit;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.tray-btn:active {
+  filter: brightness(1.2);
+  transform: translateY(1px);
+}
+.drop-sure {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+.drop-question {
+  flex-basis: 100%;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: right;
+}
+
+/* The inventory: slots in a grid, the inspector under them. */
+.inv-grid {
+  display: grid;
+  grid-template-columns: repeat(min(var(--slots), 5), minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.inv-cell {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.inv-slot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 1;
+  max-width: 84px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transition: transform 220ms cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+.inv-slot:active {
+  transform: scale(0.94);
+}
+.inv-slot.picked {
+  transform: translateY(-3px);
+}
+.inv-socket {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+}
+.inv-socket .crawl-icon {
+  width: 56%;
+  height: 56%;
+}
+.inv-ready {
+  position: absolute;
+  top: 6%;
+  right: 6%;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--t-ready, #5dff8a);
+  box-shadow:
+    0 0 0 2px var(--t-ready-ring, #000),
+    0 0 10px var(--t-ready, #5dff8a);
+}
+.inv-name {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-align: center;
+}
+.inv-name.muted {
+  opacity: 0.5;
+  font-weight: 600;
+}
+.inv-inspect {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 4px 14px;
+  align-items: center;
+  margin-top: 14px;
+  padding: 14px;
+  min-height: 96px;
+}
+.inspect-mark {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  grid-row: span 2;
+  align-self: start;
+}
+.inspect-mark .crawl-icon {
+  width: 40px;
+  height: 40px;
+}
+.inspect-words {
+  min-width: 0;
+}
+.inspect-name {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.1;
+}
+.inspect-does {
+  margin: 4px 0 0;
+  font-size: 15.5px;
+  line-height: 1.32;
+}
+.inspect-when {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  font-style: italic;
+  opacity: 0.75;
+}
+.inspect-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  grid-column: 2;
+}
+.inspect-empty {
+  grid-column: 1 / -1;
+  margin: 0;
+  text-align: center;
+  opacity: 0.7;
+}
+
+/* Suspended (the tab away) or still: nothing loops. */
+.suspended .dock-alert {
+  animation-play-state: paused;
+}
+
+@media (min-width: 700px) {
+  dialog.tray {
+    --t-gutter: 22px;
+  }
+  .dock-label {
+    font-size: 13.5px;
+  }
+  .dock-icon {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* The tray's pages keep the classes the dialogs had (`crawl-omen`,
+   `crawl-curse`, `lore-lines` and the rest name things for the tests and
+   the end screens), but not their look: the skins draw their own. */
+.tray .crawl-omen,
+.tray .crawl-curse {
+  border: 0;
+}
+.tray .crawl-curse {
+  grid-template-columns: minmax(0, 1fr);
+}
+.tray .crawl-omen span,
+.tray .crawl-curse span {
+  color: inherit;
+  font-size: inherit;
+}

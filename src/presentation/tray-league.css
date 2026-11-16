@@ -1,0 +1,1087 @@
+/* The League's tray (2026-11-16): Trainer Gear. A red handheld in moulded
+   plastic: a lens and three lamps on top, a small display for the page's
+   name and the team's HP, a lit screen for the pages (a dark teal glass
+   with a faint scan grid), and a row of rubber keys for the dock. Type
+   colours come from `typeStyle` (--type-light, --type-deep). Lettering is
+   the system's rounded face. */
+
+.tray-league {
+  --t-ink: #e8fbff;
+  --t-shell: linear-gradient(
+    180deg,
+    #f0434b 0%,
+    #d01c25 18%,
+    #b0131b 60%,
+    #8a0c12 100%
+  );
+  --t-rim: #ff9a9e;
+  --t-grab: rgb(60 0 4 / 0.55);
+  --t-close: linear-gradient(180deg, #2c2f36, #15171b);
+  --t-close-edge: #000;
+  --t-close-ink: #f2f4f8;
+  --t-tab: #c9ced8;
+  --t-tab-on: #fff;
+  --t-count: #ffd23a;
+  --t-count-ink: #3a2400;
+  --t-alert: #ffd23a;
+  --t-alert-ring: #2a0002;
+  --t-ready: #7dffb0;
+  --t-ready-ring: #062a18;
+  --lg-screen: #0b1d23;
+  --lg-glow: #6cf2ff;
+  --lg-panel: rgb(140 240 255 / 0.07);
+  --lg-line: rgb(140 240 255 / 0.18);
+  font-family:
+    ui-rounded,
+    "SF Pro Rounded",
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
+
+/* The shell: moulded plastic with a hinge line under the head and a
+   rubber-grip texture down the sides. */
+.tray-league .tray-sheet {
+  box-shadow:
+    inset 0 2px 0 rgb(255 200 200 / 0.5),
+    inset 0 -3px 0 rgb(0 0 0 / 0.25),
+    0 -18px 60px rgb(0 0 0 / 0.6);
+}
+.tray-league .tray-edge {
+  background:
+    radial-gradient(
+      120% 40% at 50% 0%,
+      rgb(255 255 255 / 0.22),
+      transparent 60%
+    ),
+    repeating-linear-gradient(
+        90deg,
+        rgb(0 0 0 / 0.05) 0 1px,
+        transparent 1px 4px
+      )
+      left / 10px 100% no-repeat,
+    repeating-linear-gradient(
+        90deg,
+        rgb(0 0 0 / 0.05) 0 1px,
+        transparent 1px 4px
+      )
+      right / 10px 100% no-repeat;
+}
+
+/* The head: lens, lamps and the small display. */
+.lg-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: 12px;
+  align-items: center;
+}
+.lg-lens {
+  grid-row: 1 / span 2;
+  position: relative;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: #f4f4f6;
+  box-shadow:
+    0 0 0 2px #1a0204,
+    0 3px 0 rgb(0 0 0 / 0.35),
+    inset 0 -3px 4px rgb(0 0 0 / 0.2);
+}
+.lg-lens i {
+  position: absolute;
+  inset: 7px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 34% 30%, #fff 0 9%, rgb(255 255 255 / 0) 22%),
+    radial-gradient(
+      circle at 50% 55%,
+      #7fe6ff 0%,
+      #1aa4e8 40%,
+      #0a4fa0 78%,
+      #062e66 100%
+    );
+  box-shadow:
+    inset 0 0 0 2px #0a2f5c,
+    0 0 16px rgb(70 200 255 / 0.65);
+  animation: lg-lens 5s ease-in-out infinite;
+}
+@keyframes lg-lens {
+  50% {
+    box-shadow:
+      inset 0 0 0 2px #0a2f5c,
+      0 0 26px rgb(70 200 255 / 0.95);
+    filter: brightness(1.12);
+  }
+}
+.lg-lamps {
+  position: absolute;
+  top: 2px;
+  left: 82px;
+  display: flex;
+  gap: 6px;
+}
+.lg-lamps i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1.5px #1a0204,
+    inset 0 -2px 2px rgb(0 0 0 / 0.3);
+}
+.lg-lamps .lamp-r {
+  background: radial-gradient(circle at 35% 30%, #ffd0d0, #ff2a2a 60%);
+  animation: lg-blink 2.6s steps(1) infinite;
+}
+.lg-lamps .lamp-y {
+  background: radial-gradient(circle at 35% 30%, #fff6c0, #ffcc00 60%);
+}
+.lg-lamps .lamp-g {
+  background: radial-gradient(circle at 35% 30%, #d6ffd6, #22c55e 60%);
+}
+@keyframes lg-blink {
+  0%,
+  80% {
+    filter: none;
+  }
+  90% {
+    filter: brightness(0.45);
+  }
+}
+.suspended .lg-lens i,
+.suspended .lg-lamps .lamp-r {
+  animation-play-state: paused;
+}
+.lg-display {
+  grid-row: 1 / span 2;
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  margin-top: 16px;
+  padding: 7px 10px 8px;
+  border-radius: 10px 10px 10px 18px;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgb(0 0 0 / 0.18) 0 1px,
+      transparent 1px 3px
+    ),
+    linear-gradient(180deg, #123038, var(--lg-screen));
+  box-shadow:
+    inset 0 0 0 2px #050c0f,
+    inset 0 2px 6px rgb(0 0 0 / 0.6),
+    0 1px 0 rgb(255 200 200 / 0.45);
+}
+.lg-kicker {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--lg-glow);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+.lg-title {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #fff;
+  font:
+    800 22px / 1.05 ui-rounded,
+    "SF Pro Rounded",
+    system-ui,
+    sans-serif;
+  letter-spacing: 0.01em;
+  text-shadow: 0 0 10px rgb(120 240 255 / 0.55);
+  animation: lg-title-in 320ms ease-out both;
+}
+@keyframes lg-title-in {
+  from {
+    opacity: 0;
+    clip-path: inset(0 100% 0 0);
+  }
+}
+
+/* Team HP: a bar in segments, green, amber, red, as the games draw it. */
+.lg-hp {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 7px;
+}
+.lg-hp-tag {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: #ffcf3a;
+  color: #2c1a00;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+}
+.lg-hp-bar {
+  position: relative;
+  height: 9px;
+  border-radius: 5px;
+  background: #05100f;
+  box-shadow: inset 0 0 0 1.5px #2c4a4e;
+  overflow: hidden;
+}
+.lg-hp-bar i {
+  position: absolute;
+  inset: 1.5px auto 1.5px 1.5px;
+  width: calc((100% - 3px) * var(--hp));
+  border-radius: 4px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 9px,
+      rgb(0 0 0 / 0.25) 9px 10px
+    ),
+    linear-gradient(180deg, #b6ffb0, #2fd25a 55%, #1c9a3c);
+  transition: width 700ms cubic-bezier(0.3, 0.8, 0.3, 1);
+}
+.lg-hp.hp-mid .lg-hp-bar i {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 9px,
+      rgb(0 0 0 / 0.25) 9px 10px
+    ),
+    linear-gradient(180deg, #fff1a8, #ffc928 55%, #c48a00);
+}
+.lg-hp.hp-low .lg-hp-bar i {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 9px,
+      rgb(0 0 0 / 0.25) 9px 10px
+    ),
+    linear-gradient(180deg, #ffb0a8, #ff3b2f 55%, #a8150c);
+  animation: lg-hp-low 1s ease-in-out infinite;
+}
+@keyframes lg-hp-low {
+  50% {
+    filter: brightness(1.5);
+  }
+}
+.suspended .lg-hp.hp-low .lg-hp-bar i {
+  animation-play-state: paused;
+}
+.lg-hp-num {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.lg-hp-num small {
+  color: var(--lg-glow);
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+/* The screen: the pages sit on dark glass inside a black bezel. */
+.tray-league .tray-viewport {
+  margin: 0 12px;
+  border-radius: 18px;
+  background:
+    radial-gradient(
+      130% 70% at 50% 0%,
+      rgb(108 242 255 / 0.12),
+      transparent 60%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgb(255 255 255 / 0.022) 0 1px,
+      transparent 1px 3px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgb(255 255 255 / 0.018) 0 1px,
+      transparent 1px 3px
+    ),
+    var(--lg-screen);
+  box-shadow:
+    0 0 0 4px #160204,
+    0 0 0 6px rgb(255 140 140 / 0.35),
+    inset 0 6px 16px rgb(0 0 0 / 0.65),
+    inset 0 0 40px rgb(0 0 0 / 0.5);
+}
+/* Glass glare, over the pages and never in the way. */
+.tray-league .tray-viewport::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    160deg,
+    rgb(255 255 255 / 0.07) 0%,
+    rgb(255 255 255 / 0) 34%
+  );
+  pointer-events: none;
+}
+.lg-screen {
+  padding: 16px 14px 22px;
+}
+.tray-league .tray-heading {
+  color: var(--lg-glow);
+}
+.tray-league .tray-heading::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  margin-right: 8px;
+  border-radius: 2px;
+  background: var(--lg-glow);
+  box-shadow: 0 0 8px var(--lg-glow);
+  align-self: center;
+}
+.tray-league .tray-heading span {
+  flex: 1;
+}
+.tray-league .tray-hint {
+  color: #b7d3d8;
+}
+
+/* The lead: the starter's card, in its type's colours. */
+.lg-lead {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px 14px;
+  padding: 14px;
+  border-radius: 16px;
+  background:
+    radial-gradient(
+      120% 120% at 0% 0%,
+      color-mix(in srgb, var(--type-light, #7cbcff) 40%, transparent),
+      transparent 55%
+    ),
+    linear-gradient(
+      160deg,
+      color-mix(in srgb, var(--type-deep, #1f4fa6) 70%, #000) 0%,
+      #08171c 100%
+    );
+  box-shadow:
+    inset 0 0 0 1.5px
+      color-mix(in srgb, var(--type-light, #7cbcff) 60%, transparent),
+    0 10px 24px rgb(0 0 0 / 0.4);
+  overflow: hidden;
+}
+.lg-lead::after {
+  /* A slow sheen across the card, like a holo trading card. */
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background: linear-gradient(
+    105deg,
+    transparent 42%,
+    rgb(255 255 255 / 0.12) 50%,
+    transparent 58%
+  );
+  animation: lg-sheen 6s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes lg-sheen {
+  0%,
+  60% {
+    translate: -60% 0;
+  }
+  100% {
+    translate: 60% 0;
+  }
+}
+.suspended .lg-lead::after {
+  animation-play-state: paused;
+}
+.lg-lead-art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+}
+.lg-lead-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    var(--type-light, #7cbcff),
+    transparent 30%,
+    var(--type-light, #7cbcff) 50%,
+    transparent 80%,
+    var(--type-light, #7cbcff)
+  );
+  mask: radial-gradient(circle, transparent 60%, #000 61% 68%, transparent 69%);
+  animation: lg-ring 8s linear infinite;
+  opacity: 0.85;
+}
+@keyframes lg-ring {
+  to {
+    rotate: 1turn;
+  }
+}
+.suspended .lg-lead-ring {
+  animation-play-state: paused;
+}
+.lg-lead .lg-lead-mark {
+  --mark-size: 60px;
+  filter: drop-shadow(0 4px 10px rgb(0 0 0 / 0.5));
+}
+.lg-lead-words {
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  min-width: 0;
+}
+.lg-lead-kicker {
+  color: color-mix(in srgb, var(--type-light, #7cbcff) 80%, #fff);
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.lg-lead strong {
+  color: #fff;
+  font-family: inherit;
+  font-size: 27px;
+  font-weight: 900;
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  text-shadow: 0 2px 0 rgb(0 0 0 / 0.35);
+}
+.lg-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 0;
+  margin: 2px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+.lg-line li {
+  color: rgb(230 250 255 / 0.5);
+}
+.lg-line li + li::before {
+  content: "›";
+  margin: 0 5px;
+  color: rgb(230 250 255 / 0.35);
+}
+.lg-line li.past {
+  color: rgb(230 250 255 / 0.7);
+}
+.lg-line li.now {
+  color: #fff;
+}
+.lg-lead .omen-rules {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 9px 11px;
+  border-radius: 10px;
+  background: rgb(0 0 0 / 0.3);
+  color: #eafcff;
+  font-size: 15.5px;
+  line-height: 1.32;
+}
+.lg-lead .lg-hp {
+  grid-column: 1 / -1;
+}
+
+/* The party's slots: a card each, a type's stripe down its edge. */
+.lg-slots {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.lg-slot {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 70px;
+  padding: 10px 10px 10px 14px;
+  border-radius: 14px;
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--type-deep, #2a4a50) 55%, transparent),
+      transparent 70%
+    ),
+    var(--lg-panel);
+  box-shadow: inset 0 0 0 1px var(--lg-line);
+  overflow: hidden;
+}
+.lg-slot::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+  background: var(--type-light, #4a6a70);
+}
+.lg-slot .type-mark {
+  --mark-size: 44px;
+}
+.lg-slot.sent {
+  box-shadow:
+    inset 0 0 0 1.5px #ffd23a,
+    0 0 16px rgb(255 210 58 / 0.3);
+}
+.lg-slot.open {
+  grid-template-columns: auto minmax(0, 1fr);
+  background: none;
+  box-shadow: inset 0 0 0 1.5px var(--lg-line);
+  border: 0;
+  outline: 1.5px dashed rgb(140 240 255 / 0.25);
+  outline-offset: -6px;
+}
+.lg-slot.open::before {
+  display: none;
+}
+.lg-slot-ball {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 0.08) 0 46%,
+    rgb(255 255 255 / 0.22) 46% 54%,
+    rgb(255 255 255 / 0.04) 54%
+  );
+  box-shadow: inset 0 0 0 2px rgb(140 240 255 / 0.22);
+}
+.lg-slot-words {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.lg-slot-words strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 800;
+}
+.lg-slot.open .lg-slot-words strong {
+  color: #a6c4ca;
+}
+.lg-slot-words small {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  color: #b7d3d8;
+  font-size: 13px;
+}
+.lg-type-pill {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--type-deep, #333);
+  box-shadow: inset 0 0 0 1px var(--type-light, #999);
+  color: #fff;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.lg-bonus {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #ffd23a;
+  color: #2c1a00;
+  font-size: 12.5px;
+  font-weight: 900;
+}
+.lg-sent {
+  color: #ffd23a;
+  font-weight: 800;
+}
+
+/* Buttons on the screen. */
+.tray-league .tray-btn {
+  border: 0;
+}
+.tray-league .tray-btn-primary {
+  background: linear-gradient(180deg, #5cf08c, #1fb556);
+  box-shadow:
+    inset 0 1px rgb(255 255 255 / 0.5),
+    0 3px 0 #0b5a28;
+  color: #032612;
+}
+.tray-league .tray-btn-quiet {
+  background: rgb(140 240 255 / 0.1);
+  box-shadow: inset 0 0 0 1px var(--lg-line);
+  color: #d8f6ff;
+}
+.tray-league .tray-btn-danger {
+  background: linear-gradient(180deg, #ff6a5e, #d82a1e);
+  box-shadow:
+    inset 0 1px rgb(255 255 255 / 0.4),
+    0 3px 0 #6a0d07;
+  color: #fff;
+}
+.tray-league .drop-question {
+  color: #ffd0cc;
+}
+
+/* The bag: each slot a glass bubble; the picked one lit. */
+.tray-league .inv-slot .inv-socket {
+  border-radius: 18px;
+  background:
+    radial-gradient(
+      circle at 50% 35%,
+      rgb(140 240 255 / 0.16),
+      transparent 70%
+    ),
+    rgb(0 0 0 / 0.3);
+  box-shadow:
+    inset 0 0 0 1.5px var(--lg-line),
+    inset 0 -4px 10px rgb(0 0 0 / 0.4);
+}
+.tray-league .inv-socket .crawl-icon {
+  background: #fff;
+  filter: drop-shadow(0 0 6px rgb(120 240 255 / 0.5));
+}
+.tray-league .inv-slot.picked .inv-socket {
+  background:
+    radial-gradient(
+      circle at 50% 35%,
+      rgb(140 240 255 / 0.35),
+      transparent 75%
+    ),
+    rgb(10 60 70 / 0.6);
+  box-shadow:
+    inset 0 0 0 2px var(--lg-glow),
+    0 0 18px rgb(108 242 255 / 0.4);
+}
+.tray-league .inv-cell.empty .inv-socket {
+  background: none;
+  box-shadow: inset 0 0 0 1.5px rgb(140 240 255 / 0.1);
+}
+.tray-league .inv-name {
+  color: #d8f6ff;
+}
+.tray-league .inv-inspect {
+  border-radius: 16px;
+  background: linear-gradient(
+    180deg,
+    rgb(140 240 255 / 0.1),
+    rgb(140 240 255 / 0.03)
+  );
+  box-shadow: inset 0 0 0 1px var(--lg-line);
+}
+.tray-league .inspect-mark {
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(140 240 255 / 0.2), transparent 70%);
+}
+.tray-league .inspect-mark .crawl-icon {
+  background: #fff;
+}
+.tray-league .inspect-name {
+  color: #fff;
+  font-weight: 900;
+}
+.tray-league .inspect-does {
+  color: #d8f6ff;
+}
+
+/* The badge case: velvet in a gold rim, eight sockets. */
+.lg-case {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px 8px;
+  margin: 0;
+  padding: 18px 12px;
+  border-radius: 18px;
+  background: radial-gradient(
+    120% 90% at 50% 0%,
+    #3a1450 0%,
+    #1e0a2a 60%,
+    #12061a 100%
+  );
+  box-shadow:
+    inset 0 0 0 3px #d9b45a,
+    inset 0 0 0 5px #6a4a12,
+    inset 0 10px 30px rgb(0 0 0 / 0.6);
+  list-style: none;
+}
+.lg-socket {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 4px;
+  min-width: 0;
+  text-align: center;
+}
+.lg-socket-well {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 40%, #0a0410, #22102c 70%);
+  box-shadow:
+    inset 0 3px 6px rgb(0 0 0 / 0.8),
+    0 1px 0 rgb(255 255 255 / 0.08);
+}
+.lg-socket small {
+  overflow: hidden;
+  max-width: 100%;
+  color: #c9a6e0;
+  font-size: 11px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lg-socket.spent small {
+  opacity: 0.55;
+}
+.lg-badge {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  overflow: hidden;
+  animation: lg-badge-in 520ms cubic-bezier(0.2, 1.4, 0.4, 1) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+.lg-badge .type-mark {
+  --mark-size: 52px;
+  box-shadow:
+    0 0 0 2px #e9c86a,
+    0 4px 10px rgb(0 0 0 / 0.6);
+}
+.lg-badge-shine {
+  position: absolute;
+  inset: -20%;
+  background: linear-gradient(
+    115deg,
+    transparent 40%,
+    rgb(255 255 255 / 0.55) 50%,
+    transparent 60%
+  );
+  translate: -100% 0;
+  animation: lg-shine 4.5s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * 0.35s);
+  pointer-events: none;
+}
+@keyframes lg-shine {
+  0%,
+  70% {
+    translate: -100% 0;
+  }
+  100% {
+    translate: 100% 0;
+  }
+}
+@keyframes lg-badge-in {
+  from {
+    opacity: 0;
+    transform: scale(0.4) rotate(-40deg);
+  }
+}
+.suspended .lg-badge-shine {
+  animation-play-state: paused;
+}
+.lg-socket strong {
+  max-width: 100%;
+  overflow: hidden;
+  color: #fff3c8;
+  font-size: 12.5px;
+  font-weight: 800;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* States on the screen: locked, clear, standby. */
+.lg-locked,
+.lg-clear {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 36px 18px;
+  text-align: center;
+}
+.lg-locked strong,
+.lg-clear strong {
+  color: #fff;
+  font-size: 22px;
+  font-weight: 900;
+}
+.lg-locked p,
+.lg-clear p {
+  max-width: 30ch;
+  margin: 0;
+  color: #b7d3d8;
+  font-size: 15.5px;
+  line-height: 1.35;
+}
+.lg-lock {
+  position: relative;
+  width: 56px;
+  height: 44px;
+  margin-top: 22px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #ffd96a, #c49218);
+  box-shadow: 0 4px 0 #6a4a00;
+}
+.lg-lock::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  width: 32px;
+  height: 26px;
+  border: 6px solid #c9ced8;
+  border-bottom: 0;
+  border-radius: 18px 18px 0 0;
+  translate: -50% 0;
+}
+.lg-clear-mark {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle,
+      transparent 54%,
+      var(--lg-glow) 56% 62%,
+      transparent 64%
+    ),
+    radial-gradient(circle, rgb(108 242 255 / 0.25), transparent 70%);
+  filter: drop-shadow(0 0 10px rgb(108 242 255 / 0.5));
+}
+.lg-standby {
+  margin: 4px 0 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--lg-panel);
+  box-shadow: inset 0 0 0 1px var(--lg-line);
+  color: #b7d3d8;
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+/* Types: the battle's matchup and the lead's chart. */
+.tray-league .matchup-panel {
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--lg-panel);
+  box-shadow: inset 0 0 0 1px var(--lg-line);
+  color: #eafcff;
+}
+.tray-league .matchup-panel.edge-advantage {
+  box-shadow:
+    inset 0 0 0 1.5px #5cf08c,
+    0 0 20px rgb(92 240 140 / 0.2);
+}
+.tray-league .matchup-panel.edge-disadvantage {
+  box-shadow:
+    inset 0 0 0 1.5px #ff6a5e,
+    0 0 20px rgb(255 106 94 / 0.2);
+}
+.lg-chart-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border-radius: 16px;
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--type-deep) 45%, transparent),
+      transparent 80%
+    ),
+    var(--lg-panel);
+  box-shadow: inset 0 0 0 1px var(--lg-line);
+}
+.lg-chart-card .type-mark {
+  --mark-size: 56px;
+}
+.tray-league .type-edges {
+  margin: 0;
+  color: #eafcff;
+}
+
+/* The jinx: a violet warning card. */
+.lg-jinx {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 24px 18px;
+  border-radius: 18px;
+  background:
+    radial-gradient(
+      100% 80% at 50% 0%,
+      rgb(170 110 255 / 0.35),
+      transparent 70%
+    ),
+    #160a2c;
+  box-shadow:
+    inset 0 0 0 1.5px #a07aff,
+    0 0 30px rgb(140 90 230 / 0.3);
+  text-align: center;
+}
+.lg-jinx-mark {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #6a3ad0, #2a1060);
+  box-shadow:
+    0 0 0 3px #c9b0ff,
+    0 0 24px rgb(170 110 255 / 0.7);
+  animation: lg-jinx 3s ease-in-out infinite;
+}
+.lg-jinx-mark .crawl-icon {
+  width: 40px;
+  height: 40px;
+  background: #fff;
+}
+@keyframes lg-jinx {
+  50% {
+    rotate: 8deg;
+    scale: 1.05;
+  }
+}
+.suspended .lg-jinx-mark {
+  animation-play-state: paused;
+}
+.lg-jinx-from {
+  color: #c9b0ff;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.lg-jinx strong {
+  color: #fff;
+  font-size: 22px;
+  font-weight: 900;
+}
+.lg-jinx > span:last-child {
+  max-width: 32ch;
+  color: #eadcff;
+  font-size: 16.5px;
+  line-height: 1.35;
+}
+
+/* The dock: rubber keys on the device's foot; the shown page's key is lit
+   from inside, and a glowing rail slides under it. */
+.tray-league .tray-dock {
+  margin-top: 10px;
+  background: linear-gradient(180deg, rgb(0 0 0 / 0.15), rgb(0 0 0 / 0));
+  box-shadow:
+    inset 0 1px 0 rgb(0 0 0 / 0.35),
+    inset 0 2px 0 rgb(255 160 160 / 0.25);
+}
+.tray-league .dock-tab {
+  background: linear-gradient(180deg, #33363e, #1b1d22);
+  box-shadow:
+    inset 0 1px rgb(255 255 255 / 0.12),
+    0 3px 0 #0a0b0d,
+    0 4px 8px rgb(0 0 0 / 0.35);
+}
+.tray-league .dock-tab[aria-selected="true"] {
+  background: linear-gradient(180deg, #3d464c, #20282c);
+  box-shadow:
+    inset 0 1px rgb(255 255 255 / 0.18),
+    inset 0 0 14px rgb(108 242 255 / 0.25),
+    0 1px 0 #0a0b0d;
+  transform: translateY(2px);
+}
+.tray-league .dock-tab[aria-selected="true"] .dock-icon {
+  filter: drop-shadow(0 0 6px rgb(108 242 255 / 0.8));
+}
+.tray-league .dock-tab.alert .dock-icon {
+  color: #ffd23a;
+}
+.tray-league .dock-svg .facet-a {
+  fill: currentColor;
+}
+.tray-league .dock-svg .facet-b {
+  fill: currentColor;
+  opacity: 0.6;
+}
+.tray-league .dock-svg .facet-c {
+  fill: currentColor;
+  opacity: 0.35;
+}
+.tray-league .dock-lamp::after {
+  content: "";
+  position: absolute;
+  left: 22%;
+  right: 22%;
+  bottom: -6px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--lg-glow);
+  box-shadow: 0 0 10px var(--lg-glow);
+}
+
+@media (min-width: 700px) {
+  .lg-screen {
+    padding: 22px 22px 28px;
+  }
+  .lg-title {
+    font-size: 26px;
+  }
+  .lg-lead-art {
+    width: 104px;
+    height: 104px;
+  }
+  .lg-lead .lg-lead-mark {
+    --mark-size: 74px;
+  }
+  .lg-lead strong {
+    font-size: 32px;
+  }
+  .lg-socket-well,
+  .lg-badge {
+    width: 66px;
+    height: 66px;
+  }
+  .lg-badge .type-mark {
+    --mark-size: 66px;
+  }
+}
+
+.tray-league .matchup-verdict {
+  font-family: inherit;
+  font-weight: 800;
+}
+.tray-league .matchup-effect {
+  font-size: 16px;
+  color: #d8f6ff;
+}
+.tray-league .matchup-side strong {
+  font-family: inherit;
+}
+.tray-league .type-edges {
+  border-top-color: var(--lg-line);
+}
+.tray-league .type-edges dt {
+  color: var(--lg-glow);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 800;
+}
+.tray-league .type-edges .type-chip {
+  padding: 5px 10px 4px;
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 800;
+  line-height: 1;
+}

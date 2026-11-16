@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import type { Loot, SessionState } from "../game/types";
 import { Button, Modal } from "../components/UI";
 import { PackLogo } from "../components/PackMarks";
@@ -12,13 +12,14 @@ import {
   strikeOutcome,
 } from "../game/engine";
 import { QuestRecord } from "../components/QuestRecord";
-import { CrawlRecord } from "../components/Crawl";
-import { badgesLocked } from "../components/LeagueMarks";
+import { trayPageFor } from "../components/trayTabs";
 import { Guide } from "../components/Guide";
-import { crawlTheme } from "../components/crawlTheme";
 import { CardFrame } from "../components/Cards";
 import { theme } from "../presentation/theme";
 import { reducedMotion } from "../presentation/motion";
+// The tray is its own lazy chunk, warmed as a crawl starts (`warmTray`).
+const Tray = lazy(() => import("../components/tray/Tray"));
+export const warmTray = () => void import("../components/tray/Tray");
 export type DialogName =
   | "menu"
   | "previous"
@@ -196,37 +197,23 @@ export function GameDialogs({
       displayed === "matchup" ||
       displayed === "lore" ||
       displayed === "rival") &&
-    record?.party
-  ) {
-    const crawl = crawlTheme(session?.quest?.packId);
-    const { words } = crawl;
-    // The hearts open the party; each chip on the strip opens its own thing.
-    // A crawl without badges (Pub Crawl) reads a stray "badges" as the party.
-    const part = displayed === "badges" && !words.badges ? "party" : displayed;
-    // A card asking for the badges from memory keeps the case shut.
-    if (part === "badges" && badgesLocked(session!, crawl)) return null;
-    const title = {
-      party: words.party,
-      badges: words.badges ?? words.party,
-      satchel: words.Satchel,
-      jinx: words.jinx?.name ?? "Jinx",
-      matchup: "Type matchup",
-      lore: "Dragon lore",
-      rival: "Your rival",
-    }[part];
+    record?.party &&
+    session
+  )
+    // A crawl's tray (2026-11-16): the hearts stud and every segment of the
+    // HUD's belt open it on their own page.
     return (
-      <Modal title={title} onClose={() => setModal(null)} exiting={exiting}>
-        <CrawlRecord
-          record={record}
-          theme={crawl}
+      <Suspense fallback={null}>
+        <Tray
           session={session}
-          onUse={onSpend}
+          open={trayPageFor(session, displayed)}
+          exiting={exiting}
+          onClose={() => setModal(null)}
+          onSpend={onSpend}
           onDrop={onDrop}
-          part={part}
         />
-      </Modal>
+      </Suspense>
     );
-  }
   if (displayed === "guide") {
     const party = session?.quest?.party;
     return (

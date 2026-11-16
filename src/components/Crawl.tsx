@@ -333,10 +333,14 @@ export type StripDialog =
   // The run's rival and what they hold (2026-11-15).
   | "rival";
 
-/** The strip under the top row in a crawl (2026-10-17): what the table acts
- * on, each a chip that opens its own dialog. The League's type edge on the
- * battle face up; the satchel's items; the League's badges; a jinx names
- * itself. */
+/** The HUD under the top row in a crawl (2026-11-16, the tray): one belt
+ * the table reads at a glance, each segment opening its own page of the
+ * tray (the party, the satchel's items, the League's badges, the Quest's
+ * lore runes, the rival), and beside it only what matters on the card in
+ * play: the dragon's scales, the League's type edge, a sent-in Pokémon or
+ * ally, the curse. The League's belt is a red device bar, the Quest's a
+ * tooled leather strap (`crawl.css`). Segments keep their `data-fly`
+ * targets, so items, badges and runes still fly into them. */
 export function CrawlStrip({
   session,
   disabled,
@@ -344,26 +348,28 @@ export function CrawlStrip({
 }: {
   session: SessionState;
   disabled: boolean;
-  onOpen: (dialog: StripDialog) => void;
+  onOpen: (dialog: StripDialog | "party") => void;
 }) {
   const quest = session.quest!;
   const party = quest.party!;
   const record = questRecord(session)!;
   const theme = crawlTheme(quest.packId);
   const { words } = theme;
+  const league = quest.packId === "pokemon";
   const jinx = party.jinx ? finaleCard(quest, party.jinx)?.jinx : undefined;
   const locked = badgesLocked(session, theme);
   const rival = rivalProfile(quest)?.profile;
   const caught = partyTeam(quest);
   const gear = record.boons.filter((b) => !isOmenBoon(b));
   const bagEmpty = !party.loot.length && !caught.length && !gear.length;
+  const live = session.phase !== "complete";
   // The League's type edge on the battle face up (2026-10-25): a mark
-  // only; the dialog says what it does.
+  // only; the tray's Types page says what it does.
   const matchup =
     session.phase === "revealed"
       ? cardMatchup(quest, currentCardOf(session))
       : null;
-  // A caught Pokémon sent into this battle (2026-10-31): its bonus.
+  // A caught Pokémon or ally sent into this fight (2026-10-31): its bonus.
   const helper =
     session.phase === "revealed" && party.assist
       ? teamMember(quest, party.assist)
@@ -371,7 +377,7 @@ export function CrawlStrip({
   const chip = (
     className: string,
     label: string,
-    dialog: StripDialog,
+    dialog: StripDialog | "party",
     children: React.ReactNode,
     shut = false,
   ) => (
@@ -383,7 +389,7 @@ export function CrawlStrip({
       aria-haspopup="dialog"
       disabled={disabled || shut}
       onClick={(event) => {
-        // Safari does not focus a tapped button; the dialog gives focus back.
+        // Safari does not focus a tapped button; the tray gives focus back.
         event.currentTarget.focus();
         onOpen(dialog);
       }}
@@ -394,12 +400,115 @@ export function CrawlStrip({
   // The dragon battle (The Quest 2.0): its scales, broken ones dimmed,
   // the newest crack played once (keyed by the hits landed).
   const dragon =
-    party.duel && quest.due && session.phase !== "complete"
+    party.duel && quest.due && live
       ? finaleCard(quest, quest.finale[quest.step])
       : undefined;
   const health = dragon?.lairFight ? hitsNeeded(quest, dragon) : 0;
+  const form = record.form;
+  const lore = party.lore ?? 0;
   return (
-    <div className="hud-strip" role="group" aria-label={words.party}>
+    <div
+      className={`hud-strip hud-${league ? "league" : "quest"}`}
+      role="group"
+      aria-label={words.party}
+    >
+      <div className="hud-belt">
+        {chip(
+          "belt-seg tag-party",
+          `${words.party}${form ? `: ${form.title}` : ""}${caught.length ? `, ${caught.map((m) => m.title).join(", ")}` : ""}`,
+          "party",
+          league ? (
+            // The team as balls on the device's bar: the lead and each
+            // Pokémon caught; an open place is an empty socket.
+            <span className="belt-balls" aria-hidden="true">
+              <i className="ball lead" />
+              {Array.from({ length: TEAM_SIZE }, (_, i) => (
+                <i key={i} className={`ball${caught[i] ? "" : " open"}`} />
+              ))}
+            </span>
+          ) : (
+            <span className="belt-buckle" aria-hidden="true">
+              <CrawlIcon name="adventurer" theme={theme} />
+            </span>
+          ),
+        )}
+        {chip(
+          `belt-seg tag-satchel${bagEmpty ? " empty" : ""}`,
+          `${words.Satchel}: ${[...party.loot.map((l) => theme.loot[l].name), ...caught.map((m) => m.title), ...gear.map((b) => b.boon.name)].join(", ") || "empty"}`,
+          "satchel",
+          // The items show for themselves; an empty bag is one dim bag, so
+          // the segment keeps its place (2026-10-27, owner).
+          bagEmpty ? (
+            <CrawlIcon name="satchel" theme={theme} />
+          ) : (
+            <>
+              {party.loot.map((item, i) => (
+                <CrawlIcon key={i} name={item} theme={theme} />
+              ))}
+              {caught.map((m) =>
+                m.type ? (
+                  <TypeMark key={m.id} type={m.type} />
+                ) : (
+                  <CrawlIcon key={m.id} name="ally" theme={theme} />
+                ),
+              )}
+              {gear.map((b) => (
+                <CrawlIcon key={b.key} name={gearIcon(b.boon)} theme={theme} />
+              ))}
+            </>
+          ),
+        )}
+        {words.badges &&
+          record.badges.of > 0 &&
+          chip(
+            `belt-seg tag-badges${locked ? " locked" : ""}`,
+            `${words.badges}: ${record.badges.earned} of ${record.badges.of}${locked ? `, ${theme.badgeLock!.why}` : ""}`,
+            "badges",
+            <>
+              <CrawlIcon name="boss" theme={theme} />
+              <b>
+                {record.badges.earned}/{record.badges.of}
+              </b>
+              {/* A card asking for the badges from memory shuts the case. */}
+              {locked && <i className="chip-lock" aria-hidden="true" />}
+            </>,
+            locked,
+          )}
+        {/* Dragon lore (The Quest 2.0 Phase 4): three runes, one lit for
+            each lore found; each is an edge on one swing at the dragon. */}
+        {!league &&
+          chip(
+            `belt-seg tag-lore${lore ? "" : " empty"}`,
+            `Dragon lore: ${lore} of 3`,
+            "lore",
+            <span className="hud-runes" aria-hidden="true">
+              {[0, 1, 2].map((i) => (
+                <CrawlIcon
+                  key={i < lore ? `lit-${i}` : `dark-${i}`}
+                  name="lore"
+                  theme={theme}
+                  className={`rune${i < lore ? " lit" : ""}`}
+                />
+              ))}
+            </span>,
+          )}
+        {/* The rival (2026-11-15): their medallion, and how many of the
+            party's items they hold; lit while they cut in on the card. */}
+        {rival &&
+          chip(
+            `belt-seg tag-rival${party.rival?.cut && live ? " cutting" : ""}`,
+            `Your rival, ${rival.name}: holding ${party.rival!.took.length} of your items`,
+            "rival",
+            <>
+              <Suspense fallback={<CrawlIcon name="ambush" theme={theme} />}>
+                <RivalMedal who={party.rival?.who} className="chip-medal" />
+              </Suspense>
+              {party.rival!.took.length > 0 && (
+                <b>{party.rival!.took.length}</b>
+              )}
+            </>,
+          )}
+      </div>
       {dragon && health > 0 && (
         <div
           className={`hud-scales${party.duel?.enraged || party.duel?.contest ? " enraged" : ""}`}
@@ -420,7 +529,7 @@ export function CrawlStrip({
       )}
       {matchup?.edge &&
         chip(
-          `tag-edge edge-${matchup.edge}`,
+          `hud-alert tag-edge edge-${matchup.edge}`,
           matchup.edge === "advantage" ? "Type advantage" : "Type disadvantage",
           "matchup",
           <>
@@ -432,9 +541,9 @@ export function CrawlStrip({
         )}
       {helper &&
         chip(
-          "tag-assist",
+          "hud-alert tag-assist",
           `${helper.title} sent in: +${assistBonus(helper, quest)} to the roll`,
-          "satchel",
+          "party",
           <>
             {helper.type ? (
               <TypeMark type={helper.type} />
@@ -444,85 +553,10 @@ export function CrawlStrip({
             <span className="chip-name">+{assistBonus(helper, quest)}</span>
           </>,
         )}
-      {chip(
-        `tag-satchel${bagEmpty ? " empty" : ""}`,
-        `${words.Satchel}: ${[...party.loot.map((l) => theme.loot[l].name), ...caught.map((m) => m.title), ...gear.map((b) => b.boon.name)].join(", ") || "empty"}`,
-        "satchel",
-        // The items show for themselves; an empty bag is one dim bag, so the
-        // chip keeps its place (2026-10-27, owner).
-        bagEmpty ? (
-          <CrawlIcon name="satchel" theme={theme} />
-        ) : (
-          <>
-            {party.loot.map((item, i) => (
-              <CrawlIcon key={i} name={item} theme={theme} />
-            ))}
-            {caught.map((m) =>
-              m.type ? (
-                <TypeMark key={m.id} type={m.type} />
-              ) : (
-                <CrawlIcon key={m.id} name="ally" theme={theme} />
-              ),
-            )}
-            {gear.map((b) => (
-              <CrawlIcon key={b.key} name={gearIcon(b.boon)} theme={theme} />
-            ))}
-          </>
-        ),
-      )}
-      {/* Dragon lore (The Quest 2.0 Phase 4): three runes, one lit for each
-          lore found; each is an edge on one swing at the dragon. */}
-      {quest.packId === "dungeon" &&
-        chip(
-          `tag-lore${party.lore ? "" : " empty"}`,
-          `Dragon lore: ${party.lore ?? 0} of 3`,
-          "lore",
-          <span className="hud-runes" aria-hidden="true">
-            {[0, 1, 2].map((i) => (
-              <CrawlIcon
-                key={i < (party.lore ?? 0) ? `lit-${i}` : `dark-${i}`}
-                name="lore"
-                theme={theme}
-                className={`rune${i < (party.lore ?? 0) ? " lit" : ""}`}
-              />
-            ))}
-          </span>,
-        )}
-      {words.badges &&
-        record.badges.of > 0 &&
-        chip(
-          `tag-badges${locked ? " locked" : ""}`,
-          `${words.badges}: ${record.badges.earned} of ${record.badges.of}${locked ? `, ${theme.badgeLock!.why}` : ""}`,
-          "badges",
-          <>
-            <CrawlIcon name="boss" theme={theme} />
-            <b>
-              {record.badges.earned}/{record.badges.of}
-            </b>
-            {/* A card asking for the badges from memory shuts the case. */}
-            {locked && <i className="chip-lock" aria-hidden="true" />}
-          </>,
-          locked,
-        )}
-      {/* The rival (2026-11-15): their name, and how many of the party's
-          items they hold; lit while they cut in on the card in play. */}
-      {rival &&
-        chip(
-          `tag-rival${party.rival?.cut && session.phase !== "complete" ? " cutting" : ""}`,
-          `Your rival, ${rival.name}: holding ${party.rival!.took.length} of your items`,
-          "rival",
-          <>
-            <Suspense fallback={<CrawlIcon name="ambush" theme={theme} />}>
-              <RivalMedal who={party.rival?.who} className="chip-medal" />
-            </Suspense>
-            <span className="chip-name">{rival.name}</span>
-            {party.rival!.took.length > 0 && <b>{party.rival!.took.length}</b>}
-          </>,
-        )}
       {jinx &&
         words.jinx &&
         chip(
-          "tag-jinx",
+          "hud-alert tag-jinx",
           `${words.jinx.name}: ${jinx.name}`,
           "jinx",
           <>
@@ -1470,7 +1504,7 @@ export const isOmenBoon = (b: { card: CardDefinition; boon: Boon }) =>
   b.card.encounter === "omen" && !b.boon.slot;
 /** What a worn piece does now: its power without the items it came with,
  * which were handed out when it was taken. */
-const wornRules = (boon: Boon) =>
+export const wornRules = (boon: Boon) =>
   boon.rules.replace(/\s*Comes with [^.]*\./g, "").trim() || boon.rules;
 
 /** A piece of gear's mark: its slot's, a trinket's for a legacy piece, or

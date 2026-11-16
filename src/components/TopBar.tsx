@@ -21,7 +21,7 @@ export function TopBar({
   onOpenMeter: () => void;
   onOpenMenu: () => void;
   onOpenPrevious: () => void;
-  onOpenStrip: (dialog: StripDialog) => void;
+  onOpenStrip: (dialog: StripDialog | "party") => void;
 }) {
   const crawl = !!session.quest?.party;
   const limit = session.config.limit;

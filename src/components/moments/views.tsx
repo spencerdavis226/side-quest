@@ -1,8 +1,5 @@
 import { DragonEye } from "./DragonEye";
-import {
-  questArt,
-  type QuestArt,
-} from "../../presentation/quest-art.generated";
+import { questArt } from "../../presentation/quest-art.generated";
 import {
   useEffect,
   useRef,
@@ -32,6 +29,7 @@ import { QUEST_MAP, crawlTheme } from "../crawlTheme";
 import { QuestMap } from "../QuestMap";
 import RivalMedal, { RIVAL_COLOURS, rivalVars } from "../RivalMedal";
 import { classMark } from "../classMark";
+import { allyMark } from "../allyMark";
 
 // The moments themselves (2026-11-01; styles in `presentation/moments.css`).
 // A lazy chunk: the director (`Director.tsx`) loads it when a game starts.
@@ -1331,29 +1329,6 @@ function LootFound({ m, scale, onDone }: ViewProps<"loot">) {
 /** The dragon's move (The Quest 2.0, M16): its name slams in from the top
  * edge with a flash and a shake, then clears to the card. Taps go
  * through; a roll cuts it. */
-/** Each ally's emblem (The Quest 2.1), by its name. */
-const ALLY_MARK: [RegExp, QuestArt][] = [
-  [/Goat/, "goat"],
-  [/Mule/, "mule"],
-  [/Mort|Skull/, "ally-skull"],
-  [/Pip|Cabin/, "cabin-boy"],
-  [/Durla|Dwarf/, "dwarf"],
-  [/Frozen Knight/, "frozen-knight"],
-  [/Hatchling/, "hatchling"],
-  [/Chester/, "chester"],
-  // The rivals, joined (Rivals Phase 5): their own medallions' marks.
-  [/Chad/, "rival-chad"],
-  [/Fingerbang/, "rival-fingerbang"],
-  [/Saggynuts/, "rival-sensei"],
-  [/Chuck/, "rival-chuck"],
-  [/Queefington/, "rival-queef"],
-  [/Bard/, "bard"],
-  // Sir Bradley: an ally in a save from before the 2026-11-15 rename.
-  [/Bradley/, "chad"],
-  [/Blade|Sword/, "blade"],
-];
-const allyMark = (name: string): QuestArt =>
-  ALLY_MARK.find(([re]) => re.test(name))?.[1] ?? "shield";
 
 /** An ally's medallion: a struck gold ring with its emblem; `fallen` is
  * cold iron, cracked. */

@@ -62,7 +62,7 @@ import { dragonStyle } from "./presentation/dragon-colors";
 import { Setup } from "./screens/Setup";
 import { Play } from "./screens/Play";
 import { Completion } from "./screens/Completion";
-import { GameDialogs, type DialogName } from "./screens/GameDialogs";
+import { GameDialogs, warmTray, type DialogName } from "./screens/GameDialogs";
 import { useWakeLock } from "./app/wakeLock";
 import { PortraitGate } from "./components/PortraitGate";
 import { PartyNewsBanner, StageBanner } from "./components/StageBanner";
@@ -166,6 +166,14 @@ function App() {
     controller.settleAll();
   }, [inPrologue, motion, opening, session, controller]);
   useWakeLock(active);
+  // A crawl's tray (2026-11-16) is a lazy chunk: fetch it while the table
+  // is being read, so the first tap on the belt opens it at once.
+  const crawling = !!display?.quest?.party;
+  useEffect(() => {
+    if (!crawling) return;
+    const id = setTimeout(warmTray, 1200);
+    return () => clearTimeout(id);
+  }, [crawling]);
   useEffect(requestPersistence, []);
   // An evolution (a Rare Candy from the bag, 2026-11-01) plays over the
   // table, so the dialog it was used from steps aside for it.

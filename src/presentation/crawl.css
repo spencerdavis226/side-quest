@@ -313,20 +313,21 @@
   }
 }
 
-/* --- The strip: what the party carries -----------------------------------
-   One row of chips under the header, each opening its own dialog: the
-   League's type edge, the satchel's slots, the League's badges, a jinx. A
-   chip reads at a glance: a mark, and a number or a name. */
-
-/* A full strip (a five-slot satchel, the badges and a jinx)
-   is wider than the header on a phone: it reaches 12px into the app's side
-   padding, a name gives way first (it shrinks to an ellipsis; the dialog
-   names it), and `safe center` keeps the first chip on screen if it still
-   overflows. */
+/* --- The HUD: the belt and its alerts (2026-11-16, the tray) ----------------
+   One belt under the header, the table's glance at what the party carries:
+   the party, the satchel's items, the League's badges or the Quest's lore
+   runes, the rival. Each segment opens its page of the tray. Beside it,
+   only what matters on the card in play: the dragon's scales, the type
+   edge, a sent-in helper, the curse. The League's belt is a red device
+   bar; the Quest's a tooled leather strap with brass rivets. A full belt
+   on a phone reaches 12px into the app's side padding, alerts give their
+   names up first (ellipsis; the tray names them), and `safe center` keeps
+   the first segment on screen. */
 .hud-strip {
   grid-column: 1 / -1;
   display: flex;
   justify-content: safe center;
+  align-items: center;
   gap: 8px;
   min-width: 0;
   height: var(--strip-h);
@@ -337,6 +338,7 @@
   display: inline-flex;
   flex: none;
   align-items: center;
+  justify-content: center;
   gap: 5px;
   height: var(--strip-h);
   padding: 0 11px;
@@ -383,7 +385,6 @@
   flex: 0 1 auto;
   min-width: 0;
 }
-
 .chip-name {
   min-width: 0;
   max-width: 8.5em;
@@ -393,6 +394,280 @@
   font: 600 16px / 1.3 var(--font-tavern);
   letter-spacing: 0.02em;
 }
+
+/* The belt: one object, its segments buttons inside it. */
+.hud-belt {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: stretch;
+  height: var(--strip-h);
+  border-radius: calc(var(--strip-h) / 2);
+  isolation: isolate;
+}
+.hud-belt .belt-seg {
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  padding: 0 9px;
+}
+.hud-belt .belt-seg:first-child {
+  padding-left: 12px;
+  border-radius: calc(var(--strip-h) / 2) 0 0 calc(var(--strip-h) / 2);
+}
+.hud-belt .belt-seg:last-child {
+  padding-right: 12px;
+  border-radius: 0 calc(var(--strip-h) / 2) calc(var(--strip-h) / 2) 0;
+}
+.hud-belt .belt-seg::after {
+  inset: -5px 0;
+}
+.hud-belt .belt-seg:active:not(:disabled) {
+  filter: none;
+  background: rgb(255 255 255 / 0.12);
+}
+/* A divider between segments: a rivet on leather, a seam on the device. */
+.hud-belt .belt-seg + .belt-seg::before {
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  translate: 0 -50%;
+  pointer-events: none;
+}
+
+/* The Quest's strap: tooled leather, a stitched groove, brass rivets. */
+.hud-quest .hud-belt {
+  border: 1px solid #1d0f06;
+  background:
+    radial-gradient(
+      120% 90% at 50% -20%,
+      rgb(255 210 150 / 0.2),
+      transparent 60%
+    ),
+    repeating-linear-gradient(
+      97deg,
+      rgb(0 0 0 / 0.06) 0 2px,
+      transparent 2px 5px
+    ),
+    linear-gradient(180deg, #7a4a28 0%, #5a3219 48%, #3e200e 100%);
+  box-shadow:
+    inset 0 1px rgb(255 214 160 / 0.32),
+    inset 0 -2px 3px rgb(0 0 0 / 0.45),
+    0 2px 0 #120803,
+    0 6px 14px rgb(0 0 0 / 0.5);
+  color: #f6dcae;
+}
+.hud-quest .hud-belt::before {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border: 1px dashed rgb(255 216 160 / 0.42);
+  border-radius: inherit;
+  pointer-events: none;
+}
+.hud-quest .belt-seg + .belt-seg::before {
+  background: radial-gradient(
+    circle at 35% 30%,
+    #fff1c2,
+    #d6a548 45%,
+    #6a4512 100%
+  );
+  box-shadow: 0 1px 1px rgb(0 0 0 / 0.6);
+}
+.hud-quest .hud-belt .crawl-icon {
+  filter: drop-shadow(0 1px 0 rgb(0 0 0 / 0.55));
+}
+/* The buckle: the adventurer's segment, a brass frame round its mark. */
+.belt-buckle {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 24px;
+  border: 2px solid #e2b860;
+  border-radius: 5px;
+  background: linear-gradient(180deg, #4a2a14, #2a160a);
+  box-shadow:
+    inset 0 0 0 1px #6a4512,
+    0 1px 1px rgb(0 0 0 / 0.6);
+  color: #ffe2a0;
+}
+.belt-buckle .crawl-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* The League's bar: a glossy red device, a black seam, white lettering. */
+.hud-league .hud-belt {
+  border: 1.5px solid #2a0608;
+  background:
+    linear-gradient(
+      180deg,
+      rgb(255 255 255 / 0.42) 0%,
+      rgb(255 255 255 / 0.08) 46%,
+      transparent 52%
+    ),
+    linear-gradient(180deg, #ef3b43 0%, #c8141d 55%, #8f0b12 100%);
+  box-shadow:
+    inset 0 -2px 0 rgb(0 0 0 / 0.25),
+    inset 0 0 0 1px rgb(255 140 140 / 0.35),
+    0 2px 0 #3a0508,
+    0 6px 14px rgb(0 0 0 / 0.5);
+  color: #fff;
+  text-shadow: 0 1px 0 rgb(80 0 0 / 0.7);
+}
+.hud-league .belt-seg + .belt-seg::before {
+  left: -1px;
+  width: 2px;
+  height: 60%;
+  border-radius: 1px;
+  background: linear-gradient(
+    180deg,
+    rgb(40 0 0 / 0.1),
+    #3a0508 40%,
+    rgb(40 0 0 / 0.1)
+  );
+  box-shadow: 1px 0 rgb(255 160 160 / 0.35);
+}
+.hud-league .hud-belt .crawl-icon {
+  filter: drop-shadow(0 1px 0 rgb(60 0 0 / 0.6));
+}
+/* The team as balls: red over white, a black band; an open place is an
+   empty socket. */
+.belt-balls {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.belt-balls .ball {
+  position: relative;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: linear-gradient(
+    180deg,
+    #ff4b52 0 44%,
+    #1a0a0a 44% 56%,
+    #f6f2ea 56%
+  );
+  box-shadow:
+    0 0 0 1.5px #1a0a0a,
+    inset -1px -2px 2px rgb(0 0 0 / 0.25);
+}
+.belt-balls .ball::after {
+  content: "";
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 1px #1a0a0a;
+  translate: -50% -50%;
+}
+.belt-balls .ball.lead {
+  width: 16px;
+  height: 16px;
+}
+.belt-balls .ball.open {
+  background: rgb(60 0 0 / 0.45);
+  box-shadow:
+    inset 0 1px 2px rgb(0 0 0 / 0.6),
+    0 0 0 1px rgb(255 160 160 / 0.4);
+}
+.belt-balls .ball.open::after {
+  display: none;
+}
+
+/* The satchel's segment: its items, an empty bag dim. */
+.tag-satchel {
+  gap: 6px;
+}
+.hud-quest .tag-satchel {
+  color: #e8d8ff;
+}
+.tag-satchel.empty > * {
+  opacity: 0.45;
+}
+/* A caught Pokémon in the bag: its type mark, as small as an item. */
+.tag-satchel .type-mark,
+.tag-assist .type-mark {
+  --mark-size: 22px;
+}
+.tag-badges {
+  color: #f1d58c;
+}
+.hud-league .tag-badges {
+  color: #ffe58a;
+}
+
+/* Alerts beside the belt: only while they matter on the card in play. */
+.hud-alert {
+  animation: hud-alert-in 420ms cubic-bezier(0.2, 1.3, 0.4, 1) both;
+}
+@keyframes hud-alert-in {
+  from {
+    opacity: 0;
+    filter: brightness(2);
+  }
+}
+/* A caught Pokémon or ally sent into the fight face up (2026-10-31): its
+   mark and what it adds to the roll, in the gold of a won roll. */
+.tag-assist {
+  border-color: #d8b25a;
+  color: #f6dc8f;
+}
+
+/* The rival's segment (2026-11-15): their medallion, crimson, lit while
+   they cut in on the card in play. */
+.hud-belt .tag-rival {
+  color: #ffd9cf;
+}
+.tag-rival b {
+  min-width: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: #ffd9cf;
+  color: #4a0d0a;
+  font-size: 0.8em;
+  text-align: center;
+}
+.tag-rival.cutting {
+  background: radial-gradient(circle, rgb(255 96 64 / 0.55), transparent 70%);
+  animation: rival-cutting 1.6s ease-in-out infinite;
+}
+@keyframes rival-cutting {
+  50% {
+    background-color: rgb(255 96 64 / 0.2);
+  }
+}
+.suspended .tag-rival.cutting {
+  animation-play-state: paused;
+}
+.tag-jinx {
+  border-color: #b5426b;
+  background: linear-gradient(180deg, #6b1e3c, #2e0b19);
+  color: #ffd6e4;
+  box-shadow:
+    inset 0 1px rgb(255 190 220 / 0.18),
+    0 2px 0 #0e0a07,
+    0 0 12px rgb(214 70 130 / 0.45);
+}
+.hud-league .tag-jinx {
+  border-color: #8a5ad8;
+  background: linear-gradient(180deg, #4a2a8a, #1e0e40);
+  color: #eadcff;
+  box-shadow:
+    inset 0 1px rgb(220 200 255 / 0.2),
+    0 2px 0 #0e0a07,
+    0 0 12px rgb(140 90 230 / 0.45);
+}
+
 /* The dragon battle (The Quest 2.0, 2026-11-13): the dragon's health as a
    row of scales on the strip. A broken scale dims and cracks; the newest
    crack plays once (it is keyed by the hits landed). */
@@ -462,51 +737,6 @@
   /* A still glow: nothing here loops, so nothing runs in a hidden tab. */
 }
 
-/* The satchel: one slot per place in it, its items in violet like their
-   plaques, an empty slot a ring. */
-.tag-satchel {
-  gap: 6px;
-  color: #dccbff;
-}
-/* An empty bag: one dim bag, kept in place. */
-.tag-satchel.empty {
-  opacity: 0.5;
-}
-/* A caught Pokémon in the bag: its type mark, as small as an item. */
-.tag-satchel .type-mark,
-.tag-assist .type-mark {
-  --mark-size: 22px;
-}
-/* A caught Pokémon sent into the fight face up (2026-10-31): its mark and
-   what it adds to the roll, in the gold of a won roll. */
-.tag-assist {
-  border-color: #d8b25a;
-  color: #f6dc8f;
-}
-.tag-badges {
-  color: #f1d58c;
-}
-
-/* The run's rival (2026-11-15): crimson, and lit while they cut in on the
-   card in play. */
-.tag-rival {
-  border-color: #a8322c;
-  background: linear-gradient(180deg, #5c1512, #280807);
-  color: #ffd9cf;
-}
-.tag-rival b {
-  min-width: 18px;
-  padding: 0 4px;
-  border-radius: 9px;
-  background: #ffd9cf;
-  color: #4a0d0a;
-  font-size: 0.8em;
-  text-align: center;
-}
-.tag-rival.cutting {
-  border-color: #ff8a70;
-  box-shadow: 0 0 10px rgb(255 96 64 / 0.7);
-}
 .crawl-rival {
   display: grid;
   gap: 10px;
@@ -517,14 +747,8 @@
   border-left: 3px solid #ff8a70;
   background: rgb(90 20 12 / 0.4);
 }
-.tag-jinx {
-  border-color: #b5426b;
-  background: linear-gradient(180deg, #6b1e3c, #2e0b19);
-  color: #ffd6e4;
-}
-
-/* A narrow phone: chips keep their marks and numbers; names are in the
-   dialogs, and the plaque's label drops the count its pips already show. */
+/* A narrow phone: segments keep their marks and numbers; names are in the
+   tray, and the plaque's label drops the count its pips already show. */
 @media (max-width: 380px) {
   .hud-strip {
     gap: 4px;
@@ -532,6 +756,15 @@
   .hud-chip {
     gap: 4px;
     padding: 0 7px;
+  }
+  .hud-belt .belt-seg {
+    padding: 0 6px;
+  }
+  .hud-belt .belt-seg:first-child {
+    padding-left: 9px;
+  }
+  .hud-belt .belt-seg:last-child {
+    padding-right: 9px;
   }
   .tag-satchel {
     gap: 3px;
@@ -562,9 +795,28 @@
     border-radius: 21px;
     font-size: 21px;
   }
+  .hud-belt .belt-seg {
+    padding: 0 13px;
+  }
   .hud-chip .crawl-icon {
     width: 24px;
     height: 24px;
+  }
+  .belt-balls .ball {
+    width: 16px;
+    height: 16px;
+  }
+  .belt-balls .ball.lead {
+    width: 20px;
+    height: 20px;
+  }
+  .belt-buckle {
+    width: 32px;
+    height: 30px;
+  }
+  .belt-buckle .crawl-icon {
+    width: 20px;
+    height: 20px;
   }
   .chip-name {
     font-size: 18px;
