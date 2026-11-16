@@ -2,6 +2,48 @@
 
 Updated 2026-11-16. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Done 2026-11-16: the HUD, the menus and the sheet rebuilt per mode (same branch, PR #109)
+
+Owner, on the first tray pass: "Make the HUD ui element much simpler and more elegant. It's way over informative and cluttered. Also curses and such don't need names, just an icon ... redo the entire menu bar and HUD from scratch for each game mode ... Menu screens too ... no need for an x button on the top right of the drawers if you can swipe down. Make sure the touch area for swipe is big enough".
+
+- **The HUD** (`src/components/hud/`; `model.ts` reads the run, `LeagueHud.tsx` and `QuestHud.tsx` draw it; styles `presentation/hud-league.css`, `hud-quest.css`, eager). A crawl no longer uses the studs, the plaque or the strip: `TopBar` hands it to its mode's HUD. Each HUD is one bar and one status line.
+  - League: a dark glass capsule lit in the lead's type colour, holding the lead's medallion in a draining Team HP ring with the number, the place over its pips, and a menu of three dots.
+  - Quest: a tooled-leather band with gilt corners, holding a heart that drains like a vial with the number, the region in gilt over diamond waymarks (the dragon's scales in the lair; a tap opens the map), and a wax-seal menu.
+  - The status line is a mark and a number each: the team (n/2), bag and badges, or the rank, satchel, lore and rival. Alerts appear only while they hold, and as marks alone: the type edge, a sent-in helper, the curse or jinx (no name; the spoken label keeps it). Classes the tests and moments use stay: `crawl-meter`, `crawl-progress`, `hud-strip`, `tag-*`, `hud-scales`, `data-fly` targets.
+  - `CrawlStrip`, `CrawlProgress`, `CrawlMeterFace` and their CSS are deleted; `QuestMeter` keeps the plain meter quests only. The header is shorter (`--hud-strip` 38px, 44px on a tablet), so the card is a little bigger.
+- **The sheet** (`tray/Sheet.tsx`): the tray and the menus rise on it.
+  - There is no close button. The grabber is a full-width 36px band and a button named Close. The whole sheet takes the pull: header, dock, and a page's content once that page is at its top.
+  - Touch is read from touch events, so a pull can stop the page's own scroll and bounce. A drag that starts on a page scrolled down is that page's scroll.
+  - Mouse and pen use pointer events. The pager ignores a pull, and a pull ignores a page swipe.
+- **The menus** (`tray/Menu.tsx`, lazy): a crawl's pause menu is a sheet in its mode's look (the device's settings screen; a journal page). Its rows are Previous card, Undo, How to play and End game. End game asks "Call it a night?" on the sheet itself. Plain games keep the old dialog.
+- **Moments**: no change. The fly targets moved with the HUD.
+- **Tests**: `tray.spec.ts` is rewritten for the HUD, with three new tests:
+  - Touch pull from a page's top vs a scrolled page, using synthetic touch events.
+  - Each mode's menu, and its in-sheet End game question.
+  - The grabber's size.
+
+  `crawl.spec.ts` counts `.hud-stat`, reads the heart's number and splat off the new gauge, and reads the lore as one rune and its count.
+- **Checked**:
+  - `npm test` 798 passed; typecheck; lint.
+  - Build: budgets pass. Initial JS is 178.4 KiB gzip; runtime is 5,451 KiB.
+  - Chromium `test:e2e` 204 of 204; Chromium `test:sweep` 12 of 12.
+  - Screens reviewed at 390 and 320 px.
+- **Not run**: WebKit, a phone. Real iOS touch (the non-passive touchmove, the scroll handoff) is the main thing to check on a device.
+
+## Done 2026-11-16: the tray (branch `claude/vigilant-cray-mtcl90`, not merged)
+
+Owner: "a custom and high budget tray to better organize and view all items and inventory and curses and pokemon etc instead of little ui elements on the top ... one for the league that is very Pokemon themed and one for the quest that is very rpg/dnd themed ... still allows like a HUD to display really important things even when you're not opening the tray". Asked for a new branch, so this is a pull request for the owner's review, not merged under the auto-merge rule.
+
+- **The HUD** (`CrawlStrip` in `Crawl.tsx`, styles in `crawl.css`): the chips under the header are one belt, a red device bar in the League and a tooled leather strap with brass rivets in the Quest. Its segments are the party (the League's team as balls, the Quest's adventurer in a buckle), the satchel's items, the League's badges or the Quest's lore runes, and the rival's medallion. Each opens its page of the tray and keeps its `data-fly` target, so items, badges and runes still fly into it. Beside the belt, only while they matter: the dragon's scales, the type edge, a sent-in helper, the curse.
+- **The tray** (`src/components/tray/`, a 9 KiB gzip lazy chunk; `trayTabs.ts` eager): a native modal `<dialog>` holding a sheet that rises on a spring. It has a page per thing the party carries, a dock of tabs (tap, arrow keys, Home/End), and swipe between pages. Pull the grabber or header down to put it away (distance or flick), or tap the dimmed table. Springs are computed as CSS `linear()` easings (`spring.ts`). The page shown names the dialog with the old dialogs' titles ("Bag", "The party", "Curse"...).
+  - League, Trainer Gear: a lens and lamps, a display with the page and Team HP, pages on a glass screen. Team: the lead with its type, line, perks and strong/weak chart, and a slot per catch with type, bonus and Release. Bag: slots and an inspector with Use/Drop. Badges: a velvet case of eight sockets, earned badges shining, locked while Veteran Ada is up. Types: this battle's matchup and the lead's chart. Jinx.
+  - Quest, the journal: a wax seal, gilt titles, hearts on a brass plate, parchment pages. Party: a character sheet (class emblem, ranks in numerals, perks), heart containers, tonight's omen as a tarot plate, allies with Dismiss. Pack: the satchel's slots with an inspector, then Worn (weapon, armour, trinket sockets). Map: the quest map, where you are, the wanted poster. Lore: the dragon's emblem ringed by three rune sockets and the lines found. Rival: their file, tally and ledger. Curse: a black-sealed scroll.
+- **No engine or save change.** The tray calls the same `onSpend` and `onDrop`. Old dialogs (`party`, `satchel`, `badges`, `jinx`, `matchup`, `lore`, `rival`) now open the tray. `CrawlRecord` still draws the end screens.
+- **Tests**: new `tests/tray.test.ts` (pages, titles, fallbacks, springs) and `tests/browser/tray.spec.ts` (each segment's page; dock, keys and swipe with its rubber band; pull-to-dismiss, a short pull springing back, scrim and Close; the inspector's Use and Drop; the League's team, release and badge case). Updated: `crawl.spec.ts` (the belt counts four segments plus alerts, gear in the Pack's sockets, the party scoped to the page shown, the map on its own page) and `quest.spec.ts` (catches on the team page, items on the Bag page, the lead's type chip).
+- **Checked**: `npm test` 798 passed; typecheck; lint; build (budgets pass: initial 177.8 KiB gzip, was 177.0; runtime 5,438 KiB); Chromium `test:e2e` 202 of 202; Chromium `test:sweep` 12 of 12. Screens reviewed at 390 px in Chromium for every page of both trays. **Not run**: WebKit (none in this container; CI runs `@release` in WebKit, and `quest.spec.ts`'s catch test there now opens the tray), a phone. Gestures were driven with mouse pointer events, not touch.
+- **Risks**: touch gestures on iOS (pan-y on the pager, pointer capture after the slop) are unverified on a device; the League's glass screen and badge shine are the heaviest paint; `::backdrop` is not used (the scrim is a div).
+- **Device checks** added to `docs/DEVICE_CHECKLIST.md` ("The tray").
+- **Next**: the owner's review of the PR on a phone; then the device checks below.
 ## Open 2026-11-16: WebKit release flakes keep skipping deploys
 
 The `main` runs for #108 (`243ca0a`) and #110 (`dab471a`) both failed the WebKit `@release` job, so neither deployed (the live site stayed on #107). #108's run failed "the League's starter turns over with a ball" (`.moment-omen` never appeared; the open item below); #110's failed "legacy finite game" (`.progress` never appeared after Play, the View Transition path). Neither touches what those PRs changed; #110's run was re-run once.
@@ -31,6 +73,7 @@ Owner: "The quest has too many horny cards ... Crude sexual or abrasive or adult
 - **Rule and guard**: the Realms section of `docs/CARD_VOICE_REFERENCE.md` is rewritten (sex is a punchline, never the subject); `tests/realms-voice.test.ts` fails a Realms card that says "horny", "sex", "hookup", "flirt" and the like (The Horny Oak is its one named exception).
 - **Checked**: `npm test` (793); lint; typecheck; `cards:review`; build (budgets pass, 5,361 KiB runtime); Chromium `test:sweep` 12 of 12. Not run: `test:balance` (no number changed), WebKit, a phone.
 - **Next**: the owner's read of the kept list; then the owner's table (below).
+
 
 ## Open 2026-11-16: WebKit release flakes blocked PR #106's deploy
 

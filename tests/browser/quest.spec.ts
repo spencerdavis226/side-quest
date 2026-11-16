@@ -505,8 +505,9 @@ test("the bag lets an item or a caught Pokémon go, after a second tap", async (
       },
     }),
   );
-  await page.locator(".tag-satchel").click();
-  const bag = page.getByRole("dialog", { name: "Bag" });
+  // A caught Pokémon is on the tray's team page (2026-11-16).
+  await page.locator(".tag-party").click();
+  const bag = page.getByRole("dialog", { name: "The team" });
   // One tap only asks: nothing is dropped, and "Keep" puts the button back.
   await bag.getByRole("button", { name: "Release Pidgey" }).click();
   await expect(
@@ -524,8 +525,11 @@ test("the bag lets an item or a caught Pokémon go, after a second tap", async (
   await expect
     .poll(async () => (await saved(page)).quest.party.team)
     .toBeUndefined();
-  await bag.getByRole("button", { name: "Drop Protect" }).click();
-  await bag.getByRole("button", { name: "Yes, drop Protect" }).click();
+  // Items are on the bag's page.
+  await page.getByRole("tab", { name: /Bag/ }).click();
+  const items = page.getByRole("dialog", { name: "Bag" });
+  await items.getByRole("button", { name: "Drop Protect" }).click();
+  await items.getByRole("button", { name: "Yes, drop Protect" }).click();
   await expect
     .poll(async () => (await saved(page)).quest.party.loot)
     .toEqual([]);
@@ -721,11 +725,13 @@ test("@release a beaten wild Pokémon is caught into the bag, and sent in for +1
     "Go, Pidgey! +1 to this roll. Win and it stays; lose and it faints.",
   );
   await page.screenshot({ path: info.outputPath("send-in.png") });
-  // The caught Pokémon sits in the bag chip and the bag dialog.
+  // The caught Pokémon sits in the bag segment and on the team page.
   await expect(page.locator(".tag-satchel")).toHaveAccessibleName(/Pidgey/);
-  await page.locator(".tag-satchel").click();
-  const dialog = page.getByRole("dialog", { name: "Bag" });
-  await expect(dialog.locator(".crawl-team li")).toContainText("Pidgey");
+  await page.locator(".tag-party").click();
+  const dialog = page.getByRole("dialog", { name: "The team" });
+  await expect(dialog.locator(".crawl-team li").first()).toContainText(
+    "Pidgey",
+  );
   await page.screenshot({ path: info.outputPath("bag-caught.png") });
   await page.keyboard.press("Escape");
   // The gem shows the roll to beat; Pidgey takes one off it.

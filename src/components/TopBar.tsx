@@ -1,7 +1,9 @@
 import type { SessionState } from "../game/types";
 import { IconButton } from "./UI";
 import { QuestMeter } from "./QuestMeter";
-import { CrawlProgress, CrawlStrip, type StripDialog } from "./Crawl";
+import type { StripDialog } from "./Crawl";
+import { LeagueHud } from "./hud/LeagueHud";
+import { QuestHud } from "./hud/QuestHud";
 
 /** The play screen's header (2026-10-17): a stud on each side and a plaque
  * between them that says where the game is. In a crawl the left stud is the
@@ -21,13 +23,26 @@ export function TopBar({
   onOpenMeter: () => void;
   onOpenMenu: () => void;
   onOpenPrevious: () => void;
-  onOpenStrip: (dialog: StripDialog) => void;
+  onOpenStrip: (dialog: StripDialog | "party" | "map") => void;
 }) {
   const crawl = !!session.quest?.party;
+  // A crawl has its own HUD per mode (2026-11-16): the League's glass bar,
+  // the Quest's iron bar. Plain games keep the studs and the plaque.
+  if (crawl) {
+    const Hud = session.quest!.packId === "pokemon" ? LeagueHud : QuestHud;
+    return (
+      <Hud
+        session={session}
+        disabled={disabled}
+        onOpen={onOpenStrip}
+        onMenu={onOpenMenu}
+      />
+    );
+  }
   const limit = session.config.limit;
   const card = session.discarded + 1;
   return (
-    <header className={`topbar hud${crawl ? " hud-crawl" : ""}`}>
+    <header className="topbar hud">
       {session.quest ? (
         <QuestMeter
           session={session}
@@ -52,9 +67,7 @@ export function TopBar({
           </svg>
         </IconButton>
       )}
-      {crawl ? (
-        <CrawlProgress quest={session.quest!} />
-      ) : (
+      {
         <div
           className="progress hud-plaque count"
           role="img"
@@ -79,7 +92,7 @@ export function TopBar({
             </span>
           ) : null}
         </div>
-      )}
+      }
       <IconButton
         className="menu-button"
         label="Open game menu"
@@ -92,13 +105,6 @@ export function TopBar({
           <i />
         </span>
       </IconButton>
-      {crawl && (
-        <CrawlStrip
-          session={session}
-          disabled={disabled}
-          onOpen={onOpenStrip}
-        />
-      )}
     </header>
   );
 }

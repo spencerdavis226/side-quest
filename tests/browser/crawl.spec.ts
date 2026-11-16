@@ -142,9 +142,10 @@ for (const width of [320, 375])
         party: { ...q.party!, jinx: "dungeon.hedge-witch" },
       },
     });
-    // The satchel, the jinx and the lore runes (Phase 4).
-    const chips = page.locator(".hud-strip .hud-chip");
-    await expect(chips).toHaveCount(3);
+    // The status line (the party, the satchel and the lore) and the curse's
+    // mark (the HUD, 2026-11-16).
+    const chips = page.locator(".hud-strip .hud-stat");
+    await expect(chips).toHaveCount(4);
     for (const box of await chips.evaluateAll((els) =>
       els.map((e) => e.getBoundingClientRect().toJSON()),
     )) {
@@ -237,7 +238,9 @@ test("a trial is settled with plaques; a loss costs hearts", async ({
   await expect(meter(page)).toHaveAccessibleName(
     new RegExp(`^Hearts: ${H - 2} of ${H}`),
   );
-  await expect(page.locator(".crawl-meter strong")).toHaveText(`${H - 2}`);
+  await expect(page.locator(".crawl-meter .qh-hp-num b")).toHaveText(
+    `${H - 2}`,
+  );
 });
 
 test("a boss shows its wounds, its trinket, and comes back until it falls", async ({
@@ -315,16 +318,18 @@ test("a boss shows its wounds, its trinket, and comes back until it falls", asyn
   expect((await saved(page)).quest.party.boons).toEqual([
     "dungeon.bone-golem#0",
   ]);
-  // The bag lists it as gear, with its slot.
+  // The satchel's page shows it worn, in its slot (the tray, 2026-11-16).
   await page.locator(".tag-satchel").click();
   const bag = page.getByRole("dialog", { name: "Satchel" });
-  await expect(bag.locator(".crawl-gear .bag-name")).toHaveText(
-    "Golem's KnuckleWeapon",
-  );
+  const worn = bag.locator(".tray-page.shown .crawl-gear .qt-socket.worn");
+  await expect(worn.locator(".bag-name")).toHaveText("Golem's Knuckle");
+  await expect(worn.locator(".qt-socket-slot")).toHaveText("Weapon");
   await page.keyboard.press("Escape");
   await meter(page).click();
   await expect(
-    page.getByRole("dialog", { name: "The party" }).locator(".crawl-gear"),
+    page
+      .getByRole("dialog", { name: "The party" })
+      .locator(".tray-page.shown .crawl-gear"),
   ).toHaveCount(0);
 });
 
@@ -383,7 +388,8 @@ test("with Reduce Motion a moment's plaque fades and goes, and the splat stays c
   // The lost hearts float off the heart, centred on it.
   const [splat, heart] = await Promise.all([
     page.locator(".heart-splat").boundingBox(),
-    meter(page).boundingBox(),
+    // The heart it floats off (the HUD, 2026-11-16).
+    page.locator('[data-fly="hearts"]').boundingBox(),
   ]);
   await page.evaluate(() => {
     for (const a of (window as unknown as { __held: Animation[] }).__held)
@@ -598,12 +604,15 @@ test("the party dialog lays out the run: adventurer, boons and jinx", async ({
     },
   });
   // The strip under the top row carries the party's things at a glance:
-  // the satchel, the jinx and the dragon lore runes (Phase 4).
-  await expect(page.locator(".hud-strip .hud-chip")).toHaveCount(3);
+  // the status line (the party, the satchel, the dragon lore) and the
+  // curse's mark.
+  await expect(page.locator(".hud-strip .hud-stat")).toHaveCount(4);
   await page.screenshot({ path: info.outputPath("strip.png") });
   // The hearts open the party: hearts, adventurer, boons, and nothing else.
   await meter(page).click();
-  const dialog = page.getByRole("dialog", { name: "The party" });
+  const dialog = page
+    .getByRole("dialog", { name: "The party" })
+    .locator(".tray-page.shown");
   await expect(dialog.locator(".crawl-omen").first()).toContainText("Rogue");
   await expect(dialog.locator(".crawl-boons li")).toHaveCount(1);
   await expect(dialog.locator(".satchel, .crawl-floors")).toHaveCount(0);
@@ -918,10 +927,10 @@ for (const width of [320, 390])
     const centre = (b: { y: number; height: number }) => b.y + b.height / 2;
     expect(Math.abs(centre(left!) - centre(middle!))).toBeLessThan(2);
     expect(Math.abs(centre(menu!) - centre(middle!))).toBeLessThan(2);
-    // The strip: three chips here, all there is (the satchel, the jinx and
-    // the lore runes), under the row, inside the screen, above the card.
-    const chips = page.locator(".hud-strip .hud-chip");
-    await expect(chips).toHaveCount(3);
+    // The status line: the party, the satchel and the lore, and the curse's
+    // mark, under the bar, inside the screen, above the card.
+    const chips = page.locator(".hud-strip .hud-stat");
+    await expect(chips).toHaveCount(4);
     for (const chip of await chips.all()) {
       const b = (await chip.boundingBox())!;
       expect(b.x).toBeGreaterThanOrEqual(0);
@@ -1294,7 +1303,8 @@ test("the lore runes and an ally sent in", async ({ page }, info) => {
   await seed(page, s);
   const runes = page.locator(".hud-strip .tag-lore");
   await expect(runes).toHaveAccessibleName("Dragon lore: 2 of 3");
-  await expect(runes.locator(".rune.lit")).toHaveCount(2);
+  // The status line shows the lore as one rune and its count.
+  await expect(runes).toHaveText("2");
   await runes.click();
   const dialog = page.getByRole("dialog", { name: "Dragon lore" });
   await expect(dialog.locator(".lore-lines li.found")).toHaveCount(2);
@@ -1350,8 +1360,10 @@ test("the road out: two regions, one taken, the map", async ({
   const after: SessionState = await saved(page);
   expect(after.quest!.dropped).toHaveLength(2);
   expect(after.quest!.stages.some((st) => st.label === first)).toBe(true);
+  // The map is the tray's own page (2026-11-16).
   await meter(page).click();
-  const map = page.locator(".quest-map");
+  await page.getByRole("tab", { name: /Map/ }).click();
+  const map = page.locator(".tray-page.shown .quest-map");
   await expect(map).toBeVisible();
   await expect(map).toHaveAccessibleName(new RegExp(first));
   await expect(map.locator(".map-region.current")).toHaveCount(1);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import type { Loot, SessionState } from "../game/types";
 import { Button, Modal } from "../components/UI";
 import { PackLogo } from "../components/PackMarks";
@@ -12,13 +12,18 @@ import {
   strikeOutcome,
 } from "../game/engine";
 import { QuestRecord } from "../components/QuestRecord";
-import { CrawlRecord } from "../components/Crawl";
-import { badgesLocked } from "../components/LeagueMarks";
+import { trayPageFor } from "../components/trayTabs";
 import { Guide } from "../components/Guide";
-import { crawlTheme } from "../components/crawlTheme";
 import { CardFrame } from "../components/Cards";
 import { theme } from "../presentation/theme";
 import { reducedMotion } from "../presentation/motion";
+// The tray is its own lazy chunk, warmed as a crawl starts (`warmTray`).
+const Tray = lazy(() => import("../components/tray/Tray"));
+const CrawlMenu = lazy(() => import("../components/tray/Menu"));
+export const warmTray = () => {
+  void import("../components/tray/Tray");
+  void import("../components/tray/Menu");
+};
 export type DialogName =
   | "menu"
   | "previous"
@@ -35,6 +40,8 @@ export type DialogName =
   | "lore"
   // The Quest's rival and their ledger (2026-11-15).
   | "rival"
+  // The Quest's map, from the HUD's place (2026-11-16).
+  | "map"
   | "guide"
   // The previous card opened from the header's stud.
   | "recap"
@@ -119,6 +126,27 @@ export function GameDialogs({
         </Button>
       </Modal>
     );
+  // A crawl's pause menu and its End game question (2026-11-16): one sheet
+  // in the mode's look, the question asked on it.
+  if ((displayed === "menu" || displayed === "end") && session?.quest?.party)
+    return (
+      <Suspense fallback={null}>
+        <CrawlMenu
+          session={session}
+          step={displayed}
+          exiting={exiting}
+          onClose={() => setModal(null)}
+          onPrevious={
+            session.previousId ? () => setModal("previous") : undefined
+          }
+          onUndo={onUndo}
+          onGuide={() => setModal("guide")}
+          onAskEnd={() => setModal("end")}
+          onBack={() => setModal("menu")}
+          onEnd={onEnd}
+        />
+      </Suspense>
+    );
   if (displayed === "menu")
     return (
       <Modal title="Paused" onClose={() => setModal(null)} exiting={exiting}>
@@ -195,38 +223,25 @@ export function GameDialogs({
       displayed === "jinx" ||
       displayed === "matchup" ||
       displayed === "lore" ||
-      displayed === "rival") &&
-    record?.party
-  ) {
-    const crawl = crawlTheme(session?.quest?.packId);
-    const { words } = crawl;
-    // The hearts open the party; each chip on the strip opens its own thing.
-    // A crawl without badges (Pub Crawl) reads a stray "badges" as the party.
-    const part = displayed === "badges" && !words.badges ? "party" : displayed;
-    // A card asking for the badges from memory keeps the case shut.
-    if (part === "badges" && badgesLocked(session!, crawl)) return null;
-    const title = {
-      party: words.party,
-      badges: words.badges ?? words.party,
-      satchel: words.Satchel,
-      jinx: words.jinx?.name ?? "Jinx",
-      matchup: "Type matchup",
-      lore: "Dragon lore",
-      rival: "Your rival",
-    }[part];
+      displayed === "rival" ||
+      displayed === "map") &&
+    record?.party &&
+    session
+  )
+    // A crawl's tray (2026-11-16): the hearts stud and every segment of the
+    // HUD's belt open it on their own page.
     return (
-      <Modal title={title} onClose={() => setModal(null)} exiting={exiting}>
-        <CrawlRecord
-          record={record}
-          theme={crawl}
+      <Suspense fallback={null}>
+        <Tray
           session={session}
-          onUse={onSpend}
+          open={trayPageFor(session, displayed)}
+          exiting={exiting}
+          onClose={() => setModal(null)}
+          onSpend={onSpend}
           onDrop={onDrop}
-          part={part}
         />
-      </Modal>
+      </Suspense>
     );
-  }
   if (displayed === "guide") {
     const party = session?.quest?.party;
     return (

@@ -36,6 +36,17 @@ Automated browser emulation is not evidence of actual iOS Home Screen behavior. 
 - [ ] Publish an update while a game is active: no mid-game reload. Then force-quit and reopen the app (or reload in Safari) and confirm the new build loads on its own, with the saved game intact. Finish/end a game after another update and apply the offered Update game, then check offline relaunch.
 - [ ] Measure interaction smoothness on real devices; target 60 fps. No performance claim until measured.
 
+## The HUD, the tray and the menus (2026-11-16): to check on a phone
+
+Only checked in Chromium emulation (mouse pointer events and synthetic touch events); no WebKit run locally.
+
+- [ ] The HUD reads from across the table and feels calm, not busy, in the League (glass capsule, HP ring, place, menu; status line of marks and numbers) and the Quest (leather band, heart vial, region in gilt, wax-seal menu). A curse or jinx shows only as its glowing mark. Nothing is clipped at 320 px, and nothing sits under the status-bar frost in the installed app.
+- [ ] Each status mark opens its tray page; the hearts open the party or team; the Quest's region opens the map; the menu opens the mode's own pause sheet.
+- [ ] Pull a sheet down from the grabber, the header, the dock, or a page's content when it is at the top. It follows the finger, a short pull springs back, and a long pull or quick flick puts it away. On a page scrolled down, the same drag scrolls the page first, and nothing bounces or stutters at the handoff. A sideways swipe turns pages and never pulls.
+- [ ] The rise and settle feel weighted; frame rate holds on an older iPhone (the League's glass, the badge shine).
+- [ ] VoiceOver: each sheet is announced by its page ("Bag", "Paused"); the grabber reads as Close; the dock reads as tabs.
+- [ ] Haptic tick on a tab tap, a Use, a confirmed drop and End game (with the haptics experiment).
+
 ## Safari 26 features (2026-11-16): to check on a phone
 
 Only Chromium emulation so far; WebKit runs the `@release` suite in CI.

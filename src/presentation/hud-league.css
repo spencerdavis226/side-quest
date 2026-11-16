@@ -1,0 +1,445 @@
+/* The League's HUD (2026-11-16, rebuilt from scratch): a dark glass
+   capsule lit along its top edge in the lead's type colour, and under it a
+   quiet line of marks and numbers. Rounded system lettering, as on the
+   tray's device. Alerts (the type edge, a sent-in Pokémon, a jinx) are
+   marks alone in a soft glow. Eager: it is the table's header. */
+
+/* Both HUDs: the bar over the status line, the width of the table. */
+.playing .crawl-hud.topbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: 8px;
+  min-height: 0;
+}
+.lh {
+  --lh-ink: #f4f8fb;
+  --lh-dim: rgb(226 236 244 / 0.62);
+  --lh-glass: rgb(255 255 255 / 0.07);
+  font-family:
+    ui-rounded,
+    "SF Pro Rounded",
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
+.lh-bar {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  height: 54px;
+  padding: 0 4px;
+  border-radius: 27px;
+  background: linear-gradient(
+    180deg,
+    rgb(32 42 54 / 0.94),
+    rgb(12 17 23 / 0.96)
+  );
+  box-shadow:
+    inset 0 1px rgb(255 255 255 / 0.16),
+    inset 0 0 0 1px rgb(255 255 255 / 0.06),
+    0 10px 26px rgb(0 0 0 / 0.45);
+}
+/* The edge light, in the lead's colours. */
+.lh-bar::before {
+  content: "";
+  position: absolute;
+  inset: 0 26px auto;
+  height: 1.5px;
+  border-radius: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--type-light, #ff5a5f) 30%,
+    var(--type-light, #ff5a5f) 70%,
+    transparent
+  );
+  opacity: 0.85;
+}
+
+/* Team HP: the lead's medallion in a ring that drains, the number beside. */
+.lh-hp {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 46px;
+  padding: 0 12px 0 2px;
+  border: 0;
+  border-radius: 23px;
+  background: var(--lh-glass);
+  color: var(--lh-ink);
+  font: inherit;
+  cursor: pointer;
+}
+.lh-hp:disabled {
+  opacity: 1;
+  cursor: default;
+}
+.lh-hp:active:not(:disabled) {
+  background: rgb(255 255 255 / 0.13);
+}
+.lh-gauge {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+}
+.lh-ring {
+  position: absolute;
+  inset: 0;
+  rotate: -90deg;
+  overflow: visible;
+}
+.lh-ring circle {
+  fill: none;
+  stroke-width: 3.5;
+  stroke-linecap: round;
+}
+.lh-ring .ring-track {
+  stroke: rgb(255 255 255 / 0.12);
+}
+.lh-ring .ring-live {
+  stroke: #4ade80;
+  filter: drop-shadow(0 0 3px currentColor);
+  color: #4ade80;
+  transition:
+    stroke-dashoffset 500ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    stroke 400ms ease;
+}
+.lh-hp.hp-mid .ring-live {
+  stroke: #facc15;
+  color: #facc15;
+}
+.lh-hp.hp-low .ring-live {
+  stroke: #ff4d4d;
+  color: #ff4d4d;
+}
+.lh-gauge .lh-lead.type-mark {
+  --mark-size: 30px;
+  box-shadow: none;
+}
+.lh-gauge .lh-lead.crawl-icon {
+  width: 26px;
+  height: 26px;
+  background: #fff;
+}
+.lh-hp.hurt .lh-gauge {
+  animation: lh-hurt 520ms cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+.lh-hp.heal .lh-gauge {
+  animation: lh-heal 700ms ease-out;
+}
+@keyframes lh-hurt {
+  0% {
+    transform: scale(1.18);
+    filter: brightness(1.8) drop-shadow(0 0 8px #ff4d4d);
+  }
+  30% {
+    transform: translateX(-3px);
+  }
+  55% {
+    transform: translateX(2px);
+  }
+}
+@keyframes lh-heal {
+  0% {
+    transform: scale(0.88);
+    filter: brightness(1.6) drop-shadow(0 0 10px #4ade80);
+  }
+  60% {
+    transform: scale(1.08);
+  }
+}
+.lh-hp-num {
+  display: inline-flex;
+  align-items: baseline;
+  font-variant-numeric: tabular-nums;
+}
+.lh-hp-num b {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  animation: lh-tick 380ms cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+.lh-hp-num small {
+  color: var(--lh-dim);
+  font-size: 13px;
+  font-weight: 700;
+}
+@keyframes lh-tick {
+  from {
+    transform: translateY(-5px);
+    opacity: 0.3;
+  }
+}
+
+/* The place: its name over its pips. */
+.lh-place {
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+.lh-place-name {
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--lh-dim);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.lh .hud-pips {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.lh .room-pips i {
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background: rgb(255 255 255 / 0.18);
+  transition: all 300ms ease;
+}
+.lh .room-pips i.done {
+  background: rgb(255 255 255 / 0.55);
+}
+.lh .room-pips i.here {
+  width: 18px;
+  background: var(--type-light, #fff);
+  box-shadow: 0 0 8px var(--type-light, #fff);
+}
+.lh .boss-pips i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px rgb(255 120 110 / 0.7);
+}
+.lh .boss-pips i.hit {
+  background: #ff5a4f;
+  box-shadow: 0 0 8px rgb(255 90 79 / 0.7);
+}
+.lh-place.fight-boss .lh-place-name,
+.lh-place.fight-ambush .lh-place-name {
+  color: #ffb4aa;
+}
+
+/* The menu: three dots on glass. */
+.lh-menu {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--lh-glass);
+  cursor: pointer;
+}
+.lh-menu span {
+  display: flex;
+  gap: 4px;
+}
+.lh-menu i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--lh-ink);
+}
+.lh-menu:active:not(:disabled) {
+  background: rgb(255 255 255 / 0.15);
+}
+.lh-menu:disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+/* The status line: a mark and a number each, no boxes. */
+.lh-status {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  height: 30px;
+}
+.hud-stat {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 15px;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    opacity 220ms ease-out;
+  @starting-style {
+    opacity: 0;
+  }
+}
+/* A 44px target round a 30px mark. */
+.hud-stat::after {
+  content: "";
+  position: absolute;
+  inset: -7px -2px;
+}
+.hud-stat:disabled {
+  cursor: default;
+}
+.hud-stat b {
+  font-variant-numeric: tabular-nums;
+}
+.lh .hud-stat {
+  color: var(--lh-ink);
+  font-size: 15px;
+  font-weight: 800;
+}
+.lh .hud-stat:active:not(:disabled) {
+  background: rgb(255 255 255 / 0.1);
+}
+.lh .hud-stat .crawl-icon {
+  width: 17px;
+  height: 17px;
+  opacity: 0.9;
+}
+.lh .hud-stat b small {
+  color: var(--lh-dim);
+  font-size: 12px;
+}
+.lh .tag-satchel.empty {
+  opacity: 0.5;
+}
+.lh-rule {
+  width: 1px;
+  height: 16px;
+  margin: 0 4px;
+  background: rgb(255 255 255 / 0.2);
+}
+
+/* Alerts: the mark alone, in a soft halo. */
+.lh .hud-alert {
+  padding: 0 7px;
+  min-width: 30px;
+  justify-content: center;
+}
+.lh .tag-edge .edge-mark {
+  width: 20px;
+  height: 20px;
+}
+.lh .tag-edge.edge-advantage {
+  background: rgb(74 222 128 / 0.14);
+  box-shadow: inset 0 0 0 1px rgb(74 222 128 / 0.45);
+}
+.lh .tag-edge.edge-disadvantage {
+  background: rgb(255 77 77 / 0.14);
+  box-shadow: inset 0 0 0 1px rgb(255 77 77 / 0.45);
+}
+.lh .tag-assist {
+  color: #fde68a;
+  background: rgb(250 204 21 / 0.14);
+  box-shadow: inset 0 0 0 1px rgb(250 204 21 / 0.45);
+}
+.lh .tag-assist .type-mark {
+  --mark-size: 20px;
+}
+.lh .tag-jinx {
+  color: #d8b4fe;
+  background: rgb(168 85 247 / 0.18);
+  box-shadow:
+    inset 0 0 0 1px rgb(192 132 252 / 0.55),
+    0 0 14px rgb(168 85 247 / 0.45);
+  animation: hud-breathe 2.8s ease-in-out infinite;
+}
+.lh .tag-jinx .crawl-icon {
+  width: 18px;
+  height: 18px;
+}
+@keyframes hud-breathe {
+  50% {
+    filter: brightness(1.25);
+  }
+}
+.suspended .hud-alert {
+  animation-play-state: paused;
+}
+
+/* The badges, shut while a card asks for them by heart: dim, struck. */
+.hud-stat.locked > :not(.chip-lock) {
+  opacity: 0.4;
+}
+.chip-lock {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.chip-lock::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 18%;
+  right: 18%;
+  height: 2px;
+  border-radius: 1px;
+  background: #ff5a4f;
+  rotate: -18deg;
+}
+
+@media (max-width: 360px) {
+  .lh-bar {
+    gap: 4px;
+  }
+  .lh-hp {
+    padding-right: 8px;
+  }
+  .lh .hud-stat {
+    padding: 0 7px;
+  }
+}
+@media (min-width: 700px) {
+  .lh-bar {
+    height: 64px;
+    border-radius: 32px;
+    padding: 0 6px;
+  }
+  .lh-hp {
+    height: 54px;
+    border-radius: 27px;
+  }
+  .lh-gauge {
+    width: 50px;
+    height: 50px;
+  }
+  .lh-gauge .lh-lead.type-mark {
+    --mark-size: 36px;
+  }
+  .lh-hp-num b {
+    font-size: 26px;
+  }
+  .lh-menu {
+    width: 54px;
+    height: 54px;
+  }
+  .lh-place-name {
+    font-size: 14px;
+  }
+  .lh-status,
+  .lh .hud-stat {
+    height: 36px;
+  }
+  .lh .hud-stat {
+    font-size: 18px;
+  }
+  .lh .hud-stat .crawl-icon {
+    width: 21px;
+    height: 21px;
+  }
+}
