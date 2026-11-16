@@ -126,7 +126,7 @@ test("the Chronicle keeps each rival's record, and names the nemesis", async ({
   await page.getByRole("button", { name: /Chronicle/ }).click();
   const book = page.getByRole("dialog", { name: "Chronicle" });
   const rivals = book.locator(".chronicle-rivals");
-  await expect(rivals.locator("li")).toHaveCount(6);
+  await expect(rivals.locator("li")).toHaveCount(7);
   const her = rivals.locator("li.met");
   await expect(her).toContainText("Lady Fingerbang");
   await expect(her).toContainText("Nemesis");

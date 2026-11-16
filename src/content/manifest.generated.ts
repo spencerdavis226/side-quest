@@ -2318,6 +2318,7 @@ export const packs: PackDefinition[] = [
             "dungeon.rival-chuck",
             "dungeon.rival-gary",
             "dungeon.rival-queef",
+            "dungeon.rival-nocap",
           ],
           variants: [
             { deeds: ["nemesis-chad"], cardIds: ["dungeon.rival-chad-back"] },
@@ -2332,6 +2333,7 @@ export const packs: PackDefinition[] = [
             { deeds: ["nemesis-chuck"], cardIds: ["dungeon.rival-chuck-back"] },
             { deeds: ["nemesis-gary"], cardIds: ["dungeon.rival-gary-back"] },
             { deeds: ["nemesis-queef"], cardIds: ["dungeon.rival-queef-back"] },
+            { deeds: ["nemesis-nocap"], cardIds: ["dungeon.rival-nocap-back"] },
           ],
         },
         {
@@ -2821,6 +2823,10 @@ export const packs: PackDefinition[] = [
             "dungeon.rival-queef-encore",
             "dungeon.rival-queef-requests",
             "dungeon.rival-queef-open-mic",
+            "dungeon.rival-nocap-caught-in-4k",
+            "dungeon.rival-nocap-mid",
+            "dungeon.rival-nocap-touch-grass",
+            "dungeon.rival-nocap-aura-check",
           ],
           ambush: [
             "dungeon.rival-chad-autograph",
@@ -2847,6 +2853,10 @@ export const packs: PackDefinition[] = [
             "dungeon.rival-queef-encore",
             "dungeon.rival-queef-requests",
             "dungeon.rival-queef-open-mic",
+            "dungeon.rival-nocap-caught-in-4k",
+            "dungeon.rival-nocap-mid",
+            "dungeon.rival-nocap-touch-grass",
+            "dungeon.rival-nocap-aura-check",
           ],
           variants: [
             {
@@ -2901,6 +2911,15 @@ export const packs: PackDefinition[] = [
                 "dungeon.rival-queef-encore",
                 "dungeon.rival-queef-requests",
                 "dungeon.rival-queef-open-mic",
+              ],
+            },
+            {
+              deeds: ["rival-nocap"],
+              cardIds: [
+                "dungeon.rival-nocap-caught-in-4k",
+                "dungeon.rival-nocap-mid",
+                "dungeon.rival-nocap-touch-grass",
+                "dungeon.rival-nocap-aura-check",
               ],
             },
           ],
@@ -3053,6 +3072,7 @@ export const packs: PackDefinition[] = [
                   "dungeon.rival-chuck-door",
                   "dungeon.rival-gary-door",
                   "dungeon.rival-queef-door",
+                  "dungeon.rival-nocap-door",
                   "dungeon.rival-sensei-pinned",
                 ],
                 variants: [
@@ -3082,6 +3102,10 @@ export const packs: PackDefinition[] = [
                     cardIds: ["dungeon.rival-queef-door"],
                   },
                   {
+                    deeds: ["rival-nocap"],
+                    cardIds: ["dungeon.rival-nocap-door"],
+                  },
+                  {
                     deeds: ["rival-sensei", "rival-won-twice"],
                     cardIds: ["dungeon.rival-sensei-pinned"],
                   },
@@ -3098,6 +3122,7 @@ export const packs: PackDefinition[] = [
                   "dungeon.rival-chuck-duel",
                   "dungeon.rival-gary-duel",
                   "dungeon.rival-queef-duel",
+                  "dungeon.rival-nocap-duel",
                 ],
                 optional: true,
                 variants: [
@@ -3124,6 +3149,10 @@ export const packs: PackDefinition[] = [
                   {
                     deeds: ["rival-queef", "rival-refused"],
                     cardIds: ["dungeon.rival-queef-duel"],
+                  },
+                  {
+                    deeds: ["rival-nocap", "rival-refused"],
+                    cardIds: ["dungeon.rival-nocap-duel"],
                   },
                 ],
               },
@@ -3291,6 +3320,7 @@ export const packs: PackDefinition[] = [
                   "dungeon.rival-chuck-door",
                   "dungeon.rival-gary-door",
                   "dungeon.rival-queef-door",
+                  "dungeon.rival-nocap-door",
                   "dungeon.rival-sensei-pinned",
                 ],
                 variants: [
@@ -3320,6 +3350,10 @@ export const packs: PackDefinition[] = [
                     cardIds: ["dungeon.rival-queef-door"],
                   },
                   {
+                    deeds: ["rival-nocap"],
+                    cardIds: ["dungeon.rival-nocap-door"],
+                  },
+                  {
                     deeds: ["rival-sensei", "rival-won-twice"],
                     cardIds: ["dungeon.rival-sensei-pinned"],
                   },
@@ -3336,6 +3370,7 @@ export const packs: PackDefinition[] = [
                   "dungeon.rival-chuck-duel",
                   "dungeon.rival-gary-duel",
                   "dungeon.rival-queef-duel",
+                  "dungeon.rival-nocap-duel",
                 ],
                 optional: true,
                 variants: [
@@ -3362,6 +3397,10 @@ export const packs: PackDefinition[] = [
                   {
                     deeds: ["rival-queef", "rival-refused"],
                     cardIds: ["dungeon.rival-queef-duel"],
+                  },
+                  {
+                    deeds: ["rival-nocap", "rival-refused"],
+                    cardIds: ["dungeon.rival-nocap-duel"],
                   },
                 ],
               },
@@ -3529,6 +3568,7 @@ export const packs: PackDefinition[] = [
                   "dungeon.rival-chuck-door",
                   "dungeon.rival-gary-door",
                   "dungeon.rival-queef-door",
+                  "dungeon.rival-nocap-door",
                   "dungeon.rival-sensei-pinned",
                 ],
                 variants: [
@@ -3558,6 +3598,10 @@ export const packs: PackDefinition[] = [
                     cardIds: ["dungeon.rival-queef-door"],
                   },
                   {
+                    deeds: ["rival-nocap"],
+                    cardIds: ["dungeon.rival-nocap-door"],
+                  },
+                  {
                     deeds: ["rival-sensei", "rival-won-twice"],
                     cardIds: ["dungeon.rival-sensei-pinned"],
                   },
@@ -3574,6 +3618,7 @@ export const packs: PackDefinition[] = [
                   "dungeon.rival-chuck-duel",
                   "dungeon.rival-gary-duel",
                   "dungeon.rival-queef-duel",
+                  "dungeon.rival-nocap-duel",
                 ],
                 optional: true,
                 variants: [
@@ -3600,6 +3645,10 @@ export const packs: PackDefinition[] = [
                   {
                     deeds: ["rival-queef", "rival-refused"],
                     cardIds: ["dungeon.rival-queef-duel"],
+                  },
+                  {
+                    deeds: ["rival-nocap", "rival-refused"],
+                    cardIds: ["dungeon.rival-nocap-duel"],
                   },
                 ],
               },

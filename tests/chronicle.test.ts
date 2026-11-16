@@ -476,19 +476,25 @@ describe("the Chronicle's rivals", () => {
     expect(
       createSession(crawl, cards, packs, seeded(9), new Set(), {}).quest,
     ).toEqual(createSession(crawl, cards, packs, seeded(9)).quest);
-    // Picked plainly 1 time in 6; swapped in 1 time in 7 more when not:
-    // 1/6 + (5/6)(1/7) = 2/7, twice any other rival's 5/42 each.
+    // Picked plainly 1 time in 7 (Lord Nocap, 2026-11-16); swapped in 1
+    // time in 8 more when not: 1/7 + (6/7)(1/8) = 1/4, twice any other
+    // rival's 1/8.
     const s = createSession(crawl, cards, packs, seeded(1));
-    const other = ["chad", "fingerbang", "sensei", "chuck", "queef"].find(
-      (w) => intro(s) !== `dungeon.rival-${w}`,
-    )!;
+    const other = [
+      "chad",
+      "fingerbang",
+      "sensei",
+      "chuck",
+      "queef",
+      "nocap",
+    ].find((w) => intro(s) !== `dungeon.rival-${w}`)!;
     const swap = (r: number) =>
       intro({
         ...s,
         quest: rememberRivals(s.quest!, { nemesis: other }, () => r),
       });
-    expect(swap(1 / 7 - 0.001)).toBe(`dungeon.rival-${other}`);
-    expect(swap(1 / 7 + 0.001)).toBe(intro(s));
+    expect(swap(1 / 8 - 0.001)).toBe(`dungeon.rival-${other}`);
+    expect(swap(1 / 8 + 0.001)).toBe(intro(s));
     // Met before: the deed that deals their returning introduction.
     const back = createSession(crawl, cards, packs, seeded(4), new Set(), {
       nemesis: "gary",

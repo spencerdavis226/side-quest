@@ -807,7 +807,126 @@ const queef = rival(
   },
 );
 
-export const rivals: Rival[] = [chad, fingerbang, sensei, chuck, gary, queef];
+/** His two curses, laid by a lost meeting or when he cuts in to curse. */
+const NO_CAP: Jinx = {
+  name: "No Cap",
+  rule: "The cursed player ends every sentence with 'no cap'. Slip: drink 1.",
+};
+const MAIN_CHARACTER: Jinx = {
+  name: "Main Character",
+  rule: "The cursed player narrates what they do in the third person. Slip: drink 1.",
+};
+
+/** Lord Nocap the Mid (2026-11-16, owner: "a Gen Z kid with Gen Z lingo
+ * and attitude but in the theme of the game"): a teenage lordling who
+ * streams the quest. He films your swings (makes you run them back), rates
+ * everything, and posts you; a lost meeting costs a heart and lays his
+ * curse. He will collab at the door, and keeps his word: with a betrayal,
+ * joining him won less often than a duel lost, which the balance forbids. */
+const nocap = rival(
+  "nocap",
+  {
+    name: "Lord Nocap",
+    ritual:
+      "When Lord Nocap shows up, he rates everyone's aura. On three, point at the lowest; they drink 1.",
+    lines: {
+      took: "Lord Nocap takes your {item} for content. 'It's giving mine.'",
+      back: "Lord Nocap tosses back your {item}. 'Mid anyway, no cap.'",
+      lostTo: "'Bro really thought.' Lord Nocap is already editing the clip.",
+      beaten: "Lord Nocap says it was staged. His chat says otherwise.",
+      redo: "'Nah, run it back. I wasn't recording.' Roll again.",
+      meddle: "'Hold up, let me get this angle.' Roll twice, keep the worse.",
+      curse: "Lord Nocap posts you. The comments are brutal. You're cursed.",
+    },
+    style: { redo: 4, curse: 4, meddle: 1 },
+    verse: {
+      joined: "with Lord Nocap filming every swing,",
+      beaten: "left Lord Nocap ratioed in the dirt,",
+      ahead: "clipped and posted by Lord Nocap,",
+    },
+  },
+  {
+    title: "Lord Nocap the Mid",
+    rules:
+      "Lord Nocap the Mid is live and grabs an item for content. Everyone poses on three; worst drinks 2.",
+    back: [
+      "Nocap, Part Two",
+      "Lord Nocap is back. His chat remembers you. He takes two. Everyone poses; worst drinks 2.",
+    ],
+  },
+  { damage: 1 },
+  [
+    [
+      "caught-in-4k",
+      "Caught in 4K",
+      "Lord Nocap is filming your swing for his chat. Roll d20 to not choke on camera.",
+      vs(
+        "You choked. Two million views. Drink 3.",
+        "You ate. He posts it as his. Give 3.",
+      ),
+      MAIN_CHARACTER,
+    ],
+    [
+      "mid",
+      "That's Mid",
+      "Lord Nocap calls your sword mid. Defend it like a product review for 10 seconds, then roll d20.",
+      vs("Ratioed. Drink 3.", "He lowkey wants one now. Give 3."),
+      NO_CAP,
+    ],
+    [
+      "touch-grass",
+      "Touch Grass",
+      "Lord Nocap says you need to touch grass. Roll d20 to find some first.",
+      vs(
+        "He touches it first, on stream. Drink 3.",
+        "You touch grass. He's shook. Give 3.",
+      ),
+      MAIN_CHARACTER,
+    ],
+    [
+      "aura-check",
+      "Aura Check",
+      "Lord Nocap rates your aura out loud. It's negative. Roll d20 to farm some back.",
+      vs("Minus a thousand aura. Drink 3.", "Aura restored, no cap. Give 3."),
+      NO_CAP,
+    ],
+  ],
+  {
+    title: "The Collab",
+    rules:
+      "Lord Nocap gives it all back for a collab: he films the dragon fight. Not for clout. Vote.",
+    offers: [
+      { label: "Collab", recruit: true, restore: true, deed: "rival-joined" },
+      { label: "Duel him", deed: "rival-refused" },
+    ],
+    ally: {
+      name: "Lord Nocap",
+      calling: ["any"],
+      bonus: 3,
+      ritual: "Whenever he fights, everyone yells 'W' or 'L' after the roll.",
+    },
+  },
+  {
+    title: "The Final Stream",
+    rules:
+      "Lord Nocap goes live to take the dragon off you. Duel him. Roll d20.",
+    fight: vs(
+      "He clips your loss. Drink 4.",
+      "You unplug his stream mid-sentence. Give 4.",
+    ),
+    prize: ["Nocap's Ring Light", { roll: { elite: 1 } }],
+  },
+);
+
+export const rivals: Rival[] = [
+  chad,
+  fingerbang,
+  sensei,
+  chuck,
+  gary,
+  queef,
+  nocap,
+];
 
 /** Rivals Phase 4: Sensei beaten twice (the deed `rival-won-twice`) is pinned
  * under the dragon's claw at the door instead of setting his exam. Saved
