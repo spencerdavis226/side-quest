@@ -2,6 +2,15 @@
 
 Updated 2026-11-16. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Done 2026-11-16: sheets rise from the bottom, without the snap
+
+Owner, on an iPhone, with a screenshot: menus and trays in both modes "snap up to like the middle of the screen, freeze, then drag up normal", and the menu "glitches up and disconnects" (the sheet and the dim ending two-thirds down, the card undimmed below).
+
+- **Cause** (measured in WebKit here, a one-off spec not committed): opening a modal `<dialog>` stalls WebKit's main thread while it restyles the page and paints the sheet, about 450 ms for a plain modal and 700 to 900 ms for a tray sheet. The rise was a CSS animation timed by the clock, so it ran on through the stall: the first frame drawn had the sheet half-way up, its unpainted tiles showed as the gap, then it finished the rise. Moving the rise to Web Animations after two frames was not enough: the sheet was then painted only once it became visible, and the first frame shown was still half-way (y 446 to 479 for a menu resting at 295, on an 844 screen).
+- **Fix** (`tray/Sheet.tsx`): the sheet is painted where it rests at opacity 0.002 (WebKit may skip painting at 0), and the rise is stepped one frame at a time from the spring (`sheetAt` in `spring.ts`), moving at most 34 ms of the spring per frame: a stalled frame holds the sheet where it was instead of jumping ahead. Inline styles on the sheet and the scrim only, so nothing else restyles. A pull (`pulling`) or a close (`closing`) takes over at once; Reduced Motion skips it. After: the first frame shown has the menu at y 664 and it climbs to 295; the stall is spent while it is invisible.
+- **Paint** (`tray.css`, `tray-league.css`, `tray-quest.css`): the costliest paint in a bisect was blurred shadows, then filters, then repeating gradients. Removed: 59 blurred `box-shadow` layers (crisp rims and insets kept), 1 blurred `text-shadow`, 20 `filter` drop-shadows/brightness, 10 repeating-gradient textures. Screenshots of both skins' trays and menus checked; the sheet loses its soft upward shadow.
+- **Checked**: `npm test` 805 passed; typecheck; lint; build (budgets pass); WebKit `tray.spec` 24 of 24 (3 repeats, 4 workers); WebKit and Chromium `test:release` 28 of 28; Chromium `test:e2e` 206 of 206. **Not checked**: a phone. On a slow device the rise now plays slower rather than skipping; on an iPhone at 60 Hz it is the same spring as before.
+
 ## Done 2026-11-16: the WebKit release flakes, found and fixed
 
 Owner: "Fix the league starter animation test or whatever it is I don't want this to keep failing". Reproduced in WebKit in the agent's container for the first time: the session moved to a personal environment, `side-quest`, that allows Playwright's download hosts (`cdn.playwright.dev`, `playwright.download.prss.microsoft.com`), so `npx playwright install webkit` works there.

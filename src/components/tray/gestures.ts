@@ -167,6 +167,8 @@ export function useSheetDrag(
         // Read once, before any write this gesture makes.
         height = Math.max(1, el.offsetHeight);
         track.reset();
+        // A pull during the rise takes over from it: the rise stops
+        // when the host is `pulling` (Sheet.tsx).
         el.style.transition = "none";
         if (shade) shade.style.transition = "none";
         host.classList.add("pulling");

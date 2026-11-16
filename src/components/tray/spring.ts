@@ -10,13 +10,14 @@ export interface Spring {
   ms: number;
 }
 
-/** Sample a critically-or-under-damped spring from 0 to 1. `stiffness` and
- * `damping` are per unit mass; the curve ends when it stays within 0.1% of
- * rest. */
-export function spring(stiffness: number, damping: number): Spring {
+/** The spring's position at `t` seconds, from 0 to 1 (about). */
+export function springCurve(
+  stiffness: number,
+  damping: number,
+): (t: number) => number {
   const w0 = Math.sqrt(stiffness);
   const zeta = damping / (2 * w0);
-  const at = (t: number) => {
+  return (t: number) => {
     if (zeta < 1) {
       const wd = w0 * Math.sqrt(1 - zeta * zeta);
       return (
@@ -27,6 +28,13 @@ export function spring(stiffness: number, damping: number): Spring {
     }
     return 1 - Math.exp(-w0 * t) * (1 + w0 * t);
   };
+}
+
+/** Sample a critically-or-under-damped spring from 0 to 1. `stiffness` and
+ * `damping` are per unit mass; the curve ends when it stays within 0.1% of
+ * rest. */
+export function spring(stiffness: number, damping: number): Spring {
+  const at = springCurve(stiffness, damping);
   // Find where it settles, in steps of 1/60 s, at most 2 s.
   const step = 1 / 60;
   let end = step;
@@ -55,5 +63,7 @@ export function spring(stiffness: number, damping: number): Spring {
 /** The sheet rising and settling back: a quick spring with a small
  * overshoot. */
 export const SHEET = spring(260, 26);
+/** The same spring as a function of time, for the rise (Sheet.tsx). */
+export const sheetAt = springCurve(260, 26);
 /** A page snapping into place. */
 export const PAGE = spring(300, 32);

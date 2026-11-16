@@ -44,6 +44,7 @@ Only checked in Chromium emulation (mouse pointer events and synthetic touch eve
 - [ ] Each status mark opens its tray page; the hearts open the party or team; the Quest's region opens the map; the menu opens the mode's own pause sheet.
 - [ ] Pull a sheet down from the grabber, the header, the dock, or a page's content when it is at the top. It follows the finger, a short pull springs back, and a long pull or quick flick puts it away. On a page scrolled down, the same drag scrolls the page first, and nothing bounces or stutters at the handoff. A sideways swipe turns pages and never pulls.
 - [ ] The rise and settle feel weighted; frame rate holds on an older iPhone (the League's glass, the badge shine).
+- [ ] Open every sheet (each tray page, the menu, End game) in both modes, cold and again: the sheet rises from the bottom edge in one motion, with no frame half-way up, no pause, and no gap or undimmed strip under it (the owner's 2026-11-16 snap report; fixed in emulated WebKit only).
 - [ ] VoiceOver: each sheet is announced by its page ("Bag", "Paused"); the grabber reads as Close; the dock reads as tabs.
 - [ ] Haptic tick on a tab tap, a Use, a confirmed drop and End game (with the haptics experiment).
 

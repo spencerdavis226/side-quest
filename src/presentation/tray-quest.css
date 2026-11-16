@@ -42,9 +42,7 @@
 
 /* The cover: stitching inside the edge and gilt corner pieces. */
 .tray-quest .tray-sheet {
-  box-shadow:
-    inset 0 2px 0 rgb(255 214 160 / 0.35),
-    0 -18px 60px rgb(0 0 0 / 0.65);
+  box-shadow: inset 0 2px 0 rgb(255 214 160 / 0.35);
 }
 .tray-quest .tray-edge {
   background:
@@ -89,18 +87,14 @@
     #9a1e12 45%,
     #5a0c06 100%
   );
-  box-shadow:
-    inset 0 -3px 5px rgb(0 0 0 / 0.4),
-    inset 0 2px 3px rgb(255 160 140 / 0.45),
-    0 3px 6px rgb(0 0 0 / 0.5);
+  box-shadow: none;
   color: #f6b8a4;
   rotate: -8deg;
 }
 .qt-seal .tray-emblem {
   width: 28px;
   height: 28px;
-  filter: drop-shadow(0 -1px 0 rgb(0 0 0 / 0.5))
-    drop-shadow(0 1px 0 rgb(255 200 180 / 0.35));
+  filter: none;
   fill: #7a140a;
 }
 .qt-titles {
@@ -131,7 +125,7 @@
   letter-spacing: 0.01em;
   text-overflow: ellipsis;
   white-space: nowrap;
-  filter: drop-shadow(0 2px 0 rgb(40 18 4 / 0.9));
+  filter: none;
   animation: qt-title-in 380ms ease-out both;
 }
 /* Opacity and transform only: the compositor plays it, no relayout. */
@@ -150,8 +144,7 @@
   background: linear-gradient(180deg, #e6c06a, #a77a26);
   box-shadow:
     inset 0 1px rgb(255 245 200 / 0.8),
-    inset 0 -2px 0 rgb(80 50 10 / 0.4),
-    0 2px 4px rgb(0 0 0 / 0.5);
+    inset 0 -2px 0 rgb(80 50 10 / 0.4);
   color: #3a1e06;
 }
 .qt-vitals .crawl-icon {
@@ -197,23 +190,11 @@
       transparent 55%,
       rgb(120 70 20 / 0.28) 100%
     ),
-    repeating-radial-gradient(
-      circle at 30% 20%,
-      rgb(140 100 40 / 0.04) 0 1px,
-      transparent 1px 7px
-    ),
-    repeating-linear-gradient(
-      80deg,
-      rgb(120 80 30 / 0.035) 0 1px,
-      transparent 1px 9px
-    ),
     linear-gradient(180deg, #f5e8c8, var(--qt-parch) 50%, #e6d1a2);
   box-shadow:
     0 0 0 1px #2a1406,
     0 3px 0 #d8c08a,
-    0 5px 0 #c4a870,
-    0 7px 10px rgb(0 0 0 / 0.5),
-    inset 0 0 22px rgb(120 70 20 / 0.28);
+    0 5px 0 #c4a870;
   color: var(--qt-ink);
 }
 .qt-leaf {
@@ -279,23 +260,20 @@
   );
   box-shadow:
     0 0 0 3px #b48a3c,
-    0 0 0 5px #4a2c0c,
-    0 6px 14px rgb(40 20 0 / 0.45),
-    inset 0 -4px 8px rgb(0 0 0 / 0.5),
-    inset 0 3px 4px rgb(255 255 255 / 0.18);
+    0 0 0 5px #4a2c0c;
   color: #e8d2a0;
 }
 .qt-hero-medal .tray-emblem {
   width: 54px;
   height: 54px;
-  filter: drop-shadow(0 2px 0 rgb(0 0 0 / 0.7));
+  filter: none;
   animation: qt-strike 640ms cubic-bezier(0.2, 1.5, 0.4, 1) both;
 }
 @keyframes qt-strike {
   from {
     opacity: 0;
     scale: 1.5;
-    filter: brightness(3);
+    filter: none;
   }
 }
 .qt-hero-words {
@@ -391,7 +369,7 @@
 }
 .qt-heart.full .crawl-icon {
   background: linear-gradient(180deg, #ff6a52, #b8180c 70%, #7a0a04);
-  filter: drop-shadow(0 2px 0 rgb(80 10 0 / 0.5));
+  filter: none;
 }
 .qt-heart.spent .crawl-icon {
   background: rgb(90 56 24 / 0.22);
@@ -476,9 +454,7 @@
     #d1a042 50%,
     #7a5212 100%
   );
-  box-shadow:
-    0 0 0 2px #5a3a0c,
-    0 3px 6px rgb(60 30 0 / 0.4);
+  box-shadow: 0 0 0 2px #5a3a0c;
   color: #4a2e08;
 }
 .qt-ally-medal .tray-emblem {
@@ -572,9 +548,7 @@
   height: 54px;
   border-radius: 10px;
   background: radial-gradient(circle at 50% 35%, #4a3a2a, #1e1610 75%);
-  box-shadow:
-    0 0 0 2px #8a6a3a,
-    inset 0 3px 8px rgb(0 0 0 / 0.7);
+  box-shadow: 0 0 0 2px #8a6a3a;
 }
 .qt-socket-well .crawl-icon {
   width: 32px;
@@ -585,10 +559,7 @@
   background: rgb(232 200 138 / 0.25);
 }
 .qt-socket.worn .qt-socket-well {
-  box-shadow:
-    0 0 0 2px #e2b860,
-    0 0 12px rgb(226 184 96 / 0.45),
-    inset 0 3px 8px rgb(0 0 0 / 0.7);
+  box-shadow: 0 0 0 2px #e2b860;
 }
 .qt-socket-words {
   display: grid;
@@ -624,25 +595,20 @@
     linear-gradient(180deg, #3a2a1c, #1e140c);
   box-shadow:
     0 0 0 2px #7a5a2c,
-    0 0 0 4px #2a1a0a,
-    inset 0 4px 10px rgb(0 0 0 / 0.7);
+    0 0 0 4px #2a1a0a;
 }
 .tray-quest .inv-socket .crawl-icon {
   background: linear-gradient(180deg, #e6d4ff, #a88ae0);
-  filter: drop-shadow(0 2px 2px rgb(0 0 0 / 0.6));
+  filter: none;
 }
 .tray-quest .inv-slot.picked .inv-socket {
   box-shadow:
     0 0 0 2px #ffe2a0,
-    0 0 0 4px #8a5a14,
-    0 0 18px rgb(255 200 100 / 0.6),
-    inset 0 4px 10px rgb(0 0 0 / 0.6);
+    0 0 0 4px #8a5a14;
 }
 .tray-quest .inv-cell.empty .inv-socket {
   background: rgb(90 56 24 / 0.08);
-  box-shadow:
-    inset 0 0 0 1.5px rgb(90 56 24 / 0.25),
-    inset 0 2px 6px rgb(90 56 24 / 0.15);
+  box-shadow: inset 0 0 0 1.5px rgb(90 56 24 / 0.25);
 }
 .tray-quest .inv-name {
   color: var(--qt-ink);
@@ -673,7 +639,7 @@
   padding: 6px;
   border-radius: 10px;
   background: linear-gradient(180deg, #c9993e, #7a5212);
-  box-shadow: 0 4px 10px rgb(60 30 0 / 0.35);
+  box-shadow: none;
 }
 .qt-map-frame .quest-map {
   display: block;
@@ -726,9 +692,7 @@
   margin: 0;
   padding: 8px 8px 10px;
   background: linear-gradient(180deg, #e8d0a0, #d4b47a);
-  box-shadow:
-    0 6px 12px rgb(60 30 0 / 0.35),
-    inset 0 0 18px rgb(120 70 20 / 0.35);
+  box-shadow: none;
   rotate: 2.5deg;
   text-align: center;
 }
@@ -804,9 +768,7 @@
 }
 .qt-lore-seal.lore-3 .qt-lore-dragon {
   opacity: 1;
-  filter: drop-shadow(
-    0 0 12px color-mix(in srgb, var(--dragon, #ff7a6a) 70%, transparent)
-  );
+  filter: none;
 }
 .qt-rune {
   position: absolute;
@@ -816,9 +778,7 @@
   height: 54px;
   border-radius: 50%;
   background: radial-gradient(circle at 50% 35%, #4a3a2a, #1e1610 75%);
-  box-shadow:
-    0 0 0 2px #8a6a3a,
-    inset 0 3px 8px rgb(0 0 0 / 0.7);
+  box-shadow: 0 0 0 2px #8a6a3a;
 }
 .qt-rune.r0 {
   top: -4px;
@@ -839,18 +799,15 @@
   background: rgb(232 200 138 / 0.2);
 }
 .qt-rune.lit {
-  box-shadow:
-    0 0 0 2px #ffe2a0,
-    0 0 22px rgb(255 190 80 / 0.8),
-    inset 0 3px 8px rgb(0 0 0 / 0.5);
+  box-shadow: 0 0 0 2px #ffe2a0;
 }
 .qt-rune.lit .crawl-icon {
   background: linear-gradient(180deg, #fff1c2, #f0a43a);
-  filter: drop-shadow(0 0 6px #ffcf6a);
+  filter: none;
 }
 @keyframes qt-rune {
   50% {
-    filter: drop-shadow(0 0 12px #ffcf6a) brightness(1.15);
+    filter: none;
   }
 }
 .suspended .qt-rune.lit .crawl-icon {
@@ -907,7 +864,7 @@
 .qt-rival-medal {
   width: 92px;
   height: 92px;
-  filter: drop-shadow(0 4px 8px rgb(60 10 0 / 0.45));
+  filter: none;
   animation: qt-strike 640ms cubic-bezier(0.2, 1.5, 0.4, 1) both;
 }
 .qt-rival-words {
@@ -1012,10 +969,7 @@
   background:
     radial-gradient(120% 80% at 50% 0%, rgb(180 40 90 / 0.3), transparent 70%),
     linear-gradient(180deg, #2a0e18, #160610);
-  box-shadow:
-    inset 0 0 0 1px #b5426b,
-    inset 0 0 30px rgb(0 0 0 / 0.6),
-    0 8px 18px rgb(40 0 10 / 0.45);
+  box-shadow: inset 0 0 0 1px #b5426b;
   color: #ffd6e4;
   text-align: center;
 }
@@ -1028,9 +982,7 @@
   height: 64px;
   border-radius: 46% 54% 50% 50% / 52% 48% 52% 48%;
   background: radial-gradient(circle at 38% 32%, #3a3a3a, #0a0a0a 75%);
-  box-shadow:
-    0 0 0 2px #b5426b,
-    0 0 22px rgb(214 70 130 / 0.6);
+  box-shadow: 0 0 0 2px #b5426b;
 }
 .qt-curse-seal .crawl-icon {
   width: 34px;
@@ -1039,9 +991,7 @@
 }
 @keyframes qt-curse {
   50% {
-    box-shadow:
-      0 0 0 2px #ff6aa0,
-      0 0 34px rgb(255 90 150 / 0.8);
+    box-shadow: 0 0 0 2px #ff6aa0;
   }
 }
 .suspended .qt-curse-seal {
@@ -1106,8 +1056,7 @@
   background: linear-gradient(180deg, #5a3419, #3a1e0c);
   box-shadow:
     inset 0 1px rgb(255 214 160 / 0.25),
-    inset 0 0 0 1px rgb(0 0 0 / 0.35),
-    0 2px 4px rgb(0 0 0 / 0.4);
+    inset 0 0 0 1px rgb(0 0 0 / 0.35);
   font-family: var(--font-tavern);
 }
 .tray-quest .dock-label {
@@ -1119,8 +1068,7 @@
   background: linear-gradient(180deg, #fff3d4, #ecd6a6);
   box-shadow:
     inset 0 0 0 1px #8a5a14,
-    inset 0 -3px 0 rgb(138 90 20 / 0.25),
-    0 -2px 10px rgb(255 210 140 / 0.35);
+    inset 0 -3px 0 rgb(138 90 20 / 0.25);
   transform: translateY(-3px);
 }
 .tray-quest .dock-tab[aria-selected="true"] .dock-icon {
@@ -1138,7 +1086,7 @@
   height: 3px;
   border-radius: 2px;
   background: var(--qt-gilt);
-  box-shadow: 0 0 8px rgb(255 210 120 / 0.7);
+  box-shadow: none;
 }
 
 @media (min-width: 700px) {
@@ -1180,9 +1128,7 @@
       rgb(120 70 20 / 0.24) 100%
     ),
     linear-gradient(180deg, #f5e8c8, var(--qt-parch) 60%, #e6d1a2);
-  box-shadow:
-    0 0 0 1px #2a1406,
-    inset 0 0 22px rgb(120 70 20 / 0.24);
+  box-shadow: 0 0 0 1px #2a1406;
   color: var(--qt-ink);
 }
 .tray-quest .menu-run {
