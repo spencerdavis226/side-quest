@@ -77,7 +77,20 @@ export function useAppUpdate() {
     // cached): the import fails and its caller falls back, rather than the
     // page reloading forever. Without session storage there is no way to
     // tell, so it never reloads.
+    // Leaving the page aborts its chunk downloads, and WebKit reports each
+    // abort as a preload error: reloading then would drag the browser back
+    // to the page it was leaving (2026-11-16, the @release Pages test: a
+    // goto to ?workshop=1 "interrupted by another navigation" to the page
+    // before). So a page on its way out never reloads.
+    let leaving = false;
+    const onLeave = () => {
+      leaving = true;
+    };
+    const onStay = () => {
+      leaving = false;
+    };
     const onPreloadError = (event: Event) => {
+      if (leaving) return;
       try {
         const last = Number(sessionStorage.getItem(PRELOAD_RELOAD_KEY));
         if (Date.now() - last < PRELOAD_RELOAD_MS) return;
@@ -89,8 +102,15 @@ export function useAppUpdate() {
       location.reload();
     };
     window.addEventListener("vite:preloadError", onPreloadError);
-    return () =>
+    window.addEventListener("beforeunload", onLeave);
+    window.addEventListener("pagehide", onLeave);
+    window.addEventListener("pageshow", onStay);
+    return () => {
       window.removeEventListener("vite:preloadError", onPreloadError);
+      window.removeEventListener("beforeunload", onLeave);
+      window.removeEventListener("pagehide", onLeave);
+      window.removeEventListener("pageshow", onStay);
+    };
   }, []);
   return { offlineReady: offlineReady || cachedReady, updateReady };
 }

@@ -2,6 +2,17 @@
 
 Updated 2026-11-16. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Done 2026-11-16: the WebKit release flakes, found and fixed
+
+Owner: "Fix the league starter animation test or whatever it is I don't want this to keep failing". Reproduced in WebKit in the agent's container for the first time: the session moved to a personal environment, `side-quest`, that allows Playwright's download hosts (`cdn.playwright.dev`, `playwright.download.prss.microsoft.com`), so `npx playwright install webkit` works there.
+
+- **The League starter test ("Target crashed")**: WebKit's web process crashed about one run in four under load (9 of 40 with 4 workers). Bisected with injected CSS: all animations off, 40 of 40 passed; the starter moment's animations off, 40 of 40; only the ball button's animation off, 40 of 40; the atmosphere, the particle canvas, the beam, the roll and the wobble each made no difference. The button animated `filter: brightness() drop-shadow()` inside the rotating ball. It is now a glow layer (`.omen-ballbody .button::after`) animated on `opacity` alone, the same three flashes (`moments.css`). After: 80 of 80 with 4 workers. The other moments animate `filter` too (57 `filter:` lines in `moments.css`); the moments and prologue specs ran 3 times each in WebKit with no crash, but a filter animation on a transformed parent is the pattern to avoid.
+- **"Legacy finite game" (`.progress` missing after Play)**: not a stall in the app. The table is in the DOM about a second after Play, but on CI's software-rendered WebKit the 260 ms View Transition crossfade took 3 to 4 s to draw (`finished` at about 6 s over 24 runs), and Playwright's visibility check saw no frame until then, past the test's 5 s. The test is about flips and taps, so it now runs without View Transitions (they are covered in `pages.spec.ts`). On a phone the crossfade is GPU work and was not seen to stall; unverified on a device.
+- **"Pages manifest" (navigation interrupted)**: a real bug. Leaving a page aborts its chunk downloads, WebKit reports each as `vite:preloadError`, and `useAppUpdate`'s one-time recovery reload dragged the browser back to the page it was leaving. A page on its way out (`beforeunload`/`pagehide`, cleared on `pageshow`) never reloads now.
+- **"Fits a Safari tab" (30 s timeout)**: did not recur in 140 WebKit release runs after the fixes. Most likely CPU starvation from the crashing starter test's processes.
+- **The tray's own specs in WebKit** (not `@release`, so CI never ran them there) failed: their drags fired Playwright's mouse steps with no pause (12 steps in about 40 ms in WebKit), which reads as a flick and dismissed the sheet or turned the page, correctly. `drag` now moves one step a rendered frame; the touch helper builds plain events with touch fields, since WebKit refuses `new Touch`. The long pull test has a 60 s limit (about 12 s of WebKit time; four WebKit workers on four cores overran 30 s).
+- **Checked**: WebKit `test:release` 70 of 70 (5 repeats, 2 workers, as CI) and 70 of 70 (5 repeats, 4 workers); WebKit `pages.spec` 39 of 39; WebKit `tray.spec` 24 of 24 (2 workers); Chromium `test:e2e` 206 of 206; `test:update` passed; `npm test` 805 passed; typecheck; lint; build (budgets pass). Not checked: a phone.
+
 ## Done 2026-11-16: the sheet clears the Dynamic Island, and the tray runs smooth
 
 Owner, on an iPhone after #109 went live: "The menu goes too high and goes into the Dynamic Island ... the animations and sliding is really choppy and low fps ... Swapping tabs is really clunky and slow loading and low fps too".
@@ -49,7 +60,7 @@ Owner, on the first tray pass: "Make the HUD ui element much simpler and more el
   - Screens reviewed at 390 and 320 px.
 - **Not run**: WebKit, a phone. Real iOS touch (the non-passive touchmove, the scroll handoff) is the main thing to check on a device.
 
-## Done 2026-11-16: the tray (branch `claude/vigilant-cray-mtcl90`, not merged)
+## Done 2026-11-16: the tray (merged in #109)
 
 Owner: "a custom and high budget tray to better organize and view all items and inventory and curses and pokemon etc instead of little ui elements on the top ... one for the league that is very Pokemon themed and one for the quest that is very rpg/dnd themed ... still allows like a HUD to display really important things even when you're not opening the tray". Asked for a new branch, so this is a pull request for the owner's review, not merged under the auto-merge rule.
 
@@ -63,7 +74,7 @@ Owner: "a custom and high budget tray to better organize and view all items and 
 - **Risks**: touch gestures on iOS (pan-y on the pager, pointer capture after the slop) are unverified on a device; the League's glass screen and badge shine are the heaviest paint; `::backdrop` is not used (the scrim is a div).
 - **Device checks** added to `docs/DEVICE_CHECKLIST.md` ("The tray").
 - **Next**: the owner's review of the PR on a phone; then the device checks below.
-## Open 2026-11-16: WebKit release flakes keep skipping deploys
+## Resolved 2026-11-16 (see the top section): WebKit release flakes keep skipping deploys
 
 The `main` runs for #108 (`243ca0a`) and #110 (`dab471a`) both failed the WebKit `@release` job, so neither deployed (the live site stayed on #107). #108's run failed "the League's starter turns over with a ball" (`.moment-omen` never appeared; the open item below); #110's failed "legacy finite game" (`.progress` never appeared after Play, the View Transition path). Neither touches what those PRs changed; #110's run was re-run once.
 
@@ -94,7 +105,7 @@ Owner: "The quest has too many horny cards ... Crude sexual or abrasive or adult
 - **Next**: the owner's read of the kept list; then the owner's table (below).
 
 
-## Open 2026-11-16: WebKit release flakes blocked PR #106's deploy
+## Resolved 2026-11-16 (see the top section): WebKit release flakes blocked PR #106's deploy
 
 PR #106 passed every CI job, then its merge commit (`2e30345`, the same tree) failed the WebKit `@release` job twice, on two different tests, so `deploy` was skipped and the live site still serves `1c33fde`.
 

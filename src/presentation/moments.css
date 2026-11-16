@@ -1911,6 +1911,26 @@
   margin: -15% 0 0 -15%;
   border-radius: 50%;
   background: radial-gradient(circle, #fff 0 40%, #141010 42% 58%, #e8e2da 60%);
+}
+/* The button's three flashes as the ball wobbles: a glow that fades in
+   and out on `opacity` alone. It animated `filter: brightness()
+   drop-shadow()` on the button inside the rotating ball until 2026-11-16,
+   which crashed WebKit's web process about one run in four under load
+   (the @release League starter test's "Target crashed"; with only this
+   animation removed, 40 of 40 runs passed). */
+.omen-ballbody .button::after {
+  content: "";
+  position: absolute;
+  inset: -45%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    #ffffffd0 0 22%,
+    #ff6a5acc 34%,
+    #ff4a3a66 50%,
+    transparent 70%
+  );
+  opacity: 0;
   animation: omen-button var(--len) ease both;
 }
 .omen-beam {
@@ -2067,13 +2087,14 @@
   44%,
   48%,
   60%,
-  64% {
-    filter: none;
+  64%,
+  100% {
+    opacity: 0;
   }
   26%,
   46%,
   62% {
-    filter: brightness(1.5) drop-shadow(0 0 6px #ff4a3a);
+    opacity: 1;
   }
 }
 @keyframes omen-beam {
