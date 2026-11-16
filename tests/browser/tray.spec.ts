@@ -1,5 +1,5 @@
 import { type Page } from "@playwright/test";
-import { test, expect, seed, saved } from "./support";
+import { test, expect, seed, saved, frames } from "./support";
 import { advance } from "../../src/game/engine";
 import type { SessionState } from "../../src/game/types";
 import { STEP, crawlAt, leagueAt } from "./sessions";
@@ -47,6 +47,10 @@ const tray = (page: Page) => page.locator("dialog.tray");
 const shown = (page: Page) => tray(page).locator(".tray-page.shown");
 
 /** Drag from one point to another in small steps, as a finger would. */
+/** Drag from one point to another at a finger's pace: one step a rendered
+ * frame. Playwright's own `steps` fire with no pause (in WebKit, 12 steps
+ * in about 40 ms), which reads as a flick, and a flick dismisses or turns
+ * the page, as it does on an iPhone. */
 async function drag(
   page: Page,
   from: { x: number; y: number },
@@ -55,7 +59,13 @@ async function drag(
 ) {
   await page.mouse.move(from.x, from.y);
   await page.mouse.down();
-  await page.mouse.move(to.x, to.y, { steps });
+  for (let i = 1; i <= steps; i++) {
+    await page.mouse.move(
+      from.x + ((to.x - from.x) * i) / steps,
+      from.y + ((to.y - from.y) * i) / steps,
+    );
+    await frames(page, 1);
+  }
   await page.mouse.up();
 }
 
@@ -146,6 +156,9 @@ test("the tray's dock, keys and swipe move between pages", async ({
 test("the tray is pulled down to put it away, or tapped away", async ({
   page,
 }) => {
+  // Four opens and two drags at a finger's pace: about 12 s in WebKit on
+  // one core, past the default 30 s when four WebKit workers share them.
+  test.setTimeout(60_000);
   await seed(page, questRun());
   await page.locator(".tag-satchel").click();
   await expect(tray(page)).toBeVisible();
@@ -177,7 +190,9 @@ test("the tray is pulled down to put it away, or tapped away", async ({
 });
 
 /** A one-finger touch drag, as Safari reports it: touch events on the
- * element under the finger (Chromium builds them with `new Touch`). */
+ * element under the finger, one move a frame. WebKit will not construct a
+ * `Touch` ("Illegal constructor"), so each event is a plain event carrying
+ * the fields a real one has, which is all the sheet reads. */
 async function touchDrag(
   page: Page,
   selector: string,
@@ -186,31 +201,38 @@ async function touchDrag(
   steps = 12,
 ) {
   await page.evaluate(
-    ({ selector, from, to, steps }) => {
-      const target = document.querySelector(selector)!;
-      const touch = (x: number, y: number) =>
-        new Touch({ identifier: 1, target, clientX: x, clientY: y });
-      const fire = (type: string, x: number, y: number) => {
-        const t = touch(x, y);
-        target.dispatchEvent(
-          new TouchEvent(type, {
-            bubbles: true,
-            cancelable: true,
-            touches: type === "touchend" ? [] : [t],
-            targetTouches: type === "touchend" ? [] : [t],
-            changedTouches: [t],
-          }),
-        );
-      };
-      fire("touchstart", from.x, from.y);
-      for (let i = 1; i <= steps; i++)
-        fire(
-          "touchmove",
-          from.x + ((to.x - from.x) * i) / steps,
-          from.y + ((to.y - from.y) * i) / steps,
-        );
-      fire("touchend", to.x, to.y);
-    },
+    ({ selector, from, to, steps }) =>
+      new Promise<void>((done) => {
+        const target = document.querySelector(selector)!;
+        const fire = (type: string, x: number, y: number) => {
+          const t = { identifier: 1, target, clientX: x, clientY: y };
+          const event = new Event(type, { bubbles: true, cancelable: true });
+          const live = type === "touchend" ? [] : [t];
+          Object.defineProperties(event, {
+            touches: { value: live },
+            targetTouches: { value: live },
+            changedTouches: { value: [t] },
+          });
+          target.dispatchEvent(event);
+        };
+        fire("touchstart", from.x, from.y);
+        let i = 0;
+        const step = () => {
+          i += 1;
+          if (i > steps) {
+            fire("touchend", to.x, to.y);
+            done();
+            return;
+          }
+          fire(
+            "touchmove",
+            from.x + ((to.x - from.x) * i) / steps,
+            from.y + ((to.y - from.y) * i) / steps,
+          );
+          requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      }),
     { selector, from, to, steps },
   );
 }

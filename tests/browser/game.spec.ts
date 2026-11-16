@@ -43,6 +43,16 @@ test("@release legacy finite game, rapid taps, restore, previous card, replay an
   test.setTimeout(90000);
   // Rapid taps must land while the flip is still turning.
   await withMotion(page);
+  // Without View Transitions (tested in pages.spec.ts). With motion on,
+  // Play crossfades the screens, and on CI's software-rendered WebKit that
+  // 260 ms crossfade took 3 to 4 s to draw: the table was in the DOM about
+  // a second after Play, but no frame showed it until the crossfade ended,
+  // past this test's 5 s wait for `.progress` (measured 2026-11-16, 24 runs
+  // in local WebKit). This test is about flips and taps, not the crossfade.
+  await page.addInitScript(() => {
+    delete (Document.prototype as { startViewTransition?: unknown })
+      .startViewTransition;
+  });
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("./");
