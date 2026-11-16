@@ -106,7 +106,9 @@ export const clock = (end: string, seconds = 45): TimerDefinition => ({
   seconds,
   end,
 });
-export const GUESSED = "Time. Someone guessed it? Give 3. Nobody did? Drink 3.";
+/** A shared-screen guess (owner, 2026-11-16: the Quest is played on a TV, so
+ * no secret is one player's): the table sees it, the drawer guesses. */
+export const GUESSED = "Time. Drawer guessed it? Give 3. Didn't? Drink 3.";
 /** Four seats, four dice: the drawer and the next three clockwise. */
 export const seats = (line: string): DiceDefinition => ({
   version: 1,

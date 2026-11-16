@@ -38,7 +38,7 @@ export const marsh: FloorCards = {
         "Monster",
         "bog-hermit",
         "The Bog Hermit",
-        "Read alone what the hermit mutters about, start the clock, then rant about it. The table guesses.",
+        "Drawer, look away. Left neighbor: Hold to read, start the clock. Rant like him; drawer guesses.",
       ),
       secret: "A FROG THAT OWES HIM MONEY.",
       timer: clock(GUESSED),

@@ -72,7 +72,7 @@ export const coast: FloorCards = {
         "Monster",
         "old-sailor",
         "The Old Sailor",
-        "Read alone his one story, start the clock, then tell it as him. The table guesses what it's about.",
+        "Drawer, look away. Left neighbor: Hold to read, start the clock. Tell his story; drawer guesses.",
       ),
       secret: "THE ONE THAT GOT AWAY (A FISH).",
       timer: clock(GUESSED),

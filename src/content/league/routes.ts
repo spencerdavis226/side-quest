@@ -33,8 +33,10 @@ import { moreEvolutions, moreWilds } from "./wilds";
 
 // Who's That Pokémon?: three cards, each holding a share of the ~266 answers
 // in `whosthat.ts`; one answer per game is picked when the card is dealt. The
-// drawer reads it alone, then has twenty seconds to describe it without the
-// banned words (2026-10-31: 20 s, was 45).
+// drawer looks away while the left neighbor shows it to the table (the screen
+// is shared: the League is played on a TV, owner 2026-11-16), and the table
+// has twenty seconds to describe it without the banned words (20 s since
+// 2026-10-31, was 45).
 const quizzes = quizPools(3);
 const whosThat = (route: Leg, id: string, k: number): CardDefinition => ({
   ...tableMoment(
@@ -43,7 +45,7 @@ const whosThat = (route: Leg, id: string, k: number): CardDefinition => ({
     "Who's That Pokémon?",
     "Quiz",
     "category",
-    "Read alone, start the clock, then describe it without saying its name. The table guesses.",
+    "Drawer, look away. Left neighbor: Hold to read, start the clock. Describe it; drawer guesses.",
   ),
   secret: quizzes[k]![0]!,
   secretPool: quizzes[k]!,
@@ -51,7 +53,7 @@ const whosThat = (route: Leg, id: string, k: number): CardDefinition => ({
     version: 1,
     kind: "countdown",
     seconds: 20,
-    end: "Time. Someone guessed it? Give 3. Nobody did? Drink 3.",
+    end: "Time. Drawer guessed it? Give 3. Didn't? Drink 3. Said a banned word? Drink 1.",
   },
 });
 
@@ -65,14 +67,14 @@ const route1: CardDefinition[] = [
       "Professor's Quiz",
       "Quiz",
       "category",
-      "Read alone, start the clock, then describe it without saying its name. The table guesses.",
+      "Drawer, look away. Left neighbor: Hold to read, start the clock. Describe it; drawer guesses.",
     ),
     secret: "PIKACHU. Don't say yellow, electric, mouse or Ash.",
     timer: {
       version: 1,
       kind: "countdown",
       seconds: 45,
-      end: "Time. Someone guessed it? Give 3. Nobody did? Drink 3.",
+      end: "Time. Drawer guessed it? Give 3. Didn't? Drink 3. Said a banned word? Drink 1.",
     },
   },
   tableMoment(

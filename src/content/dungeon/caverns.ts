@@ -234,7 +234,7 @@ export const caverns: FloorCards = {
         "Monster",
         "imps-spit",
         "The Imp's Spit",
-        "Read alone what the imp is roasting, start the clock, then describe it like a bard. Table guesses.",
+        "Drawer, look away. Left neighbor: Hold to read, start the clock. Sing it; drawer guesses.",
       ),
       secret: "A DRAGON-EGG OMELETTE.",
       timer: clock(GUESSED),
