@@ -722,6 +722,14 @@ dialog p {
    meant to survive (banners, the heart splat, the party pulse) restore their
    own durations with !important beside their keyframes. This is the only
    global block; theme.css adds the atmosphere's display: none. */
+/* Screen changes (presentation/screenChange.ts): the old screen and the
+   new crossfade over the table, which is the same in both, so only what
+   changed is seen to move. Never started under Reduced Motion. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 260ms;
+  animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

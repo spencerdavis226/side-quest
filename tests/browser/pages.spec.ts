@@ -1,4 +1,5 @@
-import { test, expect, seed as seedSession, rng } from "./support";
+import { type Page } from "@playwright/test";
+import { test, expect, seed as seedSession, rng, withMotion } from "./support";
 import { createSession } from "../../src/game/engine";
 import { cards, packs } from "../../src/content/catalog";
 const key = "side-quest.session.v1";
@@ -307,4 +308,39 @@ test("a device that cannot run the app is told it needs iOS 26", async ({
     "Side Quest needs iOS 26 or newer.",
   );
   await fresh.close();
+});
+// Screens change through a View Transition (Safari 18; screenChange.ts):
+// Play opens the table through one, and End game goes back through
+// another. Reduced Motion never starts one.
+async function countTransitions(page: Page) {
+  await page.addInitScript(() => {
+    const w = window as unknown as { transitions: number };
+    w.transitions = 0;
+    const start = document.startViewTransition.bind(document);
+    document.startViewTransition = ((update) => {
+      w.transitions++;
+      return start(update);
+    }) as typeof document.startViewTransition;
+  });
+}
+const transitions = (page: Page) =>
+  page.evaluate(
+    () => (window as unknown as { transitions: number }).transitions,
+  );
+test("screens change through a View Transition", async ({ page }) => {
+  await withMotion(page);
+  await countTransitions(page);
+  await page.goto("./");
+  await page.getByRole("button", { name: "Play", exact: true }).click();
+  await expect(page.locator(".progress")).toBeVisible();
+  expect(await transitions(page)).toBe(1);
+});
+test("Reduced Motion changes screens without a View Transition", async ({
+  page,
+}) => {
+  await countTransitions(page);
+  await page.goto("./");
+  await page.getByRole("button", { name: "Play", exact: true }).click();
+  await expect(page.locator(".progress")).toBeVisible();
+  expect(await transitions(page)).toBe(0);
 });
