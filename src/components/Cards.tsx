@@ -16,7 +16,10 @@ import type { Matchup } from "../game/matchup";
 import { TypeMark } from "./LeagueMarks";
 import { pokemonTypes } from "../presentation/pokemon-types";
 import { type Accent, accentStyle, ownAccent } from "./cardAccent";
-type Overflow = "none" | "top" | "bottom" | "both";
+/** Whether the rules fit or scroll. Measured on resize only: the fades at
+ * the scroller's ends follow the scroll in CSS (a scroll-driven animation,
+ * Safari 26), so scrolling re-renders nothing. */
+type Overflow = "none" | "scroll";
 /** The smallest a rule's text shrinks to fit the card: 26px becomes 20px. */
 const RULES_FIT_MIN = 0.77;
 
@@ -121,11 +124,7 @@ export function CardFace({
   const updateOverflow = () => {
     const el = rulesRef.current;
     if (!el) return;
-    const atTop = el.scrollTop <= 2;
-    const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 2;
-    setOverflow(
-      atTop && atBottom ? "none" : atTop ? "bottom" : atBottom ? "top" : "both",
-    );
+    setOverflow(el.scrollHeight > el.clientHeight + 2 ? "scroll" : "none");
   };
   // Keep the original rule until the dice have been dismissed.
   const resolved = !!roll?.returned;
@@ -330,7 +329,6 @@ export function CardFace({
               event.currentTarget.scrollTop !== active.startScrollTop
             )
               active.cancelClick = true;
-            updateOverflow();
           }}
         >
           {ball ? (

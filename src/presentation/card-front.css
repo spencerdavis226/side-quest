@@ -115,21 +115,52 @@
   overscroll-behavior: contain;
   touch-action: pan-y;
 }
-.study-rules[data-overflow="bottom"],
-.study-rules[data-overflow="both"] {
-  mask-image: linear-gradient(to bottom, #000 calc(100% - 26px), transparent);
+/* Long rules fade at whichever end has more to read. The fades follow the
+   scroll itself (a scroll-driven animation, Safari 26): the top one grows
+   over the first tenth of the scroll and the bottom one goes over the last,
+   so scrolling costs no script and no render. */
+@property --fade-top {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
 }
-.study-rules[data-overflow="top"] {
-  mask-image: linear-gradient(to bottom, transparent 0, #000 26px);
+@property --fade-bottom {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 26px;
 }
-.study-rules[data-overflow="both"] {
+@keyframes rules-fade {
+  0% {
+    --fade-top: 0px;
+  }
+  10% {
+    --fade-top: 26px;
+  }
+  90% {
+    --fade-bottom: 26px;
+  }
+  100% {
+    --fade-top: 26px;
+    --fade-bottom: 0px;
+  }
+}
+.study-rules[data-overflow="scroll"] {
   mask-image: linear-gradient(
     to bottom,
     transparent 0,
-    #000 26px,
-    #000 calc(100% - 26px),
+    #000 var(--fade-top),
+    #000 calc(100% - var(--fade-bottom)),
     transparent
   );
+  animation: rules-fade linear both;
+  animation-timeline: scroll(self);
+}
+@media (prefers-reduced-motion: reduce) {
+  /* Not motion: the fades track the finger. The global block's 0.01ms would
+     still fill a scroll timeline, but keep it explicit. */
+  .study-rules[data-overflow="scroll"] {
+    animation-duration: auto !important;
+  }
 }
 .card-footer {
   flex-shrink: 0;
