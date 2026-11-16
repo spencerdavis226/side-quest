@@ -156,11 +156,11 @@ function rival(
   };
 }
 
-/** Sir Chad Thundercock (key `bradley`): the glory hog. He says "the
+/** Sir Chad Thundercock (key `chad`): the glory hog. He says "the
  * Undefeated"; he has only ever fought things already dying. He takes the
  * credit and whatever a room was about to give. */
-const bradley = rival(
-  "bradley",
+const chad = rival(
+  "chad",
   {
     name: "Sir Chad",
     ritual: "When Sir Chad shows up, everyone flexes. Weakest flex drinks 1.",
@@ -209,7 +209,7 @@ const bradley = rival(
       ),
     ],
     [
-      "verse",
+      "gun-show",
       "The Gun Show",
       "Sir Chad is charging admission to his biceps. Out-flex him: roll d20.",
       vs(
@@ -218,7 +218,7 @@ const bradley = rival(
       ),
     ],
     [
-      "shortcut",
+      "participation-trophy",
       "Participation Trophy",
       "Sir Chad hands you a trophy: 'Nice Try, Champ'. Roll d20 to shove it up his.",
       vs(
@@ -227,7 +227,7 @@ const bradley = rival(
       ),
     ],
     [
-      "spar",
+      "spotter",
       "Chad's Spotter",
       "Sir Chad needs a spot, on your face. Roll d20 before he finishes his set.",
       vs(
@@ -264,10 +264,10 @@ const bradley = rival(
   },
 );
 
-/** Lady Fingerbang (key `mirabel`): the thief, charming and handsy.
+/** Lady Fingerbang (key `fingerbang`): the thief, charming and handsy.
  * Everything is hers; a lost meeting costs two items and no hearts. */
-const mirabel = rival(
-  "mirabel",
+const fingerbang = rival(
+  "fingerbang",
   {
     name: "Lady Fingerbang",
     ritual:
@@ -311,13 +311,13 @@ const mirabel = rival(
   { takes: 2, intro: 2 },
   [
     [
-      "inventory",
+      "pat-down",
       "The Pat-Down",
       "Lady Fingerbang offers to check you for weapons. Thoroughly. Roll d20 to say no.",
       vs("She found something. Drink 3.", "You pat her down instead. Give 3."),
     ],
     [
-      "trade",
+      "fair-trade",
       "A Fair Trade",
       "Lady Fingerbang will trade your things for a wink. Roll d20 to refuse the wink.",
       vs(
@@ -326,7 +326,7 @@ const mirabel = rival(
       ),
     ],
     [
-      "keepers",
+      "finders-keepers",
       "Finders Keepers",
       "'Finders keepers,' says Lady Fingerbang, holding your stuff. Roll d20 to get it back.",
       vs(
@@ -335,7 +335,7 @@ const mirabel = rival(
       ),
     ],
     [
-      "toll",
+      "toll-booth",
       "Her Toll Booth",
       "Lady Fingerbang charges a toll of 'everything you've got'. Roll d20 to run it.",
       vs(
@@ -377,11 +377,11 @@ const mirabel = rival(
   },
 );
 
-/** Sensei Saggynuts (key `tutt`), your old master: ancient, cross-legged
+/** Sensei Saggynuts (key `sensei`), your old master: ancient, cross-legged
  * in a loincloth that does not cover enough, never impressed. He
  * confiscates once; after that a lost lesson costs a heart, not items. */
-const tutt = rival(
-  "tutt",
+const sensei = rival(
+  "sensei",
   {
     name: "Sensei Saggynuts",
     ritual:
@@ -417,7 +417,7 @@ const tutt = rival(
   { damage: 1 },
   [
     [
-      "quiz",
+      "pop-quiz",
       "Pop Quiz",
       "Sensei Saggynuts has a pop quiz and his loincloth is slipping. Roll d20 without looking down.",
       vs(
@@ -426,7 +426,7 @@ const tutt = rival(
       ),
     ],
     [
-      "demonstration",
+      "wax-on-nuts-off",
       "Wax On, Nuts Off",
       "Sensei Saggynuts makes you wax his... floor. Roll d20 to finish before he sits up.",
       vs(
@@ -435,7 +435,7 @@ const tutt = rival(
       ),
     ],
     [
-      "posture",
+      "posture-check",
       "Posture Check",
       "Sensei Saggynuts taps your spine with his stick. 'Slouching.' Roll d20 to stand like a hero.",
       vs(
@@ -513,7 +513,7 @@ const chuck = rival(
   { takes: 1 },
   [
     [
-      "watches",
+      "just-watches",
       "Chuck Just Watches",
       "Chuck the Cuck pulls up a chair to watch you work. Roll d20 to make him leave.",
       vs(
@@ -522,7 +522,7 @@ const chuck = rival(
       ),
     ],
     [
-      "ale",
+      "holds-your-ale",
       "Chuck Holds Your Ale",
       "Chuck the Cuck 'holds' your drink. It's half gone. Roll d20 to get it back.",
       vs(
@@ -537,7 +537,7 @@ const chuck = rival(
       vs("He gets louder. Drink 3.", "He switches sides, to you. Give 3."),
     ],
     [
-      "notes",
+      "takes-notes",
       "Chuck Takes Notes",
       "Chuck the Cuck writes down everything you do 'for later'. Roll d20 for the notebook.",
       vs(
@@ -621,7 +621,7 @@ const gary = rival(
   { takes: 1, damage: 1 },
   [
     [
-      "receipts",
+      "receipts-please",
       "Receipts, Please",
       "Gary Shitwhistle wants receipts for every drink tonight. Roll d20 to produce them.",
       vs(
@@ -639,13 +639,13 @@ const gary = rival(
       ),
     ],
     [
-      "form",
+      "form-27-b",
       "Form 27-B",
       "Gary Shitwhistle needs form 27-B in triplicate. Everyone signs a napkin. Roll d20.",
       vs("Wrong napkin. Drink 3.", "Stamped and approved. Give 3."),
     ],
     [
-      "taxes",
+      "back-taxes",
       "Back Taxes",
       "Gary Shitwhistle has calculated your back taxes. Roll d20 to dispute them.",
       vs("Plus interest. Drink 3.", "He forgot to carry the one. Give 3."),
@@ -747,7 +747,7 @@ const queef = rival(
   { damage: 1 },
   [
     [
-      "diss",
+      "diss-track",
       "The Diss Track",
       "Dame Queefington drops a diss track about you. Roll d20 to drop one back.",
       vs("It charts. Drink 3.", "Yours goes platinum. Give 3."),
@@ -804,14 +804,14 @@ const queef = rival(
   },
 );
 
-export const rivals: Rival[] = [bradley, mirabel, tutt, chuck, gary, queef];
+export const rivals: Rival[] = [chad, fingerbang, sensei, chuck, gary, queef];
 
 /** Rivals Phase 4: Sensei beaten twice (the deed `rival-won-twice`) is pinned
  * under the dragon's claw at the door instead of setting his exam. Saved
  * (a heart), he joins for one swing at the dragon, then dies. */
 export const senseiPinned: CardDefinition = {
   ...card(
-    "rival-tutt-pinned",
+    "rival-sensei-pinned",
     "Pinned!",
     "group",
     "Sensei Saggynuts, pinned under a claw: 'I was wrong about you.' Save him, or leave him.",
@@ -830,7 +830,7 @@ export const senseiPinned: CardDefinition = {
     once: true,
     ritual: "Everyone bows when Sensei swings.",
   },
-  rival: { who: "tutt" },
+  rival: { who: "sensei" },
 };
 export const rivalIntros = rivals.map((r) => r.intro);
 export const rivalBacks = rivals.map((r) => r.back);

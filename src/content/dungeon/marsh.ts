@@ -29,14 +29,14 @@ import {
 // a hydra with too many opinions. Each card holds its final text and
 // mechanics (the variety pass and outcome rewrites folded in).
 
-export const brewery: FloorCards = {
+export const marsh: FloorCards = {
   fights: [
     // A secret on a clock.
     {
       ...mishap(
         6,
         "Monster",
-        "hop-goblin",
+        "bog-hermit",
         "The Bog Hermit",
         "Read alone what the hermit mutters about, start the clock, then rant about it. The table guesses.",
       ),
@@ -46,13 +46,13 @@ export const brewery: FloorCards = {
     mishap(
       6,
       "Monster",
-      "yeast-beast",
+      "swamp-farts",
       "Swamp Farts",
       "The swamp farts. Then it farts again. Everyone puffs their cheeks; first to laugh drinks 2.",
     ),
     monster(
       6,
-      "craft-bro",
+      "frog-prince",
       "The Frog Prince",
       "A frog insists he's a prince, and he'd like a kiss. With tongue. Roll d6.",
       "",
@@ -75,13 +75,13 @@ export const brewery: FloorCards = {
     // A table duel.
     trial(
       6,
-      "mash-tun-monster",
+      "mud-golem",
       "The Mud Golem",
       "Thumb war with your left neighbor, who plays the mud golem. Best of three. Lose: drink 3.",
     ),
     monster(
       6,
-      "brewers-ghost",
+      "bog-body",
       "The Bog Body",
       "A bog body sits up and asks if it's still hot. Look it over, nod slowly, then roll d20.",
       "You tell it the truth. Drink 3.",
@@ -99,7 +99,7 @@ export const brewery: FloorCards = {
       ...mishap(
         6,
         "Monster",
-        "foam-ferrets",
+        "leeches",
         "Leeches",
         "Leeches in the water, and they've found the table. Roll four dice.",
       ),
@@ -107,7 +107,7 @@ export const brewery: FloorCards = {
     },
     monster(
       6,
-      "sour-mash-witch",
+      "bog-hag",
       "The Bog Hag",
       "She lives in a hut on chicken legs and hates visitors. Make your ugliest face, then roll d20.",
       "She makes it uglier. Drink 3.",
@@ -119,7 +119,7 @@ export const brewery: FloorCards = {
     // 2d6, and doubles are a better win.
     monster(
       6,
-      "keg-ninja",
+      "lizard-warrior",
       "The Lizard Warrior",
       "A lizardfolk warrior, fast as a snake, in a loincloth that's losing the fight. Roll 2d6.",
       "",
@@ -136,44 +136,44 @@ export const brewery: FloorCards = {
     // A table duel.
     trial(
       6,
-      "bottle-cap-crab",
+      "crabs",
       "Crabs",
       "A giant crab. Now you've all got crabs. Flick a coaster to the edge, two tries. Miss: drink 3.",
     ),
     mishap(
       6,
       "Monster",
-      "gruit-druid",
+      "toad-auction",
       "The Toad Auction",
       "A toad auctions a jar of glowing swamp piss. Bid sips clockwise; top bid drinks them.",
     ),
     trial(
       6,
-      "name-that-brand",
+      "five-swamp-things",
       "Five Swamp Things",
       "Name five things that live in a swamp in 10 seconds. Stumble: drink 3.",
     ),
     trial(
       6,
-      "the-perfect-pour",
+      "ferrymans-song",
       "The Ferryman's Song",
       "Pole a mime boat across the marsh, singing a filthy shanty, 15 seconds. Anyone laughs: you drink 3.",
     ),
     trial(
       6,
-      "brewers-riddle",
+      "hags-riddle",
       "The Hag's Riddle",
       "Your right neighbor names a creature. Sum it up in one word. Booed: drink 3.",
     ),
     trial(
       6,
-      "bottling-line",
+      "stepping-stones",
       "Stepping Stones",
       "Balance an empty cup on the back of your hand while the table counts to ten. It falls: drink 3.",
     ),
     trap(
       6,
-      "bottle-bombs",
+      "popping-pods",
       "Popping Pods",
       "A field of seed pods, ripe and ready to burst. Roll d20.",
       "Seed everywhere. Drink 2.",
@@ -181,7 +181,7 @@ export const brewery: FloorCards = {
     ),
     trap(
       6,
-      "grain-chute",
+      "sinking-bank",
       "The Sinking Bank",
       "The bank under your feet starts sliding into the water. Jump, then roll d20.",
       "Into the water. Drink 2.",
@@ -190,7 +190,7 @@ export const brewery: FloorCards = {
     // A hidden fuse.
     trap(
       6,
-      "hot-wort",
+      "quicksand",
       "Quicksand",
       "The path turns to quicksand under your boots. Roll d20.",
       "Down on your knees, and everyone's staring. Drink 2.",
@@ -198,7 +198,7 @@ export const brewery: FloorCards = {
     ),
     ambush(
       6,
-      "brewery-tour",
+      "frog-choir",
       "The Frog Choir",
       "A choir of frogs wants you to join in. Croak a note, then roll d20.",
       "You're in the choir now. Drink 2.",
@@ -206,7 +206,7 @@ export const brewery: FloorCards = {
     ),
     ambush(
       6,
-      "bottle-gnomes",
+      "bog-imps",
       "Bog Imps",
       "Two bog imps humping in the reeds saw you see them. Whistle innocently, then roll d20.",
       "Hush money. Drink 2.",
@@ -215,13 +215,13 @@ export const brewery: FloorCards = {
     mishap(
       6,
       "Monster",
-      "spent-grain-golem",
+      "lost-fisherman",
       "The Lost Fisherman",
       "A fisherman is lost in the fog. On three, point at who'd find him first. Most fingers: give 2.",
     ),
     monster(
       6,
-      "hazy-wraith",
+      "fog-wraith",
       "The Fog Wraith",
       "A ghost made of marsh fog. You can't see through it, or around it. Roll d20.",
       "It smells like a fart. It is one. Drink 3.",
@@ -229,7 +229,7 @@ export const brewery: FloorCards = {
     ),
     monster(
       6,
-      "forklift-goblin",
+      "gator",
       "The Gator",
       "An alligator, very calm, until it isn't. Roll d6.",
       "",
@@ -248,13 +248,13 @@ export const brewery: FloorCards = {
     ),
     trial(
       6,
-      "quality-control",
+      "snail-rhyme",
       "The Snail Rhyme",
       "Say 'six slimy snails slid slowly south' five times fast. Trip up: drink 3.",
     ),
     trap(
       6,
-      "loose-hose",
+      "one-eyed-snake",
       "The One-Eyed Snake",
       "A water snake whips across the path. Roll d20 to jump it.",
       "It wraps your ankles. Drink 2.",
@@ -262,7 +262,7 @@ export const brewery: FloorCards = {
     ),
     ambush(
       6,
-      "homebrew-club",
+      "hags-tea-party",
       "The Hags' Tea Party",
       "Three hags having tea want your opinion of their brew. All of it. Roll d20.",
       "You give it. Drink 2.",
@@ -272,7 +272,7 @@ export const brewery: FloorCards = {
   finds: [
     gamble(
       6,
-      "tap-roulette",
+      "lily-pad-hop",
       "Lily Pad Hop",
       "Hop across the lily pads for a prize. Win, then cash out or hop again, harder. Roll d20.",
       "Splash. Drink 3.",
@@ -281,7 +281,7 @@ export const brewery: FloorCards = {
     ),
     relic(
       6,
-      "experimental-batch",
+      "glowing-pool",
       "The Glowing Pool",
       "A pool of water glowing green. Drink from it, or leave it.",
       11,
@@ -292,7 +292,7 @@ export const brewery: FloorCards = {
     ),
     relic(
       6,
-      "cold-room",
+      "sunken-chest-marsh",
       "The Sunken Chest",
       "A chest half-sunk in the mud, chained, and something inside it hums. Break in, or don't.",
       12,
@@ -303,27 +303,27 @@ export const brewery: FloorCards = {
     ),
     treasure(
       6,
-      "bottle-cap-stash",
+      "smugglers-jar",
       "A Smuggler's Jar",
       "A sealed jar in the reeds, and a lucky coin inside it. Flip a pretend coin and call it.",
       "die",
     ),
     treasure(
       6,
-      "the-growler",
+      "herbalists-hut",
       "The Herbalist's Hut",
       "An empty hut with one potion on the shelf, labeled YOURS. Say thank you to nobody, and keep it.",
       "draught",
     ),
     shrine(
       6,
-      "beer-garden",
+      "fireflies",
       "The Fireflies",
       "Fireflies, blinking in pairs. They're fucking. Everyone toasts their left neighbor.",
     ),
     merchant(
       6,
-      "apprentice-brewer",
+      "hags-apprentice",
       "The Hag's Apprentice",
       "The hag's apprentice is selling off her potions while she's out.",
       [
@@ -334,7 +334,7 @@ export const brewery: FloorCards = {
     ),
     merchant(
       6,
-      "hop-dealer",
+      "eel-seller",
       "The Eel Seller",
       "He sells eels out of his trench coat. One isn't an eel. Agree they're the best eels.",
       [
@@ -345,21 +345,21 @@ export const brewery: FloorCards = {
     ),
     fork(
       6,
-      "two-vats",
+      "dare-marsh",
       "The Dare",
       "The bog folk dare you to cross the rotten plank bridge at night. Nobody ever has.",
       ["Decline politely", "Take the dare"],
     ),
     fork(
       6,
-      "conveyor-belt",
+      "ferry",
       "The Ferry",
       "Wade the shallows, or ride the ferry toward the noisy shore.",
       ["Wade", "Ride the ferry"],
     ),
     gamble(
       6,
-      "bottle-flip",
+      "frog-racing",
       "Frog Racing",
       "The bog folk race frogs for prizes. Win, then cash out or bet again, harder. Roll d20.",
       "Your frog wanders off. Drink 3.",
@@ -368,7 +368,7 @@ export const brewery: FloorCards = {
     ),
     gamble(
       6,
-      "mimic-fermenter",
+      "mimic-wishing-toad",
       "The Wishing Toad",
       "A giant toad burps up prizes until it burps up you. Cash out or poke it again. Roll d20.",
       "It swallows your hand. Drink 3.",
@@ -379,7 +379,7 @@ export const brewery: FloorCards = {
   elites: [
     elite(
       6,
-      "the-brewmaster",
+      "swamp-witch",
       "The Swamp Witch",
       "Forty years in the bog, and you just called her cauldron 'fine'. Roll d20.",
       "She makes you drink the whole pot. Drink 4.",
@@ -391,7 +391,7 @@ export const brewery: FloorCards = {
     ),
     elite(
       6,
-      "barrel-aged-horror",
+      "thing-in-the-peat",
       "The Thing in the Peat",
       "Something has slept in the peat for a thousand years. It's awake. Roll d20.",
       "It's very old and very strong. Drink 4.",
@@ -403,7 +403,7 @@ export const brewery: FloorCards = {
     ),
     elite(
       6,
-      "hostile-brewer",
+      "lizard-king",
       "The Lizard King",
       "The lizardfolk's king wants the marsh, one boardwalk at a time. Roll d20.",
       "He takes your boardwalk. Drink 4.",
@@ -415,7 +415,7 @@ export const brewery: FloorCards = {
     ),
     elite(
       6,
-      "head-brewer",
+      "leech-queen",
       "The Leech Queen",
       "She's fed on every traveler since 1098, and she likes your type. Roll d20.",
       "She sucks your neck. Enjoy the hickey. Drink 4.",
@@ -429,7 +429,7 @@ export const brewery: FloorCards = {
   bosses: [
     boss(
       6,
-      "the-fermenter",
+      "bog-hydra",
       "The Bog Hydra",
       "Five heads, all hungry, and two of them are making out. Roll d20.",
       d20(
@@ -447,7 +447,7 @@ export const brewery: FloorCards = {
     ),
     boss(
       6,
-      "king-hop",
+      "frog-king",
       "The Frog King",
       `A cart-sized frog in a crown. ${SIDE_BETS} Roll d20.`,
       d20(
@@ -465,7 +465,7 @@ export const brewery: FloorCards = {
     ),
     boss(
       6,
-      "beer-snob-lich",
+      "drowned-lich",
       "The Drowned Lich",
       "A lich who sank in the marsh and has been complaining ever since. Roll d20.",
       d20(
@@ -487,7 +487,7 @@ export const brewery: FloorCards = {
     ),
     boss(
       6,
-      "keg-kraken",
+      "marsh-serpent",
       "The Marsh Serpent",
       `Eight coils, each as thick as a tree. ${SIDE_BETS} Roll d20.`,
       d20(
@@ -505,7 +505,7 @@ export const brewery: FloorCards = {
     ),
     boss(
       6,
-      "brewery-owner",
+      "baron-of-the-bog",
       "The Baron of the Bog",
       "He drained half the marsh for a manor, and he's pissing on you to celebrate. Roll d20.",
       d20(

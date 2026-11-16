@@ -124,7 +124,7 @@ describe("the ballad", () => {
 
   it("a fool's win was foretold; one heart left is by a pube", () => {
     const fool = play(
-      atDoor(3, 30, "dungeon.class-intern"),
+      atDoor(3, 30, "dungeon.class-squire"),
       Array(DRAGON_HEALTH + 2).fill(19),
     );
     expect(ballad(fool).at(-1)).toMatch(/^and the fool slew /);
@@ -149,7 +149,7 @@ describe("the ballad", () => {
     // Wiped at the crossroads, by the rival.
     const door = atDoor(6, 1);
     const finale = [...door.quest!.finale];
-    const spar = "dungeon.rival-bradley-spar";
+    const spar = "dungeon.rival-chad-spotter";
     if (finale.includes(spar)) finale[finale.indexOf(spar)] = finale[31];
     finale[31] = spar;
     const early = fight(

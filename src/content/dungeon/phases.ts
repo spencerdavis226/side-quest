@@ -26,17 +26,17 @@ const d20At =
 
 const beats: Readonly<Record<string, Beat[]>> = {
   // The King's Road (was the Cellar).
-  "keg-golem": [
+  "bridge-troll": [
     duel(
       "He climbs back up, loincloth gone. Arm-wrestle your left neighbor, playing the troll. Lose: drink 3.",
     ),
   ],
-  "rat-king": [
+  "robber-baron": [
     duel(
       "His court is in session. Plead your case to the table for 20 seconds; they vote. Guilty: drink 3.",
     ),
   ],
-  "the-landlord": [
+  ogre: [
     roll(
       "He swings a tree at you. It might be his dick. Roll 2d6.",
       pair(
@@ -46,7 +46,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
       ),
     ),
   ],
-  "big-cheese": [
+  "great-boar": [
     roll(
       "It turns and charges again, tusks first. Roll d6.",
       moves(
@@ -60,34 +60,34 @@ const beats: Readonly<Record<string, Beat[]>> = {
       ),
     ),
   ],
-  "the-pipe-organ": [
+  "headless-rider": [
     duel(
       "He rides back. Left neighbor plays him: rock, paper, scissors, best of three. Lose: drink 3.",
     ),
   ],
   // The Old Forest (was the Wine Cellar).
-  "count-corkula": [
+  "wolf-king": [
     duel(
       "He circles you. Staring contest with your left neighbor, playing the wolf. Blink first: drink 3.",
     ),
   ],
-  "cask-queen": [
+  "faerie-queen": [
     duel(
       "She demands a dirty toast. Give her one, ten seconds, no ums; the table judges. Fail: drink 3.",
     ),
   ],
-  "chateau-ghoul": [
+  "old-bear": [
     roll(
       "He sniffs your crotch for honey. Roll 2d6 to prove you have none.",
       pair("He finds some. Don't ask where. Drink 4.", "Empty-handed. Give 4."),
     ),
   ],
-  "the-sommelier": [
+  "green-knight": [
     duel(
       "His game: you strike, then he does. Arm-wrestle your left neighbor, playing him. Lose: drink 3.",
     ),
   ],
-  "the-barrel-room": [
+  "hungry-wood": [
     roll(
       "The roots grab for you. Roll d6.",
       moves(
@@ -102,22 +102,22 @@ const beats: Readonly<Record<string, Beat[]>> = {
     ),
   ],
   // The Marsh (was the Brewery).
-  "the-fermenter": [
+  "bog-hydra": [
     duel(
       "The heads argue over you. Hold one note while the table counts to ten. Run out of air: drink 3.",
     ),
   ],
-  "king-hop": [
+  "frog-king": [
     duel(
       "He wants his court flattered. Croak his praises for 15 seconds. Laugh or stall: drink 3.",
     ),
   ],
-  "beer-snob-lich": [
+  "drowned-lich": [
     duel(
       "Name swamp creatures back and forth with your left neighbor. Stall or repeat first: drink 3.",
     ),
   ],
-  "keg-kraken": [
+  "marsh-serpent": [
     roll(
       "It thrashes, coils everywhere. Roll 2d6 to break free.",
       pair(
@@ -127,7 +127,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
       ),
     ),
   ],
-  "brewery-owner": [
+  "baron-of-the-bog": [
     roll(
       "He offers you a job at the manor. Roll d6 to negotiate.",
       moves(
@@ -142,7 +142,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
     ),
   ],
   // The Haunted Crypt (was the Catacombs).
-  "hangover-hydra": [
+  "bone-golem": [
     roll(
       "It pulls itself back together, mostly. Roll d20.",
       d20At(
@@ -151,17 +151,17 @@ const beats: Readonly<Record<string, Beat[]>> = {
       ),
     ),
   ],
-  "the-bouncer": [
+  "crypt-guardian": [
     duel(
       "Arm-wrestle your left neighbor, playing the guardian. Lose: drink 4.",
     ),
   ],
-  "dj-ossuary": [
+  "dancing-dead": [
     duel(
       "He plays faster. Freestyle four filthy lines about the table, in rhyme. Stop or stall: drink 4.",
     ),
   ],
-  "the-lich-lord": [
+  "lich-lord": [
     roll(
       "He pours his soul into a second cup. Roll d6.",
       moves(
@@ -178,34 +178,34 @@ const beats: Readonly<Record<string, Beat[]>> = {
       ),
     ),
   ],
-  "the-ghost-of-closing": [
+  "crypt-keeper": [
     duel(
       "Name five embarrassing things buried with a king, in ten seconds. Fall short: drink 4.",
     ),
   ],
   // The Goblin Mines (was the Sewers).
-  "the-fatberg": [
+  "goblin-king": [
     roll(
       "His goblins rush back in. Roll 2d6.",
       pair("They pile on you. Drink 5.", "You scatter them. Give 4."),
     ),
   ],
-  "alligator-al": [
+  "ogre-foreman": [
     duel(
       "He wants your miner's stance. Hold it on one leg while the table counts to 15. Wobble: drink 4.",
     ),
   ],
-  "plumber-king": [
+  "mine-lord": [
     duel(
       "Kneel and swear fealty to the Mine Lord, in one breath, in rhyme. Stumble: drink 4.",
     ),
   ],
-  "the-crocodile-mom": [
+  "mother-of-goblins": [
     duel(
       "She wants an apology. Apologize to your left neighbor for 15 seconds, sincerely. Laugh: drink 4.",
     ),
   ],
-  "the-pipe-worm": [
+  "rock-worm": [
     roll(
       "It comes up through the floor behind you. Roll d6.",
       moves(
@@ -223,12 +223,12 @@ const beats: Readonly<Record<string, Beat[]>> = {
     ),
   ],
   // The Wizard's Tower (was the Walk-in Freezer).
-  "the-walk-in": [
+  "tower-itself": [
     duel(
       "The light's out. Eyes shut, touch the nose of your left neighbor on the first try. Miss: drink 4.",
     ),
   ],
-  "the-snow-bartender": [
+  "mad-alchemist": [
     roll(
       "He serves the house special. Roll 2d6.",
       pair(
@@ -238,43 +238,43 @@ const beats: Readonly<Record<string, Beat[]>> = {
       ),
     ),
   ],
-  "absolute-zero": [
+  archmage: [
     duel(
       "He casts a holding spell. Freeze while the table counts to 15. Move, laugh or blink: drink 4.",
     ),
   ],
-  "the-ice-cream-man": [
+  "puppet-master": [
     duel(
       "He makes the table dance. Name six sex positions in ten seconds. Fall short: drink 4.",
     ),
   ],
-  "the-frozen-ex": [
+  "frozen-apprentice": [
     duel(
       "He asks what he missed. Name three new things in ten seconds. Fall short: drink 4.",
     ),
   ],
   // The side quests' keepers (Realms, 2026-11-03).
-  "the-proprietor": [
+  "granny-hex": [
     duel(
       "She wants the goat back. Haggle with your left neighbor for ten seconds. Table says no: drink 4.",
     ),
   ],
-  "the-promoter": [
+  "one-eyed-mag": [
     duel(
       "She wants a duel of insults. Trade three with your left neighbor; the table judges. Lose: drink 4.",
     ),
   ],
-  "the-manager": [
+  "barrow-king": [
     duel(
       "He demands your lineage: name four ancestors, real or not, in ten seconds. Fail: drink 4.",
     ),
   ],
-  "big-mike": [
+  "sea-witch": [
     duel(
       "She sings. The table has ten seconds to make you laugh. Laugh: drink 4.",
     ),
   ],
-  "the-undefeated": [
+  "deep-worm": [
     duel(
       "It coils for another strike. Arm-wrestle your left neighbor. Lose: drink 4.",
     ),

@@ -15,7 +15,7 @@ async function revealTitleCard(page: Page) {
     packs,
     rng("title fit"),
   );
-  const id = "cabin.almost-lost-my-cool";
+  const id = "core.cabin-almost-lost-my-cool";
   session.order = [id, ...session.order.filter((x) => x !== id)];
   await seedStorage(page, {
     [SESSION_KEY]: JSON.stringify(session),

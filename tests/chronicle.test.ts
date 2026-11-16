@@ -391,12 +391,12 @@ describe("the Chronicle's rivals", () => {
     const first = recordRun(
       emptyChronicle(),
       ended(
-        withRival(s, { ...base, who: "mirabel", took: ["shield"], lost: 2 }),
+        withRival(s, { ...base, who: "fingerbang", took: ["shield"], lost: 2 }),
         false,
       ),
       "2026-11-15T20:00:00Z",
     );
-    expect(first.rivals?.mirabel).toEqual({
+    expect(first.rivals?.fingerbang).toEqual({
       met: 1,
       beaten: 0,
       lostTo: 2,
@@ -404,15 +404,15 @@ describe("the Chronicle's rivals", () => {
       betrayed: 0,
       slainBy: 0,
     });
-    expect(first.nemesis).toBe("mirabel");
+    expect(first.nemesis).toBe("fingerbang");
     // Next run: Sensei, beaten in his duel. No nemesis now.
     const t = createSession(crawl, cards, packs, seeded(2));
     const second = recordRun(
       first,
-      ended(withRival(t, { ...base, who: "tutt", won: 3 }, ["rival-beaten"])),
+      ended(withRival(t, { ...base, who: "sensei", won: 3 }, ["rival-beaten"])),
       "2026-11-16T20:00:00Z",
     );
-    expect(second.rivals?.tutt).toMatchObject({ met: 1, beaten: 1 });
+    expect(second.rivals?.sensei).toMatchObject({ met: 1, beaten: 1 });
     expect(second.nemesis).toBeUndefined();
     expect(readChronicle(JSON.parse(JSON.stringify(second)))).toEqual(second);
   });
@@ -427,14 +427,14 @@ describe("the Chronicle's rivals", () => {
       recordRun(emptyChronicle(), ended(withRival(s, rival, deeds), won), "x")
         .feats;
     expect(
-      feats({ ...base, who: "tutt" }, [
+      feats({ ...base, who: "sensei" }, [
         "rival-refused",
         "rival-clean",
         "rival-beaten",
       ]),
     ).toContain("paid-in-full");
     expect(
-      feats({ ...base, who: "mirabel" }, ["rival-joined", "rival-turned"]),
+      feats({ ...base, who: "fingerbang" }, ["rival-joined", "rival-turned"]),
     ).toContain("et-tu");
     expect(feats({ ...base, who: "gary" }, ["rival-settled"])).toContain(
       "audited",
@@ -460,7 +460,7 @@ describe("the Chronicle's rivals", () => {
     const good = { ...emptyChronicle(), played: 2 };
     const bad = {
       ...good,
-      rivals: { mirabel: { met: -1 } },
+      rivals: { fingerbang: { met: -1 } },
       nemesis: "Not A Key",
     };
     const read = readChronicle(bad)!;
@@ -479,7 +479,7 @@ describe("the Chronicle's rivals", () => {
     // Picked plainly 1 time in 6; swapped in 1 time in 7 more when not:
     // 1/6 + (5/6)(1/7) = 2/7, twice any other rival's 5/42 each.
     const s = createSession(crawl, cards, packs, seeded(1));
-    const other = ["bradley", "mirabel", "tutt", "chuck", "queef"].find(
+    const other = ["chad", "fingerbang", "sensei", "chuck", "queef"].find(
       (w) => intro(s) !== `dungeon.rival-${w}`,
     )!;
     const swap = (r: number) =>

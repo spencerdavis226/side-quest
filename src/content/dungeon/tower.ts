@@ -29,18 +29,18 @@ import {
 // Each card holds its final text and mechanics (the variety pass and
 // outcome rewrites folded in).
 
-export const freezer: FloorCards = {
+export const tower: FloorCards = {
   fights: [
     // A table duel.
     trial(
       7,
-      "freezer-burn",
+      "gargoyle",
       "The Gargoyle",
       "Stare-down with your left neighbor, playing the gargoyle. Blink or laugh first: drink 4.",
     ),
     monster(
       7,
-      "ice-wraith",
+      "living-spellbook",
       "The Living Spellbook",
       "A spellbook flaps at you, reading itself aloud. Shush it, then roll d20.",
       "It reads your diary aloud. The sex parts. Drink 4.",
@@ -49,7 +49,7 @@ export const freezer: FloorCards = {
     ),
     monster(
       7,
-      "frozen-bachelor",
+      "stuck-apprentice",
       "The Stuck Apprentice",
       "An apprentice stuck halfway through a wall, ass out, since a teleport went wrong. Roll d20.",
       "He grabs your ankle. Drink 4.",
@@ -57,7 +57,7 @@ export const freezer: FloorCards = {
     ),
     monster(
       7,
-      "frost-giant",
+      "clay-golem",
       "The Clay Golem",
       "Nine feet of clay guarding the stair, and it wants the password. Guess one aloud, then roll d20.",
       "It squeezes you into a new shape. Drink 4.",
@@ -70,7 +70,7 @@ export const freezer: FloorCards = {
     mishap(
       7,
       "Monster",
-      "brain-freeze",
+      "mana-burn",
       "Mana Burn",
       "Everyone presses a thumb to their forehead. Last to say 'mana burn' drinks 3.",
     ),
@@ -79,7 +79,7 @@ export const freezer: FloorCards = {
       ...mishap(
         7,
         "Monster",
-        "the-snowman",
+        "wizards-portrait",
         "The Wizard's Portrait",
         "Read alone who the portrait shows, start the clock, and describe them. The table guesses.",
       ),
@@ -88,7 +88,7 @@ export const freezer: FloorCards = {
     },
     monster(
       7,
-      "ice-sculpture",
+      "empty-armor",
       "The Empty Armor",
       "An empty suit of armor clanks toward you, very politely. Roll d20.",
       "It bows, then hits you. Drink 4.",
@@ -103,13 +103,13 @@ export const freezer: FloorCards = {
     // A table duel.
     trial(
       7,
-      "the-mammoth",
+      "imp",
       "The Imp",
       "Imp-tail wrestle: link pinkies with your right neighbor and pull. Let go first: drink 4.",
     ),
     monster(
       7,
-      "hypothermia-hal",
+      "burning-mage",
       "The Burning Mage",
       "A fire mage in the tower's cold room, on fire, insisting he meant to be. Roll d20.",
       "He hugs you for warmth. Drink 4.",
@@ -117,7 +117,7 @@ export const freezer: FloorCards = {
     ),
     monster(
       7,
-      "margarita-elemental",
+      "love-potion",
       "The Love Potion",
       "A walking love potion with a cork for a hat. Lick your lips, then roll d20.",
       "It splashes you, and now you're horny. Drink 4.",
@@ -126,31 +126,31 @@ export const freezer: FloorCards = {
     ),
     trial(
       7,
-      "the-shiver",
+      "cold-spell",
       "The Cold Spell",
       "The wind wants something colder than itself. Say the coldest line you can. Nobody winces: drink 4.",
     ),
     trial(
       7,
-      "frozen-solid",
+      "petrified",
       "Petrified",
       "Strike your most dramatic pose and hold it, stone still, for 15 seconds. Move: drink 4.",
     ),
     trial(
       7,
-      "the-icebreaker",
+      "pickup-spell",
       "The Pickup Spell",
       "Cast a pickup line on your left neighbor, said like a spell. The table groans: drink 4.",
     ),
     trial(
       7,
-      "cold-open",
+      "spell-it-out",
       "Spell It Out",
       "Name a magic word for every letter of SPELL in 10 seconds. Stumble: drink 4.",
     ),
     trap(
       7,
-      "slippery-floor",
+      "grease-spell",
       "The Grease Spell",
       "A grease spell by the door. It smells like lube. Roll d20.",
       "Flat on your back. Drink 3.",
@@ -159,7 +159,7 @@ export const freezer: FloorCards = {
     // A hidden fuse.
     trap(
       7,
-      "icicle-drop",
+      "falling-books",
       "Falling Books",
       "The shelves sway, and you just sneezed. Freeze, then roll d20.",
       "One finds you. Drink 3.",
@@ -170,7 +170,7 @@ export const freezer: FloorCards = {
       ...mishap(
         7,
         "Trap",
-        "tongue-on-the-pole",
+        "dare-tower",
         "The Dare",
         "Read alone what you touched on a dare, start the clock, and mime it. The table guesses.",
       ),
@@ -179,7 +179,7 @@ export const freezer: FloorCards = {
     },
     ambush(
       7,
-      "penguin-gang",
+      "owl-familiars",
       "The Owl Familiars",
       "Six owls in tiny spectacles say you're in their library. Hoot once, then roll d20.",
       "Pecks, from all sides. Drink 3.",
@@ -187,7 +187,7 @@ export const freezer: FloorCards = {
     ),
     ambush(
       7,
-      "frozen-peas",
+      "marching-brooms",
       "The Marching Brooms",
       "A dozen enchanted brooms, sweeping in formation. Count to five out loud, then roll d20.",
       "Swept off your feet. Drink 3.",
@@ -196,14 +196,14 @@ export const freezer: FloorCards = {
     mishap(
       7,
       "Monster",
-      "popsicle-golem",
+      "imps-auction",
       "The Imp's Auction",
       "An imp auctions the wizard's last potion. Bid sips clockwise; top bid drinks it.",
     ),
     // 2d6, and doubles are a better win.
     monster(
       7,
-      "thawed-caveman",
+      "summoned-savage",
       "The Summoned Savage",
       "A warrior summoned from a thousand years ago wants to know what a fork is. Roll 2d6.",
       "",
@@ -221,7 +221,7 @@ export const freezer: FloorCards = {
       ...mishap(
         7,
         "Monster",
-        "ice-goblin",
+        "juggling-imp",
         "The Juggling Imp",
         "The imp juggles sparks around the table. Roll four dice.",
       ),
@@ -229,13 +229,13 @@ export const freezer: FloorCards = {
     },
     trial(
       7,
-      "chattering-teeth",
+      "incantation",
       "The Incantation",
       "Say 'which witch wished which wicked wish' three times fast. Fumble it: drink 4.",
     ),
     trap(
       7,
-      "ice-machine",
+      "cauldron-tower",
       "The Cauldron",
       "A cauldron is boiling over, and shaking. Roll d20 before it blows.",
       "Potion everywhere, mostly on you. Drink 3.",
@@ -243,7 +243,7 @@ export const freezer: FloorCards = {
     ),
     ambush(
       7,
-      "ski-lodge-crew",
+      "apprentices",
       "The Apprentices",
       "Five apprentices who only ever passed sex magic. Say 'abracadabra', then roll d20.",
       "They practice a fart spell on you. Drink 3.",
@@ -253,7 +253,7 @@ export const freezer: FloorCards = {
   finds: [
     relic(
       7,
-      "frozen-in-the-ice",
+      "bottled-spell",
       "The Bottled Spell",
       "A spell sealed in a bottle, glowing. Uncork it, or leave it.",
       12,
@@ -264,7 +264,7 @@ export const freezer: FloorCards = {
     ),
     relic(
       7,
-      "the-chest-freezer",
+      "locked-trunk",
       "The Locked Trunk",
       "A wizard's trunk, scratched on the inside of the lid. Open it, or don't.",
       12,
@@ -275,33 +275,33 @@ export const freezer: FloorCards = {
     ),
     treasure(
       7,
-      "lost-parka",
+      "lost-robe",
       "The Lost Robe",
       "A wizard's robe, a potion in the pocket, a stain on the front. Twirl in it like a wizard.",
       "draught",
     ),
     treasure(
       7,
-      "ice-tray",
+      "spellbook-shelf",
       "The Spellbook Shelf",
       "Jars of eyes and toes, and a training tome. Read its first line aloud; make it up.",
       "candy",
     ),
     shrine(
       7,
-      "the-compressor",
+      "fireplace",
       "The Fireplace",
       "A warm fire in a cold tower. Everyone huddles in and sips.",
     ),
     shrine(
       7,
-      "hot-chocolate",
+      "hot-cocoa",
       "Hot Cocoa",
       "A pot of cocoa, still warm, and a note: FOR WHOEVER'S NEXT. Everyone sips, slowly.",
     ),
     merchant(
       7,
-      "the-yeti",
+      "familiar",
       "The Familiar",
       "The wizard's cat runs a little shop out of the library, for treats.",
       [
@@ -312,7 +312,7 @@ export const freezer: FloorCards = {
     ),
     merchant(
       7,
-      "the-frozen-mime",
+      "silenced-mage",
       "The Silenced Mage",
       "A mage who cast silence on himself mid-sale. He sells by pointing.",
       [
@@ -323,21 +323,21 @@ export const freezer: FloorCards = {
     ),
     fork(
       7,
-      "two-shelves",
+      "shortcut-tower",
       "The Shortcut",
       "A teleport circle chalked on the floor, half rubbed out. It might go up.",
       ["Take the stairs", "Step in the circle"],
     ),
     fork(
       7,
-      "the-meat-hooks",
+      "mirrors",
       "The Mirrors",
       "Walk past the dark mirrors, or step through the one with a naked you in it, waving.",
       ["Walk past", "Step through"],
     ),
     gamble(
       7,
-      "ice-fishing",
+      "scrying-pool",
       "The Scrying Pool",
       "A pool that shows the future. Look, then cash out or look again, harder. Roll d20.",
       "You see your future. Drink 4.",
@@ -346,7 +346,7 @@ export const freezer: FloorCards = {
     ),
     gamble(
       7,
-      "mimic-fridge",
+      "mimic-bookcase",
       "Mimic Bookcase",
       "A bookcase with a heartbeat. It pays out until it bites. Cash out or open again. Roll d20.",
       "It bites. Drink 4.",
@@ -357,7 +357,7 @@ export const freezer: FloorCards = {
   elites: [
     elite(
       7,
-      "the-ice-queen",
+      "frost-mage",
       "The Frost Mage",
       "She has never once let anything go, the temperature included. Roll d20.",
       "She freezes you out. Drink 5.",
@@ -369,7 +369,7 @@ export const freezer: FloorCards = {
     ),
     elite(
       7,
-      "abominable-barback",
+      "golem-butler",
       "The Golem Butler",
       "Eight feet of stone with a silver tray, and you just asked for no ice. Roll d20.",
       "He dumps the tray on you. Drink 5.",
@@ -381,7 +381,7 @@ export const freezer: FloorCards = {
     ),
     elite(
       7,
-      "the-enforcer",
+      "tower-guard",
       "The Tower Guard",
       "The wizard keeps him for people who owe. You don't. He doesn't care. Roll d20.",
       "He locks you in a cupboard. Drink 5.",
@@ -393,7 +393,7 @@ export const freezer: FloorCards = {
     ),
     elite(
       7,
-      "freezer-witch",
+      "mirror-witch",
       "The Mirror Witch",
       "She keeps her rivals in mirrors, and there's room for one more. Roll d20.",
       "You're in the mirror. Drink 5.",
@@ -407,7 +407,7 @@ export const freezer: FloorCards = {
   bosses: [
     boss(
       7,
-      "the-walk-in",
+      "tower-itself",
       "The Tower Itself",
       `The tower wakes, and every door slams. ${SIDE_BETS} Roll d20.`,
       d20(
@@ -425,7 +425,7 @@ export const freezer: FloorCards = {
     ),
     boss(
       7,
-      "the-snow-bartender",
+      "mad-alchemist",
       "The Mad Alchemist",
       "He brews only exploding potions, and he never stops pouring. Roll d20.",
       d20(
@@ -443,7 +443,7 @@ export const freezer: FloorCards = {
     ),
     boss(
       7,
-      "absolute-zero",
+      "archmage",
       "The Archmage",
       "The oldest wizard alive. He doesn't move, and nothing near him does either. Roll d20.",
       d20(
@@ -465,7 +465,7 @@ export const freezer: FloorCards = {
     ),
     boss(
       7,
-      "the-ice-cream-man",
+      "puppet-master",
       "The Puppet Master",
       `A wizard with strings on every finger. ${SIDE_BETS} Roll d20.`,
       d20(
@@ -483,7 +483,7 @@ export const freezer: FloorCards = {
     ),
     boss(
       7,
-      "the-frozen-ex",
+      "frozen-apprentice",
       "The Frozen Apprentice",
       "The wizard's last apprentice, frozen mid-spell a hundred years ago, now thawing. Roll d20.",
       d20(

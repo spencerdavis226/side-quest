@@ -10,7 +10,7 @@ import { guard, keeper, moves, pair, plea, trinket, vs } from "./shared";
 // Walk on and the dungeon leaves the run. Card IDs are the hidden rooms'.
 // The Quest only.
 
-export interface HiddenRoom {
+export interface SideQuest {
   label: string;
   intro: string;
   plea: CardDefinition;
@@ -24,26 +24,26 @@ const barrow = "Old Barrow";
 const shrine = "Drowned Shrine";
 const vault = "Sunless Vault";
 
-export const hiddenRooms: HiddenRoom[] = [
+export const sideQuests: SideQuest[] = [
   {
     label: "The Witch's Cottage",
     intro: "Smoke from a crooked chimney",
     plea: plea(
-      "goat",
+      "miller",
       "The Miller's Plea",
       "A miller begs: a witch took his goat, and the goat is his best friend. Everyone says 'baa' once.",
     ),
     guards: [
       guard(
         cottage,
-        "peephole",
+        "gingerbread-door",
         "The Gingerbread Door",
         "A gingerbread door wants a password. Invent one in 5 seconds and sell it. Table says no: drink 3.",
         null,
       ),
       guard(
         cottage,
-        "flapper-fran",
+        "witchs-cat",
         "The Witch's Cat",
         "A black cat blocks the path and judges you. Do your best cat for 5 seconds, then roll d20.",
         vs(
@@ -53,7 +53,7 @@ export const hiddenRooms: HiddenRoom[] = [
       ),
       guard(
         cottage,
-        "bathtub-gin",
+        "witchs-cauldron",
         "The Cauldron",
         "A cauldron of something green, and a ladle. Roll d6.",
         moves(
@@ -72,7 +72,7 @@ export const hiddenRooms: HiddenRoom[] = [
     ],
     keeper: keeper(
       cottage,
-      "the-proprietor",
+      "granny-hex",
       "Granny Hex",
       "Three hundred years old, and she has never lost a staring contest. Roll d20.",
       vs(
@@ -96,14 +96,14 @@ export const hiddenRooms: HiddenRoom[] = [
     label: "The Bandit Fort",
     intro: "Torches on a wooden wall",
     plea: plea(
-      "strongbox",
+      "merchant",
       "The Merchant's Plea",
       "A merchant, robbed blind, wants his strongbox back. Everyone checks their own pockets, loudly.",
     ),
     guards: [
       guard(
         fort,
-        "bottle-service",
+        "toll-booth",
         "The Toll Booth",
         "The bandits charge a toll to get in, and another to get out. Roll 2d6.",
         pair(
@@ -114,14 +114,14 @@ export const hiddenRooms: HiddenRoom[] = [
       ),
       guard(
         fort,
-        "the-influencer",
+        "bandit-bard",
         "The Bandit Bard",
         "Sing the bandits a song about how great they are, 10 seconds. They hate it: drink 3.",
         null,
       ),
       guard(
         fort,
-        "the-bodyguard",
+        "gatekeeper",
         "The Gatekeeper",
         "Seven feet tall, one eye, and he wants the password. Roll d20.",
         vs(
@@ -132,7 +132,7 @@ export const hiddenRooms: HiddenRoom[] = [
     ],
     keeper: keeper(
       fort,
-      "the-promoter",
+      "one-eyed-mag",
       "One-Eyed Mag",
       "The bandit chief. The strongbox is under her chair, and she's sitting on it. Roll d20.",
       vs("She robs you too. Drink 4.", "You take the strongbox. Give 4.", {
@@ -154,14 +154,14 @@ export const hiddenRooms: HiddenRoom[] = [
     label: "The Old Barrow",
     intro: "A hill with a door in it",
     plea: plea(
-      "barrow",
+      "gravedigger",
       "The Gravedigger's Plea",
       "The gravedigger says the dead won't stay down. Everyone shows their best zombie face on three.",
     ),
     guards: [
       guard(
         barrow,
-        "the-accountant",
+        "barrow-wight",
         "The Barrow Wight",
         "A dead lord in rusted armor, counting his coins, and you. Roll d20.",
         vs(
@@ -171,14 +171,14 @@ export const hiddenRooms: HiddenRoom[] = [
       ),
       guard(
         barrow,
-        "security-camera",
+        "stone-watcher",
         "The Stone Watcher",
         "Freeze like a statue for 15 seconds while the table tries to crack you. Move: drink 3.",
         null,
       ),
       guard(
         barrow,
-        "the-safe",
+        "sealed-tomb",
         "The Sealed Tomb",
         "The seal is a riddle nobody remembers. Roll d6 to crack it.",
         moves(
@@ -194,7 +194,7 @@ export const hiddenRooms: HiddenRoom[] = [
     ],
     keeper: keeper(
       barrow,
-      "the-manager",
+      "barrow-king",
       "The Barrow King",
       "A crown, a sword, and no patience for visitors. Roll d20.",
       vs(
@@ -220,14 +220,14 @@ export const hiddenRooms: HiddenRoom[] = [
     label: "The Drowned Shrine",
     intro: "Bells ringing underwater",
     plea: plea(
-      "nets",
+      "fisherman",
       "The Fisherman's Plea",
       "A fisherman says the old shrine sings at night and his nets come up empty. Everyone hums low.",
     ),
     guards: [
       guard(
         shrine,
-        "card-sharp",
+        "merfolk-gambler",
         "The Merfolk Gambler",
         "He deals you a hand of wet cards and smiles too wide. Roll 2d6 for your hand.",
         pair(
@@ -238,14 +238,14 @@ export const hiddenRooms: HiddenRoom[] = [
       ),
       guard(
         shrine,
-        "the-tell",
+        "siren",
         "The Siren",
         "The siren only trusts liars. Tell two truths and a lie. Anyone spots the lie: you drink 3.",
         null,
       ),
       guard(
         shrine,
-        "the-dealer",
+        "drowned-priest",
         "The Drowned Priest",
         "He has prayed underwater for a hundred years and wants you to join him. Roll d20.",
         vs(
@@ -256,7 +256,7 @@ export const hiddenRooms: HiddenRoom[] = [
     ],
     keeper: keeper(
       shrine,
-      "big-mike",
+      "sea-witch",
       "The Sea Witch",
       "She trades in voices and has never lost a bargain. Roll d20.",
       vs("She takes your voice. Drink 4.", "You crack her shell. Give 4.", {
@@ -278,21 +278,21 @@ export const hiddenRooms: HiddenRoom[] = [
     label: "The Sunless Vault",
     intro: "Stairs into the mountain",
     plea: plea(
-      "vault",
+      "dwarf",
       "The Dwarf's Plea",
       "Something big took a dwarf's family vault. Everyone strokes an imaginary beard, suggestively.",
     ),
     guards: [
       guard(
         vault,
-        "arm-wrestle",
+        "last-guard",
         "The Last Guard",
         "The vault's last guard wants a test of strength. Arm-wrestle your right neighbor. Lose: drink 3.",
         null,
       ),
       guard(
         vault,
-        "the-ref",
+        "rune-door",
         "The Rune Door",
         "A door covered in runes that change when you look away. Roll d20.",
         vs(
@@ -302,7 +302,7 @@ export const hiddenRooms: HiddenRoom[] = [
       ),
       guard(
         vault,
-        "the-undercard",
+        "cave-troll",
         "The Cave Troll",
         "A young cave troll, warming up on you. Roll d6.",
         moves(
@@ -318,7 +318,7 @@ export const hiddenRooms: HiddenRoom[] = [
     ],
     keeper: keeper(
       vault,
-      "the-undefeated",
+      "deep-worm",
       "The Deep Worm",
       "A worm the size of a hall, coiled around the dwarf's gold. Roll d20.",
       vs(
@@ -346,44 +346,44 @@ export const hiddenRooms: HiddenRoom[] = [
 // joins as an ally when its keeper falls, and tells the party one dragon
 // lore. Each is sent into one kind of fight for +3; lost there, it dies.
 const ALLIES: Record<string, NonNullable<CardDefinition["ally"]>> = {
-  "dungeon.the-proprietor": {
+  "dungeon.granny-hex": {
     name: "Gertie the Goat",
     calling: ["trap"],
     bonus: 3,
     ritual: "Everyone bleats when the party heals. Silent: drink 1.",
   },
-  "dungeon.the-promoter": {
+  "dungeon.one-eyed-mag": {
     name: "Coin the Mule",
     calling: ["ambush"],
     bonus: 3,
     ritual:
       "Whoever uses an item pats the table twice first. Forgets: drink 1.",
   },
-  "dungeon.the-manager": {
+  "dungeon.barrow-king": {
     name: "Mort the Skull",
     calling: ["relic"],
     bonus: 3,
     ritual: "Before any gamble, the left neighbor advises as Mort.",
   },
-  "dungeon.big-mike": {
+  "dungeon.sea-witch": {
     name: "Pip the Cabin Boy",
     calling: ["monster"],
     bonus: 3,
     ritual: "The table shouts 'Pip!' at every monster. Last to shout drinks 1.",
   },
-  "dungeon.the-undefeated": {
+  "dungeon.deep-worm": {
     name: "Durla Ironbraid",
     calling: ["boss"],
     bonus: 3,
     ritual: "Everyone clinks glasses before a boss swing.",
   },
 };
-for (const r of hiddenRooms) {
+for (const r of sideQuests) {
   r.keeper.ally = ALLIES[r.keeper.id];
   r.keeper.reward = { lore: true };
 }
 
-export const hiddenRoomCards: CardDefinition[] = hiddenRooms.flatMap((r) => [
+export const sideQuestCards: CardDefinition[] = sideQuests.flatMap((r) => [
   r.plea,
   ...r.guards,
   r.keeper,

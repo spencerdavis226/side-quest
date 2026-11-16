@@ -28,7 +28,7 @@ export const classicCards: CardDefinition[] = [
     "Guys drink 2. Anyone who's ever peed in a sink drinks 2 more.",
   ),
   card(
-    "tallest",
+    "big-friendly-giant",
     "Big Friendly Giant",
     "group",
     "Tallest player drinks 2. Shortest player gives 2 and finally feels powerful.",
@@ -80,7 +80,7 @@ export const classicCards: CardDefinition[] = [
     "Do an impression of someone here having sex. You both drink 3.",
   ),
   card(
-    "stare-down",
+    "mirror-mirror",
     "Mirror Mirror",
     "challenge",
     "Mirror someone's every move and word for 20 seconds. First of you to laugh drinks 2.",

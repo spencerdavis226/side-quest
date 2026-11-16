@@ -106,7 +106,7 @@ describe("hidden results", () => {
     for (let seed = 1; ; seed++) {
       let s = takeRoads(createSession(crawl, cards, packs, seeded(seed)));
       const q = s.quest!;
-      const at = q.finale.indexOf("dungeon.keg-golem");
+      const at = q.finale.indexOf("dungeon.bridge-troll");
       if (at < 0) continue;
       s = advance({
         ...s,
@@ -119,7 +119,7 @@ describe("hidden results", () => {
       // A felled boss waits for its spoils.
       const next = takeSpoils(s, 0);
       expect(next.quest!.party!.loot).toContain("die");
-      expect(next.quest!.party!.found).toEqual(["dungeon.keg-golem"]);
+      expect(next.quest!.party!.found).toEqual(["dungeon.bridge-troll"]);
       roundTrip(next);
       // Any other face finds nothing.
       const plain = takeSpoils(

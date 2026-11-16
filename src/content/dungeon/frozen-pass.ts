@@ -25,18 +25,18 @@ import {
 // Each card holds its final text and mechanics (the variety pass and
 // outcome rewrites folded in).
 
-export const rooftop: FloorCards = {
+export const frozenPass: FloorCards = {
   fights: [
     // A table duel.
     trial(
       8,
-      "pigeon-king",
+      "eagle-king",
       "The Eagle King",
       "Screech-off with your left neighbor; the table picks the better eagle. Worse eagle: drink 5.",
     ),
     monster(
       8,
-      "rooftop-dj",
+      "mountain-horn",
       "The Mountain Horn",
       "A giant on the peak blows a horn, and he takes requests personally. Roll d6.",
       "",
@@ -58,7 +58,7 @@ export const rooftop: FloorCards = {
     ),
     monster(
       8,
-      "the-wind",
+      "wind",
       "The Wind",
       "Not a monster. Just the wind, a mile up, and it wants your drink. Roll d20.",
       "It takes your hat, your dignity and your pants. Drink 5.",
@@ -67,14 +67,14 @@ export const rooftop: FloorCards = {
     mishap(
       8,
       "Monster",
-      "the-seagull",
+      "snow-owl",
       "The Snow Owl",
       "A snow owl eyes the table. Last to cover their drink with a hand drinks 3.",
     ),
     // 2d6, and doubles are a better win.
     monster(
       8,
-      "influencer-golem",
+      "ice-golem",
       "The Ice Golem",
       "A golem of ice blocks needs one more snowman, and you're the head. Roll 2d6.",
       "",
@@ -90,7 +90,7 @@ export const rooftop: FloorCards = {
     ),
     monster(
       8,
-      "the-neighbor",
+      "hermit",
       "The Hermit",
       "A hermit on the next ledge threatens to start an avalanche. Wave at him, then roll d20.",
       "He shouts. Drink 5.",
@@ -105,7 +105,7 @@ export const rooftop: FloorCards = {
     ),
     monster(
       8,
-      "the-gargoyle",
+      "ice-troll",
       "The Ice Troll",
       "An ice troll on the ledge, pretending to be a rock. Everyone freezes while you roll d20.",
       "It drops on you. Drink 5.",
@@ -113,7 +113,7 @@ export const rooftop: FloorCards = {
     ),
     monster(
       8,
-      "thunderstorm",
+      "blizzard",
       "The Blizzard",
       "The sky opens, and nobody brought a cloak. Roll 2d6.",
       "",
@@ -130,38 +130,38 @@ export const rooftop: FloorCards = {
     // A table duel.
     trial(
       8,
-      "rooftop-raccoon",
+      "snow-fox",
       "The Snow Fox",
       "Guarding the rations: rock-paper-scissors with your right neighbor, best of 3. Lose: drink 5.",
       { loot: "die" },
     ),
     trial(
       8,
-      "toast-to-the-city",
+      "to-the-mountain",
       "To the Mountain",
       "Give a toast to the mountain in 15 seconds, no 'um'. Say 'um': drink 5.",
     ),
     trial(
       8,
-      "skyline-trivia",
+      "mountain-names",
       "Mountain Names",
       "Name five famous mountains in 10 seconds. Stumble: drink 5.",
     ),
     trial(
       8,
-      "the-slow-dance",
+      "slow-dance",
       "The Slow Dance",
       "Slow dance with your right neighbor, eyes locked, hands visible, 10 seconds. Laugh: drink 5.",
     ),
     trial(
       8,
-      "golden-hour",
+      "summit-pose",
       "The Summit Pose",
       "Give the table your best heroic summit pose. The table votes it fake: drink 5.",
     ),
     trap(
       8,
-      "the-ledge",
+      "ledge",
       "The Ledge",
       "You lean over for the view, and the ice leans with you. Roll d20.",
       "You see your life flash. Drink 4.",
@@ -170,13 +170,13 @@ export const rooftop: FloorCards = {
     mishap(
       8,
       "Trap",
-      "the-sprinklers",
+      "snow-slide",
       "Snow Slide",
       "Snow slides off the cliff above. Last to cover their head with both hands drinks 3.",
     ),
     trap(
       8,
-      "loose-tile",
+      "ice-bridge",
       "The Ice Bridge",
       "The ice bridge cracks right under your foot. Roll d20.",
       "You slide. Drink 4.",
@@ -185,13 +185,13 @@ export const rooftop: FloorCards = {
     mishap(
       8,
       "Trap",
-      "the-heat-lamp",
+      "campfire-hog",
       "The Campfire Hog",
       "On three, everyone points at who'd hog the campfire. Most fingers: drink 3.",
     ),
     ambush(
       8,
-      "rooftop-yoga",
+      "mountain-monks",
       "The Mountain Monks",
       "Twenty monks meditating on the pass, and you're in their way. Bow, then roll d20.",
       "They make you join. Drink 4.",
@@ -199,7 +199,7 @@ export const rooftop: FloorCards = {
     ),
     ambush(
       8,
-      "pigeon-squadron",
+      "griffin-flight",
       "The Griffin Flight",
       "Twelve griffins in a V, on a strafing run. Duck, then roll d20.",
       "Direct hit. It's griffin shit. Drink 4.",
@@ -210,7 +210,7 @@ export const rooftop: FloorCards = {
       ...mishap(
         8,
         "Monster",
-        "rogue-drone",
+        "snowball-imp",
         "The Snowball Imp",
         "A snowball imp pelts the table. Roll four dice.",
       ),
@@ -218,7 +218,7 @@ export const rooftop: FloorCards = {
     },
     monster(
       8,
-      "hot-tub-wizard",
+      "hot-spring-wizard",
       "The Hot Spring Wizard",
       "A naked 'wizard' in a hot spring wants your drink. Hold it close, then roll d20.",
       "He's a wizard. Drink 5.",
@@ -232,7 +232,7 @@ export const rooftop: FloorCards = {
       ...mishap(
         8,
         "Monster",
-        "the-fireworks",
+        "avalanche",
         "The Avalanche",
         "Light the fuse. Pass a cup clockwise, each 'shh' quieter. The avalanche hits whoever holds it.",
       ),
@@ -240,13 +240,13 @@ export const rooftop: FloorCards = {
     },
     trial(
       8,
-      "the-heckler",
+      "heckling-yeti",
       "The Heckling Yeti",
       "A yeti on the next peak heckles you. Roast him back in 10 seconds. Weak roast: drink 5.",
     ),
     trap(
       8,
-      "the-awning",
+      "snow-shelf",
       "The Snow Shelf",
       "The snow shelf above you is sagging. Roll d20.",
       "Buried. Drink 4.",
@@ -254,7 +254,7 @@ export const rooftop: FloorCards = {
     ),
     ambush(
       8,
-      "wedding-shoot",
+      "frost-wedding",
       "The Frost Wedding",
       "A frost-giant wedding wants the view, and you're in every portrait. Smile, then roll d20.",
       "You're in the portrait forever. Drink 4.",
@@ -264,7 +264,7 @@ export const rooftop: FloorCards = {
   finds: [
     relic(
       8,
-      "the-telescope",
+      "spyglass",
       "The Spyglass",
       "An old spyglass pointed at a castle far away. Look, or don't.",
       13,
@@ -275,7 +275,7 @@ export const rooftop: FloorCards = {
     ),
     relic(
       8,
-      "the-water-tower",
+      "watchtower",
       "The Watchtower",
       "A ladder up an old watchtower, and something glinting at the top. Climb, or don't.",
       13,
@@ -286,40 +286,40 @@ export const rooftop: FloorCards = {
     ),
     treasure(
       8,
-      "rooftop-lost-found",
+      "left-behind",
       "Left Behind",
       "A frozen pack in the snow: one boot, one condom and a smoke bomb. Blow on your hands.",
       "smoke",
     ),
     treasure(
       8,
-      "abandoned-table",
+      "frozen-feast",
       "The Frozen Feast",
       "A whole camp left its supper and never came back. Pour a splash for them.",
       "draught",
     ),
     treasure(
       8,
-      "pass-frozen-scout",
+      "frozen-scout",
       "The Frozen Scout",
       "A scout frozen at her post, a potion still on her belt. Everyone salutes her.",
       "draught",
     ),
     shrine(
       8,
-      "the-view",
+      "view",
       "The View",
       "The whole realm, laid out below. Everyone stops, looks, and drinks to it.",
     ),
     shrine(
       8,
-      "the-fire-pit",
+      "fire-pit",
       "The Fire Pit",
       "A fire pit and a ring of rocks. Everyone sits closer than they need to and sips.",
     ),
     merchant(
       8,
-      "the-bottle-girl",
+      "yak-herder",
       "The Yak Herder",
       "A yak herder with a sled of supplies and a spot by his fire, for a price.",
       [
@@ -330,21 +330,21 @@ export const rooftop: FloorCards = {
     ),
     fork(
       8,
-      "the-two-terraces",
+      "cry-for-help-pass",
       "A Cry for Help",
       "A horn from a stuck caravan up the pass: three short blasts, for help.",
       ["Press on", "Answer the horn"],
     ),
     fork(
       8,
-      "the-fire-escape",
+      "ice-cave",
       "The Ice Cave",
       "Climb over the ridge, or crawl through the ice cave, where someone is shouting.",
       ["Over the ridge", "The ice cave"],
     ),
     gamble(
       8,
-      "paper-planes",
+      "sled-racing",
       "Sled Racing",
       "Bet on the sled races down the slope. Win, then cash out or bet again. Roll d20.",
       "Yours flips. Drink 5.",
@@ -353,7 +353,7 @@ export const rooftop: FloorCards = {
     ),
     gamble(
       8,
-      "mimic-planter",
+      "mimic-snowdrift",
       "Mimic Snowdrift",
       "A snowdrift that grows prizes until it bites. Cash out or dig again. Roll d20.",
       "It bites. Drink 5.",
@@ -364,7 +364,7 @@ export const rooftop: FloorCards = {
   elites: [
     elite(
       8,
-      "penthouse-owner",
+      "frost-lord",
       "The Frost Lord",
       "He owns the pass, the peaks and, he thinks, you. Roll d20.",
       "He has you thrown off the mountain, gently. Drink 6.",
@@ -376,7 +376,7 @@ export const rooftop: FloorCards = {
     ),
     elite(
       8,
-      "gargoyle-king",
+      "yeti-king",
       "The Yeti King",
       "The biggest yeti there is. Every other yeti on the mountain just turned to look. Roll d20.",
       "Fur fist. Drink 6.",
@@ -388,7 +388,7 @@ export const rooftop: FloorCards = {
     ),
     elite(
       8,
-      "storm-chaser",
+      "storm-giant",
       "The Storm Giant",
       "He throws lightning for fun, and tonight he brought you some. Roll d20.",
       "Struck. Drink 6.",
@@ -400,7 +400,7 @@ export const rooftop: FloorCards = {
     ),
     elite(
       8,
-      "helicopter-pilot",
+      "griffin-rider",
       "The Griffin Rider",
       "He landed on the pass and won't leave until somebody pays. Roll d20.",
       "You're paying. Drink 6.",

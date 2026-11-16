@@ -1648,7 +1648,7 @@ function rivalEnding(deeds: string[], who: string): string {
   if (has("rival-fled")) return "Fled with your things";
   if (has("rival-settled")) return "Debt settled in drinks";
   if (has("rival-skipped"))
-    return who === "tutt" ? "Exam skipped" : "Walked past";
+    return who === "sensei" ? "Exam skipped" : "Walked past";
   return "Still out there";
 }
 /** The end screen's Nemesis panel (Rivals Phase 5): the rival's medallion,

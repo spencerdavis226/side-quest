@@ -1,12 +1,12 @@
 import type { CardDefinition, PackDefinition } from "../game/types";
 import { withNaturals } from "./naturals";
-import { hiddenRoomCards, hiddenRooms } from "./dungeon/bookcase";
-import { brewery } from "./dungeon/brewery";
-import { catacombs } from "./dungeon/catacombs";
-import { cellar } from "./dungeon/cellar";
+import { sideQuestCards, sideQuests } from "./dungeon/side-quests";
+import { marsh } from "./dungeon/marsh";
+import { crypt } from "./dungeon/crypt";
+import { kingsRoad } from "./dungeon/kings-road";
 import { JOKE_CLASSES, classes } from "./dungeon/classes";
-import { freezer } from "./dungeon/freezer";
-import { kitchen } from "./dungeon/kitchen";
+import { tower } from "./dungeon/tower";
+import { caverns } from "./dungeon/caverns";
 import { applyPhases } from "./dungeon/phases";
 import { applyJinxes } from "./dungeon/jinxes";
 import { floorMoments } from "./dungeon/moments";
@@ -19,12 +19,8 @@ import {
   senseiPinned,
   rivals,
 } from "./dungeon/rivals";
-import {
-  dragons as lastCallBosses,
-  lairs,
-  unlockedDragons,
-} from "./dungeon/dragons";
-import { lowerLandings, upperLandings } from "./dungeon/landings";
+import { dragons, lairs, unlockedDragons } from "./dungeon/dragons";
+import { lastInns, inns } from "./dungeon/inns";
 import { omens } from "./dungeon/omens";
 import { summonsCards } from "./dungeon/summons";
 import { signCards } from "./dungeon/signs";
@@ -38,55 +34,42 @@ import {
 import { echoes } from "./dungeon/echoes";
 import { applyHidden } from "./dungeon/hidden";
 import { landmarks } from "./dungeon/landmarks";
-import { rooftop } from "./dungeon/rooftop";
-import { sewers } from "./dungeon/sewers";
+import { frozenPass } from "./dungeon/frozen-pass";
+import { mines } from "./dungeon/mines";
 import {
   DRAGON_RARE,
   DRAGON_RARE_HEROIC,
   PARTY_HEARTS,
   type FloorCards,
 } from "./dungeon/shared";
-import { taproom } from "./dungeon/taproom";
-import { wine } from "./dungeon/wine";
+import { coast } from "./dungeon/coast";
+import { oldForest } from "./dungeon/old-forest";
 
-// Dungeon night: the bar has a cellar, and the cellar goes down forever.
-// Written for the owner on 2026-10-15 ("very flavorful", "actually difficult,
-// and failable"; inspired by Heroes of Barcadia's drink-as-damage fights, with
-// original text). In the plain modes the monsters, trials, traps and bosses
-// play as ordinary cards. Pub Crawl deals them as a run while the table
-// shares hearts. A lost fight costs the drawer a drink and the party hearts
-// (`damage`, shown on the card in Pub Crawl only, so no deck card's rule
-// mentions hearts); at zero the party wipes and everyone finishes their
-// drink.
+// Realms (the `dungeon` pack): classic fantasy, and The Quest, its crawl.
+// In the plain modes the region monsters, trials, traps, bosses and the
+// dragons play as ordinary cards. The Quest deals them as a run while the
+// table shares hearts: a lost fight costs the drawer a drink and the party
+// hearts (`damage`, shown on the card in The Quest only, so no deck card's
+// rule mentions hearts); at zero the party wipes.
 //
-// Replayability (2026-10-15): each depth is one of two floors (Cellar or
-// Wine Cellar, Catacombs or Sewers, Drowned Taproom or Kitchen); a third
-// at each since 2026-10-17 (the Brewery, the Walk-in Freezer, the Rooftop
-// Bar).
-//
-// The crawl at League depth (2026-10-17, owner: "bring it up to Pokémon
-// League tier"): a run opens on an adventurer (`dungeon/classes.ts`, the
-// starters' engine: a felt perk that levels up twice) and tonight's omen
-// (now a boon that stacks). The rival party, the Quarter-Zips, cut the queue
-// at the door and come back at closing time. Each floor has eight rooms,
-// elites and bosses drop trinkets (boons kept for the run), a landing
-// between floors trades drinks for a level or rests, and a jinx is a spoken
-// rule that holds until the floor's boss falls. Since 2026-10-31 (owner:
-// "too much clutter") there are no powers, knacks, floor rules, Cup or
-// Quaff: a class is its perk and its level line. The floor files hold
-// the cards; `dungeon/shared.ts` holds the builders and every tuning
-// constant, measured by `tests/dungeon.balance.test.ts`.
+// One file per region (`dungeon/kings-road.ts` to `dungeon/frozen-pass.ts`),
+// then the run's other cards: `classes.ts`, `omens.ts`, `summons.ts`,
+// `roads.ts`, `inns.ts`, `side-quests.ts`, `rivals.ts`, `dragons.ts` and
+// the rest. `dungeon/shared.ts` holds the builders and every tuning
+// constant, measured by `tests/dungeon.balance.test.ts`. The pack began as
+// Pub Crawl (2026-10-15) and was reskinned on 2026-11-03; its card IDs were
+// renamed to match on 2026-11-15 (`src/app/renamed-ids.ts`).
 
 const floors: Record<string, FloorCards> = {
-  cellar,
-  wine,
-  catacombs,
-  sewers,
-  taproom,
-  kitchen,
-  brewery,
-  freezer,
-  rooftop,
+  kingsRoad,
+  oldForest,
+  crypt,
+  mines,
+  coast,
+  caverns,
+  marsh,
+  tower,
+  frozenPass,
 };
 
 // Four table moments a floor (2026-10-25) join its finds.
@@ -102,7 +85,7 @@ const deck = [
     ...f.elites,
     ...f.bosses,
   ]),
-  ...lastCallBosses,
+  ...dragons,
 ];
 
 // Every d20 here carries the crawls' natural 20 and natural 1
@@ -131,9 +114,9 @@ export const dungeonCards: CardDefinition[] = applyPhases([
   ...unlockedDragons,
   ...Object.values(landmarks).flat(),
   ...classes,
-  ...upperLandings,
-  ...lowerLandings,
-  ...hiddenRoomCards,
+  ...inns,
+  ...lastInns,
+  ...sideQuestCards,
 ]).map(withNaturals);
 // Curses became jinxes (2026-10-25): one spoken system, not two.
 applyJinxes(dungeonCards);
@@ -170,7 +153,10 @@ const one = (label: string, intro: string, cards: CardDefinition[]) => ({
 });
 
 /** A lair: its region, the Company at the door and its dragons. */
-const lair = (region: ReturnType<typeof floor>, dragons: CardDefinition[]) => [
+const lair = (
+  region: ReturnType<typeof floor>,
+  lairDragons: CardDefinition[],
+) => [
   region,
   // The road remembers (The Quest 2.0 Phase 6): the echo of one deed the
   // party holds, or nothing; then the Company, by its record.
@@ -201,9 +187,12 @@ const lair = (region: ReturnType<typeof floor>, dragons: CardDefinition[]) => [
       ...rivals.map((r) => ({
         deeds: [`rival-${r.who}`],
         cardIds: [r.plea.id],
-        ...(r.who === "tutt" ? { fallback: true as const } : {}),
+        ...(r.who === "sensei" ? { fallback: true as const } : {}),
       })),
-      { deeds: ["rival-tutt", "rival-won-twice"], cardIds: [senseiPinned.id] },
+      {
+        deeds: ["rival-sensei", "rival-won-twice"],
+        cardIds: [senseiPinned.id],
+      },
     ],
   },
   {
@@ -219,7 +208,7 @@ const lair = (region: ReturnType<typeof floor>, dragons: CardDefinition[]) => [
   },
   // The Chronicle's dragons (The Quest 2.0 Phase 7), once unlocked.
   {
-    ...one("The Dragon's Lair", "It's awake", dragons),
+    ...one("The Dragon's Lair", "It's awake", lairDragons),
     rare: {
       cardIds: ids(unlockedDragons),
       odds: DRAGON_RARE,
@@ -250,8 +239,7 @@ export const dungeonPack: PackDefinition = {
     // then one of three regions at each depth (eight encounters, and a boss
     // on the first two) with an inn after each boss, a side quest the table
     // may take or walk past, the Company at the crossroads and at the
-    // lair's door, and the dragon. File and variable names are the old
-    // floors' (cellar is the King's Road, and so on).
+    // lair's door, and the dragon.
     finale: [
       // The joke classes are rare (The Quest 2.0 Phase 6): about 6 runs in
       // 100 (D8).
@@ -278,35 +266,35 @@ export const dungeonPack: PackDefinition = {
               floor(
                 "The King's Road",
                 "Out through the city gate",
-                cellar,
-                landmarks.cellar,
-                regionRares.cellar,
+                kingsRoad,
+                landmarks.kingsRoad,
+                regionRares.kingsRoad,
               ),
               one(
                 "King's Road boss",
                 "Something blocks the road",
-                cellar.bosses,
+                kingsRoad.bosses,
               ),
             ],
             [
               floor(
                 "The Old Forest",
                 "Into the Old Forest",
-                wine,
-                landmarks.wine,
-                regionRares.wine,
+                oldForest,
+                landmarks.oldForest,
+                regionRares.oldForest,
               ),
-              one("Old Forest boss", "The trees go quiet", wine.bosses),
+              one("Old Forest boss", "The trees go quiet", oldForest.bosses),
             ],
             [
               floor(
                 "The Marsh",
                 "Down into the Marsh",
-                brewery,
-                landmarks.brewery,
-                regionRares.brewery,
+                marsh,
+                landmarks.marsh,
+                regionRares.marsh,
               ),
-              one("Marsh boss", "Something stirs in the reeds", brewery.bosses),
+              one("Marsh boss", "Something stirs in the reeds", marsh.bosses),
             ],
           ],
         },
@@ -326,13 +314,13 @@ export const dungeonPack: PackDefinition = {
       // banner: its shadow crosses the card instead.
       { label: "A Dragon Sign", pick: 1, cardIds: ids(signCards) },
       {
-        ...one("The Inn", "A warm fire and a bad bed", upperLandings),
+        ...one("The Inn", "A warm fire and a bad bed", inns),
         rare: { cardIds: ids(innRares), odds: 0.08 },
       },
       // A side quest: one of five pleas, its dungeon's two guards and its
       // keeper (2026-10-17 as the hidden rooms). Walking on skips both.
       {
-        oneOf: hiddenRooms.map((r) => [
+        oneOf: sideQuests.map((r) => [
           one("A Side Quest", "Someone needs help", [r.plea]),
           { label: r.label, intro: r.intro, pick: 2, cardIds: ids(r.guards) },
           one(`${r.label.replace(/^The /, "")} boss`, "Someone is waiting", [
@@ -348,37 +336,37 @@ export const dungeonPack: PackDefinition = {
               floor(
                 "The Haunted Crypt",
                 "Down into the Haunted Crypt",
-                catacombs,
-                landmarks.catacombs,
-                regionRares.catacombs,
+                crypt,
+                landmarks.crypt,
+                regionRares.crypt,
               ),
-              one("Haunted Crypt boss", "The dead stand up", catacombs.bosses),
+              one("Haunted Crypt boss", "The dead stand up", crypt.bosses),
             ],
             [
               floor(
                 "The Goblin Mines",
                 "Down into the Goblin Mines",
-                sewers,
-                landmarks.sewers,
-                regionRares.sewers,
+                mines,
+                landmarks.mines,
+                regionRares.mines,
               ),
-              one("Goblin Mines boss", "Drums in the deep", sewers.bosses),
+              one("Goblin Mines boss", "Drums in the deep", mines.bosses),
             ],
             [
               floor(
                 "The Wizard's Tower",
                 "Up the Wizard's Tower",
-                freezer,
-                landmarks.freezer,
-                regionRares.freezer,
+                tower,
+                landmarks.tower,
+                regionRares.tower,
               ),
-              one("Wizard's Tower boss", "The lights go out", freezer.bosses),
+              one("Wizard's Tower boss", "The lights go out", tower.bosses),
             ],
           ],
         },
       },
       {
-        ...one("The Last Inn", "One last night's sleep", lowerLandings),
+        ...one("The Last Inn", "One last night's sleep", lastInns),
         rare: { cardIds: [lastInnRare.id], odds: 0.08 },
       },
       // The rival holds the crossroads: one of their four confrontations.
@@ -401,31 +389,31 @@ export const dungeonPack: PackDefinition = {
             floor(
               "The Sunken Coast",
               "Down to the Sunken Coast",
-              taproom,
-              landmarks.taproom,
-              regionRares.taproom,
+              coast,
+              landmarks.coast,
+              regionRares.coast,
             ),
-            lairs.taproom,
+            lairs.coast,
           ),
           lair(
             floor(
               "The Fire Caverns",
               "Into the Fire Caverns",
-              kitchen,
-              landmarks.kitchen,
-              regionRares.kitchen,
+              caverns,
+              landmarks.caverns,
+              regionRares.caverns,
             ),
-            lairs.kitchen,
+            lairs.caverns,
           ),
           lair(
             floor(
               "The Frozen Pass",
               "Up into the Frozen Pass",
-              rooftop,
-              landmarks.rooftop,
-              regionRares.rooftop,
+              frozenPass,
+              landmarks.frozenPass,
+              regionRares.frozenPass,
             ),
-            lairs.rooftop,
+            lairs.frozenPass,
           ),
         ],
       },

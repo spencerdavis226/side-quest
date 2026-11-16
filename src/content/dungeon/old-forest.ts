@@ -29,11 +29,11 @@ import {
 // final text and mechanics (the variety pass and the outcome rewrites
 // folded in); boss beats, curses and table moments stay in their own files.
 
-export const wine: FloorCards = {
+export const oldForest: FloorCards = {
   fights: [
     monster(
       3,
-      "boxed-wine-golem",
+      "horny-oak",
       "The Horny Oak",
       "An old oak keeps calling you 'sweet sapling'. Turn it down gently, then roll d20.",
       "It drops a branch on your head out of spite. Drink 3.",
@@ -42,7 +42,7 @@ export const wine: FloorCards = {
     ),
     monster(
       3,
-      "cork-imp",
+      "pixie-swarm",
       "Pixie Swarm",
       "Pixies, giggling and pulling your arm hair. And other hair. Roll d6.",
       "",
@@ -67,7 +67,7 @@ export const wine: FloorCards = {
       ...mishap(
         3,
         "Monster",
-        "zombie-sommelier",
+        "silent-druid",
         "The Silent Druid",
         "Read alone what the druid is thinking, start the clock, then act it out. The table guesses.",
       ),
@@ -77,13 +77,13 @@ export const wine: FloorCards = {
     // A table duel.
     trial(
       3,
-      "wine-mom-banshee",
+      "moaning-hag",
       "The Moaning Hag",
       "Moan like a hag in heat against your left neighbor. The table calls the quieter: drink 3.",
     ),
     monster(
       3,
-      "rose-slime",
+      "fairy-ring",
       "The Fairy Ring",
       "A ring of red mushrooms, and you ate some. Dance a little, then roll d20.",
       "You're tripping balls and can't stop dancing. Drink 3.",
@@ -96,7 +96,7 @@ export const wine: FloorCards = {
     // 2d6, and doubles are a better win.
     monster(
       3,
-      "decanter-ghost",
+      "wisp",
       "The Wisp",
       "A little light in the trees, bobbing, leading you off the path. Roll 2d6.",
       "",
@@ -116,27 +116,27 @@ export const wine: FloorCards = {
     mishap(
       3,
       "Monster",
-      "barrel-mimic",
+      "hollow-log",
       "The Hollow Log",
       "On three, everyone points at who'd fuck a hollow log first. Most fingers: drink 2.",
     ),
     mishap(
       3,
       "Monster",
-      "corkscrew-crab",
+      "pinecones",
       "Pinecones!",
       "A pinecone storm in the canopy. Everyone ducks on three; the last to duck drinks 2.",
     ),
     // A table duel.
     trial(
       3,
-      "sangria-sprite",
+      "deez-nuts",
       "Deez Nuts",
       "Your right neighbor throws you a mimed nut. Catch it in your mouth. Booed: drink 3.",
     ),
     monster(
       3,
-      "vinegar-vampire",
+      "bramble-witch",
       "The Bramble Witch",
       "A witch made of thorns, sure you pissed in her garden. Roll d20.",
       "You did piss in it. Drink 3, and say sorry to a plant.",
@@ -144,31 +144,31 @@ export const wine: FloorCards = {
     ),
     trial(
       3,
-      "blind-tasting",
+      "elves-test",
       "The Elves' Test",
       "Eyes shut; the elves hand you someone's drink. Name whose it is. Wrong: drink 3.",
     ),
     trial(
       3,
-      "coaster-nose",
+      "heron",
       "The Heron",
       "Stand on one leg like a heron, eyes shut, for 10 seconds. Wobble or peek: drink 3.",
     ),
     trial(
       3,
-      "swirl-sniff-lie",
+      "elf-lords-wine",
       "The Elf Lord's Wine",
       "Review your drink like a very old elf lord for 15 seconds. Crack a smile: drink 3.",
     ),
     trial(
       3,
-      "the-toast",
+      "morning-wood",
       "Morning Wood",
       "Praise your right neighbor's wood like an ancient oak for 20 seconds. Anyone laughs: you drink 3.",
     ),
     trap(
       3,
-      "falling-rack",
+      "falling-branches",
       "Falling Branches",
       "A storm in the canopy, and the branches start coming down. Roll d20.",
       "Bonked in the nuts. Drink 3.",
@@ -176,7 +176,7 @@ export const wine: FloorCards = {
     ),
     trap(
       3,
-      "merlot-stairs",
+      "mossy-slope",
       "The Mossy Slope",
       "A slope of wet moss, and the path is at the bottom. Stand up, then roll d20.",
       "Down on your ass, and your pants are green now. Drink 2 standing up.",
@@ -186,7 +186,7 @@ export const wine: FloorCards = {
     // A hidden fuse.
     trap(
       3,
-      "cork-mines",
+      "snares",
       "Snares",
       "Hunters' snares all over the path. Some of them twitch. Roll d20.",
       "Snap. Hung upside down, shirt over your face, nipples out. Drink 2.",
@@ -194,7 +194,7 @@ export const wine: FloorCards = {
     ),
     ambush(
       3,
-      "fruit-fly-swarm",
+      "midge-cloud",
       "Midge Cloud",
       "A cloud of midges off the pond, and they brought friends. Roll d20.",
       "In your mouth. You swallow. Drink 2 with a hand over your glass.",
@@ -202,7 +202,7 @@ export const wine: FloorCards = {
     ),
     ambush(
       3,
-      "book-club",
+      "elf-patrol",
       "The Elf Patrol",
       "Four elves who think humans are hot in a gross way. Name a song you'd sing them, then roll d20.",
       "They pat you on the head. Drink 2.",
@@ -211,20 +211,20 @@ export const wine: FloorCards = {
     mishap(
       3,
       "Monster",
-      "cork-goblin",
+      "nice-pecker",
       "Nice Pecker",
       "A woodpecker goes to work on the tree beside you. Everyone does a woodpecker; the worst drinks 2.",
     ),
     mishap(
       3,
       "Monster",
-      "rose-elemental",
+      "green-man",
       "The Green Man",
       "Everyone says 'the forest remembers' as a threat. The table picks the scariest; they give 3.",
     ),
     monster(
       3,
-      "tannin-troll",
+      "moss-troll",
       "The Moss Troll",
       "A troll with moss where moss shouldn't grow. Very itchy. Roll 2d6.",
       "",
@@ -239,13 +239,13 @@ export const wine: FloorCards = {
     ),
     trial(
       3,
-      "palate-test",
+      "name-that-tree",
       "Name That Tree",
       "Your left neighbor names three trees, one made up. Spot the fake. Wrong: drink 3.",
     ),
     trap(
       3,
-      "sediment-pit",
+      "sinkhole",
       "The Sinkhole",
       "Leaves over a hole, and the hole is full of mud. Roll d20.",
       "You wade through. It isn't all mud. Drink 2, and squelch.",
@@ -253,7 +253,7 @@ export const wine: FloorCards = {
     ),
     ambush(
       3,
-      "gender-reveal",
+      "hunting-party",
       "The Hunting Party",
       "A lord's hunting party, and you look a lot like a deer. Shout 'not a deer!', then roll d20.",
       "They're not convinced. Drink 2.",
@@ -263,7 +263,7 @@ export const wine: FloorCards = {
   finds: [
     gamble(
       3,
-      "wine-roulette",
+      "mushroom-roulette",
       "Mushroom Roulette",
       "Six mushrooms: five get you high, one kills. Win, then cash out or eat again. Roll d20.",
       "Poison. You shit yourself. Drink 3.",
@@ -272,7 +272,7 @@ export const wine: FloorCards = {
     ),
     relic(
       3,
-      "dusty-bottle",
+      "hollow-oak",
       "The Hollow Oak",
       "A hollow oak with something glinting inside. Reach in, or leave it.",
       11,
@@ -283,7 +283,7 @@ export const wine: FloorCards = {
     ),
     relic(
       3,
-      "locked-reserve",
+      "fairy-mound",
       "The Fairy Mound",
       "A grassy mound with a door the size of a hand. Knock, or leave it.",
       12,
@@ -300,39 +300,39 @@ export const wine: FloorCards = {
     ),
     treasure(
       3,
-      "cellar-masters-coat",
+      "hunters-pack",
       "A Hunter's Pack",
       "A pack on a branch: rope, jerky and a smoke bomb. Chew the pretend jerky, loudly and sexually.",
       "smoke",
     ),
     treasure(
       3,
-      "the-magnum",
+      "wacky-tobacky",
       "Wacky Tobacky",
       "A patch of 'healing herbs'. Everyone takes a pretend hit and coughs. Brew a potion.",
       "draught",
     ),
     shrine(
       3,
-      "tasting-room",
+      "elf-feast",
       "The Elf Feast",
       "An elf feast, left out for travelers. It's all salad. Everyone toasts the cook, sadly.",
     ),
     shrine(
       3,
-      "candle-nook",
+      "fairy-lights",
       "The Fairy Lights",
       "A clearing full of floating lights. Everyone makes a wish and blows on one.",
     ),
     shrine(
       3,
-      "forest-white-stag",
+      "white-stag",
       "The White Stag",
       "A white stag watches from the trees, and the forest goes still. Everyone raises a glass, silently.",
     ),
     merchant(
       3,
-      "the-vintner",
+      "mushroom-man",
       "The Mushroom Man",
       "An old man with huge pupils swears every mushroom is safe. He's been tripping since spring.",
       [
@@ -343,21 +343,21 @@ export const wine: FloorCards = {
     ),
     fork(
       3,
-      "red-or-white",
+      "shortcut-forest",
       "The Shortcut",
       "A woodcutter swears the shortcut through the thorns saves a day. He has never taken it.",
       ["The long way", "The shortcut"],
     ),
     fork(
       3,
-      "the-bung-hole",
+      "hollow-tree",
       "The Hollow Tree",
       "A hollow tree to crawl through, or the long way round. Something inside moans.",
       ["Long way round", "The hollow tree"],
     ),
     gamble(
       3,
-      "mimic-cask",
+      "mimic-wishing-tree",
       "The Wishing Tree",
       "Shake the tree for a gift, until it drops a beehive. Cash out or shake again. Roll d20.",
       "Beehive. Drink 3.",
@@ -368,7 +368,7 @@ export const wine: FloorCards = {
   elites: [
     elite(
       3,
-      "wine-snob",
+      "elf-archer",
       "The Elf Archer",
       "She has never missed, and she's very polite about it. Roll d20.",
       "An arrow through your codpiece. Drink 4, and check.",
@@ -380,7 +380,7 @@ export const wine: FloorCards = {
     ),
     elite(
       3,
-      "grape-elemental",
+      "treant",
       "The Treant",
       "Two tons of walking oak, and you stepped on its roots. Roll d20.",
       "Stomped. Drink 4, then stomp your feet for 5 seconds.",
@@ -392,7 +392,7 @@ export const wine: FloorCards = {
     ),
     elite(
       3,
-      "cellar-master",
+      "woodcutter",
       "The Woodcutter",
       "He knows every tree in this forest, and you pissed on his favorite. Roll d20.",
       "He makes you stack wood. Drink 4.",
@@ -404,7 +404,7 @@ export const wine: FloorCards = {
     ),
     elite(
       3,
-      "wine-influencer",
+      "faerie-bard",
       "The Faerie Bard",
       "A faerie bard who needs a villain for her new song, and has picked you. Roll d20.",
       "You're the villain of the song. Drink 4, and bow.",
@@ -418,7 +418,7 @@ export const wine: FloorCards = {
   bosses: [
     boss(
       3,
-      "count-corkula",
+      "wolf-king",
       "The Wolf King",
       `He means to eat you first. ${SIDE_BETS} Roll d20.`,
       d20(
@@ -436,7 +436,7 @@ export const wine: FloorCards = {
     ),
     boss(
       3,
-      "cask-queen",
+      "faerie-queen",
       "The Faerie Queen",
       "She sits on a throne of thorns and judges your manners. Curtsy, then roll d20.",
       d20(
@@ -458,7 +458,7 @@ export const wine: FloorCards = {
     ),
     boss(
       3,
-      "chateau-ghoul",
+      "old-bear",
       "The Old Bear",
       "A bear older than the forest, woken from a very long nap. Roll d20.",
       d20(
@@ -476,7 +476,7 @@ export const wine: FloorCards = {
     ),
     boss(
       3,
-      "the-sommelier",
+      "green-knight",
       "The Green Knight",
       `Twelve feet tall and green as moss. ${SIDE_BETS} Roll d20.`,
       d20(
@@ -494,7 +494,7 @@ export const wine: FloorCards = {
     ),
     boss(
       3,
-      "the-barrel-room",
+      "hungry-wood",
       "The Hungry Wood",
       "The trees close in, and one of them has a mouth. Roll d20.",
       d20(

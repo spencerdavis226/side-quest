@@ -27,14 +27,14 @@ import {
 // it. Each card holds its final text and mechanics (the variety pass and
 // outcome rewrites folded in).
 
-export const kitchen: FloorCards = {
+export const caverns: FloorCards = {
   fights: [
     // A hidden fuse.
     {
       ...mishap(
         5,
         "Monster",
-        "deep-fryer-demon",
+        "lava-spout",
         "The Lava Spout",
         "Light the fuse. Pass a cup clockwise, naming something hot. The lava spits on whoever holds it.",
       ),
@@ -43,7 +43,7 @@ export const kitchen: FloorCards = {
     // A table duel.
     trial(
       5,
-      "line-cook-golem",
+      "forge-golem",
       "The Forge Golem",
       "Your left neighbor names three weapons for the forge. Repeat them back in order. Miss one: drink 5.",
       {
@@ -55,7 +55,7 @@ export const kitchen: FloorCards = {
     ),
     monster(
       5,
-      "sentient-sourdough",
+      "living-magma",
       "The Living Magma",
       "A blob of magma that has been fed for a thousand years. It wants more. Roll d20.",
       "It rises over you. Drink 5.",
@@ -64,13 +64,13 @@ export const kitchen: FloorCards = {
     // A table duel.
     trial(
       5,
-      "garlic-wraith",
+      "smoke-wraith",
       "The Smoke Wraith",
       "Breath-off in the smoke: hold your breath against your right neighbor. Breathe first: drink 4.",
     ),
     monster(
       5,
-      "the-expo",
+      "imp-foreman",
       "The Imp Foreman",
       "The imp foreman is screaming for hands, and you have hands. Roll d6.",
       "",
@@ -92,7 +92,7 @@ export const kitchen: FloorCards = {
     ),
     monster(
       5,
-      "food-critic-ghoul",
+      "fire-judge",
       "The Fire Judge",
       "A demon judge who weighs every hero's soul, and yours is light. Roll d20.",
       "Found wanting. Drink 5, and list your three hottest sins out loud.",
@@ -102,7 +102,7 @@ export const kitchen: FloorCards = {
     mishap(
       5,
       "Monster",
-      "walk-in-yeti",
+      "salamander",
       "The Salamander",
       "On three, everyone points at who'd lick a salamander that's on fire. Most fingers: drink 3.",
     ),
@@ -111,7 +111,7 @@ export const kitchen: FloorCards = {
       ...mishap(
         5,
         "Monster",
-        "dish-pit-horror",
+        "spark-swarm",
         "The Spark Swarm",
         "A swarm of sparks drifts over the table. Roll four dice.",
       ),
@@ -119,7 +119,7 @@ export const kitchen: FloorCards = {
     },
     monster(
       5,
-      "gordon-wraith",
+      "screaming-smith",
       "The Screaming Smith",
       "A ghost blacksmith who screams at every blade he sees. Yours is next. Roll d20.",
       "He calls you a limp, useless sack, at length. Drink 5.",
@@ -134,7 +134,7 @@ export const kitchen: FloorCards = {
     // 2d6, and doubles are a better win.
     monster(
       5,
-      "rogue-rotisserie",
+      "roasting-boar",
       "The Roasting Boar",
       "A fire boar, smoking, and it has decided you are dinner. Roll 2d6.",
       "",
@@ -149,31 +149,31 @@ export const kitchen: FloorCards = {
     ),
     trial(
       5,
-      "yes-chef",
+      "forge-oath",
       "The Forge Oath",
       "The forge demands an oath. For 30 seconds, answer everything with 'By the flame!' Miss one: drink 5.",
     ),
     trial(
       5,
-      "four-plates",
+      "bucket-line",
       "The Bucket Line",
       "The cave is burning. Carry four empties on one arm across the room and back. Drop one: drink 5.",
     ),
     trial(
       5,
-      "hot-sauce",
+      "fire-names",
       "Fire Names",
       "Name ten fiery things, real or made up, in 20 seconds. Stumble: drink 5.",
     ),
     trial(
       5,
-      "the-pitch",
+      "fire-ritual",
       "The Fire Ritual",
       "Pitch the table a new fire ritual in 20 seconds. Fewer than half would join in: drink 5.",
     ),
     trap(
       5,
-      "grease-fire",
+      "burst-of-flame",
       "Burst of Flame",
       "A gas vent catches. Everyone yells 'FIRE!', then you roll d20.",
       "Singed. Drink 4.",
@@ -181,7 +181,7 @@ export const kitchen: FloorCards = {
     ),
     trap(
       5,
-      "wet-floor",
+      "obsidian-glass",
       "Obsidian Glass",
       "The floor here is glass-smooth obsidian. Roll d20.",
       "Down. Drink 4, and lie on the floor for 5 seconds.",
@@ -190,13 +190,13 @@ export const kitchen: FloorCards = {
     mishap(
       5,
       "Trap",
-      "swinging-door",
+      "furnace-door",
       "The Furnace Door",
       "The furnace door bursts open. Everyone shouts 'Duck!'; the last to shout drinks 3.",
     ),
     trap(
       5,
-      "mandoline",
+      "blade-trap",
       "The Blade Trap",
       "Blades swing out of the walls on their own. Hands up, then roll d20.",
       "Thinly sliced. Drink 4.",
@@ -204,7 +204,7 @@ export const kitchen: FloorCards = {
     ),
     ambush(
       5,
-      "raccoon-crew",
+      "fire-imps",
       "Fire Imps",
       "Two fire imps are stealing your rations. Hide your hands, then roll d20.",
       "They take your bread too. Drink 4.",
@@ -212,7 +212,7 @@ export const kitchen: FloorCards = {
     ),
     ambush(
       5,
-      "the-brunch-crowd",
+      "fire-cult",
       "The Fire Cult",
       "A fire cult in red robes, nothing under them, insists you join the dancing. Roll d20.",
       "You dance. Drink 4.",
@@ -220,7 +220,7 @@ export const kitchen: FloorCards = {
     ),
     monster(
       5,
-      "microwave-ghost",
+      "fart-ghost",
       "The Fart Ghost",
       "The ghost of every fart ever cracked. Hold your nose, then roll d20.",
       "You smell like it now. Drink 5.",
@@ -232,7 +232,7 @@ export const kitchen: FloorCards = {
       ...mishap(
         5,
         "Monster",
-        "rat-chef",
+        "imps-spit",
         "The Imp's Spit",
         "Read alone what the imp is roasting, start the clock, then describe it like a bard. Table guesses.",
       ),
@@ -241,7 +241,7 @@ export const kitchen: FloorCards = {
     },
     monster(
       5,
-      "ticket-machine",
+      "forge-bell",
       "The Forge Bell",
       "The forge bell won't stop: two hundred swords, all for you. Roll 2d6.",
       "",
@@ -256,7 +256,7 @@ export const kitchen: FloorCards = {
     ),
     trial(
       5,
-      "the-order",
+      "smiths-wares",
       "The Smith's Wares",
       "Sell the smith's wares: make up three magic swords, with prices, in 15 seconds. Stall: drink 5.",
     ),
@@ -265,7 +265,7 @@ export const kitchen: FloorCards = {
       ...mishap(
         5,
         "Trap",
-        "hot-pan",
+        "hot-rock",
         "The Hot Rock",
         "Light the fuse. Pass a cup clockwise, saying 'hot, hot, hot'. It burns whoever holds it.",
       ),
@@ -273,7 +273,7 @@ export const kitchen: FloorCards = {
     },
     ambush(
       5,
-      "food-truck-guys",
+      "forge-robbers",
       "The Forge Robbers",
       "Two bandits are robbing the forge. Shout your battle cry, then roll d20.",
       "They sell you your own sword. Drink 4.",
@@ -283,7 +283,7 @@ export const kitchen: FloorCards = {
   finds: [
     gamble(
       5,
-      "hot-sauce-ladder",
+      "firewalk",
       "The Firewalk",
       "Each step is hotter coals. Win, then cash out or step again, harder. Roll d20.",
       "Your feet are on fire. Drink 5.",
@@ -292,7 +292,7 @@ export const kitchen: FloorCards = {
     ),
     relic(
       5,
-      "back-burner",
+      "hot-spring",
       "The Hot Spring",
       "A hot spring that never stops boiling. Taste it, or leave it.",
       13,
@@ -303,7 +303,7 @@ export const kitchen: FloorCards = {
     ),
     relic(
       5,
-      "the-mystery-meat",
+      "warm-egg",
       "The Dragon Egg",
       "A warm egg the size of a barrel, marked DO NOT TOUCH. Lift it, or don't.",
       13,
@@ -314,27 +314,27 @@ export const kitchen: FloorCards = {
     ),
     treasure(
       5,
-      "staff-meal",
+      "smiths-lunch",
       "The Smiths' Lunch",
       "Bread, pickles and a smoke bomb the smiths hid for you. Bow to the smiths.",
       "smoke",
     ),
     treasure(
       5,
-      "knife-roll",
+      "tool-roll",
       "The Tool Roll",
       "A smith's tool roll left on the anvil, something heavy in the end pocket. Weigh it in your hand.",
       "die",
     ),
     shrine(
       5,
-      "family-meal",
+      "smiths-supper",
       "The Smiths' Supper",
       "The dwarven smiths sit down to eat, and they set a place for you. Everyone toasts the smiths.",
     ),
     merchant(
       5,
-      "the-dishwasher",
+      "ash-sweeper",
       "The Ash Sweeper",
       "The ash sweeper has seen everything, and he'll sell you some of it, for drinks or blood.",
       [
@@ -345,7 +345,7 @@ export const kitchen: FloorCards = {
     ),
     merchant(
       5,
-      "the-sous-chef",
+      "smiths-apprentice",
       "The Smith's Apprentice",
       "The apprentice is selling the master's stash, quietly, out the back.",
       [
@@ -356,21 +356,21 @@ export const kitchen: FloorCards = {
     ),
     fork(
       5,
-      "the-pass",
+      "lava-bridge",
       "The Lava Bridge",
       "Two ways on: the quiet back tunnel, or straight across the lava bridge.",
       ["Back tunnel", "Lava bridge"],
     ),
     fork(
       5,
-      "the-dumbwaiter",
+      "locked-door-caverns",
       "The Locked Door",
       "An iron door, hot to the touch, with a claw mark the length of a man across it.",
       ["Leave it shut", "Force it open"],
     ),
     gamble(
       5,
-      "mimic-oven",
+      "mimic-furnace",
       "Mimic Furnace",
       "A furnace that bakes treats until it bites. Cash out or open it again. Roll d20.",
       "It bites. Drink 5.",
@@ -381,7 +381,7 @@ export const kitchen: FloorCards = {
   elites: [
     elite(
       5,
-      "head-chef",
+      "fire-giant",
       "The Fire Giant",
       "He's thrown a boulder at everyone tonight. You're next. Roll d20.",
       "The boulder. Drink 6.",
@@ -393,7 +393,7 @@ export const kitchen: FloorCards = {
     ),
     elite(
       5,
-      "the-butcher",
+      "orc-butcher",
       "The Orc Butcher",
       "The orc butcher is sharpening, and sharpening, and sharpening. Roll d20.",
       "Filleted. Drink 6.",
@@ -405,7 +405,7 @@ export const kitchen: FloorCards = {
     ),
     elite(
       5,
-      "the-owner",
+      "fire-lord",
       "The Fire Lord",
       "The lord of these caverns is counting his gold tonight, and some is missing. Roll d20.",
       "He blames you for the missing gold. Drink 6.",
@@ -420,7 +420,7 @@ export const kitchen: FloorCards = {
     ),
     elite(
       5,
-      "celebrity-chef",
+      "phoenix",
       "The Phoenix",
       "A phoenix with a catchphrase and a temper, and you're in its nest. Roll d20.",
       "It calls you a donkey, on fire. Drink 6.",

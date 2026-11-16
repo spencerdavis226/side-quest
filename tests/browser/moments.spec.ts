@@ -151,7 +151,7 @@ test("a boss's entrance plays once, and a tap on the card skips it and turns it"
   page,
 }) => {
   await withMotion(page);
-  await seed(page, advance(crawlAt("dungeon.possessed-mop", STEP.boss1 - 1)));
+  await seed(page, advance(crawlAt("dungeon.snake-in-the-road", STEP.boss1 - 1)));
   await page.locator(".game-card").click();
   const entrance = page.locator(".moment-entrance");
   await expect(entrance).toBeVisible();
@@ -169,7 +169,7 @@ test("a boss dealt again after a lost swing has no second entrance", async ({
   page,
 }) => {
   await withMotion(page);
-  const boss = advance(crawlAt("dungeon.keg-golem", STEP.boss1));
+  const boss = advance(crawlAt("dungeon.bridge-troll", STEP.boss1));
   const lost = returnToCard(
     rollDice(boss, () => (2 - 0.5) / currentCard(boss).dice!.sides),
   );
@@ -178,7 +178,7 @@ test("a boss dealt again after a lost swing has no second entrance", async ({
   // Put aside and dealt again, face down: the same boss, the same step.
   await expect.poll(async () => (await saved(page)).phase).toBe("hidden");
   const again = await saved(page);
-  expect(again.previousId).toBe("dungeon.keg-golem");
+  expect(again.previousId).toBe("dungeon.bridge-troll");
   expect(again.quest.step).toBe(STEP.boss1);
   await expect(page.locator(".card-stage")).not.toHaveClass(
     /\b(deal|flip|discard)\b/,
@@ -254,7 +254,7 @@ test("a jinx is laid on a scroll that rolls up into the jinx chip", async ({
   // The Hedge Witch lost on a 2: Toad Voice is laid.
   await seed(
     page,
-    rolled(advance(crawlAt("dungeon.goblin-shaman", STEP.floor1)), 2),
+    rolled(advance(crawlAt("dungeon.hedge-witch", STEP.floor1)), 2),
   );
   await page.locator(".game-card").click();
   const scroll = page.locator(".moment-jinx .jinx-scroll");
@@ -319,7 +319,7 @@ test("a side quest's secret way in swings open; a tap on the card skips it and t
     page,
     advance(
       crawlAt(
-        "dungeon.quest-goat",
+        "dungeon.quest-miller",
         STEP.plea,
         {},
         {
@@ -408,7 +408,7 @@ test("a Quest rank up holds on the new rank until the table taps", async ({
     page,
     advance(
       crawlAt(
-        "dungeon.drunk-goblin",
+        "dungeon.goblin-scouts",
         STEP.floor1,
         { loot: ["candy"] },
         { adventurer: "barbarian" },
@@ -436,7 +436,7 @@ test("the Summons reveals the dragon once, and a dragon sign's shadow passes", a
   page,
 }) => {
   await withMotion(page);
-  const at = crawlAt("dungeon.summons-proclamation", STEP.summons);
+  const at = crawlAt("dungeon.summons-kings-decree", STEP.summons);
   await seed(page, at);
   // The prologue (2026-11-15) turns the Summons for the table at once.
   const wanted = page.locator(".moment-wanted");

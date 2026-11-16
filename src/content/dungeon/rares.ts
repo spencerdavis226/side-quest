@@ -43,11 +43,11 @@ const offers = (
 
 /** Each region's two rares, keyed by its file's name. */
 export const regionRares: Record<string, CardDefinition[]> = {
-  cellar: [
+  kingsRoad: [
     rare(
       trial(
         0,
-        "rare-king-disguise",
+        "rare-king-in-disguise",
         "The King in Disguise",
         "A beggar who is plainly the king. The drawer chats for 20 seconds; no bowing, no saying 'king'.",
         { loot: "candy" },
@@ -63,10 +63,10 @@ export const regionRares: Record<string, CardDefinition[]> = {
       reward: { heal: 4 },
     }),
   ],
-  wine: [
+  oldForest: [
     rare({
       ...card(
-        "rare-sword-stone",
+        "rare-sword-in-the-stone",
         "The Sword in the Stone",
         "challenge",
         "A sword in a stone, and a queue of failed knights, all compensating. The drawer may pull. Roll d20.",
@@ -106,7 +106,7 @@ export const regionRares: Record<string, CardDefinition[]> = {
       },
     },
   ],
-  brewery: [
+  marsh: [
     offers(
       6,
       "rare-wishing-frog",
@@ -120,17 +120,17 @@ export const regionRares: Record<string, CardDefinition[]> = {
     ),
     offers(
       6,
-      "rare-wisp",
+      "rare-will-o-wisp",
       "The Will-o'-Wisp",
       "A blue light bobs off the path, singing your name. Everyone hums along.",
       [{ label: "Follow it", cost: 1, ...LORE }, { label: "Stay on the path" }],
     ),
   ],
-  catacombs: [
+  crypt: [
     rare(
       treasure(
         1,
-        "rare-own-grave",
+        "rare-your-own-grave",
         "Your Own Grave",
         "A headstone with tonight's date and the drawer's name. Everyone toasts.",
         "revive",
@@ -139,7 +139,7 @@ export const regionRares: Record<string, CardDefinition[]> = {
     rare({
       ...trial(
         1,
-        "rare-death-chess",
+        "rare-death-playing-chess",
         "Death, Playing Chess",
         "Death challenges the table's champion to rock-paper-scissors, best of three.",
       ),
@@ -147,7 +147,7 @@ export const regionRares: Record<string, CardDefinition[]> = {
       damage: 2,
     }),
   ],
-  sewers: [
+  mines: [
     rare({
       ...gamble(
         4,
@@ -180,10 +180,10 @@ export const regionRares: Record<string, CardDefinition[]> = {
       ),
     ),
   ],
-  freezer: [
+  tower: [
     offers(
       7,
-      "rare-wizard-home",
+      "rare-wizard-is-home",
       "The Wizard Is Home",
       "The wizard's home, in slippers and nothing else, and delighted. Everyone compliments the tower.",
       [
@@ -193,7 +193,7 @@ export const regionRares: Record<string, CardDefinition[]> = {
     ),
     offers(
       7,
-      "rare-old-apprentice",
+      "rare-oldest-apprentice",
       "The Oldest Apprentice",
       "An apprentice of ninety, still sweeping. The drawer asks what he has learned.",
       [
@@ -205,7 +205,7 @@ export const regionRares: Record<string, CardDefinition[]> = {
       ],
     ),
   ],
-  taproom: [
+  coast: [
     rare(
       trial(
         2,
@@ -218,18 +218,18 @@ export const regionRares: Record<string, CardDefinition[]> = {
     rare({
       ...shrine(
         2,
-        "rare-mermaid-kiss",
+        "rare-mermaids-kiss",
         "A Mermaid's Kiss",
         "A mermaid kisses the drawer, who may not speak until their next turn.",
       ),
       reward: { heal: 3 },
     }),
   ],
-  kitchen: [
+  caverns: [
     rare({
       ...monster(
         5,
-        "rare-dragon-egg",
+        "rare-dragons-egg",
         "A Dragon's Egg",
         "A dragon egg, warm, in a nest of slag, and its mother is out. Roll d20.",
         "It bites. Drink 4.",
@@ -250,7 +250,7 @@ export const regionRares: Record<string, CardDefinition[]> = {
     }),
     offers(
       5,
-      "rare-forge-kings",
+      "rare-forge-of-kings",
       "The Forge of Kings",
       "The forge where the old kings' swords were made, still burning. Everyone feels the heat.",
       [
@@ -263,11 +263,11 @@ export const regionRares: Record<string, CardDefinition[]> = {
       ],
     ),
   ],
-  rooftop: [
+  frozenPass: [
     rare(
       moment(
         8,
-        "rare-yeti-tea",
+        "rare-yetis-tea-party",
         "The Yeti's Tea Party",
         "A yeti pours tea for everyone. Everyone pours for their left neighbor.",
         2,
@@ -275,7 +275,7 @@ export const regionRares: Record<string, CardDefinition[]> = {
     ),
     offers(
       8,
-      "rare-old-slayer",
+      "rare-old-dragonslayer",
       "The Old Dragonslayer",
       "An old dragonslayer on a rock, missing an arm and one ball. Everyone asks him one question.",
       [
@@ -289,7 +289,7 @@ export const regionRares: Record<string, CardDefinition[]> = {
 /** The rare King's Summons. */
 export const summonsRare: CardDefinition = {
   ...card(
-    "summons-dragon-writes",
+    "summons-letter",
     "A Letter",
     "group",
     "'{dragon} here. Stop sending heroes. I'm out of room.' The drawer reads it as the dragon.",
@@ -303,7 +303,7 @@ export const summonsRare: CardDefinition = {
 export const innRares: CardDefinition[] = [
   {
     ...card(
-      "landing-mimic-inn",
+      "inn-mimic",
       "The Inn Is a Mimic",
       "challenge",
       "The inn has teeth. The drawer fights their way out of bed. Roll d20.",
@@ -318,14 +318,14 @@ export const innRares: CardDefinition[] = [
   },
   {
     ...landing(
-      "company-table",
+      "companys-table",
       "The Company's Table",
       "The Gilded Company, asleep at the inn's best table. Everyone tiptoes.",
     ),
     ribbon: "Inn · Rare",
     offers: [
       { label: "Take a potion", loot: "draught" },
-      { label: "Draw on Chad", deed: "drew-on-bradley" },
+      { label: "Draw on Chad", deed: "drew-on-chad" },
     ],
   },
 ];
@@ -333,7 +333,7 @@ export const innRares: CardDefinition[] = [
 /** The Last Inn's rare: the dragonslayer's widow. */
 export const lastInnRare: CardDefinition = {
   ...landing(
-    "widow",
+    "slayers-widow",
     "The Slayer's Widow",
     "She keeps the inn now, and her husband's sword over the fire. Everyone raises a glass to him.",
   ),

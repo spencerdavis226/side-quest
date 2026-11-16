@@ -15,7 +15,7 @@ import type { CardDefinition } from "../src/game/types";
 // to dodge the duration rule.
 const DURATION_EXCEPTIONS = new Set([
   "core.buffalo", // a one-off "finish your drink", kept in the rule category
-  "house.sheet-015", // Mr Freeze: ends when the drawer stops touching them
+  "core.house-015", // Mr Freeze: ends when the drawer stops touching them
 ]);
 
 const textOf = (card: CardDefinition) =>

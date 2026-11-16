@@ -65,10 +65,10 @@ describe("natural 20 and natural 1", () => {
   it("leads every other d20 card's own 1 and 20 too", () => {
     // The roll is the amount on these, so neither end is good or bad.
     const amount = new Set([
-      "core.chosen-one",
+      "core.gods-drunkest-soldier",
       "core.body-count",
-      "house.sheet-008",
-      "cabin.maddy-booty",
+      "core.house-008",
+      "core.cabin-maddy-booty",
     ]);
     const others = cards.filter(
       (c) =>

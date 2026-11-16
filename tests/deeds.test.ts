@@ -131,20 +131,20 @@ describe("echoes and the Lair's Door", () => {
 
   it("the door deals the run's rival, and the duel only when refused", () => {
     const s = run(7);
-    const door = pass(at(s, REGION3_LAST, ["rival-bradley"]));
+    const door = pass(at(s, REGION3_LAST, ["rival-chad"]));
     expect(door.quest!.finale[door.quest!.step]).toBe(
-      "dungeon.rival-bradley-door",
+      "dungeon.rival-chad-door",
     );
     roundTrip(door);
     // Taken in: the duel leaves the run.
     const joined = takeOffer(advance(door), 0);
     expect(finaleStage(joined.quest!).label).toBe("The Dragon's Lair");
-    expect(joined.quest!.party!.team).toEqual(["dungeon.rival-bradley-door"]);
+    expect(joined.quest!.party!.team).toEqual(["dungeon.rival-chad-door"]);
     roundTrip(joined);
     // Refused: their own duel is dealt.
     const refused = takeOffer(advance(door), 1);
     expect(refused.quest!.finale[refused.quest!.step]).toBe(
-      "dungeon.rival-bradley-duel",
+      "dungeon.rival-chad-duel",
     );
     roundTrip(refused);
   });

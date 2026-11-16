@@ -329,7 +329,7 @@ describe("moments", () => {
     // An echo turns: put it in the run where the echo stage deals.
     const echo = stepOf(c, "An Echo");
     const finale = [...c.quest!.finale];
-    finale[echo] = "dungeon.echo-hanged-man";
+    finale[echo] = "dungeon.echo-hanged-man-returns";
     const dealt = atStep({ ...c, quest: { ...c.quest!, finale } }, echo);
     const turned = momentsBetween(dealt, { ...dealt, phase: "revealed" });
     expect(turned.find((m) => m.kind === "echo")).toMatchObject({
@@ -389,11 +389,11 @@ describe("moments", () => {
       ...atStep(c, stepOf(c, "The Last Inn")),
       phase: "revealed" as const,
     };
-    const rival = { who: "bradley", took: [], won: 0, lost: 0 };
+    const rival = { who: "chad", took: [], won: 0, lost: 0 };
     // Walks in: once, when they are first named.
     const met = withParty(shown, { rival });
     const enter = momentsBetween(shown, met).find((m) => m.kind === "rival");
-    expect(enter).toMatchObject({ beat: "enter", who: "bradley" });
+    expect(enter).toMatchObject({ beat: "enter", who: "chad" });
     expect(enter?.say).toMatch(/^Your rival: Sir Chad\./);
     expect(
       momentsBetween(met, met).filter((m) => m.kind === "rival"),

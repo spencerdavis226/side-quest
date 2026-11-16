@@ -20,7 +20,7 @@ const EASIER = { harder: -2 } as const;
 export const dragons: CardDefinition[] = [
   // Proud, loud, greedy.
   dragon(
-    "last-call-lich",
+    "dragon-emberfang",
     "Emberfang",
     "A red dragon uncoils from a hill of gold, and the air catches fire. Roll d20.",
     {
@@ -91,7 +91,7 @@ export const dragons: CardDefinition[] = [
   ),
   // Eats everything.
   dragon(
-    "two-am-kebab",
+    "dragon-gorgrath",
     "Gorgrath the Hungry",
     "It has eaten three knights today, and it's still hungry. It's looking at you. Roll d20.",
     {
@@ -164,7 +164,7 @@ export const dragons: CardDefinition[] = [
   ),
   // Tired, patient, has seen it all.
   dragon(
-    "the-morning-after",
+    "dragon-ashmaw",
     "Ashmaw the Ancient",
     "The oldest dragon there is, and it has been waiting for you in particular. Roll d20.",
     {
@@ -241,7 +241,7 @@ export const dragons: CardDefinition[] = [
   ),
   // Cold and still.
   dragon(
-    "bartender-below",
+    "dragon-rimeclaw",
     "Rimeclaw",
     "A white dragon in the frozen dark, with eyes like old ice. Roll d20.",
     {
@@ -318,7 +318,7 @@ export const dragons: CardDefinition[] = [
   ),
   // Fast and showy.
   dragon(
-    "surge-pricing",
+    "dragon-stormcrown",
     "Stormcrown",
     "A blue dragon riding its own storm, crackling with every breath. Roll d20.",
     {
@@ -392,7 +392,7 @@ export const dragons: CardDefinition[] = [
   ),
   // Vain.
   dragon(
-    "house-lights",
+    "dragon-glimmerwing",
     "Glimmerwing",
     "A golden dragon who wants to be admired first and fought second. Roll d20.",
     {
@@ -462,7 +462,7 @@ export const dragons: CardDefinition[] = [
   ),
   // Riddling, motherly, hungry.
   dragon(
-    "final-tab",
+    "dragon-mother-brine",
     "Old Mother Brine",
     "Older than the sea and twice as wet. She has eaten heroes for lunch. Roll d20.",
     {
@@ -536,7 +536,7 @@ export const dragons: CardDefinition[] = [
   ),
   // Knows your secrets.
   dragon(
-    "the-group-chat",
+    "dragon-whispering-wyrm",
     "The Whispering Wyrm",
     "A dragon that speaks in your own voice and tells your secrets. Roll d20.",
     {
@@ -832,7 +832,15 @@ const byId = (id: string) => dragons.find((c) => c.id === `dungeon.${id}`)!;
 /** Each lair region's three dragons (The Quest 2.0 Phase 1, 2026-11-13):
  * the run's third region is the dragon's own. */
 export const lairs = {
-  taproom: ["final-tab", "the-group-chat", "dragon-tidewrack"].map(byId),
-  kitchen: ["last-call-lich", "two-am-kebab", "the-morning-after"].map(byId),
-  rooftop: ["bartender-below", "surge-pricing", "house-lights"].map(byId),
+  coast: [
+    "dragon-mother-brine",
+    "dragon-whispering-wyrm",
+    "dragon-tidewrack",
+  ].map(byId),
+  caverns: ["dragon-emberfang", "dragon-gorgrath", "dragon-ashmaw"].map(byId),
+  frozenPass: [
+    "dragon-rimeclaw",
+    "dragon-stormcrown",
+    "dragon-glimmerwing",
+  ].map(byId),
 };

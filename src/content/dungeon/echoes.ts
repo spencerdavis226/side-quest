@@ -27,7 +27,7 @@ const scene = (
 /** Each echo, by the deed that deals it. */
 export const echoes: Record<string, CardDefinition> = {
   freed: scene(
-    "hanged-man",
+    "hanged-man-returns",
     "The Hanged Man Returns",
     "The man you freed was a thief. He's picked the lair's lock for you. Everyone thanks him.",
     {
@@ -41,7 +41,7 @@ export const echoes: Record<string, CardDefinition> = {
   "rode-on": echo(
     ambush(
       5,
-      "echo-brother",
+      "echo-his-brother",
       "His Brother",
       "The hanged man's brother wants a word about the gallows. Roll d20.",
       "He has a lot of words. Drink 4.",
@@ -49,7 +49,7 @@ export const echoes: Record<string, CardDefinition> = {
     ),
   ),
   "fairy-debt": scene(
-    "fair-folk",
+    "fair-folk-collect",
     "The Fair Folk Collect",
     "The fair folk are here about that gift. Everyone looks innocent.",
     {
@@ -63,7 +63,7 @@ export const echoes: Record<string, CardDefinition> = {
     { reward: { heal: 2 } },
   ),
   "hag-deal": scene(
-    "hag-owed",
+    "hag-is-owed",
     "The Hag Is Owed",
     "The hag wants the rest of her price. Everyone shudders.",
     {
@@ -76,7 +76,7 @@ export const echoes: Record<string, CardDefinition> = {
   stiffed: echo({
     ...trial(
       5,
-      "echo-ferryman",
+      "echo-ferryman-waits",
       "The Ferryman Waits",
       "The ferryman you stiffed is waiting. The drawer pays him in compliments for ten seconds.",
     ),
@@ -94,7 +94,7 @@ export const echoes: Record<string, CardDefinition> = {
     ),
   ),
   "quest-taken": scene(
-    "gift",
+    "gift-from-home",
     "A Gift from Home",
     "The village you saved sent bread, still warm. Everyone breaks off a piece.",
     { reward: { heal: 2 } },
@@ -105,14 +105,14 @@ export const echoes: Record<string, CardDefinition> = {
     "They did it themselves, and they're not speaking to you. Everyone drinks 2.",
   ),
   // The Quest 2.1: the Company's Table, and what the party drew there.
-  "drew-on-bradley": scene(
-    "moustache",
+  "drew-on-chad": scene(
+    "chads-moustache",
     "Chad's Moustache",
     "Sir Chad rides by with an inked moustache he hasn't found yet. Nobody laughs, or drinks 2.",
     { reward: { heal: 1 } },
   ),
   "ally-fell": scene(
-    "grave",
+    "grave-by-the-road",
     "A Grave by the Road",
     "A cairn for the friend you lost. Everyone toasts them by name.",
     { reward: { lore: LORE.lore } },

@@ -53,8 +53,8 @@ const theme = crawlTheme("dungeon");
 
 describe("the choice sheet", () => {
   it("is used when a plaque costs, brings or changes something", () => {
-    expect(choosesInSheet(card("dungeon.sign-tracks"))).toBe(true);
-    expect(choosesInSheet(card("dungeon.rat-fence"))).toBe(true);
+    expect(choosesInSheet(card("dungeon.sign-droppings"))).toBe(true);
+    expect(choosesInSheet(card("dungeon.peddler"))).toBe(true);
     expect(plainOffers([{ label: "Left" }, { label: "Right" }])).toBe(true);
     expect(plainOffers([{ label: "Search · drink 2" }, { label: "Go" }])).toBe(
       false,
@@ -62,7 +62,7 @@ describe("the choice sheet", () => {
   });
 
   it("says what each way costs and brings, and why one can't be taken", () => {
-    const rows = choiceRows(at("dungeon.rat-fence", 1), theme);
+    const rows = choiceRows(at("dungeon.peddler", 1), theme);
     expect(rows).toHaveLength(3);
     // Every way has words for what it brings.
     for (const row of rows) expect(row.gets.length).toBeGreaterThan(5);
@@ -77,7 +77,7 @@ describe("the choice sheet", () => {
   });
 
   it("puts a dragon sign's price in hearts beside its name", () => {
-    const [follow, around] = choiceRows(at("dungeon.sign-tracks"), theme);
+    const [follow, around] = choiceRows(at("dungeon.sign-droppings"), theme);
     expect(follow).toMatchObject({ name: "Follow them", hearts: 1 });
     expect(follow.gets).toMatch(/dragon lore/);
     expect(around.gets).toMatch(/nothing gained, nothing lost/);

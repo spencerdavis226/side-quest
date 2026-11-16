@@ -16,8 +16,8 @@ const record: Chronicle = {
   ...emptyChronicle(),
   played: 2,
   won: 1,
-  slain: { "dungeon.last-call-lich": 1 },
-  fellTo: { "dungeon.two-am-kebab": 1 },
+  slain: { "dungeon.dragon-emberfang": 1 },
+  fellTo: { "dungeon.dragon-gorgrath": 1 },
   feats: ["by-a-thread"],
   ballads: [
     {
@@ -111,7 +111,7 @@ test("the Chronicle keeps each rival's record, and names the nemesis", async ({
     [CHRONICLE]: JSON.stringify({
       ...record,
       rivals: {
-        mirabel: {
+        fingerbang: {
           met: 2,
           beaten: 0,
           lostTo: 3,
@@ -120,7 +120,7 @@ test("the Chronicle keeps each rival's record, and names the nemesis", async ({
           slainBy: 0,
         },
       },
-      nemesis: "mirabel",
+      nemesis: "fingerbang",
     }),
   });
   await page.getByRole("button", { name: /Chronicle/ }).click();

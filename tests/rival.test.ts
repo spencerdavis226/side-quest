@@ -155,7 +155,7 @@ describe("the rival", () => {
       const after = advance(advance(s));
       // Lady Fingerbang takes two from the start (Phase 2), newest first.
       const took: Loot[] =
-        r.who === "mirabel" ? ["shield", "draught"] : ["shield"];
+        r.who === "fingerbang" ? ["shield", "draught"] : ["shield"];
       expect(party(after).rival).toEqual({
         who: r.who,
         took,
@@ -164,7 +164,9 @@ describe("the rival", () => {
         news: { took },
         seen: STEP.rival + 1,
       });
-      expect(party(after).loot).toEqual(r.who === "mirabel" ? [] : ["draught"]);
+      expect(party(after).loot).toEqual(
+        r.who === "fingerbang" ? [] : ["draught"],
+      );
       expect(party(after).deeds).toEqual([`rival-${r.who}`]);
       expect(rivalProfile(after.quest)?.profile.name).toBe(r.name);
       roundTrip(after);
@@ -189,9 +191,9 @@ describe("the rival", () => {
   });
 
   it("a lost meeting hands them what its card shows; a won one takes one back", () => {
-    const spar = "dungeon.rival-bradley-spar";
+    const spar = "dungeon.rival-chad-spotter";
     const s = place(
-      met("bradley", STEP.crossroads, { loot: ["draught", "smoke"] }),
+      met("chad", STEP.crossroads, { loot: ["draught", "smoke"] }),
       STEP.crossroads,
       spar,
     );
@@ -206,7 +208,7 @@ describe("the rival", () => {
     roundTrip(lost);
     const owed = place(
       met(
-        "bradley",
+        "chad",
         STEP.crossroads,
         { loot: [], hearts: 20 },
         { took: ["shield", "die"] },
@@ -226,9 +228,11 @@ describe("the rival", () => {
     // Lady Fingerbang takes two and no hearts.
     const robbed = fight(
       place(
-        met("mirabel", STEP.crossroads, { loot: ["draught", "smoke", "die"] }),
+        met("fingerbang", STEP.crossroads, {
+          loot: ["draught", "smoke", "die"],
+        }),
         STEP.crossroads,
-        "dungeon.rival-mirabel-toll",
+        "dungeon.rival-fingerbang-toll-booth",
       ),
       5,
     );
@@ -238,11 +242,11 @@ describe("the rival", () => {
   });
 
   it("meddling rolls the fight twice and keeps the worse", () => {
-    const base = met("tutt", STEP.floor2 + 2);
+    const base = met("sensei", STEP.floor2 + 2);
     const room = roomOf(base, STEP.floor2 + 2, plainFight);
     const s = advance(
       at(place(base, STEP.floor2 + 2, room.id), STEP.floor2 + 2, {
-        rival: { who: "tutt", took: [], won: 0, lost: 0, cut: "meddle" },
+        rival: { who: "sensei", took: [], won: 0, lost: 0, cut: "meddle" },
       }),
     );
     expect(cardEdge(s.quest, currentCard(s))).toBe("disadvantage");
@@ -274,14 +278,14 @@ describe("the rival", () => {
   });
 
   it("sniping takes what the card gives", () => {
-    const base = met("bradley", STEP.floor2 + 2);
+    const base = met("chad", STEP.floor2 + 2);
     const find = roomOf(
       base,
       STEP.floor2 + 2,
       (c) => !c.battle && !c.offers && !!c.reward?.loot && !c.dice,
     );
     const s = at(place(base, STEP.floor2 + 2, find.id), STEP.floor2 + 2, {
-      rival: { who: "bradley", took: [], won: 0, lost: 0, cut: "snipe" },
+      rival: { who: "chad", took: [], won: 0, lost: 0, cut: "snipe" },
     });
     expect(currentCard(s).ribbon).toBe("Sir Chad · Sniping");
     const after = advance(advance(s), seeded(3));
@@ -364,7 +368,7 @@ describe("the rival", () => {
 
   it("leaves a party on its last few hearts alone", () => {
     for (let seed = 1; seed <= 40; seed++) {
-      const base = met("bradley", STEP.floor2, { hearts: 1 }, {}, seed);
+      const base = met("chad", STEP.floor2, { hearts: 1 }, {}, seed);
       const s = advance(advance(base), seeded(seed));
       // A room that needs no roll and heals too little to matter.
       if (s.quest!.step !== STEP.floor2 + 1 || party(s).hearts > 4) continue;
@@ -379,16 +383,16 @@ describe("the rival", () => {
     const loot: Loot[] = ["die", "smoke"];
     const door = advance(
       place(
-        met("mirabel", STEP.door, { loot: [] }, { took: loot }),
+        met("fingerbang", STEP.door, { loot: [] }, { took: loot }),
         STEP.door,
-        "dungeon.rival-mirabel-door",
+        "dungeon.rival-fingerbang-door",
       ),
     );
     // A draw that keeps her loyal (Phase 4's betrayal is tested below).
     const joined = takeOffer(door, 0, () => 0.99);
     expect(party(joined)).toMatchObject({
       loot,
-      team: ["dungeon.rival-mirabel-door"],
+      team: ["dungeon.rival-fingerbang-door"],
     });
     expect(party(joined).rival?.took).toEqual([]);
     expect(party(joined).deeds).toContain("rival-joined");
@@ -396,8 +400,8 @@ describe("the rival", () => {
     expect(finaleStage(joined.quest!).label).toBe("The Dragon's Lair");
     roundTrip(joined);
     // Sent into a swing that misses, she leaves with the satchel.
-    const sent = sendIn(advance(joined), "dungeon.rival-mirabel-door");
-    expect(party(sent).assist).toBe("dungeon.rival-mirabel-door");
+    const sent = sendIn(advance(joined), "dungeon.rival-fingerbang-door");
+    expect(party(sent).assist).toBe("dungeon.rival-fingerbang-door");
     const missed = advance(rollTo(sent, 2), seeded(2));
     expect(party(missed).team).toBeUndefined();
     expect(party(missed).loot).toEqual([]);
@@ -441,13 +445,13 @@ describe("the rival", () => {
       roundTrip(s);
     }
     // Sensei Saggynuts' exam can be skipped: he keeps what he took.
-    const tutt = rivals.find((r) => r.who === "tutt")!;
+    const sensei = rivals.find((r) => r.who === "sensei")!;
     const skipped = takeOffer(
       advance(
         place(
-          met("tutt", STEP.door, {}, { took: ["die"] }),
+          met("sensei", STEP.door, {}, { took: ["die"] }),
           STEP.door,
-          tutt.plea.id,
+          sensei.plea.id,
         ),
       ),
       1,
@@ -534,7 +538,7 @@ describe("the rival", () => {
   });
 
   it("a malformed rival is rejected", () => {
-    const s = met("bradley", STEP.floor2 + 1, {}, { took: ["die"] });
+    const s = met("chad", STEP.floor2 + 1, {}, { took: ["die"] });
     roundTrip(s);
     const bad = (change: (r: Rival) => void) => {
       const next = structuredClone(s);
@@ -587,7 +591,7 @@ const winAt = (s: SessionState) => rollTo(s, 19);
 
 describe("the rival, Phase 2", () => {
   it("the Do-Over: a won roll is rolled again, and the new roll stands", () => {
-    const s = cutOn("tutt", STEP.floor2 + 2, plainFight, "redo");
+    const s = cutOn("sensei", STEP.floor2 + 2, plainFight, "redo");
     expect(currentCard(s).ribbon).toBe("Sensei Saggynuts · Do-Over");
     expect(rivalCut(s.quest)?.line).toContain("Lucky. Again.");
     // A lost first roll is left alone.
@@ -615,7 +619,7 @@ describe("the rival, Phase 2", () => {
 
   it("pays them off with the newest item: the cut is cancelled", () => {
     // A Do-Over, once the win is on the card.
-    const s = cutOn("tutt", STEP.floor2 + 2, plainFight, "redo", {
+    const s = cutOn("sensei", STEP.floor2 + 2, plainFight, "redo", {
       loot: ["draught", "shield"],
     });
     expect(payOffItem(s)).toBeUndefined();
@@ -632,7 +636,7 @@ describe("the rival, Phase 2", () => {
     expect(currentCard(paid).ribbon).not.toContain("Do-Over");
     roundTrip(paid);
     // A meddle, before the roll only.
-    const meddle = cutOn("tutt", STEP.floor2 + 2, plainFight, "meddle", {
+    const meddle = cutOn("sensei", STEP.floor2 + 2, plainFight, "meddle", {
       loot: ["die"],
     });
     expect(payOffItem(meddle)).toBe("die");
@@ -641,13 +645,13 @@ describe("the rival, Phase 2", () => {
       cardEdge(payOff(meddle).quest, currentCard(payOff(meddle))),
     ).not.toBe("disadvantage");
     // Nothing to pay with: no pay-off.
-    const broke = cutOn("tutt", STEP.floor2 + 2, plainFight, "meddle");
+    const broke = cutOn("sensei", STEP.floor2 + 2, plainFight, "meddle");
     expect(payOff(broke)).toBe(broke);
   });
 
   it("swipes or hands off the newest item when the card goes", () => {
     for (const cut of ["swipe", "handoff"] as const) {
-      const s = cutOn("mirabel", STEP.floor2 + 2, plainRoom, cut, {
+      const s = cutOn("fingerbang", STEP.floor2 + 2, plainRoom, cut, {
         loot: ["draught", "shield"],
       });
       expect(payOffItem(s)).toBeUndefined();
@@ -668,13 +672,13 @@ describe("the rival, Phase 2", () => {
   });
 
   it("poaches an ally unless the table drinks, and the duel brings it home", () => {
-    const base = met("mirabel", STEP.floor2 + 2);
+    const base = met("fingerbang", STEP.floor2 + 2);
     // The first inn's hired blade, dealt before the second region.
     const ally = base
       .quest!.finale.slice(0, STEP.floor2)
       .map((id) => finaleCard(base.quest!, id)!)
       .find((c) => c.ally && !c.rival)!;
-    const s = cutOn("mirabel", STEP.floor2 + 2, plainRoom, "poach", {
+    const s = cutOn("fingerbang", STEP.floor2 + 2, plainRoom, "poach", {
       team: [ally.id],
     });
     expect(canKickOut(s)).toBe(true);
@@ -691,9 +695,9 @@ describe("the rival, Phase 2", () => {
     });
     roundTrip(taken);
     // The duel falls: the ally comes back with everything.
-    const mirabel = rivals.find((r) => r.who === "mirabel")!;
+    const fingerbang = rivals.find((r) => r.who === "fingerbang")!;
     let duel = advance(
-      at(place(taken, STEP.duel, mirabel.duel.id), STEP.duel, {
+      at(place(taken, STEP.duel, fingerbang.duel.id), STEP.duel, {
         hearts: 30,
         loot: [],
       }),
@@ -714,9 +718,9 @@ describe("the rival, Phase 2", () => {
           i > STEP.floor2 &&
           !!finaleCard(b.quest!, id)?.offers?.some((o) => o.heal),
       );
-    let base = met("bradley", STEP.floor2);
+    let base = met("chad", STEP.floor2);
     for (let seed = 2; innAt(base) < 0; seed++)
-      base = met("bradley", STEP.floor2, {}, {}, seed);
+      base = met("chad", STEP.floor2, {}, {}, seed);
     const step = innAt(base);
     const inn = finaleCard(base.quest!, base.quest!.finale[step])!;
     const rest = inn.offers!.findIndex((o) => o.heal);
@@ -724,7 +728,7 @@ describe("the rival, Phase 2", () => {
       at(base, step, {
         hearts: 5,
         max: 30,
-        rival: { who: "bradley", took: [], won: 0, lost: 0, cut: "squat" },
+        rival: { who: "chad", took: [], won: 0, lost: 0, cut: "squat" },
       }),
     );
     expect(currentCard(s).offers![rest].heal).toBe(inn.offers![rest].heal! - 1);
@@ -735,7 +739,7 @@ describe("the rival, Phase 2", () => {
   });
 
   it("an invoice holds the card until it is paid with a heart or an item", () => {
-    const s = cutOn("bradley", STEP.floor2 + 2, plainRoom, "invoice", {
+    const s = cutOn("chad", STEP.floor2 + 2, plainRoom, "invoice", {
       loot: ["draught"],
     });
     expect(awaitingInvoice(s)).toBe(true);
@@ -749,19 +753,19 @@ describe("the rival, Phase 2", () => {
     expect(party(item).rival?.took).toEqual(["draught"]);
     expect(advance(item, seeded(1)).discarded).toBe(s.discarded + 1);
     // No item: only a heart.
-    const broke = cutOn("bradley", STEP.floor2 + 2, plainRoom, "invoice");
+    const broke = cutOn("chad", STEP.floor2 + 2, plainRoom, "invoice");
     expect(canPayInvoice(broke, "item")).toBe(false);
     expect(payInvoice(broke, "item")).toBe(broke);
   });
 
   it("a curse lands with the card, from a card of theirs never dealt", () => {
     const withJinx = cards.find((c) => c.jinx)!;
-    const base = met("tutt", STEP.floor2 + 2);
+    const base = met("sensei", STEP.floor2 + 2);
     const id = base
       .quest!.stages.flatMap((st) => st.ambush ?? [])
-      .find((c) => c.rival?.who === "tutt")!.id;
+      .find((c) => c.rival?.who === "sensei")!.id;
     const s = structuredClone(
-      cutOn("tutt", STEP.floor2 + 2, plainRoom, "curse"),
+      cutOn("sensei", STEP.floor2 + 2, plainRoom, "curse"),
     );
     // Every copy of that card carries their curse (Phase 3's bard's do).
     for (const st of s.quest!.stages)
@@ -777,10 +781,14 @@ describe("the rival, Phase 2", () => {
   });
 
   it("the duel is fought with what they took", () => {
-    const tutt = rivals.find((r) => r.who === "tutt")!;
+    const sensei = rivals.find((r) => r.who === "sensei")!;
     const duelWith = (took: Loot[]) =>
       advance(
-        place(met("tutt", STEP.duel, {}, { took }), STEP.duel, tutt.duel.id),
+        place(
+          met("sensei", STEP.duel, {}, { took }),
+          STEP.duel,
+          sensei.duel.id,
+        ),
       );
     // Each Tower Shield is a swing more.
     const shields = duelWith(["shield", "shield"]);
@@ -814,7 +822,7 @@ describe("the rival, Phase 2", () => {
     expect(party(fled).rival?.took).toEqual([]);
     expect(party(fled).rival?.news?.gone).toEqual(["smoke", "shield"]);
     expect(party(fled).deeds).toContain("rival-fled");
-    expect(party(fled).boons ?? []).not.toContain(tutt.duel.id);
+    expect(party(fled).boons ?? []).not.toContain(sensei.duel.id);
     roundTrip(fled);
     // Won first, the bomb is spent.
     const late = fight(fight(smoke, 18), 2);
@@ -822,16 +830,16 @@ describe("the rival, Phase 2", () => {
   });
 
   it("a joined rival's grudge: one more for each meeting lost, up to two", () => {
-    const chad = rivals.find((r) => r.who === "bradley")!;
+    const chad = rivals.find((r) => r.who === "chad")!;
     expect(chad.plea.ally!.grudge).toBe(true);
-    const q = met("bradley", STEP.door, {}, { lost: 5 }).quest!;
+    const q = met("chad", STEP.door, {}, { lost: 5 }).quest!;
     expect(assistBonus(chad.plea, q)).toBe(chad.plea.ally!.bonus + 2);
-    const q1 = met("bradley", STEP.door, {}, { lost: 1 }).quest!;
+    const q1 = met("chad", STEP.door, {}, { lost: 1 }).quest!;
     expect(assistBonus(chad.plea, q1)).toBe(chad.plea.ally!.bonus + 1);
   });
 
   it("rejects a malformed Phase 2 rival", () => {
-    const s = cutOn("tutt", STEP.floor2 + 2, plainFight, "redo");
+    const s = cutOn("sensei", STEP.floor2 + 2, plainFight, "redo");
     roundTrip(s);
     const bad = (change: (r: Rival) => void) => {
       const next = structuredClone(s);
@@ -922,7 +930,7 @@ describe("the rival, Phase 3", () => {
 
   it("Gary's Whistle calls off a cut once a region", () => {
     const gary = rivals.find((r) => r.who === "gary")!;
-    const base = met("tutt", STEP.floor2 + 2);
+    const base = met("sensei", STEP.floor2 + 2);
     // The whistle won from Gary's audit, carried here by its card ID.
     const q = structuredClone(base.quest!);
     const audit = structuredClone(gary.duel);
@@ -935,7 +943,7 @@ describe("the rival, Phase 3", () => {
         STEP.floor2 + 2,
         {
           boons: [audit.id],
-          rival: { who: "tutt", took: [], won: 0, lost: 0, cut: "meddle" },
+          rival: { who: "sensei", took: [], won: 0, lost: 0, cut: "meddle" },
         },
       ),
     );
@@ -1024,9 +1032,9 @@ describe("the rival, Phase 4", () => {
 
   it("decides at join whether they turn, and on which swing", () => {
     // Lady Fingerbang: 25%, and 15% more for each meeting won.
-    const loyal = join(door("mirabel", {}, { won: 0 }), [0.3]);
+    const loyal = join(door("fingerbang", {}, { won: 0 }), [0.3]);
     expect(party(loyal).rival?.turnsAt).toBeUndefined();
-    const hated = join(door("mirabel", {}, { won: 1 }), [0.3, 0.5]);
+    const hated = join(door("fingerbang", {}, { won: 1 }), [0.3, 0.5]);
     expect(party(hated).rival?.turnsAt).toBe(1);
     roundTrip(hated);
     // Never decided again: the swing is saved.
@@ -1035,7 +1043,10 @@ describe("the rival, Phase 4", () => {
 
   it("Lady Fingerbang turns on her swing and walks off with the satchel", () => {
     const loot: Loot[] = ["die", "smoke"];
-    const joined = join(door("mirabel", { loot: [] }, { took: loot }), [0, 0]);
+    const joined = join(
+      door("fingerbang", { loot: [] }, { took: loot }),
+      [0, 0],
+    );
     // She turns as the dragon's first round is dealt (swing 0).
     expect(party(joined).rival).toMatchObject({
       turnsAt: 0,
@@ -1050,9 +1061,12 @@ describe("the rival, Phase 4", () => {
   });
 
   it("waits for a party with 3 hearts or more", () => {
-    const low = join(door("mirabel", { hearts: 2 }, { took: ["die"] }), [0, 0]);
+    const low = join(
+      door("fingerbang", { hearts: 2 }, { took: ["die"] }),
+      [0, 0],
+    );
     expect(party(low).rival?.turned).toBeUndefined();
-    expect(party(low).team).toEqual(["dungeon.rival-mirabel-door"]);
+    expect(party(low).team).toEqual(["dungeon.rival-fingerbang-door"]);
   });
 
   it("Dame Queefington sings the dragon's song: that swing is 2 harder", () => {
@@ -1074,8 +1088,8 @@ describe("the rival, Phase 4", () => {
   });
 
   it("Sir Chad on the team when the dragon falls takes the credit", () => {
-    const chad = rivals.find((r) => r.who === "bradley")!;
-    const joined = join(door("bradley"), [0.99]);
+    const chad = rivals.find((r) => r.who === "chad")!;
+    const joined = join(door("chad"), [0.99]);
     let s = advance(joined);
     for (let i = 0; i < 20 && s.phase !== "complete"; i++)
       s = winRound(advance(s), i);
@@ -1086,9 +1100,9 @@ describe("the rival, Phase 4", () => {
 
   it("Sensei beaten twice is pinned at the door: saved for a heart, he lasts one swing", () => {
     // Two meetings won: the deed that pins him.
-    let s = met("tutt", STEP.crossroads, {}, { won: 1 });
-    const tutt = rivals.find((r) => r.who === "tutt")!;
-    s = fight(place(s, STEP.crossroads, tutt.fights[0].id), 19);
+    let s = met("sensei", STEP.crossroads, {}, { won: 1 });
+    const sensei = rivals.find((r) => r.who === "sensei")!;
+    s = fight(place(s, STEP.crossroads, sensei.fights[0].id), 19);
     expect(party(s).deeds).toContain("rival-won-twice");
     // The door's variant is the pinned card.
     const stage = s.quest!.stages.find((st) => st.label === "The Lair's Door")!;
@@ -1097,7 +1111,11 @@ describe("the rival, Phase 4", () => {
     )!;
     expect(pinned.cards.map((c) => c.id)).toEqual([senseiPinned.id]);
     const at = advance(
-      place(met("tutt", STEP.door, {}, { won: 2 }), STEP.door, senseiPinned.id),
+      place(
+        met("sensei", STEP.door, {}, { won: 2 }),
+        STEP.door,
+        senseiPinned.id,
+      ),
     );
     const saved = takeOffer(at, 0, seeded(1));
     expect(party(saved).hearts).toBe(29);
@@ -1112,9 +1130,9 @@ describe("the rival, Phase 4", () => {
   });
 
   it("a refused rival who wins two swings of the duel goes into the lair first", () => {
-    const r = rivals.find((x) => x.who === "bradley")!;
+    const r = rivals.find((x) => x.who === "chad")!;
     let s = takeOffer(
-      door("bradley", {}, { took: ["die", "shield"] }),
+      door("chad", {}, { took: ["die", "shield"] }),
       1,
       seeded(3),
     );
@@ -1160,7 +1178,7 @@ describe("the rival, Phase 4", () => {
   });
 
   it("rejects a malformed Phase 4 rival", () => {
-    const s = join(door("mirabel", {}, { won: 1 }), [0.3, 0.5]);
+    const s = join(door("fingerbang", {}, { won: 1 }), [0.3, 0.5]);
     roundTrip(s);
     const bad = (change: (r: Rival) => void) => {
       const next = structuredClone(s);

@@ -259,7 +259,7 @@ export interface CardDefinition {
  * rival's other cards are the only ones dealt, and they turn up uninvited
  * on other cards (`party.rival.cut`) or in place of a room (an ambush). */
 export interface RivalCard {
-  /** Which rival: a short key ("bradley"). */
+  /** Which rival: a short key ("chad"). */
   who: string;
   /** The introduction: putting this card aside names the run's rival. */
   profile?: RivalProfile;

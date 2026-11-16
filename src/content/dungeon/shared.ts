@@ -673,7 +673,7 @@ export const landing = (
   rest = "Rest",
   stock: Loot = "draught",
 ): CardDefinition => ({
-  ...card(`landing-${id}`, title, "group", rules),
+  ...card(`inn-${id}`, title, "group", rules),
   ribbon: "Inn · Rest",
   ribbonTone: "violet",
   encounter: "rest",

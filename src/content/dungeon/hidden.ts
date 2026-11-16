@@ -26,49 +26,49 @@ const mimic: Hidden = {
 };
 const HIDDEN: Record<string, Hidden> = {
   // Every region's mimic gamble: a natural 1, and Chester joins.
-  "dungeon.mimic-keg": mimic,
-  "dungeon.mimic-cask": mimic,
-  "dungeon.mimic-fermenter": mimic,
+  "dungeon.mimic-lucky-stone": mimic,
+  "dungeon.mimic-wishing-tree": mimic,
+  "dungeon.mimic-wishing-toad": mimic,
   "dungeon.mimic-coffin": mimic,
-  "dungeon.mimic-manhole": mimic,
-  "dungeon.mimic-fridge": mimic,
+  "dungeon.mimic-mine-cart": mimic,
+  "dungeon.mimic-bookcase": mimic,
   "dungeon.mimic-clam": mimic,
-  "dungeon.mimic-oven": mimic,
-  "dungeon.mimic-planter": mimic,
+  "dungeon.mimic-furnace": mimic,
+  "dungeon.mimic-snowdrift": mimic,
   // The Black Knight kneels.
-  "dungeon.grease-trap-horror": {
+  "dungeon.black-knight": {
     face: 20,
     line: "He kneels.",
     reward: { ally: true },
     ally: { name: "A Hired Blade", calling: ["elite"], bonus: 3 },
   },
-  "dungeon.keg-golem": {
+  "dungeon.bridge-troll": {
     face: 20,
     line: "He pays you the toll.",
     reward: { loot: "die" },
   },
-  "dungeon.the-lich-lord": {
+  "dungeon.lich-lord": {
     face: 20,
     line: "You drink his soul by mistake.",
     reward: { loot: "revive" },
   },
-  "dungeon.absolute-zero": {
+  "dungeon.archmage": {
     face: 20,
     line: "He takes you on as a student.",
     reward: { loot: "candy" },
   },
-  "dungeon.hex-witch": {
+  "dungeon.fortune-teller": {
     face: 20,
     line: "She tells you how it ends.",
     reward: { lore: true },
   },
-  "dungeon.turtle-sensei": {
+  "dungeon.old-dwarf": {
     face: 6,
     line: "He tells you about the dragon.",
     reward: { lore: true },
   },
   // The rival's own (2026-11-15; the city gate's charter held it before).
-  "dungeon.rival-bradley-spar": {
+  "dungeon.rival-chad-spotter": {
     face: 20,
     line: "He drops his bar tab, still open.",
     reward: { loot: "round" },
