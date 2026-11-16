@@ -36,16 +36,16 @@ Automated browser emulation is not evidence of actual iOS Home Screen behavior. 
 - [ ] Publish an update while a game is active: no mid-game reload. Then force-quit and reopen the app (or reload in Safari) and confirm the new build loads on its own, with the saved game intact. Finish/end a game after another update and apply the offered Update game, then check offline relaunch.
 - [ ] Measure interaction smoothness on real devices; target 60 fps. No performance claim until measured.
 
-## The tray (2026-11-16): to check on a phone
+## The HUD, the tray and the menus (2026-11-16): to check on a phone
 
-Only checked in Chromium emulation (mouse-driven pointer events); no WebKit run locally.
+Only checked in Chromium emulation (mouse pointer events and synthetic touch events); no WebKit run locally.
 
-- [ ] The belt reads from across the table: in the League the red bar's balls (the lead, each caught Pokémon, an open place), the bag's items and the badge count; in the Quest the strap's buckle, items, lore runes and the rival's medallion. The curse, the type edge, a sent-in helper and the dragon's scales stand beside it only while they matter. Nothing is clipped at 320 px, and nothing sits under the status-bar frost in the installed app.
-- [ ] Each segment opens the tray on its own page; the hearts stud opens the party or team.
-- [ ] Pull the tray down by its grabber or header: it follows the finger, a short pull springs back, a long pull or a quick flick puts it away, and the table lightens as it goes. Swipe the pages sideways: the page follows the finger, rubber-bands past the first and last, and a flick turns a page. A vertical scroll inside a long page (the map, the League's team) never turns the page, and a swipe that starts on a button never presses it.
-- [ ] The rise and the settles feel weighted, not floaty (springs in `tray/spring.ts`); frame rate holds on an older iPhone, mainly the League's glass screen and the badge shine.
-- [ ] VoiceOver: the tray is announced by the page's name ("Bag", "The party"), the dock reads as tabs with the selected one, and the pages not shown are skipped.
-- [ ] The tray's haptic tick on a tab tap, a Use and a confirmed drop (with the haptics experiment).
+- [ ] The HUD reads from across the table and feels calm, not busy, in the League (glass capsule, HP ring, place, menu; status line of marks and numbers) and the Quest (leather band, heart vial, region in gilt, wax-seal menu). A curse or jinx shows only as its glowing mark. Nothing is clipped at 320 px, and nothing sits under the status-bar frost in the installed app.
+- [ ] Each status mark opens its tray page; the hearts open the party or team; the Quest's region opens the map; the menu opens the mode's own pause sheet.
+- [ ] Pull a sheet down from the grabber, the header, the dock, or a page's content when it is at the top. It follows the finger, a short pull springs back, and a long pull or quick flick puts it away. On a page scrolled down, the same drag scrolls the page first, and nothing bounces or stutters at the handoff. A sideways swipe turns pages and never pulls.
+- [ ] The rise and settle feel weighted; frame rate holds on an older iPhone (the League's glass, the badge shine).
+- [ ] VoiceOver: each sheet is announced by its page ("Bag", "Paused"); the grabber reads as Close; the dock reads as tabs.
+- [ ] Haptic tick on a tab tap, a Use, a confirmed drop and End game (with the haptics experiment).
 
 ## Safari 26 features (2026-11-16): to check on a phone
 

@@ -2,7 +2,6 @@ import {
   useCallback,
   useEffect,
   useId,
-  useMemo,
   useRef,
   useState,
   type CSSProperties,
@@ -11,10 +10,9 @@ import {
 import type { Loot, SessionState } from "../../game/types";
 import type { BagDrop } from "../../game/engine";
 import { haptic } from "../../app/haptics";
-import { CloseIcon } from "../UI";
 import { trayKind, trayPages, type TrayTab } from "../trayTabs";
-import { useSheetDrag, usePager } from "./gestures";
-import { SHEET } from "./spring";
+import { usePager } from "./gestures";
+import { Sheet } from "./Sheet";
 import { DockIcon } from "./marks";
 import { LeagueHead, LeaguePage } from "./LeagueTray";
 import { QuestHead, QuestPage } from "./QuestTray";
@@ -30,12 +28,12 @@ import "../../presentation/tray-quest.css";
 //
 // Behaviour:
 // - Opens on the page the HUD segment or the hearts stud asked for.
-// - Pull the grabber or the header down to put it away (a flick does it
-//   too); swipe the pages sideways; tap a tab on the dock (arrow keys
-//   move between tabs, Escape closes).
-// - A native modal <dialog>: focus stays inside and the table behind is
-//   inert. The page shown names the dialog, so "Bag", "The party" and the
-//   rest read as before.
+// - It rises on `Sheet`: pulled down from anywhere (a page from its top)
+//   to put it away, a flick enough, no close button.
+// - Swipe the pages sideways; tap a tab on the dock (arrow keys move
+//   between tabs, Escape closes).
+// - The page shown names the dialog, so "Bag", "The party" and the rest
+//   read as before.
 
 export interface TrayProps {
   session: SessionState;
@@ -75,34 +73,8 @@ export default function Tray({
   const page = pages[at];
 
   const dialog = useRef<HTMLDialogElement>(null);
-  const sheet = useRef<HTMLDivElement>(null);
-  const grab = useRef<HTMLDivElement>(null);
-  const head = useRef<HTMLElement>(null);
   const viewport = useRef<HTMLDivElement>(null);
   const track = useRef<HTMLDivElement>(null);
-  const handles = useMemo(() => [grab, head], []);
-
-  useEffect(() => {
-    const previous = document.activeElement as HTMLElement | null;
-    const el = dialog.current!;
-    el.showModal();
-    // Focus the tab shown, not the first button in the header.
-    el.querySelector<HTMLElement>('[role="tab"][aria-selected="true"]')?.focus({
-      preventScroll: true,
-    });
-    return () => {
-      el.close();
-      previous?.focus({ preventScroll: true });
-    };
-  }, []);
-
-  // Pulled off screen by the gesture: the close holds it there instead of
-  // playing the fall from the top.
-  const [pulled, setPulled] = useState(false);
-  useSheetDrag(sheet, dialog, handles, () => {
-    setPulled(true);
-    onClose();
-  });
   const go = useCallback((i: number) => setIndex(i), []);
   usePager(viewport, track, dialog, at, pages.length, go);
 
@@ -139,69 +111,22 @@ export default function Tray({
   const Head = kind === "league" ? LeagueHead : QuestHead;
   const Page = kind === "league" ? LeaguePage : QuestPage;
   return (
-    <dialog
-      ref={dialog}
-      className={`tray tray-${kind}${exiting ? " closing" : ""}${pulled ? " pulled" : ""}`}
-      inert={exiting || undefined}
-      aria-labelledby={titleId}
+    <Sheet
+      skin={`tray-${kind}`}
+      rootRef={dialog}
+      exiting={exiting}
+      onClose={onClose}
+      titleId={titleId}
+      focus='[role="tab"][aria-selected="true"]'
       style={
         {
           "--pages": pages.length,
           "--page": at,
           "--pos": at,
-          "--sheet-ease": SHEET.easing,
-          "--sheet-ms": `${SHEET.ms}ms`,
         } as CSSProperties
       }
-      onCancel={(event) => {
-        event.preventDefault();
-        onClose();
-      }}
-    >
-      {/* The table behind, dimmed; a tap on it puts the tray away. */}
-      <div className="tray-scrim" aria-hidden="true" onClick={onClose} />
-      <div ref={sheet} className="tray-sheet">
-        <div className="tray-edge" aria-hidden="true" />
-        <div ref={grab} className="tray-grab" aria-hidden="true">
-          <i />
-        </div>
-        <header ref={head} className="tray-head">
-          <Head session={session} page={page} titleId={titleId} />
-          <button
-            type="button"
-            className="tray-close"
-            aria-label="Close"
-            onClick={onClose}
-          >
-            <CloseIcon />
-          </button>
-        </header>
-        <div ref={viewport} className="tray-viewport">
-          <div ref={track} className="tray-track">
-            {pages.map((p, i) => (
-              <section
-                key={p.id}
-                id={panelId(p.id)}
-                role="tabpanel"
-                aria-labelledby={tabId(p.id)}
-                className={`tray-page page-${p.id}${i === at ? " shown" : ""}`}
-                inert={i !== at || undefined}
-                aria-hidden={i !== at || undefined}
-                // Pages more than one away are not drawn until reached.
-                data-near={Math.abs(i - at) <= 1 || undefined}
-              >
-                {Math.abs(i - at) <= 1 && (
-                  <Page
-                    id={p.id}
-                    session={session}
-                    onSpend={onSpend}
-                    onDrop={onDrop}
-                  />
-                )}
-              </section>
-            ))}
-          </div>
-        </div>
+      header={<Head session={session} page={page} titleId={titleId} />}
+      footer={
         <nav className="tray-dock" aria-label="Tray pages">
           <div role="tablist" aria-orientation="horizontal" onKeyDown={keys}>
             <span className="dock-lamp" aria-hidden="true" />
@@ -229,7 +154,34 @@ export default function Tray({
             ))}
           </div>
         </nav>
+      }
+    >
+      <div ref={viewport} className="tray-viewport">
+        <div ref={track} className="tray-track">
+          {pages.map((p, i) => (
+            <section
+              key={p.id}
+              id={panelId(p.id)}
+              role="tabpanel"
+              aria-labelledby={tabId(p.id)}
+              className={`tray-page page-${p.id}${i === at ? " shown" : ""}`}
+              inert={i !== at || undefined}
+              aria-hidden={i !== at || undefined}
+              data-sheet-scroll
+            >
+              {/* Pages more than one away are not drawn until reached. */}
+              {Math.abs(i - at) <= 1 && (
+                <Page
+                  id={p.id}
+                  session={session}
+                  onSpend={onSpend}
+                  onDrop={onDrop}
+                />
+              )}
+            </section>
+          ))}
+        </div>
       </div>
-    </dialog>
+    </Sheet>
   );
 }

@@ -1,0 +1,471 @@
+/* The Quest's HUD (2026-11-16, rebuilt from scratch): a band of tooled
+   leather with gilt corners, a heart that drains like a vial, the region in
+   gilt over its waymarks (diamonds), the menu as a wax seal; under it a
+   line of brass marks and numbers. Alerts (a sent-in ally, the curse) are
+   marks alone in a glow. In the lair the waymarks are the dragon's scales,
+   and its rage burns the band's edge. Eager: it is the table's header. */
+
+.qh {
+  --qh-gold: #f1d395;
+  --qh-brass: #d9b471;
+  --qh-dim: rgb(241 211 149 / 0.6);
+  font-family: var(--font-tavern);
+}
+.qh-bar {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  height: 56px;
+  padding: 0 5px;
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 7px 7px, #f6d27a 0 1.6px, transparent 2.4px),
+    radial-gradient(
+      circle at calc(100% - 7px) 7px,
+      #f6d27a 0 1.6px,
+      transparent 2.4px
+    ),
+    radial-gradient(
+      circle at 7px calc(100% - 7px),
+      #f6d27a 0 1.6px,
+      transparent 2.4px
+    ),
+    radial-gradient(
+      circle at calc(100% - 7px) calc(100% - 7px),
+      #f6d27a 0 1.6px,
+      transparent 2.4px
+    ),
+    radial-gradient(
+      120% 140% at 50% -40%,
+      rgb(255 210 150 / 0.16),
+      transparent 60%
+    ),
+    repeating-linear-gradient(
+      100deg,
+      rgb(0 0 0 / 0.05) 0 2px,
+      transparent 2px 6px
+    ),
+    linear-gradient(180deg, #4a2c16, #2a170a);
+  box-shadow:
+    inset 0 1px rgb(255 214 160 / 0.28),
+    inset 0 0 0 1px rgb(20 8 2 / 0.8),
+    0 10px 26px rgb(0 0 0 / 0.5);
+}
+/* The tooled groove inside the edge. */
+.qh-bar::before {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border: 1px solid rgb(241 211 149 / 0.2);
+  border-radius: 11px;
+  pointer-events: none;
+}
+.qh.enraged .qh-bar {
+  box-shadow:
+    inset 0 1px rgb(255 214 160 / 0.28),
+    inset 0 0 0 1px #ff6a2a,
+    0 0 18px rgb(255 90 30 / 0.55),
+    0 10px 26px rgb(0 0 0 / 0.5);
+}
+
+/* Hearts: a heart that drains like a vial, the number beside it. */
+.qh-hp {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 46px;
+  padding: 0 10px 0 6px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--qh-gold);
+  font: inherit;
+  cursor: pointer;
+}
+.qh-hp:active:not(:disabled) {
+  background: rgb(255 214 160 / 0.1);
+}
+.qh-hp:disabled {
+  opacity: 1;
+  cursor: default;
+}
+.qh-vial {
+  position: relative;
+  display: grid;
+  width: 34px;
+  height: 32px;
+}
+.qh-vial .crawl-icon {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 100%;
+}
+.qh-vial-glass {
+  background: rgb(255 220 190 / 0.18);
+}
+.qh-vial-blood {
+  background: linear-gradient(180deg, #ff7a62, #c4180c 60%, #6a0804);
+  clip-path: inset(calc((1 - var(--fill, 1)) * 100%) 0 0 0);
+  filter: drop-shadow(0 0 6px rgb(255 60 40 / 0.45));
+  transition: clip-path 600ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.qh-hp.low .qh-vial {
+  animation: qh-beat 1.15s ease-in-out infinite;
+}
+.suspended .qh-hp.low .qh-vial {
+  animation-play-state: paused;
+}
+@keyframes qh-beat {
+  0%,
+  60%,
+  100% {
+    scale: 1;
+  }
+  15%,
+  40% {
+    scale: 1.14;
+  }
+}
+.qh-hp.hurt .qh-vial {
+  animation: qh-hurt 560ms cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+.qh-hp.heal .qh-vial {
+  animation: qh-heal 760ms ease-out;
+}
+@keyframes qh-hurt {
+  0% {
+    scale: 1.25;
+    rotate: -8deg;
+    filter: brightness(1.8);
+  }
+  35% {
+    rotate: 6deg;
+  }
+}
+@keyframes qh-heal {
+  0% {
+    scale: 0.85;
+    filter: brightness(1.7) drop-shadow(0 0 10px #ffe39a);
+  }
+  60% {
+    scale: 1.1;
+  }
+}
+.qh-hp-num {
+  display: inline-flex;
+  align-items: baseline;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.qh-hp-num b {
+  font-family: var(--font-card-title);
+  font-size: 24px;
+  font-weight: 800;
+  color: #ffeccc;
+  text-shadow: 0 1px 0 #1a0a02;
+  animation: lh-tick 380ms cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+.qh-hp-num small {
+  color: var(--qh-dim);
+  font-family: var(--font-card-title);
+  font-size: 13px;
+  font-weight: 700;
+}
+.qh-hp.low .qh-hp-num b {
+  color: #ff9a86;
+}
+
+/* The place: the region in gilt over its waymarks; a tap opens the map. */
+.qh-place {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  min-width: 0;
+  height: 46px;
+  align-content: center;
+  padding: 0 4px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+}
+.qh-place:active:not(:disabled) {
+  background: rgb(255 214 160 / 0.1);
+}
+.qh-place:disabled {
+  opacity: 1;
+  cursor: default;
+}
+.qh-place-name {
+  max-width: 100%;
+  overflow: hidden;
+  background: linear-gradient(180deg, #fff1c2, #e6b85a 55%, #b07a24);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  filter: drop-shadow(0 1px 0 #1a0a02);
+}
+.qh-place.fight-boss .qh-place-name,
+.qh-place.fight-ambush .qh-place-name {
+  background-image: linear-gradient(180deg, #ffd0c4, #ff7a62 60%, #b8301c);
+}
+.qh .hud-pips {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.qh .room-pips i {
+  width: 6px;
+  height: 6px;
+  rotate: 45deg;
+  border: 1px solid rgb(241 211 149 / 0.5);
+  transition: all 300ms ease;
+}
+.qh .room-pips i.done {
+  border-color: var(--qh-brass);
+  background: var(--qh-brass);
+}
+.qh .room-pips i.here {
+  width: 9px;
+  height: 9px;
+  border-color: #fff4d4;
+  background: #ffe7a8;
+  box-shadow: 0 0 8px rgb(255 214 120 / 0.9);
+}
+.qh .boss-pips i {
+  width: 9px;
+  height: 9px;
+  rotate: 45deg;
+  border: 1.5px solid #ff8a70;
+}
+.qh .boss-pips i.hit {
+  background: #ff5a3a;
+  box-shadow: 0 0 8px rgb(255 90 58 / 0.8);
+}
+
+/* The dragon's scales in the lair. */
+.qh-scales {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.qh-scales .scale {
+  width: 9px;
+  height: 11px;
+  border-radius: 50% 50% 50% 50% / 30% 30% 70% 70%;
+  background: linear-gradient(160deg, #ff9b6a 0%, #c7361d 55%, #6e140a 100%);
+  box-shadow: inset 0 1px rgb(255 230 200 / 0.6);
+}
+.qh-scales .scale.broken {
+  background: rgb(90 58 50 / 0.6);
+  box-shadow: none;
+}
+.qh-scales .scale.just {
+  animation: qh-crack 900ms cubic-bezier(0.3, 1.4, 0.5, 1) both;
+}
+@keyframes qh-crack {
+  0% {
+    filter: brightness(2.4);
+    transform: none;
+  }
+  35% {
+    transform: translateY(-3px) rotate(-14deg) scale(1.3);
+  }
+}
+/* Enraged: the screen's edge burns for the rest of the fight. */
+.lair-edge {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  box-shadow:
+    inset 0 0 28px 6px rgb(255 80 20 / 0.45),
+    inset 0 0 90px 10px rgb(180 30 10 / 0.3);
+}
+
+/* The menu: a wax seal with three pressed lines. */
+.qh-menu {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-right: 1px;
+  padding: 0;
+  border: 0;
+  border-radius: 47% 53% 50% 50% / 52% 48% 52% 48%;
+  background: radial-gradient(
+    circle at 38% 32%,
+    #d0412c 0%,
+    #9a1e12 45%,
+    #5a0c06 100%
+  );
+  box-shadow:
+    inset 0 -3px 4px rgb(0 0 0 / 0.4),
+    inset 0 2px 3px rgb(255 160 140 / 0.45),
+    0 2px 5px rgb(0 0 0 / 0.5);
+  cursor: pointer;
+}
+.qh-menu span {
+  display: grid;
+  gap: 3.5px;
+}
+.qh-menu i {
+  width: 16px;
+  height: 2.5px;
+  border-radius: 2px;
+  background: #6a0c06;
+  box-shadow: 0 1px 0 rgb(255 170 150 / 0.45);
+}
+.qh-menu:active:not(:disabled) {
+  filter: brightness(1.2);
+}
+.qh-menu:disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+/* The status line: brass marks and numbers, a diamond between each. */
+.qh-status {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  height: 30px;
+}
+.qh .hud-stat {
+  color: var(--qh-gold);
+  font-family: var(--font-card-title);
+  font-size: 16px;
+  font-weight: 700;
+}
+.qh .hud-stat:active:not(:disabled) {
+  background: rgb(255 214 160 / 0.12);
+}
+.qh .hud-stat .crawl-icon {
+  width: 18px;
+  height: 18px;
+  background: var(--qh-brass);
+  filter: drop-shadow(0 1px 0 rgb(0 0 0 / 0.6));
+}
+.qh .hud-stat:not(.hud-alert) + .hud-stat:not(.hud-alert)::before {
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  rotate: 45deg;
+  translate: 0 -50%;
+  background: rgb(241 211 149 / 0.35);
+}
+.qh .qh-rank {
+  font-family: var(--font-tavern);
+  font-size: 17px;
+  letter-spacing: 0.04em;
+}
+.qh .qh-allies {
+  color: var(--qh-dim);
+  font-size: 14px;
+}
+.qh .tag-satchel.empty,
+.qh .tag-lore.empty {
+  opacity: 0.55;
+}
+.qh .tag-lore.found .crawl-icon {
+  background: linear-gradient(180deg, #fff1c2, #f0a43a);
+  filter: drop-shadow(0 0 5px rgb(255 200 90 / 0.8));
+}
+.qh .tag-rival {
+  color: #ffd2c4;
+}
+.qh .tag-rival .chip-medal {
+  width: 20px;
+  height: 20px;
+}
+.qh .tag-rival.cutting {
+  background: rgb(255 96 64 / 0.18);
+  box-shadow: inset 0 0 0 1px rgb(255 120 90 / 0.55);
+  animation: hud-breathe 1.6s ease-in-out infinite;
+}
+.qh-rule {
+  width: 1px;
+  height: 16px;
+  margin: 0 4px;
+  background: rgb(241 211 149 / 0.25);
+}
+.qh .hud-alert {
+  padding: 0 7px;
+  min-width: 30px;
+  justify-content: center;
+}
+.qh .tag-assist {
+  color: #ffe08a;
+  background: rgb(250 204 21 / 0.12);
+  box-shadow: inset 0 0 0 1px rgb(250 204 21 / 0.4);
+}
+.qh .tag-assist .crawl-icon {
+  background: #ffe08a;
+}
+.qh .tag-jinx {
+  background: rgb(214 70 130 / 0.2);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 120 180 / 0.55),
+    0 0 14px rgb(214 70 130 / 0.5);
+  animation: hud-breathe 2.8s ease-in-out infinite;
+}
+.qh .tag-jinx .crawl-icon {
+  background: #ffb0d0;
+}
+
+@media (max-width: 360px) {
+  .qh-bar {
+    gap: 2px;
+  }
+  .qh-place-name {
+    font-size: 17px;
+  }
+  .qh .hud-stat {
+    padding: 0 7px;
+  }
+}
+@media (min-width: 700px) {
+  .qh-bar {
+    height: 66px;
+    border-radius: 16px;
+  }
+  .qh-vial {
+    width: 40px;
+    height: 38px;
+  }
+  .qh-hp-num b {
+    font-size: 28px;
+  }
+  .qh-place-name {
+    font-size: 23px;
+  }
+  .qh-menu {
+    width: 52px;
+    height: 52px;
+  }
+  .qh-status,
+  .qh .hud-stat {
+    height: 36px;
+  }
+  .qh .hud-stat {
+    font-size: 19px;
+  }
+  .qh .hud-stat .crawl-icon {
+    width: 22px;
+    height: 22px;
+  }
+}

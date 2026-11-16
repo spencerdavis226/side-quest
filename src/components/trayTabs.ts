@@ -129,7 +129,7 @@ export function trayPages(session: SessionState): TrayPage[] {
  * have (a stray "badges" in the Quest) opens the party. */
 export function trayPageFor(
   session: SessionState,
-  opened: StripDialog | "party",
+  opened: StripDialog | "party" | "map",
 ): TrayTab {
   const pages = trayPages(session);
   return pages.some((p) => p.id === opened) ? (opened as TrayTab) : "party";

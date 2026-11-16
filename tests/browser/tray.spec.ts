@@ -59,17 +59,22 @@ async function drag(
   await page.mouse.up();
 }
 
-test("the Quest's belt opens the journal on each segment's page", async ({
+test("the Quest's HUD opens the journal on each mark's page", async ({
   page,
 }, info) => {
   await seed(page, questRun());
-  const belt = page.locator(".hud-belt");
-  await expect(belt).toBeVisible();
-  // One belt: the party, the satchel, the lore and the rival; the curse
-  // stands beside it as an alert.
-  await expect(belt.locator(".belt-seg")).toHaveCount(4);
-  await expect(page.locator(".hud-alert.tag-jinx")).toBeVisible();
-  await page.screenshot({ path: info.outputPath("belt.png") });
+  // The bar: the hearts, the place, the menu. The status line: marks and
+  // numbers only, and the curse as a mark with no name.
+  const hud = page.locator(".crawl-hud.qh");
+  await expect(hud).toBeVisible();
+  const status = hud.locator(".hud-strip");
+  await expect(status.locator(".hud-stat")).toHaveCount(5);
+  await expect(status.locator(".tag-satchel")).toHaveText("3");
+  await expect(status.locator(".tag-lore")).toHaveText("2");
+  const curse = status.locator(".tag-jinx");
+  await expect(curse).toHaveText("");
+  await expect(curse).toHaveAccessibleName("Curse: Toad Voice");
+  await page.screenshot({ path: info.outputPath("hud.png") });
 
   const cases: [string, string][] = [
     [".tag-party", "The party"],
@@ -77,6 +82,7 @@ test("the Quest's belt opens the journal on each segment's page", async ({
     [".tag-lore", "Dragon lore"],
     [".tag-rival", "Your rival"],
     [".tag-jinx", "Curse"],
+    [".crawl-progress", "The map"],
   ];
   for (const [segment, title] of cases) {
     await page.locator(segment).click();
@@ -156,10 +162,116 @@ test("the tray is pulled down to put it away, or tapped away", async ({
   await expect(tray(page)).toBeVisible();
   await page.mouse.click(20, 20);
   await expect(page.getByRole("dialog")).toHaveCount(0);
-  // The close button.
+  // There is no close button: the grabber is the button named Close.
   await page.locator(".tag-satchel").click();
-  await tray(page).getByRole("button", { name: "Close" }).click();
+  await expect(tray(page).locator(".tray-close")).toHaveCount(0);
+  const close = tray(page).getByRole("button", { name: "Close" });
+  await expect(close).toHaveClass(/sheet-grab/);
+  // Its band is a full-width pull zone, 36px tall.
+  const band = (await close.boundingBox())!;
+  const sheet = (await tray(page).locator(".tray-sheet").boundingBox())!;
+  expect(band.width).toBeGreaterThanOrEqual(sheet.width - 1);
+  expect(band.height).toBeGreaterThanOrEqual(36);
+  await close.click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
+});
+
+/** A one-finger touch drag, as Safari reports it: touch events on the
+ * element under the finger (Chromium builds them with `new Touch`). */
+async function touchDrag(
+  page: Page,
+  selector: string,
+  from: { x: number; y: number },
+  to: { x: number; y: number },
+  steps = 12,
+) {
+  await page.evaluate(
+    ({ selector, from, to, steps }) => {
+      const target = document.querySelector(selector)!;
+      const touch = (x: number, y: number) =>
+        new Touch({ identifier: 1, target, clientX: x, clientY: y });
+      const fire = (type: string, x: number, y: number) => {
+        const t = touch(x, y);
+        target.dispatchEvent(
+          new TouchEvent(type, {
+            bubbles: true,
+            cancelable: true,
+            touches: type === "touchend" ? [] : [t],
+            targetTouches: type === "touchend" ? [] : [t],
+            changedTouches: [t],
+          }),
+        );
+      };
+      fire("touchstart", from.x, from.y);
+      for (let i = 1; i <= steps; i++)
+        fire(
+          "touchmove",
+          from.x + ((to.x - from.x) * i) / steps,
+          from.y + ((to.y - from.y) * i) / steps,
+        );
+      fire("touchend", to.x, to.y);
+    },
+    { selector, from, to, steps },
+  );
+}
+
+test("a page pulls the tray down from its top, and scrolls when it is not", async ({
+  page,
+}) => {
+  await seed(page, questRun());
+  await page.locator(".tag-party").click();
+  await expect(page.getByRole("dialog", { name: "The party" })).toBeVisible();
+  const content = ".tray-page.shown .qt-hero";
+  const box = (await shown(page).locator(".qt-hero").boundingBox())!;
+  const from = { x: box.x + box.width / 2, y: box.y + 20 };
+  // Scrolled down, a downward drag is the page's own: the tray stays.
+  await shown(page).evaluate((el) => {
+    el.scrollTop = 40;
+  });
+  await touchDrag(page, content, from, { x: from.x, y: from.y + 400 });
+  await expect(page.getByRole("dialog", { name: "The party" })).toBeVisible();
+  // At its top, the same drag takes the sheet with it, and away.
+  await shown(page).evaluate((el) => {
+    el.scrollTop = 0;
+  });
+  await touchDrag(page, content, from, { x: from.x, y: from.y + 400 });
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+});
+
+test("each crawl's menu is its own sheet, and asks before ending", async ({
+  page,
+}, info) => {
+  await seed(page, questRun());
+  await page.getByRole("button", { name: "Open game menu" }).click();
+  const menu = page.getByRole("dialog", { name: "Paused" });
+  await expect(menu).toBeVisible();
+  await expect(menu).toHaveClass(/tray-quest/);
+  await expect(menu.getByRole("button", { name: "How to play" })).toBeVisible();
+  await page.screenshot({ path: info.outputPath("menu.png") });
+  // End game asks on the sheet itself; Keep playing goes back.
+  await menu.getByRole("button", { name: "End game" }).click();
+  const ask = page.getByRole("dialog", { name: "Call it a night?" });
+  await expect(ask).toBeVisible();
+  await ask.getByRole("button", { name: "Keep playing" }).click();
+  await expect(page.getByRole("dialog", { name: "Paused" })).toBeVisible();
+  // Pulled down, it goes.
+  const head = (await menu.locator(".tray-head").boundingBox())!;
+  const from = { x: head.x + 80, y: head.y + head.height / 2 };
+  await drag(page, from, { x: from.x, y: from.y + 360 }, 16);
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  // And it ends the game when asked twice.
+  await page.getByRole("button", { name: "Open game menu" }).click();
+  await page
+    .getByRole("dialog", { name: "Paused" })
+    .getByRole("button", { name: "End game" })
+    .click();
+  await page
+    .getByRole("dialog", { name: "Call it a night?" })
+    .getByRole("button", { name: "End game" })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Play", exact: true }),
+  ).toBeVisible();
 });
 
 test("the satchel's inspector uses and drops what is picked", async ({
@@ -224,11 +336,21 @@ test("the League's gear: the team, the bag and the badge case", async ({
       },
     }),
   );
-  const belt = page.locator(".hud-league .hud-belt");
-  await expect(belt).toBeVisible();
-  // The team as balls: the lead, Pidgey, an open place.
-  await expect(belt.locator(".belt-balls .ball")).toHaveCount(3);
-  await expect(belt.locator(".belt-balls .ball.open")).toHaveCount(1);
+  const hud = page.locator(".crawl-hud.lh");
+  await expect(hud).toBeVisible();
+  // The status line: the team (Pidgey of two), the bag, the badges, and the
+  // type edge as a mark alone.
+  await expect(hud.locator(".tag-party")).toHaveText("1/2");
+  await expect(hud.locator(".tag-satchel")).toHaveText("1");
+  await expect(hud.locator(".tag-badges")).toHaveText("0");
+  await expect(hud.locator(".tag-edge")).toHaveText("");
+  // The pause menu is the device's.
+  await page.getByRole("button", { name: "Open game menu" }).click();
+  await expect(page.getByRole("dialog", { name: "Paused" })).toHaveClass(
+    /tray-league/,
+  );
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
   await page.locator(".tag-party").click();
   const team = page.getByRole("dialog", { name: "The team" });
   await expect(team).toBeVisible();

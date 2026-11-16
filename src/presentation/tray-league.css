@@ -1085,3 +1085,39 @@
   font-weight: 800;
   line-height: 1;
 }
+
+/* The League's pause menu: the device's settings screen. */
+.tray-league .menu-body {
+  margin: 0 12px 0;
+  padding-top: 16px;
+  border-radius: 18px 18px 0 0;
+  background: var(--lg-screen);
+  box-shadow:
+    0 0 0 4px #160204,
+    inset 0 6px 16px rgb(0 0 0 / 0.6);
+}
+.tray-league .menu-run {
+  color: var(--lg-glow);
+}
+.tray-league .menu-row-x {
+  background: var(--lg-panel);
+  box-shadow: inset 0 0 0 1px var(--lg-line);
+  color: #eafcff;
+}
+.tray-league .menu-row-icon {
+  background: rgb(108 242 255 / 0.12);
+  color: var(--lg-glow);
+}
+.tray-league .menu-row-words strong {
+  font-weight: 800;
+}
+.tray-league .menu-row-x.danger {
+  color: #ffb4aa;
+}
+.tray-league .menu-row-x.danger .menu-row-icon {
+  background: rgb(255 90 79 / 0.16);
+  color: #ff7a6e;
+}
+.tray-league .menu-ask p {
+  color: #d8f6ff;
+}

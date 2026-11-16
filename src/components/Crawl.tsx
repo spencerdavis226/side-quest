@@ -30,9 +30,7 @@ import {
   offerHeal,
   cardMatchup,
   finaleCard,
-  teamMember,
   finaleStage,
-  hitsNeeded,
   isBossCard,
   isLasting,
   catchReplaces,
@@ -75,11 +73,9 @@ const RivalMedal = lazy(() => import("./RivalMedal"));
 import { dragonStyle } from "../presentation/dragon-colors";
 import {
   BadgeCase,
-  EdgeMark,
   MatchupPanel,
   TypeEdges,
   TypeMark,
-  badgesLocked,
 } from "./LeagueMarks";
 import { pokemonTypes, typeStyle } from "../presentation/pokemon-types";
 import { Modal } from "./UI";
@@ -127,73 +123,6 @@ export function crawlPlace(quest: QuestState) {
   };
 }
 
-/** The meter's crawl face, a brass medallion: the heart with the hearts
- * left inside it, sized like the menu stud so the top row is symmetric.
- * Everything else the party carries is on the strip under the top row. */
-export function CrawlMeterFace({ quest }: { quest: QuestState }) {
-  const party = quest.party!;
-  const theme = crawlTheme(quest.packId);
-  const { pulse, delta } = useHeartPulse(party.hearts);
-  return (
-    <>
-      {/* The change floats off the heart, like a damage number. */}
-      {pulse && (
-        <span
-          className={`heart-splat splat-${pulse}`}
-          key={`splat-${party.hearts}`}
-          aria-hidden="true"
-        >
-          {delta > 0 ? `+${delta}` : `−${-delta}`}
-        </span>
-      )}
-      <HpRing hearts={party.hearts} max={party.max} />
-      <span
-        className={`meter-heart ${pulse}${theme.icons.files.heart ? "" : " heart-shape"}`}
-        key={`${party.hearts}-${pulse}`}
-      >
-        <CrawlIcon name="heart" theme={theme} />
-        <strong className={party.hearts <= 3 ? "low" : undefined}>
-          {party.hearts}
-        </strong>
-      </span>
-    </>
-  );
-}
-/** The share of hearts left as a ring round the stud (2026-11-01): green,
- * amber, then red, draining in a chunk with a pale trail catching up a
- * beat later, as a fighting game's bar does. The number in the stud is the
- * truth; the ring only shows it. */
-const RING = 2 * Math.PI * 18;
-function HpRing({ hearts, max }: { hearts: number; max: number }) {
-  const share = Math.max(0, Math.min(1, max ? hearts / max : 0));
-  const tone = share > 0.5 ? "high" : share > 0.25 ? "mid" : "low";
-  const offset = RING * (1 - share);
-  return (
-    <svg
-      className={`hp-ring hp-${tone}`}
-      viewBox="0 0 40 40"
-      aria-hidden="true"
-    >
-      <circle className="hp-track" cx="20" cy="20" r="18" />
-      <circle
-        className="hp-trail"
-        cx="20"
-        cy="20"
-        r="18"
-        strokeDasharray={RING}
-        strokeDashoffset={offset}
-      />
-      <circle
-        className="hp-live"
-        cx="20"
-        cy="20"
-        r="18"
-        strokeDasharray={RING}
-        strokeDashoffset={offset}
-      />
-    </svg>
-  );
-}
 export function crawlMeterLabel(quest: QuestState) {
   const party = quest.party!;
   const place = crawlPlace(quest);
@@ -212,7 +141,7 @@ export function crawlMeterLabel(quest: QuestState) {
 
 /** "hurt" or "heal" for a moment after the hearts change, and by how
  * many. */
-function useHeartPulse(hearts: number) {
+export function useHeartPulse(hearts: number) {
   const last = useRef(hearts);
   const [change, setChange] = useState<{
     pulse: "" | "hurt" | "heal";
@@ -230,97 +159,6 @@ function useHeartPulse(hearts: number) {
   return change;
 }
 
-/** The top row's centre plaque during a crawl (2026-10-17): where the
- * party is, in words, over a track that reads from across the table: the
- * floor's rooms as pips, a boss's or an ambush's swings, or the mark of
- * tonight's omen or a landing. */
-export function CrawlProgress({ quest }: { quest: QuestState }) {
-  const place = crawlPlace(quest);
-  const party = quest.party!;
-  const card = finaleCard(quest, quest.finale[quest.step]);
-  const need = card ? hitsNeeded(quest, card) : 0;
-  const theme = crawlTheme(quest.packId);
-  const { words } = theme;
-  const plaque = (
-    kind: string,
-    label: React.ReactNode,
-    spoken: string,
-    track: React.ReactNode,
-  ) => (
-    <div
-      className={`progress crawl-progress hud-plaque ${kind}`}
-      role="img"
-      aria-label={spoken}
-    >
-      <small className="plaque-label">{label}</small>
-      <span className="plaque-track">{track}</span>
-    </div>
-  );
-  if (place.omen) {
-    const label = place.kind === "adventurer" ? words.adventurer : words.omen;
-    return plaque(
-      "omen",
-      label,
-      label,
-      <CrawlIcon
-        name={place.kind === "adventurer" ? "adventurer" : "omen"}
-        theme={theme}
-      />,
-    );
-  }
-  // A landing, or a lone set piece without swings (the queue).
-  if (place.kind === "rest" || (place.kind === "set-piece" && !need))
-    return plaque(
-      `omen ${place.kind}`,
-      place.name,
-      place.name,
-      <CrawlIcon
-        name={place.kind === "rest" ? "rest" : "ambush"}
-        theme={theme}
-      />,
-    );
-  if (need) {
-    // A boss is named by its own stage (Gym 6, Brewery boss, Elite Four
-    // 2/4); an ambush by the room it waits in.
-    const at = finaleStage(quest);
-    const stage = quest.stages[at.stage].label;
-    return plaque(
-      `boss ${place.boss ? "" : "ambush"}`,
-      place.boss
-        ? at.size > 1
-          ? `${stage} · ${at.index + 1}/${at.size}`
-          : stage
-        : place.kind === "set-piece"
-          ? place.name
-          : `${words.Ambush} · ${place.room}/${place.rooms}`,
-      `${place.boss ? words.Boss : place.kind === "set-piece" ? `${words.Ambush}, ${place.name}` : `${words.Ambush} in ${words.Room.toLowerCase()} ${place.room} of ${place.rooms}`}: ${party.hits} of ${need} hits`,
-      <>
-        <CrawlIcon name={place.boss ? "boss" : "ambush"} theme={theme} />
-        <span className="boss-pips">
-          {Array.from({ length: need }, (_, i) => (
-            <i key={i} className={i < party.hits ? "hit" : undefined} />
-          ))}
-        </span>
-      </>,
-    );
-  }
-  return plaque(
-    "rooms",
-    <>{place.name}</>,
-    `${words.Room} ${place.room} of ${place.rooms}, ${place.name}`,
-    <span className="room-pips">
-      {Array.from({ length: place.rooms }, (_, i) => (
-        <i
-          key={i}
-          className={
-            i < place.room - 1 ? "done" : i === place.room - 1 ? "here" : ""
-          }
-        />
-      ))}
-    </span>,
-  );
-}
-
 /** What the strip opens: the satchel, the League's badge case, or one thing
  * on the party, on its own. */
 export type StripDialog =
@@ -332,241 +170,6 @@ export type StripDialog =
   | "lore"
   // The run's rival and what they hold (2026-11-15).
   | "rival";
-
-/** The HUD under the top row in a crawl (2026-11-16, the tray): one belt
- * the table reads at a glance, each segment opening its own page of the
- * tray (the party, the satchel's items, the League's badges, the Quest's
- * lore runes, the rival), and beside it only what matters on the card in
- * play: the dragon's scales, the League's type edge, a sent-in Pokémon or
- * ally, the curse. The League's belt is a red device bar, the Quest's a
- * tooled leather strap (`crawl.css`). Segments keep their `data-fly`
- * targets, so items, badges and runes still fly into them. */
-export function CrawlStrip({
-  session,
-  disabled,
-  onOpen,
-}: {
-  session: SessionState;
-  disabled: boolean;
-  onOpen: (dialog: StripDialog | "party") => void;
-}) {
-  const quest = session.quest!;
-  const party = quest.party!;
-  const record = questRecord(session)!;
-  const theme = crawlTheme(quest.packId);
-  const { words } = theme;
-  const league = quest.packId === "pokemon";
-  const jinx = party.jinx ? finaleCard(quest, party.jinx)?.jinx : undefined;
-  const locked = badgesLocked(session, theme);
-  const rival = rivalProfile(quest)?.profile;
-  const caught = partyTeam(quest);
-  const gear = record.boons.filter((b) => !isOmenBoon(b));
-  const bagEmpty = !party.loot.length && !caught.length && !gear.length;
-  const live = session.phase !== "complete";
-  // The League's type edge on the battle face up (2026-10-25): a mark
-  // only; the tray's Types page says what it does.
-  const matchup =
-    session.phase === "revealed"
-      ? cardMatchup(quest, currentCardOf(session))
-      : null;
-  // A caught Pokémon or ally sent into this fight (2026-10-31): its bonus.
-  const helper =
-    session.phase === "revealed" && party.assist
-      ? teamMember(quest, party.assist)
-      : undefined;
-  const chip = (
-    className: string,
-    label: string,
-    dialog: StripDialog | "party",
-    children: React.ReactNode,
-    shut = false,
-  ) => (
-    <button
-      type="button"
-      className={`hud-chip ${className}`}
-      data-fly={dialog}
-      aria-label={label}
-      aria-haspopup="dialog"
-      disabled={disabled || shut}
-      onClick={(event) => {
-        // Safari does not focus a tapped button; the tray gives focus back.
-        event.currentTarget.focus();
-        onOpen(dialog);
-      }}
-    >
-      {children}
-    </button>
-  );
-  // The dragon battle (The Quest 2.0): its scales, broken ones dimmed,
-  // the newest crack played once (keyed by the hits landed).
-  const dragon =
-    party.duel && quest.due && live
-      ? finaleCard(quest, quest.finale[quest.step])
-      : undefined;
-  const health = dragon?.lairFight ? hitsNeeded(quest, dragon) : 0;
-  const form = record.form;
-  const lore = party.lore ?? 0;
-  return (
-    <div
-      className={`hud-strip hud-${league ? "league" : "quest"}`}
-      role="group"
-      aria-label={words.party}
-    >
-      <div className="hud-belt">
-        {chip(
-          "belt-seg tag-party",
-          `${words.party}${form ? `: ${form.title}` : ""}${caught.length ? `, ${caught.map((m) => m.title).join(", ")}` : ""}`,
-          "party",
-          league ? (
-            // The team as balls on the device's bar: the lead and each
-            // Pokémon caught; an open place is an empty socket.
-            <span className="belt-balls" aria-hidden="true">
-              <i className="ball lead" />
-              {Array.from({ length: TEAM_SIZE }, (_, i) => (
-                <i key={i} className={`ball${caught[i] ? "" : " open"}`} />
-              ))}
-            </span>
-          ) : (
-            <span className="belt-buckle" aria-hidden="true">
-              <CrawlIcon name="adventurer" theme={theme} />
-            </span>
-          ),
-        )}
-        {chip(
-          `belt-seg tag-satchel${bagEmpty ? " empty" : ""}`,
-          `${words.Satchel}: ${[...party.loot.map((l) => theme.loot[l].name), ...caught.map((m) => m.title), ...gear.map((b) => b.boon.name)].join(", ") || "empty"}`,
-          "satchel",
-          // The items show for themselves; an empty bag is one dim bag, so
-          // the segment keeps its place (2026-10-27, owner).
-          bagEmpty ? (
-            <CrawlIcon name="satchel" theme={theme} />
-          ) : (
-            <>
-              {party.loot.map((item, i) => (
-                <CrawlIcon key={i} name={item} theme={theme} />
-              ))}
-              {caught.map((m) =>
-                m.type ? (
-                  <TypeMark key={m.id} type={m.type} />
-                ) : (
-                  <CrawlIcon key={m.id} name="ally" theme={theme} />
-                ),
-              )}
-              {gear.map((b) => (
-                <CrawlIcon key={b.key} name={gearIcon(b.boon)} theme={theme} />
-              ))}
-            </>
-          ),
-        )}
-        {words.badges &&
-          record.badges.of > 0 &&
-          chip(
-            `belt-seg tag-badges${locked ? " locked" : ""}`,
-            `${words.badges}: ${record.badges.earned} of ${record.badges.of}${locked ? `, ${theme.badgeLock!.why}` : ""}`,
-            "badges",
-            <>
-              <CrawlIcon name="boss" theme={theme} />
-              <b>
-                {record.badges.earned}/{record.badges.of}
-              </b>
-              {/* A card asking for the badges from memory shuts the case. */}
-              {locked && <i className="chip-lock" aria-hidden="true" />}
-            </>,
-            locked,
-          )}
-        {/* Dragon lore (The Quest 2.0 Phase 4): three runes, one lit for
-            each lore found; each is an edge on one swing at the dragon. */}
-        {!league &&
-          chip(
-            `belt-seg tag-lore${lore ? "" : " empty"}`,
-            `Dragon lore: ${lore} of 3`,
-            "lore",
-            <span className="hud-runes" aria-hidden="true">
-              {[0, 1, 2].map((i) => (
-                <CrawlIcon
-                  key={i < lore ? `lit-${i}` : `dark-${i}`}
-                  name="lore"
-                  theme={theme}
-                  className={`rune${i < lore ? " lit" : ""}`}
-                />
-              ))}
-            </span>,
-          )}
-        {/* The rival (2026-11-15): their medallion, and how many of the
-            party's items they hold; lit while they cut in on the card. */}
-        {rival &&
-          chip(
-            `belt-seg tag-rival${party.rival?.cut && live ? " cutting" : ""}`,
-            `Your rival, ${rival.name}: holding ${party.rival!.took.length} of your items`,
-            "rival",
-            <>
-              <Suspense fallback={<CrawlIcon name="ambush" theme={theme} />}>
-                <RivalMedal who={party.rival?.who} className="chip-medal" />
-              </Suspense>
-              {party.rival!.took.length > 0 && (
-                <b>{party.rival!.took.length}</b>
-              )}
-            </>,
-          )}
-      </div>
-      {dragon && health > 0 && (
-        <div
-          className={`hud-scales${party.duel?.enraged || party.duel?.contest ? " enraged" : ""}`}
-          role="img"
-          aria-label={`${dragon.title}: ${health - party.hits} of ${health} scales`}
-        >
-          {/* Enraged: the screen's edge burns for the rest of the fight. */}
-          {(party.duel?.enraged || party.duel?.contest) && (
-            <i className="lair-edge" aria-hidden="true" />
-          )}
-          {Array.from({ length: health }, (_, i) => (
-            <i
-              key={i < party.hits ? `broken-${i}-${party.hits}` : `whole-${i}`}
-              className={`scale${i < party.hits ? " broken" : ""}${i === party.hits - 1 ? " just" : ""}`}
-            />
-          ))}
-        </div>
-      )}
-      {matchup?.edge &&
-        chip(
-          `hud-alert tag-edge edge-${matchup.edge}`,
-          matchup.edge === "advantage" ? "Type advantage" : "Type disadvantage",
-          "matchup",
-          <>
-            <EdgeMark edge={matchup.edge} />
-            <span className="chip-name">
-              {matchup.edge === "advantage" ? "Strong" : "Weak"}
-            </span>
-          </>,
-        )}
-      {helper &&
-        chip(
-          "hud-alert tag-assist",
-          `${helper.title} sent in: +${assistBonus(helper, quest)} to the roll`,
-          "party",
-          <>
-            {helper.type ? (
-              <TypeMark type={helper.type} />
-            ) : (
-              <CrawlIcon name="ally" theme={theme} />
-            )}
-            <span className="chip-name">+{assistBonus(helper, quest)}</span>
-          </>,
-        )}
-      {jinx &&
-        words.jinx &&
-        chip(
-          "hud-alert tag-jinx",
-          `${words.jinx.name}: ${jinx.name}`,
-          "jinx",
-          <>
-            <CrawlIcon name="jinx" theme={theme} />
-            <span className="chip-name">{jinx.name}</span>
-          </>,
-        )}
-    </div>
-  );
-}
 
 /** The dragon's move a lair fight's face shows, found by its rules (a face
  * may be Previous Card, a round behind the duel in play). */

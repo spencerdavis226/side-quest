@@ -418,8 +418,14 @@ p {
 }
 /* A crawl's header carries the strip of the party's chips. */
 .playing.crawl-deck {
-  /* The strip's height (--strip-h) and the 10px above it. */
-  --hud-strip: calc(var(--strip-h) + 10px);
+  /* A crawl's HUD (2026-11-16): its bar is about a stud tall, and its
+     status line (30px) and the gap above it (8px) are the rest. */
+  --hud-strip: 38px;
+}
+@media (min-width: 700px) {
+  .playing.crawl-deck {
+    --hud-strip: 44px;
+  }
 }
 .table {
   display: flex;

@@ -19,7 +19,11 @@ import { theme } from "../presentation/theme";
 import { reducedMotion } from "../presentation/motion";
 // The tray is its own lazy chunk, warmed as a crawl starts (`warmTray`).
 const Tray = lazy(() => import("../components/tray/Tray"));
-export const warmTray = () => void import("../components/tray/Tray");
+const CrawlMenu = lazy(() => import("../components/tray/Menu"));
+export const warmTray = () => {
+  void import("../components/tray/Tray");
+  void import("../components/tray/Menu");
+};
 export type DialogName =
   | "menu"
   | "previous"
@@ -36,6 +40,8 @@ export type DialogName =
   | "lore"
   // The Quest's rival and their ledger (2026-11-15).
   | "rival"
+  // The Quest's map, from the HUD's place (2026-11-16).
+  | "map"
   | "guide"
   // The previous card opened from the header's stud.
   | "recap"
@@ -120,6 +126,27 @@ export function GameDialogs({
         </Button>
       </Modal>
     );
+  // A crawl's pause menu and its End game question (2026-11-16): one sheet
+  // in the mode's look, the question asked on it.
+  if ((displayed === "menu" || displayed === "end") && session?.quest?.party)
+    return (
+      <Suspense fallback={null}>
+        <CrawlMenu
+          session={session}
+          step={displayed}
+          exiting={exiting}
+          onClose={() => setModal(null)}
+          onPrevious={
+            session.previousId ? () => setModal("previous") : undefined
+          }
+          onUndo={onUndo}
+          onGuide={() => setModal("guide")}
+          onAskEnd={() => setModal("end")}
+          onBack={() => setModal("menu")}
+          onEnd={onEnd}
+        />
+      </Suspense>
+    );
   if (displayed === "menu")
     return (
       <Modal title="Paused" onClose={() => setModal(null)} exiting={exiting}>
@@ -196,7 +223,8 @@ export function GameDialogs({
       displayed === "jinx" ||
       displayed === "matchup" ||
       displayed === "lore" ||
-      displayed === "rival") &&
+      displayed === "rival" ||
+      displayed === "map") &&
     record?.party &&
     session
   )

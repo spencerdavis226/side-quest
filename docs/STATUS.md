@@ -2,6 +2,34 @@
 
 Updated 2026-11-16. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Done 2026-11-16: the HUD, the menus and the sheet rebuilt per mode (same branch, PR #109)
+
+Owner, on the first tray pass: "Make the HUD ui element much simpler and more elegant. It's way over informative and cluttered. Also curses and such don't need names, just an icon ... redo the entire menu bar and HUD from scratch for each game mode ... Menu screens too ... no need for an x button on the top right of the drawers if you can swipe down. Make sure the touch area for swipe is big enough".
+
+- **The HUD** (`src/components/hud/`; `model.ts` reads the run, `LeagueHud.tsx` and `QuestHud.tsx` draw it; styles `presentation/hud-league.css`, `hud-quest.css`, eager). A crawl no longer uses the studs, the plaque or the strip: `TopBar` hands it to its mode's HUD. Each HUD is one bar and one status line.
+  - League: a dark glass capsule lit in the lead's type colour, holding the lead's medallion in a draining Team HP ring with the number, the place over its pips, and a menu of three dots.
+  - Quest: a tooled-leather band with gilt corners, holding a heart that drains like a vial with the number, the region in gilt over diamond waymarks (the dragon's scales in the lair; a tap opens the map), and a wax-seal menu.
+  - The status line is a mark and a number each: the team (n/2), bag and badges, or the rank, satchel, lore and rival. Alerts appear only while they hold, and as marks alone: the type edge, a sent-in helper, the curse or jinx (no name; the spoken label keeps it). Classes the tests and moments use stay: `crawl-meter`, `crawl-progress`, `hud-strip`, `tag-*`, `hud-scales`, `data-fly` targets.
+  - `CrawlStrip`, `CrawlProgress`, `CrawlMeterFace` and their CSS are deleted; `QuestMeter` keeps the plain meter quests only. The header is shorter (`--hud-strip` 38px, 44px on a tablet), so the card is a little bigger.
+- **The sheet** (`tray/Sheet.tsx`): the tray and the menus rise on it.
+  - There is no close button. The grabber is a full-width 36px band and a button named Close. The whole sheet takes the pull: header, dock, and a page's content once that page is at its top.
+  - Touch is read from touch events, so a pull can stop the page's own scroll and bounce. A drag that starts on a page scrolled down is that page's scroll.
+  - Mouse and pen use pointer events. The pager ignores a pull, and a pull ignores a page swipe.
+- **The menus** (`tray/Menu.tsx`, lazy): a crawl's pause menu is a sheet in its mode's look (the device's settings screen; a journal page). Its rows are Previous card, Undo, How to play and End game. End game asks "Call it a night?" on the sheet itself. Plain games keep the old dialog.
+- **Moments**: no change. The fly targets moved with the HUD.
+- **Tests**: `tray.spec.ts` is rewritten for the HUD, with three new tests:
+  - Touch pull from a page's top vs a scrolled page, using synthetic touch events.
+  - Each mode's menu, and its in-sheet End game question.
+  - The grabber's size.
+
+  `crawl.spec.ts` counts `.hud-stat`, reads the heart's number and splat off the new gauge, and reads the lore as one rune and its count.
+- **Checked**:
+  - `npm test` 798 passed; typecheck; lint.
+  - Build: budgets pass. Initial JS is 178.4 KiB gzip; runtime is 5,451 KiB.
+  - Chromium `test:e2e` 204 of 204; Chromium `test:sweep` 12 of 12.
+  - Screens reviewed at 390 and 320 px.
+- **Not run**: WebKit, a phone. Real iOS touch (the non-passive touchmove, the scroll handoff) is the main thing to check on a device.
+
 ## Done 2026-11-16: the tray (branch `claude/vigilant-cray-mtcl90`, not merged)
 
 Owner: "a custom and high budget tray to better organize and view all items and inventory and curses and pokemon etc instead of little ui elements on the top ... one for the league that is very Pokemon themed and one for the quest that is very rpg/dnd themed ... still allows like a HUD to display really important things even when you're not opening the tray". Asked for a new branch, so this is a pull request for the owner's review, not merged under the auto-merge rule.

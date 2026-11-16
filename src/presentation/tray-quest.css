@@ -1168,3 +1168,54 @@
     margin: 0 auto;
   }
 }
+
+/* The Quest's pause menu: a page of the journal. */
+.tray-quest .menu-body {
+  margin: 0 12px;
+  padding-top: 16px;
+  border-radius: 6px 6px 0 0;
+  background:
+    radial-gradient(
+      120% 90% at 50% 40%,
+      transparent 55%,
+      rgb(120 70 20 / 0.24) 100%
+    ),
+    linear-gradient(180deg, #f5e8c8, var(--qt-parch) 60%, #e6d1a2);
+  box-shadow:
+    0 0 0 1px #2a1406,
+    inset 0 0 22px rgb(120 70 20 / 0.24);
+  color: var(--qt-ink);
+}
+.tray-quest .menu-run {
+  color: var(--qt-ink-soft);
+  font-family: var(--font-tavern);
+  font-size: 15px;
+  letter-spacing: 0.06em;
+}
+.tray-quest .menu-row-x {
+  background: rgb(255 250 235 / 0.55);
+  box-shadow: inset 0 0 0 1px rgb(120 80 30 / 0.3);
+  color: var(--qt-ink);
+}
+.tray-quest .menu-row-icon {
+  border-radius: 50%;
+  background: linear-gradient(180deg, #3a2a1c, #1e140c);
+  box-shadow: 0 0 0 2px #b48a3c;
+  color: #f1d395;
+}
+.tray-quest .menu-row-words strong {
+  font-family: var(--font-tavern);
+  font-size: 22px;
+  font-weight: 700;
+}
+.tray-quest .menu-row-x.danger {
+  color: #8a180c;
+}
+.tray-quest .menu-row-x.danger .menu-row-icon {
+  background: radial-gradient(circle at 38% 32%, #d0412c, #7a140a 75%);
+  box-shadow: 0 0 0 2px #4a0a04;
+  color: #ffd8cc;
+}
+.tray-quest .menu-ask p {
+  font-size: 18px;
+}

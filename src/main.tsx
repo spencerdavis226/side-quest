@@ -75,6 +75,8 @@ import "./style.css";
 import "./presentation/theme.css";
 import "./presentation/card-front.css";
 import "./presentation/crawl.css";
+import "./presentation/hud-league.css";
+import "./presentation/hud-quest.css";
 import "./presentation/moments.css";
 
 // The opening of a crawl, shown apart from the table (2026-11-15). Lazy: it

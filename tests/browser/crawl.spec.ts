@@ -142,9 +142,9 @@ for (const width of [320, 375])
         party: { ...q.party!, jinx: "dungeon.hedge-witch" },
       },
     });
-    // The belt (the party, the satchel and the lore runes) and the jinx
-    // beside it (the tray, 2026-11-16).
-    const chips = page.locator(".hud-strip .hud-chip");
+    // The status line (the party, the satchel and the lore) and the curse's
+    // mark (the HUD, 2026-11-16).
+    const chips = page.locator(".hud-strip .hud-stat");
     await expect(chips).toHaveCount(4);
     for (const box of await chips.evaluateAll((els) =>
       els.map((e) => e.getBoundingClientRect().toJSON()),
@@ -238,7 +238,7 @@ test("a trial is settled with plaques; a loss costs hearts", async ({
   await expect(meter(page)).toHaveAccessibleName(
     new RegExp(`^Hearts: ${H - 2} of ${H}`),
   );
-  await expect(page.locator(".crawl-meter strong")).toHaveText(`${H - 2}`);
+  await expect(page.locator(".crawl-meter .qh-hp-num b")).toHaveText(`${H - 2}`);
 });
 
 test("a boss shows its wounds, its trinket, and comes back until it falls", async ({
@@ -386,7 +386,8 @@ test("with Reduce Motion a moment's plaque fades and goes, and the splat stays c
   // The lost hearts float off the heart, centred on it.
   const [splat, heart] = await Promise.all([
     page.locator(".heart-splat").boundingBox(),
-    meter(page).boundingBox(),
+    // The heart it floats off (the HUD, 2026-11-16).
+    page.locator('[data-fly="hearts"]').boundingBox(),
   ]);
   await page.evaluate(() => {
     for (const a of (window as unknown as { __held: Animation[] }).__held)
@@ -601,8 +602,9 @@ test("the party dialog lays out the run: adventurer, boons and jinx", async ({
     },
   });
   // The strip under the top row carries the party's things at a glance:
-  // the belt (the party, the satchel, the dragon lore runes) and the jinx.
-  await expect(page.locator(".hud-strip .hud-chip")).toHaveCount(4);
+  // the status line (the party, the satchel, the dragon lore) and the
+  // curse's mark.
+  await expect(page.locator(".hud-strip .hud-stat")).toHaveCount(4);
   await page.screenshot({ path: info.outputPath("strip.png") });
   // The hearts open the party: hearts, adventurer, boons, and nothing else.
   await meter(page).click();
@@ -923,10 +925,9 @@ for (const width of [320, 390])
     const centre = (b: { y: number; height: number }) => b.y + b.height / 2;
     expect(Math.abs(centre(left!) - centre(middle!))).toBeLessThan(2);
     expect(Math.abs(centre(menu!) - centre(middle!))).toBeLessThan(2);
-    // The strip: the belt's three segments here (the party, the satchel and
-    // the lore runes) and the jinx beside it, under the row, inside the
-    // screen, above the card.
-    const chips = page.locator(".hud-strip .hud-chip");
+    // The status line: the party, the satchel and the lore, and the curse's
+    // mark, under the bar, inside the screen, above the card.
+    const chips = page.locator(".hud-strip .hud-stat");
     await expect(chips).toHaveCount(4);
     for (const chip of await chips.all()) {
       const b = (await chip.boundingBox())!;
@@ -1300,7 +1301,8 @@ test("the lore runes and an ally sent in", async ({ page }, info) => {
   await seed(page, s);
   const runes = page.locator(".hud-strip .tag-lore");
   await expect(runes).toHaveAccessibleName("Dragon lore: 2 of 3");
-  await expect(runes.locator(".rune.lit")).toHaveCount(2);
+  // The status line shows the lore as one rune and its count.
+  await expect(runes).toHaveText("2");
   await runes.click();
   const dialog = page.getByRole("dialog", { name: "Dragon lore" });
   await expect(dialog.locator(".lore-lines li.found")).toHaveCount(2);

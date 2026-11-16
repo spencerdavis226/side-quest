@@ -2,7 +2,6 @@ import type { SessionState } from "../game/types";
 import { finaleStage, questRecord } from "../game/engine";
 import { packs } from "../content/manifest.generated";
 import { PackLogo, ModeMark } from "./PackMarks";
-import { CrawlMeterFace, crawlMeterLabel } from "./Crawl";
 import { badgeArt } from "../presentation/league-art";
 
 /** A quest mode's table-wide meter, in the play screen's top row: the goal's
@@ -20,26 +19,6 @@ export function QuestMeter({
 }) {
   const quest = session.quest;
   if (!quest) return null;
-  // A crawl's meter is the party: hearts and satchel.
-  if (quest.party)
-    return (
-      <div className="quest-meters">
-        <button
-          type="button"
-          data-fly="hearts"
-          className={`quest-meter crawl-meter${quest.party.hearts <= 3 ? " low" : ""}`}
-          aria-label={crawlMeterLabel(quest)}
-          aria-haspopup="dialog"
-          disabled={disabled}
-          onClick={(event) => {
-            event.currentTarget.focus();
-            onOpen();
-          }}
-        >
-          <CrawlMeterFace quest={quest} />
-        </button>
-      </div>
-    );
   const pack = packs.find((p) => p.id === quest.packId);
   const stage = quest.due ? finaleStage(quest) : null;
   const label = stage ? stage.label : quest.label;

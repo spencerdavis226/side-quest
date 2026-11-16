@@ -44,14 +44,24 @@ class Tracker {
   }
 }
 
-/** Pull the sheet down to dismiss it. `handles` are the parts that take
- * the gesture (the grabber and the header); the sheet's pages scroll. The
- * scrim's opacity follows through `--pull` (0 at rest, 1 off screen) on
- * `root`. */
+/** The scroller a gesture starts in (a page, a menu's list), if any. */
+const scrollerOf = (target: EventTarget | null) =>
+  target instanceof Element
+    ? target.closest<HTMLElement>("[data-sheet-scroll]")
+    : null;
+
+/** Pull the sheet down to dismiss it, as an iOS sheet does: from anywhere on
+ * it (the grabber, the header, the dock), and from a page's content when
+ * that page is scrolled to its top. A pull that starts while a page is
+ * scrolled down is the page's own scroll; a sideways drag is the pager's.
+ * Touch is read from touch events, so the pull can stop the page's native
+ * scroll and bounce (`preventDefault` on a non-passive touchmove); a mouse
+ * or pen from pointer events. The scrim follows through `--pull` (0 at
+ * rest, 1 off screen) on `root`, and `root` carries `pulling` while the
+ * sheet is held. */
 export function useSheetDrag(
   sheet: RefObject<HTMLElement | null>,
   root: RefObject<HTMLElement | null>,
-  handles: RefObject<HTMLElement | null>[],
   onDismiss: () => void,
 ) {
   const dismiss = useRef(onDismiss);
@@ -60,8 +70,14 @@ export function useSheetDrag(
     const el = sheet.current;
     const host = root.current;
     if (!el || !host) return;
-    let start: { x: number; y: number; id: number } | null = null;
-    let dragging = false;
+    type Mode = "wait" | "pull" | "other";
+    let start: {
+      x: number;
+      y: number;
+      id: number;
+      top: boolean;
+      mode: Mode;
+    } | null = null;
     let offset = 0;
     const track = new Tracker();
     const set = (y: number, settle?: string) => {
@@ -72,38 +88,58 @@ export function useSheetDrag(
         String(Math.max(0, Math.min(1, y / el.offsetHeight))),
       );
     };
-    const down = (event: PointerEvent) => {
-      if (event.button !== 0 || start) return;
-      start = { x: event.clientX, y: event.clientY, id: event.pointerId };
-      dragging = false;
+    const begin = (
+      x: number,
+      y: number,
+      id: number,
+      target: EventTarget | null,
+    ) => {
+      const scroller = scrollerOf(target);
+      start = {
+        x,
+        y,
+        id,
+        top: !scroller || scroller.scrollTop <= 0,
+        mode: "wait",
+      };
       offset = 0;
     };
-    const move = (event: PointerEvent) => {
-      if (!start || event.pointerId !== start.id) return;
-      const dy = event.clientY - start.y;
-      const dx = event.clientX - start.x;
-      if (!dragging) {
-        if (Math.abs(dy) < SLOP || Math.abs(dy) < Math.abs(dx)) return;
-        dragging = true;
-        (event.currentTarget as HTMLElement).setPointerCapture?.(
-          event.pointerId,
-        );
-        el.classList.add("dragging");
+    /** Decide what a move is; true once it is the sheet's pull. */
+    const decide = (dx: number, dy: number) => {
+      if (!start) return false;
+      if (start.mode !== "wait") return start.mode === "pull";
+      if (host.classList.contains("paging")) {
+        start.mode = "other";
+        return false;
       }
+      if (Math.abs(dx) >= SLOP && Math.abs(dx) > Math.abs(dy)) {
+        start.mode = "other";
+        return false;
+      }
+      if (dy >= SLOP && dy > Math.abs(dx) && start.top) {
+        start.mode = "pull";
+        host.classList.add("pulling");
+        el.classList.add("dragging");
+        return true;
+      }
+      if (Math.abs(dy) >= SLOP) start.mode = "other";
+      return false;
+    };
+    const follow = (dy: number, y: number) => {
       offset = dy >= 0 ? dy : -rubber(-dy, el.offsetHeight);
-      track.add(event.clientY);
+      track.add(y);
       set(offset);
     };
-    const up = (event: PointerEvent) => {
-      if (!start || event.pointerId !== start.id) return;
+    const release = (cancelled: boolean) => {
+      const was = start;
       start = null;
-      if (!dragging) return;
-      dragging = false;
+      if (!was || was.mode !== "pull") return;
+      host.classList.remove("pulling");
       el.classList.remove("dragging");
       swallowClick();
-      const v = event.type === "pointercancel" ? 0 : track.speed();
-      const far = offset > el.offsetHeight * 0.28;
-      if ((far && v > -0.2) || v > 0.55) {
+      const v = cancelled ? 0 : track.speed();
+      const far = offset > el.offsetHeight * 0.25;
+      if ((far && v > -0.2) || v > 0.5) {
         // Off it goes, at least as fast as the flick.
         const left = el.offsetHeight + 24 - offset;
         const ms = stillMotion()
@@ -121,24 +157,73 @@ export function useSheetDrag(
         stillMotion() ? "none" : `transform ${SHEET.ms}ms ${SHEET.easing}`,
       );
     };
-    const targets = handles
-      .map((h) => h.current)
-      .filter((h): h is HTMLElement => !!h);
-    for (const h of targets) {
-      h.addEventListener("pointerdown", down);
-      h.addEventListener("pointermove", move);
-      h.addEventListener("pointerup", up);
-      h.addEventListener("pointercancel", up);
-    }
-    return () => {
-      for (const h of targets) {
-        h.removeEventListener("pointerdown", down);
-        h.removeEventListener("pointermove", move);
-        h.removeEventListener("pointerup", up);
-        h.removeEventListener("pointercancel", up);
-      }
+
+    // Touch: the pull takes the gesture from the page's scroll.
+    const touchStart = (event: TouchEvent) => {
+      if (start || event.touches.length !== 1) return;
+      const t = event.touches[0];
+      begin(t.clientX, t.clientY, t.identifier, event.target);
     };
-  }, [sheet, root, handles]);
+    const touchMove = (event: TouchEvent) => {
+      if (!start) return;
+      const t = [...event.changedTouches].find(
+        (c) => c.identifier === start!.id,
+      );
+      if (!t) return;
+      const dx = t.clientX - start.x;
+      const dy = t.clientY - start.y;
+      // At a page's top, a downward move is the sheet's before it is
+      // decided, so the page never starts its bounce.
+      if (start.mode === "wait" && start.top && dy > 0 && dy >= Math.abs(dx))
+        event.preventDefault();
+      if (!decide(dx, dy)) return;
+      event.preventDefault();
+      follow(dy, t.clientY);
+    };
+    const touchEnd = (event: TouchEvent) => {
+      if (!start) return;
+      if (![...event.changedTouches].some((c) => c.identifier === start!.id))
+        return;
+      release(event.type === "touchcancel");
+    };
+    // A mouse or a pen: pointer events (touch pointers are handled above).
+    const down = (event: PointerEvent) => {
+      if (event.pointerType === "touch" || event.button !== 0 || start) return;
+      begin(event.clientX, event.clientY, event.pointerId, event.target);
+    };
+    const move = (event: PointerEvent) => {
+      if (!start || event.pointerId !== start.id) return;
+      const dx = event.clientX - start.x;
+      const dy = event.clientY - start.y;
+      const was = start.mode;
+      if (!decide(dx, dy)) return;
+      if (was === "wait") el.setPointerCapture?.(event.pointerId);
+      follow(dy, event.clientY);
+    };
+    const up = (event: PointerEvent) => {
+      if (!start || event.pointerId !== start.id) return;
+      release(event.type === "pointercancel");
+    };
+    const opts = { passive: false } as const;
+    el.addEventListener("touchstart", touchStart, { passive: true });
+    el.addEventListener("touchmove", touchMove, opts);
+    el.addEventListener("touchend", touchEnd);
+    el.addEventListener("touchcancel", touchEnd);
+    el.addEventListener("pointerdown", down);
+    el.addEventListener("pointermove", move);
+    el.addEventListener("pointerup", up);
+    el.addEventListener("pointercancel", up);
+    return () => {
+      el.removeEventListener("touchstart", touchStart);
+      el.removeEventListener("touchmove", touchMove);
+      el.removeEventListener("touchend", touchEnd);
+      el.removeEventListener("touchcancel", touchEnd);
+      el.removeEventListener("pointerdown", down);
+      el.removeEventListener("pointermove", move);
+      el.removeEventListener("pointerup", up);
+      el.removeEventListener("pointercancel", up);
+    };
+  }, [sheet, root]);
 }
 
 /** Swipe between pages. `viewport` is the clipping box and `track` the row
@@ -188,6 +273,7 @@ export function usePager(
       const mx = event.clientX - start.x;
       const my = event.clientY - start.y;
       if (!dragging) {
+        if (host.classList.contains("pulling")) return;
         if (Math.abs(mx) < SLOP || Math.abs(mx) < Math.abs(my) * 1.2) return;
         dragging = true;
         view.setPointerCapture?.(event.pointerId);
