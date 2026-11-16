@@ -15,6 +15,57 @@ const webgl = (page: Page) =>
     const canvas = document.createElement("canvas");
     return !!(canvas.getContext("webgl2") || canvas.getContext("webgl"));
   });
+// The stage holds `settled:<faces>` for only 700 ms before it reveals
+// (FullScreenDice.tsx), while Playwright's later polls are a second apart:
+// a slow runner can poll straight past it and see only `revealing` (WebKit
+// in CI, 2026-11-16). `recordStages` notes every state the stage passes
+// through, as it changes, and `settledStage` waits for the settled one.
+interface StageState {
+  renderer: string;
+  stop: string;
+}
+async function recordStages(page: Page) {
+  await page.addInitScript(() => {
+    const seen: { renderer: string; stop: string }[] = [];
+    (window as unknown as { stages: typeof seen }).stages = seen;
+    const note = (el: Element) =>
+      seen.push({
+        renderer: el.getAttribute("data-renderer") ?? "",
+        stop: el.getAttribute("data-stop-reason") ?? "",
+      });
+    new MutationObserver((records) => {
+      for (const record of records) {
+        if (record.type === "attributes") {
+          const el = record.target as Element;
+          if (el.classList.contains("roll-stage")) note(el);
+          continue;
+        }
+        for (const node of record.addedNodes)
+          if (node instanceof Element)
+            for (const el of [
+              ...(node.matches(".roll-stage") ? [node] : []),
+              ...node.querySelectorAll(".roll-stage"),
+            ])
+              note(el);
+      }
+    }).observe(document, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ["data-renderer"],
+    });
+  });
+}
+async function settledStage(page: Page): Promise<StageState> {
+  const settled = () =>
+    page.evaluate(() =>
+      (window as unknown as { stages: StageState[] }).stages.find((s) =>
+        s.renderer.startsWith("settled:"),
+      ),
+    );
+  await expect.poll(settled, { timeout: 15000 }).toBeTruthy();
+  return (await settled())!;
+}
 const diceIds = ["core.same-shit", "core.fuck-around"] as const;
 // The dice overlay is motion: these tests watch it throw, land and settle.
 test.use(motion);
@@ -97,18 +148,13 @@ test("@release a restored unrolled dice card rolls by tapping the card", async (
   page,
 }) => {
   test.skip(!(await webgl(page)), "WebGL unavailable (headless Linux WebKit)");
+  await recordStages(page);
   await seed(page);
   const cta = page.locator(".game-card");
   await expect(cta).toHaveAccessibleName(/^Roll /);
   await cta.click();
-  await expect(page.locator(".roll-stage")).toHaveAttribute(
-    "data-renderer",
-    /^settled:/,
-    { timeout: 15000 },
-  );
-  expect(
-    await page.locator(".roll-stage").getAttribute("data-stop-reason"),
-  ).toBe("");
+  const stage = await settledStage(page);
+  expect(stage.stop).toBe("");
   await expect(page.locator(".roll-layer")).toHaveCount(0);
   await expect(page.locator(".game-card")).toHaveAccessibleName(
     /Tap to put this card aside\.$/,
