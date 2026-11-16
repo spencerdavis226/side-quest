@@ -297,7 +297,13 @@ function App() {
       undone={!!undone}
       secrets={chronicle.secrets}
     >
-      <Atmosphere hidden={hidden} scene={crawlScene(display)} lair={lair} />
+      {/* Covered by a sheet or dialog, the table holds still: its embers and
+          the lair shader stop redrawing behind the scrim (2026-11-16). */}
+      <Atmosphere
+        hidden={hidden || !!modal}
+        scene={crawlScene(display)}
+        lair={lair}
+      />
       <Announcer />
       <PortraitGate />
       <main

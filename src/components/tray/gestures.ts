@@ -1,4 +1,4 @@
-import { useEffect, useRef, type RefObject } from "react";
+import { useEffect, useLayoutEffect, useRef, type RefObject } from "react";
 import { stillMotion } from "../../presentation/motion";
 import { PAGE, SHEET } from "./spring";
 
@@ -8,6 +8,16 @@ import { PAGE, SHEET } from "./spring";
 // release read the flick's speed as well as its distance. A gesture that
 // moved swallows the click that follows, so a swipe that starts on a
 // button never presses it. A tap is untouched (the slop is 8px).
+//
+// Performance (2026-11-16, owner: "choppy and low fps" on an iPhone): a
+// frame of a drag writes one `transform` (and the scrim's `opacity`)
+// straight onto the element that moves, never an inherited custom property
+// on the dialog (that restyled every element in the sheet each frame). The
+// sizes a drag needs are read once, when it starts, so no write is followed
+// by a read in the same frame (a forced layout). Moves are coalesced to one
+// write per animation frame. Everything that moves is its own compositor
+// layer (`will-change` in tray.css), so a frame is a recomposite, not a
+// repaint.
 
 const SLOP = 8;
 
@@ -30,6 +40,9 @@ const rubber = (over: number, size: number) =>
 /** Velocity in px/ms from the last few moves. */
 class Tracker {
   private points: { at: number; v: number }[] = [];
+  reset() {
+    this.points = [];
+  }
   add(v: number) {
     const at = performance.now();
     this.points.push({ at, v });
@@ -44,6 +57,30 @@ class Tracker {
   }
 }
 
+/** One write per frame: the latest value wins. */
+function frameWriter(write: () => void) {
+  let raf = 0;
+  return {
+    schedule() {
+      if (!raf)
+        raf = requestAnimationFrame(() => {
+          raf = 0;
+          write();
+        });
+    },
+    /** Write now (a release), dropping a frame still pending. */
+    flush() {
+      if (raf) cancelAnimationFrame(raf);
+      raf = 0;
+      write();
+    },
+    cancel() {
+      if (raf) cancelAnimationFrame(raf);
+      raf = 0;
+    },
+  };
+}
+
 /** The scroller a gesture starts in (a page, a menu's list), if any. */
 const scrollerOf = (target: EventTarget | null) =>
   target instanceof Element
@@ -56,11 +93,11 @@ const scrollerOf = (target: EventTarget | null) =>
  * scrolled down is the page's own scroll; a sideways drag is the pager's.
  * Touch is read from touch events, so the pull can stop the page's native
  * scroll and bounce (`preventDefault` on a non-passive touchmove); a mouse
- * or pen from pointer events. The scrim follows through `--pull` (0 at
- * rest, 1 off screen) on `root`, and `root` carries `pulling` while the
- * sheet is held. */
+ * or pen from pointer events. The scrim fades with the pull; `root`
+ * carries `pulling` while the sheet is held. */
 export function useSheetDrag(
   sheet: RefObject<HTMLElement | null>,
+  scrim: RefObject<HTMLElement | null>,
   root: RefObject<HTMLElement | null>,
   onDismiss: () => void,
 ) {
@@ -68,6 +105,7 @@ export function useSheetDrag(
   dismiss.current = onDismiss;
   useEffect(() => {
     const el = sheet.current;
+    const shade = scrim.current;
     const host = root.current;
     if (!el || !host) return;
     type Mode = "wait" | "pull" | "other";
@@ -79,14 +117,22 @@ export function useSheetDrag(
       mode: Mode;
     } | null = null;
     let offset = 0;
+    let height = 1;
     const track = new Tracker();
-    const set = (y: number, settle?: string) => {
-      el.style.transition = settle ?? "none";
+    const paint = (y: number) => {
       el.style.transform = y ? `translate3d(0, ${y}px, 0)` : "";
-      host.style.setProperty(
-        "--pull",
-        String(Math.max(0, Math.min(1, y / el.offsetHeight))),
-      );
+      if (shade)
+        shade.style.opacity = String(
+          1 - Math.max(0, Math.min(1, y / height)) * 0.9,
+        );
+    };
+    const frame = frameWriter(() => paint(offset));
+    const settle = (y: number, transition: string) => {
+      frame.cancel();
+      el.style.transition = transition;
+      if (shade)
+        shade.style.transition = transition.replace("transform", "opacity");
+      paint(y);
     };
     const begin = (
       x: number,
@@ -118,6 +164,11 @@ export function useSheetDrag(
       }
       if (dy >= SLOP && dy > Math.abs(dx) && start.top) {
         start.mode = "pull";
+        // Read once, before any write this gesture makes.
+        height = Math.max(1, el.offsetHeight);
+        track.reset();
+        el.style.transition = "none";
+        if (shade) shade.style.transition = "none";
         host.classList.add("pulling");
         el.classList.add("dragging");
         return true;
@@ -126,9 +177,9 @@ export function useSheetDrag(
       return false;
     };
     const follow = (dy: number, y: number) => {
-      offset = dy >= 0 ? dy : -rubber(-dy, el.offsetHeight);
+      offset = dy >= 0 ? dy : -rubber(-dy, height);
       track.add(y);
-      set(offset);
+      frame.schedule();
     };
     const release = (cancelled: boolean) => {
       const was = start;
@@ -138,21 +189,21 @@ export function useSheetDrag(
       el.classList.remove("dragging");
       swallowClick();
       const v = cancelled ? 0 : track.speed();
-      const far = offset > el.offsetHeight * 0.25;
+      const far = offset > height * 0.25;
       if ((far && v > -0.2) || v > 0.5) {
         // Off it goes, at least as fast as the flick.
-        const left = el.offsetHeight + 24 - offset;
+        const left = height + 24 - offset;
         const ms = stillMotion()
           ? 0
           : Math.max(140, Math.min(320, left / Math.max(v, 1.4)));
-        set(
-          el.offsetHeight + 24,
-          `transform ${ms}ms cubic-bezier(0.2, 0.7, 0.4, 1)`,
+        settle(
+          height + 24,
+          ms ? `transform ${ms}ms cubic-bezier(0.2, 0.7, 0.4, 1)` : "none",
         );
         dismiss.current();
         return;
       }
-      set(
+      settle(
         0,
         stillMotion() ? "none" : `transform ${SHEET.ms}ms ${SHEET.easing}`,
       );
@@ -166,9 +217,9 @@ export function useSheetDrag(
     };
     const touchMove = (event: TouchEvent) => {
       if (!start) return;
-      const t = [...event.changedTouches].find(
-        (c) => c.identifier === start!.id,
-      );
+      const id = start.id;
+      let t: Touch | undefined;
+      for (const c of event.changedTouches) if (c.identifier === id) t = c;
       if (!t) return;
       const dx = t.clientX - start.x;
       const dy = t.clientY - start.y;
@@ -182,9 +233,11 @@ export function useSheetDrag(
     };
     const touchEnd = (event: TouchEvent) => {
       if (!start) return;
-      if (![...event.changedTouches].some((c) => c.identifier === start!.id))
-        return;
-      release(event.type === "touchcancel");
+      const id = start.id;
+      let ended = false;
+      for (const c of event.changedTouches)
+        if (c.identifier === id) ended = true;
+      if (ended) release(event.type === "touchcancel");
     };
     // A mouse or a pen: pointer events (touch pointers are handled above).
     const down = (event: PointerEvent) => {
@@ -204,9 +257,8 @@ export function useSheetDrag(
       if (!start || event.pointerId !== start.id) return;
       release(event.type === "pointercancel");
     };
-    const opts = { passive: false } as const;
     el.addEventListener("touchstart", touchStart, { passive: true });
-    el.addEventListener("touchmove", touchMove, opts);
+    el.addEventListener("touchmove", touchMove, { passive: false });
     el.addEventListener("touchend", touchEnd);
     el.addEventListener("touchcancel", touchEnd);
     el.addEventListener("pointerdown", down);
@@ -214,6 +266,7 @@ export function useSheetDrag(
     el.addEventListener("pointerup", up);
     el.addEventListener("pointercancel", up);
     return () => {
+      frame.cancel();
       el.removeEventListener("touchstart", touchStart);
       el.removeEventListener("touchmove", touchMove);
       el.removeEventListener("touchend", touchEnd);
@@ -223,16 +276,28 @@ export function useSheetDrag(
       el.removeEventListener("pointerup", up);
       el.removeEventListener("pointercancel", up);
     };
-  }, [sheet, root]);
+  }, [sheet, scrim, root]);
 }
 
-/** Swipe between pages. `viewport` is the clipping box and `track` the row
- * of pages (CSS places it from `--page`, the index, plus `--pager-x`, the
- * finger's offset). `--pos`, the fractional page, goes on `root` for the
- * dock's indicator. `go` is called with the page to settle on. */
+/** Where the track and the dock's lamp sit for page `at` and a finger
+ * offset of `dx` px over a page `width` px wide. */
+const trackAt = (at: number, dx = 0) =>
+  dx
+    ? `translate3d(calc(${-at * 100}% + ${dx}px), 0, 0)`
+    : `translate3d(${-at * 100}%, 0, 0)`;
+const lampAt = (pos: number) =>
+  `translate3d(calc(${pos} * (100% + 4px)), 0, 0)`;
+
+/** Swipe between pages. `viewport` is the clipping box, `track` the row of
+ * pages and `lamp` the dock's indicator; both are moved by `transform`
+ * alone. `go` is called with the page to settle on. A tab tapped moves the
+ * track too: a neighbour slides on the page spring, a page further away is
+ * a quick crossfade (sliding past the pages between would draw them all).
+ * `root` carries `paging` while a swipe is held. */
 export function usePager(
   viewport: RefObject<HTMLElement | null>,
   track: RefObject<HTMLElement | null>,
+  lamp: RefObject<HTMLElement | null>,
   root: RefObject<HTMLElement | null>,
   index: number,
   count: number,
@@ -240,6 +305,7 @@ export function usePager(
 ) {
   const state = useRef({ index, count, go });
   state.current = { index, count, go };
+  const shown = useRef(index);
   useEffect(() => {
     const view = viewport.current;
     const row = track.current;
@@ -248,20 +314,13 @@ export function usePager(
     let start: { x: number; y: number; id: number } | null = null;
     let dragging = false;
     let dx = 0;
+    let width = 1;
     const tracker = new Tracker();
-    const place = (x: number, settle: boolean) => {
-      row.style.transition = settle
-        ? stillMotion()
-          ? "none"
-          : `transform ${PAGE.ms}ms ${PAGE.easing}`
-        : "none";
-      row.style.setProperty("--pager-x", `${x}px`);
-      host.style.setProperty(
-        "--pos",
-        String(state.current.index - x / Math.max(1, view.clientWidth)),
-      );
-      host.classList.toggle("paging", !settle);
-    };
+    const frame = frameWriter(() => {
+      const at = state.current.index;
+      row.style.transform = trackAt(at, dx);
+      if (lamp.current) lamp.current.style.transform = lampAt(at - dx / width);
+    });
     const down = (event: PointerEvent) => {
       if (event.button !== 0 || start) return;
       start = { x: event.clientX, y: event.clientY, id: event.pointerId };
@@ -276,15 +335,20 @@ export function usePager(
         if (host.classList.contains("pulling")) return;
         if (Math.abs(mx) < SLOP || Math.abs(mx) < Math.abs(my) * 1.2) return;
         dragging = true;
+        // Read once, before any write this swipe makes.
+        width = Math.max(1, view.clientWidth);
+        tracker.reset();
+        row.style.transition = "none";
+        if (lamp.current) lamp.current.style.transition = "none";
+        host.classList.add("paging");
         view.setPointerCapture?.(event.pointerId);
       }
       const { index: at, count: n } = state.current;
-      const w = view.clientWidth;
       dx = mx;
       if ((at === 0 && dx > 0) || (at === n - 1 && dx < 0))
-        dx = Math.sign(dx) * rubber(Math.abs(dx), w);
+        dx = Math.sign(dx) * rubber(Math.abs(dx), width);
       tracker.add(event.clientX);
-      place(dx, false);
+      frame.schedule();
     };
     const up = (event: PointerEvent) => {
       if (!start || event.pointerId !== start.id) return;
@@ -292,18 +356,26 @@ export function usePager(
       if (!dragging) return;
       dragging = false;
       swallowClick();
+      host.classList.remove("paging");
       const { index: at, count: n, go: to } = state.current;
-      const w = view.clientWidth;
       const v = event.type === "pointercancel" ? 0 : tracker.speed();
       let next = at;
-      if ((dx < -w * 0.22 && v < 0.3) || v < -0.45)
+      if ((dx < -width * 0.22 && v < 0.3) || v < -0.45)
         next = Math.min(n - 1, at + 1);
-      else if ((dx > w * 0.22 && v > -0.3) || v > 0.45)
+      else if ((dx > width * 0.22 && v > -0.3) || v > 0.45)
         next = Math.max(0, at - 1);
-      // Settle: the index moves and the finger's offset goes back to 0 in
-      // one transition, so the page glides on from where it was let go.
+      frame.cancel();
+      // Settle: the page glides on from where it was let go.
+      const ease = stillMotion()
+        ? "none"
+        : `transform ${PAGE.ms}ms ${PAGE.easing}`;
+      row.style.transition = ease;
+      if (lamp.current) lamp.current.style.transition = ease;
+      dx = 0;
+      shown.current = next;
       state.current.index = next;
-      place(0, true);
+      row.style.transform = trackAt(next);
+      if (lamp.current) lamp.current.style.transform = lampAt(next);
       if (next !== at) to(next);
     };
     view.addEventListener("pointerdown", down);
@@ -311,21 +383,38 @@ export function usePager(
     view.addEventListener("pointerup", up);
     view.addEventListener("pointercancel", up);
     return () => {
+      frame.cancel();
       view.removeEventListener("pointerdown", down);
       view.removeEventListener("pointermove", move);
       view.removeEventListener("pointerup", up);
       view.removeEventListener("pointercancel", up);
     };
-  }, [viewport, track, root]);
-  // A tab tapped, or the page opened from outside: glide there.
-  useEffect(() => {
+  }, [viewport, track, lamp, root]);
+  // A tab tapped, or the page opened from outside. Before paint, so the
+  // first frame of the sheet already shows the right page.
+  useLayoutEffect(() => {
     const row = track.current;
-    const host = root.current;
-    if (!row || !host) return;
-    row.style.transition = stillMotion()
-      ? "none"
-      : `transform ${PAGE.ms}ms ${PAGE.easing}`;
-    row.style.setProperty("--pager-x", "0px");
-    host.style.setProperty("--pos", String(index));
-  }, [index, track, root]);
+    const view = viewport.current;
+    if (!row) return;
+    const from = shown.current;
+    shown.current = index;
+    const still = stillMotion() || from === index;
+    const far = Math.abs(index - from) > 1;
+    const ease =
+      still || far ? "none" : `transform ${PAGE.ms}ms ${PAGE.easing}`;
+    row.style.transition = ease;
+    row.style.transform = trackAt(index);
+    if (lamp.current) {
+      lamp.current.style.transition = still
+        ? "none"
+        : `transform ${PAGE.ms}ms ${PAGE.easing}`;
+      lamp.current.style.transform = lampAt(index);
+    }
+    // A jump past a neighbour: the new page fades in where it is.
+    if (far && !still && view)
+      view.animate?.([{ opacity: 0.2 }, { opacity: 1 }], {
+        duration: 180,
+        easing: "ease-out",
+      });
+  }, [index, track, viewport, lamp]);
 }

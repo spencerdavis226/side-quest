@@ -2,6 +2,25 @@
 
 Updated 2026-11-16. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Done 2026-11-16: the sheet clears the Dynamic Island, and the tray runs smooth
+
+Owner, on an iPhone after #109 went live: "The menu goes too high and goes into the Dynamic Island ... the animations and sliding is really choppy and low fps ... Swapping tabs is really clunky and slow loading and low fps too".
+
+- **Dynamic Island** (`tray.css`): the sheet was sized `--app-height` minus the inset and anchored to the dialog's bottom. In the installed app the fixed dialog is one status-bar inset shorter than `--app-height` (100lvh), so its top landed about 18px from the screen's top. It is now anchored by `top: max(inset + 12px, 28px)` and `bottom: 0` in the dialog's own box; a menu's sheet is capped by the same line. `tray.spec.ts` "a sheet's top clears the status bar and the Dynamic Island" poses a 59px inset and that taller `--app-height`: it read 18px before the fix and passes after.
+- **Gestures** (`tray/gestures.ts`): a drag frame writes one `transform` on the element that moves (the sheet, the track, the dock's lamp) and the scrim's `opacity`, never an inherited custom property on the dialog (`--pull`, `--pos`, `--pager-x` restyled every element in the sheet each frame). Sizes are read once per gesture, so no frame forces a layout. Moves are coalesced to one write per animation frame.
+- **Tabs** (`tray/Tray.tsx`): pages are built once and kept: the page asked for first, its neighbours on the next frames, every page once the rise settles. Pages are memoized with stable callbacks, so a tab switch re-renders the dock and the title only. A page past a neighbour is `content-visibility: hidden`. A jump past a neighbour is a 180 ms crossfade instead of sliding past every page between. The per-page entrance animation is gone.
+- **Paint**: loops that repainted every frame are gone or made composited. Removed: the lens pulse (`box-shadow`), the lamp blink (`filter`), the lead's sheen and ring, the jinx mark's sway, the rune glow and the curse seal's pulse. The badge shine sweeps once instead of looping. The titles fade in instead of animating `clip-path` or `letter-spacing`. The HUD's curse and rival-cutting breathe in `opacity` instead of `filter`. The table's embers and the lair shader pause while a sheet or dialog covers it (`Atmosphere` `hidden || modal`). Moving parts are their own layers (`will-change`); the sheet and pages use `contain`.
+- **Measured** (Chromium, 6x CPU throttle, a one-off spec not committed), before → after:
+
+  | Gesture | Style recalc | Frames over 34 ms |
+  |---|---|---|
+  | Four page swipes | 10,270 → 333 ms | 125 → 4 |
+  | Two pulls | 3,276 → 391 ms | 49 → 1 |
+  | Five tab taps | 342 → 160 ms | 5 → 5–7 |
+
+  A tap's remaining long frame is the tap's own React commit and the `inert` swap, about 5 ms of real CPU.
+- **Checked**: `npm test` 805 passed; typecheck; lint; build (budgets pass); Chromium `test:e2e` 206 of 206. **Not checked**: a phone (iOS GPU paint is not what Chromium measures), WebKit locally.
+
 ## Done 2026-11-16: the HUD, the menus and the sheet rebuilt per mode (same branch, PR #109)
 
 Owner, on the first tray pass: "Make the HUD ui element much simpler and more elegant. It's way over informative and cluttered. Also curses and such don't need names, just an icon ... redo the entire menu bar and HUD from scratch for each game mode ... Menu screens too ... no need for an x button on the top right of the drawers if you can swipe down. Make sure the touch area for swipe is big enough".

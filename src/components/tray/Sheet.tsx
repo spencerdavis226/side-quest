@@ -53,6 +53,7 @@ export function Sheet({
   const own = useRef<HTMLDialogElement>(null);
   const dialog = rootRef ?? own;
   const sheet = useRef<HTMLDivElement>(null);
+  const scrim = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const previous = document.activeElement as HTMLElement | null;
     const el = dialog.current!;
@@ -70,7 +71,7 @@ export function Sheet({
   // Pulled off screen by the gesture: the close holds it there instead of
   // playing the fall from the top.
   const [pulled, setPulled] = useState(false);
-  useSheetDrag(sheet, dialog, () => {
+  useSheetDrag(sheet, scrim, dialog, () => {
     setPulled(true);
     onClose();
   });
@@ -93,7 +94,12 @@ export function Sheet({
       }}
     >
       {/* The table behind, dimmed; a tap on it puts the sheet away. */}
-      <div className="tray-scrim" aria-hidden="true" onClick={onClose} />
+      <div
+        ref={scrim}
+        className="tray-scrim"
+        aria-hidden="true"
+        onClick={onClose}
+      />
       <div ref={sheet} className="tray-sheet">
         <div className="tray-edge" aria-hidden="true" />
         <button

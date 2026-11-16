@@ -1,4 +1,5 @@
 import {
+  memo,
   useCallback,
   useEffect,
   useId,
@@ -13,6 +14,7 @@ import { haptic } from "../../app/haptics";
 import { trayKind, trayPages, type TrayTab } from "../trayTabs";
 import { usePager } from "./gestures";
 import { Sheet } from "./Sheet";
+import { SHEET } from "./spring";
 import { DockIcon } from "./marks";
 import { LeagueHead, LeaguePage } from "./LeagueTray";
 import { QuestHead, QuestPage } from "./QuestTray";
@@ -45,6 +47,45 @@ export interface TrayProps {
   onDrop: (drop: BagDrop) => void;
 }
 
+/** One page's content, memoized: a tab tapped or a swipe re-renders the
+ * shell (the dock, the title) but never a page whose run has not changed.
+ * The callbacks it gets are stable (`Tray` routes them through refs). */
+const PageBody = memo(function PageBody({
+  kind,
+  id,
+  session,
+  onSpend,
+  onDrop,
+}: {
+  kind: "league" | "quest";
+  id: TrayTab;
+  session: SessionState;
+  onSpend: (item: Loot) => void;
+  onDrop: (drop: BagDrop) => void;
+}) {
+  const Page = kind === "league" ? LeaguePage : QuestPage;
+  return <Page id={id} session={session} onSpend={onSpend} onDrop={onDrop} />;
+});
+
+/** How much of the tray is built: the page asked for first (the sheet rises
+ * with only that), then its neighbours on the next frames (a swipe can
+ * reach them), then every page once the rise has settled, so a tab tapped
+ * later never builds anything. Pages stay built until the tray closes. */
+function useBuilt() {
+  const [built, setBuilt] = useState<"one" | "near" | "all">("one");
+  useEffect(() => {
+    let raf = requestAnimationFrame(() => {
+      raf = requestAnimationFrame(() => setBuilt("near"));
+    });
+    const all = setTimeout(() => setBuilt("all"), SHEET.ms + 60);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(all);
+    };
+  }, []);
+  return built;
+}
+
 export default function Tray({
   session,
   open,
@@ -71,12 +112,25 @@ export default function Tray({
   }, [open, ids]);
   const at = Math.min(index, pages.length - 1);
   const page = pages[at];
+  const built = useBuilt();
+  // Pages built once stay built (a page reached early, before "all").
+  const [reached] = useState(() => new Set<TrayTab>());
+  reached.add(pages[at]?.id);
+
+  // Stable callbacks for the memoized pages.
+  const spendRef = useRef(onSpend);
+  const dropRef = useRef(onDrop);
+  spendRef.current = onSpend;
+  dropRef.current = onDrop;
+  const spend = useCallback((item: Loot) => spendRef.current(item), []);
+  const drop = useCallback((d: BagDrop) => dropRef.current(d), []);
 
   const dialog = useRef<HTMLDialogElement>(null);
   const viewport = useRef<HTMLDivElement>(null);
   const track = useRef<HTMLDivElement>(null);
+  const lamp = useRef<HTMLSpanElement>(null);
   const go = useCallback((i: number) => setIndex(i), []);
-  usePager(viewport, track, dialog, at, pages.length, go);
+  usePager(viewport, track, lamp, dialog, at, pages.length, go);
 
   const choose = (i: number) => {
     if (i === at) return;
@@ -109,7 +163,6 @@ export default function Tray({
 
   if (!page) return null;
   const Head = kind === "league" ? LeagueHead : QuestHead;
-  const Page = kind === "league" ? LeaguePage : QuestPage;
   return (
     <Sheet
       skin={`tray-${kind}`}
@@ -118,18 +171,12 @@ export default function Tray({
       onClose={onClose}
       titleId={titleId}
       focus='[role="tab"][aria-selected="true"]'
-      style={
-        {
-          "--pages": pages.length,
-          "--page": at,
-          "--pos": at,
-        } as CSSProperties
-      }
+      style={{ "--pages": pages.length } as CSSProperties}
       header={<Head session={session} page={page} titleId={titleId} />}
       footer={
         <nav className="tray-dock" aria-label="Tray pages">
           <div role="tablist" aria-orientation="horizontal" onKeyDown={keys}>
-            <span className="dock-lamp" aria-hidden="true" />
+            <span ref={lamp} className="dock-lamp" aria-hidden="true" />
             {pages.map((p, i) => (
               <button
                 key={p.id}
@@ -158,28 +205,38 @@ export default function Tray({
     >
       <div ref={viewport} className="tray-viewport">
         <div ref={track} className="tray-track">
-          {pages.map((p, i) => (
-            <section
-              key={p.id}
-              id={panelId(p.id)}
-              role="tabpanel"
-              aria-labelledby={tabId(p.id)}
-              className={`tray-page page-${p.id}${i === at ? " shown" : ""}`}
-              inert={i !== at || undefined}
-              aria-hidden={i !== at || undefined}
-              data-sheet-scroll
-            >
-              {/* Pages more than one away are not drawn until reached. */}
-              {Math.abs(i - at) <= 1 && (
-                <Page
-                  id={p.id}
-                  session={session}
-                  onSpend={onSpend}
-                  onDrop={onDrop}
-                />
-              )}
-            </section>
-          ))}
+          {pages.map((p, i) => {
+            const near = Math.abs(i - at) <= 1;
+            const build =
+              i === at ||
+              built === "all" ||
+              (built === "near" && near) ||
+              reached.has(p.id);
+            return (
+              <section
+                key={p.id}
+                id={panelId(p.id)}
+                role="tabpanel"
+                aria-labelledby={tabId(p.id)}
+                className={`tray-page page-${p.id}${i === at ? " shown" : ""}`}
+                inert={i !== at || undefined}
+                aria-hidden={i !== at || undefined}
+                // Pages past a neighbour are kept but not drawn.
+                data-far={!near || undefined}
+                data-sheet-scroll
+              >
+                {build && (
+                  <PageBody
+                    kind={kind}
+                    id={p.id}
+                    session={session}
+                    onSpend={spend}
+                    onDrop={drop}
+                  />
+                )}
+              </section>
+            );
+          })}
         </div>
       </div>
     </Sheet>
