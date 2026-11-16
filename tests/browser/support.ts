@@ -52,11 +52,49 @@ function seedPageRandom(seed: string) {
 const seedOf = (info: { titlePath: string[] }) =>
   info.titlePath.slice(1).join(" › ");
 
-export const test = base.extend<{ deterministic: void }>({
+export const test = base.extend<{ deterministic: void; diagnose: void }>({
   context: async ({ context }, use, info) => {
     await context.addInitScript(seedPageRandom, seedOf(info));
+    await context.addInitScript(traceTransitions);
     await use(context);
   },
+  // A failed test says what the page was doing (2026-11-16: WebKit's
+  // release job kept failing in CI with no way to read its trace from the
+  // agent's container). Attached as text, the report prints it inline.
+  diagnose: [
+    async ({ page }, use, info) => {
+      const log: string[] = [];
+      const t0 = Date.now();
+      const at = () => `+${Date.now() - t0}ms`;
+      page.on("console", (m) =>
+        log.push(`${at()} console.${m.type()}: ${m.text()}`),
+      );
+      page.on("pageerror", (e) => log.push(`${at()} pageerror: ${e.message}`));
+      page.on("framenavigated", (f) => {
+        if (f === page.mainFrame()) log.push(`${at()} navigated: ${f.url()}`);
+      });
+      await use();
+      if (info.status === info.expectedStatus) return;
+      const state = await page
+        .evaluate(() => ({
+          url: location.href,
+          visibility: document.visibilityState,
+          screen: [...document.querySelectorAll("main, main > *")]
+            .slice(0, 6)
+            .map(
+              (el) =>
+                `${el.tagName.toLowerCase()}.${[...el.classList].join(".")}`,
+            ),
+          transitions: (window as unknown as { __vt?: string[] }).__vt ?? [],
+        }))
+        .catch((e: Error) => ({ unreadable: e.message }));
+      await info.attach("diagnosis", {
+        contentType: "text/plain",
+        body: [JSON.stringify(state, null, 1), ...log].join("\n"),
+      });
+    },
+    { auto: true },
+  ],
   deterministic: [
     // eslint-disable-next-line no-empty-pattern
     async ({}, use, info) => {
@@ -68,6 +106,35 @@ export const test = base.extend<{ deterministic: void }>({
     { auto: true },
   ],
 });
+
+/** In the page: log every View Transition's life (started, its callback
+ * run, skipped, settled) with times, read by `diagnose` on a failure. */
+function traceTransitions() {
+  const w = window as unknown as { __vt: string[] };
+  w.__vt = [];
+  const start = document.startViewTransition?.bind(document);
+  if (!start) return;
+  let n = 0;
+  const t = () => `${Math.round(performance.now())}ms`;
+  document.startViewTransition = ((update?: () => void) => {
+    const id = ++n;
+    w.__vt.push(`#${id} start ${t()} hidden=${document.hidden}`);
+    const vt = start(() => {
+      w.__vt.push(`#${id} callback ${t()}`);
+      return update?.();
+    });
+    const skip = vt.skipTransition.bind(vt);
+    vt.skipTransition = () => {
+      w.__vt.push(`#${id} skip ${t()}`);
+      skip();
+    };
+    vt.finished.then(
+      () => w.__vt.push(`#${id} finished ${t()}`),
+      (e: Error) => w.__vt.push(`#${id} finished rejected ${t()}: ${e.name}`),
+    );
+    return vt;
+  }) as typeof document.startViewTransition;
+}
 
 /** Opt a spec (or a describe block) back into animation. */
 export const motion = { reducedMotion: "no-preference" } as const;
