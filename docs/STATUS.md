@@ -2,6 +2,15 @@
 
 Updated 2026-11-16. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Done 2026-11-16: the opening reveal plays first, alone
+
+Owner, on an iPhone, with screenshots: "The 'your partner screen' shows first for a moment, then the pokeball screen, then the your partner screen again. Same issue with the quest. Shouldn't the pokeball be the very first screen you see?"
+
+- **Cause** (`screens/Prologue.tsx`): `useRevealFirst` held a step's scene back only once its card was face up. Play deals the first card with motion, and while it is being dealt there is no card, so the heading ("Your partner") and the Set out button drew; then the card turned, the reveal (the ball, the tarot) covered them, and the scene came back after.
+- **Fix**: a step with a reveal (starter, adventurer, summons, rival) is held from its arrival. Until its card is face up it waits with no grace timer (the prologue turns a face-down card as soon as the deal's motion ends, so it always arrives); the 450 ms grace for a reload starts only then.
+- **Test**: `prologue.spec.ts` "the pokemon/dungeon opening shows no scene before its reveal" starts each mode from setup with motion and records which appears first. Before the fix: failed 6 of 6 in Chromium (both modes) and the League in WebKit. After: passes.
+- **Checked**: `npm test` 805 passed; typecheck; lint; build; `prologue.spec` 35 of 35 in WebKit and in Chromium (5 repeats); `test:release` 28 of 28 (WebKit and Chromium); Chromium `test:e2e` 208 of 208. Not checked: a phone.
+
 ## Done 2026-11-16: sheets rise from the bottom, without the snap
 
 Owner, on an iPhone, with a screenshot: menus and trays in both modes "snap up to like the middle of the screen, freeze, then drag up normal", and the menu "glitches up and disconnects" (the sheet and the dim ending two-thirds down, the card undimmed below).
