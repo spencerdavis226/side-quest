@@ -69,7 +69,7 @@ export const oldForest: FloorCards = {
         "Monster",
         "silent-druid",
         "The Silent Druid",
-        "Read alone what the druid is thinking, start the clock, then act it out. The table guesses.",
+        "Drawer, look away. Left neighbor: Hold to read, start the clock. Act it out; drawer guesses.",
       ),
       secret: "A BEAR IN A HURRY.",
       timer: clock(GUESSED),

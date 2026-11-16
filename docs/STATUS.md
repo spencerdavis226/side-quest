@@ -1,6 +1,15 @@
 # Current state and implementation plan
 
-Updated 2026-11-15. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
+Updated 2026-11-16. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
+
+## Done 2026-11-16: no one-player secrets in the League or the Quest
+
+Owner: "the best way to play this is by projecting it to an Apple TV where everyone can see ... secrets that only 1 player can know won't work specifically with the league and the quest. Standard mode is fine."
+
+- **Cards** (copy only, no engine change): the 10 hold-to-read cards in the `pokemon` and `dungeon` packs are turned around. The drawer looks away, the left neighbor holds the plaque so the table (and the TV) sees it, starts the clock, and the table describes, mimes or acts it while the drawer guesses. League: `route-professors-quiz` and the three Who's That Pokémon? cards (end: "Drawer guessed it? Give 3. Didn't? Drink 3. Said a banned word? Drink 1."). Realms: `old-sailor`, `wizards-portrait`, `dare-tower`, `bog-hermit`, `silent-druid`, `imps-spit` (`GUESSED` in `dungeon/shared.ts` now reads from the drawer's side). The Realms six also play in Standard, where the new wording works the same.
+- **Not changed**: the Secrets & fuses pack (Standard only); the plain `pokemon.whos-that` card (the drawer picks the Pokémon in their head, nothing on screen). Old saves keep their snapshot text.
+- **Guard**: `tests/shared-screen.test.ts`: no `pokemon.*` or `dungeon.*` card says "read alone", and every secret there follows the look-away wording. `docs/AUTHORING.md` states the rule.
+- **Checked**: `npm test`; lint; typecheck; `cards:review`; build (budgets pass). Not run: the Playwright sweeps (every new rule is shorter than the one it replaced, except the League timer's end line), a phone or a TV.
 
 ## Done 2026-11-16: card IDs renamed to match their cards
 
