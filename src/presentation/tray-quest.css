@@ -134,10 +134,11 @@
   filter: drop-shadow(0 2px 0 rgb(40 18 4 / 0.9));
   animation: qt-title-in 380ms ease-out both;
 }
+/* Opacity and transform only: the compositor plays it, no relayout. */
 @keyframes qt-title-in {
   from {
     opacity: 0;
-    letter-spacing: 0.12em;
+    transform: translateY(3px);
   }
 }
 .qt-vitals {
@@ -846,7 +847,6 @@
 .qt-rune.lit .crawl-icon {
   background: linear-gradient(180deg, #fff1c2, #f0a43a);
   filter: drop-shadow(0 0 6px #ffcf6a);
-  animation: qt-rune 3.2s ease-in-out infinite;
 }
 @keyframes qt-rune {
   50% {
@@ -1031,7 +1031,6 @@
   box-shadow:
     0 0 0 2px #b5426b,
     0 0 22px rgb(214 70 130 / 0.6);
-  animation: qt-curse 3.4s ease-in-out infinite;
 }
 .qt-curse-seal .crawl-icon {
   width: 34px;

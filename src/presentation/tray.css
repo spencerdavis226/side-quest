@@ -9,6 +9,9 @@ dialog.tray {
   inset: 0;
   width: 100%;
   height: 100%;
+  /* The sheet's top keeps clear of the status bar and the Dynamic Island:
+     the inset plus a margin, measured in the dialog's own box. */
+  --sheet-top: max(calc(var(--top-safe) + 12px), 28px);
   max-width: none;
   max-height: none;
   margin: 0;
@@ -53,8 +56,9 @@ dialog.tray.closing::backdrop {
       rgb(4 2 1 / 0.82) 70%
     ),
     rgb(4 2 1 / 0.35);
-  opacity: calc(1 - var(--pull, 0) * 0.9);
   animation: tray-scrim-in 260ms ease-out both;
+  /* Its own layer: the pull fades it every frame (gestures.ts). */
+  will-change: opacity;
 }
 .tray.closing .tray-scrim {
   animation: tray-scrim-out 200ms ease-in forwards;
@@ -81,10 +85,11 @@ dialog.tray.closing::backdrop {
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr) auto;
   width: min(100%, 760px);
-  height: min(
-    calc(var(--app-height) - max(36px, var(--top-safe) + 18px)),
-    980px
-  );
+  /* Anchored to the dialog's top and bottom, never sized from the
+     viewport: in the installed iOS app the fixed box is one status-bar
+     inset shorter than --app-height (100lvh), and a height taken from that
+     pushed the sheet's top into the Dynamic Island (owner, 2026-11-16). */
+  top: max(var(--sheet-top), calc(100% - 980px));
   border-radius: var(--t-radius) var(--t-radius) 0 0;
   background: var(--t-shell, #2a1d14);
   box-shadow:
@@ -95,6 +100,7 @@ dialog.tray.closing::backdrop {
   will-change: transform;
   overflow: hidden;
   isolation: isolate;
+  contain: layout style paint;
 }
 @keyframes tray-rise {
   from {
@@ -175,8 +181,8 @@ dialog.tray.closing::backdrop {
 
 /* A sheet as tall as its content (the menus), under a top margin. */
 .tray-sheet:has(> .menu-body) {
-  height: auto;
-  max-height: calc(var(--app-height) - max(60px, var(--top-safe) + 40px));
+  top: auto;
+  max-height: calc(100% - var(--sheet-top) - 24px);
   grid-template-rows: auto auto minmax(0, auto);
 }
 
@@ -188,14 +194,11 @@ dialog.tray.closing::backdrop {
   overflow: hidden;
   touch-action: pan-y;
 }
+/* The track is moved by its inline transform alone (gestures.ts), on its
+   own layer. */
 .tray-track {
   display: flex;
   height: 100%;
-  transform: translate3d(
-    calc(var(--page, 0) * -100% + var(--pager-x, 0px)),
-    0,
-    0
-  );
   will-change: transform;
 }
 .tray-page {
@@ -206,6 +209,12 @@ dialog.tray.closing::backdrop {
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: none;
+  contain: layout style paint;
+}
+/* A page past a neighbour is kept built but not drawn, so the track's
+   layer holds at most three pages. */
+.tray-page[data-far] {
+  content-visibility: hidden;
 }
 .tray-page::-webkit-scrollbar {
   display: none;
@@ -213,18 +222,11 @@ dialog.tray.closing::backdrop {
 .tray-page:focus-visible {
   outline: none;
 }
-/* A page shown for the first time settles its contents in. */
-.tray-page.shown > * {
-  animation: tray-page-in 360ms cubic-bezier(0.2, 0.8, 0.3, 1) both;
-}
 @keyframes tray-page-in {
   from {
     opacity: 0;
     transform: translateY(8px);
   }
-}
-.tray.paging .tray-page.shown > * {
-  animation: none;
 }
 
 /* The dock: a tab per page, its lamp gliding under the one shown and
@@ -246,12 +248,9 @@ dialog.tray.closing::backdrop {
   position: absolute;
   inset: 0 auto 0 0;
   width: calc((100% - (var(--pages) - 1) * 4px) / var(--pages));
-  transform: translateX(calc(var(--pos, 0) * (100% + 4px)));
-  transition: transform 460ms cubic-bezier(0.25, 1.25, 0.4, 1);
+  /* Moved by its inline transform (gestures.ts), on its own layer. */
+  will-change: transform;
   pointer-events: none;
-}
-.tray.paging .dock-lamp {
-  transition: none;
 }
 .dock-tab {
   position: relative;

@@ -383,3 +383,31 @@ test("the League's gear: the team, the bag and the badge case", async ({
   );
   await page.screenshot({ path: info.outputPath("badges.png") });
 });
+
+// The owner's iPhone (2026-11-16): the menu rose into the Dynamic Island.
+// In the installed app the fixed box is one status-bar inset shorter than
+// --app-height (100lvh), and the sheet's height was taken from that. Pose
+// the same: a 59px inset (an iPhone 15 Pro) and an --app-height one inset
+// taller than the visible box. The sheet's top must clear the inset.
+test("a sheet's top clears the status bar and the Dynamic Island", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 393, height: 793 });
+  await seed(page, questRun());
+  await page.addStyleTag({
+    content: ":root { --top-safe: 59px; --app-height: calc(100vh + 59px) }",
+  });
+  const clear = async () => {
+    const box = (await page.locator(".tray-sheet").boundingBox())!;
+    expect(box.y).toBeGreaterThanOrEqual(59 + 8);
+    expect(box.y + box.height).toBeLessThanOrEqual(793 + 1);
+  };
+  await page.locator(".tag-satchel").click();
+  await expect(tray(page)).toBeVisible();
+  await clear();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await page.getByRole("button", { name: "Open game menu" }).click();
+  await expect(page.getByRole("dialog", { name: "Paused" })).toBeVisible();
+  await clear();
+});
