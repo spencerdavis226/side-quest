@@ -543,7 +543,6 @@ p {
   min-height: 0;
   border-radius: var(--card-radius);
   backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
   background-size: 100% 100%;
   background-position: center;
   min-width: 0;

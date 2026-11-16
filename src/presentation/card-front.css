@@ -84,12 +84,6 @@
   mix-blend-mode: multiply;
   /* Strongest through the middle of the parchment, falling away toward the
      frame lip so the lattice reads as material rather than a stamped logo. */
-  -webkit-mask-image: radial-gradient(
-    120% 100% at 50% 46%,
-    #000 0%,
-    rgb(0 0 0 / 0.5) 46%,
-    transparent 80%
-  );
   mask-image: radial-gradient(
     120% 100% at 50% 46%,
     #000 0%,
@@ -123,25 +117,12 @@
 }
 .study-rules[data-overflow="bottom"],
 .study-rules[data-overflow="both"] {
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    #000 calc(100% - 26px),
-    transparent
-  );
   mask-image: linear-gradient(to bottom, #000 calc(100% - 26px), transparent);
 }
 .study-rules[data-overflow="top"] {
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 26px);
   mask-image: linear-gradient(to bottom, transparent 0, #000 26px);
 }
 .study-rules[data-overflow="both"] {
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0,
-    #000 26px,
-    #000 calc(100% - 26px),
-    transparent
-  );
   mask-image: linear-gradient(
     to bottom,
     transparent 0,
@@ -879,7 +860,6 @@
   z-index: 1;
   pointer-events: none;
   isolation: isolate;
-  -webkit-mask: url("./art/title-enamel.webp") 0 0 / 100% 100% no-repeat;
   mask: url("./art/title-enamel.webp") 0 0 / 100% 100% no-repeat;
 }
 .accented .card-enamel {
@@ -1270,7 +1250,6 @@
   height: 100%;
   border-radius: var(--card-radius);
   pointer-events: none;
-  -webkit-mask: url("./art/title-enamel.webp") 0 0 / 100% 100% no-repeat;
   mask: url("./art/title-enamel.webp") 0 0 / 100% 100% no-repeat;
   mix-blend-mode: soft-light;
   opacity: 0.6;

@@ -140,7 +140,6 @@
     transparent 6deg 18deg
   );
   mask-image: radial-gradient(circle, #000 0, transparent 46%);
-  -webkit-mask-image: radial-gradient(circle, #000 0, transparent 46%);
   opacity: 0;
   animation:
     evo-rays-in var(--len) ease both,
@@ -187,7 +186,6 @@
   inset: 8%;
   background: #fff;
   mask: center / contain no-repeat;
-  -webkit-mask: center / contain no-repeat;
   filter: drop-shadow(0 0 14px #fff);
 }
 .evo-glyph.old {
@@ -1082,12 +1080,6 @@
     var(--foe) 0deg 4deg,
     transparent 4deg 13deg
   );
-  -webkit-mask-image: radial-gradient(
-    circle,
-    #000 0,
-    #0006 14%,
-    transparent 34%
-  );
   mask-image: radial-gradient(circle, #000 0, #0006 14%, transparent 34%);
   opacity: 0;
   animation:
@@ -1300,7 +1292,6 @@
       #3a322c calc(16vh - 8px) calc(16vh + 8px),
       transparent calc(16vh + 8px) 32vh
     );
-  -webkit-mask-image: linear-gradient(180deg, #000 88%, transparent);
   mask-image: linear-gradient(180deg, #000 88%, transparent);
   filter: drop-shadow(0 8px 10px #000);
   animation: gate-bars var(--len) cubic-bezier(0.55, 0, 1, 0.45) both;
@@ -2200,7 +2191,6 @@
     transparent 7deg 20deg
   );
   mask-image: radial-gradient(circle, #000 0, transparent 40%);
-  -webkit-mask-image: radial-gradient(circle, #000 0, transparent 40%);
   animation:
     badge-shade var(--len) ease both,
     spin calc(var(--m) * 9s) linear infinite;
@@ -2244,7 +2234,6 @@
     )
     5% 0 / 300% 100% no-repeat;
   mask: center / contain no-repeat;
-  -webkit-mask: center / contain no-repeat;
   mix-blend-mode: screen;
   animation: badge-glint var(--len) ease-in-out both;
 }
@@ -2373,13 +2362,6 @@
     transparent
   );
   opacity: 0.7;
-  -webkit-mask-image: linear-gradient(
-    0deg,
-    transparent,
-    #000 30%,
-    #000 60%,
-    transparent
-  );
   mask-image: linear-gradient(
     0deg,
     transparent,
@@ -3103,8 +3085,6 @@
 /* Lifted: the scroll shows (no unroll), the seal splits, and a mask three
    times the scroll's height slides up so the paper burns from the foot. */
 .moment-jinx.lifted .jinx-scroll {
-  -webkit-mask: linear-gradient(180deg, #000 0 46%, transparent 48% 100%) 0 0 /
-    100% 300% no-repeat;
   mask: linear-gradient(180deg, #000 0 46%, transparent 48% 100%) 0 0 / 100%
     300% no-repeat;
   animation: jinx-burn var(--len) linear both;
@@ -3194,15 +3174,12 @@
 @keyframes jinx-burn {
   0%,
   32% {
-    -webkit-mask-position: 0 19%;
     mask-position: 0 19%;
   }
   62% {
-    -webkit-mask-position: 0 69%;
     mask-position: 0 69%;
   }
   100% {
-    -webkit-mask-position: 0 100%;
     mask-position: 0 100%;
   }
 }
@@ -3495,7 +3472,6 @@
     0 20px 50px #000c;
   transform-origin: 0 50%;
   backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
   animation: bookcase var(--len) cubic-bezier(0.55, 0, 0.35, 1) both;
 }
 .bookcase::after {
@@ -4004,7 +3980,6 @@
   justify-content: center;
   gap: 4vmin;
   background: rgb(8 5 3 / 0.93);
-  -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
   animation: ball-stage-in 220ms ease-out both;
   touch-action: manipulation;
@@ -4120,12 +4095,6 @@
 .ball-donut-half {
   position: absolute;
   inset: 0;
-  -webkit-mask-image: radial-gradient(
-    circle closest-side,
-    transparent 0 61.5%,
-    #000 62.5% 99%,
-    transparent 100%
-  );
   mask-image: radial-gradient(
     circle closest-side,
     transparent 0 61.5%,
@@ -4349,7 +4318,6 @@
     #fff2b833 0deg 7deg,
     transparent 7deg 22deg
   );
-  -webkit-mask-image: radial-gradient(circle, #000 12%, transparent 58%);
   mask-image: radial-gradient(circle, #000 12%, transparent 58%);
   animation: natural-rays 1.4s ease-out both;
 }
@@ -4710,7 +4678,6 @@
   inset: 0 22% 14%;
   background: linear-gradient(180deg, transparent, var(--c) 75%, #fff 100%);
   clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%);
-  -webkit-mask-image: linear-gradient(180deg, transparent, #000 60%, #0008);
   mask-image: linear-gradient(180deg, transparent, #000 60%, #0008);
   filter: blur(10px);
   opacity: 0.6;
@@ -5319,7 +5286,6 @@
     #f2c94c33 0deg 6deg,
     transparent 6deg 18deg
   );
-  -webkit-mask-image: radial-gradient(circle, #000 0, transparent 42%);
   mask-image: radial-gradient(circle, #000 0, transparent 42%);
   opacity: 0;
   animation:

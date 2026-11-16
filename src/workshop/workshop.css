@@ -139,11 +139,6 @@
   inset: 0;
   display: block;
   mix-blend-mode: multiply;
-  -webkit-mask-image: radial-gradient(
-    130% 100% at 50% 38%,
-    #000,
-    transparent 78%
-  );
   mask-image: radial-gradient(130% 100% at 50% 38%, #000, transparent 78%);
 }
 .icon-swatch-copy {

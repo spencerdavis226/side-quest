@@ -12,7 +12,6 @@
   height: 1em;
   background: currentColor;
   mask: center / contain no-repeat;
-  -webkit-mask: center / contain no-repeat;
 }
 
 /* --- The meter: hearts, satchel ------------------------------------------ */
@@ -1003,7 +1002,6 @@
   height: 58%;
   background: #fffaf0;
   mask: center / contain no-repeat;
-  -webkit-mask: center / contain no-repeat;
 }
 /* An empty socket: a badge still to win, unnamed. */
 .type-mark.empty {
@@ -2229,13 +2227,6 @@
   /* A worn stamp: ink missing in flecks. Two grids of pinholes at
      unrelated sizes, so a fleck shows only where both have a hole and the
      wear never reads as a regular dot pattern. */
-  -webkit-mask-image:
-    radial-gradient(circle at 30% 60%, #0000 0 1.6px, #000 2.2px),
-    radial-gradient(circle at 70% 20%, #0000 0 2.4px, #000 3px);
-  -webkit-mask-size:
-    11px 9px,
-    17px 23px;
-  -webkit-mask-composite: source-over;
   mask-image:
     radial-gradient(circle at 30% 60%, #0000 0 1.6px, #000 2.2px),
     radial-gradient(circle at 70% 20%, #0000 0 2.4px, #000 3px);

@@ -113,13 +113,9 @@ const FROZEN = [
   "width",
   "height",
   "mask-image",
-  "-webkit-mask-image",
   "mask-size",
-  "-webkit-mask-size",
   "mask-position",
-  "-webkit-mask-position",
   "mask-repeat",
-  "-webkit-mask-repeat",
   "opacity",
 ] as const;
 /** Copy each element's painted look onto its clone, pair by pair. */
