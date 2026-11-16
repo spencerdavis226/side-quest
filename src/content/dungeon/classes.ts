@@ -33,13 +33,13 @@ const kits: Readonly<Record<string, OmenEffect>> = {
   ranger: { roll: { ambush: 1 } }, // Hunting Bow
   necromancer: { roll: { boss: 1 } }, // Bone Wand
   warlock: { hearts: 1 }, // Hellfire Cloak
-  bouncer: { roll: { monster: 1 } }, // Family Sword
-  mercenary: { hearts: 1 }, // Chainmail Vest
+  knight: { roll: { monster: 1 } }, // Family Sword
+  sellsword: { hearts: 1 }, // Chainmail Vest
   druid: { heal: 1 }, // Pet Ferret
   // The Smock cost a heart on every trap until the rival (2026-11-15)
   // took the Peasant under its 1% floor.
-  "plus-one": {}, // Smock
-  intern: { heal: -1 }, // Oversized Helmet
+  peasant: {}, // Smock
+  squire: { heal: -1 }, // Oversized Helmet
   mimic: { roll: { monster: -1 } }, // Its Own Lid
 };
 /** An effect with a kit's numbers added (a sum of 0 drops the key). */
@@ -241,7 +241,7 @@ export const classes: CardDefinition[] = [
   ),
   // Stumbles early, then fights like nobody else.
   adventurer(
-    "monk",
+    "drunken-monk",
     "Drunken Monk",
     "Starts drunk. Gets drunker. Fights better.",
     { hearts: -1, fumble: 2 },
@@ -326,7 +326,7 @@ export const classes: CardDefinition[] = [
   ),
   // New 2026-10-25 (was the Bouncer). Ambushes hurt less.
   adventurer(
-    "bouncer",
+    "knight",
     "Knight",
     "Mentions the armor daily. Compensating.",
     { hearts: 2, hurt: { ambush: -1 } },
@@ -347,7 +347,7 @@ export const classes: CardDefinition[] = [
   ),
   // New 2026-10-25 (was the Bartender). The Hired Sword, then potions.
   adventurer(
-    "bartender",
+    "innkeeper",
     "Innkeeper",
     "Knows who's banging.",
     { hearts: 1, satchel: 4, loot: ["round", "draught"] },
@@ -368,7 +368,7 @@ export const classes: CardDefinition[] = [
   ),
   // New 2026-10-25 (was the Mercenary). Takes the loud door: elites.
   adventurer(
-    "mercenary",
+    "sellsword",
     "Sellsword",
     "Will fight anything for coin. Or a handy.",
     { roll: { elite: 3, monster: 1 } },
@@ -412,7 +412,7 @@ export const classes: CardDefinition[] = [
   // Their ranks come whether the table wants them or not, and help no one.
   // The worst of all, on purpose (was the Plus-One).
   adventurer(
-    "plus-one",
+    "peasant",
     "The Peasant",
     "Brought dad's pitchfork. Already shat himself.",
     { hearts: -3, roll: { boss: -1 }, reroll20: true },
@@ -433,7 +433,7 @@ export const classes: CardDefinition[] = [
   ),
   // Carries everything, drops most of it (was the Intern).
   adventurer(
-    "intern",
+    "squire",
     "The Squire",
     "Drops trou.",
     { hearts: -2, satchel: 1, fumble: 2 },
@@ -506,7 +506,7 @@ export const classes: CardDefinition[] = [
 ];
 
 /** The joke classes: worst by design, measured apart from the rest. */
-export const JOKE_CLASSES = ["plus-one", "intern", "mimic"].map(
+export const JOKE_CLASSES = ["peasant", "squire", "mimic"].map(
   (id) => `dungeon.class-${id}`,
 );
 

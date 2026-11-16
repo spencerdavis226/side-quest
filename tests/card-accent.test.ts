@@ -47,7 +47,7 @@ describe("card accents", () => {
       deep: pokemonTypes.fire.deep,
       source: "type-fire",
     });
-    expect(ownAccent(card("dungeon.last-call-lich"))?.source).toBe("dragon");
+    expect(ownAccent(card("dungeon.dragon-emberfang"))?.source).toBe("dragon");
   });
 
   it("leaves a plain game's cards on the frame's teal", () => {
@@ -88,13 +88,19 @@ describe("card accents", () => {
         ...s.quest!,
         party: {
           ...s.quest!.party!,
-          rival: { who: "mirabel", took: [], won: 0, lost: 0, cut: "meddle" },
+          rival: {
+            who: "fingerbang",
+            took: [],
+            won: 0,
+            lost: 0,
+            cut: "meddle",
+          },
         },
       },
     };
     expect(cardAccent(withRival, currentCard(withRival))).toMatchObject({
-      light: RIVAL_COLOURS.mirabel.light,
-      source: "rival-mirabel",
+      light: RIVAL_COLOURS.fingerbang.light,
+      source: "rival-fingerbang",
     });
   });
 });

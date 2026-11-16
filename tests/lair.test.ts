@@ -14,10 +14,7 @@ import {
 import { returnToCard, rollDice, rollTarget } from "../src/game/dice";
 import { parseSession } from "../src/app/persistence";
 import { cards, packs, validateCatalog } from "../src/content/catalog";
-import {
-  DRAGON_HEALTH,
-  ENRAGE_HURT,
-} from "../src/content/dungeon/shared";
+import { DRAGON_HEALTH, ENRAGE_HURT } from "../src/content/dungeon/shared";
 import type { GameConfig, SessionState } from "../src/game/types";
 import { takeRoads } from "./roads";
 
@@ -290,7 +287,7 @@ describe("the dragon battle", () => {
       packs,
       seeded(2),
     );
-    const dragon = s.cards.find((c) => c.id === "dungeon.last-call-lich")!;
+    const dragon = s.cards.find((c) => c.id === "dungeon.dragon-emberfang")!;
     expect(dragon.rules).toMatch(/Roll d20\.$/);
     let p = s;
     while (currentCard(p).id !== dragon.id)
@@ -317,7 +314,7 @@ describe("the dragon battle", () => {
   });
 
   it("the validator holds a lair fight to its shape", () => {
-    const dragon = cards.find((c) => c.id === "dungeon.last-call-lich")!;
+    const dragon = cards.find((c) => c.id === "dungeon.dragon-emberfang")!;
     const check = (change: (c: typeof dragon) => void) => () => {
       const c = structuredClone(dragon);
       change(c);

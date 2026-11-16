@@ -109,10 +109,12 @@ describe("dice content", () => {
     }
   });
   it("resolves parity and per-die placeholders to exact text", () => {
-    const parity = diceCards.find((c) => c.id === "core.chosen-one")!.dice!;
+    const parity = diceCards.find(
+      (c) => c.id === "core.gods-drunkest-soldier",
+    )!.dice!;
     expect(resolveInstruction(parity, [13])).toBe("Drink 13.");
     expect(resolveInstruction(parity, [14])).toBe("Give 14.");
-    const split = diceCards.find((c) => c.id === "house.sheet-094")!.dice!;
+    const split = diceCards.find((c) => c.id === "core.house-094")!.dice!;
     expect(resolveInstruction(split, [6, 2])).toBe("Give 6 and drink 2.");
   });
   it("rejects parity gaps, overlaps, and unavailable placeholders", () => {
@@ -325,7 +327,7 @@ describe("dice transactions and saves", () => {
 });
 
 describe("choice cards", () => {
-  const choiceCard = diceCards.find((c) => c.id === "house.sheet-023")!;
+  const choiceCard = diceCards.find((c) => c.id === "core.house-023")!;
   const controller = (limit: number | null = 2) => {
     const persist = vi.fn(),
       effect = vi.fn(),
@@ -346,12 +348,12 @@ describe("choice cards", () => {
       "core.truth-or-drink",
       "core.rant",
       ...[4, 8, 9, 23, 62].map(
-        (row) => `house.sheet-0${String(row).padStart(2, "0")}`,
+        (row) => `core.house-0${String(row).padStart(2, "0")}`,
       ),
-      "cabin.mint-chev",
-      "cabin.fourth-meal",
-      // Sheet row 42, a CABIIN space, keeps its cabin.* ID inside Core.
-      "cabin.pet-that-dog",
+      "core.cabin-mint-chev",
+      "core.cabin-fourth-meal",
+      // Sheet row 42, a CABIIN space, keeps its CABIIN ID inside Core.
+      "core.cabin-pet-that-dog",
       // Pokémon League finds: walk away, or roll for the item.
       "pokemon.route-mystery-egg",
       "pokemon.route-slots",
@@ -359,26 +361,26 @@ describe("choice cards", () => {
       "pokemon.route-missingno",
       "pokemon.route-mew-truck",
       // Dungeon night relics: walk away, or roll for the loot.
-      "dungeon.mimic-cooler",
-      "dungeon.dusty-bottle",
-      "dungeon.locked-reserve",
+      "dungeon.mimic-chest-in-the-road",
+      "dungeon.hollow-oak",
+      "dungeon.fairy-mound",
       "dungeon.cursed-idol",
-      "dungeon.bone-vending",
+      "dungeon.box-of-teeth",
       "dungeon.sarcophagus",
-      "dungeon.glint-in-the-drain",
-      "dungeon.the-floater",
-      "dungeon.sunken-chest",
-      "dungeon.the-cash-register",
-      "dungeon.back-burner",
-      "dungeon.the-mystery-meat",
-      "dungeon.experimental-batch",
-      "dungeon.cold-room",
-      "dungeon.frozen-in-the-ice",
-      "dungeon.the-chest-freezer",
-      "dungeon.the-telescope",
-      "dungeon.the-water-tower",
+      "dungeon.glint-in-the-rock",
+      "dungeon.lost-strongbox",
+      "dungeon.wrecks-chest",
+      "dungeon.captains-box",
+      "dungeon.hot-spring",
+      "dungeon.warm-egg",
+      "dungeon.glowing-pool",
+      "dungeon.sunken-chest-marsh",
+      "dungeon.bottled-spell",
+      "dungeon.locked-trunk",
+      "dungeon.spyglass",
+      "dungeon.watchtower",
       // A rare (The Quest 2.0 Phase 6): pull the sword, or leave it.
-      "dungeon.rare-sword-stone",
+      "dungeon.rare-sword-in-the-stone",
     ]);
     for (const choice of [
       {},

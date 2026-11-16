@@ -29,12 +29,12 @@ import {
 // goblin king on a throne of stolen pans. Each card holds its final text
 // and mechanics (the variety pass and outcome rewrites folded in).
 
-export const sewers: FloorCards = {
+export const mines: FloorCards = {
   fights: [
     // The Quest 2.1: a fight settled by one coin.
     monster(
       4,
-      "coin-goblin-wager",
+      "coin-goblins-wager",
       "The Goblin's Wager",
       "A goblin bets his pants against yours on one flip. Shake on it, then flip the coin.",
       "",
@@ -50,7 +50,7 @@ export const sewers: FloorCards = {
     ),
     monster(
       4,
-      "gator-junior",
+      "goblin-sappers",
       "Goblin Sappers",
       "Three goblins with a barrel of blasting powder and one match. Roll d20.",
       "Boom. Drink 4, and do the explosion with your hands.",
@@ -59,13 +59,13 @@ export const sewers: FloorCards = {
     mishap(
       4,
       "Monster",
-      "toilet-mimic",
+      "mimic-cart",
       "The Mimic Cart",
       "On three, point at who'd fuck a mine cart that licks its lips. Most fingers: drink 3.",
     ),
     monster(
       4,
-      "hazmat-goblin",
+      "goblin-miner",
       "The Goblin Miner",
       "A goblin in a lamp-helmet who loves it down here. Loves it. Roll d20.",
       "He humps your leg, helmet and all. Drink 4.",
@@ -75,20 +75,20 @@ export const sewers: FloorCards = {
     mishap(
       4,
       "Monster",
-      "sludge-bro",
+      "rock-troll",
       "The Rock Troll",
       "A rock troll wants a flex-off. Everyone flexes; the table picks the weakest flex. They drink 3.",
     ),
     // A table duel.
     trial(
       4,
-      "pizza-rat-prime",
+      "hungry-goblin",
       "The Hungry Goblin",
       "Bread-off: you and your left neighbor mime eating a loaf. Slower, by the table's call: drink 4.",
     ),
     monster(
       4,
-      "drain-witch",
+      "goblin-alchemist",
       "The Goblin Alchemist",
       "She brews in the miners' piss bucket and offers you a sip. Hold your nose, then roll d20.",
       "You sip. Drink 3 and say it tasted fine.",
@@ -99,7 +99,7 @@ export const sewers: FloorCards = {
     ),
     monster(
       4,
-      "fatberg-spawn",
+      "ooze-pup",
       "Ooze Pup",
       "A baby ooze of mine slime and something worse. It thinks you're its mother. Roll d20.",
       "It clings. Drink 3.",
@@ -110,7 +110,7 @@ export const sewers: FloorCards = {
       ...mishap(
         4,
         "Monster",
-        "sewer-mutant",
+        "four-armed-ogre",
         "The Four-Armed Ogre",
         "The four-armed ogre arm-wrestles the table, clockwise. Roll four dice.",
       ),
@@ -118,7 +118,7 @@ export const sewers: FloorCards = {
     },
     monster(
       4,
-      "turtle-sensei",
+      "old-dwarf",
       "The Old Dwarf",
       "A dwarf who trained four heroes and got nothing for it. He wants a fight. Roll d6.",
       "",
@@ -138,7 +138,7 @@ export const sewers: FloorCards = {
     // A table duel.
     trial(
       4,
-      "echo-bat",
+      "echo-cave",
       "The Echo Cave",
       "Your right neighbor echoes everything you say for 20 seconds. You laugh first: drink 4.",
       {
@@ -150,25 +150,25 @@ export const sewers: FloorCards = {
     ),
     trial(
       4,
-      "the-smell",
+      "troll-stench",
       "Troll Stench",
       "Hold your nose and describe your day for 30 seconds. Let go: drink 4.",
     ),
     trial(
       4,
-      "the-pipe",
+      "crawlspace",
       "The Crawlspace",
       "Crawl under the table and out the other side without touching a leg. Touch one: drink 4.",
     ),
     trial(
       4,
-      "the-echo",
+      "spell-the-mine",
       "Spell the Mine",
       "Say a word starting with each letter of GOBLIN, in order, in 10 seconds. Stumble: drink 4.",
     ),
     trial(
       4,
-      "rat-race",
+      "mine-cart-race",
       "Mine Cart Race",
       "Race your left neighbor: take a sip, then say 'cart' three times. Slower: drink 4.",
     ),
@@ -177,7 +177,7 @@ export const sewers: FloorCards = {
       ...mishap(
         4,
         "Trap",
-        "big-flush",
+        "powder-keg",
         "The Powder Keg",
         "Light the fuse. Pass a cup clockwise, naming a gemstone. The keg blows on whoever holds it.",
       ),
@@ -185,7 +185,7 @@ export const sewers: FloorCards = {
     },
     trap(
       4,
-      "loose-grate",
+      "loose-rail",
       "The Loose Rail",
       "The rail under your foot isn't attached to anything. Roll d20.",
       "One leg down a shaft. Drink 3 on one leg.",
@@ -193,7 +193,7 @@ export const sewers: FloorCards = {
     ),
     trap(
       4,
-      "swamp-gas",
+      "fire-damp",
       "Fire Damp",
       "Somebody farted, then lit a torch. Down here. Roll d20.",
       "Whoomph. Drink 3, and pat out your hair.",
@@ -201,7 +201,7 @@ export const sewers: FloorCards = {
     ),
     trap(
       4,
-      "slime-slide",
+      "ore-chute",
       "The Ore Chute",
       "The floor tilts into an ore chute. Lean back in your chair, then roll d20.",
       "Down the chute, face first. Drink 3.",
@@ -209,7 +209,7 @@ export const sewers: FloorCards = {
     ),
     ambush(
       4,
-      "roach-conga",
+      "kobold-conga",
       "The Kobold Conga",
       "The kobolds are doing a conga line, and now you're in it. Roll d20.",
       "You conga'd. Drink 3, and lead a conga to the door.",
@@ -217,7 +217,7 @@ export const sewers: FloorCards = {
     ),
     ambush(
       4,
-      "alligator-gang",
+      "goblin-gang",
       "The Goblin Gang",
       "Three goblins in stolen armor, one with a very small dagger. Snap your fingers, then roll d20.",
       "They take your purse. Drink 3.",
@@ -227,7 +227,7 @@ export const sewers: FloorCards = {
     // 2d6, and doubles are a better win.
     monster(
       4,
-      "rat-don",
+      "goblin-boss",
       "The Goblin Boss",
       "A goblin in a big hat says that's a nice drink. Shame if something happened to it. Roll 2d6.",
       "",
@@ -245,7 +245,7 @@ export const sewers: FloorCards = {
       ...mishap(
         4,
         "Monster",
-        "pipe-octopus",
+        "tunnel-spider",
         "The Tunnel Spider",
         "Eight legs out of eight tunnels, reaching for drinks. Roll four dice.",
       ),
@@ -259,7 +259,7 @@ export const sewers: FloorCards = {
     ),
     trap(
       4,
-      "manhole-cover",
+      "falling-rocks",
       "Falling Rocks",
       "A rock is working itself loose from the ceiling right above you. Roll d20.",
       "It lands on your foot. Drink 3.",
@@ -267,7 +267,7 @@ export const sewers: FloorCards = {
     ),
     ambush(
       4,
-      "larpers",
+      "virgin-adventurers",
       "Virgin Adventurers",
       "Four virgin adventurers are sure you're the monster at the end of their quest. Roll d20.",
       "A wooden sword to the face. Drink 3, then growl.",
@@ -277,7 +277,7 @@ export const sewers: FloorCards = {
   finds: [
     relic(
       4,
-      "glint-in-the-drain",
+      "glint-in-the-rock",
       "A Glint in the Rock",
       "Something gold in a crack in the wall. Reach in, or don't.",
       12,
@@ -288,7 +288,7 @@ export const sewers: FloorCards = {
     ),
     relic(
       4,
-      "the-floater",
+      "lost-strongbox",
       "The Lost Strongbox",
       "A strongbox bobbing in a flooded shaft. It could be anything. Fish it out, or let it go.",
       12,
@@ -305,28 +305,28 @@ export const sewers: FloorCards = {
     ),
     treasure(
       4,
-      "flushed-purse",
+      "dead-miners-purse",
       "A Dead Miner's Purse",
       "A dead miner's purse, somehow dry: a candle, a flint and a sellsword's contract. Sign it in the air.",
       "round",
     ),
     treasure(
       4,
-      "maintenance-locker",
+      "tool-shed",
       "The Tool Shed",
       "A miner's helmet on a hook, and a flask of something brown. Put the helmet on: tap your head twice.",
       "shield",
     ),
     treasure(
       4,
-      "mines-dwarf-stash",
+      "dwarfs-stash",
       "The Dwarf's Stash",
       "Behind a loose stone, a dwarf's stash and one lucky coin. Knock twice on the table to thank him.",
       "die",
     ),
     shrine(
       4,
-      "storm-drain-skylight",
+      "air-shaft",
       "The Air Shaft",
       "A shaft overhead and real moonlight. Everyone looks up and makes a wish.",
     ),
@@ -343,7 +343,7 @@ export const sewers: FloorCards = {
     ),
     merchant(
       4,
-      "rat-pharmacist",
+      "kobold-dealer",
       "The Kobold Dealer",
       "A kobold dealer: uppers, downers, potions and one very old book.",
       [
@@ -354,21 +354,21 @@ export const sewers: FloorCards = {
     ),
     fork(
       4,
-      "two-pipes",
+      "cry-for-help-mines",
       "A Cry for Help",
       "A miner's voice from a collapsed tunnel: 'Help! And bring snacks.'",
       ["Mark it, move on", "Dig him out"],
     ),
     fork(
       4,
-      "the-overflow",
+      "flooded-shaft",
       "The Flooded Shaft",
       "A dry tunnel, or the flooded shaft, where something big just splashed.",
       ["Dry tunnel", "Flooded shaft"],
     ),
     gamble(
       4,
-      "sewer-slots",
+      "gem-wheel",
       "The Gem Wheel",
       "A dwarf's wheel of gems, still spinning. Win, then cash out or spin again. Roll d20.",
       "It flings a rock at you. Drink 4.",
@@ -377,7 +377,7 @@ export const sewers: FloorCards = {
     ),
     gamble(
       4,
-      "mimic-manhole",
+      "mimic-mine-cart",
       "Mimic Mine Cart",
       "A mine cart that spits out loot until it bites. Cash out or knock again. Roll d20.",
       "It bites. Drink 4.",
@@ -386,7 +386,7 @@ export const sewers: FloorCards = {
     ),
     gamble(
       4,
-      "rubber-duck-race",
+      "rat-race-mines",
       "The Rat Race",
       "Bet on a rat in the goblins' race. Win, then cash out or bet again, harder. Roll d20.",
       "Your rat sits down. Drink 4.",
@@ -397,7 +397,7 @@ export const sewers: FloorCards = {
   elites: [
     elite(
       4,
-      "clog-beast",
+      "ore-golem",
       "The Ore Golem",
       "Every bit of ore the goblins ever dropped, fused into one angry golem. Roll d20.",
       "It falls on you. Drink 5.",
@@ -409,7 +409,7 @@ export const sewers: FloorCards = {
     ),
     elite(
       4,
-      "rat-captain",
+      "kobold-captain",
       "The Kobold Captain",
       "A kobold in a captain's hat with a tiny cutlass and a big grudge. Roll d20.",
       "Keelhauled, somehow, underground. Drink 5, and say 'aye aye, captain'.",
@@ -421,7 +421,7 @@ export const sewers: FloorCards = {
     ),
     elite(
       4,
-      "sewer-king",
+      "goblin-kingpin",
       "The Goblin Kingpin",
       "He runs every tunnel from here to the river, and he's heard about you. Roll d20.",
       "You owe him now. Drink 5.",
@@ -436,7 +436,7 @@ export const sewers: FloorCards = {
     ),
     elite(
       4,
-      "sewer-siren",
+      "deep-siren",
       "The Deep Siren",
       "She sings from the flooded shaft, topless, and every miner follows. Roll d20.",
       "You follow. Drink 5, and hum her song.",
@@ -450,7 +450,7 @@ export const sewers: FloorCards = {
   bosses: [
     boss(
       4,
-      "the-fatberg",
+      "goblin-king",
       "The Goblin King",
       `A goblin king on a throne of pans. ${SIDE_BETS} Roll d20.`,
       d20(
@@ -468,7 +468,7 @@ export const sewers: FloorCards = {
     ),
     boss(
       4,
-      "alligator-al",
+      "ogre-foreman",
       "The Ogre Foreman",
       `An ogre with a whip and a quota. ${SIDE_BETS} Roll d20.`,
       d20(
@@ -486,7 +486,7 @@ export const sewers: FloorCards = {
     ),
     boss(
       4,
-      "plumber-king",
+      "mine-lord",
       "The Mine Lord",
       "A dwarf lord crowned in gold, mad with greed, sure you're a thief. Roll d20.",
       d20(
@@ -511,7 +511,7 @@ export const sewers: FloorCards = {
     ),
     boss(
       4,
-      "the-crocodile-mom",
+      "mother-of-goblins",
       "Mother of Goblins",
       "The goblins' mother has heard what you did to her boys. Roll d20.",
       d20(
@@ -529,7 +529,7 @@ export const sewers: FloorCards = {
     ),
     boss(
       4,
-      "the-pipe-worm",
+      "rock-worm",
       "The Rock Worm",
       "Eighty years in the tunnels, and now it's as long as the mountain. Roll d20.",
       d20(

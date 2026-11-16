@@ -18,8 +18,8 @@ export const BALLAD_WIDTH = 44;
  * engine never imports content, and `tests/ballad.test.ts` keeps the two
  * lists equal). */
 export const BALLAD_FOOLS = [
-  "dungeon.class-plus-one",
-  "dungeon.class-intern",
+  "dungeon.class-peasant",
+  "dungeon.class-squire",
   "dungeon.class-mimic",
 ];
 

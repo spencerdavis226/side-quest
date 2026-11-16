@@ -140,9 +140,9 @@ describe("the names a run fills in", () => {
       )![0];
       expect(
         {
-          taproom: "The Sunken Coast",
-          kitchen: "The Fire Caverns",
-          rooftop: "The Frozen Pass",
+          coast: "The Sunken Coast",
+          caverns: "The Fire Caverns",
+          frozenPass: "The Frozen Pass",
         }[home],
       ).toBe(region.label);
     }
@@ -158,7 +158,7 @@ describe("the names a run fills in", () => {
         ...q,
         step: 2,
         finale: q.finale.map((id, i) =>
-          i === 2 ? "dungeon.summons-proclamation" : id,
+          i === 2 ? "dungeon.summons-kings-decree" : id,
         ),
       },
     };

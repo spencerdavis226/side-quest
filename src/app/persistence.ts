@@ -23,6 +23,7 @@ import {
 import type { GameConfig, Loot, PartyState, SessionState } from "../game/types";
 import { LOOT, type RivalVerb } from "../game/types";
 import { IS_PREVIEW, KEY_PREFIX } from "./channel";
+import { renameIds } from "./renamed-ids";
 export const SAVE_KEY = `${KEY_PREFIX}session.v1`;
 export const SETTINGS_KEY = `${KEY_PREFIX}settings.v1`;
 /** The Chronicle (The Quest 2.0 Phase 7): The Quest's record across runs,
@@ -579,7 +580,9 @@ export function retireSystems(parsed: unknown) {
   if (Array.isArray(party.loot)) party.loot = party.loot.map(tera);
 }
 export function parseSession(raw: string): SessionState {
-  const parsed = JSON.parse(raw);
+  // Card IDs renamed since the save was written (2026-11-15) are moved on
+  // first, so every check below sees today's IDs.
+  const parsed = renameIds(JSON.parse(raw));
   // Retain the storage key so existing installs discover and migrate their saves.
   // Legacy snapshots cannot have dice mechanics retroactively attached to them.
   if (parsed?.version === 1 && Array.isArray(parsed.cards)) {
@@ -774,7 +777,7 @@ export function loadChronicle(): Chronicle {
   }
   if (!raw) return emptyChronicle();
   try {
-    const c = readChronicle(JSON.parse(raw));
+    const c = readChronicle(renameIds(JSON.parse(raw)));
     if (c) return c;
   } catch {
     /* malformed */

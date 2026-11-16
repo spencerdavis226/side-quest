@@ -17,7 +17,7 @@ const summons = (id: string, title: string, rules: string): CardDefinition => ({
 
 export const summonsCards: CardDefinition[] = [
   summons(
-    "proclamation",
+    "kings-decree",
     "The King's Decree",
     "{dragon} woke under {lair}, horny. Everyone toasts the king's tiny balls.",
   ),
@@ -27,7 +27,7 @@ export const summonsCards: CardDefinition[] = [
     "Your hometown, torched by {dragon}. Your ex made it out, sadly. Everyone drinks 1.",
   ),
   summons(
-    "wanted-poster",
+    "bounty",
     "The Bounty",
     "WANTED: {dragon}. REWARD: gold, and a handy from the mayor. Everyone toasts the reward.",
   ),
@@ -37,12 +37,12 @@ export const summonsCards: CardDefinition[] = [
     "A dumbass will slay {dragon}. Everyone points at the dumbass; most fingers drinks 2.",
   ),
   summons(
-    "princess",
+    "princess-writes",
     "A Princess Writes",
     "'{dragon} took me to {lair}. Bring wine.' The drawer reads it, sobbing.",
   ),
   summons(
-    "survivor",
+    "last-survivor",
     "The Last Survivor",
     "A singed knight gasps '{dragon}... {lair}...' and shits. Everyone toasts him.",
   ),

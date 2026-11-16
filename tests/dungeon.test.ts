@@ -47,9 +47,9 @@ import {
 import { lairs } from "../src/content/dungeon/dragons";
 import { roadDraw, takeRoads } from "./roads";
 const LAIRS = {
-  taproom: "The Sunken Coast",
-  kitchen: "The Fire Caverns",
-  rooftop: "The Frozen Pass",
+  coast: "The Sunken Coast",
+  caverns: "The Fire Caverns",
+  frozenPass: "The Frozen Pass",
 };
 
 // The party's starting hearts, before any adventurer or omen.
@@ -345,54 +345,54 @@ describe("Pub Crawl", () => {
   }, 30_000);
 
   it("a lost room fight costs the party hearts, and the run moves on", () => {
-    let s = deal(start(), "dungeon.gelatinous-shot");
+    let s = deal(start(), "dungeon.highwaymen");
     s = fight(s, 3);
     expect(party(s)).toMatchObject({ hearts: H - 1 });
     expect(s.quest!.step).toBe(STEP.floor1 + 1);
     expect(s.quest!.lost ?? 0).toBe(0);
     roundTrip(s);
-    const won = fight(deal(start(), "dungeon.gelatinous-shot"), 15);
+    const won = fight(deal(start(), "dungeon.highwaymen"), 15);
     expect(party(won).hearts).toBe(H);
   });
 
   it("a won fight earns its loot; a lost one its jinx", () => {
-    let s = deal(start(), "dungeon.drunk-goblin");
+    let s = deal(start(), "dungeon.goblin-scouts");
     s = fight(s, 15);
     expect(party(s).loot).toEqual(["smoke"]);
     // A table duel since 2026-10-31 (the variety pass): lost with the plaque.
     s = settleBattle(
-      advance(deal(fromStep(start(), STEP.floor2), "dungeon.leech-swarm")),
+      advance(deal(fromStep(start(), STEP.floor2), "dungeon.vampire-bat")),
       false,
     );
     // Curses became jinxes (2026-10-25).
     expect(party(s)).toMatchObject({
-      jinx: "dungeon.leech-swarm",
+      jinx: "dungeon.vampire-bat",
       hearts: H - 2,
     });
     roundTrip(s);
   });
 
   it("the satchel holds three; a fourth find is left behind", () => {
-    let s = deal(start(), "dungeon.lost-and-found");
+    let s = deal(start(), "dungeon.abandoned-camp");
     s.quest!.party!.loot = ["draught", "die", "smoke"];
     s = advance(advance(s));
     expect(party(s).loot).toEqual(["draught", "die", "smoke"]);
   });
 
   it("a shrine heals, never past the party's full hearts", () => {
-    let s = deal(start(), "dungeon.wishing-drain");
+    let s = deal(start(), "dungeon.wishing-well");
     s.quest!.party!.hearts = H - 3;
     s = advance(advance(s));
     expect(party(s).hearts).toBe(H - 1);
-    s = deal(s, "dungeon.lost-and-found");
+    s = deal(s, "dungeon.abandoned-camp");
     s.quest!.party!.hearts = H;
     expect(
-      party(advance(advance(deal(s, "dungeon.wishing-drain")))).hearts,
+      party(advance(advance(deal(s, "dungeon.wishing-well")))).hearts,
     ).toBe(H);
   });
 
   it("a trial waits for Won or Lost", () => {
-    let s = advance(deal(start(), "dungeon.riddling-tap"));
+    let s = advance(deal(start(), "dungeon.sphinx"));
     expect(awaitingVerdict(s)).toBe(true);
     expect(advance(s)).toBe(s);
     expect(party(settleBattle(s, true))).toMatchObject({ hearts: H });
@@ -402,7 +402,7 @@ describe("Pub Crawl", () => {
   });
 
   it("walking away from a relic is neither a win nor a loss", () => {
-    let s = advance(deal(start(), "dungeon.mimic-cooler"));
+    let s = advance(deal(start(), "dungeon.mimic-chest-in-the-road"));
     expect(awaitingChoice(s)).toBe(true);
     s = skipRoll(s);
     expect(party(s)).toMatchObject({ hearts: H, loot: [] });
@@ -412,16 +412,16 @@ describe("Pub Crawl", () => {
 
   it("a boss is dealt again until it falls; then the jinx lifts, and it drops its trinket", () => {
     // The jinx's card dealt earlier on the second floor, so it can hold.
-    let s = deal(fromStep(start(), STEP.floor2), "dungeon.leech-swarm");
-    s = deal(fromStep(s, STEP.boss2), "dungeon.hangover-hydra");
-    s.quest!.party!.jinx = "dungeon.leech-swarm";
+    let s = deal(fromStep(start(), STEP.floor2), "dungeon.vampire-bat");
+    s = deal(fromStep(s, STEP.boss2), "dungeon.bone-golem");
+    s.quest!.party!.jinx = "dungeon.vampire-bat";
     s = fight(s, 2); // a miss
-    expect(currentCard(s).id).toBe("dungeon.hangover-hydra");
+    expect(currentCard(s).id).toBe("dungeon.bone-golem");
     expect(party(s)).toMatchObject({ hearts: H - 2, hits: 0, rounds: 0 });
     expect(s.quest!.lost).toBe(1);
     roundTrip(s);
     s = fight(s, 14); // one head off
-    expect(currentCard(s).id).toBe("dungeon.hangover-hydra");
+    expect(currentCard(s).id).toBe("dungeon.bone-golem");
     expect(party(s)).toMatchObject({ hits: 1, rounds: 1 });
     expect(party(s).boons).toBeUndefined();
     roundTrip(s);
@@ -439,7 +439,7 @@ describe("Pub Crawl", () => {
     expect(party(s)).toMatchObject({
       hits: 0,
       rounds: 1,
-      boons: ["dungeon.hangover-hydra#0"],
+      boons: ["dungeon.bone-golem#0"],
     });
     expect(party(s).jinx).toBeUndefined();
     // The Golem's Knuckle: +2 to boss rolls from now on.
@@ -450,7 +450,7 @@ describe("Pub Crawl", () => {
   it("a natural 20 doubles what a win brings; a natural 1 doubles a loss's cost", () => {
     // A room: 2 hearts on a loss (floor 2), 4 on a natural 1.
     const room = () =>
-      deal(fromStep(start(), STEP.floor2), "dungeon.bachelor-ghosts");
+      deal(fromStep(start(), STEP.floor2), "dungeon.wedding-ghosts");
     expect(party(fight(room(), 2)).hearts).toBe(H - 2);
     expect(party(fight(room(), 1)).hearts).toBe(H - 4);
     // A shield still takes the whole doubled loss.
@@ -458,15 +458,15 @@ describe("Pub Crawl", () => {
     shielded.quest!.party!.loot = ["shield"];
     expect(party(fight(shielded, 1))).toMatchObject({ hearts: H, loot: [] });
     // A room's item comes twice on a natural 20, room permitting.
-    const goblin = deal(start(), "dungeon.drunk-goblin");
+    const goblin = deal(start(), "dungeon.goblin-scouts");
     expect(party(fight(goblin, 20)).loot).toEqual(["smoke", "smoke"]);
     // A trinket comes once, natural or not.
-    const s = takeOffer(advance(deal(start(), "dungeon.two-hatches")), 1);
+    const s = takeOffer(advance(deal(start(), "dungeon.fork-in-the-road")), 1);
     expect(party(takeSpoils(fight(s, 20), 0)).boons).toEqual([
       `${currentCard(s).id}#0`,
     ]);
     // A boss takes two swings from a natural 20.
-    let b = deal(fromStep(start(), STEP.boss2), "dungeon.hangover-hydra");
+    let b = deal(fromStep(start(), STEP.boss2), "dungeon.bone-golem");
     b = takeSpoils(fight(b, 20), 1);
     expect(b.quest!.step).toBe(STEP.landing2);
     expect(party(b)).toMatchObject({ hits: 0, rounds: 0 });
@@ -491,7 +491,10 @@ describe("Pub Crawl", () => {
   });
 
   it("the last boss falling wins the crawl", () => {
-    let s = deal(fromStep(start(), STEP.lastCall), "dungeon.final-tab");
+    let s = deal(
+      fromStep(start(), STEP.lastCall),
+      "dungeon.dragon-mother-brine",
+    );
     // The dragon battle (2026-11-13): its scales. Swings land until half
     // health, the next round is the enrage contest (Won and Lost), then
     // swings until the felling one.
@@ -509,7 +512,7 @@ describe("Pub Crawl", () => {
   });
 
   it("losing the last heart wipes the party and ends the game", () => {
-    let s = deal(start(), "dungeon.keg-spider");
+    let s = deal(start(), "dungeon.giant-spider");
     s.quest!.party!.hearts = 1;
     s = fight(s, 1);
     expect(s.phase).toBe("complete");
@@ -517,7 +520,7 @@ describe("Pub Crawl", () => {
     expect(questRecord(s)!.won).toBe(false);
     roundTrip(s);
     // Wiping on a boss mid-fight is the end too.
-    let b = deal(fromStep(start(), STEP.boss1), "dungeon.keg-golem");
+    let b = deal(fromStep(start(), STEP.boss1), "dungeon.bridge-troll");
     b.quest!.party!.hearts = 2;
     b = fight(b, 1);
     expect(b.phase).toBe("complete");
@@ -526,7 +529,7 @@ describe("Pub Crawl", () => {
 
   it("the shield takes a loss whole", () => {
     const at = (loot: Loot[]) => {
-      const s = deal(fromStep(start(), STEP.floor2), "dungeon.bachelor-ghosts");
+      const s = deal(fromStep(start(), STEP.floor2), "dungeon.wedding-ghosts");
       s.quest!.party!.loot = loot;
       return party(fight(s, 2));
     };
@@ -535,7 +538,7 @@ describe("Pub Crawl", () => {
   });
 
   it("items: a draught heals two, a loaded die rerolls a loss, a smoke bomb escapes a room but not a boss", () => {
-    let s = deal(start(), "dungeon.gelatinous-shot");
+    let s = deal(start(), "dungeon.highwaymen");
     s.quest!.party!.loot = ["draught", "die", "smoke"];
     expect(canUseLoot(s, "draught")).toBe(false); // full hearts
     s.quest!.party!.hearts = H - 4;
@@ -562,33 +565,33 @@ describe("Pub Crawl", () => {
     s = advance(rollTo(s, 18));
     expect(party(s).hearts).toBe(H - 2);
     // Smoke: past a room before it is rolled, never past a boss.
-    s = advance(deal(s, "dungeon.keg-spider"));
+    s = advance(deal(s, "dungeon.giant-spider"));
     expect(canUseLoot(s, "smoke")).toBe(true);
     const fled = spendLoot(s, "smoke");
     expect(fled.quest!.step).toBe(s.quest!.step + 1);
     expect(party(fled)).toMatchObject({ hearts: H - 2, loot: [] });
     roundTrip(fled);
     const boss = advance(
-      deal(fromStep(start(), STEP.boss1), "dungeon.keg-golem"),
+      deal(fromStep(start(), STEP.boss1), "dungeon.bridge-troll"),
     );
     boss.quest!.party!.loot = ["smoke"];
     expect(canUseLoot(boss, "smoke")).toBe(false);
   });
 
   it("a jinx lands on a loss and holds until the floor's boss falls", () => {
-    let s = fight(deal(start(), "dungeon.goblin-shaman"), 2);
-    expect(party(s).jinx).toBe("dungeon.goblin-shaman");
+    let s = fight(deal(start(), "dungeon.hedge-witch"), 2);
+    expect(party(s).jinx).toBe("dungeon.hedge-witch");
     expect(questRecord(s)!.jinx?.jinx?.name).toBe("Toad Voice");
     roundTrip(s);
     // A win lays nothing.
     expect(
-      party(fight(deal(start(), "dungeon.goblin-shaman"), 15)).jinx,
+      party(fight(deal(start(), "dungeon.hedge-witch"), 15)).jinx,
     ).toBeUndefined();
     // A newer jinx replaces the old one; an ambush's fall keeps it.
     s = fromStep(s, STEP.boss1);
-    s = deal(s, "dungeon.rat-king");
+    s = deal(s, "dungeon.robber-baron");
     s = fight(s, 2);
-    expect(party(s).jinx).toBe("dungeon.rat-king");
+    expect(party(s).jinx).toBe("dungeon.robber-baron");
     // Its second beat is a duel (2026-10-25); the win picks a trinket.
     s = settleBattle(advance(fight(s, 15)), true, Math.random, 0);
     expect(party(s).jinx).toBeUndefined();
@@ -614,7 +617,7 @@ describe("Pub Crawl", () => {
     roundTrip(s);
     // Rolls feel the adventurer: a Barbarian is +2 against a boss.
     s = adventure("barbarian", undefined, STEP.boss1);
-    s = rollTo(advance(deal(s, "dungeon.keg-golem")), BOSS_NEED[0] - 2);
+    s = rollTo(advance(deal(s, "dungeon.bridge-troll")), BOSS_NEED[0] - 2);
     expect(s.roll).toMatchObject({ bonus: 2 });
     expect(rollWins(currentCard(s).dice!, s.roll!.values, s.roll!)).toBe(true);
   });
@@ -624,7 +627,7 @@ describe("Pub Crawl", () => {
       advance(
         deal(
           adventure(id, undefined, STEP.landing1),
-          "dungeon.landing-smoking-area",
+          "dungeon.inn-crooked-lantern",
         ),
       );
     const s = at("barbarian");
@@ -645,7 +648,7 @@ describe("Pub Crawl", () => {
     expect(party(takeOffer(s, 1)).loot).toEqual(["shield"]);
     // Ranks come from the region's boss (Realms, 2026-11-03).
     let b = adventure("barbarian", undefined, STEP.boss1);
-    b = deal(b, "dungeon.keg-golem");
+    b = deal(b, "dungeon.bridge-troll");
     b = fight(b, 18);
     b = settleBattle(advance(b), true, Math.random, 1);
     expect(party(b)).toMatchObject({ form: 1, max: H + 2 });
@@ -657,8 +660,8 @@ describe("Pub Crawl", () => {
     roundTrip(b);
     // The Peasant ranks up into nothing better (a rank shrank its satchel
     // to 2 until the rival, 2026-11-15, took it under its 1% floor).
-    let p = adventure("plus-one", undefined, STEP.boss1);
-    p = deal(p, "dungeon.keg-golem");
+    let p = adventure("peasant", undefined, STEP.boss1);
+    p = deal(p, "dungeon.bridge-troll");
     p = settleBattle(advance(fight(p, 18)), true, Math.random, 1);
     expect(party(p)).toMatchObject({ max: H - 3, form: 1 });
     expect(satchelSize(p.quest)).toBe(3);
@@ -700,18 +703,18 @@ describe("Pub Crawl", () => {
     const tonight = (id: string) =>
       advance(advance(deal(fromStep(make(), STEP.omen), `dungeon.omen-${id}`)));
     // Starting hearts and items.
-    let s = tonight("running-a-tab");
+    let s = tonight("hush-money");
     expect(party(s)).toMatchObject({
       hearts: H - 2,
       max: H - 2,
       loot: ["shield", "draught"],
-      boons: ["dungeon.omen-running-a-tab"],
+      boons: ["dungeon.omen-hush-money"],
     });
     expect(party(s).omen).toBeUndefined();
     expect(s.quest!.step).toBe(STEP.summons);
     roundTrip(s);
     // A bigger satchel.
-    s = tonight("cargo-shorts");
+    s = tonight("bag-of-holding");
     expect(satchelSize(s.quest)).toBe(4);
     // A smaller one: a save holding more than it fits is rejected.
     s = tonight("butterfingers");
@@ -721,13 +724,13 @@ describe("Pub Crawl", () => {
     expect(() => parseSession(JSON.stringify(over))).toThrow();
     // Dearer monsters, but not traps.
     s = fromStep(tonight("blood-moon"), STEP.floor1);
-    expect(party(fight(deal(s, "dungeon.gelatinous-shot"), 3)).hearts).toBe(H);
-    expect(party(fight(deal(s, "dungeon.sticky-floor"), 3)).hearts).toBe(H + 1);
+    expect(party(fight(deal(s, "dungeon.highwaymen"), 3)).hearts).toBe(H);
+    expect(party(fight(deal(s, "dungeon.mud-pit"), 3)).hearts).toBe(H + 1);
     // Kinder heals.
-    s = fromStep(tonight("happy-hour"), STEP.floor1);
+    s = fromStep(tonight("harvest-orgy"), STEP.floor1);
     s.quest!.party!.hearts = 6;
     expect(
-      party(advance(advance(deal(s, "dungeon.wishing-drain")))).hearts,
+      party(advance(advance(deal(s, "dungeon.wishing-well")))).hearts,
     ).toBe(9);
     // A potion is a heal too (owner, 2026-11-15): 2 and the bonus; the
     // Intern's worse heals make it 1.
@@ -735,38 +738,36 @@ describe("Pub Crawl", () => {
     s = spendLoot(s, "draught");
     expect(party(s)).toMatchObject({ hearts: 9, loot: [] });
     roundTrip(s);
-    const intern = adventure("intern");
+    const intern = adventure("squire");
     intern.quest!.party!.loot = ["draught"];
     intern.quest!.party!.hearts = 2;
     expect(party(spendLoot(intern, "draught")).hearts).toBe(3);
     // What the plaque says it heals is what it heals (owner, 2026-11-15).
-    const inn = findCard(intern, "dungeon.landing-smoking-area")!;
+    const inn = findCard(intern, "dungeon.inn-crooked-lantern")!;
     const rest = inn.offers![0];
     expect(offerHeal(intern.quest, rest)).toBe(rest.heal! - 1);
     expect(healAmount(rest.heal!, adventure("cleric").quest)).toBe(
       rest.heal! + 1,
     );
     // A longer boss fight; an ambush is not a boss.
-    s = tonight("lock-in");
-    expect(hitsNeeded(s.quest, findCard(s, "dungeon.final-tab")!)).toBe(
-      DRAGON_HEALTH + 1,
-    );
-    expect(hitsNeeded(s.quest, findCard(s, "dungeon.lost-bridesmaids")!)).toBe(
-      2,
-    );
+    s = tonight("grounded");
+    expect(
+      hitsNeeded(s.quest, findCard(s, "dungeon.dragon-mother-brine")!),
+    ).toBe(DRAGON_HEALTH + 1);
+    expect(hitsNeeded(s.quest, findCard(s, "dungeon.lost-pilgrims")!)).toBe(2);
     // A table rule changes nothing in the engine.
-    expect(party(tonight("lefty-night"))).toMatchObject({
+    expect(party(tonight("wank-hand"))).toMatchObject({
       hearts: H,
       loot: [],
     });
     // Stacked: a Rogue's extra slot and the cargo shorts' make five; a
     // Paladin with the regulars has fifteen hearts.
-    expect(satchelSize(adventure("rogue", "cargo-shorts").quest)).toBe(5);
-    expect(party(adventure("paladin", "the-regulars")).max).toBe(H + 3);
+    expect(satchelSize(adventure("rogue", "bag-of-holding").quest)).toBe(5);
+    expect(party(adventure("paladin", "town-cheers")).max).toBe(H + 3);
     // Ranking up keeps the omen's hearts.
     let up = deal(
-      adventure("paladin", "the-regulars", STEP.boss1),
-      "dungeon.keg-golem",
+      adventure("paladin", "town-cheers", STEP.boss1),
+      "dungeon.bridge-troll",
     );
     up = settleBattle(advance(fight(up, 18)), true, Math.random, 1);
     // The Crusader adds a heart to the Paladin's (Realms, 2026-11-03), and
@@ -795,16 +796,16 @@ describe("Pub Crawl", () => {
 
   it("an elite's trinket comes with the win and holds for the run", () => {
     const loud = takeOffer(
-      advance(deal(start(), "dungeon.two-hatches")),
+      advance(deal(start(), "dungeon.fork-in-the-road")),
       1,
       seeded(4),
     );
     const elite = currentCard(loud);
     expect(elite.encounter).toBe("elite");
     expect([
-      "dungeon.grease-trap-horror",
-      "dungeon.health-inspector",
-      "dungeon.keg-mimic-queen",
+      "dungeon.black-knight",
+      "dungeon.sheriff",
+      "dungeon.bandit-queen",
     ]).toContain(elite.id);
     roundTrip(loud);
     const won = takeSpoils(fight(loud, 19), 1);
@@ -817,7 +818,7 @@ describe("Pub Crawl", () => {
     expect(party(fight(loud, 2)).boons).toBeUndefined();
     // The Queen's Tap: a heart more, now and for good.
     const queen = takeSpoils(
-      fight(deal(start(), "dungeon.keg-mimic-queen"), 19),
+      fight(deal(start(), "dungeon.bandit-queen"), 19),
       0,
     );
     expect(party(queen)).toMatchObject({ hearts: H + 1, max: H + 1 });
@@ -826,7 +827,7 @@ describe("Pub Crawl", () => {
   it("a won fight's spoils wait for the table to pick one", () => {
     // An elite is never a floor's first room: a fork comes before it.
     let s = advance(
-      deal(fromStep(start(), STEP.floor1 + 1), "dungeon.keg-mimic-queen"),
+      deal(fromStep(start(), STEP.floor1 + 1), "dungeon.bandit-queen"),
     );
     // A lost elite offers nothing, and the table can't pick early.
     expect(awaitingSpoils(rollTo(s, 2))).toBe(false);
@@ -837,15 +838,13 @@ describe("Pub Crawl", () => {
     expect(takeSpoils(s, -1)).toBe(s);
     const alt = takeSpoils(s, 1);
     expect(party(alt)).toMatchObject({
-      boons: ["dungeon.keg-mimic-queen#1"],
+      boons: ["dungeon.bandit-queen#1"],
       loot: ["draught"],
     });
     expect(alt.quest!.step).toBe(STEP.floor1 + 2);
     roundTrip(alt);
     // A boss offers nothing until its last swing lands.
-    let b = advance(
-      deal(fromStep(start(), STEP.boss2), "dungeon.hangover-hydra"),
-    );
+    let b = advance(deal(fromStep(start(), STEP.boss2), "dungeon.bone-golem"));
     b = rollTo(b, 15);
     expect(awaitingSpoils(b)).toBe(false);
     // The Felled stamp (display only) waits for the felling swing too.
@@ -859,7 +858,7 @@ describe("Pub Crawl", () => {
             advance(
               rollTo(
                 advance(
-                  deal(fromStep(start(), STEP.boss2), "dungeon.hangover-hydra"),
+                  deal(fromStep(start(), STEP.boss2), "dungeon.bone-golem"),
                 ),
                 15,
               ),
@@ -874,7 +873,7 @@ describe("Pub Crawl", () => {
       fellingSwing(
         rollTo(
           advance(
-            deal(fromStep(start(), STEP.floor1 + 1), "dungeon.keg-mimic-queen"),
+            deal(fromStep(start(), STEP.floor1 + 1), "dungeon.bandit-queen"),
           ),
           19,
         ),
@@ -887,11 +886,11 @@ describe("Pub Crawl", () => {
       packs,
       seeded(3),
     );
-    const at = plain.order.indexOf("dungeon.keg-mimic-queen");
+    const at = plain.order.indexOf("dungeon.bandit-queen");
     const p = {
       ...plain,
       order: [
-        "dungeon.keg-mimic-queen",
+        "dungeon.bandit-queen",
         ...plain.order.filter((_, i) => i !== at),
       ],
     };
@@ -902,9 +901,7 @@ describe("Pub Crawl", () => {
   it("pushing your luck banks a prize a win, rolls lower each time, and a loss loses the lot", () => {
     // The One-Armed Bandit: a die, a draught, a shield.
     const bandit = () =>
-      advance(
-        deal(fromStep(start(), STEP.floor1 + 1), "dungeon.one-armed-bandit"),
-      );
+      advance(deal(fromStep(start(), STEP.floor1 + 1), "dungeon.shell-game"));
     let s = rollTo(bandit(), 15);
     expect(awaitingPress(s)).toBe(true);
     expect(advance(s)).toBe(s);
@@ -938,7 +935,7 @@ describe("Pub Crawl", () => {
   });
 
   it("a Bar Tab passes a lost fight's drinks on, once; the hearts still go", () => {
-    let s = advance(deal(start(), "dungeon.gelatinous-shot"));
+    let s = advance(deal(start(), "dungeon.highwaymen"));
     s.quest!.party!.loot = ["round", "round"];
     expect(canUseLoot(s, "round")).toBe(false); // nothing lost yet
     s = rollTo(s, 2);
@@ -969,7 +966,7 @@ describe("Pub Crawl", () => {
   });
 
   it("a merchant sells for drinks or hearts, never the last heart", () => {
-    const s = advance(deal(start(), "dungeon.rat-fence"));
+    const s = advance(deal(start(), "dungeon.peddler"));
     expect(awaitingOffer(s)).toBe(true);
     expect(advance(s)).toBe(s);
     const bought = takeOffer(s, 0);
@@ -988,7 +985,7 @@ describe("Pub Crawl", () => {
   });
 
   it("a fork's quiet door changes nothing", () => {
-    const s = advance(deal(start(), "dungeon.two-hatches"));
+    const s = advance(deal(start(), "dungeon.fork-in-the-road"));
     const next = s.quest!.finale[STEP.floor1 + 1];
     expect(takeOffer(s, 0).quest!.finale[STEP.floor1 + 1]).toBe(next);
   });
@@ -1006,9 +1003,9 @@ describe("Pub Crawl", () => {
   }, 30_000);
 
   it("an ambush is dealt again until beaten twice", () => {
-    let s = deal(start(), "dungeon.lost-bridesmaids");
+    let s = deal(start(), "dungeon.lost-pilgrims");
     s = fight(s, 15);
-    expect(currentCard(s).id).toBe("dungeon.lost-bridesmaids");
+    expect(currentCard(s).id).toBe("dungeon.lost-pilgrims");
     expect(party(s)).toMatchObject({ hits: 1, rounds: 1 });
     roundTrip(s);
     s = fight(s, 2); // a miss
@@ -1023,9 +1020,9 @@ describe("Pub Crawl", () => {
   });
 
   it("replay starts a fresh crawl, with an empty Cup", () => {
-    let s = fight(deal(start(), "dungeon.keg-spider"), 1);
+    let s = fight(deal(start(), "dungeon.giant-spider"), 1);
     s = takeSpoils(
-      fight(deal(fromStep(s, STEP.boss1), "dungeon.keg-golem"), 15),
+      fight(deal(fromStep(s, STEP.boss1), "dungeon.bridge-troll"), 15),
       0,
     );
     s = replaySession(s, seeded(9));
@@ -1064,22 +1061,21 @@ describe("Pub Crawl", () => {
     const trial = {
       ...s,
       order: [
-        "dungeon.riddling-tap",
-        "dungeon.goblin-shaman",
+        "dungeon.sphinx",
+        "dungeon.hedge-witch",
         ...s.order.filter(
-          (id) =>
-            id !== "dungeon.riddling-tap" && id !== "dungeon.goblin-shaman",
+          (id) => id !== "dungeon.sphinx" && id !== "dungeon.hedge-witch",
         ),
       ],
     };
     const after = advance(advance(trial));
     expect(after.discarded).toBe(1);
-    expect(currentCard(after).id).toBe("dungeon.goblin-shaman");
+    expect(currentCard(after).id).toBe("dungeon.hedge-witch");
   });
 
   it("rejects saves whose party does not add up", () => {
     const s = fight(
-      deal(fromStep(start(), STEP.boss2), "dungeon.hangover-hydra"),
+      deal(fromStep(start(), STEP.boss2), "dungeon.bone-golem"),
       14,
     );
     const tamper = (change: (q: SessionState) => void) => {
@@ -1130,7 +1126,7 @@ describe("Pub Crawl", () => {
     // That save opened on tonight's omen (an `omen` card, `party.omen`),
     // then seven rooms a floor.
     const old = structuredClone(make());
-    const omen = findCard(old, "dungeon.omen-the-regulars")!;
+    const omen = findCard(old, "dungeon.omen-town-cheers")!;
     const legacy = { ...omen, omen: omen.boon!.effect };
     delete (legacy as { boon?: unknown }).boon;
     old.quest!.stages = old.quest!.stages.slice(1).map((st, i) => ({
@@ -1155,11 +1151,11 @@ describe("Pub Crawl", () => {
     expect(party(s).boons).toBeUndefined();
     roundTrip(s);
     // The first region, after the Road Out (Phase 5).
-    s = fight(deal(fromStep(s, 4), "dungeon.gelatinous-shot"), 2);
+    s = fight(deal(fromStep(s, 4), "dungeon.highwaymen"), 2);
     roundTrip(s);
     // A tampered omen is rejected.
     const forged = structuredClone(start());
-    forged.quest!.party!.omen = "dungeon.gelatinous-shot";
+    forged.quest!.party!.omen = "dungeon.highwaymen";
     expect(() => parseSession(JSON.stringify(forged))).toThrow();
   });
 
@@ -1190,8 +1186,8 @@ describe("Pub Crawl", () => {
     // Queen's Dagger (a weapon too) and her crown (a trinket).
     // (Worn without its card dealt, so only the swap, whose gear is all
     // dealt, round-trips as a save; `crawl-gear-*` fixtures cover the rest.)
-    let s = deal(fromStep(start(), STEP.floor1 + 1), "dungeon.keg-mimic-queen");
-    s.quest!.party!.boons = ["dungeon.grease-trap-horror#1"];
+    let s = deal(fromStep(start(), STEP.floor1 + 1), "dungeon.bandit-queen");
+    s.quest!.party!.boons = ["dungeon.black-knight#1"];
     s = rollTo(advance(s), 19);
     const [tap, jelly] = currentCard(s).spoils!;
     expect(tap.slot).toBe("trinket");
@@ -1202,16 +1198,16 @@ describe("Pub Crawl", () => {
     ]);
     // Taking the weapon swaps it in.
     const swapped = takeSpoils(s, 1);
-    expect(party(swapped).boons).toEqual(["dungeon.keg-mimic-queen#1"]);
+    expect(party(swapped).boons).toEqual(["dungeon.bandit-queen#1"]);
     roundTrip(swapped);
     // Taking the trinket wears both.
     expect(party(takeSpoils(s, 0)).boons).toEqual([
-      "dungeon.grease-trap-horror#1",
-      "dungeon.keg-mimic-queen#0",
+      "dungeon.black-knight#1",
+      "dungeon.bandit-queen#0",
     ]);
     // Keeping the gear puts the card aside and changes nothing worn.
     const kept = skipSpoils(s);
-    expect(party(kept).boons).toEqual(["dungeon.grease-trap-horror#1"]);
+    expect(party(kept).boons).toEqual(["dungeon.black-knight#1"]);
     expect(kept.quest!.step).toBe(STEP.floor1 + 2);
     expect(skipSpoils(kept)).toBe(kept);
   });
@@ -1219,16 +1215,13 @@ describe("Pub Crawl", () => {
   it("swapping armor takes its hearts with it", () => {
     // Wearing the Padded Gambeson (+1 heart), the Black Knight offers
     // Traveler's Boots, armor that adds none.
-    let s = deal(
-      fromStep(start(), STEP.floor1 + 1),
-      "dungeon.grease-trap-horror",
-    );
+    let s = deal(fromStep(start(), STEP.floor1 + 1), "dungeon.black-knight");
     const p = party(s);
     s.quest!.party = {
       ...p,
       max: p.max + 1,
       hearts: p.max + 1,
-      boons: ["dungeon.health-inspector#1"],
+      boons: ["dungeon.sheriff#1"],
     };
     s = rollTo(advance(s), 19);
     expect(currentCard(s).spoils![0].slot).toBe("armor");
@@ -1236,14 +1229,17 @@ describe("Pub Crawl", () => {
     expect(party(next)).toMatchObject({
       max: p.max,
       hearts: p.max,
-      boons: ["dungeon.grease-trap-horror#0"],
+      boons: ["dungeon.black-knight#0"],
     });
     roundTrip(next);
   });
 
   it("an item-only trinket goes into the satchel and isn't worn", () => {
     // Death's Intern offers Death's Lanyard: a Second Wind, nothing more.
-    let s = deal(fromStep(start(), STEP.floor2 + 1), "dungeon.deaths-intern");
+    let s = deal(
+      fromStep(start(), STEP.floor2 + 1),
+      "dungeon.deaths-apprentice",
+    );
     s = rollTo(advance(s), 19);
     const lanyard = currentCard(s).spoils![0];
     expect(lanyard.slot).toBeUndefined();
@@ -1257,20 +1253,20 @@ describe("Pub Crawl", () => {
   it("an older save's unslotted trinkets keep stacking", () => {
     // A save from before slots holds its cards as they were then: strip the
     // slots and two weapons are both kept.
-    let s = deal(fromStep(start(), STEP.floor1 + 1), "dungeon.keg-mimic-queen");
+    let s = deal(fromStep(start(), STEP.floor1 + 1), "dungeon.bandit-queen");
     const unslot = (id: string) => {
       for (const st of s.quest!.stages)
         for (const c of [...st.cards, ...(st.elite ?? [])])
           if (c.id === id)
             c.spoils = c.spoils!.map(({ slot: _slot, ...b }) => b);
     };
-    unslot("dungeon.keg-mimic-queen");
-    unslot("dungeon.grease-trap-horror");
-    s.quest!.party!.boons = ["dungeon.grease-trap-horror#1"];
+    unslot("dungeon.bandit-queen");
+    unslot("dungeon.black-knight");
+    s.quest!.party!.boons = ["dungeon.black-knight#1"];
     s = rollTo(advance(s), 19);
     expect(party(takeSpoils(s, 1)).boons).toEqual([
-      "dungeon.grease-trap-horror#1",
-      "dungeon.keg-mimic-queen#1",
+      "dungeon.black-knight#1",
+      "dungeon.bandit-queen#1",
     ]);
   });
 

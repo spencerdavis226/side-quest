@@ -40,7 +40,7 @@ const starter: CardDefinition = {
   ],
 };
 const landing = (n: number): CardDefinition => ({
-  ...card(`landing-${n}`, "Landing", "group", "Rest."),
+  ...card(`inn-${n}`, "Inn", "group", "Rest."),
   encounter: "rest",
   offers: [
     { label: "Level up", evolve: true },

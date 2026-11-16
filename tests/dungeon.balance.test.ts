@@ -120,7 +120,7 @@ function playRun(seed: number, adventurer?: string, heroic = false) {
     random,
   );
   if (adventurer) s = deal(s, `dungeon.class-${adventurer}`);
-  // For tuning: QUEST_RIVAL=tutt plays every run against one rival.
+  // For tuning: QUEST_RIVAL=sensei plays every run against one rival.
   if (FORCED_RIVAL) {
     const finale = [...s.quest!.finale];
     const at = finale.findIndex((id) => /^dungeon\.rival-[a-z]+$/.test(id));
@@ -178,7 +178,7 @@ function playRun(seed: number, adventurer?: string, heroic = false) {
       // two items or fewer.
       else if (card.rival?.who === "chuck") pick = 0;
       // Rivals Phase 4: Sensei, pinned, is saved above 3 hearts.
-      else if (card.id === "dungeon.rival-tutt-pinned")
+      else if (card.id === "dungeon.rival-sensei-pinned")
         pick = p.hearts > 3 ? 0 : 1;
       else if (card.rival?.who === "gary")
         pick = (p.rival?.took.length ?? 0) <= 2 ? 0 : 1;
@@ -522,7 +522,7 @@ it("every rival is a nuisance, none a wall (Rivals Phase 2)", () => {
       `holding ${holding.toFixed(1)} items at the door; ` +
       `won: joined ${pct(rate(joined))}, refused ${pct(rate(refused))}, duel won ${pct(rate(duelWon))}, went in first ${pct(rate(duelLost))} (${duelLost.length}); ` +
       `betrayed ${pct(betrayed)} of ${turncoats.length} joined turncoats at the dragon; ` +
-      `joined by rival: ${["bradley", "mirabel", "chuck", "queef"].map((w) => `${w} ${pct(rate(joined.filter((s) => party(s).rival!.who === w)))}`).join(", ")}`,
+      `joined by rival: ${["chad", "fingerbang", "chuck", "queef"].map((w) => `${w} ${pct(rate(joined.filter((s) => party(s).rival!.who === w)))}`).join(", ")}`,
   );
   expect(who).toHaveLength(6);
   for (const [name, r] of who) {

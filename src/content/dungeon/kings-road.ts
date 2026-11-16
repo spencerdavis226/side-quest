@@ -22,11 +22,11 @@ import {
 // Region 1: the King's Road (Realms, 2026-11-03; was the Cellar, whose card
 // IDs it keeps). Highwaymen, wolves, tolls and a long way to walk.
 
-export const cellar: FloorCards = {
+export const kingsRoad: FloorCards = {
   fights: [
     monster(
       0,
-      "gelatinous-shot",
+      "highwaymen",
       "Highwaymen",
       "Three masked riders block the road. Your money or your life. Hands up, then roll d20.",
       "They take the money. Drink 3, hands still up.",
@@ -39,13 +39,13 @@ export const cellar: FloorCards = {
     // A table duel: the left neighbor plays the guard and calls it.
     trial(
       0,
-      "rat-trench-coat",
+      "toll-gate",
       "The Toll Gate",
       "Papers, or a peek. Left neighbor plays the guard: talk your way past in 10 seconds, or drink 3.",
     ),
     monster(
       0,
-      "mold-elemental",
+      "wolf-pack",
       "Wolf Pack",
       "Eyes in the trees, then teeth. Howl at them, then roll d20.",
       "They circle and bite. Drink 3, and howl once more.",
@@ -58,7 +58,7 @@ export const cellar: FloorCards = {
     ),
     monster(
       0,
-      "drunk-goblin",
+      "goblin-scouts",
       "Goblin Scouts",
       "Two goblins on one stolen pony, both steering. Hold out your reins, then roll d20.",
       "The pony runs you over. Drink 3 and neigh.",
@@ -73,20 +73,20 @@ export const cellar: FloorCards = {
     mishap(
       0,
       "Monster",
-      "skeleton-barback",
+      "wanted-poster",
       "Wanted Poster",
       "Wanted, for public indecency: one of you. On three, everyone points. Most fingers: drink 2.",
     ),
     mishap(
       0,
       "Monster",
-      "possessed-mop",
+      "snake-in-the-road",
       "Snake in the Road",
       "A snake crosses the road. Last to lift both feet off the floor drinks 2.",
     ),
     monster(
       0,
-      "keg-spider",
+      "giant-spider",
       "Giant Spider",
       "It hangs over the road, waiting. Wiggle eight fingers at it, then roll d20.",
       "Bitten. Drink 3, then spider-walk to the door and back.",
@@ -100,13 +100,13 @@ export const cellar: FloorCards = {
     // A table duel.
     trial(
       0,
-      "tab-goblin",
+      "tax-collector",
       "The Tax Collector",
       "The tax collector wants his cut. Right neighbor plays him: thumb war, best of three. Lose: drink 4.",
     ),
     monster(
       0,
-      "goblin-shaman",
+      "hedge-witch",
       "Hedge Witch",
       "A woman in a hat of twigs is cursing travelers' privates, for fun. Roll d20.",
       "Something of yours shrinks. Drink 3.",
@@ -123,7 +123,7 @@ export const cellar: FloorCards = {
       ...mishap(
         0,
         "Monster",
-        "cask-bat",
+        "bats-under-the-bridge",
         "Bats Under the Bridge",
         "Light the fuse. Pass a cup clockwise, naming a weapon as you pass. The bats hit whoever holds it.",
       ),
@@ -137,31 +137,31 @@ export const cellar: FloorCards = {
     },
     trial(
       0,
-      "clipboard-troll",
+      "rope-bridge",
       "The Rope Bridge",
       "A rope bridge, one plank wide. Walk heel to toe across the room and back. Wobble: drink 3.",
     ),
     trial(
       0,
-      "riddling-tap",
+      "sphinx",
       "The Sphinx",
       "A sphinx sits across the road. Your left neighbor asks a riddle: 10 seconds, or drink 3.",
     ),
     trial(
       0,
-      "stuck-door",
+      "stuck-cart",
       "The Stuck Cart",
       "A cart stuck in the mud. Push it, push it real good: wall-sit for 30 seconds. Stand early: drink 3.",
     ),
     trial(
       0,
-      "keg-stand-off",
+      "stare-down",
       "The Stare-Down",
       "A knight blocks the road and stares. Right neighbor plays him. Blink or laugh first: drink 3.",
     ),
     trap(
       0,
-      "sticky-floor",
+      "mud-pit",
       "Mud Pit",
       "The road turns to knee-deep mud. Roll d20 to pull free.",
       "You leave a boot behind. Drink 2, and stay one shoe down until your next turn.",
@@ -172,7 +172,7 @@ export const cellar: FloorCards = {
     ),
     trap(
       0,
-      "christmas-lights",
+      "tripwire",
       "Tripwire",
       "Bandits strung a wire across the road at shin height. Roll d20.",
       "You eat shit. Literally: it's a horse road. Drink 2.",
@@ -180,7 +180,7 @@ export const cellar: FloorCards = {
     ),
     trap(
       0,
-      "rolling-kegs",
+      "runaway-cart",
       "Runaway Cart",
       "A cart full of cabbages comes down the hill. Nobody is driving it. Roll d20 to dive.",
       "Flattened. Drink 3, lying down if you can.",
@@ -189,7 +189,7 @@ export const cellar: FloorCards = {
     mishap(
       0,
       "Trap",
-      "falling-taps",
+      "falling-acorns",
       "Falling Acorns",
       "An acorn bonks you in the nuts, and you're Thumb Master now. Drink 1, then use it.",
       {
@@ -201,7 +201,7 @@ export const cellar: FloorCards = {
     ),
     ambush(
       0,
-      "lost-bridesmaids",
+      "lost-pilgrims",
       "Lost Pilgrims",
       "A line of pilgrims has decided you're the prophet. Roll d20.",
       "You lead the hymn. Drink 2, then sway with your right neighbor.",
@@ -209,7 +209,7 @@ export const cellar: FloorCards = {
     ),
     ambush(
       0,
-      "rat-pack",
+      "wandering-minstrels",
       "Wandering Minstrels",
       "Three minstrels sing about your mom, for coin. Sing them a line back, then roll d20.",
       "They follow you for a mile. Drink 2.",
@@ -220,7 +220,7 @@ export const cellar: FloorCards = {
       ...mishap(
         0,
         "Monster",
-        "fryer-oil-ooze",
+        "stampede",
         "Stampede",
         "A herd of cattle comes down the road, and it runs clockwise from you. Roll four dice.",
       ),
@@ -235,7 +235,7 @@ export const cellar: FloorCards = {
     // 2d6, and doubles are a better win.
     monster(
       0,
-      "barback-poltergeist",
+      "pickpocket",
       "Pickpocket",
       "A small boy keeps bumping into you. Your purse is lighter every time. Roll 2d6.",
       "",
@@ -251,13 +251,13 @@ export const cellar: FloorCards = {
     // A secret on a clock.
     trial(
       0,
-      "low-beam",
+      "low-branch",
       "The Low Branch",
       "Your right neighbor holds out an arm as the branch. Limbo under it. Touch it: drink 3.",
     ),
     trap(
       0,
-      "loose-floorboard",
+      "rotten-plank",
       "Rotten Plank",
       "One plank on the bridge is not like the others. Roll d20.",
       "It snaps under you. Drink 2.",
@@ -265,7 +265,7 @@ export const cellar: FloorCards = {
     ),
     ambush(
       0,
-      "stag-party",
+      "wedding-party",
       "The Wedding Party",
       "A wedding party on the road, and the groom's already cheating. Roll d20.",
       "Invited. Drink 2, then toast the couple without mentioning the bridesmaid.",
@@ -275,7 +275,7 @@ export const cellar: FloorCards = {
   finds: [
     relic(
       0,
-      "mimic-cooler",
+      "mimic-chest-in-the-road",
       "A Chest in the Road",
       "An unlocked chest sits in the middle of the road. Nobody is around. Open it, or walk on.",
       11,
@@ -286,33 +286,33 @@ export const cellar: FloorCards = {
     ),
     treasure(
       0,
-      "lost-and-found",
+      "abandoned-camp",
       "Abandoned Camp",
       "A cold campfire, a bedroll, and a dented shield someone left behind. Rap on the table: still sound.",
       "shield",
     ),
     treasure(
       0,
-      "tip-jar",
+      "fallen-knight",
       "The Fallen Knight",
       "A knight's bones by a milestone, pants down. He died doing what he loved. Everyone bows their head.",
       "die",
     ),
     shrine(
       0,
-      "wishing-drain",
+      "wishing-well",
       "Wishing Well",
       "A mossy well full of old coins. Everyone makes a dirty wish out loud and toasts it.",
     ),
     shrine(
       0,
-      "dead-jukebox",
+      "bards-grave",
       "The Bard's Grave",
       "A bard buried by a jealous husband. Everyone sings the chorus, whatever they think it is.",
     ),
     merchant(
       0,
-      "rat-fence",
+      "peddler",
       "The Peddler",
       "A peddler with a cart of things that fell off other carts. He takes drinks, or blood.",
       [
@@ -323,7 +323,7 @@ export const cellar: FloorCards = {
     ),
     merchant(
       0,
-      "the-regular",
+      "old-soldier",
       "The Old Soldier",
       "He's walked this road fifty years, and every story is about a brothel. He'll trade one for one.",
       [
@@ -345,21 +345,21 @@ export const cellar: FloorCards = {
     ),
     fork(
       0,
-      "two-hatches",
+      "fork-in-the-road",
       "The Fork in the Road",
       "The road splits. One way is quiet. The other way has smoke, and shouting.",
       ["Quiet road", "Smoky road"],
     ),
     fork(
       0,
-      "staff-only",
+      "cry-for-help-road",
       "A Cry for Help",
       "Someone screams for help in the trees off the road. Or you keep walking.",
       ["Keep walking", "Go and help"],
     ),
     gamble(
       0,
-      "mimic-keg",
+      "mimic-lucky-stone",
       "The Lucky Stone",
       "A talking stone pays a coin every rub, until it bites. Cash out or rub again. Roll d20.",
       "It bites. Drink 3.",
@@ -368,7 +368,7 @@ export const cellar: FloorCards = {
     ),
     gamble(
       0,
-      "one-armed-bandit",
+      "shell-game",
       "The Shell Game",
       "Three cups, one pea, a man who never loses. Win, then walk away or play again. Roll d20.",
       "Wrong cup. Drink 3.",
@@ -379,7 +379,7 @@ export const cellar: FloorCards = {
   elites: [
     elite(
       0,
-      "grease-trap-horror",
+      "black-knight",
       "The Black Knight",
       "He has held this crossing for years and lets no one pass. Roll d20.",
       "Knocked flat. Drink 4, then bow to him.",
@@ -391,7 +391,7 @@ export const cellar: FloorCards = {
     ),
     elite(
       0,
-      "health-inspector",
+      "sheriff",
       "The Sheriff",
       "The sheriff says you match a description. Roll d20.",
       "The stocks. Drink 4 and name three things you didn't do.",
@@ -403,7 +403,7 @@ export const cellar: FloorCards = {
     ),
     elite(
       0,
-      "keg-mimic-queen",
+      "bandit-queen",
       "The Bandit Queen",
       "Every bandit in the woods answers to her, and they're all here. Roll d20.",
       "Robbed blind. She keeps your underwear as a trophy. Drink 4.",
@@ -418,7 +418,7 @@ export const cellar: FloorCards = {
     ),
     elite(
       0,
-      "the-exterminator",
+      "witch-hunter",
       "The Witch Hunter",
       "He hunts witches, and he has decided you count. Roll d20.",
       "Dunked in the river. Drink 4, holding your breath.",
@@ -432,7 +432,7 @@ export const cellar: FloorCards = {
   bosses: [
     boss(
       0,
-      "keg-golem",
+      "bridge-troll",
       "The Bridge Troll",
       "He wants a toll. Side bets: thumbs up or down on you; wrong bets drink 1. Roll d20.",
       d20(
@@ -450,7 +450,7 @@ export const cellar: FloorCards = {
     ),
     boss(
       0,
-      "rat-king",
+      "robber-baron",
       "The Robber Baron",
       "He says he owns this road, and everyone on it. Kneel, then roll d20.",
       d20(
@@ -472,7 +472,7 @@ export const cellar: FloorCards = {
     ),
     boss(
       0,
-      "the-landlord",
+      "ogre",
       "The Ogre",
       "An ogre blocks the road. Side bets: thumbs up or down on you; wrong bets drink 1. Roll d20.",
       d20(
@@ -490,7 +490,7 @@ export const cellar: FloorCards = {
     ),
     boss(
       0,
-      "big-cheese",
+      "great-boar",
       "The Great Boar",
       "A boar with balls like a cart's wheels. Side bets: thumbs up or down; wrong bets drink 1. Roll d20.",
       d20(BOSS_NEED[0], "Gored. Drink 4.", "You bring it down. Give 5.", {
@@ -505,7 +505,7 @@ export const cellar: FloorCards = {
     ),
     boss(
       0,
-      "the-pipe-organ",
+      "headless-rider",
       "The Headless Rider",
       "A rider with no head, galloping right at you. Roll d20.",
       d20(

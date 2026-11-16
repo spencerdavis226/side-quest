@@ -92,8 +92,8 @@ function inn() {
     quest: { ...s.quest!, step: STEP.landing1 },
   });
 }
-const PIP = "dungeon.big-mike";
-const DURLA = "dungeon.the-undefeated";
+const PIP = "dungeon.sea-witch";
+const DURLA = "dungeon.deep-worm";
 
 describe("allies", () => {
   it("a keeper's fall brings its ally and a dragon lore", () => {

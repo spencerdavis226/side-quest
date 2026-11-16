@@ -1342,14 +1342,14 @@ const ALLY_MARK: [RegExp, QuestArt][] = [
   [/Hatchling/, "hatchling"],
   [/Chester/, "chester"],
   // The rivals, joined (Rivals Phase 5): their own medallions' marks.
-  [/Chad/, "rival-bradley"],
-  [/Fingerbang/, "rival-mirabel"],
-  [/Saggynuts/, "rival-tutt"],
+  [/Chad/, "rival-chad"],
+  [/Fingerbang/, "rival-fingerbang"],
+  [/Saggynuts/, "rival-sensei"],
   [/Chuck/, "rival-chuck"],
   [/Queefington/, "rival-queef"],
   [/Bard/, "bard"],
   // Sir Bradley: an ally in a save from before the 2026-11-15 rename.
-  [/Bradley/, "bradley"],
+  [/Bradley/, "chad"],
   [/Blade|Sword/, "blade"],
 ];
 const allyMark = (name: string): QuestArt =>

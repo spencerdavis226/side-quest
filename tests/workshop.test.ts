@@ -36,7 +36,7 @@ test("Core composition matches the trimmed content brief", () => {
   // main deck, the supplied house sheet and Cabin weekend.
   expect(core.cardIds).toHaveLength(285);
   const coreCards = cards.filter(
-    (c) => core.cardIds.includes(c.id) && c.id.startsWith("core."),
+    (c) => core.cardIds.includes(c.id) && !isHouseRow(c.id) && !isCabin(c.id),
   );
   // The 2026-10-07 rewrite: sample set (25), classics (24) and the standard
   // expansion (47), with the bare roll-and-pour cards cut.
@@ -53,13 +53,17 @@ test("Core composition matches the trimmed content brief", () => {
   expect(coreCards.filter((c) => c.dice)).toHaveLength(26);
 });
 
-// Sheet rows that are CABIIN board spaces keep their `cabin.*` IDs.
+// The House sheet's rows are `core.house-NNN` by sheet row, Cabin weekend's
+// cards `core.cabin-*` (`house.sheet-NNN` and `cabin.*` until 2026-11-15).
+const isHouseRow = (id: string) => /^core\.house-\d{3}$/.test(id);
+const isCabin = (id: string) => id.startsWith("core.cabin-");
+// Sheet rows that are CABIIN board spaces keep their CABIIN IDs.
 const cabinRows: Record<number, string> = {
   12: "maddy-booty",
   16: "ursaring",
   24: "wench",
   28: "no-take-give",
-  40: "first-name-only",
+  40: "pokemon",
   42: "pet-that-dog",
   53: "abra-like-a-slut",
   54: "whinnie-the-pooh",
@@ -67,7 +71,7 @@ const cabinRows: Record<number, string> = {
 test("each supplied sheet row lands in the Core deck (House or CABIIN IDs) or VIP night", () => {
   const core = packs.find((p) => p.id === "core")!;
   const house = {
-    cardIds: core.cardIds.filter((id) => id.startsWith("house.")),
+    cardIds: core.cardIds.filter(isHouseRow),
   };
   const vip = packs.find((p) => p.id === "vip")!;
   // Rows 3–106 minus the blank row 75 and the description-less row 106.
@@ -76,18 +80,18 @@ test("each supplied sheet row lands in the Core deck (House or CABIIN IDs) or VI
     (_, offset) => offset + 3,
   ).filter((row) => row !== 75 && row !== 106);
   const cabin = {
-    cardIds: core.cardIds.filter((id) => id.startsWith("cabin.")),
+    cardIds: core.cardIds.filter(isCabin),
   };
   expect(house.cardIds).toHaveLength(94);
   for (const row of sheetRows)
     if (cabinRows[row]) {
-      expect(cabin.cardIds).toContain(`cabin.${cabinRows[row]}`);
+      expect(cabin.cardIds).toContain(`core.cabin-${cabinRows[row]}`);
       expect(house.cardIds).not.toContain(
-        `house.sheet-${String(row).padStart(3, "0")}`,
+        `core.house-${String(row).padStart(3, "0")}`,
       );
     } else
       expect(house.cardIds).toContain(
-        `house.sheet-${String(row).padStart(3, "0")}`,
+        `core.house-${String(row).padStart(3, "0")}`,
       );
   expect(vip.cardIds.slice(-4)).toEqual(
     [3, 4, 5, 6].map((row) => `vip.sheet-${String(row).padStart(3, "0")}`),
@@ -117,19 +121,19 @@ test("League gyms come in eight tiers, one leader per region in each", () => {
 test("the CABIIN cards sit in Core under their own IDs and are shared by none", () => {
   const core = packs.find((p) => p.id === "core")!;
   const cabin = {
-    cardIds: core.cardIds.filter((id) => id.startsWith("cabin.")),
+    cardIds: core.cardIds.filter(isCabin),
   };
   expect(cabin.cardIds).toHaveLength(85);
   // No card is in two packs.
   const all = packs.flatMap((p) => p.cardIds);
   expect(new Set(all).size).toBe(all.length);
-  // Moved, not duplicated: the CABIIN-born cards kept their cabin.* IDs.
+  // Moved, not duplicated: the CABIIN-born cards kept their CABIIN IDs.
   for (const id of ["smooth-brain", "samesies", "thanos-snap", "for-safety"]) {
     expect(core.cardIds).not.toContain(`core.${id}`);
-    expect(cabin.cardIds).toContain(`cabin.${id}`);
+    expect(cabin.cardIds).toContain(`core.cabin-${id}`);
   }
   // The sheet rows keep the sheet's wording.
-  expect(cards.find((c) => c.id === "cabin.ursaring")).toMatchObject({
+  expect(cards.find((c) => c.id === "core.cabin-ursaring")).toMatchObject({
     title: "Ursaring",
     rules: "Give 13 and apologize",
   });

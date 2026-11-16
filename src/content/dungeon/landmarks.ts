@@ -37,7 +37,7 @@ const approach = (
 
 /** Each region's three landmarks, keyed by its file's name. */
 export const landmarks: Record<string, CardDefinition[]> = {
-  cellar: [
+  kingsRoad: [
     landmark(
       0,
       "gallows-tree",
@@ -70,7 +70,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       ],
     ),
   ],
-  wine: [
+  oldForest: [
     landmark(
       3,
       "fairy-court",
@@ -107,7 +107,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       ],
     ),
   ],
-  brewery: [
+  marsh: [
     landmark(
       6,
       "sunken-chapel",
@@ -135,7 +135,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
     ),
     landmark(
       6,
-      "frog-ferry",
+      "ferry-of-frogs",
       "The Ferry of Frogs",
       "A raft poled by frogs, and the fare is a song. Everyone croaks the chorus.",
       [
@@ -144,7 +144,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       ],
     ),
   ],
-  catacombs: [
+  crypt: [
     landmark(
       1,
       "dead-ferryman",
@@ -185,7 +185,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       },
     ),
   ],
-  sewers: [
+  mines: [
     landmark(
       4,
       "goblin-market",
@@ -203,7 +203,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
     ),
     landmark(
       4,
-      "the-lift",
+      "lift",
       "The Lift",
       "A rusty cage lift, or a thousand stairs. Everyone creaks like an old bed; worst creak drinks 2.",
       [{ label: "Ride it", elite: true }, { label: "Stairs · drink 2" }],
@@ -223,7 +223,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       },
     ),
   ],
-  freezer: [
+  tower: [
     landmark(
       7,
       "room-of-doors",
@@ -237,7 +237,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
     ),
     landmark(
       7,
-      "the-library",
+      "library",
       "The Library",
       "Every book ever written, half of them smut. The drawer names the last book they read, or admits it.",
       [
@@ -258,7 +258,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
     ),
   ],
   // The lairs' landmarks: the Approaches.
-  kitchen: [
+  caverns: [
     approach(
       5,
       "bone-road",
@@ -298,7 +298,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       },
     ),
   ],
-  rooftop: [
+  frozenPass: [
     approach(
       8,
       "frozen-army",
@@ -327,7 +327,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       [{ label: "Cross", elite: true }, { label: "Go round · drink 3" }],
     ),
   ],
-  taproom: [
+  coast: [
     approach(
       2,
       "bell-reef",
@@ -366,7 +366,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
 
 // The Frozen Knight (The Quest 2.0 Phase 4): chipped out of the ice, he
 // joins for the dragon.
-const army = landmarks.rooftop.find(
+const army = landmarks.frozenPass.find(
   (c) => c.id === "dungeon.landmark-frozen-army",
 )!;
 army.ally = {

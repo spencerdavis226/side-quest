@@ -27,7 +27,7 @@ export const signCards: CardDefinition[] = [
     [{ label: "Watch it · drink 2", ...LORE }, { label: "Stay down" }],
   ),
   sign(
-    "scale",
+    "fallen-scale",
     "A Fallen Scale",
     "A warm, sticky scale off {dragon}. Don't ask why it's sticky. Everyone touches it anyway.",
     [
@@ -36,13 +36,13 @@ export const signCards: CardDefinition[] = [
     ],
   ),
   sign(
-    "knights",
+    "fleeing-knights",
     "The Fleeing Knights",
     "Knights gallop past the wrong way, crying '{dragon}!' Everyone shouts it too, crying.",
     [{ label: "Stop one", cost: 1, ...LORE }, { label: "Let them run" }],
   ),
   sign(
-    "mill",
+    "burned-mill",
     "The Burned Mill",
     "A mill, still smoking. {dragon} took a dump on it an hour ago. Everyone pours out a sip.",
     [
@@ -51,13 +51,13 @@ export const signCards: CardDefinition[] = [
     ],
   ),
   sign(
-    "tracks",
+    "droppings",
     "Droppings",
     "A dragon turd, big enough to sit in. Nobody sits in it. Last to say 'nope' drinks 2.",
     [{ label: "Follow them", cost: 1, ...LORE }, { label: "Go around" }],
   ),
   sign(
-    "song",
+    "old-song",
     "The Old Song",
     "A shepherd sings a filthy song about {dragon}. Everyone hums along. Nobody knows it.",
     [

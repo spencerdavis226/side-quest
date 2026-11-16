@@ -9,56 +9,56 @@ import { ask, hire, landing } from "./shared";
 // a run are never the same card. The Quest only.
 
 /** After the first region's boss. */
-export const upperLandings: CardDefinition[] = [
+export const inns: CardDefinition[] = [
   landing(
-    "stairwell",
+    "sloppy-goat",
     "The Sloppy Goat",
     "Sticky floors, stickier sheets. Everyone gives their left neighbor a tavern-wench name.",
     "Take a room",
   ),
   landing(
-    "smoking-area",
+    "crooked-lantern",
     "The Crooked Lantern",
     "A crooked inn, a straight fire, a one-toothed barmaid. Everyone names their best moment so far.",
     "Rest",
     "shield",
   ),
   landing(
-    "coat-check",
+    "hayloft",
     "A Hayloft",
     "A warm hayloft, and the farmer's kid keeps checking on you. Everyone names their battle mount.",
     "Nap in the hay",
     "die",
   ),
   landing(
-    "bathroom-line",
+    "ferry-house",
     "The Ferry House",
     "Everyone's soaked to the taint. Everyone hypes their left neighbor like a herald.",
     "Dry off",
     "smoke",
   ),
   landing(
-    "loading-dock",
+    "shepherds-hut",
     "A Shepherd's Hut",
     "A shepherd shares his bread and his theories about the queen. Everyone names a snack to kill for.",
     "Sit by the fire",
   ),
   landing(
-    "phone-booth",
+    "pilgrims-rest",
     "The Pilgrims' Rest",
     "Monks who brew, and brew hard. Everyone confesses one thing they'd never tell their mother.",
     "Pray",
     "shield",
   ),
   landing(
-    "mop-closet",
+    "drunken-dwarf",
     "The Drunken Dwarf",
     "The dwarf who runs it arm-wrestles every guest, naked. Everyone gives their left a dwarf name.",
     "Rest",
     "die",
   ),
   landing(
-    "photo-booth",
+    "painted-wagon",
     "A Painted Wagon",
     "Actors let you sleep in their wagon. It smells like sex. Everyone strikes a heroic pose on three.",
     "Sleep",
@@ -68,9 +68,9 @@ export const upperLandings: CardDefinition[] = [
 
 /** After the second region's boss. Each names the run's dragon (The Quest
  * 2.0 Phase 3, 2026-11-14). */
-export const lowerLandings: CardDefinition[] = [
+export const lastInns: CardDefinition[] = [
   landing(
-    "boiler-room",
+    "last-warm-fire",
     "The Last Warm Fire",
     "Past here, only {dragon}. Everyone warms their hands and names one thing they'll miss.",
     "Lie down",
@@ -83,41 +83,41 @@ export const lowerLandings: CardDefinition[] = [
     "shield",
   ),
   landing(
-    "staff-room",
+    "monastery",
     "The Monastery",
     "Monks sworn to silence and to wine. Everyone stays silent a minute. First sound drinks 2.",
     "Meditate",
     "die",
   ),
   landing(
-    "fire-escape",
+    "watchtower",
     "The Watchtower",
     "A ruined tower; far off, smoke from {dragon}. Everyone toasts how far you've come.",
     "Take it in",
     "smoke",
   ),
   landing(
-    "service-stairs",
+    "hermits-cave",
     "The Hermit's Cave",
     "A hermit met {dragon} and won't say what happened. Everyone tells him some gossip.",
     "Sit",
   ),
   landing(
-    "the-bunker",
+    "empty-fort",
     "The Empty Fort",
     "A fort abandoned when {dragon} woke. Everyone names who they'd want on its walls.",
     "Bunk down",
     "shield",
   ),
   landing(
-    "laundry-room",
+    "hot-springs",
     "The Hot Springs",
     "Naked hot springs. Someone definitely peed. Everyone confesses one secret to the party.",
     "Soak",
     "die",
   ),
   landing(
-    "stuck-elevator",
+    "haunted",
     "The Haunted Inn",
     "The innkeeper is a ghost; {dragon} got him. Everyone hums his song on three.",
     "Sleep, nervously",

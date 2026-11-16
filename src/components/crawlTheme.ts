@@ -247,22 +247,22 @@ const dungeon: CrawlTheme = {
       "Everyone hums a fanfare. The drawer winks at someone.",
     "dungeon.class-paladin": "Everyone salutes, then confesses one sin.",
     "dungeon.class-ranger": "Everyone sniffs their own armpit and howls.",
-    "dungeon.class-monk": "Everyone takes one calm sip, then burps.",
+    "dungeon.class-drunken-monk": "Everyone takes one calm sip, then burps.",
     "dungeon.class-necromancer":
       "Everyone plays dead for three seconds. Stiffly.",
     "dungeon.class-alchemist":
       "Everyone clinks glasses: to science, and to not asking.",
     "dungeon.class-warlock": "Everyone signs an invisible contract in spit.",
-    "dungeon.class-bouncer":
+    "dungeon.class-knight":
       "Everyone kneels to be knighted. Shoulder, not crotch.",
-    "dungeon.class-bartender":
+    "dungeon.class-innkeeper":
       "Everyone taps the table twice and whispers a rumor.",
-    "dungeon.class-mercenary":
+    "dungeon.class-sellsword":
       "Everyone rubs finger and thumb: coin. Or a nipple.",
     "dungeon.class-druid": "Everyone makes a bird noise, high as hell.",
-    "dungeon.class-plus-one":
+    "dungeon.class-peasant":
       "Nobody claps. The Peasant claps alone, sticky-handed.",
-    "dungeon.class-intern": "Everyone gives the Squire a pity thumbs up.",
+    "dungeon.class-squire": "Everyone gives the Squire a pity thumbs up.",
     "dungeon.class-dragonslayer": "Everyone bares their teeth at the sky.",
     "dungeon.class-mimic":
       "Everyone opens and shuts their mouth like a lid. Tongue out.",
@@ -644,14 +644,14 @@ export const LAIR_WORDS: Record<string, string> = {
 /** What each echo remembers (The Quest 2.0 Phase 6, M14): the earlier
  * card's title, shown faintly as the echo turns. Display only. */
 export const ECHO_OF: Record<string, string> = {
-  "dungeon.echo-hanged-man": "The Gallows Tree",
-  "dungeon.echo-brother": "The Gallows Tree",
-  "dungeon.echo-fair-folk": "The Fairy Court",
+  "dungeon.echo-hanged-man-returns": "The Gallows Tree",
+  "dungeon.echo-his-brother": "The Gallows Tree",
+  "dungeon.echo-fair-folk-collect": "The Fairy Court",
   "dungeon.echo-lord-remembers": "The Hunter's Feast",
-  "dungeon.echo-hag-owed": "The Hag's Bargain",
-  "dungeon.echo-ferryman": "The Dead Ferryman",
+  "dungeon.echo-hag-is-owed": "The Hag's Bargain",
+  "dungeon.echo-ferryman-waits": "The Dead Ferryman",
   "dungeon.echo-goblin-posse": "The Goblin Market",
-  "dungeon.echo-gift": "A Side Quest",
+  "dungeon.echo-gift-from-home": "A Side Quest",
   "dungeon.echo-one-you-left": "A Side Quest",
-  "dungeon.echo-grave": "A Fallen Friend",
+  "dungeon.echo-grave-by-the-road": "A Fallen Friend",
 };

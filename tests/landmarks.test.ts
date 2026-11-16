@@ -106,7 +106,7 @@ describe("landmarks", () => {
         expect(c.dice).toBeUndefined();
       }
     }
-    for (const key of ["taproom", "kitchen", "rooftop"])
+    for (const key of ["coast", "caverns", "frozenPass"])
       for (const c of landmarks[key]) {
         expect(c.ribbon).toMatch(/ · Approach$/);
       }

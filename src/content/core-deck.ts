@@ -5,8 +5,10 @@ import { cabinCards } from "./cabin";
 
 // One plain deck. Core, the supplied House sheet and Cabin weekend all play
 // the same way (read the card, drink or give), so since 2026-10-24 (owner)
-// they are one pack. Card IDs keep their origin (`core.*`, `house.sheet-*`,
-// `cabin.*`) so saved games, marks and the reference records still line up.
+// they are one pack. Every ID is `core.*`; the House sheet's keep their
+// sheet row (`core.house-NNN`) and Cabin weekend's a `core.cabin-` prefix
+// (until 2026-11-15 they were `house.sheet-*` and `cabin.*`;
+// `src/app/renamed-ids.ts` moves saved games on).
 export const coreDeckCards = [...coreCards, ...houseCards, ...cabinCards];
 
 export const corePack: PackDefinition = {

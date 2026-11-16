@@ -145,7 +145,7 @@ export const FEATS: { key: string; name: string; line: string }[] = [
     line: "Win with no curse on you at the end.",
   },
   {
-    key: "bradley",
+    key: "chad",
     name: "Nice One, Chad",
     line: "Sir Chad falls at the dragon.",
   },
@@ -236,14 +236,14 @@ export const UNLOCKS: {
 ];
 /** The nine dragons the Chronicle counts toward the Dragon King. */
 export const NINE = [
-  "dungeon.last-call-lich",
-  "dungeon.two-am-kebab",
-  "dungeon.the-morning-after",
-  "dungeon.bartender-below",
-  "dungeon.surge-pricing",
-  "dungeon.house-lights",
-  "dungeon.final-tab",
-  "dungeon.the-group-chat",
+  "dungeon.dragon-emberfang",
+  "dungeon.dragon-gorgrath",
+  "dungeon.dragon-ashmaw",
+  "dungeon.dragon-rimeclaw",
+  "dungeon.dragon-stormcrown",
+  "dungeon.dragon-glimmerwing",
+  "dungeon.dragon-mother-brine",
+  "dungeon.dragon-whispering-wyrm",
   "dungeon.dragon-tidewrack",
 ];
 export const DRAGON_KING = "dungeon.dragon-king";
@@ -395,9 +395,9 @@ export function recordRun(
   if (
     atDragon &&
     (party.fainted === "dungeon.closing-bradley-begs" ||
-      party.fainted === "dungeon.rival-bradley-door")
+      party.fainted === "dungeon.rival-chad-door")
   )
-    earned.push("bradley");
+    earned.push("chad");
   if (won && deeds.includes("quest-taken")) earned.push("long-way");
   if (won && deeds.includes("quest-walked")) earned.push("straight-there");
   if (next.landmarks.length >= LANDMARK_COUNT) earned.push("full-house");

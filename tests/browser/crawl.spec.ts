@@ -78,7 +78,7 @@ test("@release The Quest opens on an adventurer, the omen and the summons, then 
 test("@release a monster shows its stakes; a smoke bomb flees it", async ({
   page,
 }, info) => {
-  const goblin = crawlAt("dungeon.drunk-goblin", STEP.floor1, {
+  const goblin = crawlAt("dungeon.goblin-scouts", STEP.floor1, {
     loot: ["smoke"],
   });
   // The encounter after it is an ordinary one: an ambush would read
@@ -120,7 +120,7 @@ for (const width of [320, 375])
   test(`a full strip fits at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 700 });
     const s = crawlAt(
-      "dungeon.bone-sommelier",
+      "dungeon.skeleton-butler",
       STEP.floor2 + 1,
       {
         loot: ["draught", "shield", "die", "smoke", "draught"],
@@ -131,15 +131,15 @@ for (const width of [320, 375])
     );
     const q = s.quest!;
     const finale = [...q.finale];
-    const at = finale.indexOf("dungeon.goblin-shaman");
+    const at = finale.indexOf("dungeon.hedge-witch");
     if (at >= 0) finale[at] = finale[STEP.floor1];
-    finale[STEP.floor1] = "dungeon.goblin-shaman";
+    finale[STEP.floor1] = "dungeon.hedge-witch";
     await seed(page, {
       ...s,
       quest: {
         ...q,
         finale,
-        party: { ...q.party!, jinx: "dungeon.goblin-shaman" },
+        party: { ...q.party!, jinx: "dungeon.hedge-witch" },
       },
     });
     // The satchel, the jinx and the lore runes (Phase 4).
@@ -160,7 +160,7 @@ test("a lucky coin rerolls a lost fight", async ({ page }, info) => {
   await seed(
     page,
     rolled(
-      reveal(crawlAt("dungeon.ex-wraith", STEP.floor2, { loot: ["die"] })),
+      reveal(crawlAt("dungeon.left-on-read", STEP.floor2, { loot: ["die"] })),
       2,
     ),
   );
@@ -178,7 +178,7 @@ test("pushing your luck: cash out, or go again for the next prize", async ({
   page,
 }, info) => {
   const won = rolled(
-    reveal(crawlAt("dungeon.one-armed-bandit", STEP.floor1 + 1)),
+    reveal(crawlAt("dungeon.shell-game", STEP.floor1 + 1)),
     15,
   );
   await seed(page, won);
@@ -209,7 +209,7 @@ test("a Hired Sword passes a lost fight's drinks to someone else", async ({
   await seed(
     page,
     rolled(
-      reveal(crawlAt("dungeon.ex-wraith", STEP.floor2, { loot: ["round"] })),
+      reveal(crawlAt("dungeon.left-on-read", STEP.floor2, { loot: ["round"] })),
       2,
     ),
   );
@@ -244,7 +244,7 @@ test("a boss shows its wounds, its trinket, and comes back until it falls", asyn
   page,
 }, info) => {
   let s = reveal(
-    crawlAt("dungeon.hangover-hydra", STEP.boss2, { hits: 1, rounds: 1 }),
+    crawlAt("dungeon.bone-golem", STEP.boss2, { hits: 1, rounds: 1 }),
   );
   s = { ...s, discarded: STEP.boss2 + 1 };
   await seed(page, s);
@@ -262,7 +262,7 @@ test("a boss shows its wounds, its trinket, and comes back until it falls", asyn
   // The party wears the Queen's Dagger, a weapon from the King's Road's Bandit
   // Queen, dealt on the first floor.
   const finale = [...s.quest!.finale];
-  const queen = "dungeon.keg-mimic-queen";
+  const queen = "dungeon.bandit-queen";
   const at = finale.indexOf(queen);
   if (at >= 0) finale[at] = finale[STEP.floor1 + 1];
   finale[STEP.floor1 + 1] = queen;
@@ -313,7 +313,7 @@ test("a boss shows its wounds, its trinket, and comes back until it falls", asyn
   await page.screenshot({ path: info.outputPath("trinket.png") });
   // The Knuckle replaced the Dagger.
   expect((await saved(page)).quest.party.boons).toEqual([
-    "dungeon.hangover-hydra#0",
+    "dungeon.bone-golem#0",
   ]);
   // The bag lists it as gear, with its slot.
   await page.locator(".tag-satchel").click();
@@ -333,7 +333,7 @@ test("a lost fight can lay a jinx, shown on the meter and as a moment", async ({
 }, info) => {
   await seed(
     page,
-    rolled(reveal(crawlAt("dungeon.goblin-shaman", STEP.floor1)), 2),
+    rolled(reveal(crawlAt("dungeon.hedge-witch", STEP.floor1)), 2),
   );
   await expect(page.locator(".game-card .stake-jinx")).toHaveAccessibleName(
     "Losing lays a curse: Toad Voice",
@@ -355,7 +355,7 @@ test("with Reduce Motion a moment's plaque fades and goes, and the splat stays c
   await page.emulateMedia({ reducedMotion: "reduce" });
   await seed(
     page,
-    rolled(reveal(crawlAt("dungeon.goblin-shaman", STEP.floor1)), 2),
+    rolled(reveal(crawlAt("dungeon.hedge-witch", STEP.floor1)), 2),
   );
   await page.locator(".game-card").click();
   const banner = page.locator(".still-plaque");
@@ -406,7 +406,7 @@ test("a Cleric's inn rest says it heals one more", async ({ page }) => {
     page,
     reveal(
       crawlAt(
-        "dungeon.landing-smoking-area",
+        "dungeon.inn-crooked-lantern",
         STEP.landing1,
         { hearts: H - 5 },
         { adventurer: "cleric" },
@@ -427,7 +427,7 @@ test("an inn rests or stocks up, and its plaques read at 320px", async ({
     page,
     reveal(
       crawlAt(
-        "dungeon.landing-smoking-area",
+        "dungeon.inn-crooked-lantern",
         STEP.landing1,
         { hearts: H - 4 },
         { adventurer: "barbarian" },
@@ -476,7 +476,7 @@ test("a region's boss ranks the adventurer up, and a side quest can be walked pa
   await seed(page, {
     ...reveal(
       crawlAt(
-        "dungeon.keg-golem",
+        "dungeon.bridge-troll",
         STEP.boss1,
         { hits: 1, rounds: 1 },
         { adventurer: "barbarian" },
@@ -498,7 +498,7 @@ test("a region's boss ranks the adventurer up, and a side quest can be walked pa
   await seed(
     page,
     reveal(
-      crawlAt("dungeon.quest-goat", STEP.plea, {}, { adventurer: "rogue" }),
+      crawlAt("dungeon.quest-miller", STEP.plea, {}, { adventurer: "rogue" }),
     ),
   );
   const plaques = await choices(page);
@@ -521,7 +521,7 @@ test("a region's boss ranks the adventurer up, and a side quest can be walked pa
 // Mishaps (2026-10-31): Pub Crawl's rooms with no roll read one line and
 // cost no hearts.
 test("a mishap reads its one line and costs no hearts", async ({ page }) => {
-  const barback = cards.find((c) => c.id === "dungeon.skeleton-barback")!;
+  const barback = cards.find((c) => c.id === "dungeon.wanted-poster")!;
   expect(barback.strike).toBeUndefined();
   await seed(
     page,
@@ -547,7 +547,7 @@ test("a Tome of Training ranks the adventurer up from the satchel", async ({
     page,
     reveal(
       crawlAt(
-        "dungeon.drunk-goblin",
+        "dungeon.goblin-scouts",
         STEP.floor1,
         { loot: ["candy"] },
         { adventurer: "wizard" },
@@ -566,7 +566,7 @@ test("the party dialog lays out the run: adventurer, boons and jinx", async ({
   page,
 }, info) => {
   const s = crawlAt(
-    "dungeon.bone-sommelier",
+    "dungeon.skeleton-butler",
     STEP.floor2 + 1,
     {
       hearts: 5,
@@ -582,9 +582,9 @@ test("the party dialog lays out the run: adventurer, boons and jinx", async ({
     if (at >= 0) finale[at] = finale[step];
     finale[step] = id;
   };
-  swap("dungeon.goblin-shaman", STEP.floor1);
+  swap("dungeon.hedge-witch", STEP.floor1);
   // An omen that leaves the satchel alone.
-  swap("dungeon.omen-lefty-night", STEP.omen);
+  swap("dungeon.omen-wank-hand", STEP.omen);
   await seed(page, {
     ...s,
     quest: {
@@ -593,7 +593,7 @@ test("the party dialog lays out the run: adventurer, boons and jinx", async ({
       party: {
         ...q.party!,
         boons: [finale[STEP.omen]],
-        jinx: "dungeon.goblin-shaman",
+        jinx: "dungeon.hedge-witch",
       },
     },
   });
@@ -652,7 +652,7 @@ test("losing the last heart wipes the party", async ({ page }, info) => {
     rolled(
       // The Giant Spider, a d20 fight (the Tax Collector is a table duel since
       // 2026-10-31).
-      reveal(crawlAt("dungeon.keg-spider", STEP.floor1 + 2, { hearts: 1 })),
+      reveal(crawlAt("dungeon.giant-spider", STEP.floor1 + 2, { hearts: 1 })),
       1,
     ),
   );
@@ -680,7 +680,7 @@ test("losing the last heart wipes the party", async ({ page }, info) => {
 
 test("felling the dragon wins the quest", async ({ page }, info) => {
   let s = reveal(
-    crawlAt("dungeon.final-tab", STEP.lastCall, {
+    crawlAt("dungeon.dragon-mother-brine", STEP.lastCall, {
       // Its scales (the dragon battle, 2026-11-13): one left.
       hits: DRAGON_HEALTH - 1,
       rounds: DRAGON_HEALTH - 1,
@@ -708,7 +708,7 @@ test("the dragon battle: a round's move, the scales, the kill and the wipe", asy
   const left = DRAGON_HEALTH - 1;
   const round = { move: 0, swings: left, enraged: true as const };
   let s = reveal(
-    crawlAt("dungeon.final-tab", STEP.lastCall, {
+    crawlAt("dungeon.dragon-mother-brine", STEP.lastCall, {
       hits: left,
       rounds: left,
       duel: round,
@@ -799,7 +799,7 @@ for (const width of [320, 390])
     // A Barbarian at its second rank (the Warlord), with the Harvest
     // Festival and a trinket kept, fells the dragon.
     let s = crawlAt(
-      "dungeon.final-tab",
+      "dungeon.dragon-mother-brine",
       STEP.lastCall,
       { hits: DRAGON_HEALTH - 1, rounds: DRAGON_HEALTH - 1, form: 2 },
       { adventurer: "barbarian" },
@@ -811,8 +811,8 @@ for (const width of [320, 390])
       if (at >= 0) finale[at] = finale[step];
       finale[step] = id;
     };
-    swap("dungeon.omen-happy-hour", STEP.omen);
-    swap("dungeon.keg-golem", STEP.boss1);
+    swap("dungeon.omen-harvest-orgy", STEP.omen);
+    swap("dungeon.bridge-troll", STEP.boss1);
     s = {
       ...s,
       quest: {
@@ -820,7 +820,7 @@ for (const width of [320, 390])
         finale,
         party: {
           ...q.party!,
-          boons: ["dungeon.omen-happy-hour", "dungeon.keg-golem#0"],
+          boons: ["dungeon.omen-harvest-orgy", "dungeon.bridge-troll#0"],
         },
       },
     };
@@ -865,7 +865,7 @@ test("a wiped run's wall shows the bosses felled and empty sockets", async ({
     page,
     rolled(
       reveal(
-        crawlAt("dungeon.bachelor-ghosts", STEP.floor2 + 2, { hearts: 1 }),
+        crawlAt("dungeon.wedding-ghosts", STEP.floor2 + 2, { hearts: 1 }),
       ),
       1,
     ),
@@ -889,7 +889,7 @@ for (const width of [320, 390])
       loot: ["draught", "die", "shield"],
     });
     const finale = [...s.quest!.finale];
-    finale[STEP.floor1] = "dungeon.goblin-shaman";
+    finale[STEP.floor1] = "dungeon.hedge-witch";
     await seed(
       page,
       reveal({
@@ -897,11 +897,11 @@ for (const width of [320, 390])
         quest: {
           ...s.quest!,
           finale: finale.map((id, i) =>
-            i !== STEP.floor1 && id === "dungeon.goblin-shaman"
+            i !== STEP.floor1 && id === "dungeon.hedge-witch"
               ? s.quest!.finale[STEP.floor1]
               : id,
           ),
-          party: { ...s.quest!.party!, jinx: "dungeon.goblin-shaman" },
+          party: { ...s.quest!.party!, jinx: "dungeon.hedge-witch" },
         },
       }),
     );
@@ -940,7 +940,7 @@ test("a merchant sells on plaques, and a price in hearts needs a spare heart", a
   page,
 }, info) => {
   const at = STEP.floor1 + 1;
-  await seed(page, reveal(crawlAt("dungeon.rat-fence", at, { hearts: 1 })));
+  await seed(page, reveal(crawlAt("dungeon.peddler", at, { hearts: 1 })));
   // A stray tap on the card does nothing; the choice decides.
   await page.locator(".game-card").click({ force: true });
   expect((await saved(page)).quest.step).toBe(at);
@@ -968,7 +968,7 @@ test("a fork's loud door deals one of the floor's elites, which drops a trinket"
 }, info) => {
   await seed(
     page,
-    reveal(crawlAt("dungeon.red-or-white", STEP.floor1, {}, { other: true })),
+    reveal(crawlAt("dungeon.shortcut-forest", STEP.floor1, {}, { other: true })),
   );
   await expect(page.locator(".game-card .card-ribbon")).toHaveText(
     "Old Forest · Fork",
@@ -999,7 +999,7 @@ test("an ambush shows its two swings in the medallion", async ({
   await seed(page, {
     ...reveal(
       crawlAt(
-        "dungeon.roach-conga",
+        "dungeon.kobold-conga",
         STEP.floor2 + 2,
         { hits: 1, rounds: 1 },
         { other: true },
@@ -1017,7 +1017,7 @@ test("an ambush shows its two swings in the medallion", async ({
 test("the lair's door: the rival asks, and the table answers", async ({
   page,
 }, info) => {
-  await seed(page, reveal(crawlAt("dungeon.rival-bradley-door", STEP.closing)));
+  await seed(page, reveal(crawlAt("dungeon.rival-chad-door", STEP.closing)));
   await expect(page.locator(".game-card .card-ribbon")).toHaveText(
     "The Lair's Door · Rival",
   );
@@ -1032,10 +1032,10 @@ test("the lair's door: the rival asks, and the table answers", async ({
 test("the rival: a chip on the strip, a ledger, and a cut-in on the card", async ({
   page,
 }, info) => {
-  let s = crawlAt("dungeon.bachelor-ghosts", STEP.floor2, {
-    deeds: ["rival-bradley"],
+  let s = crawlAt("dungeon.wedding-ghosts", STEP.floor2, {
+    deeds: ["rival-chad"],
     rival: {
-      who: "bradley",
+      who: "chad",
       took: ["shield"],
       won: 0,
       lost: 1,
@@ -1044,9 +1044,9 @@ test("the rival: a chip on the strip, a ledger, and a cut-in on the card", async
   });
   // Their introduction was dealt after the first boss.
   const finale = [...s.quest!.finale];
-  const was = finale.indexOf("dungeon.rival-bradley");
+  const was = finale.indexOf("dungeon.rival-chad");
   if (was >= 0) finale[was] = finale[STEP.rival];
-  finale[STEP.rival] = "dungeon.rival-bradley";
+  finale[STEP.rival] = "dungeon.rival-chad";
   s = reveal({ ...s, quest: { ...s.quest!, finale } });
   await seed(page, s);
   await expect(page.locator(".game-card .card-ribbon")).toHaveText(
@@ -1068,7 +1068,7 @@ test("the rival's news banner speaks in their own voice", async ({ page }) => {
   // Rivals Phase 1: the introduction takes the newest item, and the
   // banner reads Sir Chad's own line with the item's name filled in.
   const s = reveal(
-    crawlAt("dungeon.rival-bradley", STEP.rival, {
+    crawlAt("dungeon.rival-chad", STEP.rival, {
       loot: ["draught", "shield"],
     }),
   );
@@ -1086,15 +1086,15 @@ test("the rival's Do-Over holds a won roll: roll again, or pay them off", async 
   page,
 }, info) => {
   // Rivals Phase 2: Sir Chad cuts in with a Do-Over and the table wins.
-  let s = crawlAt("dungeon.bachelor-ghosts", STEP.floor2, {
-    deeds: ["rival-bradley"],
+  let s = crawlAt("dungeon.wedding-ghosts", STEP.floor2, {
+    deeds: ["rival-chad"],
     loot: ["shield"],
-    rival: { who: "bradley", took: [], won: 0, lost: 0, cut: "redo" },
+    rival: { who: "chad", took: [], won: 0, lost: 0, cut: "redo" },
   });
   const finale = [...s.quest!.finale];
-  const was = finale.indexOf("dungeon.rival-bradley");
+  const was = finale.indexOf("dungeon.rival-chad");
   if (was >= 0) finale[was] = finale[STEP.rival];
-  finale[STEP.rival] = "dungeon.rival-bradley";
+  finale[STEP.rival] = "dungeon.rival-chad";
   s = rolled(reveal({ ...s, quest: { ...s.quest!, finale } }), 20);
   await seed(page, s);
   await expect(page.locator(".game-card .card-ribbon")).toHaveText(
@@ -1119,14 +1119,14 @@ test("the rival's duel shows the tricks they will fight with", async ({
 }, info) => {
   // Rivals Phase 2: Sensei holds a Tower Shield (a swing more), a Lucky
   // Coin and a Smoke Bomb.
-  let s = crawlAt("dungeon.rival-tutt-duel", STEP.duel, {
-    deeds: ["rival-tutt", "rival-refused"],
-    rival: { who: "tutt", took: ["shield", "die", "smoke"], won: 0, lost: 0 },
+  let s = crawlAt("dungeon.rival-sensei-duel", STEP.duel, {
+    deeds: ["rival-sensei", "rival-refused"],
+    rival: { who: "sensei", took: ["shield", "die", "smoke"], won: 0, lost: 0 },
   });
   const finale = [...s.quest!.finale];
-  const was = finale.indexOf("dungeon.rival-tutt");
+  const was = finale.indexOf("dungeon.rival-sensei");
   if (was >= 0) finale[was] = finale[STEP.rival];
-  finale[STEP.rival] = "dungeon.rival-tutt";
+  finale[STEP.rival] = "dungeon.rival-sensei";
   s = reveal({ ...s, quest: { ...s.quest!, finale } });
   await seed(page, s);
   await expect(page.locator(".stake-arsenal")).toHaveAccessibleName(
@@ -1164,14 +1164,14 @@ test("Sensei beaten twice is pinned at the door: save him for a heart", async ({
   page,
 }, info) => {
   // Rivals Phase 4: the door's pinned variant.
-  let s = crawlAt("dungeon.rival-tutt-pinned", STEP.closing, {
-    deeds: ["rival-tutt", "rival-won-twice"],
-    rival: { who: "tutt", took: [], won: 2, lost: 0 },
+  let s = crawlAt("dungeon.rival-sensei-pinned", STEP.closing, {
+    deeds: ["rival-sensei", "rival-won-twice"],
+    rival: { who: "sensei", took: [], won: 2, lost: 0 },
   });
   const finale = [...s.quest!.finale];
-  const was = finale.indexOf("dungeon.rival-tutt");
+  const was = finale.indexOf("dungeon.rival-sensei");
   if (was >= 0) finale[was] = finale[STEP.rival];
-  finale[STEP.rival] = "dungeon.rival-tutt";
+  finale[STEP.rival] = "dungeon.rival-sensei";
   s = reveal({ ...s, quest: { ...s.quest!, finale } });
   await seed(page, s);
   await expect(page.locator(".game-card")).toContainText("Pinned!");
@@ -1208,7 +1208,7 @@ test("the end screen's Nemesis panel: Sir Chad slew it, allegedly", async ({
 test("the omen is kept in the party dialog", async ({ page }, info) => {
   // Past the prologue (2026-11-15): the summons and the road put aside,
   // so the party dialog is on the table.
-  let s = reveal(crawlAt("dungeon.omen-lock-in", STEP.omen));
+  let s = reveal(crawlAt("dungeon.omen-grounded", STEP.omen));
   s = advance(reveal(advance(s)));
   s = takeOffer(reveal(s), 0);
   await seed(page, s);
@@ -1237,7 +1237,7 @@ test("a boss's next beat is a duel, and its felling win brings spoils", async ({
     rolled(
       reveal(
         crawlAt(
-          "dungeon.keg-golem",
+          "dungeon.bridge-troll",
           STEP.boss1,
           {},
           { adventurer: "barbarian" },
@@ -1259,7 +1259,7 @@ test("a boss's next beat is a duel, and its felling win brings spoils", async ({
   await expect(sheet).toBeVisible();
   await sheet.locator(".spoils-row").first().click();
   const s = await saved(page);
-  expect(s.quest.party.boons).toContain("dungeon.keg-golem#0");
+  expect(s.quest.party.boons).toContain("dungeon.bridge-troll#0");
   expect(s.quest.step).toBe(STEP.rival);
 });
 
@@ -1269,7 +1269,7 @@ test("a boss's next beat is a duel, and its felling win brings spoils", async ({
 test("the lore runes and an ally sent in", async ({ page }, info) => {
   await page.setViewportSize({ width: 320, height: 700 });
   const inn = (s: SessionState) => s.quest!.finale[STEP.landing1];
-  let s = crawlAt("dungeon.final-tab", STEP.lastCall, { lore: 2 });
+  let s = crawlAt("dungeon.dragon-mother-brine", STEP.lastCall, { lore: 2 });
   s = {
     ...s,
     quest: {

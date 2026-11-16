@@ -320,9 +320,9 @@ const SAMPLES: Moment[] = [
 // real saved run for the map.
 const mapQuest = (JSON.parse(roadSave) as SessionState).quest!;
 const roadQuest = (JSON.parse(roadTaken) as SessionState).quest!;
-const EMBERFANG = "dungeon.last-call-lich";
-const RIMECLAW = "dungeon.bartender-below";
-const BRINE = "dungeon.final-tab";
+const EMBERFANG = "dungeon.dragon-emberfang";
+const RIMECLAW = "dungeon.dragon-rimeclaw";
+const BRINE = "dungeon.dragon-mother-brine";
 const QUEST: Moment[] = [
   {
     kind: "wanted",
@@ -335,7 +335,7 @@ const QUEST: Moment[] = [
   {
     kind: "wanted",
     key: "wanted-long",
-    id: "dungeon.two-am-kebab",
+    id: "dungeon.dragon-gorgrath",
     dragon: "Gorgrath the Hungry",
     lair: "The Fire Caverns",
     say: "",
@@ -373,7 +373,7 @@ const QUEST: Moment[] = [
     kind: "rival",
     key: "rival-enter",
     beat: "enter",
-    who: "bradley",
+    who: "chad",
     name: "Sir Chad",
     line: "When Sir Chad shows up, everyone flexes. Weakest flex drinks 1.",
     say: "",
@@ -391,7 +391,7 @@ const QUEST: Moment[] = [
     kind: "rival",
     key: "rival-betrayal",
     beat: "betrayal",
-    who: "mirabel",
+    who: "fingerbang",
     name: "Lady Fingerbang",
     line: "Lady Fingerbang turns on you. Everyone who voted to take her drinks 3.",
     say: "",
@@ -399,7 +399,7 @@ const QUEST: Moment[] = [
   {
     kind: "rivalfly",
     key: "rival-takes",
-    who: "mirabel",
+    who: "fingerbang",
     items: ["shield", "draught"],
     to: "rival",
     say: "",
@@ -474,7 +474,7 @@ const QUEST: Moment[] = [
   {
     kind: "swing",
     key: "swing-hit",
-    id: "dungeon.last-call-lich",
+    id: "dungeon.dragon-emberfang",
     hit: true,
     scales: 1,
     say: "",
@@ -482,7 +482,7 @@ const QUEST: Moment[] = [
   {
     kind: "swing",
     key: "swing-miss",
-    id: "dungeon.bartender-below",
+    id: "dungeon.dragon-rimeclaw",
     hit: false,
     scales: 0,
     say: "",
@@ -507,7 +507,7 @@ const QUEST: Moment[] = [
     hearts: 6,
     max: 12,
     heartsWord: "hearts",
-    dragon: { id: "dungeon.surge-pricing", scales: 7, lore: 2 },
+    dragon: { id: "dungeon.dragon-stormcrown", scales: 7, lore: 2 },
     say: "",
   },
   {
@@ -679,7 +679,7 @@ export default function Moments() {
           singleBlow={params.get("blow") === "1"}
           dragon={
             params.get("pack") === "dungeon"
-              ? "dungeon.surge-pricing"
+              ? "dungeon.dragon-stormcrown"
               : undefined
           }
           title={

@@ -90,7 +90,7 @@ test("the Quest opens on four scenes and a road, then hands the phone on", async
 test("the rival's introduction takes the scene, then the table comes back", async ({
   page,
 }) => {
-  await seed(page, advance(crawlAt("dungeon.rival-mirabel", STEP.rival)));
+  await seed(page, advance(crawlAt("dungeon.rival-fingerbang", STEP.rival)));
   const scene = page.locator(".prologue");
   await expect(scene.locator(".pro-kicker")).toHaveText("Your rival");
   await expect(scene.locator(".pro-title")).toHaveText("Lady Fingerbang");
@@ -109,7 +109,7 @@ test("the rival's introduction takes the scene, then the table comes back", asyn
             ?.who,
       ),
     )
-    .toBe("mirabel");
+    .toBe("fingerbang");
 });
 
 test("the class is drawn alone, then its scene comes in", async ({ page }) => {

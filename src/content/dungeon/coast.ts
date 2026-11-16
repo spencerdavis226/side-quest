@@ -27,7 +27,7 @@ import {
 // holds its final text and mechanics (the variety pass and outcome
 // rewrites folded in).
 
-export const taproom: FloorCards = {
+export const coast: FloorCards = {
   fights: [
     // The Quest 2.1: a fight settled by one coin.
     monster(
@@ -51,7 +51,7 @@ export const taproom: FloorCards = {
       ...mishap(
         2,
         "Monster",
-        "sommelier-kraken",
+        "thirsty-kraken",
         "The Thirsty Kraken",
         "The kraken sips from four glasses at once. Roll four dice.",
       ),
@@ -59,7 +59,7 @@ export const taproom: FloorCards = {
     },
     monster(
       2,
-      "last-orders-siren",
+      "singing-rock",
       "The Singing Rock",
       "A siren on a rock sings 'one more drink', and it's beautiful. Cover your ears, then roll d20.",
       "You swim to her. Finish half your drink.",
@@ -70,7 +70,7 @@ export const taproom: FloorCards = {
       ...mishap(
         2,
         "Monster",
-        "drowned-regular",
+        "old-sailor",
         "The Old Sailor",
         "Read alone his one story, start the clock, then tell it as him. The table guesses what it's about.",
       ),
@@ -79,7 +79,7 @@ export const taproom: FloorCards = {
     },
     monster(
       2,
-      "foam-leviathan",
+      "foam-giant",
       "The Foam Giant",
       "A wave of sea foam the size of a ship rises out of the bay. Roll d20.",
       "It washes over you. Drink 5, and wear the mustache.",
@@ -88,20 +88,20 @@ export const taproom: FloorCards = {
     mishap(
       2,
       "Monster",
-      "piranha-shots",
+      "piranha-pool",
       "The Piranha Pool",
       "Piranhas in the tide pool. On three, point at who'd skinny-dip anyway. Most fingers: drink 3.",
     ),
     // A table duel.
     trial(
       2,
-      "merfolk-ex",
+      "merfolk-herald",
       "The Merfolk Herald",
       "A merfolk herald wants your deeds. Out-brag your left neighbor for 15 seconds. Loser: drink 4.",
     ),
     monster(
       2,
-      "text-them-eel",
+      "ex-letter-eel",
       "The Ex-Letter Eel",
       "An eel whispers: write your ex a letter. Sit on your hands, then roll d20.",
       "You write it. Drink 4, then tell the table what it said.",
@@ -111,7 +111,7 @@ export const taproom: FloorCards = {
     // A table duel.
     trial(
       2,
-      "tap-mimic",
+      "mimic-barrel",
       "The Mimic Barrel",
       "The barrel is a mimic. Pour-off with your right neighbor: mime a pint. Table's worse pour: drink 5.",
       { loot: "draught" },
@@ -139,13 +139,13 @@ export const taproom: FloorCards = {
     ),
     trial(
       2,
-      "rising-water",
+      "rising-tide",
       "Rising Tide",
       "The tide's at your chin. Hold your breath for 30 seconds. Breathe early: drink 5.",
     ),
     trial(
       2,
-      "last-round",
+      "ships-cook",
       "The Ship's Cook",
       "Feed the crew: name everyone's drink from memory. Miss one: drink 5.",
     ),
@@ -165,7 +165,7 @@ export const taproom: FloorCards = {
     ),
     trap(
       2,
-      "barnacle-stool",
+      "barnacle-rock",
       "Barnacle Rock",
       "You sat on a rock. Now you can't stand up. Roll d20.",
       "Fused to it. Drink 4, and stay seated until your next turn.",
@@ -173,7 +173,7 @@ export const taproom: FloorCards = {
     ),
     trap(
       2,
-      "undertow-tap",
+      "undertow",
       "The Undertow",
       "You wade in for a shell, and the sea pulls you under. Roll d20.",
       "Swallowed. Drink 4, holding your breath first.",
@@ -182,13 +182,13 @@ export const taproom: FloorCards = {
     mishap(
       2,
       "Trap",
-      "drain-vortex",
+      "whirlpool",
       "The Whirlpool",
       "A whirlpool opens in the bay. Last to spin once in their seat drinks 3.",
     ),
     ambush(
       2,
-      "happy-hour-eels",
+      "shock-eels",
       "The Shock Eels",
       "Two eels circle your boots, sparking. They are not here to talk. Roll d20.",
       "Zapped twice, in the nipples. Drink 4.",
@@ -196,7 +196,7 @@ export const taproom: FloorCards = {
     ),
     ambush(
       2,
-      "mermaid-hens",
+      "merfolk-wedding",
       "The Merfolk Wedding",
       "A merfolk wedding, out of wine. Nobody knows how they'll consummate. Toast, then roll d20.",
       "They take yours. Drink 4.",
@@ -205,14 +205,14 @@ export const taproom: FloorCards = {
     mishap(
       2,
       "Monster",
-      "kelp-bouncer",
+      "kelp-guard",
       "The Kelp Guard",
       "Living kelp asks who looks least like a fish. On three, everyone points. Most fingers: drink 3.",
     ),
     // 2d6, and doubles are a better win.
     monster(
       2,
-      "barnacle-bro",
+      "barnacled-knight",
       "The Barnacled Knight",
       "A knight so covered in barnacles he's mostly reef. He wants to arm-wrestle. Roll 2d6.",
       "",
@@ -227,7 +227,7 @@ export const taproom: FloorCards = {
     ),
     monster(
       2,
-      "jellyfish-shots",
+      "jellyfish-bloom",
       "Jellyfish Bloom",
       "A bloom of glowing jellyfish drifts past. Grab one. Roll d6.",
       "",
@@ -255,7 +255,7 @@ export const taproom: FloorCards = {
     ),
     trap(
       2,
-      "floating-stools",
+      "floating-wreckage",
       "Floating Wreckage",
       "Wreckage in the shallows, and a barrel is drifting at your knees. Roll d20.",
       "It takes your legs out. Drink 4.",
@@ -263,7 +263,7 @@ export const taproom: FloorCards = {
     ),
     ambush(
       2,
-      "fishing-charter",
+      "lost-fishermen",
       "The Lost Fishermen",
       "Six fishermen, lost at sea since Tuesday, still casting. Cast an imaginary line, then roll d20.",
       "Hooked by the ear. Drink 4.",
@@ -273,7 +273,7 @@ export const taproom: FloorCards = {
   finds: [
     relic(
       2,
-      "sunken-chest",
+      "wrecks-chest",
       "The Wreck's Chest",
       "A chest in a shipwreck, chained shut, still dry inside. Pry it open, or leave it.",
       13,
@@ -284,7 +284,7 @@ export const taproom: FloorCards = {
     ),
     relic(
       2,
-      "the-cash-register",
+      "captains-box",
       "The Captain's Box",
       "The captain's box floats past, lid shut. It's making a noise like a laugh. Open it, or don't.",
       13,
@@ -295,27 +295,27 @@ export const taproom: FloorCards = {
     ),
     treasure(
       2,
-      "message-bottle",
+      "message-in-a-bottle",
       "Message in a Bottle",
       "A note inside says SEND NUDES. Read it aloud in a pirate voice.",
       "draught",
     ),
     treasure(
       2,
-      "lifebuoy",
+      "ships-shield",
       "A Ship's Shield",
       "A round shield off a wreck's rail, still painted. Hold it up: everyone says 'ahoy'.",
       "shield",
     ),
     shrine(
       2,
-      "air-pocket",
+      "sea-cave",
       "The Sea Cave",
       "A dry sea cave and an old sailor's fiddle. Everyone sings a chorus, any chorus.",
     ),
     shrine(
       2,
-      "dry-booth",
+      "last-dry-rock",
       "The Last Dry Rock",
       "One rock the tide never reached. Sit. Breathe. Everyone toasts dry balls.",
     ),
@@ -332,7 +332,7 @@ export const taproom: FloorCards = {
     ),
     merchant(
       2,
-      "the-ferryman",
+      "ferryman",
       "The Ferryman",
       "A hooded figure in a rowboat takes you across, for a price, and sells extras.",
       [
@@ -343,14 +343,14 @@ export const taproom: FloorCards = {
     ),
     fork(
       2,
-      "two-taps",
+      "dare-coast",
       "The Dare",
       "The sailors bet you won't swim out naked to the wreck at high tide. They're already counting.",
       ["Not tonight", "Swim for it"],
     ),
     fork(
       2,
-      "the-trapdoor",
+      "wreck",
       "The Wreck",
       "The cliff path, or through the wreck's hull, with bubbles coming up out of it.",
       ["Cliff path", "Through the wreck"],
@@ -389,7 +389,7 @@ export const taproom: FloorCards = {
     ),
     elite(
       2,
-      "shark-bartender",
+      "shark-knight",
       "The Shark Knight",
       "A shark in armor, sharpening his sword on his teeth, is cutting someone down. Roll d20.",
       "It's you. Drink 6.",
@@ -401,7 +401,7 @@ export const taproom: FloorCards = {
     ),
     elite(
       2,
-      "the-kraken-bouncer",
+      "deep-one",
       "The Deep One",
       "Something under the bay has drunk every wreck's wine for a century. Roll d20.",
       "It drinks you a bit. Drink 6.",

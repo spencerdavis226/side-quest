@@ -128,10 +128,10 @@ test("VIP is a selectable add-on and Core can be deselected", async ({
   // (10 coin cards since The Quest 2.1).
   expect(session.cards).toHaveLength(301);
   expect(
-    session.cards.some((card: { id: string }) => card.id === "house.sheet-091"),
+    session.cards.some((card: { id: string }) => card.id === "core.house-091"),
   ).toBe(true);
   expect(
-    session.cards.some((card: { id: string }) => card.id === "house.sheet-106"),
+    session.cards.some((card: { id: string }) => card.id === "core.house-106"),
   ).toBe(false);
 });
 test("the card is the only dice control and keeps a generous target", async ({

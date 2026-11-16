@@ -28,7 +28,7 @@ import {
 // who keeps his soul in a cup. Each card holds its final text and
 // mechanics (the variety pass and outcome rewrites folded in).
 
-export const catacombs: FloorCards = {
+export const crypt: FloorCards = {
   fights: [
     // The Quest 2.1: a fight settled by one coin.
     monster(
@@ -49,7 +49,7 @@ export const catacombs: FloorCards = {
     ),
     monster(
       1,
-      "bachelor-ghosts",
+      "wedding-ghosts",
       "The Wedding Ghosts",
       "A wedding party from 1498 that died before the wedding night. They want one more dance. Roll d20.",
       "You're in the dance. Drink 4 and tell your worst hookup story.",
@@ -57,7 +57,7 @@ export const catacombs: FloorCards = {
     ),
     monster(
       1,
-      "ex-wraith",
+      "left-on-read",
       "Left on Read",
       "A wraith with a list of everyone who ghosted it, and it reads the list aloud. Roll d20.",
       "Your name is on it, twice. Drink 4.",
@@ -66,7 +66,7 @@ export const catacombs: FloorCards = {
     ),
     monster(
       1,
-      "bone-sommelier",
+      "skeleton-butler",
       "The Skeleton Butler",
       "A skeleton butler insists on announcing you, and gets your name wrong. Roll d20.",
       "Announced as 'Sir Smallcock'. Drink 4.",
@@ -75,13 +75,13 @@ export const catacombs: FloorCards = {
     // A table duel.
     trial(
       1,
-      "leech-swarm",
+      "vampire-bat",
       "The Vampire Bat",
       "Staring contest with your right neighbor, who plays the bat. Blink or laugh first: drink 3.",
     ),
     monster(
       1,
-      "hex-witch",
+      "fortune-teller",
       "The Fortune Teller",
       "A dead fortune teller reads your palm and your diary. Cross your fingers, then roll d20.",
       "Doomed. Drink 3, and confess your last hookup.",
@@ -92,7 +92,7 @@ export const catacombs: FloorCards = {
     ),
     monster(
       1,
-      "vampire-bro",
+      "virgin-hunter",
       "The Virgin Hunter",
       "A vampire who only drinks from virgins. Say 'I'm no virgin' twice, then roll d20.",
       "He doesn't believe you. Drink 4.",
@@ -101,7 +101,7 @@ export const catacombs: FloorCards = {
     ),
     monster(
       1,
-      "crypt-crawler",
+      "bone-centipede",
       "The Bone Centipede",
       "Something with a hundred bony legs and no manners. Roll 2d6.",
       "",
@@ -117,7 +117,7 @@ export const catacombs: FloorCards = {
     mishap(
       1,
       "Monster",
-      "hungover-mummy",
+      "die-a-virgin",
       "Die a Virgin",
       "On three, point at who'll die a virgin, mummified. Most fingers: drink 3.",
     ),
@@ -125,7 +125,7 @@ export const catacombs: FloorCards = {
     // A table duel.
     trial(
       1,
-      "lich-intern",
+      "lichs-scribe",
       "The Lich's Scribe",
       "The lich's scribe tests you: your left neighbor asks three trivia questions. Miss two: drink 4.",
       {
@@ -155,7 +155,7 @@ export const catacombs: FloorCards = {
     ),
     trial(
       1,
-      "the-seance",
+      "seance",
       "The Séance",
       "Hands joined, you summon a spirit: a dead pervert. Make someone laugh in 20 seconds, or drink 4.",
     ),
@@ -217,7 +217,7 @@ export const catacombs: FloorCards = {
       ...mishap(
         1,
         "Monster",
-        "zombie-roommate",
+        "zombie-lodger",
         "The Zombie Lodger",
         "Light the fuse. Pass a cup clockwise, naming a chore you skipped. The zombie bites whoever holds it.",
       ),
@@ -226,7 +226,7 @@ export const catacombs: FloorCards = {
     // 2d6, and doubles are a better win.
     monster(
       1,
-      "gym-ghoul",
+      "ghoul-knight",
       "The Ghoul Knight",
       "A ghoul knight still guarding a king three hundred years gone. He wants a duel. Roll 2d6.",
       "",
@@ -242,13 +242,13 @@ export const catacombs: FloorCards = {
     mishap(
       1,
       "Monster",
-      "skeleton-mariachi",
+      "skeleton-minstrels",
       "Skeleton Minstrels",
       "Three skeletons with lutes. Everyone twerks for 10 seconds; the worst twerk drinks 3.",
     ),
     trial(
       1,
-      "own-eulogy",
+      "your-own-eulogy",
       "Your Own Eulogy",
       "Give your own eulogy in 10 seconds. The table says if it moved them. Not moved: drink 4.",
     ),
@@ -257,7 +257,7 @@ export const catacombs: FloorCards = {
       ...mishap(
         1,
         "Trap",
-        "grabbing-hand",
+        "grabbing-hands",
         "The Grabbing Hands",
         "Hands grab from every coffin. Roll four dice.",
       ),
@@ -265,7 +265,7 @@ export const catacombs: FloorCards = {
     },
     ambush(
       1,
-      "ghost-tour",
+      "ghost-hunters",
       "The Ghost Hunters",
       "A band of ghost hunters is sure you're a ghost, and they want proof. Roll d20.",
       "You do the voice. Drink 3, then moan for them.",
@@ -295,7 +295,7 @@ export const catacombs: FloorCards = {
     ),
     relic(
       1,
-      "bone-vending",
+      "box-of-teeth",
       "The Box of Teeth",
       "A box full of teeth and, at the back, one potion. Shake it, or leave it.",
       12,
@@ -330,7 +330,7 @@ export const catacombs: FloorCards = {
     ),
     shrine(
       1,
-      "the-ossuary-bar",
+      "ossuary",
       "The Ossuary",
       "A banquet hall of bones, shut for centuries, with one last round. Everyone toasts the dead.",
     ),
@@ -347,7 +347,7 @@ export const catacombs: FloorCards = {
     ),
     merchant(
       1,
-      "the-undertaker",
+      "undertaker",
       "The Undertaker",
       "He measures you for a coffin while he sells you things. Very thorough around the inseam.",
       [
@@ -358,14 +358,14 @@ export const catacombs: FloorCards = {
     ),
     fork(
       1,
-      "the-split",
+      "split",
       "The Split",
       "The tunnel splits. Left: silence. Right: drums, chanting, maybe an orgy.",
       ["Left, quiet", "Right, loud"],
     ),
     fork(
       1,
-      "two-crypts",
+      "locked-door-crypt",
       "The Locked Door",
       "A key in the lock, and a sign: DO NOT. Something knocks from the other side.",
       ["Leave it locked", "Turn the key"],
@@ -383,7 +383,7 @@ export const catacombs: FloorCards = {
   elites: [
     elite(
       1,
-      "crypt-keepers-mom",
+      "crypt-matron",
       "The Crypt Matron",
       "The crypt's oldest ghost tends the dead like children. She does not like visitors. Roll d20.",
       "She tucks you into a coffin. Drink 5, then say goodnight.",
@@ -395,7 +395,7 @@ export const catacombs: FloorCards = {
     ),
     elite(
       1,
-      "deaths-intern",
+      "deaths-apprentice",
       "Death's Apprentice",
       "Death's apprentice is behind on his quota, and you'll do. Roll d20.",
       "Collected. Drink 5.",
@@ -436,7 +436,7 @@ export const catacombs: FloorCards = {
   bosses: [
     boss(
       1,
-      "hangover-hydra",
+      "bone-golem",
       "The Bone Golem",
       "Every bone in the crypt, stacked into one angry giant with one very big bone. Roll d20.",
       d20(
@@ -454,7 +454,7 @@ export const catacombs: FloorCards = {
     ),
     boss(
       1,
-      "the-bouncer",
+      "crypt-guardian",
       "The Crypt Guardian",
       `Seven feet of armor at a door. ${SIDE_BETS} Roll d20.`,
       d20(
@@ -478,7 +478,7 @@ export const catacombs: FloorCards = {
     ),
     boss(
       1,
-      "dj-ossuary",
+      "dancing-dead",
       "The Dancing Dead",
       "A skeleton fiddler plays the dead to their feet. Everyone dances, then you roll d20.",
       d20(
@@ -496,7 +496,7 @@ export const catacombs: FloorCards = {
     ),
     boss(
       1,
-      "the-lich-lord",
+      "lich-lord",
       "The Lich Lord",
       `His soul is in a jeweled cup. ${SIDE_BETS} Roll d20.`,
       d20(
@@ -514,7 +514,7 @@ export const catacombs: FloorCards = {
     ),
     boss(
       1,
-      "the-ghost-of-closing",
+      "crypt-keeper",
       "The Crypt Keeper",
       "Every soul down here owes him a coin, and so do you. Roll d20.",
       d20(

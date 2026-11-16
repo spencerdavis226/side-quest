@@ -38,7 +38,7 @@ export const sampleCards: CardDefinition[] = [
     "Cheapest drink at the table drinks 3. Broke behavior.",
   ),
   card(
-    "baller",
+    "big-money",
     "Big Money",
     "group",
     "Priciest drink at the table gives 4. Trickle-down economics.",
@@ -50,19 +50,19 @@ export const sampleCards: CardDefinition[] = [
     "Pick someone to carry you. They drink 4 for the both of you; you take the credit.",
   ),
   card(
-    "bad-text",
+    "u-up",
     "U Up?",
     "sip",
     "Anyone who sent a regrettable late-night text drinks 3. Anyone who answered one drinks 1.",
   ),
   card(
-    "fake-sick",
+    "wellness-program",
     "Corporate Wellness",
     "sip",
     "Anyone who faked sick to skip work drinks 3. Hungover counts.",
   ),
   card(
-    "crypto-bro",
+    "financial-genius",
     "Financial Genius",
     "sip",
     "Crypto owners drink 2. Everyone else gives 2.",
@@ -98,7 +98,7 @@ export const sampleCards: CardDefinition[] = [
     roll(1, 6, "Give {total} to whoever you'd least want to see naked."),
   ),
   card(
-    "high-roller",
+    "big-dick-energy",
     "Big Dick Energy",
     "challenge",
     "Roll d6. That's your size.",
@@ -140,7 +140,7 @@ export const sampleCards: CardDefinition[] = [
     ]),
   ),
   card(
-    "chosen-one",
+    "gods-drunkest-soldier",
     "God's Drunkest Soldier",
     "challenge",
     "Roll d20. Odd: drink it. Even: give it. God gave you this burden.",
@@ -162,13 +162,13 @@ export const sampleCards: CardDefinition[] = [
     "Pick a word. Clockwise, rhyme it. First bad rhyme or blank drinks 3.",
   ),
   card(
-    "rock-paper-drink",
+    "thumb-wrestle",
     "Thumb War",
     "challenge",
     "Thumb-war anyone you want. Loser drinks 3 and calls the winner daddy.",
   ),
   card(
-    "never-have-i",
+    "dirty-confession",
     "Dirty Confession",
     "category",
     "Never have I ever... Finish the sentence. Make it dirty. Anyone who has drinks 2.",
@@ -180,13 +180,13 @@ export const sampleCards: CardDefinition[] = [
     "Make a rule for the rest of the game. Make it stupid. Breakers drink 2.",
   ),
   card(
-    "no-names",
+    "who-the-fuck-are-you",
     "Who the Fuck Are You?",
     "rule",
     "Until your next turn, nobody uses names. Slip: drink 2.",
   ),
   card(
-    "potty-mouth",
+    "church-mode",
     "Church Mode",
     "rule",
     "Until your next turn, everyone whispers like they're in church. Slip: drink 2.",

@@ -76,7 +76,7 @@ const crawl = config(["dungeon"], null, "dungeon");
 /** The Quest, as a table whose Chronicle has met every rival. */
 const remembered = config(["dungeon"], null, "dungeon");
 const REMEMBERED = {
-  met: ["bradley", "mirabel", "tutt", "chuck", "gary", "queef"],
+  met: ["chad", "fingerbang", "sensei", "chuck", "gary", "queef"],
 };
 
 /** A situation, read from a state and the one before it. */
@@ -670,20 +670,20 @@ const situations: [string, GameConfig, Find][] = [
     (s) =>
       s.phase === "complete" &&
       !party(s).wiped &&
-      party(s).rival?.who === "bradley" &&
-      !!party(s).team?.includes("dungeon.rival-bradley-door"),
+      party(s).rival?.who === "chad" &&
+      !!party(s).team?.includes("dungeon.rival-chad-door"),
   ],
   [
     "realms-rival-sensei-pinned",
     crawl,
     (s) =>
       s.phase === "revealed" &&
-      currentCard(s).id === "dungeon.rival-tutt-pinned",
+      currentCard(s).id === "dungeon.rival-sensei-pinned",
   ],
   [
     "realms-rival-sensei-saved",
     crawl,
-    (s) => !!party(s).team?.includes("dungeon.rival-tutt-pinned"),
+    (s) => !!party(s).team?.includes("dungeon.rival-sensei-pinned"),
   ],
   [
     "realms-rival-ballad-queef",
