@@ -132,3 +132,39 @@ test("the class is drawn alone, then its scene comes in", async ({ page }) => {
     "Your adventurer",
   );
 });
+
+for (const mode of ["pokemon", "dungeon"] as const)
+  test(`the ${mode} opening shows no scene before its reveal`, async ({
+    page,
+  }) => {
+    // Owner, 2026-11-16: "your partner" showed for a moment, then the
+    // ball, then "your partner" again. While the first card was still
+    // being dealt there was no card, so nothing held the scene back.
+    await withMotion(page);
+    await page.addInitScript(() => {
+      const w = window as unknown as { __order: string[] };
+      w.__order = [];
+      new MutationObserver(() => {
+        for (const [sel, name] of [
+          [".prologue .pro-stage", "scene"],
+          [".moment", "reveal"],
+        ])
+          if (!w.__order.includes(name) && document.querySelector(sel))
+            w.__order.push(name);
+      }).observe(document, { childList: true, subtree: true });
+    });
+    // From setup, as at the table: Play deals the first card with motion.
+    await page.goto("./");
+    await page
+      .locator(".quest-mode")
+      .filter({ hasText: mode === "pokemon" ? "Pokémon League" : "The Quest" })
+      .click();
+    await page.getByRole("button", { name: "Play", exact: true }).click();
+    await expect(page.locator(".moment")).toBeVisible();
+    await expect(page.locator(".moment")).toHaveCount(0, { timeout: 10000 });
+    await expect(page.locator(".prologue .pro-stage")).toBeVisible();
+    const order = await page.evaluate(
+      () => (window as unknown as { __order: string[] }).__order,
+    );
+    expect(order).toEqual(["reveal", "scene"]);
+  });

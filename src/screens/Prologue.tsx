@@ -129,7 +129,12 @@ export default function Prologue({
   // it: the reveal plays alone, then the scene comes in (owner, 2026-11-15:
   // the draw "happens at the same time as the 'your adventurer' scene").
   const stageKey = `${at?.at ?? "rival"}-${card?.id ?? ""}`;
-  const held = useRevealFirst(stageKey, !!card && REVEALS.has(kind));
+  // Held from the step's arrival, not only once its card is face up: in
+  // the frames while the card is still being dealt there is no card, and
+  // the scene's heading and button showed before the reveal covered them
+  // (owner, 2026-11-16: "your partner" first, then the ball, then "your
+  // partner" again).
+  const held = useRevealFirst(stageKey, !handoff && REVEALS.has(kind), !!card);
   const tint = type
     ? ({
         "--pro-light": pokemonTypes[type].light,
@@ -274,8 +279,10 @@ const REVEAL_GRACE_MS = 450;
 
 /** True while the step `key` should keep its scene back: from its arrival
  * until its reveal moment has started and finished, or until the grace
- * passes with none. A step without a reveal is never held. */
-function useRevealFirst(key: string, reveals: boolean) {
+ * passes with none. A step without a reveal is never held. Until its card
+ * is `dealt` face up the step waits with no grace: the reveal is queued
+ * only once the card turns. */
+function useRevealFirst(key: string, reveals: boolean, dealt: boolean) {
   const { busy } = useMoments();
   const [step, setStep] = useState({ key, phase: "wait" });
   if (step.key !== key) setStep({ key, phase: "wait" });
@@ -290,14 +297,14 @@ function useRevealFirst(key: string, reveals: boolean) {
       setStep({ key, phase: "shown" });
       return;
     }
-    if (phase === "wait") {
+    if (phase === "wait" && dealt) {
       const id = setTimeout(
         () => setStep({ key, phase: "shown" }),
         REVEAL_GRACE_MS,
       );
       return () => clearTimeout(id);
     }
-  }, [key, reveals, phase, busy]);
+  }, [key, reveals, phase, busy, dealt]);
   return reveals && phase !== "shown";
 }
 
