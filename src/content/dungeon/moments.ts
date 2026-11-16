@@ -13,7 +13,7 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
       0,
       "road-head",
       "Road Head",
-      "Everyone tells their worst hookup on the road. The table picks the worst; they drink 2.",
+      "A head on a pike. Everyone tells it their worst trip. The table picks the worst; they drink 2.",
     ),
     moment(
       0,
@@ -190,7 +190,7 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
       7,
       "prophecy",
       "Prophecy",
-      "Everyone prophesies their left neighbor's sex life. The table picks the best; they give 3.",
+      "Everyone prophesies how their left neighbor dies. The table picks the best; they give 3.",
     ),
     moment(
       7,

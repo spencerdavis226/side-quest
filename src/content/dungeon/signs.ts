@@ -29,7 +29,7 @@ export const signCards: CardDefinition[] = [
   sign(
     "fallen-scale",
     "A Fallen Scale",
-    "A warm, sticky scale off {dragon}. Don't ask why it's sticky. Everyone touches it anyway.",
+    "A warm, wet scale off {dragon}. That's dragon snot. Everyone touches it anyway.",
     [
       { label: "Study it · drink 2", ...LORE },
       { label: "Wear it", loot: "shield" },

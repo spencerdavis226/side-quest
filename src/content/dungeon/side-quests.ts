@@ -280,7 +280,7 @@ export const sideQuests: SideQuest[] = [
     plea: plea(
       "dwarf",
       "The Dwarf's Plea",
-      "Something big took a dwarf's family vault. Everyone strokes an imaginary beard, suggestively.",
+      "Something big took a dwarf's family vault. Everyone strokes an imaginary beard, gravely.",
     ),
     guards: [
       guard(

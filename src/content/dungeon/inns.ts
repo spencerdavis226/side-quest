@@ -13,7 +13,7 @@ export const inns: CardDefinition[] = [
   landing(
     "sloppy-goat",
     "The Sloppy Goat",
-    "Sticky floors, stickier sheets. Everyone gives their left neighbor a tavern-wench name.",
+    "Sticky floors, stickier ale. Everyone names the tavern their left neighbor would run.",
     "Take a room",
   ),
   landing(
@@ -26,7 +26,7 @@ export const inns: CardDefinition[] = [
   landing(
     "hayloft",
     "A Hayloft",
-    "A warm hayloft, and the farmer's kid keeps checking on you. Everyone names their battle mount.",
+    "A warm hayloft, and the goat won't stop staring at you. Everyone names their battle mount.",
     "Nap in the hay",
     "die",
   ),
@@ -60,7 +60,7 @@ export const inns: CardDefinition[] = [
   landing(
     "painted-wagon",
     "A Painted Wagon",
-    "Actors let you sleep in their wagon. It smells like sex. Everyone strikes a heroic pose on three.",
+    "Actors let you sleep in their wagon. It smells like feet. Everyone strikes a heroic pose on three.",
     "Sleep",
     "smoke",
   ),

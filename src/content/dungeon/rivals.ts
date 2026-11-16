@@ -264,7 +264,7 @@ const chad = rival(
   },
 );
 
-/** Lady Fingerbang (key `fingerbang`): the thief, charming and handsy.
+/** Lady Fingerbang (key `fingerbang`): the thief, charming and light-fingered.
  * Everything is hers; a lost meeting costs two items and no hearts. */
 const fingerbang = rival(
   "fingerbang",
@@ -276,9 +276,9 @@ const fingerbang = rival(
       took: "Lady Fingerbang was here. Check your pockets: your {item}, gone.",
       back: "Lady Fingerbang hands back your {item}. It's a little warm.",
       lostTo: "'Mine,' says Lady Fingerbang, already halfway out the door.",
-      beaten: "Lady Fingerbang pouts, then pinches a bum on the way out.",
+      beaten: "Lady Fingerbang pouts, then picks a pocket on the way out.",
       ambush:
-        "Lady Fingerbang blocks the way, licking her fingers. 'Hello, you.'",
+        "Lady Fingerbang blocks the way, wearing your rings. 'Hello, you.'",
       meddle:
         "Her hand is in your pocket mid-swing. Roll twice, keep the worse.",
       swipe:
@@ -287,7 +287,7 @@ const fingerbang = rival(
       turned:
         "Lady Fingerbang turns on you. Everyone who voted to take her drinks 3.",
       snipe:
-        "Whatever this gives is already down Lady Fingerbang's top. 'Mine.'",
+        "Whatever this gives is already in Lady Fingerbang's sack. 'Mine.'",
     },
     style: { swipe: 4, ambush: 3, snipe: 2, poach: 1 },
     // Rivals Phase 4: the more she was beaten, the likelier she turns.
@@ -313,8 +313,11 @@ const fingerbang = rival(
     [
       "pat-down",
       "The Pat-Down",
-      "Lady Fingerbang offers to check you for weapons. Thoroughly. Roll d20 to say no.",
-      vs("She found something. Drink 3.", "You pat her down instead. Give 3."),
+      "Lady Fingerbang offers to check you for weapons. And coins. Roll d20 to say no.",
+      vs(
+        "She found your purse. Drink 3.",
+        "You check her pockets instead. Give 3.",
+      ),
     ],
     [
       "fair-trade",
@@ -347,7 +350,7 @@ const fingerbang = rival(
   {
     title: "Fingerbang's Offer",
     rules:
-      "Lady Fingerbang gives it all back if she can come. She crosses her heart, with your hand. Vote.",
+      "Lady Fingerbang gives it all back if she can come. She crosses her heart, in your gloves. Vote.",
     offers: [
       {
         label: "Take her",

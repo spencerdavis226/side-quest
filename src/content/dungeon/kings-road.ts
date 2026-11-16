@@ -41,7 +41,7 @@ export const kingsRoad: FloorCards = {
       0,
       "toll-gate",
       "The Toll Gate",
-      "Papers, or a peek. Left neighbor plays the guard: talk your way past in 10 seconds, or drink 3.",
+      "Papers, or a bribe. Left neighbor plays the guard: talk your way past in 10 seconds, or drink 3.",
     ),
     monster(
       0,
@@ -279,7 +279,7 @@ export const kingsRoad: FloorCards = {
       "A Chest in the Road",
       "An unlocked chest sits in the middle of the road. Nobody is around. Open it, or walk on.",
       11,
-      "It was a mimic, and it French-kissed you. Drink 4.",
+      "It was a mimic, and it ate your boots. Drink 4.",
       "Gold, and something useful. Flip someone a coin; they drink 3.",
       ["Walk on", "Open it"],
       { loot: "draught" },
@@ -302,7 +302,7 @@ export const kingsRoad: FloorCards = {
       0,
       "wishing-well",
       "Wishing Well",
-      "A mossy well full of old coins. Everyone makes a dirty wish out loud and toasts it.",
+      "A mossy well full of old coins. Everyone makes a petty wish out loud and toasts it.",
     ),
     shrine(
       0,
@@ -325,7 +325,7 @@ export const kingsRoad: FloorCards = {
       0,
       "old-soldier",
       "The Old Soldier",
-      "He's walked this road fifty years, and every story is about a brothel. He'll trade one for one.",
+      "He's walked this road fifty years, and every story is about his bowels. He'll trade one for one.",
       [
         { label: "Tell one · drink 2", loot: "round" },
         { label: "His war diary", cost: 2, loot: "candy" },
