@@ -80,24 +80,30 @@ A strong suggestion should answer yes to most of these:
 
 If a personal reference is missing context, preserve a clear placeholder or ask Spencer for the story behind it instead of inventing lore.
 
-## Realms: the crude voice (owner, 2026-11-15)
+## Realms: the crude voice (owner, 2026-11-15; crude, not horny since 2026-11-16)
 
 The Quest (the `dungeon` pack) speaks the CABIIN voice at full volume: adult, brash and crude, and not timid inside its borders. The League stays playful and clean. The plan and its phases are in `docs/REALMS_VOICE_PLAN.md`.
 
-- **Fair game:** sex, bodily functions, swearing, drugs and drinking, and roasting the players ("like your mom").
+Owner, 2026-11-16: "The quest has too many horny cards ... Crude sexual or abrasive or adult humor is fine, but sex isn't the goal here. It's a medium for crude and funny jokes, similar to the cabiin cards." CABIIN is the measure: swearing, insults, slapstick, bodily functions and deadpan, with sex as an occasional punchline.
+
+- **Fair game:** swearing, bodily functions, drugs and drinking, slapstick, roasting the players ("like your mom"), and a sex joke when it is a joke (a punchline, a pun title, an insult).
+- **Not the goal:** sex as a card's subject. No card asks the table to act anything sexual out (moan, flirt, describe a hookup, "sexually"), and the world's people are not "horny" as a default trait. If the line is only funny because it mentions sex, write a different joke.
+- **A crude title may stay if the card plays against it.** "Road Head" is a head on a pike; "The Moaning Hag" complains about her knees; "Harvest Orgy" turns out to be a turnip fair.
 - **Off-limits:** slurs, jokes at real groups (race, religion, sexuality, gender), anything sexual without consent (no kidnapped-princess sex jokes, no bestiality), and inside jokes or real names. Every card works for any table.
-- **The world plays it straight; its people don't.** The fantasy is real, but everyone in it is horny, hungover, cowardly or petty. A troll is still a troll; he just has opinions about your mom.
+- **The world plays it straight; its people don't.** The fantasy is real, but everyone in it is hungover, cowardly, petty or gross. A troll is still a troll; he just has opinions about your mom.
 - **Rationing:** about a third of the cards fully crude, a third brash or dry, the rest touched lightly. A crude word that isn't the joke gets cut.
 - **Menace kept:** bosses, the dragon and the last inns stay a threat that also insults you.
-- **The rivals are the loudest thing in the game.** Nothing else outdoes Sir Chad Thundercock.
+- **The rivals are the loudest thing in the game.** Nothing else outdoes Sir Chad Thundercock. Their names are the crude part; Lady Fingerbang is a thief, not a seductress.
 
-| Was                                             | Now                                                                                   |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------- |
-| Bard: "Brought a lute. Nobody asked."           | "Has fucked a dragon. Won't shut up about it."                                        |
-| Warlock: "Read none of the pact."               | "Sold his soul for a bigger dick. Got neither."                                       |
-| Omen "The Oath": drink with your off hand       | "Wank Hand": "Your good hand is for wanking now. Drink with the other one all quest." |
-| Omen "Heroic Names"                             | "Porn Names": everyone answers only to their porn name                                |
-| Summons: "Everyone raises a glass to the king." | "{dragon} woke under {lair}, horny. Everyone toasts the king's tiny balls."           |
-| Sign "Tracks": everyone sits in a footprint     | "Droppings": "A dragon turd, big enough to sit in. Nobody sits in it."                |
-| Ballad: "and never saw the lair."               | "and crapped out short of the lair."                                                  |
-| Rank "Grand Magus"                              | "Grand Wankmage"                                                                      |
+`tests/realms-voice.test.ts` fails a Realms card that says "horny", "sex", "hookup", "flirt" and the like.
+
+| Was (2026-11-15)                                                      | Now                                                                         |
+| --------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Summons: "{dragon} woke under {lair}, horny."                         | "{dragon} woke under {lair}, gassy. Everyone toasts the king's tiny balls." |
+| Road: "The forest is shut: the elves are having an orgy."             | "The forest is shut: the elves all have the shits."                         |
+| Morning Wood: "Praise your right neighbor's wood like an ancient oak" | "Complain about your morning like a stiff old oak for 20 seconds."          |
+| Road Head: "Everyone tells their worst hookup on the road."           | "A head on a pike. Everyone tells it their worst trip."                     |
+| Prophecy: "Everyone prophesies their left neighbor's sex life."       | "Everyone prophesies how their left neighbor dies."                         |
+| Jinx "Daddy": calls everyone 'Daddy'                                  | "The Ex": "The cursed player calls everyone 'my ex'. Slip: drink 1."        |
+| Kept: Warlock                                                         | "Sold his soul for a bigger dick. Got neither."                             |
+| Kept: omen "Wank Hand"                                                | "Your good hand is for wanking now. Drink with the other one all quest."    |

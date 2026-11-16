@@ -36,7 +36,7 @@ const jinxes: Readonly<Record<string, Jinx>> = {
   },
   "lich-lord": {
     name: "Undead",
-    rule: "The cursed player moans like a horny zombie before every sip. Forgets: drink 1.",
+    rule: "The cursed player groans like a hungover zombie before every sip. Forgets: drink 1.",
   },
   "crypt-keeper": {
     name: "Last Rites",
@@ -63,8 +63,8 @@ const jinxes: Readonly<Record<string, Jinx>> = {
     rule: "The cursed player gasps like a fish after every sip. Forgets: drink 1.",
   },
   "ex-letter-eel": {
-    name: "Daddy",
-    rule: "The cursed player calls everyone 'Daddy'. Slip: drink 1.",
+    name: "The Ex",
+    rule: "The cursed player calls everyone 'my ex'. Slip: drink 1.",
   },
   "smoke-wraith": {
     name: "Dragon Breath",
@@ -107,8 +107,8 @@ const jinxes: Readonly<Record<string, Jinx>> = {
     rule: "The cursed player sits perfectly still while anyone else rolls. Moves: drink 1.",
   },
   "dragon-glimmerwing": {
-    name: "Dragon Crush",
-    rule: "The cursed player flirts with the dragon before every sip. Forgets: drink 1.",
+    name: "Dragon Suck-Up",
+    rule: "The cursed player compliments the dragon before every sip. Forgets: drink 1.",
   },
   "dragon-stormcrown": {
     name: "Thunderstruck",

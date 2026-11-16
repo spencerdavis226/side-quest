@@ -52,7 +52,7 @@ export const crypt: FloorCards = {
       "wedding-ghosts",
       "The Wedding Ghosts",
       "A wedding party from 1498 that died before the wedding night. They want one more dance. Roll d20.",
-      "You're in the dance. Drink 4 and tell your worst hookup story.",
+      "You're in the dance. Drink 4 and give the worst wedding toast you can.",
       "You lay them to rest with a song. Give 4.",
     ),
     monster(
@@ -84,7 +84,7 @@ export const crypt: FloorCards = {
       "fortune-teller",
       "The Fortune Teller",
       "A dead fortune teller reads your palm and your diary. Cross your fingers, then roll d20.",
-      "Doomed. Drink 3, and confess your last hookup.",
+      "Doomed. Drink 3, and read your last sent text aloud.",
       "You flip her table. Give 4.",
       {
         crit: "You read her fortune back to her. She vanishes in shame. Give 8.",
@@ -157,7 +157,7 @@ export const crypt: FloorCards = {
       1,
       "seance",
       "The Séance",
-      "Hands joined, you summon a spirit: a dead pervert. Make someone laugh in 20 seconds, or drink 4.",
+      "Hands joined, you summon a spirit: a dead jester. Make someone laugh in 20 seconds, or drink 4.",
     ),
     mishap(
       1,
@@ -268,7 +268,7 @@ export const crypt: FloorCards = {
       "ghost-hunters",
       "The Ghost Hunters",
       "A band of ghost hunters is sure you're a ghost, and they want proof. Roll d20.",
-      "You do the voice. Drink 3, then moan for them.",
+      "You do the voice. Drink 3, then wail for them.",
       "You charge them for the sighting. Give 3.",
     ),
   ],
@@ -360,7 +360,7 @@ export const crypt: FloorCards = {
       1,
       "split",
       "The Split",
-      "The tunnel splits. Left: silence. Right: drums, chanting, maybe an orgy.",
+      "The tunnel splits. Left: silence. Right: drums, chanting, someone puking.",
       ["Left, quiet", "Right, loud"],
     ),
     fork(

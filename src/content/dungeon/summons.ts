@@ -19,7 +19,7 @@ export const summonsCards: CardDefinition[] = [
   summons(
     "kings-decree",
     "The King's Decree",
-    "{dragon} woke under {lair}, horny. Everyone toasts the king's tiny balls.",
+    "{dragon} woke under {lair}, gassy. Everyone toasts the king's tiny balls.",
   ),
   summons(
     "burned-village",
@@ -29,7 +29,7 @@ export const summonsCards: CardDefinition[] = [
   summons(
     "bounty",
     "The Bounty",
-    "WANTED: {dragon}. REWARD: gold, and a handy from the mayor. Everyone toasts the reward.",
+    "WANTED: {dragon}. REWARD: gold, and a free kick at the mayor. Everyone toasts the reward.",
   ),
   summons(
     "prophecy",

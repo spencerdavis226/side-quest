@@ -2,6 +2,17 @@
 
 Updated 2026-11-16. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Done 2026-11-16: Realms is crude, not horny
+
+Owner: "The quest has too many horny cards ... Crude sexual or abrasive or adult humor is fine, but sex isn't the goal here. It's a medium for crude and funny jokes, similar to the cabiin cards."
+
+- **Cards** (copy only; no ID, mechanic or number changed): about 70 lines across the `dungeon` pack. Three kinds of change: (1) nothing asks the table to act sex out (moan, flirt, hookup stories, "sexually", sex positions, a dirty toast or wish); (2) the world's people are no longer horny by default (the elves' orgy, horny skeletons and bandits, "smells like sex"); (3) Lady Fingerbang is a thief, not a seductress. Replacements are bodily, petty or slapstick. Crude titles stay where the card now plays against them (Road Head is a head on a pike, the Moaning Hag moans about her knees, Harvest Orgy is a turnip fair), so no ID was renamed.
+- **Also changed**: the Bard's second rank is "Smug Troubadour" (the old name keeps its colours for saved runs); jinx names "The Ex" (was "Daddy") and "Dragon Suck-Up" (was "Dragon Crush"); Glimmerwing's move "Flatter Me" (was "Flirt With Me"); the Wizard's rank line in `crawlTheme.ts`.
+- **Kept on purpose** (sex as a punchline, a pun or an insult; the owner may still cut them): the Warlock, Wizard and Bard taglines, the omens Wank Hand and Porn Names, the three virgin cards, Deez Nuts, Nice Pecker, Crabs, The Horny Oak, "SEND NUDES" in a bottle, Sensei's loincloth, Chuck the Cuck, and the rivals' names.
+- **Rule and guard**: the Realms section of `docs/CARD_VOICE_REFERENCE.md` is rewritten (sex is a punchline, never the subject); `tests/realms-voice.test.ts` fails a Realms card that says "horny", "sex", "hookup", "flirt" and the like (The Horny Oak is its one named exception).
+- **Checked**: `npm test` (793); lint; typecheck; `cards:review`; build (budgets pass, 5,361 KiB runtime); Chromium `test:sweep` 12 of 12. Not run: `test:balance` (no number changed), WebKit, a phone.
+- **Next**: the owner's read of the kept list; then the owner's table (below).
+
 ## Open 2026-11-16: WebKit release flakes blocked PR #106's deploy
 
 PR #106 passed every CI job, then its merge commit (`2e30345`, the same tree) failed the WebKit `@release` job twice, on two different tests, so `deploy` was skipped and the live site still serves `1c33fde`.

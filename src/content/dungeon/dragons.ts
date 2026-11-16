@@ -405,8 +405,8 @@ export const dragons: CardDefinition[] = [
       calm: [
         move("Dazzle", "Everyone shields their eyes. Last to drinks 2.", ONE),
         move(
-          "Flirt With Me",
-          "The drawer flirts with it. If the table boos, the drawer drinks 3.",
+          "Flatter Me",
+          "The drawer flatters it. If the table boos, the drawer drinks 3.",
         ),
         move(
           "Pose",
@@ -554,7 +554,7 @@ export const dragons: CardDefinition[] = [
         ),
         move(
           "A Secret",
-          "The drawer whispers a dirty secret to their left neighbor, who rates it. Tame: drink 3.",
+          "The drawer whispers a secret to their left neighbor, who rates it. Boring: drink 3.",
         ),
         move(
           "Coil",

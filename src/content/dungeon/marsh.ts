@@ -54,13 +54,13 @@ export const marsh: FloorCards = {
       6,
       "frog-prince",
       "The Frog Prince",
-      "A frog insists he's a prince, and he'd like a kiss. With tongue. Roll d6.",
+      "A frog insists he's a prince, and he'd like a kiss. He's mostly warts. Roll d6.",
       "",
       "",
       {
         roll: moves(
           [
-            "You kiss him. Tongue. Still a frog. Drink 3.",
+            "You kiss him. Warts. Still a frog. Drink 3.",
             "You kiss him again, to be sure. Drink 3.",
           ],
           [
@@ -208,7 +208,7 @@ export const marsh: FloorCards = {
       6,
       "bog-imps",
       "Bog Imps",
-      "Two bog imps humping in the reeds saw you see them. Whistle innocently, then roll d20.",
+      "Two bog imps shitting in the reeds saw you see them. Whistle innocently, then roll d20.",
       "Hush money. Drink 2.",
       "They pay you to forget. Give 2.",
     ),
@@ -319,7 +319,7 @@ export const marsh: FloorCards = {
       6,
       "fireflies",
       "The Fireflies",
-      "Fireflies, blinking in pairs. They're fucking. Everyone toasts their left neighbor.",
+      "Fireflies, blinking out of time. They're shitfaced. Everyone toasts their left neighbor.",
     ),
     merchant(
       6,
@@ -418,7 +418,7 @@ export const marsh: FloorCards = {
       "leech-queen",
       "The Leech Queen",
       "She's fed on every traveler since 1098, and she likes your type. Roll d20.",
-      "She sucks your neck. Enjoy the hickey. Drink 4.",
+      "She latches on. Enjoy the anemia. Drink 4.",
       "She asks your blood type. Make one up out loud, then give 4.",
       [
         trinket("Queen's Fang", { hearts: 1, roll: { boss: 1 } }),
@@ -431,7 +431,7 @@ export const marsh: FloorCards = {
       6,
       "bog-hydra",
       "The Bog Hydra",
-      "Five heads, all hungry, and two of them are making out. Roll d20.",
+      "Five heads, all hungry, and two of them aren't speaking. Roll d20.",
       d20(
         BOSS_NEED[0],
         "A head gets you. Drink 4.",

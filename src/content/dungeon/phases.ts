@@ -73,7 +73,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "faerie-queen": [
     duel(
-      "She demands a dirty toast. Give her one, ten seconds, no ums; the table judges. Fail: drink 3.",
+      "She demands a rhyming toast. Give her one, ten seconds, no ums; the table judges. Fail: drink 3.",
     ),
   ],
   "old-bear": [
@@ -245,7 +245,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "puppet-master": [
     duel(
-      "He makes the table dance. Name six sex positions in ten seconds. Fall short: drink 4.",
+      "He makes the table dance. Name six dances in ten seconds. Fall short: drink 4.",
     ),
   ],
   "frozen-apprentice": [
