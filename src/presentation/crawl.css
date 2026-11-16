@@ -351,6 +351,13 @@
   font: 700 17px / 1 var(--font-card-title);
   font-variant-numeric: lining-nums;
   cursor: pointer;
+  /* A chip that turns up mid-run (the rival, a jinx, the type edge) fades
+     in rather than popping (@starting-style, Safari 17.5). Opacity only:
+     fly.ts measures a chip as it arrives, so it must not move or scale. */
+  transition: opacity 220ms ease-out;
+  @starting-style {
+    opacity: 0;
+  }
 }
 /* A 44px target around a 34px chip. */
 .hud-chip::after {
@@ -1368,6 +1375,10 @@
   min-width: 0;
   color: #ffd9d2;
   font: 600 1rem/1.2 var(--font-tavern);
+  transition: opacity 160ms ease-out;
+  @starting-style {
+    opacity: 0;
+  }
 }
 .bag-type,
 .bag-bonus {

@@ -66,6 +66,14 @@ dialog p,
 .notice {
   color: var(--parchment);
 }
+/* Notices and the Update button fade in where they appear. */
+.notice,
+.update {
+  transition: opacity 240ms ease-out;
+  @starting-style {
+    opacity: 0;
+  }
+}
 .primary {
   position: relative;
   /* A deliberate fallback while the painted border image loads or offline
