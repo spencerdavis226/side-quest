@@ -51,6 +51,12 @@ function at(keeper: string, team: string[] = [], id?: string) {
     let s = takeRoads(createSession(crawl, cards, packs, seeded(seed)));
     const q = s.quest!;
     if (q.finale[STEP.keeper] !== keeper) continue;
+    // The first inn must hire a blade (its rare, the Mimic inn, hires
+    // nobody; a seventh rival on 2026-11-16 moved the seeds onto one).
+    const inn = q.stages
+      .flatMap((st) => st.cards)
+      .find((c) => c.id === q.finale[STEP.landing1]);
+    if (!inn?.ally) continue;
     const region = q.stages.find(
       (st) => st.pick === 8 && q.stages.indexOf(st) > 9,
     )!;

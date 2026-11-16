@@ -486,6 +486,7 @@ describe("the rival", () => {
       "Chuck the Cuck",
       "Gary Shitwhistle",
       "Dame Queefington",
+      "Lord Nocap",
     ]);
     const old = /Bradley|Mirabel|Tutt|Aldous/;
     for (const r of rivals) {
@@ -993,17 +994,18 @@ describe("the rival, Phase 3", () => {
     roundTrip(cursed);
   });
 
-  it("every rival's door ends their own way, and the stage pools hold all six", () => {
+  it("every rival's door ends their own way, and the stage pools hold all seven", () => {
     const run1 = run(1);
     const door = run1.quest!.stages.find(
       (st) => st.label === "The Lair's Door",
     )!;
-    // Six rivals' doors, and Sensei pinned (Phase 4).
-    expect(door.variants).toHaveLength(7);
+    // Seven rivals' doors (Lord Nocap since 2026-11-16), and Sensei
+    // pinned (Phase 4).
+    expect(door.variants).toHaveLength(8);
     const crossroads = run1.quest!.stages.find(
       (st) => st.label === "The Crossroads",
     )!;
-    expect(crossroads.ambush).toHaveLength(24);
+    expect(crossroads.ambush).toHaveLength(28);
     for (const r of rivals) {
       const offers = r.plea.offers!;
       expect(offers.some((o) => o.deed === "rival-refused")).toBe(true);

@@ -76,7 +76,7 @@ const crawl = config(["dungeon"], null, "dungeon");
 /** The Quest, as a table whose Chronicle has met every rival. */
 const remembered = config(["dungeon"], null, "dungeon");
 const REMEMBERED = {
-  met: ["chad", "fingerbang", "sensei", "chuck", "gary", "queef"],
+  met: ["chad", "fingerbang", "sensei", "chuck", "gary", "queef", "nocap"],
 };
 
 /** A situation, read from a state and the one before it. */
@@ -635,6 +635,28 @@ const situations: [string, GameConfig, Find][] = [
     crawl,
     (s) =>
       !!party(s).jinx?.startsWith("dungeon.rival-queef-") &&
+      s.phase === "hidden",
+  ],
+  // Lord Nocap the Mid (2026-11-16): his curse laid, a Do-Over waiting,
+  // and the collab joined at the door.
+  [
+    "realms-rival-nocap-jinx",
+    crawl,
+    (s) =>
+      !!party(s).jinx?.startsWith("dungeon.rival-nocap-") &&
+      s.phase === "hidden",
+  ],
+  [
+    "realms-rival-nocap-redo",
+    crawl,
+    (s) => party(s).rival?.who === "nocap" && awaitingRedo(s),
+  ],
+  [
+    "realms-rival-nocap-collab",
+    crawl,
+    (s) =>
+      party(s).rival?.who === "nocap" &&
+      !!party(s).team?.includes("dungeon.rival-nocap-door") &&
       s.phase === "hidden",
   ],
   [

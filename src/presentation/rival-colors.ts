@@ -11,4 +11,5 @@ export const RIVAL_COLOURS: Readonly<
   chuck: { light: "#9fd3e8", deep: "#1f5468" },
   gary: { light: "#b8c4a0", deep: "#3f4a2a" },
   queef: { light: "#f29a7a", deep: "#7a2a1a" },
+  nocap: { light: "#b6f24c", deep: "#3d5a0f" },
 };

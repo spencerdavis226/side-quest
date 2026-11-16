@@ -44,6 +44,17 @@ Owner: "a custom and high budget tray to better organize and view all items and 
 - **Risks**: touch gestures on iOS (pan-y on the pager, pointer capture after the slop) are unverified on a device; the League's glass screen and badge shine are the heaviest paint; `::backdrop` is not used (the scrim is a div).
 - **Device checks** added to `docs/DEVICE_CHECKLIST.md` ("The tray").
 - **Next**: the owner's review of the PR on a phone; then the device checks below.
+## Done 2026-11-16: Lord Nocap the Mid, a seventh rival
+
+Owner: "make a new nemesis that is basically a Gen Z kid with Gen Z lingo and attitude but in the theme of the game"; chose the name "Lord nocap the mid" from a list. Added as a seventh rival (the six stay).
+
+- **Who**: key `nocap`, short name "Lord Nocap". A teenage lordling who streams the quest: he makes you run won swings back ("Nah, run it back. I wasn't recording."), films your swing (the d20 twice, the worse kept) and posts you (a curse). Style `{ redo: 4, curse: 4, meddle: 1 }`; a lost meeting costs a heart and lays his curse (`No Cap`: end every sentence with "no cap"; `Main Character`: narrate yourself in the third person). Ritual: he rates everyone's aura; the table points at the lowest.
+- **Cards** (8): introduction and "Nocap, Part Two", Caught in 4K, That's Mid, Touch Grass, Aura Check, The Collab (join, everything back, ally +3, no betrayal) and The Final Stream (duel; prize Nocap's Ring Light, +1 to elite d20s). Lime colour (`rival-colors.ts`), the delapouite smartphone emblem (`quest-art.ts`, regenerated), his ally medallion (`views.tsx`).
+- **Balance** (`npm run test:balance`, all 8 pass): rivals' runs chad 31%, queef 34%, fingerbang 32%, chuck 38%, sensei 32%, gary 31%, nocap 35%; door: joined 42%, refused 44%, duel won 48%, went in first 42%. Tuning on the way: with a betrayal (and items taken per lost meeting) joining him won 31 to 32% and "joined" fell below "went in first", which the test forbids, so his betrayal is cut and a lost meeting costs a heart instead of an item. The seed shift put the Alchemist at 51% (ceiling 50%): its last rank, Philosopher, is +1 heart (was +2). No band or limit changed.
+- **Tests**: roster counts (rival, Chronicle odds now 1/8, workshop 1,962 cards, balance seven rivals, Chronicle spec seven entries); `allies.test.ts` now picks a run whose first inn hires a blade (the seed shift landed on the Mimic inn, which hires nobody). Fixtures `2026-11-16-realms-rival-nocap-jinx`, `-redo`, `-collab`.
+- **Checked**: `npm test` 799; `test:balance` 8 of 8; lint; typecheck; `cards:review`; build (budgets pass, 5,365 KiB runtime, initial 177.3 KiB gzip); Chromium `test:sweep` 12 of 12; Chromium `prologue`, `chronicle` and `crawl` specs; a 390x844 look at his prologue introduction and the Chronicle's seven rivals. Not run: WebKit locally, a phone.
+- **Not done**: a Chronicle feat of his own (the other rivals' feats are tied to their mechanics; he has none unique yet).
+
 ## Done 2026-11-16: Realms is crude, not horny
 
 Owner: "The quest has too many horny cards ... Crude sexual or abrasive or adult humor is fine, but sex isn't the goal here. It's a medium for crude and funny jokes, similar to the cabiin cards."

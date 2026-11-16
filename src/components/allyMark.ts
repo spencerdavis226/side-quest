@@ -18,6 +18,7 @@ const ALLY_MARK: [RegExp, QuestArt][] = [
   [/Saggynuts/, "rival-sensei"],
   [/Chuck/, "rival-chuck"],
   [/Queefington/, "rival-queef"],
+  [/Nocap/, "rival-nocap"],
   [/Bard/, "bard"],
   // Sir Bradley: an ally in a save from before the 2026-11-15 rename.
   [/Bradley/, "chad"],

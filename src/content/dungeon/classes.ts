@@ -298,7 +298,9 @@ export const classes: CardDefinition[] = [
       },
       {
         title: "Philosopher",
-        omen: { hearts: 2, satchel: 5, heal: 1, restock: "draught" },
+        // A heart less on 2026-11-16: a seventh rival moved the seeds and
+        // it read 51%, over the 50% ceiling.
+        omen: { hearts: 1, satchel: 5, heal: 1, restock: "draught" },
       },
     ],
   ),

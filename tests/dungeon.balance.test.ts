@@ -522,9 +522,9 @@ it("every rival is a nuisance, none a wall (Rivals Phase 2)", () => {
       `holding ${holding.toFixed(1)} items at the door; ` +
       `won: joined ${pct(rate(joined))}, refused ${pct(rate(refused))}, duel won ${pct(rate(duelWon))}, went in first ${pct(rate(duelLost))} (${duelLost.length}); ` +
       `betrayed ${pct(betrayed)} of ${turncoats.length} joined turncoats at the dragon; ` +
-      `joined by rival: ${["chad", "fingerbang", "chuck", "queef"].map((w) => `${w} ${pct(rate(joined.filter((s) => party(s).rival!.who === w)))}`).join(", ")}`,
+      `joined by rival: ${["chad", "fingerbang", "chuck", "queef", "nocap"].map((w) => `${w} ${pct(rate(joined.filter((s) => party(s).rival!.who === w)))}`).join(", ")}`,
   );
-  expect(who).toHaveLength(6);
+  expect(who).toHaveLength(7);
   for (const [name, r] of who) {
     expect(r, name).toBeGreaterThan(0.1);
     expect(r, name).toBeLessThan(0.5);
