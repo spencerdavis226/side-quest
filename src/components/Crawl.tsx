@@ -71,12 +71,7 @@ const TrophyMark = lazy(() => import("./TrophyMark"));
 // emblems stay out of the first-load chunk).
 const RivalMedal = lazy(() => import("./RivalMedal"));
 import { dragonStyle } from "../presentation/dragon-colors";
-import {
-  BadgeCase,
-  MatchupPanel,
-  TypeEdges,
-  TypeMark,
-} from "./LeagueMarks";
+import { BadgeCase, MatchupPanel, TypeEdges, TypeMark } from "./LeagueMarks";
 import { pokemonTypes, typeStyle } from "../presentation/pokemon-types";
 import { Modal } from "./UI";
 import type { ExtraShape } from "./extras";

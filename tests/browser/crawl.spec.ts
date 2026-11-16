@@ -238,7 +238,9 @@ test("a trial is settled with plaques; a loss costs hearts", async ({
   await expect(meter(page)).toHaveAccessibleName(
     new RegExp(`^Hearts: ${H - 2} of ${H}`),
   );
-  await expect(page.locator(".crawl-meter .qh-hp-num b")).toHaveText(`${H - 2}`);
+  await expect(page.locator(".crawl-meter .qh-hp-num b")).toHaveText(
+    `${H - 2}`,
+  );
 });
 
 test("a boss shows its wounds, its trinket, and comes back until it falls", async ({
