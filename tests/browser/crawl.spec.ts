@@ -864,9 +864,7 @@ test("a wiped run's wall shows the bosses felled and empty sockets", async ({
   await seed(
     page,
     rolled(
-      reveal(
-        crawlAt("dungeon.wedding-ghosts", STEP.floor2 + 2, { hearts: 1 }),
-      ),
+      reveal(crawlAt("dungeon.wedding-ghosts", STEP.floor2 + 2, { hearts: 1 })),
       1,
     ),
   );
@@ -968,7 +966,9 @@ test("a fork's loud door deals one of the floor's elites, which drops a trinket"
 }, info) => {
   await seed(
     page,
-    reveal(crawlAt("dungeon.shortcut-forest", STEP.floor1, {}, { other: true })),
+    reveal(
+      crawlAt("dungeon.shortcut-forest", STEP.floor1, {}, { other: true }),
+    ),
   );
   await expect(page.locator(".game-card .card-ribbon")).toHaveText(
     "Old Forest · Fork",
@@ -1356,4 +1356,44 @@ test("the road out: two regions, one taken, the map", async ({
   await expect(map).toHaveAccessibleName(new RegExp(first));
   await expect(map.locator(".map-region.current")).toHaveCount(1);
   await page.screenshot({ path: info.outputPath("map.png") });
+});
+// Haptics (app/haptics.ts, an experiment): on iOS 18+ a tap that decides a
+// card clicks a hidden switch's label, which plays the system tick. Here
+// the switch attribute is faked so Chromium takes that path; the device
+// itself is the only proof of the tick. What this holds: the switch
+// toggles, and its click reaches no other listener (a moment's "swallow
+// the next click", the dice overlay's "any click finishes the roll").
+test("a decision taps the hidden haptic switch, and only it", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(HTMLInputElement.prototype, "switch", {
+      configurable: true,
+      get() {
+        return this.hasAttribute("switch");
+      },
+    });
+    const w = window as unknown as { seen: string[] };
+    w.seen = [];
+    // Registered after the app's own guard, as a moment's swallow is.
+    addEventListener("load", () =>
+      addEventListener(
+        "click",
+        (e) => w.seen.push((e.target as Element).tagName),
+        true,
+      ),
+    );
+  });
+  await seed(
+    page,
+    reveal(crawlAt("dungeon.bridge-troll", STEP.boss1, { hits: 1 })),
+  );
+  await page.getByRole("button", { name: "Won", exact: true }).click();
+  const toggle = page.locator(".haptic input[switch]");
+  await expect(toggle).toBeChecked();
+  const seen = await page.evaluate(
+    () => (window as unknown as { seen: string[] }).seen,
+  );
+  expect(seen.every((tag) => tag !== "LABEL" && tag !== "INPUT")).toBe(true);
+  expect(seen.length).toBeGreaterThan(0);
 });

@@ -39,6 +39,7 @@ import {
 import { PresentationController } from "./presentation/controller";
 import { usePresentation } from "./presentation/usePresentation";
 import { screenChange } from "./presentation/screenChange";
+import { haptic } from "./app/haptics";
 import { theme } from "./presentation/theme";
 import { preloadUrl } from "./presentation/artwork";
 import {
@@ -414,6 +415,7 @@ function App() {
                 controller.settleAll();
               }}
               onOffer={(index) => {
+                haptic();
                 controller.offer(index);
                 controller.settleAll();
               }}
@@ -431,10 +433,19 @@ function App() {
               onTap={() => controller.tap()}
               onChoose={(option) => controller.choose(option)}
               onSettle={(won, spoil) => controller.settle(won, spoil)}
-              onSpend={(item) => controller.spend(item)}
-              onOffer={(index, branch) => controller.offer(index, branch)}
+              onSpend={(item) => {
+                haptic();
+                controller.spend(item);
+              }}
+              onOffer={(index, branch) => {
+                haptic();
+                controller.offer(index, branch);
+              }}
               onCatch={() => controller.catch(true)}
-              onBall={(ball) => controller.ball(ball)}
+              onBall={(ball) => {
+                haptic();
+                controller.ball(ball);
+              }}
               onRelease={() => controller.catch(false)}
               onSend={(id) => controller.send(id)}
               onSpoils={(index) => controller.spoils(index)}
