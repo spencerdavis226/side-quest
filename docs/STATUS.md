@@ -2,6 +2,15 @@
 
 Updated 2026-11-16. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Open 2026-11-16: WebKit release flakes blocked PR #106's deploy
+
+PR #106 passed every CI job, then its merge commit (`2e30345`, the same tree) failed the WebKit `@release` job twice, on two different tests, so `deploy` was skipped and the live site still serves `1c33fde`.
+
+- **"a restored unrolled dice card rolls by tapping the card"** (`dice.spec.ts`): fixed in the test. The stage holds `settled:<faces>` for 700 ms only, and Playwright's later polls are 1 s apart, so a slow runner polled past it and saw `revealing`. `recordStages`/`settledStage` record every state the stage passes through (a MutationObserver from an init script) and wait for the settled one. The other `settled:` assertions in that file (not `@release`) have the same race and also read the stage's attributes after it settles; convert them the same way when they flake.
+- **Play stalled behind its View Transition** (`game.spec.ts` "legacy finite game", `@release`, PR #107's first run): a regression from #106. With motion on, `screenChange` ran Play's update inside `startViewTransition`, whose callback the browser runs when it is ready to snapshot; the WebKit runner had not run it after 5 s. Fixed: `screenChange` runs the update itself if the snapshot has not happened within 250 ms (or the call throws), and a change still waiting runs before the next. `pages.spec.ts` stubs a transition that never snapshots: it failed before the fix and passes after.
+- **"offline reload keeps the same revealed card"** (`game.spec.ts`, not `@release`): fails 4 of 4 in Chromium here, on a build of `1c33fde` (before #106) too. `innerText()` reads the title as "" (an ancestor is `visibility: hidden` at that instant) though `toHaveText(/\S/)` passed just before. Not fixed.
+- **"the League's starter turns over with a ball"** (`moments.spec.ts`, `@release`): not fixed, cause unknown. `.moment-omen` never appeared in 5 s; the same failure hit run 362 (2026-11-15) before #106. Boot to the moment measured 0.9 s in Chromium and 1.3 s at 6x CPU throttling, so slow start-up is unlikely; a candidate is the director dropping a moment when `document.hidden` reads true as the prologue turns the starter on load (`Director.tsx`). Needs the CI trace (`browser-failures-webkit` artifact) or a WebKit run to confirm.
+
 ## Done 2026-11-16: using the iOS 26 minimum
 
 Owner: "Let's do all recommendations and the 2 device only experiments in whatever order and methods you recommend" (after asking what the iOS 26 / Safari 26 minimum makes possible). One commit per item:

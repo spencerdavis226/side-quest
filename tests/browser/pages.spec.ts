@@ -344,3 +344,29 @@ test("Reduced Motion changes screens without a View Transition", async ({
   await expect(page.locator(".progress")).toBeVisible();
   expect(await transitions(page)).toBe(0);
 });
+// WebKit in CI once never ran a transition's callback within 5 s, and Play
+// waited on it (run 376, 2026-11-16). A browser that never snapshots must
+// not hold the game: the change runs without its crossfade.
+test("a View Transition that never snapshots does not hold up Play", async ({
+  page,
+}) => {
+  await withMotion(page);
+  await page.addInitScript(() => {
+    const w = window as unknown as { skipped: number };
+    w.skipped = 0;
+    document.startViewTransition = (() => ({
+      skipTransition: () => w.skipped++,
+      finished: new Promise(() => {}),
+      ready: new Promise(() => {}),
+      updateCallbackDone: new Promise(() => {}),
+    })) as unknown as typeof document.startViewTransition;
+  });
+  await page.goto("./");
+  await page.getByRole("button", { name: "Play", exact: true }).click();
+  await expect(page.locator(".progress")).toBeVisible({ timeout: 2000 });
+  expect(
+    await page.evaluate(
+      () => (window as unknown as { skipped: number }).skipped,
+    ),
+  ).toBe(1);
+});
