@@ -50,8 +50,13 @@
   text-wrap: balance;
   overflow-wrap: anywhere;
   text-align: center;
-  /* A hair of optical lift keeps the ink centred on the painted band. */
-  transform: translateY(-0.02em);
+  /* The box is the capitals and baseline, not the font's line box (Safari
+     18.2+), so the ink centres on the painted band without a hand lift. */
+  text-box: trim-both cap alphabetic;
+  /* The trimmed half-leading, ascender room and descent (0.45em in all,
+     measured) back as even padding: the box keeps its height, so the fit
+     picks the same size as before and descenders keep their room. */
+  padding-block: 0.225em;
   margin: 0;
 }
 .study-body {
@@ -570,7 +575,11 @@
   /* Wider than the rules' padding: the longest ("Victory Road · Pokémon
      Center") would otherwise be clipped at both ends on a 320px phone. */
   margin: max(6px, 1.3cqw) calc(-1 * max(12px, 2.55cqw)) 0;
-  padding: max(3px, 0.75cqw) max(12px, 3cqw);
+  /* Trimmed to the capitals (the ribbon is all caps) with the trimmed
+     0.49em (measured) back as even padding: the same height as before, the
+     letters centred on the band. */
+  padding: calc(max(3px, 0.75cqw) + 0.245em) max(12px, 3cqw);
+  text-box: trim-both cap alphabetic;
   overflow: hidden;
   clip-path: polygon(
     0 0,

@@ -774,6 +774,8 @@
   text-align: center;
   font-size: 0.82em;
   line-height: 1;
+  /* Centred by its capitals, not the font's line box (Safari 18.2+). */
+  text-box: trim-both cap alphabetic;
 }
 .card-choice.offers.plaques-3 .offer-label {
   font-size: clamp(13px, 4.4cqw, max(19px, 4cqw));
