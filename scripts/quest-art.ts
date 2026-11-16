@@ -46,6 +46,7 @@ const picks: Record<string, string> = {
   "rival-chuck": "delapouite/binoculars",
   "rival-gary": "delapouite/whistle",
   "rival-queef": "delapouite/trumpet",
+  "rival-nocap": "delapouite/smartphone",
   // Map terrain and stops.
   gate: "castle",
   road: "mountain-road",
