@@ -4,6 +4,17 @@
    timing, plays on transforms and opacity, and is skipped by a tap. The
    particles are one canvas (`particles.ts`) above the stage. */
 
+/* Mirrored moments (left and right, hero and foe, top and bottom lids)
+   share one keyframe each, signed by --side: -1 the left, top or hero side,
+   1 the other (@property, so a value that is not a number falls back to 1
+   rather than voiding the whole transform). Checked frame by frame against
+   the ten keyframes they replaced. */
+@property --side {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
 .moment {
   --m: 1;
   /* Each moment's length, from its stage (`Stage` sets --stage-len); a
@@ -140,7 +151,6 @@
     transparent 6deg 18deg
   );
   mask-image: radial-gradient(circle, #000 0, transparent 46%);
-  -webkit-mask-image: radial-gradient(circle, #000 0, transparent 46%);
   opacity: 0;
   animation:
     evo-rays-in var(--len) ease both,
@@ -187,7 +197,6 @@
   inset: 8%;
   background: #fff;
   mask: center / contain no-repeat;
-  -webkit-mask: center / contain no-repeat;
   filter: drop-shadow(0 0 14px #fff);
 }
 .evo-glyph.old {
@@ -847,21 +856,23 @@
   box-shadow: 0 0 40px #000c;
 }
 .vs-panel.hero {
+  --side: -1;
   top: 0;
   clip-path: polygon(0 0, 100% 0, 100% 62%, 0 100%);
   background:
     linear-gradient(115deg, #000a, transparent 55%),
     linear-gradient(160deg, var(--hero) 0, var(--hero-deep) 70%, #0d0a14 100%);
-  animation: vs-hero var(--len) cubic-bezier(0.2, 0.9, 0.2, 1.04) both;
+  animation: vs-panel var(--len) cubic-bezier(0.2, 0.9, 0.2, 1.04) both;
 }
 .vs-panel.foe {
+  --side: 1;
   bottom: 0;
   clip-path: polygon(0 38%, 100% 0, 100% 100%, 0 100%);
   background:
     linear-gradient(295deg, #000a, transparent 55%),
     linear-gradient(340deg, var(--foe) 0, var(--foe-deep) 70%, #0d0a14 100%);
   justify-content: flex-end;
-  animation: vs-foe var(--len) cubic-bezier(0.2, 0.9, 0.2, 1.04) both;
+  animation: vs-panel var(--len) cubic-bezier(0.2, 0.9, 0.2, 1.04) both;
 }
 .vs-lines {
   position: absolute;
@@ -970,9 +981,9 @@
 .vs-mark i:last-child {
   transform: translateY(0.12em);
 }
-@keyframes vs-hero {
+@keyframes vs-panel {
   0% {
-    transform: translateX(-110%);
+    transform: translateX(calc(110% * var(--side)));
   }
   13%,
   76% {
@@ -980,20 +991,7 @@
   }
   92%,
   100% {
-    transform: translateX(-115%);
-  }
-}
-@keyframes vs-foe {
-  0% {
-    transform: translateX(110%);
-  }
-  13%,
-  76% {
-    transform: none;
-  }
-  92%,
-  100% {
-    transform: translateX(115%);
+    transform: translateX(calc(115% * var(--side)));
   }
 }
 @keyframes vs-lines {
@@ -1081,12 +1079,6 @@
     from 0deg,
     var(--foe) 0deg 4deg,
     transparent 4deg 13deg
-  );
-  -webkit-mask-image: radial-gradient(
-    circle,
-    #000 0,
-    #0006 14%,
-    transparent 34%
   );
   mask-image: radial-gradient(circle, #000 0, #0006 14%, transparent 34%);
   opacity: 0;
@@ -1300,7 +1292,6 @@
       #3a322c calc(16vh - 8px) calc(16vh + 8px),
       transparent calc(16vh + 8px) 32vh
     );
-  -webkit-mask-image: linear-gradient(180deg, #000 88%, transparent);
   mask-image: linear-gradient(180deg, #000 88%, transparent);
   filter: drop-shadow(0 8px 10px #000);
   animation: gate-bars var(--len) cubic-bezier(0.55, 0, 1, 0.45) both;
@@ -1546,25 +1537,27 @@
   margin-top: calc(clamp(56px, 18vw, 120px) / -2);
 }
 .clash-side.mine {
+  --side: -1;
   right: 50%;
-  animation: clash-in-left var(--len) cubic-bezier(0.5, 0, 0.9, 0.6) both;
+  animation: clash-in var(--len) cubic-bezier(0.5, 0, 0.9, 0.6) both;
 }
 .clash-side.theirs {
+  --side: 1;
   left: 50%;
-  animation: clash-in-right var(--len) cubic-bezier(0.5, 0, 0.9, 0.6) both;
+  animation: clash-in var(--len) cubic-bezier(0.5, 0, 0.9, 0.6) both;
 }
 .clash-advantage .clash-side.theirs,
 .clash-disadvantage .clash-side.mine {
-  animation-name: clash-in-right, clash-break;
+  animation-name: clash-in, clash-break;
 }
 .clash-advantage .clash-side.mine {
-  animation-name: clash-in-left, clash-win;
+  animation-name: clash-in, clash-win;
 }
 .clash-disadvantage .clash-side.theirs {
-  animation-name: clash-in-right, clash-win;
+  animation-name: clash-in, clash-win;
 }
 .clash-disadvantage .clash-side.mine {
-  animation-name: clash-in-left, clash-break;
+  animation-name: clash-in, clash-break;
 }
 .clash-flash {
   position: absolute;
@@ -1605,35 +1598,16 @@
     0 3px 0 #6a140a,
     0 0 22px #ff4a2a;
 }
-@keyframes clash-in-left {
+@keyframes clash-in {
   0% {
-    transform: translateX(-60vw) rotate(-200deg);
+    transform: translateX(calc(60vw * var(--side)))
+      rotate(calc(200deg * var(--side)));
   }
   29% {
-    transform: translateX(4px);
+    transform: translateX(calc(-4px * var(--side)));
   }
   36% {
-    transform: translateX(-14px);
-  }
-  44%,
-  84% {
-    transform: none;
-    opacity: 1;
-  }
-  100% {
-    transform: none;
-    opacity: 0;
-  }
-}
-@keyframes clash-in-right {
-  0% {
-    transform: translateX(60vw) rotate(200deg);
-  }
-  29% {
-    transform: translateX(-4px);
-  }
-  36% {
-    transform: translateX(14px);
+    transform: translateX(calc(14px * var(--side)));
   }
   44%,
   84% {
@@ -2200,7 +2174,6 @@
     transparent 7deg 20deg
   );
   mask-image: radial-gradient(circle, #000 0, transparent 40%);
-  -webkit-mask-image: radial-gradient(circle, #000 0, transparent 40%);
   animation:
     badge-shade var(--len) ease both,
     spin calc(var(--m) * 9s) linear infinite;
@@ -2244,7 +2217,6 @@
     )
     5% 0 / 300% 100% no-repeat;
   mask: center / contain no-repeat;
-  -webkit-mask: center / contain no-repeat;
   mix-blend-mode: screen;
   animation: badge-glint var(--len) ease-in-out both;
 }
@@ -2373,13 +2345,6 @@
     transparent
   );
   opacity: 0.7;
-  -webkit-mask-image: linear-gradient(
-    0deg,
-    transparent,
-    #000 30%,
-    #000 60%,
-    transparent
-  );
   mask-image: linear-gradient(
     0deg,
     transparent,
@@ -3103,8 +3068,6 @@
 /* Lifted: the scroll shows (no unroll), the seal splits, and a mask three
    times the scroll's height slides up so the paper burns from the foot. */
 .moment-jinx.lifted .jinx-scroll {
-  -webkit-mask: linear-gradient(180deg, #000 0 46%, transparent 48% 100%) 0 0 /
-    100% 300% no-repeat;
   mask: linear-gradient(180deg, #000 0 46%, transparent 48% 100%) 0 0 / 100%
     300% no-repeat;
   animation: jinx-burn var(--len) linear both;
@@ -3194,15 +3157,12 @@
 @keyframes jinx-burn {
   0%,
   32% {
-    -webkit-mask-position: 0 19%;
     mask-position: 0 19%;
   }
   62% {
-    -webkit-mask-position: 0 69%;
     mask-position: 0 69%;
   }
   100% {
-    -webkit-mask-position: 0 100%;
     mask-position: 0 100%;
   }
 }
@@ -3289,10 +3249,12 @@
   left: calc(var(--die) / -2);
 }
 .pair-left {
-  animation: pair-left var(--len) cubic-bezier(0.3, 0, 0.2, 1) both;
+  --side: -1;
+  animation: pair-in var(--len) cubic-bezier(0.3, 0, 0.2, 1) both;
 }
 .pair-right {
-  animation: pair-right var(--len) cubic-bezier(0.3, 0, 0.2, 1) both;
+  --side: 1;
+  animation: pair-in var(--len) cubic-bezier(0.3, 0, 0.2, 1) both;
 }
 .pair-die {
   display: grid;
@@ -3342,48 +3304,29 @@
 }
 /* They spin in from either side, meet with a clack at 28%, spring a hair
    apart and sit side by side. */
-@keyframes pair-left {
+@keyframes pair-in {
   0% {
     opacity: 0;
-    transform: translateX(-60vw) rotate(-260deg);
+    transform: translateX(calc(60vw * var(--side)))
+      rotate(calc(260deg * var(--side)));
   }
   28% {
     opacity: 1;
-    transform: translateX(calc(var(--die) * -0.52)) rotate(0);
+    transform: translateX(calc(var(--die) * 0.52 * var(--side))) rotate(0);
   }
   36% {
-    transform: translateX(calc(var(--die) * -0.62)) rotate(-4deg);
+    transform: translateX(calc(var(--die) * 0.62 * var(--side)))
+      rotate(calc(4deg * var(--side)));
   }
   46%,
   84% {
     opacity: 1;
-    transform: translateX(calc(var(--die) * -0.58));
+    transform: translateX(calc(var(--die) * 0.58 * var(--side)));
   }
   100% {
     opacity: 0;
-    transform: translateX(calc(var(--die) * -0.58)) translateY(-12px);
-  }
-}
-@keyframes pair-right {
-  0% {
-    opacity: 0;
-    transform: translateX(60vw) rotate(260deg);
-  }
-  28% {
-    opacity: 1;
-    transform: translateX(calc(var(--die) * 0.52)) rotate(0);
-  }
-  36% {
-    transform: translateX(calc(var(--die) * 0.62)) rotate(4deg);
-  }
-  46%,
-  84% {
-    opacity: 1;
-    transform: translateX(calc(var(--die) * 0.58));
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(calc(var(--die) * 0.58)) translateY(-12px);
+    transform: translateX(calc(var(--die) * 0.58 * var(--side)))
+      translateY(-12px);
   }
 }
 @keyframes pair-word {
@@ -3495,7 +3438,6 @@
     0 20px 50px #000c;
   transform-origin: 0 50%;
   backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
   animation: bookcase var(--len) cubic-bezier(0.55, 0, 0.35, 1) both;
 }
 .bookcase::after {
@@ -4004,7 +3946,6 @@
   justify-content: center;
   gap: 4vmin;
   background: rgb(8 5 3 / 0.93);
-  -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
   animation: ball-stage-in 220ms ease-out both;
   touch-action: manipulation;
@@ -4120,12 +4061,6 @@
 .ball-donut-half {
   position: absolute;
   inset: 0;
-  -webkit-mask-image: radial-gradient(
-    circle closest-side,
-    transparent 0 61.5%,
-    #000 62.5% 99%,
-    transparent 100%
-  );
   mask-image: radial-gradient(
     circle closest-side,
     transparent 0 61.5%,
@@ -4349,7 +4284,6 @@
     #fff2b833 0deg 7deg,
     transparent 7deg 22deg
   );
-  -webkit-mask-image: radial-gradient(circle, #000 12%, transparent 58%);
   mask-image: radial-gradient(circle, #000 12%, transparent 58%);
   animation: natural-rays 1.4s ease-out both;
 }
@@ -4710,7 +4644,6 @@
   inset: 0 22% 14%;
   background: linear-gradient(180deg, transparent, var(--c) 75%, #fff 100%);
   clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%);
-  -webkit-mask-image: linear-gradient(180deg, transparent, #000 60%, #0008);
   mask-image: linear-gradient(180deg, transparent, #000 60%, #0008);
   filter: blur(10px);
   opacity: 0.6;
@@ -5319,7 +5252,6 @@
     #f2c94c33 0deg 6deg,
     transparent 6deg 18deg
   );
-  -webkit-mask-image: radial-gradient(circle, #000 0, transparent 42%);
   mask-image: radial-gradient(circle, #000 0, transparent 42%);
   opacity: 0;
   animation:
@@ -5967,61 +5899,52 @@
   height: auto;
   overflow: visible;
 }
-.dragon-eye .eye-lid,
-.dragon-eye .eye-pupil,
-.dragon-eye .eye-glow,
-.dragon-eye .eye-iris {
-  transform-box: fill-box;
-  transform-origin: center;
-}
-.dragon-eye .lid-top {
-  transform-origin: 50% 0%;
-}
-.dragon-eye .lid-bottom {
-  transform-origin: 50% 100%;
+/* The dragon's eye (DragonEye.tsx), nested (Safari 17.2). The lids are
+   mirrored by --side, so each state animates both with one rule. */
+.dragon-eye {
+  & .eye-lid,
+  & .eye-pupil,
+  & .eye-glow,
+  & .eye-iris {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  & .lid-top {
+    --side: -1;
+    transform-origin: 50% 0%;
+  }
+  & .lid-bottom {
+    --side: 1;
+    transform-origin: 50% 100%;
+  }
 }
 /* Open: shut, a crack, then wide; the pupil narrows on the table. */
-.eye-open .lid-top {
-  animation: lid-top-open calc(var(--len) * 0.3) calc(var(--len) * 0.15)
-    cubic-bezier(0.5, 0, 0.2, 1) both;
+.eye-open {
+  & .eye-lid {
+    animation: lid-open calc(var(--len) * 0.3) calc(var(--len) * 0.15)
+      cubic-bezier(0.5, 0, 0.2, 1) both;
+  }
+  & .eye-pupil {
+    animation: pupil-narrow calc(var(--len) * 0.22) calc(var(--len) * 0.4)
+      cubic-bezier(0.3, 0, 0.2, 1) both;
+  }
+  & .eye-glow {
+    animation: eye-breathe calc(var(--len) * 0.6) calc(var(--len) * 0.2) ease
+      both;
+  }
 }
-.eye-open .lid-bottom {
-  animation: lid-bottom-open calc(var(--len) * 0.3) calc(var(--len) * 0.15)
-    cubic-bezier(0.5, 0, 0.2, 1) both;
-}
-.eye-open .eye-pupil {
-  animation: pupil-narrow calc(var(--len) * 0.22) calc(var(--len) * 0.4)
-    cubic-bezier(0.3, 0, 0.2, 1) both;
-}
-.eye-open .eye-glow {
-  animation: eye-breathe calc(var(--len) * 0.6) calc(var(--len) * 0.2) ease both;
-}
-@keyframes lid-top-open {
+@keyframes lid-open {
   0% {
     transform: none;
   }
   30% {
-    transform: translateY(-16%);
+    transform: translateY(calc(16% * var(--side)));
   }
   45% {
-    transform: translateY(-10%);
+    transform: translateY(calc(10% * var(--side)));
   }
   100% {
-    transform: translateY(-100%);
-  }
-}
-@keyframes lid-bottom-open {
-  0% {
-    transform: none;
-  }
-  30% {
-    transform: translateY(16%);
-  }
-  45% {
-    transform: translateY(10%);
-  }
-  100% {
-    transform: translateY(100%);
+    transform: translateY(calc(100% * var(--side)));
   }
 }
 @keyframes pupil-narrow {
@@ -6047,38 +5970,28 @@
   }
 }
 /* Rage: already open, it widens, then snaps to a hairline, glowing hot. */
-.eye-rage .lid-top {
-  transform: translateY(-100%);
-  animation: lid-top-rage calc(var(--len) * 0.5) ease both;
+.eye-rage {
+  & .eye-lid {
+    transform: translateY(calc(100% * var(--side)));
+    animation: lid-rage calc(var(--len) * 0.5) ease both;
+  }
+  & .eye-pupil {
+    animation: pupil-rage calc(var(--len) * 0.5) calc(var(--len) * 0.08)
+      cubic-bezier(0.7, 0, 0.2, 1) both;
+  }
+  & .eye-glow {
+    animation: eye-flare calc(var(--len) * 0.7) ease both;
+  }
+  & .eye-iris {
+    animation: iris-hot calc(var(--len) * 0.7) ease both;
+  }
 }
-.eye-rage .lid-bottom {
-  transform: translateY(100%);
-  animation: lid-bottom-rage calc(var(--len) * 0.5) ease both;
-}
-.eye-rage .eye-pupil {
-  animation: pupil-rage calc(var(--len) * 0.5) calc(var(--len) * 0.08)
-    cubic-bezier(0.7, 0, 0.2, 1) both;
-}
-.eye-rage .eye-glow {
-  animation: eye-flare calc(var(--len) * 0.7) ease both;
-}
-.eye-rage .eye-iris {
-  animation: iris-hot calc(var(--len) * 0.7) ease both;
-}
-@keyframes lid-top-rage {
+@keyframes lid-rage {
   0% {
-    transform: translateY(-45%);
+    transform: translateY(calc(45% * var(--side)));
   }
   100% {
-    transform: translateY(-62%);
-  }
-}
-@keyframes lid-bottom-rage {
-  0% {
-    transform: translateY(45%);
-  }
-  100% {
-    transform: translateY(62%);
+    transform: translateY(calc(62% * var(--side)));
   }
 }
 @keyframes pupil-rage {
@@ -6115,21 +6028,18 @@
   }
 }
 /* Close: open, then the lids fall shut and the glow dies. */
-.eye-close .lid-top {
-  animation: lid-top-open calc(var(--len) * 0.5) reverse
-    cubic-bezier(0.6, 0, 0.8, 0.4) both;
-  animation-delay: calc(var(--len) * 0.35);
-}
-.eye-close .lid-bottom {
-  animation: lid-bottom-open calc(var(--len) * 0.5) reverse
-    cubic-bezier(0.6, 0, 0.8, 0.4) both;
-  animation-delay: calc(var(--len) * 0.35);
-}
-.eye-close .eye-pupil {
-  transform: scaleX(1.6);
-}
-.eye-close .eye-glow {
-  animation: eye-die var(--len) ease both;
+.eye-close {
+  & .eye-lid {
+    animation: lid-open calc(var(--len) * 0.5) reverse
+      cubic-bezier(0.6, 0, 0.8, 0.4) both;
+    animation-delay: calc(var(--len) * 0.35);
+  }
+  & .eye-pupil {
+    transform: scaleX(1.6);
+  }
+  & .eye-glow {
+    animation: eye-die var(--len) ease both;
+  }
 }
 @keyframes eye-die {
   0% {

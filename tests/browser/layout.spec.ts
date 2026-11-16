@@ -574,8 +574,22 @@ test("a short phone scrolls long rules with a visible overflow affordance", asyn
   await page.addStyleTag({ content: ":root {font-size:24px}" });
   await expect(page.locator(".study-rules")).toHaveAttribute(
     "data-overflow",
-    "bottom",
+    "scroll",
   );
+  // The fades follow the scroll in CSS (a scroll timeline): only the bottom
+  // one at the top, only the top one at the end.
+  const rules = page.locator(".study-rules");
+  const fades = () =>
+    rules.evaluate((el) => {
+      const cs = getComputedStyle(el);
+      return [
+        cs.getPropertyValue("--fade-top"),
+        cs.getPropertyValue("--fade-bottom"),
+      ];
+    });
+  await expect.poll(fades).toEqual(["0px", "26px"]);
+  await rules.evaluate((el) => el.scrollTo(0, el.scrollHeight));
+  await expect.poll(fades).toEqual(["26px", "0px"]);
   expect(
     await page
       .locator(".study-rules p")

@@ -9,6 +9,7 @@ import {
   type ComponentType,
   type ReactNode,
 } from "react";
+import { haptic } from "../app/haptics";
 import type { SessionState, CardDefinition, Loot, Offer } from "../game/types";
 import { diceResultText } from "../presentation/dice/result-text";
 import { diceNotation, rollTarget } from "../game/dice";
@@ -82,6 +83,11 @@ import { cardFinish } from "../components/moments/detect";
 import { cardAccent } from "../components/cardAccent";
 import { useAnnounce } from "../components/Announcer";
 import { reducedMotion } from "../presentation/motion";
+/** Dev-only: `?flip=native` turns the face culling below off (a device
+ * experiment). Always false in a production build. */
+const NATIVE_FLIP =
+  import.meta.env.DEV &&
+  new URLSearchParams(location.search).get("flip") === "native";
 // A dice overlay that can't be fetched (offline before it was cached) must
 // not strand a roll: the saved result goes straight to the card instead.
 type DiceProps = ComponentProps<
@@ -264,7 +270,10 @@ export function Play({
   useEffect(() => {
     if (stamping && stamping.at !== session.discarded) setStamping(null);
   }, [stamping, session.discarded]);
+  // The tick goes with the tap itself: iOS ignores one from the stamp's
+  // timer (app/haptics.ts).
   const won = () => {
+    haptic();
     const ask = spoilsOnWin(session);
     if (felledWord && fellingVerdict(session))
       setStamping({ at: session.discarded, ask });
@@ -419,6 +428,10 @@ export function Play({
   // backface-visibility. Cull by the actual rendered angle, not a timer, so
   // interrupted/reduced-motion turns cannot expose mirrored card text.
   useLayoutEffect(() => {
+    // Device experiment (2026-11-16, dev server only): `?flip=native` leaves
+    // both faces to backface-visibility, to see whether iOS 26 still paints
+    // the mirrored face. See docs/DEVICE_CHECKLIST.md before removing this.
+    if (NATIVE_FLIP) return;
     const el = ref.current;
     const rotator = el?.querySelector<HTMLElement>(".card-rotator");
     const front = el?.querySelector<HTMLElement>(".card-front");
@@ -678,7 +691,10 @@ export function Play({
               </button>
               <button
                 className="card-choice-option lost"
-                onClick={() => onSettle(false)}
+                onClick={() => {
+                  haptic();
+                  onSettle(false);
+                }}
               >
                 Lost
               </button>
@@ -941,6 +957,7 @@ export function Play({
           spoils={card.spoils}
           theme={crawl}
           onTake={(i) => {
+            haptic();
             setAsking(null);
             onSettle(true, i);
           }}

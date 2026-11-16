@@ -1,6 +1,6 @@
 # Physical-device release checklist
 
-Automated browser emulation is not evidence of actual iOS Home Screen behavior. Complete this on a real small iPhone, a large iPhone, and an iPad before sharing a polished release. The oldest supported system is iOS/iPadOS 16 (the CSS needs container query units); if an older device is at hand, check setup and one card on it.
+Automated browser emulation is not evidence of actual iOS Home Screen behavior. Complete this on a real small iPhone, a large iPhone, and an iPad before sharing a polished release. The oldest supported system is iOS/iPadOS 26 (since 2026-11-14; it was 16); a device on an older system should show "Side Quest needs iOS 26 or newer."
 
 - [ ] Top-edge blur (2026-10-17, owner report on iPhone 15 Pro): remove the Home Screen icon and add it again (the status-bar setting is read only then). The status bar should be a solid dark brown with light text, the header below it sharp, and the wood should reach the bottom edge with no gap or cut-off card. Check setup and a game. After the 14px strip (2026-10-17): no softened band of wood just below the status bar either.
 - [ ] Header redesign (2026-10-17): in a plain game, Pub Crawl and Pokémon League, check the studs, the plaque and (crawls) the strip read from across the table, the strip's chips open the satchel, effects and party dialogs, and nothing sits under the status-bar frost in the installed app.
@@ -35,6 +35,16 @@ Automated browser emulation is not evidence of actual iOS Home Screen behavior. 
 - [ ] Reach a dice card: first tap rolls; second tap during motion finishes through the landing, holds briefly, then dismisses. Confirm faces match the saved values and only the later tap discards.
 - [ ] Publish an update while a game is active: no mid-game reload. Then force-quit and reopen the app (or reload in Safari) and confirm the new build loads on its own, with the saved game intact. Finish/end a game after another update and apply the offered Update game, then check offline relaunch.
 - [ ] Measure interaction smoothness on real devices; target 60 fps. No performance claim until measured.
+
+## Safari 26 features (2026-11-16): to check on a phone
+
+Only Chromium emulation so far; WebKit runs the `@release` suite in CI.
+
+- [ ] Haptics (experiment, `src/app/haptics.ts`): in the installed app with System Haptics on (Settings, Sounds & Haptics), tap Won, Lost, a merchant's or inn's choice, a bag item and a Poké Ball throw. Each should give one light tick, and nothing else should happen (no moment skipped, no roll finished early, no second action). Then turn System Haptics off: no tick. Owner's call: keep it, trim it, or remove it.
+- [ ] The flip (experiment): run `npm run dev:phone`, open the printed Network URL with `?flip=native` on the iPhone in Safari, and flip long-rule cards slowly and quickly, including mid-turn taps. If the reverse never shows mirrored text, the culling in `Play.tsx` can go (and the flag with it); if it does, keep both and note the iOS version here. Compare with the same URL without the flag.
+- [ ] Long rules: on a short phone (or with enlarged text) scroll a long rule; the bottom fade shows at the top, both mid-scroll, only the top fade at the end, and a stationary tap still turns the card.
+- [ ] Screen changes: Play, the prologue's Deal the first card, End game and Set up a new game crossfade (about a quarter second) with no flash, jump, or status-bar band in the installed app; with Reduce Motion on they change at once.
+- [ ] Titles and plaques: card titles, ribbons and plaque labels look centred on their bands (the change is about 1px).
 
 ## Automated evidence
 

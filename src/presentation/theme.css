@@ -66,6 +66,14 @@ dialog p,
 .notice {
   color: var(--parchment);
 }
+/* Notices and the Update button fade in where they appear. */
+.notice,
+.update {
+  transition: opacity 240ms ease-out;
+  @starting-style {
+    opacity: 0;
+  }
+}
 .primary {
   position: relative;
   /* A deliberate fallback while the painted border image loads or offline
@@ -267,7 +275,6 @@ dialog p,
   display: inline-block;
   background: linear-gradient(135deg, #ffedb1, #a77334);
   mask: center / contain no-repeat;
-  -webkit-mask: center / contain no-repeat;
 }
 .meter-badge {
   object-fit: contain;
@@ -974,7 +981,6 @@ dialog.closing {
 .pack-logo-gilt,
 .pack-logo-seal::before,
 .pack-logo-seal::after {
-  -webkit-mask: var(--pack-seal) center / contain no-repeat;
   mask: var(--pack-seal) center / contain no-repeat;
 }
 .pack-logo-gilt {
@@ -1560,7 +1566,6 @@ button.quest-meter:active:not(:disabled) {
   /* The painting ends in stone steps whose dark bands sat behind the text
      link like a second button. Fade the hall into the table before the
      buttons, so only the painted Play again plate reads as a button. */
-  -webkit-mask-image: linear-gradient(#000 62%, transparent 86%);
   mask-image: linear-gradient(#000 62%, transparent 86%);
   pointer-events: none;
 }

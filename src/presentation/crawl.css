@@ -12,7 +12,6 @@
   height: 1em;
   background: currentColor;
   mask: center / contain no-repeat;
-  -webkit-mask: center / contain no-repeat;
 }
 
 /* --- The meter: hearts, satchel ------------------------------------------ */
@@ -352,6 +351,13 @@
   font: 700 17px / 1 var(--font-card-title);
   font-variant-numeric: lining-nums;
   cursor: pointer;
+  /* A chip that turns up mid-run (the rival, a jinx, the type edge) fades
+     in rather than popping (@starting-style, Safari 17.5). Opacity only:
+     fly.ts measures a chip as it arrives, so it must not move or scale. */
+  transition: opacity 220ms ease-out;
+  @starting-style {
+    opacity: 0;
+  }
 }
 /* A 44px target around a 34px chip. */
 .hud-chip::after {
@@ -775,6 +781,8 @@
   text-align: center;
   font-size: 0.82em;
   line-height: 1;
+  /* Centred by its capitals, not the font's line box (Safari 18.2+). */
+  text-box: trim-both cap alphabetic;
 }
 .card-choice.offers.plaques-3 .offer-label {
   font-size: clamp(13px, 4.4cqw, max(19px, 4cqw));
@@ -1003,7 +1011,6 @@
   height: 58%;
   background: #fffaf0;
   mask: center / contain no-repeat;
-  -webkit-mask: center / contain no-repeat;
 }
 /* An empty socket: a badge still to win, unnamed. */
 .type-mark.empty {
@@ -1368,6 +1375,10 @@
   min-width: 0;
   color: #ffd9d2;
   font: 600 1rem/1.2 var(--font-tavern);
+  transition: opacity 160ms ease-out;
+  @starting-style {
+    opacity: 0;
+  }
 }
 .bag-type,
 .bag-bonus {
@@ -2229,13 +2240,6 @@
   /* A worn stamp: ink missing in flecks. Two grids of pinholes at
      unrelated sizes, so a fleck shows only where both have a hole and the
      wear never reads as a regular dot pattern. */
-  -webkit-mask-image:
-    radial-gradient(circle at 30% 60%, #0000 0 1.6px, #000 2.2px),
-    radial-gradient(circle at 70% 20%, #0000 0 2.4px, #000 3px);
-  -webkit-mask-size:
-    11px 9px,
-    17px 23px;
-  -webkit-mask-composite: source-over;
   mask-image:
     radial-gradient(circle at 30% 60%, #0000 0 1.6px, #000 2.2px),
     radial-gradient(circle at 70% 20%, #0000 0 2.4px, #000 3px);

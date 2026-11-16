@@ -38,6 +38,8 @@ import {
 } from "./app/persistence";
 import { PresentationController } from "./presentation/controller";
 import { usePresentation } from "./presentation/usePresentation";
+import { screenChange } from "./presentation/screenChange";
+import { haptic } from "./app/haptics";
 import { theme } from "./presentation/theme";
 import { preloadUrl } from "./presentation/artwork";
 import {
@@ -201,6 +203,10 @@ function App() {
   useEffect(() => {
     if (!display) void loadPackCards(prefs.config.packIds).catch(() => {});
   }, [display, prefs.config.packIds]);
+  // A game opens through a View Transition, and so does the way back.
+  const begin = (next: SessionState) =>
+    screenChange(() => controller.start(next));
+  const toSetup = () => screenChange(() => controller.clear());
   const start = () => {
     const packIds = prefs.config.packIds.filter((id) =>
       packs.some((pack) => pack.id === id),
@@ -240,11 +246,11 @@ function App() {
         open,
         rivalMemory(chronicleRef.current),
       );
-    if (ready) return controller.start(fresh(ready));
+    if (ready) return begin(fresh(ready));
     setStarting(true);
     setLoadFailed(false);
     loadPackCards(game.packIds)
-      .then((cards) => controller.start(fresh(cards)))
+      .then((cards) => begin(fresh(cards)))
       .catch(() => setLoadFailed(true))
       .finally(() => setStarting(false));
   };
@@ -254,7 +260,7 @@ function App() {
   const replay = (s: SessionState) => {
     if (starting) return;
     setNews(null);
-    if (!s.quest?.party) return controller.start(replaySession(s));
+    if (!s.quest?.party) return begin(replaySession(s));
     const ready = loadedPackCards(s.config.packIds);
     const fresh = (cards: Parameters<typeof createSession>[1]) =>
       createSession(
@@ -265,11 +271,11 @@ function App() {
         unlocks(chronicleRef.current),
         rivalMemory(chronicleRef.current),
       );
-    if (ready) return controller.start(fresh(ready));
+    if (ready) return begin(fresh(ready));
     setStarting(true);
     loadPackCards(s.config.packIds)
-      .then((cards) => controller.start(fresh(cards)))
-      .catch(() => controller.start(replaySession(s)))
+      .then((cards) => begin(fresh(cards)))
+      .catch(() => begin(replaySession(s)))
       .finally(() => setStarting(false));
   };
   const finish = (id: number) => controller.finish(id);
@@ -394,7 +400,7 @@ function App() {
             celebrate={motion === "complete"}
             starting={starting}
             onReplay={() => replay(display)}
-            onSetup={() => controller.clear()}
+            onSetup={toSetup}
             onFinish={() => finish(transition)}
             onUndo={undoable ? () => controller.undo() : undefined}
           />
@@ -409,10 +415,11 @@ function App() {
                 controller.settleAll();
               }}
               onOffer={(index) => {
+                haptic();
                 controller.offer(index);
                 controller.settleAll();
               }}
-              onDeal={() => setDealt(runKey(display))}
+              onDeal={() => screenChange(() => setDealt(runKey(display)))}
               onMenu={() => setModal("menu")}
             />
           </Suspense>
@@ -426,10 +433,19 @@ function App() {
               onTap={() => controller.tap()}
               onChoose={(option) => controller.choose(option)}
               onSettle={(won, spoil) => controller.settle(won, spoil)}
-              onSpend={(item) => controller.spend(item)}
-              onOffer={(index, branch) => controller.offer(index, branch)}
+              onSpend={(item) => {
+                haptic();
+                controller.spend(item);
+              }}
+              onOffer={(index, branch) => {
+                haptic();
+                controller.offer(index, branch);
+              }}
               onCatch={() => controller.catch(true)}
-              onBall={(ball) => controller.ball(ball)}
+              onBall={(ball) => {
+                haptic();
+                controller.ball(ball);
+              }}
               onRelease={() => controller.catch(false)}
               onSend={(id) => controller.send(id)}
               onSpoils={(index) => controller.spoils(index)}
@@ -477,8 +493,10 @@ function App() {
             // The brief dice-result reveal can start under the open menu;
             // settle it so a confirmed End game is never ignored.
             controller.settleAll();
-            controller.clear();
-            setModal(null);
+            screenChange(() => {
+              controller.clear();
+              setModal(null);
+            });
           }}
         />
       </main>

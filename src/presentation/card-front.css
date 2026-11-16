@@ -50,8 +50,13 @@
   text-wrap: balance;
   overflow-wrap: anywhere;
   text-align: center;
-  /* A hair of optical lift keeps the ink centred on the painted band. */
-  transform: translateY(-0.02em);
+  /* The box is the capitals and baseline, not the font's line box (Safari
+     18.2+), so the ink centres on the painted band without a hand lift. */
+  text-box: trim-both cap alphabetic;
+  /* The trimmed half-leading, ascender room and descent (0.45em in all,
+     measured) back as even padding: the box keeps its height, so the fit
+     picks the same size as before and descenders keep their room. */
+  padding-block: 0.225em;
   margin: 0;
 }
 .study-body {
@@ -84,12 +89,6 @@
   mix-blend-mode: multiply;
   /* Strongest through the middle of the parchment, falling away toward the
      frame lip so the lattice reads as material rather than a stamped logo. */
-  -webkit-mask-image: radial-gradient(
-    120% 100% at 50% 46%,
-    #000 0%,
-    rgb(0 0 0 / 0.5) 46%,
-    transparent 80%
-  );
   mask-image: radial-gradient(
     120% 100% at 50% 46%,
     #000 0%,
@@ -121,34 +120,52 @@
   overscroll-behavior: contain;
   touch-action: pan-y;
 }
-.study-rules[data-overflow="bottom"],
-.study-rules[data-overflow="both"] {
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    #000 calc(100% - 26px),
-    transparent
-  );
-  mask-image: linear-gradient(to bottom, #000 calc(100% - 26px), transparent);
+/* Long rules fade at whichever end has more to read. The fades follow the
+   scroll itself (a scroll-driven animation, Safari 26): the top one grows
+   over the first tenth of the scroll and the bottom one goes over the last,
+   so scrolling costs no script and no render. */
+@property --fade-top {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
 }
-.study-rules[data-overflow="top"] {
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 26px);
-  mask-image: linear-gradient(to bottom, transparent 0, #000 26px);
+@property --fade-bottom {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 26px;
 }
-.study-rules[data-overflow="both"] {
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0,
-    #000 26px,
-    #000 calc(100% - 26px),
-    transparent
-  );
+@keyframes rules-fade {
+  0% {
+    --fade-top: 0px;
+  }
+  10% {
+    --fade-top: 26px;
+  }
+  90% {
+    --fade-bottom: 26px;
+  }
+  100% {
+    --fade-top: 26px;
+    --fade-bottom: 0px;
+  }
+}
+.study-rules[data-overflow="scroll"] {
   mask-image: linear-gradient(
     to bottom,
     transparent 0,
-    #000 26px,
-    #000 calc(100% - 26px),
+    #000 var(--fade-top),
+    #000 calc(100% - var(--fade-bottom)),
     transparent
   );
+  animation: rules-fade linear both;
+  animation-timeline: scroll(self);
+}
+@media (prefers-reduced-motion: reduce) {
+  /* Not motion: the fades track the finger. The global block's 0.01ms would
+     still fill a scroll timeline, but keep it explicit. */
+  .study-rules[data-overflow="scroll"] {
+    animation-duration: auto !important;
+  }
 }
 .card-footer {
   flex-shrink: 0;
@@ -558,7 +575,11 @@
   /* Wider than the rules' padding: the longest ("Victory Road · Pokémon
      Center") would otherwise be clipped at both ends on a 320px phone. */
   margin: max(6px, 1.3cqw) calc(-1 * max(12px, 2.55cqw)) 0;
-  padding: max(3px, 0.75cqw) max(12px, 3cqw);
+  /* Trimmed to the capitals (the ribbon is all caps) with the trimmed
+     0.49em (measured) back as even padding: the same height as before, the
+     letters centred on the band. */
+  padding: calc(max(3px, 0.75cqw) + 0.245em) max(12px, 3cqw);
+  text-box: trim-both cap alphabetic;
   overflow: hidden;
   clip-path: polygon(
     0 0,
@@ -879,7 +900,6 @@
   z-index: 1;
   pointer-events: none;
   isolation: isolate;
-  -webkit-mask: url("./art/title-enamel.webp") 0 0 / 100% 100% no-repeat;
   mask: url("./art/title-enamel.webp") 0 0 / 100% 100% no-repeat;
 }
 .accented .card-enamel {
@@ -1270,7 +1290,6 @@
   height: 100%;
   border-radius: var(--card-radius);
   pointer-events: none;
-  -webkit-mask: url("./art/title-enamel.webp") 0 0 / 100% 100% no-repeat;
   mask: url("./art/title-enamel.webp") 0 0 / 100% 100% no-repeat;
   mix-blend-mode: soft-light;
   opacity: 0.6;
