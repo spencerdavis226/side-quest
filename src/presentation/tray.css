@@ -56,17 +56,12 @@ dialog.tray.closing::backdrop {
       rgb(4 2 1 / 0.82) 70%
     ),
     rgb(4 2 1 / 0.35);
-  animation: tray-scrim-in 260ms ease-out both;
+  /* Fades in with the rise (Sheet.tsx, Web Animations). */
   /* Its own layer: the pull fades it every frame (gestures.ts). */
   will-change: opacity;
 }
 .tray.closing .tray-scrim {
   animation: tray-scrim-out 200ms ease-in forwards;
-}
-@keyframes tray-scrim-in {
-  from {
-    opacity: 0;
-  }
 }
 @keyframes tray-scrim-out {
   to {
@@ -92,20 +87,11 @@ dialog.tray.closing::backdrop {
   top: max(var(--sheet-top), calc(100% - 980px));
   border-radius: var(--t-radius) var(--t-radius) 0 0;
   background: var(--t-shell, #2a1d14);
-  box-shadow:
-    0 -1px 0 var(--t-rim, rgb(255 255 255 / 0.2)),
-    0 -18px 60px rgb(0 0 0 / 0.55);
-  animation: tray-rise var(--sheet-ms, 520ms) var(--sheet-ease, ease-out)
-    backwards;
+  box-shadow: 0 -1px 0 var(--t-rim, rgb(255 255 255 / 0.2));
   will-change: transform;
   overflow: hidden;
   isolation: isolate;
   contain: layout style paint;
-}
-@keyframes tray-rise {
-  from {
-    transform: translate3d(0, 100%, 0);
-  }
 }
 .tray.closing:not(.pulled) .tray-sheet {
   animation: tray-fall 200ms cubic-bezier(0.5, 0, 0.75, 0.4) forwards;
@@ -279,7 +265,7 @@ dialog.tray.closing::backdrop {
 }
 .dock-tab:focus-visible {
   outline: none;
-  filter: brightness(1.25);
+  filter: none;
 }
 .dock-icon {
   width: 24px;
@@ -324,9 +310,7 @@ dialog.tray.closing::backdrop {
   height: 9px;
   border-radius: 50%;
   background: var(--t-alert, #ff4a3a);
-  box-shadow:
-    0 0 0 2px var(--t-alert-ring, #000),
-    0 0 8px var(--t-alert, #ff4a3a);
+  box-shadow: 0 0 0 2px var(--t-alert-ring, #000);
   animation: dock-alert 1.4s ease-in-out infinite;
 }
 @keyframes dock-alert {
@@ -376,7 +360,7 @@ dialog.tray.closing::backdrop {
   white-space: nowrap;
 }
 .tray-btn:active {
-  filter: brightness(1.2);
+  filter: none;
   transform: translateY(1px);
 }
 .drop-sure {
@@ -445,9 +429,7 @@ dialog.tray.closing::backdrop {
   height: 11px;
   border-radius: 50%;
   background: var(--t-ready, #5dff8a);
-  box-shadow:
-    0 0 0 2px var(--t-ready-ring, #000),
-    0 0 10px var(--t-ready, #5dff8a);
+  box-shadow: 0 0 0 2px var(--t-ready-ring, #000);
 }
 .inv-name {
   max-width: 100%;
@@ -592,11 +574,11 @@ dialog.tray.closing::backdrop {
 }
 .menu-row-x:active {
   transform: scale(0.98);
-  filter: brightness(1.15);
+  filter: none;
 }
 .menu-row-x:focus-visible {
   outline: none;
-  filter: brightness(1.2);
+  filter: none;
 }
 .menu-row-icon {
   display: grid;
