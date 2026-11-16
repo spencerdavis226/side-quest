@@ -44,6 +44,14 @@ Owner: "a custom and high budget tray to better organize and view all items and 
 - **Risks**: touch gestures on iOS (pan-y on the pager, pointer capture after the slop) are unverified on a device; the League's glass screen and badge shine are the heaviest paint; `::backdrop` is not used (the scrim is a div).
 - **Device checks** added to `docs/DEVICE_CHECKLIST.md` ("The tray").
 - **Next**: the owner's review of the PR on a phone; then the device checks below.
+## Open 2026-11-16: WebKit release flakes keep skipping deploys
+
+The `main` runs for #108 (`243ca0a`) and #110 (`dab471a`) both failed the WebKit `@release` job, so neither deployed (the live site stayed on #107). #108's run failed "the League's starter turns over with a ball" (`.moment-omen` never appeared; the open item below); #110's failed "legacy finite game" (`.progress` never appeared after Play, the View Transition path). Neither touches what those PRs changed; #110's run was re-run once.
+
+- **Hardened** (`screenChange.ts`): the 250 ms fallback now runs the update before `skipTransition()` and catches a throw from it; before, a throwing `skipTransition` would have left Play never showing. `pages.spec.ts` "a View Transition whose skip throws does not hold up Play" fails before and passes after. Whether this is what stalled WebKit in CI is unproven: the trace (`browser-failures-webkit` artifact) cannot be read from the agent's container, and Playwright's WebKit cannot be downloaded there (its CDN is blocked).
+- **Diagnosis in the log** (`tests/browser/support.ts`): every browser test traces its page's View Transitions (`traceTransitions`: start, callback, skip, finished, with times) and, when it fails, attaches a text "diagnosis" that the report prints inline: the URL, visibility, the screen's top elements, that trace, and the page's console messages, errors and navigations. A failing CI job's log now shows whether Play's update ran, without the trace.
+- **Next**: if WebKit fails again, read the diagnosis in the job log; until then, re-run a failed WebKit job once before deciding a deploy is blocked. #110's `main` run was re-run once and failed the same way ("legacy finite game", `.progress` missing).
+
 ## Done 2026-11-16: Lord Nocap the Mid, a seventh rival
 
 Owner: "make a new nemesis that is basically a Gen Z kid with Gen Z lingo and attitude but in the theme of the game"; chose the name "Lord nocap the mid" from a list. Added as a seventh rival (the six stay).

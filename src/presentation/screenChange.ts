@@ -49,7 +49,13 @@ export function screenChange(update: () => void) {
     p.catch(() => {});
   setTimeout(() => {
     if (done) return;
-    transition.skipTransition();
+    // The update first: nothing the transition does may keep the screen
+    // from changing (a throwing skipTransition would have, 2026-11-16).
     run();
+    try {
+      transition.skipTransition();
+    } catch {
+      // Skipping is only tidying up; the screen has already changed.
+    }
   }, SNAPSHOT_MS);
 }
