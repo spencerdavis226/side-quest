@@ -39,7 +39,14 @@ export function screenChange(update: () => void) {
     return;
   }
   // Rejections only say the crossfade was skipped; the update still ran.
-  transition.finished.catch(() => {});
+  // Skipping rejects all three, so each needs a handler or WebKit reports
+  // an unhandled AbortError (PR #108's CI, 2026-11-16).
+  for (const p of [
+    transition.ready,
+    transition.updateCallbackDone,
+    transition.finished,
+  ])
+    p.catch(() => {});
   setTimeout(() => {
     if (done) return;
     transition.skipTransition();

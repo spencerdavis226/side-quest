@@ -354,13 +354,27 @@ test("a View Transition that never snapshots does not hold up Play", async ({
   await page.addInitScript(() => {
     const w = window as unknown as { skipped: number };
     w.skipped = 0;
-    document.startViewTransition = (() => ({
-      skipTransition: () => w.skipped++,
-      finished: new Promise(() => {}),
-      ready: new Promise(() => {}),
-      updateCallbackDone: new Promise(() => {}),
-    })) as unknown as typeof document.startViewTransition;
+    // Skipping rejects all three promises, as a browser does; none of them
+    // may surface as an unhandled rejection (run on PR #108, 2026-11-16).
+    document.startViewTransition = (() => {
+      let skip = () => {};
+      const aborted = new Promise<undefined>((_, reject) => {
+        skip = () =>
+          reject(new DOMException("skipTransition() was called", "AbortError"));
+      });
+      return {
+        skipTransition: () => {
+          w.skipped++;
+          skip();
+        },
+        finished: aborted.then(() => undefined),
+        ready: aborted.then(() => undefined),
+        updateCallbackDone: aborted.then(() => undefined),
+      };
+    }) as unknown as typeof document.startViewTransition;
   });
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("./");
   await page.getByRole("button", { name: "Play", exact: true }).click();
   await expect(page.locator(".progress")).toBeVisible({ timeout: 2000 });
@@ -369,4 +383,5 @@ test("a View Transition that never snapshots does not hold up Play", async ({
       () => (window as unknown as { skipped: number }).skipped,
     ),
   ).toBe(1);
+  expect(errors).toEqual([]);
 });
