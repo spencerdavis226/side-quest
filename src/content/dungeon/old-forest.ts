@@ -79,7 +79,7 @@ export const oldForest: FloorCards = {
       3,
       "moaning-hag",
       "The Moaning Hag",
-      "Moan like a hag in heat against your left neighbor. The table calls the quieter: drink 3.",
+      "Moan about your knees like a hag, against your left neighbor. The table calls the weaker: drink 3.",
     ),
     monster(
       3,
@@ -118,7 +118,7 @@ export const oldForest: FloorCards = {
       "Monster",
       "hollow-log",
       "The Hollow Log",
-      "On three, everyone points at who'd fuck a hollow log first. Most fingers: drink 2.",
+      "On three, everyone points at who'd get stuck in a hollow log first. Most fingers: drink 2.",
     ),
     mishap(
       3,
@@ -164,7 +164,7 @@ export const oldForest: FloorCards = {
       3,
       "morning-wood",
       "Morning Wood",
-      "Praise your right neighbor's wood like an ancient oak for 20 seconds. Anyone laughs: you drink 3.",
+      "Complain about your morning like a stiff old oak for 20 seconds. Anyone laughs: you drink 3.",
     ),
     trap(
       3,
@@ -302,7 +302,7 @@ export const oldForest: FloorCards = {
       3,
       "hunters-pack",
       "A Hunter's Pack",
-      "A pack on a branch: rope, jerky and a smoke bomb. Chew the pretend jerky, loudly and sexually.",
+      "A pack on a branch: rope, jerky and a smoke bomb. Chew the pretend jerky, loudly, mouth open.",
       "smoke",
     ),
     treasure(
@@ -352,7 +352,7 @@ export const oldForest: FloorCards = {
       3,
       "hollow-tree",
       "The Hollow Tree",
-      "A hollow tree to crawl through, or the long way round. Something inside moans.",
+      "A hollow tree to crawl through, or the long way round. Something inside farts.",
       ["Long way round", "The hollow tree"],
     ),
     gamble(

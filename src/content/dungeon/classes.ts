@@ -186,7 +186,7 @@ export const classes: CardDefinition[] = [
         omen: { hearts: 1, crit: 18 },
       },
       {
-        title: "Horny Troubadour",
+        title: "Smug Troubadour",
         omen: { hearts: 2, crit: 18, roll: { all: 1 } },
       },
       {
@@ -201,7 +201,7 @@ export const classes: CardDefinition[] = [
   adventurer(
     "paladin",
     "Paladin",
-    "Sworn to chastity. Lying about it.",
+    "Holier than you. Hungover anyway.",
     { hearts: 1, loot: ["shield"] },
     [
       {
@@ -349,7 +349,7 @@ export const classes: CardDefinition[] = [
   adventurer(
     "innkeeper",
     "Innkeeper",
-    "Knows who's banging.",
+    "Spits in the stew.",
     { hearts: 1, satchel: 4, loot: ["round", "draught"] },
     [
       {
@@ -370,7 +370,7 @@ export const classes: CardDefinition[] = [
   adventurer(
     "sellsword",
     "Sellsword",
-    "Will fight anything for coin. Or a handy.",
+    "Will fight anything for coin. Or a sandwich.",
     { roll: { elite: 3, monster: 1 } },
     [
       {
@@ -530,6 +530,8 @@ const PALETTES: Record<string, [primary: string, secondary: string]> = {
   "Grand Wankmage": ["#0e1638", "#ffe08a"],
   Bard: ["#7a2f5e", "#f0c27a"],
   Minstrel: ["#8f3b6e", "#b8e0d2"],
+  "Smug Troubadour": ["#5e1f4a", "#ffd166"],
+  // The rank's name until 2026-11-16; a saved run may still hold it.
   "Horny Troubadour": ["#5e1f4a", "#ffd166"],
   "Living Legend": ["#3a1030", "#ffe9a0"],
   Paladin: ["#2f5a8c", "#e6d29a"],

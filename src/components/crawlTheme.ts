@@ -242,7 +242,8 @@ const dungeon: CrawlTheme = {
       "Everyone pats down their pockets, then their underwear.",
     "dungeon.class-cleric":
       "Everyone bows their head while the Cleric fakes a prayer.",
-    "dungeon.class-wizard": "Everyone wiggles their fingers and moans a spell.",
+    "dungeon.class-wizard":
+      "Everyone wiggles their fingers and mumbles a spell.",
     "dungeon.class-bard":
       "Everyone hums a fanfare. The drawer winks at someone.",
     "dungeon.class-paladin": "Everyone salutes, then confesses one sin.",

@@ -2,6 +2,8 @@
 
 Owner, 2026-11-15: give The Quest (the `dungeon` pack, Realms) the crude CABIIN voice the rivals introduced, across most of its cards, and keep it distinct from the League.
 
+Revised 2026-11-16 (owner: "too many horny cards ... sex isn't the goal here"): sex is no longer a subject, only an occasional punchline; the current rule is the Realms section of `docs/CARD_VOICE_REFERENCE.md`, which wins over the borders and tone below.
+
 Status: all phases shipped on 2026-11-15 (PRs #94 to #97; Phases 3 and 4 shared one). See `docs/STATUS.md`.
 
 ## Owner decisions

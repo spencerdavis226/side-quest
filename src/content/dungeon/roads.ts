@@ -38,7 +38,7 @@ export const roadOut: CardDefinition[] = [
   road(
     "out-elves",
     "The Road Out",
-    "The forest is shut: the elves are having an orgy. Road or marsh? Everyone votes; the drawer decides.",
+    "The forest is shut: the elves all have the shits. Road or marsh? Everyone votes; the drawer decides.",
     "The King's Road",
     "The Marsh",
   ),
@@ -57,7 +57,7 @@ export const signposts: CardDefinition[] = [
   road(
     "sign-full",
     "The Signpost",
-    "The crypt is full of horny skeletons. Mines or tower? Everyone votes; the drawer decides.",
+    "The crypt is full of drunk skeletons. Mines or tower? Everyone votes; the drawer decides.",
     "The Goblin Mines",
     "The Wizard's Tower",
   ),

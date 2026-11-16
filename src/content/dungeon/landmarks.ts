@@ -90,7 +90,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       3,
       "oldest-tree",
       "The Oldest Tree",
-      "It has watched every hero pass, and rated their junk. The drawer reads the notes aloud.",
+      "It has watched every hero pass, and called each one a prick. The drawer reads the notes aloud.",
       [
         { label: "Listen · drink 2", ...LORE },
         { label: "Carve your names", heal: 1 },
@@ -205,7 +205,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       4,
       "lift",
       "The Lift",
-      "A rusty cage lift, or a thousand stairs. Everyone creaks like an old bed; worst creak drinks 2.",
+      "A rusty cage lift, or a thousand stairs. Everyone creaks like old knees; worst creak drinks 2.",
       [{ label: "Ride it", elite: true }, { label: "Stairs · drink 2" }],
     ),
     landmark(
