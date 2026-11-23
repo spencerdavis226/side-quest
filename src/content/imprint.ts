@@ -5,6 +5,9 @@ import { cabinCards } from "./cabin";
 import { likelyCards } from "./likely";
 import { secretsCards } from "./secrets";
 import { dungeonCards } from "./dungeon";
+import { neverCards } from "./never";
+import { vipCards } from "./vip";
+import { lastCallCards } from "./last-call";
 
 /**
  * Card imprint content: which icon and paper tint a card carries.
@@ -87,6 +90,14 @@ export const imprintAssignments: Record<string, ImprintAssignment> = {
   ),
   ...Object.fromEntries(
     secretsCards.map((card) => [card.id, expansionMotifs[card.category]]),
+  ),
+  // 2026-11-23: Never Have I Ever, the VIP expansion and Last Call. The
+  // VIP originals keep their own picks below.
+  ...Object.fromEntries(
+    [...neverCards, ...vipCards, ...lastCallCards].map((card) => [
+      card.id,
+      expansionMotifs[card.category],
+    ]),
   ),
   "core.house-special": { icon: "lorc/beer-stein", tint: "amber" },
   "core.bar-tab": { icon: "delapouite/coins-pile", tint: "sepia" },

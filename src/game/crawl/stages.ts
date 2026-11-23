@@ -11,13 +11,14 @@ import { omenForm, partyBoons, satchelSize } from "./party";
 import { isBossCard } from "./bosses";
 // A quest's stages: the routes, the picks made at game start, and the run
 // so far.
-/** Every card a pack can deal: its deck, its quest-only cards and its
- * quest's finale. */
+/** Every card a pack can deal: its deck, its Last Call pool, its
+ * quest-only cards and its quest's finale. */
 export function packCardIds(pack: PackDefinition): string[] {
   // A crawl's rooms are in both its deck and its stages; list each once.
   return [
     ...new Set([
       ...pack.cardIds,
+      ...(pack.lastCall ?? []),
       ...(pack.quest
         ? [...pack.quest.cardIds, ...finaleCardIds(pack.quest)]
         : []),

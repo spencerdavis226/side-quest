@@ -25,7 +25,11 @@ test("seeded workshop preserves the pool and reproduces order", () => {
         )
       : [],
   );
-  expect(workshopCards.length).toBe(a.order.length + questOnly.length);
+  // Last Call closers (2026-11-23) wait in their pools, outside the deck.
+  const closers = packs.flatMap((p) => p.lastCall ?? []);
+  expect(workshopCards.length).toBe(
+    a.order.length + questOnly.length + closers.length,
+  );
   expect(a.order).not.toEqual(
     workshopSession("b", "core.house-special").session.order,
   );
@@ -96,7 +100,7 @@ test("each supplied sheet row lands in the Core deck (House or CABIIN IDs) or VI
   expect(vip.cardIds.slice(-4)).toEqual(
     [3, 4, 5, 6].map((row) => `vip.sheet-${String(row).padStart(3, "0")}`),
   );
-  expect(cards).toHaveLength(1962); // 106 core (10 coin cards, The Quest 2.1) + 94 house + 16 vip + 120 Pokémon (+72 League-only gym leaders, 79 gauntlet cards, 35 starters, 239 route, Victory Road and rival cards, 36 hideout cards) + 85 cabin + 250 likely + 156 secrets + 674 Realms (304 fights, elites and bosses; 153 Quest finds, gambles, merchants, forks and table moments; 20 omens, 19 adventurers (the Dragonslayer locked), 2 locked dragons, 6 summons, 6 dragon signs, 6 road choices, 27 landmarks, 22 rares, 11 echoes, 16 inns, 57 rival cards (seven rivals of eight since Lord Nocap on 2026-11-16, six since Rivals Phase 3, Sensei pinned since Phase 4 and a returning introduction each since Phase 6; the Gilded Company's 21 gate, crossroads and door cards cut) and 25 side-quest cards)
+  expect(cards).toHaveLength(2202); // since 2026-11-23: 166 Never Have I Ever, 59 more VIP and 15 Last Call closers (6 core, 3 VIP, 3 likely, 3 never); before: 106 core (10 coin cards, The Quest 2.1) + 94 house + 16 vip + 120 Pokémon (+72 League-only gym leaders, 79 gauntlet cards, 35 starters, 239 route, Victory Road and rival cards, 36 hideout cards) + 85 cabin + 250 likely + 156 secrets + 674 Realms (304 fights, elites and bosses; 153 Quest finds, gambles, merchants, forks and table moments; 20 omens, 19 adventurers (the Dragonslayer locked), 2 locked dragons, 6 summons, 6 dragon signs, 6 road choices, 27 landmarks, 22 rares, 11 echoes, 16 inns, 57 rival cards (seven rivals of eight since Lord Nocap on 2026-11-16, six since Rivals Phase 3, Sensei pinned since Phase 4 and a returning introduction each since Phase 6; the Gilded Company's 21 gate, crossroads and door cards cut) and 25 side-quest cards)
 });
 
 test("League gyms come in eight tiers, one leader per region in each", () => {

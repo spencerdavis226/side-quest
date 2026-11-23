@@ -89,7 +89,9 @@ test("the pack count stays readable with every pack selected", async ({
   await dialog.getByRole("button", { name: "Done" }).click();
   const row = page.locator(".pack-selector");
   await expect(row.locator(".pack-logo")).toHaveCount(5);
-  const count = row.getByText("827 cards");
+  // 886 since the VIP expansion (2026-11-23); Last Call closers are not
+  // deck cards, so they are not counted.
+  const count = row.getByText("886 cards");
   await expect(count).toBeVisible();
   expect(
     await count.evaluate((el) => {
@@ -124,9 +126,10 @@ test("VIP is a selectable add-on and Core can be deselected", async ({
     key,
   );
   expect(session.config.packIds).toEqual(["core", "vip"]);
-  // Core holds the house sheet and Cabin weekend too: 285 + 16 VIP cards
-  // (10 coin cards since The Quest 2.1).
-  expect(session.cards).toHaveLength(301);
+  // Core holds the house sheet and Cabin weekend too: 285 + 75 VIP cards
+  // (16 before the 2026-11-23 expansion), plus the one Last Call card a
+  // Standard game ends on.
+  expect(session.cards).toHaveLength(361);
   expect(
     session.cards.some((card: { id: string }) => card.id === "core.house-091"),
   ).toBe(true);
@@ -182,7 +185,8 @@ test("leaving a quest mode takes its pack back out of the deck", async ({
     key,
   );
   expect(session.config.packIds).toEqual(["core"]);
-  expect(session.cards).toHaveLength(packs[0].cardIds.length);
+  // The deck and its Last Call card (2026-11-23).
+  expect(session.cards).toHaveLength(packs[0].cardIds.length + 1);
 });
 test("a quest mode chosen before a reload is still chosen", async ({
   page,

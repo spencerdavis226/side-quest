@@ -94,8 +94,9 @@ describe("the coin", () => {
 
   it("every coin card in the catalog reads both faces", () => {
     const coins = cards.filter((c) => c.dice?.sides === 2);
-    // Ten in the core deck and three Realms fights.
-    expect(coins).toHaveLength(13);
+    // Ten in the core deck, three Realms fights, and since 2026-11-23 five
+    // in Never Have I Ever, five in VIP night and three Last Call closers.
+    expect(coins).toHaveLength(26);
     for (const c of coins) {
       expect(c.dice!.count, c.id).toBe(1);
       expect(c.dice!.outcomes, c.id).toHaveLength(2);

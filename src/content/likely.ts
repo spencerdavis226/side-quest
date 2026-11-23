@@ -1,5 +1,6 @@
 import type { CardDefinition, PackDefinition } from "../game/types";
 import { cardFactory } from "./author";
+import { likelyLastCall } from "./last-call";
 
 // Most Likely To: a vote pack in the spirit of Drunk Stoned or Stupid. Every
 // card is one prompt; on three the whole table points, and whoever gets the
@@ -353,7 +354,7 @@ const payoutText = (payout: Payout = 2) =>
 
 const question = (prompt: string) => `Most likely to ${prompt}?`;
 
-export const likelyCards: CardDefinition[] = prompts.flatMap((entry, index) =>
+const likelyDeck: CardDefinition[] = prompts.flatMap((entry, index) =>
   entry
     ? [
         card(
@@ -366,6 +367,9 @@ export const likelyCards: CardDefinition[] = prompts.flatMap((entry, index) =>
     : [],
 );
 
+/** The deck and its Last Call closers (2026-11-23). */
+export const likelyCards: CardDefinition[] = [...likelyDeck, ...likelyLastCall];
+
 export const likelyPack: PackDefinition = {
   version: 1,
   id: "likely",
@@ -373,5 +377,6 @@ export const likelyPack: PackDefinition = {
   title: "Most Likely To",
   description:
     "Everyone points on three; the table decides who it's talking about.",
-  cardIds: likelyCards.map((card) => card.id),
+  cardIds: likelyDeck.map((card) => card.id),
+  lastCall: likelyLastCall.map((card) => card.id),
 };

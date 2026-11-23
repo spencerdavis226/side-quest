@@ -75,7 +75,9 @@ describe("deck engine", () => {
       [packs[0], { ...packs[0], id: "bonus" }],
       rng,
     );
-    expect(s.cards.length).toBe(coreDeckSize);
+    // Each card once, plus the one Last Call card a finite game ends on.
+    expect(s.cards.length).toBe(coreDeckSize + 1);
+    expect(s.cards.filter((c) => c.lastCall)).toHaveLength(1);
   });
   it.each([0, -1, 501, 1.5, NaN])("rejects bad limit %s", (limit) =>
     expect(() => createSession({ ...config, limit }, cards, packs)).toThrow(),

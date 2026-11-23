@@ -1,6 +1,22 @@
 # Current state and implementation plan
 
-Updated 2026-11-16. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
+Updated 2026-11-23. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
+
+## Done 2026-11-23: Never Have I Ever, the VIP expansion, Last Call, more coins
+
+Owner: "Let's do the never have I ever and VIP expansion, the last call finale, and at least discuss the callbacks before implementing. Also coin." Standard modes only; the crawls are untouched.
+
+- **Never Have I Ever** (`src/content/never.ts`, pack `never`, logo `public/art/packs/never.svg` from game-icons `generalace135/fingers-crossed` via `scripts/crawl-icons.ts`): 166 cards. 151 prompts `never.NNN` by list position (append only; a retired one stays `null`), "Never have I ever X. Anyone who has drinks N." with payouts 2, 3, a shot, or "drinks 2. Tell it."; plus 15 by slug: rounds of the classic game inside one card (Five Fingers, Speed Round, Lone Wolf, Lie Detector, Called Out, Hot Seat, Clean Record), 3 dice and 5 coin cards. Listed after Most Likely To in the picker.
+- **VIP night** 16 → 75 deck cards (59 new, 5 coin, 4 dice), so it can play alone; the four sheet rows stay last in the list (`tests/workshop.test.ts` checks that).
+- **Last Call** (engine): `PackDefinition.lastCall` (a pool of card IDs) and `CardDefinition.lastCall: true`. `createSession` deals one closer from the selected packs' pools as a Standard game's last draw: picked after the shuffle, placed by `placeLastCall` at index `limit - 1`, so the 49 cards before it deal exactly as before. `replaySession` keeps it there. Not dealt in Infinite, a quest, a pack with no pool, or a deck shorter than `limit - 1`. A flagged card is never a deck card (`createSession` filters it; validation fails a flagged card in a deck or an unflagged one in a pool). No new session field: the closer is a card in `cards` and `order`. Cards in `src/content/last-call.ts` (`<pack>.closer-*`, ribbon "Last Call"): 6 Core, 3 each for VIP, Most Likely To and Never (3 coin closers). Secrets, Pokémon and Realms have no pool.
+- **Coin**: 13 new coin cards (above); the coin renderer and `flip()` were already in place.
+- **Fixtures**: `2026-11-23-standard-last-call`, `-last-call-complete`, `-last-call-coin` (Core + VIP + Never, 50 cards).
+- **Tests**: new `tests/last-call.test.ts` (8 tests); new `@sweep` "every new standard card fits its face at 320x568" (every Never, VIP and closer card, face up and rolled). Count updates: `workshop.test.ts` (2,202 cards), `vip-pack.test.ts` (75, new category spread), `coin.test.ts` (26), `engine.test.ts` (+1 closer), `game.spec.ts` (7 packs), `secondary.spec.ts` (886 cards; Core + VIP 361; Core 286).
+- **Checked**: `npm test` 819 passed; typecheck; lint; build (budgets pass: 5,481 KiB runtime, 180.1 KiB gzip initial, up 1.7 KiB from the manifest's card IDs); Chromium `test:e2e` 204 of 208 before the count fixes, then the failing files again (all pass); Chromium `test:release` 14 of 14; Chromium `test:sweep` 12 of 12 plus the new sweep 2 of 2; `npm run cards:review` regenerated. **Not run**: WebKit (it cannot install in this container: missing host libraries), a phone, the balance suites (no crawl change).
+- **Pre-existing flake, not fixed**: `game.spec.ts` "offline reload keeps the same revealed card" fails about 8 in 10 under `--repeat-each=10` in Chromium here, on unchanged `main` as well (the title read before the reload is empty). It passed in the single runs above.
+- **Copy to review at the table**: the new cards follow `CARD_VOICE_REFERENCE.md` but are unplayed; `docs/CARD_REVIEW.md` lists them.
+
+**Next task (needs the owner's decision): callbacks.** A card that plants a later card ("remember this word; it comes back"). Proposed shape, not built: `CardDefinition.sequel: { cardId, after: [min, max] }`; when the planting card is put aside, the engine moves the sequel (a card in no deck, like a closer) into `order` that many draws ahead. Open questions in the PR description.
 
 ## Done 2026-11-16: the opening reveal plays first, alone
 

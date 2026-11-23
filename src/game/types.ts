@@ -252,6 +252,10 @@ export interface CardDefinition {
   /** The Quest 2.0 Phase 7: never dealt unless the Chronicle has earned
    * this unlock (`createSession`'s `unlocked`). */
   unlock?: string;
+  /** Last Call (2026-11-23): a Standard game's closing card. It is in no
+   * pack's deck, only in a pack's `lastCall` pool; `createSession` deals
+   * one as a finite plain game's last draw (`placeLastCall`). */
+  lastCall?: true;
 }
 /** The rival (2026-11-15, owner: "a specific random rival every time ...
  * that same rival follows you throughout the whole quest"). One of a run's
@@ -841,6 +845,10 @@ export interface PackDefinition {
   /** One single-colour silhouette; the app tints it wherever it appears. */
   logo?: string;
   quest?: PackQuest;
+  /** Last Call (2026-11-23): cards a Standard game may end on. A finite
+   * plain game draws one from every selected pack's pool as its last card.
+   * Each card carries `lastCall: true` and is in no deck. */
+  lastCall?: string[];
 }
 export interface GameConfig {
   version: 1;
