@@ -6,7 +6,8 @@
 // split into chunks so the workers share them.
 import { type Page } from "@playwright/test";
 import { test, expect, reseed } from "./support";
-import { advance, UNLOCKS } from "../../src/game/engine";
+import { advance, createSession, UNLOCKS } from "../../src/game/engine";
+import { rollDice, returnToCard } from "../../src/game/dice";
 import type { SessionState } from "../../src/game/types";
 import { cards, packs } from "../../src/content/catalog";
 import { crawlAt, leagueAt } from "./sessions";
@@ -195,5 +196,53 @@ for (let part = 0; part < BALL_PARTS; part++)
         if (await spills(page, s, ".game-card .ball-result"))
           overflowing.push(`${id}:${face}`);
       }
+    expect(overflowing).toEqual([]);
+  });
+
+// The 2026-11-23 standard cards: Never Have I Ever, VIP night and every Last
+// Call closer, each as the first card of a plain game at the smallest phone
+// size, face up and (for a dice or coin card) with its roll back on the card.
+const plainPacks = new Set(["never", "vip"]);
+const plainIds = cards
+  .filter(
+    (c) =>
+      c.lastCall ||
+      packs.some((p) => plainPacks.has(p.id) && p.cardIds.includes(c.id)),
+  )
+  .map((c) => c.id);
+const PLAIN_PARTS = 2;
+function plainAt(id: string, rolled: boolean): SessionState {
+  const card = cards.find((c) => c.id === id)!;
+  // Alone in an Infinite deck, so it is dealt first.
+  const pack = {
+    ...packs.find((p) => id.startsWith(`${p.id}.`))!,
+    cardIds: [id],
+    lastCall: undefined,
+  };
+  let s = createSession(
+    { version: 1, packIds: [pack.id], limit: null },
+    [{ ...card, lastCall: undefined }],
+    [pack],
+    () => 0.5,
+  );
+  s = reveal(s);
+  if (rolled && card.dice) s = returnToCard(rollDice(s, () => 0.5));
+  return s;
+}
+for (let part = 0; part < PLAIN_PARTS; part++)
+  test(`@sweep every new standard card fits its face at 320x568 (${part + 1}/${PLAIN_PARTS})`, async ({
+    page,
+  }) => {
+    test.setTimeout(300000);
+    await page.setViewportSize({ width: 320, height: 568 });
+    await page.goto("./");
+    const overflowing: string[] = [];
+    for (const id of chunk(plainIds, part, PLAIN_PARTS)) {
+      if (await spills(page, plainAt(id, false))) overflowing.push(id);
+      if (cards.find((c) => c.id === id)!.dice)
+        if (await spills(page, plainAt(id, true)))
+          overflowing.push(`${id} (rolled)`);
+    }
+    expect(plainIds.length).toBeGreaterThan(250);
     expect(overflowing).toEqual([]);
   });

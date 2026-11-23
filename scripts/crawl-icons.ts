@@ -1,4 +1,4 @@
-// Writes public/art/packs/{dungeon,pub-crawl}.svg, public/art/crawl/*.svg
+// Writes public/art/packs/{dungeon,pub-crawl,never}.svg, public/art/crawl/*.svg
 // and public/art/league/*.svg. The crawl's marks: single-colour silhouettes
 // from the vendored game-icons set (CC BY 3.0, docs/licenses), with the set's
 // square background removed so each works as a CSS mask. The League's
@@ -10,6 +10,8 @@ const picks: Record<string, string> = {
   // Realms (2026-11-03): a castle for the pack, a dragon for The Quest.
   "packs/dungeon": "lorc/castle",
   "packs/pub-crawl": "lorc/dragon-head",
+  // Never Have I Ever (2026-11-23): fingers crossed behind your back.
+  "packs/never": "generalace135/fingers-crossed",
   "crawl/heart": "skoll/hearts",
   "crawl/draught": "delapouite/health-potion",
   "crawl/shield": "delapouite/heart-shield",

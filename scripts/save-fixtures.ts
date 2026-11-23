@@ -69,6 +69,8 @@ const config = (
   quest?: string,
 ): GameConfig => ({ version: 1, packIds, limit, ...(quest ? { quest } : {}) });
 const standard = config(["core"], 50);
+/** Standard with the 2026-11-23 packs: Last Call from three pools. */
+const standardMix = config(["core", "vip", "never"], 50);
 const plain = config(["core", "vip", "likely"], null);
 const secrets = config(["core", "secrets"], null);
 const league = config(["pokemon"], null, "pokemon");
@@ -91,6 +93,21 @@ const situations: [string, GameConfig, Find][] = [
     (s) => !!s.roll?.returned && s.discarded >= 5,
   ],
   ["standard-complete", standard, (s) => s.phase === "complete"],
+  // Last Call (2026-11-23): the closer face up, then the game it ended.
+  [
+    "standard-last-call",
+    standardMix,
+    (s) => s.phase === "revealed" && !!currentCard(s).lastCall,
+  ],
+  ["standard-last-call-complete", standardMix, (s) => s.phase === "complete"],
+  [
+    "standard-last-call-coin",
+    standardMix,
+    (s) =>
+      !!s.roll?.returned &&
+      currentCard(s).dice?.sides === 2 &&
+      !!currentCard(s).lastCall,
+  ],
   [
     "infinite-second-round",
     plain,

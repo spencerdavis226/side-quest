@@ -232,6 +232,23 @@ export function paceQuest(
   return next;
 }
 
+/**
+ * Last Call (2026-11-23): a finite plain game ends on its Last Call card.
+ * The card sits in the order as the game's last draw, `limit`, so the deck
+ * before it plays exactly as it would have. Without one (a quest, Infinite,
+ * or packs with no pool) the order is returned as it is.
+ */
+export function placeLastCall(
+  order: string[],
+  cards: CardDefinition[],
+  limit: number | null,
+): string[] {
+  const last = cards.find((c) => c.lastCall);
+  if (!last || limit === null || limit > order.length) return order;
+  const rest = order.filter((id) => id !== last.id);
+  rest.splice(limit - 1, 0, last.id);
+  return rest;
+}
 export function validConfig(c: GameConfig): boolean {
   return (
     !!c &&
@@ -277,8 +294,9 @@ export function createSession(
         ...(p.id === config.quest ? (p.quest?.cardIds ?? []) : []),
       ]),
   );
+  // A Last Call card is never a deck card, even if a pack lists it.
   const cards = catalog
-    .filter((c) => selected.has(c.id))
+    .filter((c) => selected.has(c.id) && !c.lastCall)
     .map((c) => structuredClone(c));
   if (!cards.length) throw new Error("This deck has no cards.");
   let quest: QuestState | undefined;
@@ -380,19 +398,35 @@ export function createSession(
     };
     quest = rememberRivals(quest, rivals, random);
   }
+  let order = paceQuest(
+    shuffle(
+      cards.map((c) => c.id),
+      random,
+    ),
+    cards,
+    quest,
+    random,
+  );
+  // Last Call: a finite plain game whose deck reaches its limit closes on
+  // one card from the chosen packs' pools, drawn after the shuffle so the
+  // deck deals as it always has.
+  const pool =
+    config.quest || config.limit === null
+      ? []
+      : packs
+          .filter((p) => config.packIds.includes(p.id))
+          .flatMap((p) => p.lastCall ?? [])
+          .filter((id) => catalog.some((c) => c.id === id && c.lastCall));
+  if (pool.length && cards.length + 1 >= config.limit!) {
+    const id = pool[Math.floor(random() * pool.length)];
+    cards.push(structuredClone(catalog.find((c) => c.id === id)!));
+    order = placeLastCall([...order, id], cards, config.limit);
+  }
   return {
     version: 2,
     config: { ...config, packIds: [...config.packIds] },
     cards,
-    order: paceQuest(
-      shuffle(
-        cards.map((c) => c.id),
-        random,
-      ),
-      cards,
-      quest,
-      random,
-    ),
+    order,
     position: 0,
     cycle: 0,
     discarded: 0,
@@ -478,14 +512,18 @@ export function replaySession(
     ...s,
     config: { ...s.config, packIds: [...s.config.packIds] },
     cards: s.cards.map((c) => structuredClone(c)),
-    order: paceQuest(
-      shuffle(
-        s.cards.map((c) => c.id),
+    order: placeLastCall(
+      paceQuest(
+        shuffle(
+          s.cards.map((c) => c.id),
+          random,
+        ),
+        s.cards,
+        s.quest,
         random,
       ),
       s.cards,
-      s.quest,
-      random,
+      s.config.limit,
     ),
     position: 0,
     cycle: 0,

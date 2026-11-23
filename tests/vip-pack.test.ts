@@ -14,7 +14,8 @@ test("VIP night is a registered pack with its own mark", () => {
 });
 
 test("every VIP card is namespaced and centers the VIP", () => {
-  expect(vipCards).toHaveLength(16);
+  // 16 until the 2026-11-23 expansion.
+  expect(vipCards).toHaveLength(75);
   for (const card of vipCards) {
     expect(card.id.startsWith("vip.")).toBe(true);
     // Generated VIP cards name the VIP; the supplied sheet rows stay verbatim.
@@ -31,10 +32,10 @@ test("VIP night keeps a spread of card categories", () => {
     ]),
   );
   expect(byCategory).toEqual({
-    sip: 5,
-    group: 4,
-    category: 2,
-    challenge: 3,
-    rule: 2,
+    sip: 13,
+    group: 22,
+    category: 11,
+    challenge: 21,
+    rule: 8,
   });
 });

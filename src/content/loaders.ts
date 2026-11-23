@@ -1,16 +1,17 @@
 import type { CardDefinition } from "../game/types";
-import { finaleCardIds } from "../game/engine";
+import { packCardIds } from "../game/engine";
 import { packs } from "./manifest.generated";
 
 // Card text is the largest part of the app, so each pack's cards are a lazy
 // chunk fetched only when a game starts. A resumed game never needs them: its
 // save carries its own card snapshot. `loadPackCards` keeps the chosen packs'
-// cards and their quest finales.
+// cards, their Last Call pools and their quest finales.
 const loaders: Record<string, () => Promise<CardDefinition[]>> = {
   core: () => import("./core-deck").then((m) => m.coreDeckCards),
   vip: () => import("./vip").then((m) => m.vipCards),
   pokemon: () => import("./pokemon").then((m) => m.pokemonCards),
   likely: () => import("./likely").then((m) => m.likelyCards),
+  never: () => import("./never").then((m) => m.neverCards),
   secrets: () => import("./secrets").then((m) => m.secretsCards),
   dungeon: () => import("./dungeon").then((m) => m.dungeonCards),
 };
@@ -22,14 +23,7 @@ export const loadablePackIds = Object.keys(loaders);
 const loadedPacks = new Map<string, CardDefinition[]>();
 
 const select = (chosen: typeof packs, loaded: CardDefinition[][]) => {
-  const wanted = new Set(
-    chosen.flatMap((pack) => [
-      ...pack.cardIds,
-      ...(pack.quest
-        ? [...pack.quest.cardIds, ...finaleCardIds(pack.quest)]
-        : []),
-    ]),
-  );
+  const wanted = new Set(chosen.flatMap(packCardIds));
   const byId = new Map<string, CardDefinition>();
   for (const card of loaded.flat())
     if (wanted.has(card.id)) byId.set(card.id, card);

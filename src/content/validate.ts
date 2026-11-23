@@ -173,6 +173,15 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
       fail(`Invalid artwork: ${c.id}`);
     if (c.quest !== undefined && (typeof c.quest !== "string" || !c.quest))
       fail(`Invalid quest: ${c.id}`);
+    // Last Call (2026-11-23): a plain closing card, never a quest's.
+    if (
+      c.lastCall !== undefined &&
+      (c.lastCall !== true ||
+        c.quest !== undefined ||
+        c.battle !== undefined ||
+        c.unlock !== undefined)
+    )
+      fail(`Invalid Last Call card: ${c.id}`);
     if (
       c.ribbon !== undefined &&
       (typeof c.ribbon !== "string" || !c.ribbon.trim() || c.ribbon.length > 32)
@@ -753,6 +762,19 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
       p.cardIds.some((id) => !ids.has(id))
     )
       fail(`Invalid card membership: ${p.id}`);
+    // Last Call (2026-11-23): a pool of flagged cards, none in a deck.
+    if (
+      p.cardIds.some((id) => cs.find((c) => c.id === id)?.lastCall) ||
+      (p.lastCall !== undefined &&
+        (!Array.isArray(p.lastCall) ||
+          !p.lastCall.length ||
+          new Set(p.lastCall).size !== p.lastCall.length ||
+          p.lastCall.some(
+            (id) =>
+              p.cardIds.includes(id) || !cs.find((c) => c.id === id)?.lastCall,
+          )))
+    )
+      fail(`Invalid Last Call pool: ${p.id}`);
     if (p.quest !== undefined) {
       const {
         mode,

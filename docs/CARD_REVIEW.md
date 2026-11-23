@@ -1,6 +1,6 @@
 # Card review sheet
 
-Generated 2026-11-16 by `npm run cards:review`. Do not edit by hand — edit the
+Generated 2026-11-23 by `npm run cards:review`. Do not edit by hand — edit the
 source modules under `src/content` and regenerate. Each row is one card;
 the Review column is intentionally blank so you can mark it up.
 
@@ -298,26 +298,85 @@ the Review column is intentionally blank so you can mark it up.
 
 ## VIP night (`vip`)
 
-16 cards · 5 sip · 4 group · 2 category · 3 challenge · 2 rule · 0 dice
+75 cards · 13 sip · 22 group · 11 category · 21 challenge · 8 rule · 9 dice
 
 | Review | Title | ID | Cat | Rules | Dice, secret or timer |
 | --- | --- | --- | --- | --- | --- |
 | ☐ | Dirty Toast | `vip.toast` | sip | Clockwise, toast the VIP with something their mom shouldn't hear. Then the VIP drinks 2. |  |
 | ☐ | Choose a Sidekick | `vip.sidekick` | sip | The VIP picks a sidekick, who drinks 2 now and holds the VIP's hair later. |  |
 | ☐ | The VIP Tax | `vip.tax` | sip | The VIP drinks 3 and names the worst person they've ever kissed. |  |
+| ☐ | Royal Taster | `vip.taster` | sip | You're the VIP's taster. Drink 2 from their glass, then the VIP drinks 1. |  |
+| ☐ | Drinking Buddy | `vip.drinking-buddy` | sip | The VIP picks a drinking buddy. The VIP and the buddy drink 3 together. |  |
+| ☐ | Who Wore It Better | `vip.dressed-alike` | sip | Whoever is dressed most like the VIP drinks 3. The VIP decides. |  |
+| ☐ | Eye Contact | `vip.eye-contact` | sip | Clink with the VIP, lock eyes and drink 2. Whoever breaks eye contact drinks 2 more. |  |
+| ☐ | The VIP's Fate | `vip.fate` | sip | The VIP flips for their own fate. | 1d2 — 1-1: Tails. The VIP drinks 3. 2-2: Heads. The VIP gives 6, split as they like. |
+| ☐ | VIP Handout | `vip.handout` | sip | Roll two dice. The VIP hands out that many drinks. | 2d6 — The VIP gives {total}. |
+| ☐ | Party Favors | `vip.party-favors` | sip | Roll. The VIP gives that many, and you drink the same. | 1d6 — The VIP gives {total}. You drink {total}. |
+| ☐ | Gift Bag | `vip.gift-bag` | sip | The VIP opens a gift bag. Roll for what's inside. | 1d6 — 1-2: Socks. The VIP drinks 2. 3-4: Cash. The VIP gives 3. 5-5: A shot. The VIP takes it. 6-6: Jackpot. Everyone but the VIP drinks 3. |
 | ☐ | One Year Older | `vip.sheet-005` | sip | Give out the ones place of the VIP's new age |  |
 | ☐ | It's Gotta Go | `vip.sheet-006` | sip | Congrats, the VIP finishes their drink |  |
 | ☐ | Hottest Quality | `vip.fan-club` | group | The VIP names their own hottest quality, straight-faced. Anyone who laughs drinks 2. |  |
 | ☐ | Standing Ovation | `vip.standing-ovation` | group | Give the VIP a standing ovation. Last to stand drinks 3. The VIP bows and drinks 1. |  |
 | ☐ | Seen It All | `vip.favors` | group | Anyone who's seen the VIP naked drinks 2. The VIP drinks 1 for each of them. |  |
+| ☐ | Origin Story | `vip.origin-story` | group | Whoever has known the VIP longest tells how they met. Everyone else drinks 2. |  |
+| ☐ | Worst Influence | `vip.bad-influence` | group | On three, point at the VIP's worst influence. Most votes drinks 3 and owns it. |  |
+| ☐ | Body Double | `vip.body-double` | group | On three, point at whoever is most like the VIP. Most votes drinks 2 with the VIP. |  |
+| ☐ | Spill It | `vip.spill-it` | group | The VIP tells one thing this table has never heard, or finishes their drink. |  |
+| ☐ | One Phone Call | `vip.jail-call` | group | Who would the VIP call from jail? Point on three. Most votes drinks 3 with the VIP. |  |
+| ☐ | Roast and Toast | `vip.roast-and-toast` | group | Clockwise, roast the VIP, then toast them. The VIP names the weakest; its author drinks 2. |  |
+| ☐ | First Impressions | `vip.first-impression` | group | Clockwise, share your first impression of the VIP. The VIP drinks 1 per right one. |  |
+| ☐ | Bow Down | `vip.bow-down` | group | Everyone bows to the VIP. Last to bow drinks 3. |  |
+| ☐ | Heard It Before | `vip.heard-it` | group | The VIP tells their wildest story in 30 seconds. Anyone who's heard it drinks 2. |  |
+| ☐ | Throwback | `vip.throwback` | group | Everyone finds their oldest photo of the VIP. The VIP picks the worst; its owner gives 3. |  |
+| ☐ | Nemesis | `vip.nemesis` | group | The VIP names their nemesis at this table. That player and the VIP drink 2 each. |  |
+| ☐ | Hot Take | `vip.hot-take` | group | The VIP shares a hot take. Everyone who disagrees drinks 2. |  |
+| ☐ | Grand Entrance | `vip.grand-entrance` | group | The VIP leaves the room and comes back in. Last to applaud drinks 2. |  |
+| ☐ | Dirt on the VIP | `vip.dirt` | group | Anyone with dirt on the VIP drinks 2. The VIP drinks 1 each to keep it quiet. |  |
+| ☐ | Dream Job | `vip.dream-job` | group | Guess what the VIP wanted to be at seven, then the VIP tells. Right guesses give 2. |  |
+| ☐ | Royal Pardon | `vip.pardon` | group | The VIP may pardon one player. Flip the coin to see if the crown allows it. | 1d2 — 1-1: Tails. No pardons. Everyone but the VIP drinks 2. 2-2: Heads. The VIP spares one player. Everyone else except the VIP drinks 2. |
+| ☐ | Coin Toast | `vip.coin-toast` | group | Raise a glass to the VIP, then flip the coin for how big a toast. | 1d2 — 1-1: Tails. Everyone drinks 1. 2-2: Heads. Everyone drinks 3. |
+| ☐ | Birthday Candles | `vip.candles` | group | Roll for candles. The VIP blows them out, one drink each. | 1d6 — The VIP drinks {total}. Everyone cheers. |
 | ☐ | Your Big Night | `vip.sheet-004` | group | Everyone has to say something nice about the VIP. Then everyone drinks. |  |
 | ☐ | Gift Registry | `vip.gift` | category | Clockwise, name sex toys you'd gift the VIP. First repeat or blank drinks 2. |  |
 | ☐ | Cause of Death | `vip.superlatives` | category | Clockwise, name ways the VIP could die tonight. First repeat or blank drinks 2. |  |
+| ☐ | Year in Review | `vip.year-in-review` | category | Clockwise, name something the VIP did this year. First blank or repeat drinks 2. |  |
+| ☐ | Bad Advice | `vip.bad-advice` | category | Clockwise, give the VIP awful life advice. The VIP picks the worst; its author drinks 2. |  |
+| ☐ | In One Word | `vip.one-word` | category | Clockwise, describe the VIP in one word. Repeat a word or blank and drink 2. |  |
+| ☐ | Hall of Fame | `vip.best-quality` | category | Clockwise, name the VIP's best quality. First blank or repeat drinks 2. |  |
+| ☐ | Hall of Shame | `vip.worst-habit` | category | Clockwise, name a bad habit of the VIP. First blank drinks 2. The VIP drinks 1 for the best. |  |
+| ☐ | Matchmaker | `vip.matchmaker` | category | Clockwise, name a celebrity the VIP should date. The VIP vetoes one; its author drinks 2. |  |
+| ☐ | Bucket List | `vip.bucket-list` | category | Clockwise, guess something on the VIP's bucket list. First guess the VIP rejects drinks 2. |  |
+| ☐ | Look-Alike | `vip.look-alike` | category | Clockwise, name the VIP's celebrity twin. The VIP picks the worst; its author drinks 3. |  |
+| ☐ | Next Year | `vip.next-year` | category | Clockwise, predict the VIP's next year in one line. First blank drinks 2. |  |
 | ☐ | The Roast | `vip.roast` | challenge | Clockwise, roast the VIP. The VIP picks the meanest one; its author gives 3. |  |
 | ☐ | Stage Name | `vip.title` | challenge | Give the VIP a stripper name. The VIP drinks 2 and introduces themselves with it. |  |
+| ☐ | Impression Night | `vip.impressions` | challenge | Clockwise, do your best VIP impression. The VIP picks the best; everyone else drinks 2. |  |
+| ☐ | Hype Man | `vip.hype-man` | challenge | Introduce the VIP like a boxer entering the ring. If the VIP isn't hyped, drink 3. |  |
+| ☐ | The Ask | `vip.the-ask` | challenge | Ask the VIP one question. They answer honestly or finish their drink. |  |
+| ☐ | Their Type | `vip.their-type` | challenge | Name the VIP's type in three words. If the VIP agrees, give 3. If not, drink 3. |  |
+| ☐ | Pop Quiz | `vip.pop-quiz` | challenge | Name the VIP's middle name, star sign and usual drink. Drink 1 for each miss. |  |
+| ☐ | Receipts | `vip.receipts` | challenge | Tell the VIP's most embarrassing moment you've seen. If the VIP denies it, they drink 3. |  |
+| ☐ | Toastmaster | `vip.toastmaster` | challenge | Toast the VIP for 20 seconds. Everyone drinks 1. Stumble and you drink 3. |  |
+| ☐ | Serenade | `vip.serenade` | challenge | Sing the VIP one line of a love song, eyes locked. Refuse and drink 4. |  |
+| ☐ | Fan Mail | `vip.fan-mail` | challenge | Everyone texts the VIP something nice. The VIP reads the best aloud; its author gives 3. |  |
+| ☐ | Red Carpet | `vip.red-carpet` | challenge | Interview the VIP like they just won an Oscar. Everyone drinks 2 to their answer. |  |
+| ☐ | Wedding Toast | `vip.wedding-toast` | challenge | Give the toast you'd give at the VIP's wedding. If anyone tears up, everyone drinks 2. |  |
+| ☐ | Usual, Please | `vip.bar-order` | challenge | You and your left neighbor guess the VIP's bar order. Anyone wrong drinks 3. |  |
+| ☐ | Thumb Duel | `vip.thumb-duel` | challenge | Thumb war the VIP. Loser drinks 3. |  |
+| ☐ | Fact Check | `vip.fact-check` | challenge | Say one true and one false thing about the VIP. The VIP spots the lie or drinks 2. |  |
+| ☐ | Signature Move | `vip.signature-move` | challenge | The VIP does their signature dance move. Everyone copies it, then drinks 1. |  |
+| ☐ | Biggest Fan | `vip.biggest-fan` | challenge | Name three of the VIP's favorite things. Drink 1 for each miss. |  |
+| ☐ | Court Jester | `vip.jester` | challenge | Tell the VIP a joke, then flip the coin to see if it landed. | 1d2 — 1-1: Tails. It bombed. Drink 3. 2-2: Heads. They laughed. Give 3. |
+| ☐ | Double Dare | `vip.double-dare` | challenge | Dare the VIP to do something. Flip the coin to see who does it. | 1d2 — 1-1: Tails. You do your own dare, then drink 2. 2-2: Heads. The VIP does it or drinks 4. |
 | ☐ | Fast as Fuck Boi | `vip.sheet-003` | challenge | VIP gives 3x what they can drink in 1 minute. |  |
 | ☐ | Daddy's Home | `vip.excellency` | rule | For the rest of the game, everyone calls the VIP Daddy or Mommy. Forget: drink 2. |  |
 | ☐ | Never Drink Alone | `vip.never-alone` | rule | For the rest of the game, the VIP picks someone to join every drink they take. |  |
+| ☐ | Bodyguard | `vip.bodyguard` | rule | Until your next turn, you guard the VIP. Anyone who touches the VIP drinks 1. |  |
+| ☐ | High Ground | `vip.high-ground` | rule | Until your next turn, nobody sits or stands higher than the VIP. Caught: drink 2. |  |
+| ☐ | Plus One | `vip.plus-one` | rule | Until your next turn, whenever the VIP drinks, you drink too. |  |
+| ☐ | Pet Name | `vip.pet-name` | rule | Pick the VIP a pet name. Until your next turn, everyone uses it. Slip: drink 1. |  |
+| ☐ | Royal Decree | `vip.royal-decree` | rule | The VIP makes a rule that lasts until your next turn. Break it: drink 2. |  |
+| ☐ | At Your Service | `vip.butler` | rule | Until your next turn, you fetch the VIP anything they ask for. Refuse: drink 2. |  |
 
 ## Pokémon night (`pokemon`)
 
@@ -1163,6 +1222,179 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Pool Party Lie | `likely.309` | group | Most likely to have sex in a pool and lie about it? Point on three. Most votes drinks 3. |  |
 | ☐ | Scarred for Life | `likely.310` | group | Most likely to walk in on their parents? Point on three. Most votes drinks 3. |  |
 | ☐ | Snooze Button | `likely.311` | group | Most likely to fall asleep mid-hookup? Point on three. Most votes drinks 2. |  |
+
+## Never Have I Ever (`never`)
+
+166 cards · 1 sip · 158 group · 2 category · 5 challenge · 0 rule · 8 dice
+
+| Review | Title | ID | Cat | Rules | Dice, secret or timer |
+| --- | --- | --- | --- | --- | --- |
+| ☐ | Double Life | `never.double-life` | sip | Never have I ever kept a secret from this whole table. Flip the coin. | 1d2 — 1-1: Tails. Anyone who has drinks 3. 2-2: Heads. Anyone who hasn't drinks 1. Boring. |
+| ☐ | Irish Goodbye | `never.001` | group | Never have I ever left a party without telling anyone. Anyone who has drinks 2. |  |
+| ☐ | Wrong Ride | `never.002` | group | Never have I ever gotten into a stranger's car by mistake. Anyone who has drinks 2. |  |
+| ☐ | Sole Survivor | `never.003` | group | Never have I ever lost a shoe on a night out. Anyone who has drinks 2. |  |
+| ☐ | Mystery Bruise | `never.004` | group | Never have I ever woken up with a mystery bruise. Anyone who has drinks 2. Tell it. |  |
+| ☐ | Tab Still Open | `never.005` | group | Never have I ever left my card behind the bar. Anyone who has drinks 2. |  |
+| ☐ | Walk of Fame | `never.006` | group | Never have I ever walked home in last night's outfit. Anyone who has drinks 2. |  |
+| ☐ | Mic Hostage | `never.007` | group | Never have I ever refused to give back the karaoke mic. Anyone who has drinks 2. |  |
+| ☐ | Porcelain Pillow | `never.008` | group | Never have I ever fallen asleep on a toilet. Anyone who has drinks 2. |  |
+| ☐ | Puke and Rally | `never.009` | group | Never have I ever puked and kept drinking. Anyone who has drinks 3. |  |
+| ☐ | Mom, It's Me | `never.010` | group | Never have I ever drunk dialed my parents. Anyone who has drinks 2. |  |
+| ☐ | Bathroom Bestie | `never.011` | group | Never have I ever made a best friend in a bathroom line. Anyone who has drinks 2. |  |
+| ☐ | Call Me Gary | `never.012` | group | Never have I ever given a stranger a fake name at a bar. Anyone who has drinks 2. |  |
+| ☐ | Brunch Zombie | `never.013` | group | Never have I ever shown up to brunch still drunk. Anyone who has drinks 2. |  |
+| ☐ | Persona Non Grata | `never.014` | group | Never have I ever been banned from a bar. Anyone who has drinks 2. Tell it. |  |
+| ☐ | Purse Bar | `never.015` | group | Never have I ever snuck my own booze into a bar. Anyone who has drinks 2. |  |
+| ☐ | Finders Keepers | `never.016` | group | Never have I ever finished a drink that wasn't mine. Anyone who has drinks 2. |  |
+| ☐ | Floor Is Lava | `never.017` | group | Never have I ever fallen over on a dance floor. Anyone who has drinks 2. |  |
+| ☐ | Splashdown | `never.018` | group | Never have I ever dropped my phone in a toilet. Anyone who has drinks 2. |  |
+| ☐ | Ghost Order | `never.019` | group | Never have I ever woken up to food I don't remember ordering. Anyone who has drinks 2. |  |
+| ☐ | Couch Tourist | `never.020` | group | Never have I ever woken up on a stranger's couch. Anyone who has drinks 2. Tell it. |  |
+| ☐ | Cart Full of Regret | `never.021` | group | Never have I ever bought something online while drunk. Anyone who has drinks 2. |  |
+| ☐ | Locked Out | `never.022` | group | Never have I ever been locked out of my own place drunk. Anyone who has drinks 2. |  |
+| ☐ | Ink Regret | `never.023` | group | Never have I ever gotten a tattoo I regret. Anyone who has drinks 3. |  |
+| ☐ | Any Bush Will Do | `never.024` | group | Never have I ever peed somewhere I definitely shouldn't have. Anyone who has drinks 2. |  |
+| ☐ | Reception Shotgun | `never.025` | group | Never have I ever shotgunned a beer at a wedding. Anyone who has drinks 2. |  |
+| ☐ | Lost the Group | `never.026` | group | Never have I ever lost my friends and gone home alone. Anyone who has drinks 2. |  |
+| ☐ | Sunrise Club | `never.027` | group | Never have I ever watched the sun come up before going to bed. Anyone who has drinks 2. |  |
+| ☐ | Shot Caller | `never.028` | group | Never have I ever ordered a round of shots nobody wanted. Anyone who has drinks 2. |  |
+| ☐ | Ghost Story | `never.029` | group | Never have I ever ghosted someone after a good date. Anyone who has drinks 2. |  |
+| ☐ | After Midnight | `never.030` | group | Never have I ever texted an ex after midnight. Anyone who has drinks 2. |  |
+| ☐ | Same Name Twice | `never.031` | group | Never have I ever dated two people with the same name. Anyone who has drinks 2. |  |
+| ☐ | Name Escapes Me | `never.032` | group | Never have I ever forgotten a hookup's name. Anyone who has drinks 2. Tell it. |  |
+| ☐ | Forbidden Swipe | `never.033` | group | Never have I ever swiped right on a friend's ex. Anyone who has drinks 2. |  |
+| ☐ | Burner Account | `never.034` | group | Never have I ever had a secret account to stalk someone. Anyone who has drinks 2. |  |
+| ☐ | Fake Emergency | `never.035` | group | Never have I ever faked an emergency to escape a date. Anyone who has drinks 2. |  |
+| ☐ | Plus-One Benefits | `never.036` | group | Never have I ever hooked up at a wedding. Anyone who has drinks 2. Tell it. |  |
+| ☐ | Sext Misfire | `never.037` | group | Never have I ever sent a sext to the wrong person. Anyone who has drinks 3. |  |
+| ☐ | Office Romance | `never.038` | group | Never have I ever hooked up with a coworker. Anyone who has drinks 2. |  |
+| ☐ | Back Seat | `never.039` | group | Never have I ever fooled around in a car. Anyone who has drinks 2. |  |
+| ☐ | Thin Walls | `never.040` | group | Never have I ever had a neighbor bang on the wall. Anyone who has drinks 2. |  |
+| ☐ | Six Foot, Allegedly | `never.041` | group | Never have I ever lied about my height on a dating app. Anyone who has drinks 2. |  |
+| ☐ | Old Photo | `never.042` | group | Never have I ever used a five-year-old photo on a dating app. Anyone who has drinks 2. |  |
+| ☐ | Snooze Button | `never.043` | group | Never have I ever fallen asleep mid-hookup. Anyone who has drinks 3. |  |
+| ☐ | Close to Home | `never.044` | group | Never have I ever kissed someone at this table. Anyone who has drinks 3. |  |
+| ☐ | Family Business | `never.045` | group | Never have I ever hooked up with a friend's sibling. Anyone who has drinks 3. |  |
+| ☐ | Knock First | `never.046` | group | Never have I ever been walked in on. Anyone who has drinks 2. Tell it. |  |
+| ☐ | No Tan Lines | `never.047` | group | Never have I ever gone skinny dipping. Anyone who has drinks 2. |  |
+| ☐ | Stranger Plus-One | `never.048` | group | Never have I ever brought someone I'd just met to a wedding. Anyone who has drinks 2. |  |
+| ☐ | Dumped by Text | `never.049` | group | Never have I ever broken up with someone by text. Anyone who has drinks 2. |  |
+| ☐ | Sneaking Out | `never.050` | group | Never have I ever snuck someone past my parents. Anyone who has drinks 2. |  |
+| ☐ | Back Together | `never.051` | group | Never have I ever gotten back with an ex I swore off. Anyone who has drinks 2. |  |
+| ☐ | Sick, Allegedly | `never.052` | group | Never have I ever called in sick hungover. Anyone who has drinks 2. |  |
+| ☐ | Reply All | `never.053` | group | Never have I ever hit reply-all on something I shouldn't have. Anyone who has drinks 3. |  |
+| ☐ | You're Not Muted | `never.054` | group | Never have I ever trashed someone on a call I thought was muted. Anyone who has drinks 3. |  |
+| ☐ | Desk Nap | `never.055` | group | Never have I ever fallen asleep at my desk. Anyone who has drinks 2. |  |
+| ☐ | Supply Closet Heist | `never.056` | group | Never have I ever stolen office supplies. Anyone who has drinks 2. |  |
+| ☐ | Busy Typing | `never.057` | group | Never have I ever pretended to type when my boss walked by. Anyone who has drinks 2. |  |
+| ☐ | Resume Fiction | `never.058` | group | Never have I ever lied on my resume. Anyone who has drinks 2. |  |
+| ☐ | Pack Your Desk | `never.059` | group | Never have I ever been fired. Anyone who has drinks 2. Tell it. |  |
+| ☐ | Gone Forever | `never.060` | group | Never have I ever quit a job by just not showing up. Anyone who has drinks 2. |  |
+| ☐ | Company Party | `never.061` | group | Never have I ever puked at a work party. Anyone who has drinks 3. |  |
+| ☐ | Throne Room | `never.062` | group | Never have I ever taken a work call on the toilet. Anyone who has drinks 2. |  |
+| ☐ | Calendar Block | `never.063` | group | Never have I ever booked a fake meeting to avoid real work. Anyone who has drinks 2. |  |
+| ☐ | Love You, Bye | `never.064` | group | Never have I ever ended a work call with 'love you'. Anyone who has drinks 2. |  |
+| ☐ | Five-Second Rule | `never.065` | group | Never have I ever eaten food off a bar floor. Anyone who has drinks 2. |  |
+| ☐ | Day Three | `never.066` | group | Never have I ever worn the same underwear three days running. Anyone who has drinks 2. |  |
+| ☐ | Pool Warmer | `never.067` | group | Never have I ever peed in a pool as an adult. Anyone who has drinks 2. |  |
+| ☐ | Smell Check | `never.068` | group | Never have I ever sniffed my own armpit in public. Anyone who has drinks 2. |  |
+| ☐ | Borrowed Brush | `never.069` | group | Never have I ever used someone's toothbrush without asking. Anyone who has drinks 2. |  |
+| ☐ | Hotel Robe | `never.070` | group | Never have I ever stolen a hotel bathrobe. Anyone who has drinks 2. |  |
+| ☐ | Plumber's Nightmare | `never.071` | group | Never have I ever clogged a toilet at someone else's house. Anyone who has drinks 3. |  |
+| ☐ | Sock Sacrifice | `never.072` | group | Never have I ever used a sock as toilet paper. Anyone who has drinks 3. |  |
+| ☐ | Carry-On Bag | `never.073` | group | Never have I ever puked in a bag on public transport. Anyone who has drinks 2. |  |
+| ☐ | Smells Fine | `never.074` | group | Never have I ever eaten something I knew had gone off. Anyone who has drinks 2. |  |
+| ☐ | Blame the Dog | `never.075` | group | Never have I ever blamed a fart on a pet. Anyone who has drinks 2. |  |
+| ☐ | Double Dog Dare | `never.076` | group | Never have I ever eaten something disgusting on a dare. Anyone who has drinks 2. |  |
+| ☐ | Dine and Dash | `never.077` | group | Never have I ever dined and dashed. Anyone who has drinks 3. |  |
+| ☐ | Five-Finger Discount | `never.078` | group | Never have I ever shoplifted as an adult. Anyone who has drinks 2. |  |
+| ☐ | McLovin | `never.079` | group | Never have I ever used a fake ID. Anyone who has drinks 2. |  |
+| ☐ | Waterworks | `never.080` | group | Never have I ever cried to get out of a ticket. Anyone who has drinks 2. |  |
+| ☐ | Borrowed Forever | `never.081` | group | Never have I ever never returned something I borrowed. Anyone who has drinks 2. |  |
+| ☐ | Freeloader | `never.082` | group | Never have I ever used an ex's streaming password. Anyone who has drinks 2. |  |
+| ☐ | After Hours | `never.083` | group | Never have I ever snuck into a pool after it closed. Anyone who has drinks 2. |  |
+| ☐ | Back of the Cruiser | `never.084` | group | Never have I ever been in the back of a cop car. Anyone who has drinks 2. Tell it. |  |
+| ☐ | Souvenir Glass | `never.085` | group | Never have I ever stolen a glass from a bar. Anyone who has drinks 2. |  |
+| ☐ | Accent Night | `never.086` | group | Never have I ever faked an accent for a whole night. Anyone who has drinks 2. |  |
+| ☐ | Hop the Fence | `never.087` | group | Never have I ever snuck into a concert or a game. Anyone who has drinks 2. |  |
+| ☐ | Seen It, Loved It | `never.088` | group | Never have I ever pretended to have seen a movie I hadn't. Anyone who has drinks 2. |  |
+| ☐ | Book Club Fraud | `never.089` | group | Never have I ever faked reading the book for book club. Anyone who has drinks 2. |  |
+| ☐ | Hey... You! | `never.090` | group | Never have I ever forgotten someone's name mid-conversation. Anyone who has drinks 2. |  |
+| ☐ | That's Not My Name | `never.091` | group | Never have I ever let someone call me the wrong name for months. Anyone who has drinks 2. |  |
+| ☐ | Polite Laugh | `never.092` | group | Never have I ever laughed at a joke I didn't get. Anyone who has drinks 2. |  |
+| ☐ | Return to Sender | `never.093` | group | Never have I ever regifted a present to the person who gave it. Anyone who has drinks 3. |  |
+| ☐ | Deep Scroll | `never.094` | group | Never have I ever liked an old photo while stalking someone. Anyone who has drinks 2. |  |
+| ☐ | Wrong Chat | `never.095` | group | Never have I ever trashed someone in a chat they were in. Anyone who has drinks 3. |  |
+| ☐ | Sudden Illness | `never.096` | group | Never have I ever faked being sick to skip a party. Anyone who has drinks 2. |  |
+| ☐ | Not You | `never.097` | group | Never have I ever waved back at someone waving at someone else. Anyone who has drinks 2. |  |
+| ☐ | Glass Door | `never.098` | group | Never have I ever walked into a glass door. Anyone who has drinks 2. |  |
+| ☐ | Front Camera | `never.099` | group | Never have I ever screamed at my own front camera. Anyone who has drinks 2. |  |
+| ☐ | Self-Talk | `never.100` | group | Never have I ever been caught talking to myself. Anyone who has drinks 2. |  |
+| ☐ | Ear to the Door | `never.101` | group | Never have I ever listened through a door on purpose. Anyone who has drinks 2. |  |
+| ☐ | Roommate's Leftovers | `never.102` | group | Never have I ever eaten a roommate's food and denied it. Anyone who has drinks 2. |  |
+| ☐ | House Rules | `never.103` | group | Never have I ever cheated at a board game. Anyone who has drinks 2. |  |
+| ☐ | Table Flip | `never.104` | group | Never have I ever flipped a board game. Anyone who has drinks 3. |  |
+| ☐ | Spoiler Alert | `never.105` | group | Never have I ever spoiled a show on purpose. Anyone who has drinks 2. |  |
+| ☐ | Fake Fan | `never.106` | group | Never have I ever pretended to like a band to impress someone. Anyone who has drinks 2. |  |
+| ☐ | Phantom Call | `never.107` | group | Never have I ever faked a phone call to escape a conversation. Anyone who has drinks 2. |  |
+| ☐ | Hide and Seek | `never.108` | group | Never have I ever hidden to avoid someone I know. Anyone who has drinks 2. |  |
+| ☐ | Celebrity Sighting | `never.109` | group | Never have I ever lied about meeting someone famous. Anyone who has drinks 2. |  |
+| ☐ | Shower Debate | `never.110` | group | Never have I ever rehearsed an argument in the shower. Anyone who has drinks 2. |  |
+| ☐ | Watered Down | `never.111` | group | Never have I ever watered down my parents' liquor. Anyone who has drinks 2. |  |
+| ☐ | Family Group Chat | `never.112` | group | Never have I ever sent something filthy to the family chat. Anyone who has drinks 2. Tell it. |  |
+| ☐ | Forged | `never.113` | group | Never have I ever forged a parent's signature. Anyone who has drinks 2. |  |
+| ☐ | Holiday Spirits | `never.114` | group | Never have I ever gotten drunk at a family holiday. Anyone who has drinks 2. |  |
+| ☐ | Kids' Table | `never.115` | group | Never have I ever been sent to the kids' table as an adult. Anyone who has drinks 2. |  |
+| ☐ | Pass the Gravy | `never.116` | group | Never have I ever started a fight at a family dinner. Anyone who has drinks 2. |  |
+| ☐ | Borrowed the Car | `never.117` | group | Never have I ever dented a parent's car and said nothing. Anyone who has drinks 3. |  |
+| ☐ | Final Boarding Call | `never.118` | group | Never have I ever missed a flight. Anyone who has drinks 2. |  |
+| ☐ | Passport Panic | `never.119` | group | Never have I ever lost my passport abroad. Anyone who has drinks 2. Tell it. |  |
+| ☐ | Mile High | `never.120` | group | Never have I ever joined the mile-high club. Anyone who has drinks 3. |  |
+| ☐ | Seat Thief | `never.121` | group | Never have I ever taken someone's seat on a plane. Anyone who has drinks 2. |  |
+| ☐ | Wheels Up | `never.122` | group | Never have I ever gotten drunk at an airport before noon. Anyone who has drinks 2. |  |
+| ☐ | Tourist Tax | `never.123` | group | Never have I ever gotten scammed on vacation. Anyone who has drinks 2. |  |
+| ☐ | Lobster Mode | `never.124` | group | Never have I ever fallen asleep on a beach and burned. Anyone who has drinks 2. |  |
+| ☐ | Point and Pray | `never.125` | group | Never have I ever ordered abroad by pointing and regretted it. Anyone who has drinks 2. |  |
+| ☐ | Wrong Bed | `never.126` | group | Never have I ever woken up in the wrong hotel room. Anyone who has drinks 2. |  |
+| ☐ | Left on Read | `never.127` | group | Never have I ever left someone on read for a week. Anyone who has drinks 2. |  |
+| ☐ | Location Shared | `never.128` | group | Never have I ever tracked someone's location in secret. Anyone who has drinks 2. |  |
+| ☐ | Drafts Folder | `never.129` | group | Never have I ever rewritten a text ten times and never sent it. Anyone who has drinks 2. |  |
+| ☐ | Ego Search | `never.130` | group | Never have I ever googled myself this month. Anyone who has drinks 2. |  |
+| ☐ | Screen Time | `never.131` | group | Never have I ever hit eight hours of screen time in a day. Anyone who has drinks 2. |  |
+| ☐ | Wrong Tab | `never.132` | group | Never have I ever shared my screen with the wrong tab open. Anyone who has drinks 3. |  |
+| ☐ | Keyboard Warrior | `never.133` | group | Never have I ever argued with a stranger online for an hour. Anyone who has drinks 2. |  |
+| ☐ | Untagged | `never.134` | group | Never have I ever untagged myself from every photo of a night. Anyone who has drinks 2. |  |
+| ☐ | Venmo Ghost | `never.135` | group | Never have I ever never paid a friend back. Anyone who has drinks 2. |  |
+| ☐ | Split It Evenly | `never.136` | group | Never have I ever ordered the most and asked to split evenly. Anyone who has drinks 2. |  |
+| ☐ | Overdraft | `never.137` | group | Never have I ever overdrawn my account on a night out. Anyone who has drinks 2. |  |
+| ☐ | Tags Still On | `never.138` | group | Never have I ever worn something once and returned it. Anyone who has drinks 2. |  |
+| ☐ | Price Inflation | `never.139` | group | Never have I ever lied about how much something cost. Anyone who has drinks 2. |  |
+| ☐ | Baby Voice | `never.140` | group | Never have I ever used a baby voice on an adult. Anyone who has drinks 2. |  |
+| ☐ | Parked and Crying | `never.141` | group | Never have I ever cried in a parked car. Anyone who has drinks 2. |  |
+| ☐ | Sleepwalker | `never.142` | group | Never have I ever sleepwalked out of my own room. Anyone who has drinks 2. |  |
+| ☐ | Breakup Haircut | `never.143` | group | Never have I ever cut my own hair after a breakup. Anyone who has drinks 2. |  |
+| ☐ | One Brow | `never.144` | group | Never have I ever shaved off an eyebrow. Anyone who has drinks 2. |  |
+| ☐ | Rabbit Hole | `never.145` | group | Never have I ever believed a conspiracy theory for a whole week. Anyone who has drinks 2. |  |
+| ☐ | Wrong Party | `never.146` | group | Never have I ever crashed the wrong party and stayed. Anyone who has drinks 2. Tell it. |  |
+| ☐ | Lights Out at Nine | `never.147` | group | Never have I ever gone to bed before nine on a Saturday. Anyone who has drinks 2. |  |
+| ☐ | Chipped | `never.148` | group | Never have I ever chipped a tooth on a bottle. Anyone who has drinks 2. |  |
+| ☐ | Singed | `never.149` | group | Never have I ever set my own hair on fire. Anyone who has drinks 2. |  |
+| ☐ | Talking to Plants | `never.150` | group | Never have I ever named a houseplant and talked to it. Anyone who has drinks 2. |  |
+| ☐ | Ugly Crier | `never.151` | group | Never have I ever cried at a commercial. Anyone who has drinks 2. |  |
+| ☐ | Clean Record | `never.clean-record` | group | Never have I ever done anything on these cards. Anyone who can say that honestly gives 3. |  |
+| ☐ | Thrown Out | `never.thrown-out` | group | Never have I ever been thrown out of somewhere. Anyone who has drinks the roll. | 1d6 — Anyone who has drinks {total}. |
+| ☐ | Still Drunk | `never.still-drunk` | group | Never have I ever woken up still drunk. Anyone who has drinks the roll. | 1d6 — Anyone who has drinks {total}. |
+| ☐ | Pressed Send | `never.send-nudes` | group | Never have I ever sent a nude. Anyone who has drinks the roll. | 1d6 — Anyone who has drinks {total}. |
+| ☐ | Flip Side | `never.flip-side` | group | Never have I ever been dumped. Flip the coin to see who drinks. | 1d2 — 1-1: Tails. Anyone who's been dumped drinks 2. 2-2: Heads. Anyone who did the dumping drinks 2. |
+| ☐ | Honest Liars | `never.honest-liars` | group | Never have I ever lied during this game. Flip the coin. | 1d2 — 1-1: Tails. Anyone who hasn't drinks 2. Sure you haven't. 2-2: Heads. Anyone who has drinks 2. |
+| ☐ | Call It | `never.call-it` | group | Never have I ever cheated at a coin toss. Everyone calls heads or tails, then flip. | 1d2 — 1-1: Tails. Everyone who called heads drinks 2. 2-2: Heads. Everyone who called tails drinks 2. |
+| ☐ | Five Fingers | `never.five-fingers` | category | Three fingers up. Clockwise, say a never have I ever; fold if you have. First fist drinks 3. |  |
+| ☐ | Speed Round | `never.speed-round` | category | Clockwise, fast: a never have I ever each. Anyone who has drinks 1. Stall: drink 2. |  |
+| ☐ | Lone Wolf | `never.lone-wolf` | challenge | Say a never have I ever only you've done. Nobody else has: give 4. Someone has: drink 2. |  |
+| ☐ | Lie Detector | `never.lie-detector` | challenge | Say a never have I ever you HAVE done. Caught lying: drink 3. Got away with it: give 3. |  |
+| ☐ | Called Out | `never.called-out` | challenge | Aim a never have I ever at your left neighbor. If they have, they drink 3. If not, you do. |  |
+| ☐ | Hot Seat | `never.hot-seat` | challenge | Everyone asks you one never have I ever. Drink 1 for each you've done. |  |
+| ☐ | Confessional | `never.confessional` | challenge | Name the worst thing you did this year. Then flip the coin. | 1d2 — 1-1: Tails. Tell the whole story, then drink 2. 2-2: Heads. Your secret's safe. Everyone else drinks 1. |
 
 ## Secrets & fuses (`secrets`)
 
