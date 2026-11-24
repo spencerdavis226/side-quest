@@ -9,15 +9,21 @@ import { packs } from "./manifest.generated";
 // finales.
 const loaders: Record<string, () => Promise<CardDefinition[]>> = {
   core: () => import("./core-deck").then((m) => m.coreDeckCards),
+  never: () => import("./never").then((m) => m.neverCards),
+  likely: () => import("./likely").then((m) => m.likelyCards),
+  minds: () => import("./minds").then((m) => m.mindsCards),
+  // Secrets & surprises deals Outbreak's cards too (2026-11-24).
+  secrets: () =>
+    Promise.all([import("./secrets"), import("./outbreak")]).then(
+      ([secrets, outbreak]) => [
+        ...secrets.secretsCards,
+        ...outbreak.outbreakCards,
+      ],
+    ),
+  dealer: () => import("./dealer").then((m) => m.dealerCards),
   vip: () => import("./vip").then((m) => m.vipCards),
   pokemon: () => import("./pokemon").then((m) => m.pokemonCards),
-  likely: () => import("./likely").then((m) => m.likelyCards),
-  never: () => import("./never").then((m) => m.neverCards),
-  secrets: () => import("./secrets").then((m) => m.secretsCards),
   dungeon: () => import("./dungeon").then((m) => m.dungeonCards),
-  minds: () => import("./minds").then((m) => m.mindsCards),
-  outbreak: () => import("./outbreak").then((m) => m.outbreakCards),
-  dealer: () => import("./dealer").then((m) => m.dealerCards),
 };
 
 export const loadablePackIds = Object.keys(loaders);

@@ -8,9 +8,15 @@ import type { CardDefinition } from "../src/game/types";
 
 const pack = packs.find((p) => p.id === "secrets")!;
 
-describe("Secrets & fuses pack", () => {
+describe("Secrets & surprises pack", () => {
   it("ships 156 cards: 81 secrets, 63 on the clock, 12 beer fuses", () => {
-    expect(pack.cardIds).toHaveLength(156);
+    // Plus Outbreak's 26 deck cards and 20 callbacks since 2026-11-24.
+    expect(pack.title).toBe("Secrets & surprises");
+    expect(pack.cardIds).toHaveLength(182);
+    expect(pack.planted).toHaveLength(20);
+    expect(pack.cardIds.filter((id) => id.startsWith("secrets."))).toHaveLength(
+      156,
+    );
     const fuses = secretsCards.filter((c) => c.timer?.kind === "fuse");
     const clocks = secretsCards.filter((c) => c.timer?.kind === "countdown");
     const secretsOnly = secretsCards.filter((c) => c.secret && !c.timer);
@@ -135,5 +141,10 @@ it("saves and resumes a game with secret and timed cards unchanged", () => {
   s = advance(s, () => 0.3); // reveal
   const back = parseSession(JSON.stringify(s));
   expect(back).toEqual(s);
-  expect(back.cards.every((c) => c.secret || c.timer)).toBe(true);
+  // Outbreak's cards joined the pack on 2026-11-24.
+  expect(
+    back.cards
+      .filter((c) => c.id.startsWith("secrets."))
+      .every((c) => c.secret || c.timer),
+  ).toBe(true);
 });

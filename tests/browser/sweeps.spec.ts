@@ -202,9 +202,9 @@ for (let part = 0; part < BALL_PARTS; part++)
 // The 2026-11-23 standard cards: Never Have I Ever, VIP night and every Last
 // Call closer, each as the first card of a plain game at the smallest phone
 // size, face up and (for a dice or coin card) with its roll back on the card.
-// Since 2026-11-24 also Great Minds, Outbreak (its callbacks too), Dealer's
-// Choice and the 13 Core cards added that day.
-const plainPacks = new Set(["never", "vip", "minds", "outbreak", "dealer"]);
+// Since 2026-11-24 also Great Minds, Outbreak's cards (callbacks too, in
+// Secrets & surprises), Dealer's Choice and the 13 Core cards added that day.
+const plainPacks = new Set(["never", "vip", "minds", "dealer"]);
 const coreAdded = new Set(
   [
     "trust-fall",
@@ -227,6 +227,7 @@ const plainIds = cards
     (c) =>
       c.lastCall ||
       coreAdded.has(c.id) ||
+      c.id.startsWith("outbreak.") ||
       packs.some(
         (p) =>
           plainPacks.has(p.id) &&
@@ -239,7 +240,12 @@ function plainAt(id: string, rolled: boolean): SessionState {
   const card = cards.find((c) => c.id === id)!;
   // Alone in an Infinite deck, so it is dealt first.
   const pack = {
-    ...packs.find((p) => id.startsWith(`${p.id}.`))!,
+    ...packs.find(
+      (p) =>
+        p.cardIds.includes(id) ||
+        !!p.planted?.includes(id) ||
+        id.startsWith(`${p.id}.`),
+    )!,
     cardIds: [id],
     lastCall: undefined,
     planted: undefined,

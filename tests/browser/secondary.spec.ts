@@ -78,7 +78,7 @@ test("the pack count stays readable with every pack selected", async ({
     "VIP night",
     "Pokémon night",
     "Most Likely To",
-    "Secrets & fuses",
+    "Secrets & surprises",
   ]) {
     const pack = dialog.getByRole("button", { name, exact: true });
     await pack.click();
@@ -90,9 +90,10 @@ test("the pack count stays readable with every pack selected", async ({
   const row = page.locator(".pack-selector");
   await expect(row.locator(".pack-logo")).toHaveCount(5);
   // 886 since the VIP expansion (2026-11-23), 899 with 13 more Core cards
-  // (2026-11-24); Last Call closers are not deck cards, so they are not
+  // (2026-11-24), 925 with Outbreak's 26 in Secrets & surprises the same
+  // day; Last Call closers and callbacks are not deck cards, so they are not
   // counted.
-  const count = row.getByText("899 cards");
+  const count = row.getByText("925 cards");
   await expect(count).toBeVisible();
   expect(
     await count.evaluate((el) => {

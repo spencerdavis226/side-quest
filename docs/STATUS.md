@@ -2,6 +2,15 @@
 
 Updated 2026-11-24. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Done 2026-11-24: packs reordered, Outbreak folded into Secrets
+
+Owner: "Can we reorder and potentially combine some packs?" Answers to the options put to them: order by kind; merge Outbreak into Secrets & fuses; keep Great Minds and Dealer's Choice separate.
+
+- **Order** (`packs` in `src/content/catalog.ts`, which setup and the manifest follow; `loaders.ts` matches, `manifest.test.ts` checks it): Core, Never Have I Ever, Most Likely To, Great Minds, Secrets & surprises, Dealer's Choice, VIP night, Pokémon, Realms. The `cards` array keeps its order, so a game's shuffle input is unchanged.
+- **Merge**: the `secrets` pack is now **Secrets & surprises** (182 deck cards: 156 secrets and timers plus Outbreak's 26; `planted` holds Outbreak's 20 callbacks). `outbreak.ts` keeps its cards and `outbreak.*` IDs (IDs never change) and exports no pack; the `secrets` loader loads both modules. `RETIRED_PACKS` reads a saved `outbreak` as `secrets` (selection and saved games); `cardPacks` also marks a pack's planted cards. `public/art/packs/outbreak.svg` stays (old pack metadata may be kept), unused.
+- **Tests**: `secrets.test.ts` (182 and 20; the resume test checks only `secrets.*` cards are secrets or timers), `callbacks.test.ts` (plays `secrets`; a new test loads the two `2026-11-24-*callbacks*` fixtures, saved with `outbreak`, as `secrets`), `game.spec.ts` (9 packs), `secondary.spec.ts` ("Secrets & surprises", 925 cards), `sweeps.spec.ts` (Outbreak's cards by ID).
+- **Checked**: below in the PR. **Not checked**: a phone.
+
 ## Done 2026-11-24: 13 Core cards, Great Minds, Outbreak (callbacks), Dealer's Choice (pots)
 
 Owner: "Propose more expansions and card ideas ... research online ... cabiin style of crude humor", then "implement the new cards, then expansions 2, 5, and 6. Commit and merge automatically". Standard modes only; the crawls are untouched.

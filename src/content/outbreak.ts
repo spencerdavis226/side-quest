@@ -1,7 +1,9 @@
-import type { CardDefinition, Category, PackDefinition } from "../game/types";
+import type { CardDefinition, Category } from "../game/types";
 import { cardFactory } from "./author";
 
-// Outbreak (2026-11-24, owner): callbacks. A card here may plant another
+// Outbreak (2026-11-24, owner): callbacks. Its own pack for a day; since
+// 2026-11-24 (owner: combine packs) part of Secrets & surprises, pack
+// `secrets`, and the `outbreak` pack ID reads as `secrets`. A card here may plant another
 // (`sequel`) that comes back a few draws later: the cure for a virus, the
 // grenade going off, a debt coming due, a quiz on a word the table was told
 // to remember. The app deals the callback itself, so nobody keeps count:
@@ -9,8 +11,8 @@ import { cardFactory } from "./author";
 // whenever the deck is dealt. Viruses are Picolo's idea; the grenade is
 // Exploding Kittens' bomb. Every line is original.
 //
-// IDs are by slug; a callback is `outbreak.<slug>` like any card, listed in
-// the pack's `planted` and in no deck. Never reuse an ID.
+// IDs are by slug and keep the `outbreak.` namespace; a callback is listed
+// in the pack's `planted` and in no deck. Never reuse an ID.
 const card = cardFactory("outbreak");
 
 /** Its callback comes back this many draws later, one picked at random. */
@@ -381,13 +383,5 @@ const plain: CardDefinition[] = [
 export const outbreakDeck: CardDefinition[] = [...planters, ...plain];
 export const outbreakCards: CardDefinition[] = [...outbreakDeck, ...planted];
 
-export const outbreakPack: PackDefinition = {
-  version: 1,
-  id: "outbreak",
-  logo: "art/packs/outbreak.svg",
-  title: "Outbreak",
-  description:
-    "Viruses, grenades, debts and pop quizzes: some cards come back a few draws later, and the app deals them.",
-  cardIds: outbreakDeck.map((c) => c.id),
-  planted: planted.map((c) => c.id),
-};
+/** The callbacks, for the pack that deals them (Secrets & surprises). */
+export const outbreakPlanted: CardDefinition[] = planted;
