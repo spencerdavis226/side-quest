@@ -52,6 +52,12 @@ describe("card logic sweep", () => {
       // crawl; its ribbon, "Tonight's omen", is its horizon.
       // A crawl's omens and boons hold for the run.
       if (card.omen || card.boon) continue;
+      // Outbreak (2026-11-24): a virus lasts until its cure, a callback the
+      // app deals itself (`sequel`).
+      if (card.sequel) {
+        expect(textOf(card), card.id).toMatch(/until the cure/i);
+        continue;
+      }
       expect(textOf(card), card.id).toMatch(
         /next turn|rest of the game|end of the game/i,
       );

@@ -33,6 +33,7 @@ import {
   thrownBall,
   awaitingRedo,
   awaitingInvoice,
+  awaitingPress,
 } from "../src/game/engine";
 import { nextMove, seeded } from "./table-play";
 import { parseSession } from "../src/app/persistence";
@@ -72,6 +73,9 @@ const standard = config(["core"], 50);
 /** Standard with the 2026-11-23 packs: Last Call from three pools. */
 const standardMix = config(["core", "vip", "never"], 50);
 const plain = config(["core", "vip", "likely"], null);
+/** 2026-11-24: callbacks and pots in a Standard game. */
+const callbacks = config(["core", "outbreak"], 50);
+const pots = config(["dealer", "minds"], 50);
 const secrets = config(["core", "secrets"], null);
 const league = config(["pokemon"], null, "pokemon");
 const crawl = config(["dungeon"], null, "dungeon");
@@ -108,6 +112,21 @@ const situations: [string, GameConfig, Find][] = [
       currentCard(s).dice?.sides === 2 &&
       !!currentCard(s).lastCall,
   ],
+  // Callbacks (2026-11-24): a sequel face up, and a reshuffled deck that
+  // planted them again.
+  [
+    "standard-callback-dealt",
+    callbacks,
+    (s) => s.phase === "revealed" && !!currentCard(s).planted,
+  ],
+  [
+    "infinite-callbacks-second-round",
+    config(["outbreak"], null),
+    (s) => s.cycle >= 1 && s.phase === "hidden",
+  ],
+  // Dealer's Choice (2026-11-24): a pot won and waiting, then ridden on.
+  ["standard-pot-waiting", pots, (s) => awaitingPress(s)],
+  ["standard-pot-riding", pots, (s) => (s.press ?? 0) >= 1 && !s.roll],
   [
     "infinite-second-round",
     plain,

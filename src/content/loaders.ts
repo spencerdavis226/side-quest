@@ -5,7 +5,8 @@ import { packs } from "./manifest.generated";
 // Card text is the largest part of the app, so each pack's cards are a lazy
 // chunk fetched only when a game starts. A resumed game never needs them: its
 // save carries its own card snapshot. `loadPackCards` keeps the chosen packs'
-// cards, their Last Call pools and their quest finales.
+// cards, their Last Call pools, their planted callbacks and their quest
+// finales.
 const loaders: Record<string, () => Promise<CardDefinition[]>> = {
   core: () => import("./core-deck").then((m) => m.coreDeckCards),
   vip: () => import("./vip").then((m) => m.vipCards),
@@ -14,6 +15,9 @@ const loaders: Record<string, () => Promise<CardDefinition[]>> = {
   never: () => import("./never").then((m) => m.neverCards),
   secrets: () => import("./secrets").then((m) => m.secretsCards),
   dungeon: () => import("./dungeon").then((m) => m.dungeonCards),
+  minds: () => import("./minds").then((m) => m.mindsCards),
+  outbreak: () => import("./outbreak").then((m) => m.outbreakCards),
+  dealer: () => import("./dealer").then((m) => m.dealerCards),
 };
 
 export const loadablePackIds = Object.keys(loaders);

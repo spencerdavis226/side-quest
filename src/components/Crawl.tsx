@@ -1052,6 +1052,36 @@ export function PressPlaques({
   theme: CrawlTheme;
 }) {
   const card = currentCardOf(session);
+  // Dealer's Choice (2026-11-24): a pot of drinks in the plain modes.
+  if (card.pot) {
+    const pull = session.press ?? 0;
+    const pot = card.pot[pull];
+    const next = card.pot[pull + 1];
+    return (
+      <>
+        <button
+          className="card-choice-option offer-plaque offer-buy press-cash"
+          aria-label={`Cash out: give ${pot}`}
+          onClick={onCashOut}
+        >
+          <span className="offer-label">
+            <span className="offer-name">Cash out</span>
+            <small className="offer-price">Give {pot}</small>
+          </span>
+        </button>
+        <button
+          className="card-choice-option offer-plaque offer-loud press-again"
+          aria-label={`Ride on: roll again for ${next}. Bust and you drink it.`}
+          onClick={onPress}
+        >
+          <span className="offer-label">
+            <span className="offer-name">Ride on</span>
+            <small className="offer-price">For {next}</small>
+          </span>
+        </button>
+      </>
+    );
+  }
   const banked = (session.quest?.party?.press ?? 0) + 1;
   const prizes = card.press!.prizes.slice(0, banked);
   const names = prizes.map((p) => theme.loot[p].name).join(", ");

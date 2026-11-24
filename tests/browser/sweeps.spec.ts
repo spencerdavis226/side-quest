@@ -202,15 +202,39 @@ for (let part = 0; part < BALL_PARTS; part++)
 // The 2026-11-23 standard cards: Never Have I Ever, VIP night and every Last
 // Call closer, each as the first card of a plain game at the smallest phone
 // size, face up and (for a dice or coin card) with its roll back on the card.
-const plainPacks = new Set(["never", "vip"]);
+// Since 2026-11-24 also Great Minds, Outbreak (its callbacks too), Dealer's
+// Choice and the 13 Core cards added that day.
+const plainPacks = new Set(["never", "vip", "minds", "outbreak", "dealer"]);
+const coreAdded = new Set(
+  [
+    "trust-fall",
+    "two-truths-shart",
+    "taco-bell-roulette",
+    "hold-my-beer",
+    "ope",
+    "per-my-last-email",
+    "bench-warmer",
+    "venmo-request",
+    "who-hurt-you",
+    "ghost-protocol",
+    "dirty-pint",
+    "coin-brown-note",
+    "hostile-takeover",
+  ].map((slug) => `core.${slug}`),
+);
 const plainIds = cards
   .filter(
     (c) =>
       c.lastCall ||
-      packs.some((p) => plainPacks.has(p.id) && p.cardIds.includes(c.id)),
+      coreAdded.has(c.id) ||
+      packs.some(
+        (p) =>
+          plainPacks.has(p.id) &&
+          (p.cardIds.includes(c.id) || !!p.planted?.includes(c.id)),
+      ),
   )
   .map((c) => c.id);
-const PLAIN_PARTS = 2;
+const PLAIN_PARTS = 3;
 function plainAt(id: string, rolled: boolean): SessionState {
   const card = cards.find((c) => c.id === id)!;
   // Alone in an Infinite deck, so it is dealt first.
@@ -218,10 +242,11 @@ function plainAt(id: string, rolled: boolean): SessionState {
     ...packs.find((p) => id.startsWith(`${p.id}.`))!,
     cardIds: [id],
     lastCall: undefined,
+    planted: undefined,
   };
   let s = createSession(
     { version: 1, packIds: [pack.id], limit: null },
-    [{ ...card, lastCall: undefined }],
+    [{ ...card, lastCall: undefined, planted: undefined, sequel: undefined }],
     [pack],
     () => 0.5,
   );

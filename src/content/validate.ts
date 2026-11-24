@@ -182,6 +182,57 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         c.unlock !== undefined)
     )
       fail(`Invalid Last Call card: ${c.id}`);
+    // Callbacks (2026-11-24): a sequel is a planted card, never a deck
+    // card, a quest's or a Last Call; a planted card plants nothing.
+    if (
+      (c.planted !== undefined &&
+        (c.planted !== true ||
+          c.sequel !== undefined ||
+          c.lastCall !== undefined ||
+          c.quest !== undefined ||
+          c.battle !== undefined)) ||
+      (c.sequel !== undefined &&
+        (!c.sequel ||
+          typeof c.sequel.cardId !== "string" ||
+          c.sequel.cardId === c.id ||
+          !Array.isArray(c.sequel.after) ||
+          c.sequel.after.length !== 2 ||
+          !Number.isSafeInteger(c.sequel.after[0]) ||
+          !Number.isSafeInteger(c.sequel.after[1]) ||
+          c.sequel.after[0] < 1 ||
+          c.sequel.after[1] < c.sequel.after[0] ||
+          c.sequel.after[1] > 30 ||
+          c.lastCall !== undefined ||
+          c.quest !== undefined ||
+          !cs.find((x) => x.id === c.sequel!.cardId)?.planted))
+    )
+      fail(`Invalid callback: ${c.id}`);
+    // Dealer's Choice (2026-11-24): a pot of 2 to 6 pulls, rising, on dice
+    // that can win and lose; plain cards only.
+    if (
+      c.pot !== undefined &&
+      (!Array.isArray(c.pot) ||
+        c.pot.length < 2 ||
+        c.pot.length > 6 ||
+        c.pot.some(
+          (n, i) =>
+            !Number.isSafeInteger(n) ||
+            n < 1 ||
+            n > 30 ||
+            (i > 0 && n < c.pot![i - 1]),
+        ) ||
+        !c.dice?.outcomes?.some((o) => o.win) ||
+        !(
+          c.dice.outcomes.some((o) => !o.win) ||
+          (!!c.dice.doubles && !c.dice.doublesWin)
+        ) ||
+        c.dice.choice !== undefined ||
+        c.press !== undefined ||
+        c.battle !== undefined ||
+        c.quest !== undefined ||
+        c.lastCall !== undefined)
+    )
+      fail(`Invalid pot: ${c.id}`);
     if (
       c.ribbon !== undefined &&
       (typeof c.ribbon !== "string" || !c.ribbon.trim() || c.ribbon.length > 32)
@@ -233,7 +284,11 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
         (c.dice && (!results.includes(true) || !results.includes(false)))
       )
         fail(`Invalid battle: ${c.id}`);
-    } else if (c.dice?.outcomes?.some((o) => o.win) || c.dice?.doublesWin)
+    } else if (
+      // A pot card's wins are pulls survived (Dealer's Choice).
+      !c.pot &&
+      (c.dice?.outcomes?.some((o) => o.win) || c.dice?.doublesWin)
+    )
       fail(`Win outcome on a card that is not a battle: ${c.id}`);
     // A strike is a fight the type matchup settles: three lines, and nothing
     // that would put the card aside another way.
@@ -775,6 +830,21 @@ export function validateCatalog(cs: CardDefinition[], ps: PackDefinition[]) {
           )))
     )
       fail(`Invalid Last Call pool: ${p.id}`);
+    // Callbacks: every sequel a deck card plants is in the pack's planted
+    // list, and nothing planted is in a deck.
+    const deckSequels = p.cardIds
+      .map((id) => cs.find((c) => c.id === id)?.sequel?.cardId)
+      .filter((id): id is string => !!id);
+    if (
+      p.cardIds.some((id) => cs.find((c) => c.id === id)?.planted) ||
+      (p.planted !== undefined &&
+        (!Array.isArray(p.planted) ||
+          !p.planted.length ||
+          new Set(p.planted).size !== p.planted.length ||
+          p.planted.some((id) => !cs.find((c) => c.id === id)?.planted))) ||
+      deckSequels.some((id) => !p.planted?.includes(id))
+    )
+      fail(`Invalid planted cards: ${p.id}`);
     if (p.quest !== undefined) {
       const {
         mode,

@@ -19,6 +19,7 @@ export function packCardIds(pack: PackDefinition): string[] {
     ...new Set([
       ...pack.cardIds,
       ...(pack.lastCall ?? []),
+      ...(pack.planted ?? []),
       ...(pack.quest
         ? [...pack.quest.cardIds, ...finaleCardIds(pack.quest)]
         : []),

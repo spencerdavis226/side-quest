@@ -256,6 +256,20 @@ export interface CardDefinition {
    * pack's deck, only in a pack's `lastCall` pool; `createSession` deals
    * one as a finite plain game's last draw (`placeLastCall`). */
   lastCall?: true;
+  /** Callbacks (2026-11-24): a card that plants another. Whenever the deck
+   * is dealt (a new game, a reshuffle, a replay), `plantSequels` puts the
+   * sequel `after` draws behind this card: `[min, max]`, one picked at
+   * random. The sequel carries `planted: true` and is in its pack's
+   * `planted` list, never in a deck. */
+  sequel?: { cardId: string; after: [number, number] };
+  /** Callbacks: a card dealt only as another card's sequel. */
+  planted?: true;
+  /** Dealer's Choice (2026-11-24): push your luck in the plain modes. The
+   * drinks on the line at each pull, rising. A won roll with a pull left
+   * offers Cash out (give the pot) or Ride on (roll again for the next
+   * pot); a lost one busts (drink the pot). The pulls taken are
+   * `SessionState.press`. Needs dice with winning and losing outcomes. */
+  pot?: number[];
 }
 /** The rival (2026-11-15, owner: "a specific random rival every time ...
  * that same rival follows you throughout the whole quest"). One of a run's
@@ -849,6 +863,9 @@ export interface PackDefinition {
    * plain game draws one from every selected pack's pool as its last card.
    * Each card carries `lastCall: true` and is in no deck. */
   lastCall?: string[];
+  /** Callbacks (2026-11-24): the pack's sequel cards, dealt only after the
+   * card that plants them (`CardDefinition.sequel`). In no deck. */
+  planted?: string[];
 }
 export interface GameConfig {
   version: 1;
@@ -876,4 +893,8 @@ export interface SessionState {
   previousId: string | null;
   /** Present only in a quest mode; older saves omit it. */
   quest?: QuestState;
+  /** Dealer's Choice (2026-11-24): pulls already won and ridden on, on the
+   * pot card in play (`CardDefinition.pot`). Plain modes only; cleared
+   * when the card is put aside. Older saves omit it. */
+  press?: number;
 }
