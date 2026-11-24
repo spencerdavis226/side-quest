@@ -9,7 +9,9 @@ export function cardPacks(
   return catalog.filter(
     (pack) =>
       (!selected || selected.includes(pack.id)) &&
-      (pack.cardIds.includes(cardId) || cardId.startsWith(`${pack.id}.`)),
+      (pack.cardIds.includes(cardId) ||
+        !!pack.planted?.includes(cardId) ||
+        cardId.startsWith(`${pack.id}.`)),
   );
 }
 export function selectedPacks(ids: readonly string[]) {

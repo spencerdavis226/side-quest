@@ -119,7 +119,13 @@ export function chooseQuest(
 /** Packs folded into another since they shipped (2026-10-24: the House sheet
  * and Cabin weekend became part of Core). A selection or a save that names one
  * means the pack that now holds its cards. */
-const RETIRED_PACKS: Record<string, string> = { house: "core", cabin: "core" };
+// Retired pack IDs and the pack that holds their cards now: House and Cabin
+// weekend joined Core (2026-10-24), Outbreak joined Secrets (2026-11-24).
+const RETIRED_PACKS: Record<string, string> = {
+  house: "core",
+  cabin: "core",
+  outbreak: "secrets",
+};
 const currentPackIds = (ids: readonly string[]) => [
   ...new Set(ids.map((id) => RETIRED_PACKS[id] ?? id)),
 ];

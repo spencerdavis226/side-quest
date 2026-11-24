@@ -4,8 +4,10 @@ import type {
   TimerDefinition,
 } from "../game/types";
 import { cardFactory } from "./author";
+import { outbreakDeck, outbreakPlanted } from "./outbreak";
 
-// Secrets & fuses: hold-to-read secrets, hidden fuses and a visible clock.
+// Secrets & surprises (Secrets & fuses until 2026-11-24): hold-to-read
+// secrets, hidden fuses and a visible clock, plus Outbreak's callbacks.
 // The mechanics are borrowed from party games (Paranoia, Killer, Heads Up,
 // Taboo, charades, 5 Second Rule, hot potato); every prompt is written for
 // this table. A secret shows only while a player holds the card's plaque; a
@@ -519,12 +521,16 @@ export const secretsCards: CardDefinition[] = [
   ...fuseCards,
 ];
 
+// Since 2026-11-24 (owner: combine packs) the pack also deals Outbreak's
+// cards (`outbreak.ts`): viruses, grenades, debts and quizzes whose callbacks
+// the app deals a few draws later. The pack was Secrets & fuses.
 export const secretsPack: PackDefinition = {
   version: 1,
   id: "secrets",
   logo: "art/packs/secrets.svg",
-  title: "Secrets & fuses",
+  title: "Secrets & surprises",
   description:
-    "Hold-to-read secrets and the clock: Paranoia, missions, Heads Up, charades, and a beer for hot potato.",
-  cardIds: secretsCards.map((c) => c.id),
+    "Hold-to-read secrets, the clock and callbacks: Paranoia, Heads Up, hot potato, and viruses whose cure turns up later.",
+  cardIds: [...secretsCards, ...outbreakDeck].map((c) => c.id),
+  planted: outbreakPlanted.map((c) => c.id),
 };

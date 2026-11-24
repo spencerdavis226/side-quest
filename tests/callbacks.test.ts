@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { cards, packs } from "../src/content/catalog";
 import {
@@ -75,9 +76,11 @@ describe("callbacks", () => {
 
   it("deals each sequel behind the card that plants it", () => {
     for (let seed = 1; seed <= 40; seed++) {
-      const s = createSession(config(["outbreak"]), cards, packs, seeded(seed));
-      expect(s.order).toHaveLength(46);
-      expect(s.cards).toHaveLength(46);
+      const s = createSession(config(["secrets"]), cards, packs, seeded(seed));
+      // Secrets & surprises: 156 secrets and timers, Outbreak's 26 deck
+      // cards and its 20 callbacks (2026-11-24).
+      expect(s.order).toHaveLength(202);
+      expect(s.cards).toHaveLength(202);
       checkPlanted(s.order, `seed ${seed}`);
       // A sequel never opens the deck.
       expect(byId.get(s.order[0])?.planted).toBeUndefined();
@@ -110,8 +113,8 @@ describe("callbacks", () => {
 
   it("plants again on every reshuffle and replay, and saves load", () => {
     const random = seeded(11);
-    let s = createSession(config(["outbreak"], null), cards, packs, random);
-    for (let i = 0; i < 46 * 3 + 5; i++) {
+    let s = createSession(config(["secrets"], null), cards, packs, random);
+    for (let i = 0; i < 202 * 3 + 5; i++) {
       if (s.position === 0) checkPlanted(s.order, `cycle ${s.cycle}`);
       s = play(s, random);
       expect(() => parseSession(JSON.stringify(s))).not.toThrow();
@@ -121,9 +124,22 @@ describe("callbacks", () => {
     checkPlanted(again.order, "replay");
   });
 
+  it("reads a save from the day Outbreak was its own pack as Secrets", () => {
+    for (const name of [
+      "2026-11-24-standard-callback-dealt",
+      "2026-11-24-infinite-callbacks-second-round",
+    ]) {
+      const raw = readFileSync(`tests/fixtures/saves/${name}.json`, "utf8");
+      expect(JSON.parse(raw).config.packIds, name).toContain("outbreak");
+      const s = parseSession(raw);
+      expect(s.config.packIds, name).toContain("secrets");
+      expect(s.config.packIds, name).not.toContain("outbreak");
+    }
+  });
+
   it("deals the cure while the virus is fresh in a mixed Standard game", () => {
     const random = seeded(3);
-    let s = createSession(config(["core", "outbreak"]), cards, packs, random);
+    let s = createSession(config(["core", "secrets"]), cards, packs, random);
     checkPlanted(s.order, "core + outbreak");
     for (let i = 0; i < 49; i++) s = play(s, random);
     expect(currentCard(s).lastCall).toBe(true);
