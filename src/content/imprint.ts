@@ -8,6 +8,9 @@ import { dungeonCards } from "./dungeon";
 import { neverCards } from "./never";
 import { vipCards } from "./vip";
 import { lastCallCards } from "./last-call";
+import { mindsCards } from "./minds";
+import { outbreakCards } from "./outbreak";
+import { dealerCards } from "./dealer";
 
 /**
  * Card imprint content: which icon and paper tint a card carries.
@@ -95,6 +98,13 @@ export const imprintAssignments: Record<string, ImprintAssignment> = {
   // VIP originals keep their own picks below.
   ...Object.fromEntries(
     [...neverCards, ...vipCards, ...lastCallCards].map((card) => [
+      card.id,
+      expansionMotifs[card.category],
+    ]),
+  ),
+  // 2026-11-24: Great Minds, Outbreak and Dealer's Choice.
+  ...Object.fromEntries(
+    [...mindsCards, ...outbreakCards, ...dealerCards].map((card) => [
       card.id,
       expansionMotifs[card.category],
     ]),

@@ -7,7 +7,7 @@ import type {
   SessionState,
 } from "../types";
 import { hiddenReward, rollWins } from "../dice";
-import { currentCard, paceQuest, shuffle, type Random } from "../engine";
+import { currentCard, dealOrder, paceQuest, type Random } from "../engine";
 import { finaleCard, finaleStage, resolveStage } from "./stages";
 import {
   addDeed,
@@ -129,6 +129,11 @@ export function discard(
   verdict?: Outcome,
   spoil?: number,
 ): SessionState {
+  // Dealer's Choice: the pot goes with its card.
+  if (s.press !== undefined) {
+    const { press: _press, ...rest } = s;
+    s = rest;
+  }
   const party = s.quest?.party;
   if (!party || (!party.assist && !party.fainted))
     return discardCard(s, random, verdict, spoil);
@@ -495,7 +500,7 @@ function discardCard(
   }
   if (s.position + 1 === s.order.length) {
     // A lost leader on the deck's last card is shuffled back in with it.
-    const order = shuffle(s.order, random, previousId);
+    const order = dealOrder(s.order, s.cards, random, previousId);
     return {
       ...s,
       ...history,

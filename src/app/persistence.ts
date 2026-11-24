@@ -676,6 +676,17 @@ export function parseSession(raw: string): SessionState {
     throw Error("Invalid party");
   validateRoll(s.roll, current.dice);
   validateRoll(s.previousRoll, previous?.dice);
+  // Dealer's Choice (2026-11-24): pulls ridden on a pot card in play.
+  if (
+    s.press !== undefined &&
+    (!Number.isSafeInteger(s.press) ||
+      s.press < 1 ||
+      !!q ||
+      s.phase !== "revealed" ||
+      !current.pot ||
+      s.press >= current.pot.length)
+  )
+    throw Error("Invalid pot");
   if (
     (s.phase === "hidden" && s.roll !== null) ||
     // A choice card may have been put aside without a roll, and a crawl's

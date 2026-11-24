@@ -445,6 +445,94 @@ const drafts: Draft[] = [
     "Everyone puts both hands on their head or on their tail. Then flip the coin.",
     flip("Tails. Hands on tails drink 2.", "Heads. Hands on heads drink 2."),
   ],
+  // --- 2026-11-24: researched additions, CABIIN voice ----------------------
+  [
+    "trust-fall",
+    "Trust Fall",
+    "sip",
+    "You trusted a fart and it lied. Tell the story. Everyone drinks 2.",
+  ],
+  [
+    "two-truths-shart",
+    "Two Truths and a Shart",
+    "challenge",
+    "Tell two truths and a lie about your bowels. Everyone who guesses wrong drinks 2.",
+  ],
+  [
+    "taco-bell-roulette",
+    "Taco Bell Roulette",
+    "challenge",
+    "You ordered the Grande Meal at 2 AM. Roll d6.",
+    rollTable(1, 6, [
+      { min: 1, max: 1, instruction: "You shat. Drink 6." },
+      { min: 2, max: 5, instruction: "Cramps. Drink {total}." },
+      { min: 6, max: 6, instruction: "Iron gut. Give 6." },
+    ]),
+  ],
+  [
+    "hold-my-beer",
+    "Hold My Beer",
+    "challenge",
+    "Hand your drink right and pull a stunt from your chair. If nobody laughs, drink 4.",
+  ],
+  [
+    "ope",
+    "Ope",
+    "rule",
+    "Until your next turn, anyone who says sorry drinks 1.",
+  ],
+  [
+    "per-my-last-email",
+    "Per My Last Email",
+    "challenge",
+    "Say something passive-aggressive to your left neighbor, office style. They drink 2.",
+  ],
+  [
+    "bench-warmer",
+    "Bench Warmer",
+    "group",
+    "Whoever has been sitting longest stands up, airs it out, and drinks 2.",
+  ],
+  [
+    "venmo-request",
+    "Venmo Request",
+    "group",
+    "Everyone who owes someone here money drinks 2. Name names.",
+  ],
+  [
+    "who-hurt-you",
+    "Who Hurt You",
+    "challenge",
+    "Your left neighbor guesses your trauma. Right, you drink 3. Wrong, they drink 3.",
+  ],
+  [
+    "ghost-protocol",
+    "Ghost Protocol",
+    "group",
+    "Point at whoever leaves without saying bye. They drink 3 now, before they vanish.",
+  ],
+  [
+    "dirty-pint",
+    "Dirty Pint",
+    "group",
+    "Everyone pours a splash into your cup. You pick who drinks it.",
+  ],
+  [
+    "coin-brown-note",
+    "Brown Note",
+    "sip",
+    "Something in your gut just changed key. Flip the coin.",
+    flip(
+      "Tails. It's you. Drink 4 and step out for a minute.",
+      "Heads. False alarm. Everyone else drinks 2 for the scare.",
+    ),
+  ],
+  [
+    "hostile-takeover",
+    "Hostile Takeover",
+    "sip",
+    "Swap seats with anyone. They drink 2 for the trouble.",
+  ],
 ];
 
 export const standardExpansionCards: CardDefinition[] = drafts.map(

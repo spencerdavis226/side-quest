@@ -1,12 +1,12 @@
 # Card review sheet
 
-Generated 2026-11-23 by `npm run cards:review`. Do not edit by hand — edit the
+Generated 2026-11-24 by `npm run cards:review`. Do not edit by hand — edit the
 source modules under `src/content` and regenerate. Each row is one card;
 the Review column is intentionally blank so you can mark it up.
 
 ## The Core deck (`core`)
 
-285 cards · 67 sip · 51 group · 24 category · 102 challenge · 41 rule · 64 dice
+298 cards · 70 sip · 55 group · 24 category · 107 challenge · 42 rule · 66 dice
 
 | Review | Title | ID | Cat | Rules | Dice, secret or timer |
 | --- | --- | --- | --- | --- | --- |
@@ -26,6 +26,9 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Double or Nothing | `core.coin-double-nothing` | sip | You owe the table 2 drinks. Flip the coin to double it or dodge it. | 1d2 — 1-1: Tails. Doubled. Drink 4. 2-2: Heads. Nothing. Give 2 instead. |
 | ☐ | Heads You Win | `core.coin-heads-you-win` | sip | Heads you win, tails everyone else does. Flip the coin. | 1d2 — 1-1: Tails. Everyone else gives you 1 each. 2-2: Heads. Give 4. |
 | ☐ | Bad Penny | `core.coin-bad-penny` | sip | A bad penny always turns up, and tonight it's turned up for you. Flip the coin. | 1d2 — 1-1: Tails. It's yours. Drink 3. 2-2: Heads. It's someone else's problem. Give 3. |
+| ☐ | Trust Fall | `core.trust-fall` | sip | You trusted a fart and it lied. Tell the story. Everyone drinks 2. |  |
+| ☐ | Brown Note | `core.coin-brown-note` | sip | Something in your gut just changed key. Flip the coin. | 1d2 — 1-1: Tails. It's you. Drink 4 and step out for a minute. 2-2: Heads. False alarm. Everyone else drinks 2 for the scare. |
+| ☐ | Hostile Takeover | `core.hostile-takeover` | sip | Swap seats with anyone. They drink 2 for the trouble. |  |
 | ☐ | California Sober | `core.house-004` | sip | Get pitted and smoke something, then drink 1d6 water. Else, take a shot. | 1d6 — Drink {total} water. |
 | ☐ | The Game Giveth | `core.house-006` | sip | Give 3 drinks. If "The Game Taketh" was already played, multiply by 1d6. |  |
 | ☐ | The Game Taketh | `core.house-007` | sip | Take 3 drinks. If "The Game Giveth" was already played, multiply by 1d6. |  |
@@ -102,6 +105,10 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Wishing Well | `core.coin-wishing-well` | group | Make a wish out loud, then flip the coin into the well. | 1d2 — 1-1: Tails. Denied. Drink 2 and wish smaller. 2-2: Heads. Granted. Everyone else drinks 2 to your wish. |
 | ☐ | Fifty-Fifty | `core.coin-fifty-fifty` | group | Half the table is safe. Hands freeze where they are, then flip the coin. | 1d2 — 1-1: Tails. Everyone holding a drink in their left hand drinks 2. 2-2: Heads. Everyone holding a drink in their right hand drinks 2. |
 | ☐ | Heads or Tails | `core.coin-heads-or-tails` | group | Everyone puts both hands on their head or on their tail. Then flip the coin. | 1d2 — 1-1: Tails. Hands on tails drink 2. 2-2: Heads. Hands on heads drink 2. |
+| ☐ | Bench Warmer | `core.bench-warmer` | group | Whoever has been sitting longest stands up, airs it out, and drinks 2. |  |
+| ☐ | Venmo Request | `core.venmo-request` | group | Everyone who owes someone here money drinks 2. Name names. |  |
+| ☐ | Ghost Protocol | `core.ghost-protocol` | group | Point at whoever leaves without saying bye. They drink 3 now, before they vanish. |  |
+| ☐ | Dirty Pint | `core.dirty-pint` | group | Everyone pours a splash into your cup. You pick who drinks it. |  |
 | ☐ | Dog Vision | `core.house-005` | group | Anyone wearing blue or yellow gives 2 |  |
 | ☐ | Ron Stop | `core.house-013` | group | Everyone drinks for as long as you can say "Ron stop" |  |
 | ☐ | And the Chicks | `core.house-019` | group | 1 guy drinks. All girls drink |  |
@@ -192,6 +199,11 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Sudden Death | `core.coin-sudden-death` | challenge | You and the player across from you, one coin. Stare each other down, then flip it. | 1d2 — 1-1: Tails. You drink 3. 2-2: Heads. They drink 3. |
 | ☐ | Two-Faced | `core.coin-two-faced` | challenge | Say something nice about your left neighbor. Then flip the coin. | 1d2 — 1-1: Tails. You lied. Drink 2 and say what you really think. 2-2: Heads. You meant it. They give 2. |
 | ☐ | The Ref | `core.coin-the-ref` | challenge | You're the ref. Point at two players, one hand each, then flip the coin for kick-off. | 1d2 — 1-1: Tails. Your left hand's player drinks 3. 2-2: Heads. Your right hand's player drinks 3. |
+| ☐ | Two Truths and a Shart | `core.two-truths-shart` | challenge | Tell two truths and a lie about your bowels. Everyone who guesses wrong drinks 2. |  |
+| ☐ | Taco Bell Roulette | `core.taco-bell-roulette` | challenge | You ordered the Grande Meal at 2 AM. Roll d6. | 1d6 — 1-1: You shat. Drink 6. 2-5: Cramps. Drink {total}. 6-6: Iron gut. Give 6. |
+| ☐ | Hold My Beer | `core.hold-my-beer` | challenge | Hand your drink right and pull a stunt from your chair. If nobody laughs, drink 4. |  |
+| ☐ | Per My Last Email | `core.per-my-last-email` | challenge | Say something passive-aggressive to your left neighbor, office style. They drink 2. |  |
+| ☐ | Who Hurt You | `core.who-hurt-you` | challenge | Your left neighbor guesses your trauma. Right, you drink 3. Wrong, they drink 3. |  |
 | ☐ | That's Two Beers? | `core.house-003` | challenge | Give 4d6 drinks | 4d6 — Give {total}. |
 | ☐ | Fetch | `core.house-008` | challenge | Get something from outside in under 30 seconds or drink 1d20 | 1d20 — Drink {total}. |
 | ☐ | Steve's Beans | `core.house-009` | challenge | Text Steve and tell him his beans are good. Else, drink 2d6 | 2d6 — Drink {total}. |
@@ -269,6 +281,7 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | Hall Monitor | `core.hall-monitor` | rule | Until your next turn, nobody pees without asking you. Ask nicely or drink 2. |  |
 | ☐ | Horny Jail | `core.horny-jail` | rule | Until your next turn, anyone who says something horny gets bonked and drinks 2. |  |
 | ☐ | Formal Night | `core.formal-night` | rule | Until your next turn, everyone addresses others as my liege. Slip: drink 2. |  |
+| ☐ | Ope | `core.ope` | rule | Until your next turn, anyone who says sorry drinks 1. |  |
 | ☐ | Caveman | `core.house-010` | rule | You can only grunt until your next turn |  |
 | ☐ | Mr Freeze | `core.house-015` | rule | Anyone you touch can't move or talk until you stop touching them |  |
 | ☐ | Potty Mouth | `core.house-030` | rule | No more cursing for the rest of the game. Drink when you fuck up. |  |
@@ -2239,6 +2252,172 @@ the Review column is intentionally blank so you can mark it up.
 | ☐ | The Squire | `dungeon.class-squire` | rule | Drops trou. −2 max hearts. Natural 1 on a 1 or 2. Every heal heals 1 less. −2 satchel slots. |  |
 | ☐ | The Mimic | `dungeon.class-mimic` | rule | Licks everything. −4 max hearts. −1 to every battle d20. −1 to monster d20s. +2 satchel slots. |  |
 | ☐ | The Dragonslayer | `dungeon.class-dragonslayer` | rule | Has done this before. Won't shut up about it. +1 to boss d20s. |  |
+
+## Great Minds (`minds`)
+
+89 cards · 0 sip · 88 group · 0 category · 1 challenge · 0 rule · 2 dice
+
+| Review | Title | ID | Cat | Rules | Dice, secret or timer |
+| --- | --- | --- | --- | --- | --- |
+| ☐ | Drunk Food | `minds.herd-001` | group | On 3, everyone names the best food after 2 AM. Lone answers drink 2. |  |
+| ☐ | Gas Station Gourmet | `minds.herd-002` | group | On 3, everyone names the grossest gas-station snack. Lone answers drink 2. |  |
+| ☐ | Hot Tub Soup | `minds.herd-003` | group | On 3, everyone names the worst thing to find in a hot tub. Lone answers drink 2. |  |
+| ☐ | Body Parts | `minds.herd-004` | group | On 3, everyone names the funniest-sounding body part. Lone answers drink 2. |  |
+| ☐ | Last Meal | `minds.herd-005` | group | On 3, everyone names a last meal before the electric chair. Lone answers drink 2. |  |
+| ☐ | Shot Glass | `minds.herd-006` | group | On 3, everyone names the worst liquor to take a shot of. Lone answers drink 2. |  |
+| ☐ | Bad Tattoo | `minds.herd-007` | group | On 3, everyone names the worst place to get a tattoo. Lone answers drink 2. |  |
+| ☐ | Gate Lice | `minds.herd-008` | group | On 3, everyone names the saddest airport to be stuck in. Lone answers drink 2. |  |
+| ☐ | Red Flag | `minds.herd-009` | group | On 3, everyone names the biggest red flag on a first date. Lone answers drink 2. |  |
+| ☐ | Fake Sick | `minds.herd-010` | group | On 3, everyone names the best fake excuse to call in sick. Lone answers drink 2. |  |
+| ☐ | Karaoke Crime | `minds.herd-011` | group | On 3, everyone names the worst karaoke song to pick. Lone answers drink 2. |  |
+| ☐ | Table for One | `minds.herd-012` | group | On 3, everyone names the worst holiday to be single. Lone answers drink 2. |  |
+| ☐ | Dog Name | `minds.herd-013` | group | On 3, everyone names the dumbest name for a dog. Lone answers drink 2. |  |
+| ☐ | Future Mullet | `minds.herd-014` | group | On 3, everyone names a baby name that guarantees a mullet. Lone answers drink 2. |  |
+| ☐ | Pizza Crime | `minds.herd-015` | group | On 3, everyone names the worst pizza topping. Lone answers drink 2. |  |
+| ☐ | Throne Reading | `minds.herd-016` | group | On 3, everyone names the best thing to read on the toilet. Lone answers drink 2. |  |
+| ☐ | Smell Test | `minds.herd-017` | group | On 3, everyone names the worst smell in a car. Lone answers drink 2. |  |
+| ☐ | Toast Bomb | `minds.herd-018` | group | On 3, everyone names the worst thing to say in a wedding toast. Lone answers drink 2. |  |
+| ☐ | Free Beer | `minds.herd-019` | group | On 3, everyone names a beer you'd only drink if it was free. Lone answers drink 2. |  |
+| ☐ | Mystery Meat | `minds.herd-020` | group | On 3, everyone names the sketchiest meat you'd still eat. Lone answers drink 2. |  |
+| ☐ | Flyover | `minds.herd-021` | group | On 3, everyone names the most boring state to drive across. Lone answers drink 2. |  |
+| ☐ | Hair of the Dog | `minds.herd-022` | group | On 3, everyone names the best hangover cure. Lone answers drink 2. |  |
+| ☐ | Chat Name | `minds.herd-023` | group | On 3, everyone names the dumbest name for a group chat. Lone answers drink 2. |  |
+| ☐ | Neon Sign | `minds.herd-024` | group | On 3, everyone names the worst name for a strip club. Lone answers drink 2. |  |
+| ☐ | Cover Band | `minds.herd-025` | group | On 3, everyone names a terrible name for a cover band. Lone answers drink 2. |  |
+| ☐ | Useless Power | `minds.herd-026` | group | On 3, everyone names the most useless superpower. Lone answers drink 2. |  |
+| ☐ | Zombie Night | `minds.herd-027` | group | On 3, everyone names the best thing in this room to fight zombies. Lone answers drink 2. |  |
+| ☐ | Midlife Crisis | `minds.herd-028` | group | On 3, everyone names the first thing you'd buy in a midlife crisis. Lone answers drink 2. |  |
+| ☐ | Yard Time | `minds.herd-029` | group | On 3, everyone names the most useful skill in prison. Lone answers drink 2. |  |
+| ☐ | Splash Zone | `minds.herd-030` | group | On 3, everyone names the worst place to throw up. Lone answers drink 2. |  |
+| ☐ | Rest Stop | `minds.herd-031` | group | On 3, everyone names the worst kind of public bathroom. Lone answers drink 2. |  |
+| ☐ | Drive-Thru Loyalty | `minds.herd-032` | group | On 3, everyone names the fast food chain you'd die defending. Lone answers drink 2. |  |
+| ☐ | Hundred Bucks | `minds.herd-033` | group | On 3, everyone names the grossest thing you'd eat for $100. Lone answers drink 2. |  |
+| ☐ | Breakfast Champ | `minds.herd-034` | group | On 3, everyone names the best cereal of all time. Lone answers drink 2. |  |
+| ☐ | Fair Fight | `minds.herd-035` | group | On 3, everyone names an animal you could beat in a fight. Lone answers drink 2. |  |
+| ☐ | Pregame Anthem | `minds.herd-036` | group | On 3, everyone names the best song to pregame to. Lone answers drink 2. |  |
+| ☐ | Wrong Room | `minds.herd-037` | group | On 3, everyone names the worst thing to say at a funeral. Lone answers drink 2. |  |
+| ☐ | Gas Snacks | `minds.herd-038` | group | On 3, everyone names the best road trip snack. Lone answers drink 2. |  |
+| ☐ | Sock Drawer | `minds.herd-039` | group | On 3, everyone names the weirdest thing hidden in a sock drawer. Lone answers drink 2. |  |
+| ☐ | Junk Drawer | `minds.herd-040` | group | On 3, everyone names the most useless kitchen gadget. Lone answers drink 2. |  |
+| ☐ | Nap Sport | `minds.herd-041` | group | On 3, everyone names the most boring sport to watch. Lone answers drink 2. |  |
+| ☐ | Haunted House | `minds.herd-042` | group | On 3, everyone names the worst room in a house to be haunted. Lone answers drink 2. |  |
+| ☐ | Roommate From Hell | `minds.herd-043` | group | On 3, everyone names the worst roommate habit. Lone answers drink 2. |  |
+| ☐ | Cheap Date | `minds.herd-044` | group | On 3, everyone names the cheapest acceptable first date. Lone answers drink 2. |  |
+| ☐ | Add to Cart | `minds.herd-045` | group | On 3, everyone names the dumbest thing to buy drunk online. Lone answers drink 2. |  |
+| ☐ | Dirty Money | `minds.herd-046` | group | On 3, everyone names the grossest job you'd take for good money. Lone answers drink 2. |  |
+| ☐ | Mouth Noises | `minds.herd-047` | group | On 3, everyone names the most annoying sound a person makes. Lone answers drink 2. |  |
+| ☐ | Wrong Hole | `minds.herd-048` | group | On 3, everyone names a thing that never goes in on the first try. Lone answers drink 2. |  |
+| ☐ | Morning After | `minds.herd-049` | group | On 3, everyone names the first thing you do hungover. Lone answers drink 2. |  |
+| ☐ | Weird Flex | `minds.herd-050` | group | On 3, everyone names the weirdest thing to brag about. Lone answers drink 2. |  |
+| ☐ | Cry Spot | `minds.herd-051` | group | On 3, everyone names the best place to cry in public. Lone answers drink 2. |  |
+| ☐ | Bad Clams | `minds.herd-052` | group | On 3, everyone names the worst food to get food poisoning from. Lone answers drink 2. |  |
+| ☐ | Tent Life | `minds.herd-053` | group | On 3, everyone names the worst thing to forget on a camping trip. Lone answers drink 2. |  |
+| ☐ | Potty Mouth | `minds.herd-054` | group | On 3, everyone names the best swear word. Lone answers drink 2. |  |
+| ☐ | Deal Breaker | `minds.herd-055` | group | On 3, everyone names the worst thing a date can order. Lone answers drink 2. |  |
+| ☐ | Puke Ride | `minds.herd-056` | group | On 3, everyone names the worst theme park ride to puke on. Lone answers drink 2. |  |
+| ☐ | Thumbs Up | `minds.herd-057` | group | On 3, everyone names the most passive-aggressive emoji. Lone answers drink 2. |  |
+| ☐ | One Star | `minds.herd-058` | group | On 3, everyone names the fastest way to tank your Uber rating. Lone answers drink 2. |  |
+| ☐ | Registry Fail | `minds.herd-059` | group | On 3, everyone names the worst wedding gift. Lone answers drink 2. |  |
+| ☐ | Bar Fight | `minds.herd-060` | group | On 3, everyone names the dumbest reason to start a bar fight. Lone answers drink 2. |  |
+| ☐ | Gas Leak | `minds.herd-061` | group | On 3, everyone names the worst food to eat before a date. Lone answers drink 2. |  |
+| ☐ | Cast Signer | `minds.herd-062` | group | On 3, everyone names the dumbest way to break a bone. Lone answers drink 2. |  |
+| ☐ | Mascot | `minds.herd-063` | group | On 3, everyone names the worst animal for a team mascot. Lone answers drink 2. |  |
+| ☐ | Swipe Left | `minds.herd-064` | group | On 3, everyone names the worst word in a dating bio. Lone answers drink 2. |  |
+| ☐ | Coal | `minds.herd-065` | group | On 3, everyone names the worst gift to get from your parents. Lone answers drink 2. |  |
+| ☐ | Gross-o-Meter | `minds.scale-001` | group | Show 1 to 5 fingers on 3: how gross is a hot tub? Furthest from you drinks 2. |  |
+| ☐ | Pool Rules | `minds.scale-002` | group | Show 1 to 5 fingers on 3: how normal is peeing in the pool? Furthest from you drinks 2. |  |
+| ☐ | Sushi Trust | `minds.scale-003` | group | Show 1 to 5 fingers on 3: how safe is gas-station sushi? Furthest from you drinks 2. |  |
+| ☐ | Dad Bod | `minds.scale-004` | group | Show 1 to 5 fingers on 3: how hot is a dad bod? Furthest from you drinks 2. |  |
+| ☐ | Side Hustle | `minds.scale-005` | group | Show 1 to 5 fingers on 3: how much could your feet earn? Furthest from you drinks 2. |  |
+| ☐ | Floor Food | `minds.scale-006` | group | Show 1 to 5 fingers on 3: how long is the five-second rule? Furthest from you drinks 2. |  |
+| ☐ | Ghost Story | `minds.scale-007` | group | Show 1 to 5 fingers on 3: how haunted was your childhood home? Furthest from you drinks 2. |  |
+| ☐ | Sent at 3 AM | `minds.scale-008` | group | Show 1 to 5 fingers on 3: how bad was your last drunk text? Furthest from you drinks 2. |  |
+| ☐ | Pineapple | `minds.scale-009` | group | Show 1 to 5 fingers on 3: how good is pineapple on pizza? Furthest from you drinks 2. |  |
+| ☐ | Clown Car | `minds.scale-010` | group | Show 1 to 5 fingers on 3: how scary are clowns? Furthest from you drinks 2. |  |
+| ☐ | Breath Check | `minds.scale-011` | group | Show 1 to 5 fingers on 3: how bad is your breath right now? Furthest from you drinks 2. |  |
+| ☐ | Seat Cover | `minds.scale-012` | group | Show 1 to 5 fingers on 3: how gross is a gas-station toilet seat? Furthest from you drinks 2. |  |
+| ☐ | Cold Slice | `minds.scale-013` | group | Show 1 to 5 fingers on 3: how good is cold pizza for breakfast? Furthest from you drinks 2. |  |
+| ☐ | Croc Check | `minds.scale-014` | group | Show 1 to 5 fingers on 3: how acceptable are Crocs at a wedding? Furthest from you drinks 2. |  |
+| ☐ | Sloppy Meter | `minds.scale-015` | group | Show 1 to 5 fingers on 3: how drunk is the drunkest one here? Furthest from you drinks 2. |  |
+| ☐ | Shower Pee | `minds.scale-016` | group | Show 1 to 5 fingers on 3: how often do you pee in the shower? Furthest from you drinks 2. |  |
+| ☐ | Raw Dough | `minds.scale-017` | group | Show 1 to 5 fingers on 3: how worth it is raw cookie dough? Furthest from you drinks 2. |  |
+| ☐ | Pigeon Intel | `minds.scale-018` | group | Show 1 to 5 fingers on 3: how much do pigeons know? Furthest from you drinks 2. |  |
+| ☐ | Tomorrow | `minds.scale-019` | group | Show 1 to 5 fingers on 3: how bad will tomorrow morning be? Furthest from you drinks 2. |  |
+| ☐ | Hive Mind | `minds.hive-mind` | group | On 3, everyone names a body part. All match, you drink 5. Otherwise the odd ones drink 2. |  |
+| ☐ | Majority Rules | `minds.majority-rules` | group | On 3, everyone points up or down. The smaller side drinks 2. A tie, everyone drinks 2. |  |
+| ☐ | Finger Count | `minds.finger-count` | group | On 3, everyone shows 1 to 6 fingers. Then roll d6. | 1d6 — Everyone showing {total} drinks {total}. |
+| ☐ | Beer or Liquor | `minds.coin-beer-or-liquor` | group | On 3, everyone says beer or liquor. Then flip the coin. | 1d2 — 1-1: Tails. Everyone who said beer drinks 2. 2-2: Heads. Everyone who said liquor drinks 2. |
+| ☐ | Mind Meld | `minds.mind-meld` | challenge | You and your left neighbor say a word at once until you match. Each miss, both drink 1. |  |
+
+## Outbreak (`outbreak`)
+
+26 cards · 4 sip · 8 group · 0 category · 5 challenge · 9 rule · 0 dice
+
+| Review | Title | ID | Cat | Rules | Dice, secret or timer |
+| --- | --- | --- | --- | --- | --- |
+| ☐ | Payday Loan | `outbreak.payday-loan` | sip | Give 4 now. The loan comes back with interest soon. |  |
+| ☐ | IOU | `outbreak.iou` | sip | Point at someone. They owe you a drink, and it comes due soon. |  |
+| ☐ | Hangover Insurance | `outbreak.hangover-insurance` | sip | Drink 2 now. Your future self gets a refund. |  |
+| ☐ | Super Spreader | `outbreak.super-spreader` | sip | You touched everything. Point at three people. Each drinks 1. |  |
+| ☐ | Live Grenade | `outbreak.live-grenade` | group | A grenade is rolling around the next ten cards. Whoever draws it finishes their drink. |  |
+| ☐ | Silent but Deadly | `outbreak.silent-but-deadly` | group | Someone dropped a silent one. It hits within ten cards. Whoever draws it drinks 4. |  |
+| ☐ | Time Bomb | `outbreak.time-bomb` | group | A bomb is ticking somewhere in the next ten cards. Its drawer and both neighbors pay. |  |
+| ☐ | Remember This | `outbreak.remember-this` | group | The table picks one silly word together. Remember it: a pop quiz is coming. |  |
+| ☐ | Rain Check | `outbreak.rain-check` | group | You're owed a waterfall, not now. It comes back to you soon. |  |
+| ☐ | Hand Sanitizer | `outbreak.hand-sanitizer` | group | Everyone who hasn't washed their hands since they got here drinks 2. |  |
+| ☐ | Sneeze Guard | `outbreak.sneeze-guard` | group | Fake a sneeze at the table. Everyone who flinches drinks 1. |  |
+| ☐ | Symptoms | `outbreak.symptoms` | group | Everyone who's hungover right now drinks 2. You know who you are. |  |
+| ☐ | Calling It | `outbreak.calling-it` | challenge | Point at who'll be drunkest ten minutes from now. The table remembers. |  |
+| ☐ | Cliffhanger | `outbreak.cliffhanger` | challenge | Start a story about your worst night out and stop mid-sentence. It comes back. |  |
+| ☐ | Grudge | `outbreak.grudge` | challenge | Name someone here you have beef with. Don't say why. It gets settled soon. |  |
+| ☐ | Sealed Envelope | `outbreak.sealed-envelope` | challenge | Predict out loud who drinks next. You'll be checked soon. |  |
+| ☐ | Patient History | `outbreak.patient-history` | challenge | Tell the table the dumbest way you've ever gotten sick. Everyone drinks 2. |  |
+| ☐ | Patient Zero | `outbreak.patient-zero` | rule | You're infected: until the cure, you only speak in questions. Slip: drink 1. |  |
+| ☐ | Pirate Flu | `outbreak.pirate-flu` | rule | You're infected: until the cure, you talk like a pirate. Slip: drink 1. |  |
+| ☐ | Narrator Virus | `outbreak.narrator-virus` | rule | You're infected: until the cure, you talk about yourself in the third person. Slip: drink 1. |  |
+| ☐ | Lockjaw | `outbreak.lockjaw` | rule | You're infected: until the cure, nobody sees your teeth. Laugh with them showing: drink 1. |  |
+| ☐ | Ex Syndrome | `outbreak.ex-syndrome` | rule | You're infected: until the cure, you call everyone 'my ex'. Slip: drink 1. |  |
+| ☐ | Royal Pox | `outbreak.royal-pox` | rule | You're infected: until the cure, you call everyone Your Majesty. Slip: drink 1. |  |
+| ☐ | Toddler Virus | `outbreak.toddler-virus` | rule | You're infected: until the cure, you say 'why?' to anything said to you. Slip: drink 1. |  |
+| ☐ | Left-Hand Plague | `outbreak.left-hand-plague` | rule | You're infected: until the cure, you drink with your left hand only. Slip: drink 1. |  |
+| ☐ | Quarantine | `outbreak.quarantine` | rule | Until your next turn, nobody may touch you. Anyone who does drinks 2. |  |
+
+## Dealer's Choice (`dealer`)
+
+30 cards · 4 sip · 6 group · 0 category · 18 challenge · 2 rule · 18 dice
+
+| Review | Title | ID | Cat | Rules | Dice, secret or timer |
+| --- | --- | --- | --- | --- | --- |
+| ☐ | Free Bet | `dealer.coin-free-bet` | sip | The house gives you a free bet. Flip the coin. | 1d2 — 1-1: Tails. Give 2. 2-2: Heads. Give 5. |
+| ☐ | Tip Your Dealer | `dealer.tip-your-dealer` | sip | Your left neighbor drinks 2 for the service. |  |
+| ☐ | Comped | `dealer.comped` | sip | The house likes you. Give 4. |  |
+| ☐ | All In | `dealer.all-in` | sip | Push it all in: finish your drink, then give out 6. |  |
+| ☐ | Red or Black | `dealer.coin-red-or-black` | group | Everyone calls red or black. Then flip the coin. | 1d2 — 1-1: Tails is black. Everyone who called red drinks 2. 2-2: Heads is red. Everyone who called black drinks 2. |
+| ☐ | Higher or Lower | `dealer.higher-or-lower` | group | Everyone calls high or low. Then roll d6. | 1d6 — 1-3: Low. Everyone who called high drinks 2. 4-6: High. Everyone who called low drinks 2. |
+| ☐ | Over Under | `dealer.over-under` | group | Everyone calls over or under 7. Then roll 2d6. | 2d6 — 2-6: Under. Everyone who called over drinks 2. 7-7: Dead center. Everyone drinks 3. House wins. 8-12: Over. Everyone who called under drinks 2. |
+| ☐ | Whale | `dealer.whale` | group | Whoever has spent the most money tonight drinks 3. Money talks. |  |
+| ☐ | House Always Wins | `dealer.house-always-wins` | group | Everyone drinks 2. The house always wins. |  |
+| ☐ | Counting Cards | `dealer.counting-cards` | group | The table counts to 20, one number each, no order. Two say a number at once: both drink 2. |  |
+| ☐ | Night Bus | `dealer.night-bus` | challenge | Roll to stay on the bus. Cash out and give the pot, or ride on. Bust and drink it. | 1d6 — 1-2: Thrown off the bus. 3-6: Still riding. |
+| ☐ | Roulette | `dealer.roulette` | challenge | One chamber is loaded. Pull the trigger: cash out and give the pot, or go again. | 1d6 — 1-1: Bang. 2-6: Click. |
+| ☐ | Let It Ride | `dealer.let-it-ride` | challenge | Double or nothing. Flip: cash out and give the pot, or let it ride. | 1d2 — 1-1: Tails. The house takes it. 2-2: Heads. It rides. |
+| ☐ | Snake Eyes | `dealer.snake-eyes` | challenge | Roll 2d6 and pray for more than 4. Cash out and give the pot, or roll on. | 2d6 — 2-4: Snakes. Bust. 5-12: Safe. |
+| ☐ | Penny Slots | `dealer.penny-slots` | challenge | Pull the lever. Cash out and give the pot, or pull again. Lose and drink it. | 1d20 — 1-1: Natural 1! The machine eats your card. Bust. 2-6: Nothing. Bust. 7-19: Cherries. 20-20: Natural 20! Jackpot row. |
+| ☐ | High Roller | `dealer.high-roller` | challenge | Big table, big pot. Roll: cash out and give it, or go again. Bust and drink it. | 1d20 — 1-1: Natural 1! Security walks you out. Bust. 2-10: The house wins. 11-19: You win the hand. 20-20: Natural 20! The table applauds. |
+| ☐ | Seven Out | `dealer.seven-out` | challenge | Roll 2d6. Anything but a 7 keeps you shooting. Cash out and give the pot, or roll on. | 2d6 — 2-6: Point. Keep shooting. 7-7: Crapped out. 8-12: Point. Keep shooting. |
+| ☐ | Pyramid | `dealer.pyramid` | challenge | Climb the pyramid one row a roll. Cash out and give the pot, or climb on. | 1d6 — 1-2: You fall off. 3-6: Up a row. |
+| ☐ | Chicken | `dealer.chicken` | challenge | Roll to keep driving at the wall. Cash out and give the pot, or floor it. | 1d20 — 1-1: Natural 1! Through the wall. Bust. 2-4: Crash. 5-19: Still driving. 20-20: Natural 20! The wall flinched. |
+| ☐ | Card Counter | `dealer.card-counter` | challenge | Roll 2d6. Doubles and the pit boss spots you. Cash out and give the pot, or keep counting. | 2d6 — 2-12: Clean. |
+| ☐ | Beer Run | `dealer.beer-run` | challenge | Run for the store before last call. Cash out and give the pot, or run on. | 1d6 — 1-1: Cops. Bust. 2-2: Closed. Bust. 3-6: Made it. |
+| ☐ | Hot Streak | `dealer.hot-streak` | challenge | You can't miss tonight. Roll: cash out and give the pot, or stay hot. | 1d20 — 1-1: Natural 1! Frozen solid. Bust. 2-8: Ice cold. 9-19: Still hot. 20-20: Natural 20! On fire. |
+| ☐ | Slot Machine | `dealer.slot-machine` | challenge | Pull the lever. Roll 3d6. | 3d6 — 3-18: No jackpot. Drink {first}. |
+| ☐ | Boxcars | `dealer.boxcars` | challenge | Roll 2d6 for the table. | 2d6 — 2-12: No pair. Drink {second}. |
+| ☐ | Screw the Dealer | `dealer.screw-the-dealer` | challenge | Your left neighbor picks 1 to 6 in secret. Two guesses: miss, drink 3; hit, they drink 3. |  |
+| ☐ | Poker Face | `dealer.poker-face` | challenge | Stare down your right neighbor. First to smile drinks 3. |  |
+| ☐ | Bad Beat | `dealer.bad-beat` | challenge | Tell the table your worst luck story. Everyone drinks 1 in sympathy. |  |
+| ☐ | Dealer's Choice | `dealer.dealers-choice` | challenge | You deal: everyone drinks 2, or one person of your choice drinks 5. |  |
+| ☐ | Pit Boss | `dealer.pit-boss` | rule | Until your next turn, you're the pit boss: anyone who touches their phone drinks 2. |  |
+| ☐ | Ace Up the Sleeve | `dealer.ace-up-the-sleeve` | rule | Until your next turn, you may pass one drink you're given to someone else. |  |
 
 ## Notes for review
 

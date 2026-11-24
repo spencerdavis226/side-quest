@@ -125,8 +125,9 @@ test("two lengths and the quest modes appear, and every pack can be toggled", as
   await page.getByRole("button", { name: "Choose packs" }).click();
   const dialog = page.getByRole("dialog");
   // Six packs since House and Cabin weekend joined Core (2026-10-24); seven
-  // with Never Have I Ever (2026-11-23).
-  await expect(dialog.locator(".pack")).toHaveCount(7);
+  // with Never Have I Ever (2026-11-23); ten with Great Minds, Outbreak and
+  // Dealer's Choice (2026-11-24).
+  await expect(dialog.locator(".pack")).toHaveCount(10);
   await expect(dialog).not.toContainText("Always included");
   const core = dialog.getByRole("button", { name: /The Core deck/ });
   await core.click();

@@ -89,9 +89,10 @@ test("the pack count stays readable with every pack selected", async ({
   await dialog.getByRole("button", { name: "Done" }).click();
   const row = page.locator(".pack-selector");
   await expect(row.locator(".pack-logo")).toHaveCount(5);
-  // 886 since the VIP expansion (2026-11-23); Last Call closers are not
-  // deck cards, so they are not counted.
-  const count = row.getByText("886 cards");
+  // 886 since the VIP expansion (2026-11-23), 899 with 13 more Core cards
+  // (2026-11-24); Last Call closers are not deck cards, so they are not
+  // counted.
+  const count = row.getByText("899 cards");
   await expect(count).toBeVisible();
   expect(
     await count.evaluate((el) => {
@@ -126,10 +127,10 @@ test("VIP is a selectable add-on and Core can be deselected", async ({
     key,
   );
   expect(session.config.packIds).toEqual(["core", "vip"]);
-  // Core holds the house sheet and Cabin weekend too: 285 + 75 VIP cards
-  // (16 before the 2026-11-23 expansion), plus the one Last Call card a
-  // Standard game ends on.
-  expect(session.cards).toHaveLength(361);
+  // Core holds the house sheet and Cabin weekend too: 298 (285 before
+  // 2026-11-24) + 75 VIP cards (16 before the 2026-11-23 expansion), plus
+  // the one Last Call card a Standard game ends on.
+  expect(session.cards).toHaveLength(374);
   expect(
     session.cards.some((card: { id: string }) => card.id === "core.house-091"),
   ).toBe(true);

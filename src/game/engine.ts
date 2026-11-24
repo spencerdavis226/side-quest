@@ -11,6 +11,7 @@ import { atBeat, awaitingSpoils, bossBeat } from "./crawl/bosses";
 import { awaitingOffer, awaitingPress } from "./crawl/offers";
 import { awaitingCatch } from "./crawl/team";
 import { awaitingVerdict, discard } from "./crawl/discard";
+import { rollWins } from "./dice";
 import { withNames, withSecret } from "./crawl/names";
 import { atRound, roundOf } from "./crawl/lair";
 import {
@@ -193,6 +194,63 @@ export function shuffle(
   return next;
 }
 /**
+ * Callbacks (2026-11-24): put each sequel `after` draws behind the card
+ * that plants it. Sequels already in `order` are taken out first, so a
+ * reshuffle places them again. Randomness is drawn only for a planting
+ * card, so a deck without one deals exactly as before.
+ */
+export function plantSequels(
+  order: string[],
+  cards: CardDefinition[],
+  random: Random = Math.random,
+): string[] {
+  const byId = new Map(cards.map((c) => [c.id, c]));
+  if (!cards.some((c) => c.sequel && byId.has(c.sequel.cardId))) return order;
+  const base = order.filter((id) => !byId.get(id)?.planted);
+  const out: string[] = [];
+  // Sequels waiting for their place: the index each should land on.
+  const due: { id: string; at: number }[] = [];
+  const settle = () => {
+    for (;;) {
+      const i = due.findIndex((d) => d.at <= out.length);
+      if (i < 0) return;
+      out.push(due.splice(i, 1)[0].id);
+    }
+  };
+  for (const id of base) {
+    settle();
+    out.push(id);
+    const sequel = byId.get(id)?.sequel;
+    if (!sequel || !byId.has(sequel.cardId)) continue;
+    const [min, max] = sequel.after;
+    const k = min + Math.floor(random() * (max - min + 1));
+    due.push({ id: sequel.cardId, at: out.length - 1 + k });
+  }
+  // Sequels planted near the end of the deck close it, in order.
+  due.sort((a, b) => a.at - b.at);
+  return [...out, ...due.map((d) => d.id)];
+}
+/** A fresh deal of a deck: shuffled, never opening on `previous`, with
+ * every sequel planted behind its card. */
+export function dealOrder(
+  ids: string[],
+  cards: CardDefinition[],
+  random: Random = Math.random,
+  previous: string | null = null,
+): string[] {
+  const planted = new Set(cards.filter((c) => c.planted).map((c) => c.id));
+  if (!planted.size) return shuffle(ids, random, previous);
+  return plantSequels(
+    shuffle(
+      ids.filter((id) => !planted.has(id)),
+      random,
+      previous,
+    ),
+    cards,
+    random,
+  );
+}
+/**
  * Spread a quest's cards through its run: move enough of them into the draws
  * before the run's last one that the goal is met and the finale still lands
  * in time. The rest of the shuffle is untouched. `from`, `need` and `window`
@@ -291,6 +349,8 @@ export function createSession(
       .filter((p) => config.packIds.includes(p.id))
       .flatMap((p) => [
         ...p.cardIds,
+        // Callbacks: sequels come with the deck that plants them.
+        ...(p.planted ?? []),
         ...(p.id === config.quest ? (p.quest?.cardIds ?? []) : []),
       ]),
   );
@@ -399,8 +459,9 @@ export function createSession(
     quest = rememberRivals(quest, rivals, random);
   }
   let order = paceQuest(
-    shuffle(
+    dealOrder(
       cards.map((c) => c.id),
+      cards,
       random,
     ),
     cards,
@@ -456,9 +517,12 @@ export function advance(
 /** Finale cards are dealt between deck cards and take no deck position. */
 export function currentCard(s: SessionState) {
   if (!s.quest?.due)
-    return withSecret(
+    return withPot(
       s,
-      s.cards.find((c) => c.id === s.order[s.position])!,
+      withSecret(
+        s,
+        s.cards.find((c) => c.id === s.order[s.position])!,
+      ),
     );
   const card = finaleCard(s.quest, s.quest.finale[s.quest.step])!;
   // The dragon battle reads this round's move (or the enrage contest).
@@ -474,6 +538,31 @@ export function currentCard(s: SessionState) {
       withSecret(s, card.phases ? atBeat(card, bossBeat(s.quest, card)) : card),
     ),
   );
+}
+const potted = new WeakMap<CardDefinition, Map<string, CardDefinition>>();
+/** Dealer's Choice (2026-11-24): a pot card wears what is on the line as
+ * its ribbon: the pot before the roll, then banked, given or busted.
+ * Memoised per card so the object is stable between reads. */
+function withPot(s: SessionState, card: CardDefinition): CardDefinition {
+  if (!card.pot || s.quest) return card;
+  const pull = Math.min(s.press ?? 0, card.pot.length - 1);
+  const pot = card.pot[pull];
+  const roll = s.roll?.returned ? s.roll : null;
+  const won = !!roll && !!card.dice && rollWins(card.dice, roll.values, roll);
+  const ribbon = !roll
+    ? pull
+      ? `Riding on ${pot}`
+      : `Pot: ${pot}`
+    : !won
+      ? `Bust: drink ${pot}`
+      : pull + 1 < card.pot.length
+        ? `Banked ${pot}`
+        : `Jackpot: give ${pot}`;
+  let byRibbon = potted.get(card);
+  if (!byRibbon) potted.set(card, (byRibbon = new Map()));
+  let out = byRibbon.get(ribbon);
+  if (!out) byRibbon.set(ribbon, (out = { ...card, ribbon }));
+  return out;
 }
 /** The card put aside last, as it read then: a boss's beat (`party.beat`). */
 export function previousCard(s: SessionState) {
@@ -508,14 +597,18 @@ export function replaySession(
   s: SessionState,
   random: Random = Math.random,
 ): SessionState {
+  // A pot ridden on is not part of a fresh deal.
+  const { press: _press, ...rest } = s;
+  s = rest;
   return {
     ...s,
     config: { ...s.config, packIds: [...s.config.packIds] },
     cards: s.cards.map((c) => structuredClone(c)),
     order: placeLastCall(
       paceQuest(
-        shuffle(
+        dealOrder(
           s.cards.map((c) => c.id),
+          s.cards,
           random,
         ),
         s.cards,

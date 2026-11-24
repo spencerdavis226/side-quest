@@ -168,6 +168,17 @@ export const PRESS_STEP = 2;
 /** A push-your-luck roll just won with prizes still to win: the table
  * cashes out or goes again. */
 export function awaitingPress(s: SessionState): boolean {
+  // Dealer's Choice (2026-11-24): a pot card in the plain modes.
+  if (!s.quest) {
+    if (s.phase !== "revealed" || !s.roll?.returned) return false;
+    const card = currentCard(s);
+    return (
+      !!card.pot &&
+      !!card.dice &&
+      rollWins(card.dice, s.roll.values, s.roll) &&
+      (s.press ?? 0) + 1 < card.pot.length
+    );
+  }
   const party = s.quest?.party;
   if (!party || !s.quest?.due || s.phase !== "revealed") return false;
   const card = currentCard(s);
@@ -180,6 +191,7 @@ export function awaitingPress(s: SessionState): boolean {
 /** Bank the pull just won and roll again, harder. */
 export function pressOn(s: SessionState): SessionState {
   if (!awaitingPress(s)) return s;
+  if (!s.quest) return { ...s, roll: null, press: (s.press ?? 0) + 1 };
   const party = s.quest!.party!;
   return {
     ...s,

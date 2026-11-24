@@ -80,6 +80,10 @@ describe("natural 20 and natural 1", () => {
     expect(others.map((c) => c.id).sort()).toEqual([
       "core.fuck-around",
       "core.nat-one",
+      "dealer.chicken",
+      "dealer.high-roller",
+      "dealer.hot-streak",
+      "dealer.penny-slots",
       "pokemon.missingno",
     ]);
     for (const c of others) {
