@@ -49,13 +49,20 @@ test("@release legacy finite game, rapid taps, restore, previous card, replay an
   // a second after Play, but no frame showed it until the crossfade ended,
   // past this test's 5 s wait for `.progress` (measured 2026-11-16, 24 runs
   // in local WebKit). This test is about flips and taps, not the crossfade.
+  // `traceTransitions` (support.ts) wraps it as the document's own
+  // property, so both go: deleting only the prototype's left the wrapper,
+  // and the crossfade, in place (the 2026-11-24 `main` WebKit failure).
   await page.addInitScript(() => {
     delete (Document.prototype as { startViewTransition?: unknown })
       .startViewTransition;
+    delete (document as { startViewTransition?: unknown }).startViewTransition;
   });
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("./");
+  expect(await page.evaluate(() => "startViewTransition" in document)).toBe(
+    false,
+  );
   await page.getByRole("button", { name: "Play", exact: true }).click();
   await expect(page.locator(".progress")).toBeVisible();
   // An in-progress game with a former custom limit keeps its original finish.

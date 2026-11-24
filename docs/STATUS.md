@@ -2,6 +2,10 @@
 
 Updated 2026-11-24. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Done 2026-11-24: the WebKit "legacy finite game" failure on `main`
+
+#118's `main` run failed WebKit `@release` "legacy finite game" (`.progress` not visible 5 s after Play), so it did not deploy. Cause, in the test: since the 2026-11-16 diagnostics, `traceTransitions` (`tests/browser/support.ts`) installs `startViewTransition` as the document's own property, so the test's `delete Document.prototype.startViewTransition` left the wrapper in place and Play crossfaded again (the job's diagnosis shows the transition starting); that crossfade is what took 3 to 4 s to draw on CI's software-rendered WebKit. The test now deletes the document's own property too and asserts `startViewTransition` is gone (in Chromium: fails with the old opt-out, passes with the new). The failed job was re-run once as well.
+
 ## Done 2026-11-24: packs reordered, Outbreak folded into Secrets
 
 Owner: "Can we reorder and potentially combine some packs?" Answers to the options put to them: order by kind; merge Outbreak into Secrets & fuses; keep Great Minds and Dealer's Choice separate.
