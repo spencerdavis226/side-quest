@@ -113,7 +113,7 @@ export const coast: FloorCards = {
       2,
       "mimic-barrel",
       "The Mimic Barrel",
-      "The barrel is a mimic. Pour-off with your right neighbor: mime a pint. Table's worse pour: drink 5.",
+      "The barrel is a mimic. You and your right neighbor each mime pouring a pint. Worse pour drinks 5.",
       { loot: "draught" },
     ),
     monster(
@@ -344,7 +344,7 @@ export const coast: FloorCards = {
     fork(
       2,
       "dare-coast",
-      "The Dare",
+      "The Sailors' Dare",
       "The sailors bet you won't swim out naked to the wreck at high tide. They're already counting.",
       ["Not tonight", "Swim for it"],
     ),

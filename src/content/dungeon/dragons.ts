@@ -33,7 +33,7 @@ export const dragons: CardDefinition[] = [
       calm: [
         move(
           "Fire Breath",
-          "Everyone drinks 2. Glasses held up as shields drink 1 instead.",
+          "Everyone drinks 2. Raise your glass as a shield first: drink 1 instead.",
           ONE,
         ),
         move("Tail Swipe", "The drawer's two neighbors drink 3."),
@@ -403,7 +403,11 @@ export const dragons: CardDefinition[] = [
     },
     {
       calm: [
-        move("Dazzle", "Everyone shields their eyes. Last to drinks 2.", ONE),
+        move(
+          "Dazzle",
+          "Everyone shields their eyes. Last to do it drinks 2.",
+          ONE,
+        ),
         move(
           "Flatter Me",
           "The drawer flatters it. If the table boos, the drawer drinks 3.",
@@ -417,7 +421,7 @@ export const dragons: CardDefinition[] = [
           "Mirror Mirror",
           "The drawer copies their left neighbor's moves until the roll. Slip: drink 3.",
         ),
-        move("Preening", "Everyone fixes their hair. Last to drinks 3."),
+        move("Preening", "Everyone fixes their hair. Last to do it drinks 3."),
         move(
           "Golden Glare",
           "Everyone points at the shiniest thing here. Last to point drinks 3.",
@@ -816,7 +820,7 @@ export const unlockedDragons: CardDefinition[] = [
           ),
         ],
         contest:
-          "Everyone stands until it falls. Anyone who sits drinks 4. Now flip the coin.",
+          "Everyone stands while the table counts to 20. Anyone who sits drinks 4. Then flip the coin.",
         lore: [
           "It has no weak scale.",
           "It fears nothing.",

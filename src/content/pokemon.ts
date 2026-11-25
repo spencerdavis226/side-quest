@@ -74,18 +74,18 @@ const deck: CardDefinition[] = [
     "slowpoke",
     "Slowpoke",
     "challenge",
-    "Slowpoke tails are valuable. Cut it off: drink 2. Dick. Leave it: give 1.",
+    "Slowpoke tails sell. Cut it off and drink 2, you monster. Leave it and give 1.",
   ),
   card(
     "zubat",
-    "Zubat",
+    "Another Zubat",
     "challenge",
     "Another fucking Zubat. Roll d6: that's how many bit your neck.",
     roll(1, 6, "Drink {total}. You're a vampire now: bite someone's neck."),
   ),
   card(
     "magikarp",
-    "Magikarp",
+    "Splash",
     "sip",
     "Magikarp used Splash! ...but nothing happened.",
   ),
@@ -103,13 +103,13 @@ const deck: CardDefinition[] = [
   ),
   card(
     "tauros",
-    "Tauros",
+    "Fleeing Tauros",
     "sip",
     "A wild Tauros appeared and instantly fled. Drink 2 for being too slow.",
   ),
   card(
     "pikachu",
-    "Pikachu",
+    "Caught a Pikachu",
     "sip",
     "You caught a Pikachu! Drink 2 and name your new starter. Electric typing included.",
   ),
@@ -127,7 +127,7 @@ const deck: CardDefinition[] = [
   ),
   card(
     "diglett",
-    "Diglett",
+    "Dig Deep",
     "sip",
     "Diglett used Dig! Dig deep and finish your drink.",
   ),
@@ -194,13 +194,13 @@ const deck: CardDefinition[] = [
   ),
   card(
     "phanpy",
-    "Phanpy",
+    "Nose Goes",
     "group",
     "A wild Phanpy appeared! Nose goes! Last finger to their nose drinks 2.",
   ),
   card(
     "abra",
-    "Abra",
+    "Teleport",
     "group",
     "Abra used Teleport! Everyone swaps seats. Last one seated drinks 2.",
   ),
@@ -218,7 +218,7 @@ const deck: CardDefinition[] = [
   ),
   card(
     "cubone",
-    "Cubone",
+    "Sad Cubone",
     "group",
     'Cubone used "My mother is dead." Share a depressing story. Then everyone drinks 1.',
   ),
@@ -252,7 +252,7 @@ const deck: CardDefinition[] = [
     "pokedex",
     "Pokédex",
     "category",
-    "Going clockwise, name Pokémon in Pokédex order. First to repeat or skip a number drinks 2.",
+    "Clockwise from Bulbasaur, name Pokémon in Pokédex order. First to skip or repeat drinks 2.",
   ),
   card(
     "type-matchup",
@@ -297,7 +297,7 @@ const deck: CardDefinition[] = [
     "may",
     "Rival May",
     "group",
-    "Rival May blocks the path! Everyone taken drinks 3. Nobody's taken: everyone drinks 5.",
+    "Rival May blocks the path! Everyone in a relationship drinks 3. If nobody is, everyone drinks 5.",
   ),
   card(
     "team-rocket",
@@ -307,7 +307,7 @@ const deck: CardDefinition[] = [
   ),
   card(
     "rocket-grunt",
-    "Rocket Grunt",
+    "Five Rattata",
     "sip",
     "A Rocket Grunt sends five Rattata. Drink as many as you want, then laugh at him.",
   ),
@@ -331,7 +331,7 @@ const deck: CardDefinition[] = [
   ),
   card(
     "champion-lance",
-    "Champion Lance",
+    "Lance's Challenge",
     "challenge",
     "Champion Lance! Finish a full drink to take his title, or drink 6.",
   ),
@@ -375,7 +375,7 @@ const deck: CardDefinition[] = [
     "raikou",
     "Raikou",
     "challenge",
-    "Raikou appears! Roll d6. 3: catch it and give 5. Anything else: take a bomb shot.",
+    "Raikou appears! Roll d6 to catch it.",
     rollTable(1, 6, [
       { min: 1, max: 2, instruction: "Zapped. Take a bomb shot." },
       { min: 3, max: 3, instruction: "Caught it! Give 5." },
@@ -386,7 +386,7 @@ const deck: CardDefinition[] = [
     "entei",
     "Entei",
     "challenge",
-    "Entei appears! Roll d6. 3: catch it and give 5. Anything else: take a high-proof shot.",
+    "Entei appears! Roll d6 to catch it.",
     rollTable(1, 6, [
       { min: 1, max: 2, instruction: "Burned. Take a high-proof shot." },
       { min: 3, max: 3, instruction: "Caught it! Give 5." },
@@ -397,7 +397,7 @@ const deck: CardDefinition[] = [
     "suicune",
     "Suicune",
     "challenge",
-    "Suicune appears! Roll d6. 3: catch it and give 5. Anything else: shotgun a beer.",
+    "Suicune appears! Roll d6 to catch it.",
     rollTable(1, 6, [
       { min: 1, max: 2, instruction: "Blitzed. Shotgun a beer." },
       { min: 3, max: 3, instruction: "Caught it! Give 5." },
@@ -406,9 +406,9 @@ const deck: CardDefinition[] = [
   ),
   card(
     "kyogre",
-    "Kyogre",
+    "Kyogre Rises",
     "challenge",
-    "Kyogre rises from the sea! Roll d6. 5-6: catch it; give 5. 1-4: soaked; shotgun a beer.",
+    "Kyogre rises from the sea! Roll d6 to catch it.",
     rollTable(1, 6, [
       { min: 1, max: 4, instruction: "Soaked. Shotgun a beer." },
       { min: 5, max: 6, instruction: "Caught it! Give 5." },
@@ -416,9 +416,9 @@ const deck: CardDefinition[] = [
   ),
   card(
     "groudon",
-    "Groudon",
+    "Groudon Wakes",
     "challenge",
-    "Groudon wakes! Roll d6. 4-6: catch it; give 4. 1-3: rocked; take a high-proof shot.",
+    "Groudon wakes! Roll d6 to catch it.",
     rollTable(1, 6, [
       { min: 1, max: 3, instruction: "Rocked. Take a high-proof shot." },
       { min: 4, max: 6, instruction: "Caught it! Give 4." },
@@ -426,9 +426,9 @@ const deck: CardDefinition[] = [
   ),
   card(
     "rayquaza",
-    "Rayquaza",
+    "Rayquaza Descends",
     "challenge",
-    "Rayquaza descends! Roll d6. 6: catch it; give 6. 1-5: dropped; take a bomb shot.",
+    "Rayquaza descends! Roll d6 to catch it.",
     rollTable(1, 6, [
       { min: 1, max: 5, instruction: "Dropped. Take a bomb shot." },
       { min: 6, max: 6, instruction: "Caught it! Give 6." },
@@ -436,7 +436,7 @@ const deck: CardDefinition[] = [
   ),
   card(
     "game-corner",
-    "Game Corner",
+    "Rigged Slots",
     "challenge",
     "The Game Corner slots are rigged by Team Rocket. Roll 2d6 anyway.",
     rollTable(2, 6, [
@@ -449,7 +449,7 @@ const deck: CardDefinition[] = [
     "bug-contest",
     "Bug Catching Contest",
     "challenge",
-    "Bug Catching Contest! Roll d6: Paras, Metapod, Beedrill, Butterfree, Pinsir or Scyther.",
+    "Bug Catching Contest! Roll d6 to see what you catch.",
     rollTable(1, 6, [
       { min: 1, max: 1, instruction: "Paras: awful. Drink 1." },
       { min: 2, max: 2, instruction: "Metapod: give 1." },
@@ -461,9 +461,9 @@ const deck: CardDefinition[] = [
   ),
   card(
     "safari-zone",
-    "Safari Zone",
+    "Bait or Rock",
     "challenge",
-    "Safari Zone! Roll d6. 1-2: bait; give 1. 3-4: throw a rock, dick; drink 4. 5-6: ball; drink 2.",
+    "Safari Zone! Roll d6 to see what you throw.",
     rollTable(1, 6, [
       { min: 1, max: 2, instruction: "Bait. Give 1." },
       { min: 3, max: 4, instruction: "Rock! Dick move. Drink 4." },
@@ -472,9 +472,9 @@ const deck: CardDefinition[] = [
   ),
   card(
     "rattata",
-    "Rattata",
+    "Tackle",
     "challenge",
-    "Rattata used Tackle! Roll d6. 1: you fainted; finish your drink. 2-6: give 1.",
+    "Rattata used Tackle! Roll d6.",
     rollTable(1, 6, [
       { min: 1, max: 1, instruction: "You fainted. Finish your drink." },
       { min: 2, max: 6, instruction: "Give 1." },
@@ -482,7 +482,7 @@ const deck: CardDefinition[] = [
   ),
   card(
     "chansey",
-    "Chansey",
+    "Chansey's Egg",
     "challenge",
     "Chansey hands you her egg. Don't ask where it came from. Roll d6.",
     rollTable(1, 6, [
@@ -529,7 +529,7 @@ const deck: CardDefinition[] = [
     "missingno",
     "Missingno",
     "challenge",
-    "Missingno glitched in! Roll d20. 5 or under breaks the game and everyone drinks. 6+: drink 2.",
+    "Missingno glitched in! Roll d20 and hope the game holds.",
     rollTable(1, 20, [
       // The standing natural 1 (owner, 2026-10-17); Missingno has no good
       // roll for a natural 20 to double.
@@ -566,7 +566,7 @@ const deck: CardDefinition[] = [
     "mankey",
     "Mankey",
     "rule",
-    "Mankey used Swagger! Teach the table a secret handshake. Until your next turn, fumble it: drink 1.",
+    "Mankey used Swagger! Teach everyone a secret handshake. Fumble it before your next turn: drink 1.",
   ),
   card(
     "aipom",
@@ -588,7 +588,7 @@ const deck: CardDefinition[] = [
   ),
   card(
     "sandshrew",
-    "Sandshrew",
+    "Sand Attack",
     "rule",
     "Sandshrew used Sand Attack! Drink with your non-dominant hand for the rest of the game.",
   ),
@@ -612,13 +612,13 @@ const deck: CardDefinition[] = [
   ),
   card(
     "psyduck",
-    "Psyduck",
+    "Psyduck's Headache",
     "sip",
     'Psyduck has a headache! Hold your head, groan "Psyyy", then drink 2.',
   ),
   card(
     "lapras",
-    "Lapras",
+    "Confuse Ray",
     "rule",
     "Lapras used Confuse Ray! Pick a player: questions only until your next turn. Slip: drink 1.",
   ),
@@ -636,13 +636,13 @@ const deck: CardDefinition[] = [
   ),
   card(
     "togepi",
-    "Togepi",
+    "Togepi Hatched",
     "rule",
     "Togepi hatched! Make a new rule for the rest of the game. Violations: drink 1.",
   ),
   card(
     "eevee",
-    "Eevee",
+    "Eeveelution",
     "rule",
     "Eeveelution time! Choose a new rule for the rest of the game. Violations: drink 1.",
   ),
@@ -674,7 +674,7 @@ const deck: CardDefinition[] = [
   ),
   card(
     "geodude",
-    "Geodude",
+    "Magnitude",
     "group",
     "Magnitude! Drink any number; your left neighbor drinks one less, and so on around the table.",
   ),
@@ -686,19 +686,19 @@ const deck: CardDefinition[] = [
   ),
   card(
     "ursaring",
-    "Ursaring",
+    "Angry Ursaring",
     "challenge",
     "Ursaring woke up angry! Drink as many as the group decides, and apologize.",
   ),
   card(
     "day-care",
-    "Day Care",
+    "Day Care Visit",
     "group",
     "You visited the Day Care! Give 1 for each sibling you have. None? Drink 2.",
   ),
   card(
     "clefairy",
-    "Clefairy",
+    "Metronome",
     "challenge",
     "Clefairy used Metronome! Close your eyes and point. Whoever you're pointing at drinks 3.",
   ),
@@ -716,7 +716,7 @@ const deck: CardDefinition[] = [
   ),
   card(
     "sudowoodo",
-    "Sudowoodo",
+    "Fake Tree",
     "challenge",
     "Sudowoodo blocks the path! Drink 2, or spill an embarrassing truth and everyone else drinks.",
   ),
@@ -734,7 +734,7 @@ const deck: CardDefinition[] = [
   ),
   card(
     "zigzagoon",
-    "Zigzagoon",
+    "Growl",
     "group",
     "Zigzagoon used Growl! Bark at the group. Last to bark back drinks 2.",
   ),
@@ -776,7 +776,7 @@ const deck: CardDefinition[] = [
   ),
   card(
     "spheal",
-    "Spheal",
+    "Ice Ball",
     "group",
     "Spheal used Ice Ball! Drink 1, your left neighbor 2, the next 3, and so on around the table.",
   ),
@@ -812,7 +812,7 @@ const deck: CardDefinition[] = [
   ),
   card(
     "bellsprout",
-    "Bellsprout",
+    "Growth",
     "sip",
     "Bellsprout used Growth! Drink 1 and take another card now.",
   ),
@@ -885,7 +885,7 @@ const deck: CardDefinition[] = [
     "koffing",
     "Koffing",
     "sip",
-    "Koffing used Haze! If there's anything nearby to smoke, smoke it to avoid 2 drinks.",
+    "Koffing used Haze! Smoke something, or drink 2.",
   ),
   card(
     "battle-of-sexes",

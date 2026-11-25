@@ -123,7 +123,7 @@ export const sinnoh: Region = {
       "bertha",
       "Bertha",
       "Ground",
-      "Grandma Bertha grills you on your love life for 20 seconds. Dodge a question: drink 5.",
+      "Grandma Bertha grills you about your life choices for 20 seconds. Dodge a question: drink 5.",
     ),
     eliteFour(
       "flint",
@@ -211,7 +211,7 @@ export const sinnoh: Region = {
     legendary(
       "darkrai",
       "Darkrai",
-      "Darkrai feeds on nightmares. Tell the table your weirdest sex dream, then roll d20.",
+      "Darkrai feeds on nightmares. Tell the table your weirdest dream, then roll d20.",
       d20(
         LEGENDARY_NEED,
         "Bad dream. Drink 5 while the table interprets it.",

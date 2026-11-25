@@ -8,12 +8,16 @@ import {
 } from "../src/app/renamed-ids";
 import { parseSession } from "../src/app/persistence";
 import { cards } from "../src/content/catalog";
+import { RETIRED_SHEET_IDS } from "../src/content/custom";
 import { emptyChronicle, readChronicle } from "../src/game/engine";
 
 // The 2026-11-15 rename (owner: "an effective set of IDs for all cards, so
 // there's no artifacts of the old game"): saves and the Chronicle are moved
 // on as they load.
 const live = new Set(cards.map((c) => c.id));
+// Retired since (2026-11-25 review): saves keep their snapshot, so an old ID
+// may still point at one.
+const retired = new Set(RETIRED_SHEET_IDS);
 const renamed = Object.entries(RENAMED_2026_11_15);
 const dir = "tests/fixtures/saves";
 const fixtures = readdirSync(dir).filter((f) => f.endsWith(".json"));
@@ -30,7 +34,7 @@ describe("renamed card IDs", () => {
   it("moves each old ID to a card that exists, and none is still in use", () => {
     expect(renamed.length).toBeGreaterThan(700);
     for (const [from, to] of renamed) {
-      expect(live.has(to), `${from} -> ${to}`).toBe(true);
+      expect(live.has(to) || retired.has(to), `${from} -> ${to}`).toBe(true);
       expect(live.has(from), from).toBe(false);
     }
     // One card per new ID.

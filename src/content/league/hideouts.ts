@@ -53,7 +53,7 @@ export const hideouts = [
     villain(
       "Team Rocket",
       "boss-giovanni",
-      "Giovanni",
+      "Rocket Boss Giovanni",
       "Giovanni strokes his Persian and doesn't look up. Roll d6.",
       moves(
         ["Persian's Slash. Drink 5.", "Earthquake. Drink 4 and kiss his ring."],
@@ -235,7 +235,7 @@ export const hideouts = [
         pair(
           "You can't keep up. Drink 3.",
           "N spins away on a Ferris wheel. Give 3.",
-          "A pair! N asks you onto the Ferris wheel. Pick a date; you both give 3.",
+          "A pair! N asks you onto the Ferris wheel. Pick a friend; you both give 3.",
         ),
         { rank: "King" },
       ),

@@ -39,7 +39,7 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
       0,
       "last-room",
       "The Last Room",
-      "One room left at the inn. Bid sips clockwise until all pass. Top bid drinks them and toasts.",
+      "One room left at the inn. Bid sips clockwise; the top bidder drinks the bid and gets the bed.",
       1,
     ),
   ],
@@ -128,7 +128,7 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
       1,
       "bone-count",
       "Bone Count",
-      "Count off around the table, skipping every multiple of three. Whoever messes up drinks 2.",
+      "Count to 30 around the table, clapping instead of every multiple of three. A slip drinks 2.",
     ),
     moment(
       1,
@@ -189,7 +189,7 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
     moment(
       7,
       "prophecy",
-      "Prophecy",
+      "Doom Foretold",
       "Everyone prophesies how their left neighbor dies. The table picks the best; they give 3.",
     ),
     moment(
@@ -257,7 +257,7 @@ export const floorMoments: Readonly<Record<string, CardDefinition[]>> = {
     moment(
       5,
       "last-meal",
-      "Last Meal",
+      "Last Supper",
       "Everyone names their last meal on earth. The table picks the weirdest; they drink 2.",
     ),
     moment(

@@ -58,7 +58,7 @@ export const crypt: FloorCards = {
     monster(
       1,
       "left-on-read",
-      "Left on Read",
+      "The Ghosted Wraith",
       "A wraith with a list of everyone who ghosted it, and it reads the list aloud. Roll d20.",
       "Your name is on it, twice. Drink 4.",
       "You read it a longer list. Give 4 to whoever holds the oldest grudge.",
@@ -87,7 +87,7 @@ export const crypt: FloorCards = {
       "Doomed. Drink 3, and read your last sent text aloud.",
       "You flip her table. Give 4.",
       {
-        crit: "You read her fortune back to her. She vanishes in shame. Give 8.",
+        crit: "You read her fortune back to her. She's impressed. Give 8.",
       },
     ),
     monster(
@@ -319,7 +319,7 @@ export const crypt: FloorCards = {
       1,
       "offering-bowl",
       "The Offering Bowl",
-      "A bowl of coins left for the dead, and an untouched potion. Tap the table: a coin for the dead.",
+      "Coins left for the dead, and an untouched potion. Everyone taps the table: a coin for the dead.",
       "draught",
     ),
     shrine(
@@ -340,7 +340,7 @@ export const crypt: FloorCards = {
       "The Grave Robber",
       "A grave robber with a cart of stolen goods and no questions asked. Prices are firm.",
       [
-        { label: "No questions · 4", loot: "die" },
+        { label: "Buy · drink 4", loot: "die" },
         { label: "Finish your drink", loot: "shield" },
         { label: "Walk on" },
       ],
@@ -366,7 +366,7 @@ export const crypt: FloorCards = {
     fork(
       1,
       "locked-door-crypt",
-      "The Locked Door",
+      "Do Not Open",
       "A key in the lock, and a sign: DO NOT. Something knocks from the other side.",
       ["Leave it locked", "Turn the key"],
     ),

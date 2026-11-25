@@ -124,20 +124,31 @@ const facts = [
 const TRUTH =
   "Tell the truth. Every word. No story of your own? Tell a true one about someone here.";
 const LIE = "Lie. Make it up and sell it.";
-// Each title is dealt once as a truth and once as a lie (story-07 onwards
-// flip story-01 to 06), so knowing the card never gives the answer away.
-const storyTopics: [title: string, topic: string, first: string][] = [
-  ["Worst Date", "your worst date story", LIE],
-  ["Police Story", "your best cop story", TRUTH],
-  ["Celebrity Sighting", "your best celebrity story", LIE],
-  ["ER Visit", "your dumbest injury story", TRUTH],
-  ["Worst Job", "your worst job story", LIE],
-  ["Worst Hangover", "your worst hangover story", TRUTH],
+// Each topic is dealt once as a truth and once as a lie (story-07 onwards
+// flip story-01 to 06), so knowing the topic never gives the answer away.
+// Since 2026-11-25 the second telling has its own title (titles are unique);
+// both still share the topic, so the rules give nothing away.
+const storyTopics: [
+  title: string,
+  again: string,
+  topic: string,
+  first: string,
+][] = [
+  ["Worst Date", "Date From Hell", "your worst date story", LIE],
+  ["Police Story", "Run-In With the Law", "your best cop story", TRUTH],
+  ["Celebrity Sighting", "Star Struck", "your best celebrity story", LIE],
+  ["ER Visit", "Hospital Story", "your dumbest injury story", TRUTH],
+  ["Worst Job", "Job From Hell", "your worst job story", LIE],
+  ["Worst Hangover", "Day After", "your worst hangover story", TRUTH],
 ];
 const stories: [title: string, topic: string, secret: string][] = [
-  ...storyTopics,
-  ...storyTopics.map(([title, topic, first]): [string, string, string] => [
+  ...storyTopics.map(([title, , topic, first]): [string, string, string] => [
     title,
+    topic,
+    first,
+  ]),
+  ...storyTopics.map(([, again, topic, first]): [string, string, string] => [
+    again,
     topic,
     first === LIE ? TRUTH : LIE,
   ]),
@@ -149,14 +160,158 @@ const secretRules = [
   "Nobody may say anyone's name.",
 ];
 
+// One title per card (2026-11-25, owner: "make titles unique"). A secret
+// card's title never hints at its secret; a list's order follows its prompts.
+const PARANOIA_TITLES = [
+  "Paranoia",
+  "Pure Paranoia",
+  "Who Says?",
+  "Hushed Tones",
+  "Ear to Ear",
+  "Pass the Whisper",
+  "Under Your Breath",
+  "Psst",
+  "Tell No One",
+  "Need to Know",
+  "Eyes Only",
+  "Classified",
+  "Off the Record",
+  "Between Us",
+  "Sworn to Secrecy",
+  "Hush Hush",
+  "Strictly Private",
+  "Mum's the Word",
+  "Lips Sealed",
+  "Not Telling",
+  "Whose Name?",
+  "Name Drop",
+  "Don't Ask",
+  "Read My Lips",
+  "Secret Ballot",
+  "Burn After Reading",
+  "The Whisper",
+  "The Quiet Part",
+  "Plausible Deniability",
+  "Just Between Friends",
+];
+const MISSION_TITLES = [
+  "Secret Mission",
+  "Undercover",
+  "Deep Cover",
+  "Sleeper Agent",
+  "Double Agent",
+  "Inside Job",
+  "Covert Op",
+  "Mission Briefing",
+  "Agent in Place",
+  "The Mole",
+  "Code Name",
+  "Field Agent",
+  "Black Ops",
+  "Stealth Mode",
+  "Spy Games",
+  "Smooth Operator",
+  "Long Con",
+  "The Setup",
+  "Sneaky Work",
+  "Mission Accepted",
+];
+const FACT_TITLES = [
+  "Fact or Cap",
+  "True or Cap",
+  "Says Who?",
+  "Trust Me",
+  "Big If True",
+  "Look It Up",
+  "Wait, Really?",
+  "Source?",
+  "Citation Needed",
+  "Bet?",
+  "Swear On It",
+  "Hear Me Out",
+  "Pub Trivia",
+  "You Sure?",
+  "Know-It-All",
+  "Smart Mouth",
+];
+const RULE_TITLES = ["Secret Rule", "Hidden Law", "Fine Print"];
+const FOREHEAD_TITLES = [
+  "Forehead",
+  "Heads Up",
+  "Head Case",
+  "Big Head",
+  "Thinking Cap",
+  "Headliner",
+  "Head Scratcher",
+  "Use Your Head",
+  "Over Your Head",
+  "Head Start",
+  "Headband",
+  "Hot Head",
+  "Head Count",
+  "Airhead",
+  "Blockhead",
+  "Bobblehead",
+];
+const BANNED_TITLES = [
+  "No Saying It",
+  "Talk Around It",
+  "Don't Say It",
+  "Word Police",
+  "Forbidden Words",
+  "Say Less",
+  "Mind Your Words",
+  "Bite Your Tongue",
+  "Off Limits",
+  "Banned List",
+  "Watch Your Mouth",
+  "Clue Giver",
+  "Dance Around It",
+  "Hint Hint",
+  "Careful Now",
+  "Tongue Tied",
+];
+const CHARADE_TITLES = [
+  "Act It Out",
+  "Charades",
+  "Silent Movie",
+  "Mime Time",
+  "No Words",
+  "Body Language",
+  "Show Me",
+  "Silent Scene",
+  "Dumb Show",
+  "Lights, Mime, Action",
+];
+const QUICK_TITLES = [
+  "Three in Five",
+  "Drawer Dive",
+  "Sick Day",
+  "Date Don'ts",
+  "Pizza Crimes",
+  "Game Night",
+  "Frat House",
+  "Exit Strategy",
+  "Sing-Along",
+  "Boss Texts",
+];
+const POTATO_TITLES = [
+  "Hot Potato",
+  "Drive-Thru Potato",
+  "Pokémon Potato",
+  "Cocktail Potato",
+  "Swiftie Potato",
+  "Slang Potato",
+];
+
 const secretCards: CardDefinition[] = [
   ...paranoia.map((question, i) =>
     withSecret(
       card(
         id("paranoia", i),
-        "Paranoia",
+        PARANOIA_TITLES[i]!,
         "group",
-        "Left neighbor reads alone, then names someone, who can drink 5 to see the question.",
+        "Left neighbor reads alone and names a player. That player may drink 5 to see the question.",
       ),
       question,
     ),
@@ -165,7 +320,7 @@ const secretCards: CardDefinition[] = [
     withSecret(
       card(
         id("mission", i),
-        "Secret Mission",
+        MISSION_TITLES[i]!,
         "challenge",
         "Read alone; do it before your next turn. Done: others drink 3. Caught: you drink 3.",
       ),
@@ -176,9 +331,9 @@ const secretCards: CardDefinition[] = [
     withSecret(
       card(
         id("fact", i),
-        "Fact or Cap",
+        FACT_TITLES[i]!,
         "group",
-        "Read alone, say just the claim. On three, all vote fact or cap; wrong voters drink 2.",
+        "Read alone and say only the claim. On three, everyone votes fact or cap. Wrong votes drink 2.",
       ),
       claim,
     ),
@@ -189,7 +344,7 @@ const secretCards: CardDefinition[] = [
         id("story", i),
         title,
         "challenge",
-        `Read alone, tell ${topic}. Truth or lie? Wrong voters drink 2.`,
+        `Read alone, then tell ${topic}. Everyone votes truth or lie. Wrong votes drink 2.`,
       ),
       secret,
     ),
@@ -198,7 +353,7 @@ const secretCards: CardDefinition[] = [
     withSecret(
       card(
         id("rule", i),
-        "Secret Rule",
+        RULE_TITLES[i]!,
         "rule",
         "Read alone. It holds the rest of the game; anyone you catch breaking it drinks 2.",
       ),
@@ -279,7 +434,7 @@ const clockCards: CardDefinition[] = [
       withSecret(
         card(
           id("forehead", i),
-          "Forehead",
+          FOREHEAD_TITLES[i]!,
           "challenge",
           "Start the clock. Phone on forehead, press Hold to read; guess from the table's clues.",
         ),
@@ -293,7 +448,7 @@ const clockCards: CardDefinition[] = [
       withSecret(
         card(
           id("banned", i),
-          "No Saying It",
+          BANNED_TITLES[i]!,
           "challenge",
           "Read alone. Start the clock; get the table to guess the word without a banned word.",
         ),
@@ -310,7 +465,7 @@ const clockCards: CardDefinition[] = [
       withSecret(
         card(
           id("charade", i),
-          "Act It Out",
+          CHARADE_TITLES[i]!,
           "challenge",
           "Read alone. Start the clock and act it out, no words or sounds. The table guesses.",
         ),
@@ -326,7 +481,7 @@ const clockCards: CardDefinition[] = [
     withTimer(
       card(
         id("quick", i),
-        "Three in Five",
+        QUICK_TITLES[i]!,
         "category",
         `Start the clock and name three ${topic}. The table calls duds.`,
       ),
@@ -452,7 +607,7 @@ const fuseCards: CardDefinition[] = [
     withTimer(
       card(
         id("potato", i),
-        "Hot Potato",
+        POTATO_TITLES[i]!,
         "category",
         `Light the fuse. Name a ${topic}, then pass a beer left. No repeats.`,
       ),
@@ -500,7 +655,7 @@ const fuseCards: CardDefinition[] = [
       "fuse-toll",
       "Toll Bomb",
       "sip",
-      "Light the fuse. Drink 1, then pass a beer left. Everyone pays every time.",
+      "Light the fuse and pass a beer left. Each holder sips before passing it on.",
     ),
     fuse("Boom. Whoever's holding the beer drinks 3 more."),
   ),

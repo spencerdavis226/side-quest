@@ -96,7 +96,7 @@ export const classicCards: CardDefinition[] = [
     "buffalo",
     "Buffalo",
     "rule",
-    "Buffalo! Finish your drink. It's gotta go.",
+    "Buffalo, rest of the game: anyone caught holding a drink in their dominant hand finishes it.",
   ),
   card(
     "little-green-man",
@@ -158,7 +158,7 @@ export const classicCards: CardDefinition[] = [
     "prophecy",
     "Prophecy",
     "challenge",
-    "Predict who finishes their drink next. When someone does: right, give 3. Wrong, drink 3.",
+    "Predict who finishes their drink next. Right: give 3. Wrong: drink 3.",
   ),
   card(
     "side-quest",

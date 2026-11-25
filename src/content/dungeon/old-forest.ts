@@ -79,7 +79,7 @@ export const oldForest: FloorCards = {
       3,
       "moaning-hag",
       "The Moaning Hag",
-      "Moan about your knees like a hag, against your left neighbor. The table calls the weaker: drink 3.",
+      "You and your left neighbor moan about your knees like old hags. The weaker one drinks 3.",
     ),
     monster(
       3,
@@ -131,7 +131,7 @@ export const oldForest: FloorCards = {
     trial(
       3,
       "deez-nuts",
-      "Deez Nuts",
+      "Nut Catch",
       "Your right neighbor throws you a mimed nut. Catch it in your mouth. Booed: drink 3.",
     ),
     monster(
@@ -309,7 +309,7 @@ export const oldForest: FloorCards = {
       3,
       "wacky-tobacky",
       "Wacky Tobacky",
-      "A patch of 'healing herbs'. Everyone takes a pretend hit and coughs. Brew a potion.",
+      "A patch of 'healing herbs'. Everyone takes a pretend hit and coughs. You brew a potion.",
       "draught",
     ),
     shrine(
@@ -344,7 +344,7 @@ export const oldForest: FloorCards = {
     fork(
       3,
       "shortcut-forest",
-      "The Shortcut",
+      "The Thorn Shortcut",
       "A woodcutter swears the shortcut through the thorns saves a day. He has never taken it.",
       ["The long way", "The shortcut"],
     ),

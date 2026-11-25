@@ -307,7 +307,12 @@ describe("moments", () => {
     const map = momentsBetween(road, { ...road, phase: "revealed" }).find(
       (m) => m.kind === "map",
     );
-    expect(map).toMatchObject({ title: "The Signpost" });
+    // The road card's own title (unique since 2026-11-25).
+    expect([
+      "The Full Crypt",
+      "The Goblin Strike",
+      "The Wandering Tower",
+    ]).toContain(map!.title);
     expect(AMBIENT.has("map")).toBe(true);
     // The road taken: the region's first card dealt face down.
     const shown = { ...road, phase: "revealed" as const };

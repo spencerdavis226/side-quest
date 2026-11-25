@@ -288,7 +288,7 @@ export const kingsRoad: FloorCards = {
       0,
       "abandoned-camp",
       "Abandoned Camp",
-      "A cold campfire, a bedroll, and a dented shield someone left behind. Rap on the table: still sound.",
+      "A cold campfire, a bedroll and a dented shield someone left behind. Knock on the table: still solid.",
       "shield",
     ),
     treasure(
@@ -301,7 +301,7 @@ export const kingsRoad: FloorCards = {
     shrine(
       0,
       "wishing-well",
-      "Wishing Well",
+      "The Mossy Well",
       "A mossy well full of old coins. Everyone makes a petty wish out loud and toasts it.",
     ),
     shrine(
@@ -434,12 +434,12 @@ export const kingsRoad: FloorCards = {
       0,
       "bridge-troll",
       "The Bridge Troll",
-      "He wants a toll. Side bets: thumbs up or down on you; wrong bets drink 1. Roll d20.",
+      "He wants a toll. Others bet thumbs up or down; wrong bets drink 1. Roll d20.",
       d20(
         BOSS_NEED[0],
         "He takes the toll out of you. Drink 4.",
         "He falls off his own bridge. Give 5.",
-        { crit: "He falls off, and pays you a toll. Everyone else drinks 3." },
+        { crit: "He falls off his own bridge. Everyone else drinks 3." },
       ),
       {
         drops: [
@@ -474,7 +474,7 @@ export const kingsRoad: FloorCards = {
       0,
       "ogre",
       "The Ogre",
-      "An ogre blocks the road. Side bets: thumbs up or down on you; wrong bets drink 1. Roll d20.",
+      "An ogre blocks the road. Others bet thumbs up or down; wrong bets drink 1. Roll d20.",
       d20(
         BOSS_NEED[0],
         "He licks you first. Then the bite. Drink 4.",
@@ -492,7 +492,7 @@ export const kingsRoad: FloorCards = {
       0,
       "great-boar",
       "The Great Boar",
-      "A boar with balls like a cart's wheels. Side bets: thumbs up or down; wrong bets drink 1. Roll d20.",
+      "A boar with balls like a cart's wheels. Others bet thumbs up or down; wrong bets drink 1. Roll d20.",
       d20(BOSS_NEED[0], "Gored. Drink 4.", "You bring it down. Give 5.", {
         crit: "You bring it down, and dinner is served. Everyone else drinks 3.",
       }),

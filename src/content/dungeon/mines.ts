@@ -84,7 +84,7 @@ export const mines: FloorCards = {
       4,
       "hungry-goblin",
       "The Hungry Goblin",
-      "Bread-off: you and your left neighbor mime eating a loaf. Slower, by the table's call: drink 4.",
+      "You and your left neighbor race to mime eating a loaf. The table calls the slower: drink 4.",
     ),
     monster(
       4,
@@ -263,7 +263,7 @@ export const mines: FloorCards = {
       "Falling Rocks",
       "A rock is working itself loose from the ceiling right above you. Roll d20.",
       "It lands on your foot. Drink 3.",
-      "You catch it like a ball. Throw a coaster to someone; they drink 3.",
+      "You catch it like a ball. Toss the rock to someone; they drink 3.",
     ),
     ambush(
       4,
@@ -307,7 +307,7 @@ export const mines: FloorCards = {
       4,
       "dead-miners-purse",
       "A Dead Miner's Purse",
-      "A dead miner's purse, somehow dry: a candle, a flint and a sellsword's contract. Sign it in the air.",
+      "A dead miner's purse, somehow dry: and a sellsword's contract. The drawer signs it in the air.",
       "round",
     ),
     treasure(
@@ -355,7 +355,7 @@ export const mines: FloorCards = {
     fork(
       4,
       "cry-for-help-mines",
-      "A Cry for Help",
+      "A Miner's Cry",
       "A miner's voice from a collapsed tunnel: 'Help! And bring snacks.'",
       ["Mark it, move on", "Dig him out"],
     ),

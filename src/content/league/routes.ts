@@ -38,11 +38,16 @@ import { moreEvolutions, moreWilds } from "./wilds";
 // has twenty seconds to describe it without the banned words (20 s since
 // 2026-10-31, was 45).
 const quizzes = quizPools(3);
-const whosThat = (route: Leg, id: string, k: number): CardDefinition => ({
+const whosThat = (
+  route: Leg,
+  id: string,
+  k: number,
+  title: string,
+): CardDefinition => ({
   ...tableMoment(
     route,
     id,
-    "Who's That Pokémon?",
+    title,
     "Quiz",
     "category",
     "Drawer, look away. Left neighbor: Hold to read, start the clock. Describe it; drawer guesses.",
@@ -112,7 +117,7 @@ const route1: CardDefinition[] = [
   wild(
     0,
     "route-bidoof",
-    "Bidoof",
+    "Wild Bidoof",
     "Wild Bidoof appeared, with the dead eyes of a man on his fourth divorce. Roll 2d6.",
     pair(
       "It stares into your soul. Drink 2 without blinking.",
@@ -163,7 +168,7 @@ const route1: CardDefinition[] = [
   catchable(
     0,
     "route-caterpie",
-    "Caterpie",
+    "Sitting Caterpie",
     "A Caterpie is just sitting there being a little guy. Will the table catch it?",
     1,
   ),
@@ -185,7 +190,7 @@ const route1: CardDefinition[] = [
   item(
     0,
     "route-potion-ground",
-    "Finders Keepers",
+    "Dropped in the Grass",
     "Someone dropped something in the grass. It's yours now. Everyone drinks 1 to celebrate.",
     "draught",
   ),
@@ -302,7 +307,7 @@ const route2: CardDefinition[] = [
     "Yungoos",
     "Wild Yungoos is a sausage with teeth and a bad attitude. Roll d20.",
     vs(
-      "It bites your sausage. Drink 3 with your legs crossed.",
+      "It bites your ankle. Drink 3 on one foot.",
       "Sausage served. Whoever has the longest name drinks 2.",
     ),
   ),
@@ -350,7 +355,7 @@ const route2: CardDefinition[] = [
   evolution(
     1,
     "route-rare-candy-1",
-    "Rare Candy",
+    "Candy on the Ground",
     "A Rare Candy on the ground, a little linty. Your starter is staring at it.",
   ),
   center(
@@ -393,7 +398,7 @@ const route2: CardDefinition[] = [
       fumble: "Gyarados. Roar at the table, then drink 6.",
     },
   ),
-  whosThat(1, "route-whos-that", 0),
+  whosThat(1, "route-whos-that", 0, "Who's That Pokémon?"),
   tableMoment(
     1,
     "route-cute-contest",
@@ -469,7 +474,7 @@ const route3: CardDefinition[] = [
     "Machop",
     "Wild Machop wants to arm-wrestle. Flex for the table, then roll d20.",
     vs(
-      'Karate Chop to the junk. Drink 3 and say "thank you, sensei."',
+      'Karate Chop to the shin. Drink 3 and say "thank you, sensei."',
       "You flex harder. Pick a player to arm-wrestle you: the loser drinks 2.",
     ),
   ),
@@ -520,7 +525,7 @@ const route3: CardDefinition[] = [
     2,
     "route-juggler",
     "Juggler Rico",
-    "Juggler Rico juggles three Voltorb. Juggle any two things for 5 seconds or drink 3.",
+    "Juggler Rico juggles three Voltorb. Mime juggling them for 5 seconds without laughing, or drink 3.",
   ),
   // A loss lays Meowth's catchphrase.
   {
@@ -729,7 +734,7 @@ const route4: CardDefinition[] = [
     3,
     "route-psychic",
     "Psychic Tyron",
-    "Think of a number from 1 to 5. Your left neighbor guesses it. Right: drink 3.",
+    "Think of a number from 1 to 5. Your left neighbor guesses. They get it: you drink 3.",
   ),
   hazard(
     3,
@@ -791,7 +796,7 @@ const route4: CardDefinition[] = [
   gamble(
     3,
     "route-slots",
-    "Slot Machine",
+    "One More Pull",
     "One more pull. You can feel it. Pull or walk?",
     11,
     "The house wins. Drink 4.",
@@ -830,7 +835,7 @@ const route4Aces: CardDefinition[] = [
 
 // --- Route 5 -----------------------------------------------------------------
 const route5: CardDefinition[] = [
-  whosThat(4, "route-whos-that-5", 1),
+  whosThat(4, "route-whos-that-5", 1, "Who's That, Again?"),
   tableMoment(
     4,
     "route-beauty-contest",
@@ -910,7 +915,7 @@ const route5: CardDefinition[] = [
     4,
     "route-safari",
     "Safari Zone",
-    "Thirty Safari Balls and a rock. Toss a napkin at your left neighbor, then roll d6.",
+    "Thirty Safari Balls and a rock. Mime a throw at your left neighbor, then roll d6.",
     moves(
       [
         "Everything runs. Drink 3.",
@@ -935,7 +940,7 @@ const route5: CardDefinition[] = [
   gamble(
     4,
     "route-silph-scope",
-    "Pokémon Tower",
+    "Ghost Marowak",
     "The sixth floor is haunted by a ghost Marowak. Climb or leave?",
     12,
     "Get out... get out... Drink 4.",
@@ -1402,7 +1407,7 @@ const route7Aces: CardDefinition[] = [
 
 // --- Route 8 -----------------------------------------------------------------
 const route8: CardDefinition[] = [
-  whosThat(7, "route-whos-that-8", 2),
+  whosThat(7, "route-whos-that-8", 2, "Last Silhouette"),
   tableMoment(
     7,
     "route-tough-contest",
@@ -1739,7 +1744,7 @@ export const rivals: CardDefinition[] = [
   ),
   rival(
     "rival-hop",
-    "Hop",
+    "Hop's Curry",
     "Hop made curry for the road and wants it rated. Rate it out loud, then roll d20.",
     vs(
       "He took that personally. Drink 5 and rate it higher.",

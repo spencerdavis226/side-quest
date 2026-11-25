@@ -84,7 +84,9 @@ If a personal reference is missing context, preserve a clear placeholder or ask 
 
 The Quest (the `dungeon` pack) speaks the CABIIN voice at full volume: adult, brash and crude, and not timid inside its borders. The League stays playful and clean. The plan and its phases are in `docs/REALMS_VOICE_PLAN.md`.
 
-Owner, 2026-11-16: "The quest has too many horny cards ... Crude sexual or abrasive or adult humor is fine, but sex isn't the goal here. It's a medium for crude and funny jokes, similar to the cabiin cards." CABIIN is the measure: swearing, insults, slapstick, bodily functions and deadpan, with sex as an occasional punchline.
+Owner, 2026-11-16: "The quest has too many horny cards ... Crude sexual or abrasive or adult humor is fine, but sex isn't the goal here. It's a medium for crude and funny jokes, similar to the cabiin cards." The League (owner, 2026-11-25: "Make things playful and clean"): no sex, hookups, smut, flirting, nudity or swearing at a player in any League card (gyms, routes, Elite Four, Legendaries, champions, hideouts); drinking, gross-out and slapstick stay. The 2026-11-25 pass cleaned Brock, Kiawe, Sidney, Bugsy, Drasna, Bertha, Shauntal, Darkrai, Reshiram, Archie, N, Skyla, Yungoos and Machop. The plain Pokémon deck (the supplied board sheets, Standard modes only) keeps its source voice.
+
+CABIIN is the measure: swearing, insults, slapstick, bodily functions and deadpan, with sex as an occasional punchline.
 
 - **Fair game:** swearing, bodily functions, drugs and drinking, slapstick, roasting the players ("like your mom"), and a sex joke when it is a joke (a punchline, a pun title, an insult).
 - **Not the goal:** sex as a card's subject. No card asks the table to act anything sexual out (moan, flirt, describe a hookup, "sexually"), and the world's people are not "horny" as a default trait. If the line is only funny because it mentions sex, write a different joke.

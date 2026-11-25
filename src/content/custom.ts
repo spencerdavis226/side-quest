@@ -1,5 +1,5 @@
 import type { CardDefinition } from "../game/types";
-import { cardFactory, choice, roll } from "./author";
+import { cardFactory, choice, roll, rollTable } from "./author";
 
 // "The House deck": one card per nonblank row of the supplied Sheet1 CSV
 // (`Drink at Ron - Sheet1.csv`). Copy is restored verbatim from that sheet —
@@ -38,13 +38,13 @@ const sheetRows: CardDefinition[] = [
     "house-006",
     "The Game Giveth",
     "sip",
-    'Give 3 drinks. If "The Game Taketh" was already played, multiply by 1d6.',
+    "Give 3. If The Game Taketh came up earlier tonight, give 3 more.",
   ),
   houseCard(
     "house-007",
     "The Game Taketh",
     "sip",
-    'Take 3 drinks. If "The Game Giveth" was already played, multiply by 1d6.',
+    "Drink 3. If The Game Giveth came up earlier tonight, drink 3 more.",
   ),
   houseCard(
     "house-008",
@@ -64,7 +64,7 @@ const sheetRows: CardDefinition[] = [
     "house-010",
     "Caveman",
     "rule",
-    "You can only grunt until your next turn",
+    "You can only grunt until your next turn. Slip: drink 2.",
   ),
   houseCard(
     "house-011",
@@ -93,13 +93,13 @@ const sheetRows: CardDefinition[] = [
     "house-014",
     "Medusa",
     "challenge",
-    "The first person you make eye contact with must get stoned.",
+    "Until your next turn, anyone who meets your eyes turns to stone and drinks 2.",
   ),
   houseCard(
     "house-015",
     "Mr Freeze",
     "rule",
-    "Anyone you touch can't move or talk until you stop touching them",
+    "Until your next turn, anyone you touch freezes until you let go. Move or talk: drink 2.",
   ),
   houseCard("house-016", "Ursaring", "sip", "Give 13 and apologize"),
   houseCard(
@@ -112,13 +112,13 @@ const sheetRows: CardDefinition[] = [
     "house-018",
     "Story Time",
     "category",
-    "Say a word. The next person repeats and adds on. Loser drinks 4.",
+    "Say a word. Clockwise, each player repeats the story and adds a word. First to slip drinks 4.",
   ),
   houseCard(
     "house-019",
     "And the Chicks",
     "group",
-    "1 guy drinks. All girls drink",
+    "Pick one guy to drink. All girls drink too.",
   ),
   houseCard("house-020", "Weinerschnitzel", "group", "All dudes drink"),
   houseCard(
@@ -175,7 +175,7 @@ const sheetRows: CardDefinition[] = [
     "house-029",
     "Pop Punk FMK",
     "challenge",
-    "Fuck, marry, kill: Blink-182, Green Day, Weezer. Defend your picks to the table.",
+    "Fuck, marry, kill: Blink-182, Green Day, Weezer. Defend your picks. Table boos one: drink 2.",
   ),
   houseCard(
     "house-030",
@@ -188,7 +188,7 @@ const sheetRows: CardDefinition[] = [
     "house-032",
     "Rawr XD",
     "rule",
-    "You have to use T-Rex arms until your next turn",
+    "You have to use T-Rex arms until your next turn. Slip: drink 2.",
   ),
   houseCard(
     "house-033",
@@ -213,15 +213,19 @@ const sheetRows: CardDefinition[] = [
     "house-036",
     "Called It",
     "sip",
-    "Ride the Bus: you called Same and it was Same. Right! Roll d6 and give that many.",
-    roll(1, 6, "Give {total}."),
-  ),
-  houseCard(
-    "house-037",
-    "Same Card, Wrong",
-    "sip",
-    "Ride the Bus: you called higher or lower, but it was Same. Wrong! Roll d6 and drink that many.",
-    roll(1, 6, "Drink {total}."),
+    "Call high or low out loud, then roll d6. Right: give what it shows. Wrong: drink it.",
+    rollTable(1, 6, [
+      {
+        min: 1,
+        max: 3,
+        instruction: "Low. Called it? Give {total}. Didn't? Drink {total}.",
+      },
+      {
+        min: 4,
+        max: 6,
+        instruction: "High. Called it? Give {total}. Didn't? Drink {total}.",
+      },
+    ]),
   ),
   houseCard(
     "house-038",
@@ -233,13 +237,13 @@ const sheetRows: CardDefinition[] = [
     "house-039",
     "This Sucks",
     "rule",
-    "Buffalo switches hands for the rest of the game",
+    "Buffalo flips: rest of the game, anyone caught holding a drink in their off hand finishes it.",
   ),
   houseCard(
     "house-040",
     "Pokemon",
     "rule",
-    "Speak only your first name until your next turn",
+    "Speak only your first name until your next turn. Slip: drink 2.",
   ),
   houseCard(
     "house-041",
@@ -270,19 +274,19 @@ const sheetRows: CardDefinition[] = [
     "house-045",
     "Drink, bitch",
     "sip",
-    "If you drank on the last card, drink again, bitch",
+    "Everyone who drank on the last card drinks again, bitch.",
   ),
   houseCard(
     "house-046",
     "Fiend",
     "challenge",
-    "Pop in a fresh Zyn, Velo, nic pouch",
+    "Pop in a fresh Zyn, Velo or nic pouch. Don't have one? Drink 2.",
   ),
   houseCard(
     "house-047",
     "Battery Life",
     "challenge",
-    "Closest guess to your phone's battery gives 2 drinks",
+    "Everyone guesses your phone's battery. Closest guess gives 2.",
   ),
   houseCard(
     "house-048",
@@ -320,13 +324,6 @@ const sheetRows: CardDefinition[] = [
     "Abra like a Slut",
     "rule",
     "Reverse the turn order for the rest of the game",
-  ),
-  houseCard(
-    "house-054",
-    "Whinnie the Pooh",
-    "sip",
-    "Pooh-bear 1d6 drinks",
-    roll(1, 6, "Drink {total}."),
   ),
   houseCard("house-055", "Could ya just", "sip", "Drink 1"),
   houseCard(
@@ -456,16 +453,8 @@ const sheetRows: CardDefinition[] = [
   houseCard(
     "house-078",
     "Clean Split",
-    "sip",
-    "Split the G: drink a Guinness to the middle of the G. Nailed it! Roll d6 and give that many.",
-    roll(1, 6, "Give {total}."),
-  ),
-  houseCard(
-    "house-079",
-    "Missed the G",
-    "sip",
-    "Split the G: drink a Guinness to the middle of the G. Missed it! Roll d6 and drink that many.",
-    roll(1, 6, "Drink {total}."),
+    "challenge",
+    "Split the G: drink yours down to exactly halfway. Table says nailed it: give 4. Missed: drink 4.",
   ),
   houseCard(
     "house-080",
@@ -537,7 +526,7 @@ const sheetRows: CardDefinition[] = [
     "house-091",
     "Goof Dog",
     "rule",
-    "Keep your eyes as open as possible until your next turn",
+    "Keep your eyes as open as possible until your next turn. Caught squinting: drink 2.",
   ),
   houseCard(
     "house-092",
@@ -574,7 +563,7 @@ const sheetRows: CardDefinition[] = [
     "house-097",
     "Hands Off",
     "rule",
-    "Until your next turn, you can't use your hands to drink",
+    "Until your next turn, you can't use your hands to drink. Slip: drink 2.",
   ),
   houseCard(
     "house-098",
@@ -592,7 +581,7 @@ const sheetRows: CardDefinition[] = [
     "house-100",
     "Dare",
     "challenge",
-    "Balance your drink on your head for 10 seconds",
+    "Balance your drink on your head for 10 seconds. Drop it or refuse: drink 3.",
   ),
   houseCard(
     "house-101",
@@ -633,8 +622,19 @@ const cabinRows: Record<string, string> = {
   "core.house-040": "pokemon",
   "core.house-042": "pet-that-dog",
   "core.house-053": "abra-like-a-slut",
-  "core.house-054": "whinnie-the-pooh",
 };
+
+/**
+ * Sheet rows retired in the 2026-11-25 card review (owner: "retire any cards
+ * that need it"; Whinnie the Pooh: "drop it entirely"). Saved games keep
+ * their snapshot; these IDs are never reused. `src/app/renamed-ids.ts` still
+ * points their old IDs here, so its test accepts them as retired.
+ */
+export const RETIRED_SHEET_IDS = [
+  "core.house-037", // Same Card, Wrong: narrated a Ride the Bus hand nobody played
+  "core.cabin-whinnie-the-pooh", // sheet row 54
+  "core.house-079", // Missed the G: folded into Clean Split (row 78)
+];
 
 export const houseCards = sheetRows.filter((card) => !cabinRows[card.id]);
 
@@ -648,7 +648,7 @@ export const customVipCards: CardDefinition[] = [
     "sheet-003",
     "Fast as Fuck Boi",
     "challenge",
-    "VIP gives 3x what they can drink in 1 minute.",
+    "The VIP drinks for one minute while the table counts sips. They give 3 per sip.",
   ),
   vipCard(
     "sheet-004",
@@ -660,7 +660,7 @@ export const customVipCards: CardDefinition[] = [
     "sheet-005",
     "One Year Older",
     "sip",
-    "Give out the ones place of the VIP's new age",
+    "Give out the last digit of the VIP's new age. A zero gives 10.",
   ),
   vipCard(
     "sheet-006",

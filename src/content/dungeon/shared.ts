@@ -116,7 +116,7 @@ export const seats = (line: string): DiceDefinition => ({
   sides: 6,
   instruction: `${line} You drink {first}; the next three clockwise drink {second}, {third} and {fourth}.`,
 });
-export const SIDE_BETS = "Side bets: thumbs up or down; wrong bets drink 1.";
+export const SIDE_BETS = "Others bet thumbs up or down; wrong bets drink 1.";
 
 /** A d20 table: below `need` loses, `need` and up wins. A `crit` replaces
  * the win on a natural 20, a `fumble` the loss on a natural 1. */

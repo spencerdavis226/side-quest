@@ -134,7 +134,7 @@ export const kalos: Region = {
       "drasna",
       "Drasna",
       "Dragon",
-      "Drasna is a sweet granny with four dragons. Kiss your left neighbor's cheek, then roll d20.",
+      "Drasna is a sweet granny with four dragons. Give your left neighbor a granny hug, then roll d20.",
       d20(
         ELITE_NEED,
         "Dragon Pulse. Drink 6, and your left neighbor pinches your cheek.",

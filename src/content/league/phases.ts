@@ -29,7 +29,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   // Legendaries: the catch (every last beat since 2026-11-02).
   "legendary-articuno": [
     duel(
-      "It's weakened. Throw a ball: toss a coaster into an empty cup, three tries. All miss: drink 4.",
+      "It's weakened. Throw a ball: name three Ice-type Pokémon in ten seconds. Fall short: drink 4.",
     ),
   ],
   "legendary-zapdos": [
@@ -77,7 +77,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "legendary-beasts": [
     duel(
-      "Suicune stops to drink, and a ball's in one of your left neighbor's hands. Pick it. Wrong: drink 4.",
+      "Suicune stops to drink. Left neighbor holds out two fists; one hides the ball. Wrong fist: drink 4.",
     ),
   ],
   "legendary-celebi": [
@@ -109,7 +109,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "legendary-rayquaza": [
     duel(
-      "Ride it to the ball: balance a coaster on your head for a count of 15. Drop it: drink 4.",
+      "Ride it to the ball: balance your drink on your head while the table counts to 10. Drop: drink 4.",
     ),
   ],
   "legendary-regi-trio": [
@@ -133,7 +133,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "legendary-giratina": [
     duel(
-      "Throw with your off hand: toss a coaster into an empty cup, three tries. All miss: drink 4.",
+      "Throw it backwards: say your name backwards three times fast. Stumble: drink 4.",
     ),
   ],
   "legendary-darkrai": [
@@ -187,7 +187,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "legendary-zacian": [
     duel(
-      "Fetch to catch it: find a coaster the table hid while you looked away. 30 seconds. Fail: drink 4.",
+      "Fetch: the table hides your phone while you look away. Find it in 30 seconds or drink 4.",
     ),
   ],
   "legendary-eternatus": [
@@ -322,7 +322,7 @@ const beats: Readonly<Record<string, Beat[]>> = {
   ],
   "boss-archie": [
     duel(
-      "Rain Dance: dance for ten seconds, shirt half open. The table votes. Weak: drink 4.",
+      "Rain Dance: dance for ten seconds like it's pouring. The table votes. Weak: drink 4.",
     ),
   ],
   "boss-cyrus": [

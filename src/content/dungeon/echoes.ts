@@ -53,7 +53,7 @@ export const echoes: Record<string, CardDefinition> = {
     "The Fair Folk Collect",
     "The fair folk are here about that gift. Everyone looks innocent.",
     {
-      offers: [{ label: "Pay", cost: 1 }, { label: "Pay · drink 5" }],
+      offers: [{ label: "Pay in blood", cost: 1 }, { label: "Pay · drink 5" }],
     },
   ),
   "feast-crashed": scene(
@@ -108,7 +108,7 @@ export const echoes: Record<string, CardDefinition> = {
   "drew-on-chad": scene(
     "chads-moustache",
     "Chad's Moustache",
-    "Sir Chad rides by with an inked moustache he hasn't found yet. Nobody laughs, or drinks 2.",
+    "Sir Chad rides by with an inked moustache he hasn't found yet. Anyone who laughs drinks 2.",
     { reward: { heal: 1 } },
   ),
   "ally-fell": scene(

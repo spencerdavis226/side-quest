@@ -45,21 +45,26 @@ describe("Secrets & surprises pack", () => {
     }
   });
 
-  it("deals every story title as a truth and as a lie", () => {
+  it("deals every story topic as a truth and as a lie", () => {
     const stories = secretsCards.filter((c) =>
       c.id.startsWith("secrets.story-"),
     );
-    const titles = new Set(stories.map((c) => c.title));
-    for (const title of titles) {
+    // Each topic (its rules) is dealt as a truth and as a lie; since
+    // 2026-11-25 the two have their own titles.
+    const topics = new Set(stories.map((c) => c.rules));
+    expect(topics.size).toBe(6);
+    for (const topic of topics) {
       const secrets = stories
-        .filter((c) => c.title === title)
+        .filter((c) => c.rules === topic)
         .map((c) => c.secret!.split(".")[0]);
-      expect(secrets.sort(), title).toEqual(["Lie", "Tell the truth"]);
+      expect(secrets.sort(), topic).toEqual(["Lie", "Tell the truth"]);
     }
   });
 
   it("gives every Fact or Cap claim its answer", () => {
-    for (const c of secretsCards.filter((c) => c.title === "Fact or Cap"))
+    for (const c of secretsCards.filter((c) =>
+      c.id.startsWith("secrets.fact-"),
+    ))
       expect(c.secret, c.id).toMatch(/^(FACT|CAP): /);
   });
 });

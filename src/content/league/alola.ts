@@ -55,7 +55,7 @@ export const alola: Region = {
       "Kiawe",
       "Trial Captain",
       "Firium Z",
-      "Kiawe's fire dance. Shirt off or hips going, the table picks. Then roll d20.",
+      "Kiawe's fire dance. Dance like a flame for five seconds, then roll d20.",
       d20(
         GYM_NEED[3],
         "Burned. Drink 5 and keep dancing.",
@@ -128,7 +128,7 @@ export const alola: Region = {
       "kahili",
       "Kahili",
       "Flying",
-      "Kahili golfs. Flick a bottle cap into a cup across the table in 3 tries. All miss: drink 5.",
+      "Kahili golfs. Mime a full swing, then name three birds in 5 seconds. Fall short: drink 5.",
     ),
     eliteFour(
       "molayne",

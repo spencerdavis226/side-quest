@@ -153,7 +153,7 @@ export const moments: CardDefinition[][] = [
       "Safari Toss",
       "Safari Zone",
       "challenge",
-      "Flick a coaster into an empty cup across the table, one try. In: give 3. Miss: drink 2.",
+      "Everyone mimes throwing a Safari Ball at you. Pick the best throw: they give 3. You drink 2.",
     ),
     moment(
       3,
@@ -288,7 +288,7 @@ export const moments: CardDefinition[][] = [
     moment(
       6,
       "route-dream-team",
-      "Dream Team",
+      "Team of Six",
       "Dream Team",
       "category",
       "Name a team of six Pokémon in 15 seconds. Stall: drink 2.",

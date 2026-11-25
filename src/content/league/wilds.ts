@@ -63,7 +63,7 @@ export const moreWilds: CardDefinition[][] = [
     wild(
       2,
       "route-voltorb",
-      "Voltorb",
+      "Suspicious Poké Ball",
       "A Poké Ball on the path. Pick it up? It's a Voltorb. Roll d20.",
       vs(
         "Self-Destruct, in your hand. Drink 3.",

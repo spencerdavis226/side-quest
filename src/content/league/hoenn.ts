@@ -122,7 +122,7 @@ export const hoenn: Region = {
       "sidney",
       "Sidney",
       "Dark",
-      "Sidney thinks you're a little bitch. Prove him wrong: roll 2d6.",
+      "Sidney thinks you're a pushover. Prove him wrong: roll 2d6.",
       rollTable(2, 6, [
         { min: 2, max: 6, instruction: "Crunched. Finish your drink." },
         { min: 7, max: 7, instruction: "A standoff. Drink 7." },
@@ -133,7 +133,7 @@ export const hoenn: Region = {
       "phoebe",
       "Phoebe",
       "Ghost",
-      "Eyes shut; someone swaps drinks with you. Guess who, or drink 4 of theirs.",
+      "Shut your eyes while someone swaps drinks with you. Guess who. Wrong: drink 4 of theirs.",
     ),
     eliteFour(
       "glacia",
@@ -205,7 +205,7 @@ export const hoenn: Region = {
     ),
     champion(
       "wallace",
-      "Wallace",
+      "Champion Wallace",
       "Hoenn",
       "Wallace wants a beautiful fight. Everyone strikes a fabulous pose, then roll d20.",
       d20(

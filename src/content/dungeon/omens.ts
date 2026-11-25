@@ -11,16 +11,15 @@ export const omens: CardDefinition[] = [
   omen(
     "swamp-ass",
     "Swamp Ass",
-    "Last to say 'moist' as a region opens drinks 1. Traps hurt 1 more. Take a Smoke Bomb.",
+    "When a new region starts, last to say 'moist' drinks 1. Traps hurt 1 more. Take a Smoke Bomb.",
     { hurt: { trap: 1 }, loot: ["smoke"] },
-    "Last to say 'moist' as a region opens drinks 1.",
+    "When a new region starts, last to say 'moist' drinks 1.",
   ),
   omen(
     "harvest-orgy",
     "Harvest Orgy",
-    "The village promised an orgy. It's a turnip fair: whoever drinks picks a partner. Heals heal 1 more.",
+    "The village promised an orgy. It's a turnip fair. Toast the biggest turnip. Heals heal 1 more.",
     { heal: 1 },
-    "Whoever drinks picks a partner to drink with them.",
   ),
   omen(
     "hush-money",
@@ -31,10 +30,10 @@ export const omens: CardDefinition[] = [
   omen(
     "grounded",
     "Grounded",
-    "Ask Mom to leave your seat, or drink 2. Bosses take an extra hit. Take a Lucky Coin and shield.",
+    "Mom grounded you. Ask 'May I?' before leaving your seat, or drink 2. Bosses take 1 more hit.",
     // A shield since 2026-10-25: the stairs fight left it near the floor.
     { bossHits: 1, loot: ["die", "shield"] },
-    "Ask Mom to leave your seat, or drink 2.",
+    "Ask 'May I?' before leaving your seat, or drink 2.",
   ),
   omen(
     "bag-of-holding",
@@ -52,7 +51,7 @@ export const omens: CardDefinition[] = [
   omen(
     "blood-moon",
     "Blood Moon",
-    "Everyone howls at the red moon; last to howl drinks 2. Fights cost a heart more; two more hearts.",
+    "Everyone howls; last to howl drinks 2. Two more hearts, but non-boss fights hurt 1 more.",
     { hurt: { monster: 1, elite: 1, ambush: 1 }, hearts: 2 },
   ),
   omen(
@@ -73,15 +72,15 @@ export const omens: CardDefinition[] = [
   ),
   omen(
     "thin-walls",
-    "Thin Walls",
-    "A hungover innkeeper next door: everyone whispers. Trials cost a heart more; heals heal 1 more.",
+    "Hungover Innkeeper",
+    "A hungover innkeeper next door: anyone who shouts drinks 1. Heals heal 1 more; trials hurt 1 more.",
     { hurt: { trial: 1 }, heal: 1 },
-    "Everyone whispers. Anyone who shouts drinks 1.",
+    "Anyone who shouts drinks 1.",
   ),
   omen(
     "farewell-shot",
     "The Farewell Shot",
-    "Everyone drinks 1 at the gate and pukes. Start a heart short, with a Lucky Coin and a Tower Shield.",
+    "Farewell drinks at the gate. Start a heart short, with a Lucky Coin and a Tower Shield.",
     { hearts: -1, loot: ["die", "shield"] },
   ),
   // Eight more (2026-10-25).
@@ -100,13 +99,13 @@ export const omens: CardDefinition[] = [
   omen(
     "black-cat",
     "A Black Cat",
-    "A black cat shat in your path. Natural 1s land on a 2 too, natural 20s on a 19.",
+    "A black cat shat in your path. Your 19s are natural 20s; your 2s are natural 1s.",
     { fumble: 2, crit: 19 },
   ),
   omen(
     "riddling-moon",
     "The Riddling Moon",
-    "Before each boss, the drawer answers the table's riddle, or drinks 2. Trials cost less, traps more.",
+    "Before each boss, answer the table's riddle or drink 2. Trials hurt 1 less, traps 1 more.",
     { hurt: { trial: -1, trap: 1 } },
     "Before each boss, the drawer answers a riddle from the table, or drinks 2.",
   ),

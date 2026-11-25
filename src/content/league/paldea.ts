@@ -133,7 +133,7 @@ export const paldea: Region = {
     ),
     eliteFour(
       "larry",
-      "Larry",
+      "Larry Again",
       "Flying",
       "It's Larry again. He's on unpaid overtime. Sigh with him, then roll d20.",
       d20(
@@ -208,7 +208,7 @@ export const paldea: Region = {
     ),
     champion(
       "nemona",
-      "Nemona",
+      "Champion Nemona",
       "Paldea",
       "Nemona wants to battle you again. And again. And again. The whole table fights. Roll d20.",
       d20(
