@@ -160,7 +160,6 @@ export const packs: PackDefinition[] = [
       "core.house-034",
       "core.house-035",
       "core.house-036",
-      "core.house-037",
       "core.house-038",
       "core.house-039",
       "core.house-041",
@@ -197,7 +196,6 @@ export const packs: PackDefinition[] = [
       "core.house-076",
       "core.house-077",
       "core.house-078",
-      "core.house-079",
       "core.house-080",
       "core.house-081",
       "core.house-082",
@@ -308,7 +306,6 @@ export const packs: PackDefinition[] = [
       "core.cabin-pokemon",
       "core.cabin-pet-that-dog",
       "core.cabin-abra-like-a-slut",
-      "core.cabin-whinnie-the-pooh",
     ],
     lastCall: [
       "core.closer-closing-time",

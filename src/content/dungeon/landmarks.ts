@@ -90,7 +90,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       3,
       "oldest-tree",
       "The Oldest Tree",
-      "It has watched every hero pass, and called each one a prick. The drawer reads the notes aloud.",
+      "It has called every passing hero a prick. The drawer says what it thinks of each player.",
       [
         { label: "Listen · drink 2", ...LORE },
         { label: "Carve your names", heal: 1 },
@@ -239,7 +239,7 @@ export const landmarks: Record<string, CardDefinition[]> = {
       7,
       "library",
       "The Library",
-      "Every book ever written, half of them smut. The drawer names the last book they read, or admits it.",
+      "Every book ever written, half of them smut. The drawer names the last book they read, if any.",
       [
         { label: "Read · drink 2", loot: "candy" },
         { label: "Borrow one", loot: "die", jinx: true },

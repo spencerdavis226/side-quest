@@ -73,18 +73,14 @@ const drafts: Draft[] = [
     "lap-dance",
     "Lap Dance Roulette",
     "challenge",
-    "Roll d6, count that many players left, skipping yourself. They get a 10-second lap dance.",
-    roll(
-      1,
-      6,
-      "{total} players left, skipping you. Dance for them or drink 5.",
-    ),
+    "Roll d6, count that many seats left (skip yourself). Lap-dance them 10 seconds or drink 5.",
+    roll(1, 6, "{total} seats left, skipping you. Lap dance or drink 5."),
   ],
   [
     "hot-seat",
     "Hot Seat",
     "challenge",
-    "Roll d6 and answer that many yes-or-no questions from the table. Lie and it costs you.",
+    "Roll d6. Answer that many yes-or-no questions. Each answer the table calls a lie: drink 3.",
     roll(1, 6, "{total} questions. Each one the table calls a lie: drink 3."),
   ],
   [
@@ -375,7 +371,7 @@ const drafts: Draft[] = [
     "coin-the-decider",
     "The Decider",
     "group",
-    "The table can't agree on anything. Flip the coin to settle which half is wrong.",
+    "Split the table down the middle through you. Flip the coin: the losing half drinks 2.",
     flip(
       "Tails. Everyone on your right drinks 2.",
       "Heads. Everyone on your left drinks 2.",
@@ -509,7 +505,7 @@ const drafts: Draft[] = [
     "ghost-protocol",
     "Ghost Protocol",
     "group",
-    "Point at whoever leaves without saying bye. They drink 3 now, before they vanish.",
+    "On three, point at who's most likely to leave without saying bye. Most votes drinks 3 now.",
   ],
   [
     "dirty-pint",

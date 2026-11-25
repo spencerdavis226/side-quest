@@ -221,12 +221,18 @@ const calls: CardDefinition[] = [
       doubles: "Jackpot! Everyone else drinks {total}.",
     },
   ),
-  card("boxcars", "Boxcars", "challenge", "Roll 2d6 for the table.", {
-    ...rollTable(2, 6, [
-      { min: 2, max: 12, instruction: "No pair. Drink {second}." },
-    ]),
-    doubles: "A pair! Give {total}.",
-  }),
+  card(
+    "boxcars",
+    "Boxcars",
+    "challenge",
+    "Roll 2d6. A pair pays out; anything else costs you.",
+    {
+      ...rollTable(2, 6, [
+        { min: 2, max: 12, instruction: "No pair. Drink {second}." },
+      ]),
+      doubles: "A pair! Give {total}.",
+    },
+  ),
   card(
     "coin-free-bet",
     "Free Bet",
@@ -241,7 +247,7 @@ const table: CardDefinition[] = [
     "screw-the-dealer",
     "Screw the Dealer",
     "challenge",
-    "Your left neighbor picks 1 to 6 in secret. Two guesses: miss, drink 3; hit, they drink 3.",
+    "Left neighbor picks 1 to 6 in their head. Two guesses. Hit: they drink 3. Miss both: you drink 3.",
   ),
   card(
     "pit-boss",

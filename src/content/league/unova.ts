@@ -77,7 +77,7 @@ export const unova: Region = {
         "Turbulence. Drink 5 while your neighbors shake your chair.",
         "Smooth landing. The table claps like passengers; give 5.",
         {
-          crit: "Mile-high club. You and a partner give 5 each.",
+          crit: "Loop the loop. You and a co-pilot give 5 each.",
           fumble: "Nosedive. Finish your drink.",
         },
       ),
@@ -188,7 +188,7 @@ export const unova: Region = {
     legendary(
       "reshiram",
       "Reshiram",
-      "Reshiram seeks truth. Tell the table the truth about your last hookup, then roll d20.",
+      "Reshiram seeks truth. Tell the table your most embarrassing moment, then roll d20.",
       d20(
         LEGENDARY_NEED,
         "Blue Flare. Drink 5, and the table asks one follow-up question.",

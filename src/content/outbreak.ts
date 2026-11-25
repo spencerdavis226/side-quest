@@ -122,7 +122,7 @@ const planters: CardDefinition[] = [
       "cure-royal-pox",
       "Revolution",
       "group",
-      "The royal pox is cured. Everyone they bowed to drinks 2.",
+      "The royal pox is cured. Long live the republic: everyone else drinks 2.",
     ],
   ),
   plant(
@@ -191,7 +191,7 @@ const planters: CardDefinition[] = [
       "time-bomb",
       "Time Bomb",
       "group",
-      "A bomb is ticking somewhere in the next ten cards. Its drawer and both neighbors pay.",
+      "A bomb ticks somewhere in the next ten cards. Whoever draws it and both their neighbors drink 3.",
     ],
     FUSE,
     [
@@ -268,14 +268,14 @@ const planters: CardDefinition[] = [
       "calling-it",
       "Calling It",
       "challenge",
-      "Point at who'll be drunkest ten minutes from now. The table remembers.",
+      "Point at who'll be drunkest when this comes back. The table remembers.",
     ],
     LATER,
     [
       "called-it",
       "Called It?",
       "group",
-      "The table votes on the pick from Calling It. Right, the caller gives 4. Wrong, drinks 4.",
+      "Calling It is due. Is the pick the drunkest now? Table votes. Yes: caller gives 4. No: drinks 4.",
     ],
   ),
   plant(
@@ -328,14 +328,14 @@ const planters: CardDefinition[] = [
       "sealed-envelope",
       "Sealed Envelope",
       "challenge",
-      "Predict out loud who drinks next. You'll be checked soon.",
+      "Predict out loud who'll be next to leave the table. You'll be checked soon.",
     ],
     LATER,
     [
       "envelope-opened",
       "Envelope Opened",
       "group",
-      "The table rules on the Sealed Envelope. Right, its writer gives 3. Wrong, drinks 3.",
+      "The Sealed Envelope opens. Right about who left first? Its writer gives 3. Wrong: drinks 3.",
     ],
   ),
 ];

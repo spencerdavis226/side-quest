@@ -20,7 +20,7 @@ export const kanto: Region = {
       "brock",
       "Brock",
       "Boulder",
-      "Brock is busy hitting on Nurse Joy. Hit on someone here for him, then roll d20.",
+      "Brock is busy swooning over Nurse Joy. Pay someone here a cheesy compliment, then roll d20.",
       rollTable(1, 20, [
         { min: 1, max: 12, instruction: "Onix flattens you. Drink 5." },
         {
@@ -97,7 +97,7 @@ export const kanto: Region = {
       "blaine",
       "Blaine",
       "Volcano",
-      "Quiz! The table asks 3 trivia questions. Get 2 right. Each miss: drink 3.",
+      "Quiz! Answer 3 trivia questions from the table. Get 2 right to win. Each miss: drink 3.",
     ),
     leader(
       7,
@@ -161,7 +161,7 @@ export const kanto: Region = {
         "agatha",
         "Agatha",
         "Ghost",
-        "Nobody says a name for one minute. Anyone else who slips drinks 3. You slip: you lose.",
+        "For one minute, nobody says a name. Anyone else who does drinks 3. If you do, you lose.",
       ),
       jinx: {
         name: "No Names",
@@ -173,7 +173,7 @@ export const kanto: Region = {
   champions: [
     champion(
       "blue",
-      "Blue",
+      "Champion Blue",
       "Kanto",
       "Blue got here first and won't shut up about it. The whole table fights. Roll d20.",
       rollTable(1, 20, [

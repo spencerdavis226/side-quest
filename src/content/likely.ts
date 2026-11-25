@@ -241,7 +241,7 @@ const prompts: Prompt[] = [
   ["Midlife Face Ink", "get a face tattoo at 50"],
 
   // --- The group -----------------------------------------------------------------
-  ["Fashionably Late", "be late to their own wedding"],
+  ["Late to the Altar", "be late to their own wedding"],
   null, // 212: retired 2026-10-07 ("be the group therapist")
   ["Who, Me?", "start drama and act surprised"],
   ["Keeper of Secrets", "know everyone's secrets"],

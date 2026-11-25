@@ -49,7 +49,7 @@ const HIDDEN: Record<string, Hidden> = {
   },
   "dungeon.lich-lord": {
     face: 20,
-    line: "You drink his soul by mistake.",
+    line: "His soul splashes on you. You feel great.",
     reward: { loot: "revive" },
   },
   "dungeon.archmage": {

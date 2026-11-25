@@ -1,6 +1,15 @@
 # Current state and implementation plan
 
-Updated 2026-11-24. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
+Updated 2026-11-25. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
+
+## Done 2026-11-25: every card reviewed; titles unique; the League cleaned
+
+Owner: "do a full, really intelligent review of every single card string ... if things are too complicated to fit ... change what the card text is entirely". All 2,380 cards were read (rules, dice outcomes, phases, dragon moves, omens, plaques, secrets, rival lines); the owner approved the list, then: drop Whinnie the Pooh, "everyone who drank" for Drink, bitch, Buffalo means finish your drink if it's in your dominant hand (This Sucks flips it), retire any cards that need it, the League "playful and clean", "make titles unique", and "make all other changes you deem fit".
+
+- **Retired** (`RETIRED_SHEET_IDS` in `custom.ts`; saves keep their snapshot; `renamed-ids.test.ts` accepts them as retired targets): `core.house-037`, `core.house-079`, `core.cabin-whinnie-the-pooh`. Core 298 → 295, catalog 2,380 → 2,377.
+- **Unique titles**: 265 cards shared a title; every title is now unique across the catalog, kept by the new `tests/titles.test.ts`. Templated Secrets cards take one title per prompt from lists in `secrets.ts` (a secret card's title never hints at its secret); story cards' second tellings have their own titles, and `secrets.test.ts` now pairs truth and lie by topic. Plain Pokémon cards that shared a League name were renamed (Caught a Pikachu, Kyogre Rises...); League champions are "Champion X"; the road cards are The Naked Parade, The Shut Forest, The Flooded Marsh, The Full Crypt, The Goblin Strike, The Wandering Tower (their stage labels, The Road Out and The Signpost, are unchanged; the map moment shows the card's title, so `moments.test.ts` expects one of the three).
+- **Wording**: crammed templates split into steps (Paranoia, Fact or Cap, stories, side bets "Others bet thumbs up or down", Realms omens), logic bugs fixed (Sealed Envelope and Calling It callbacks, Bridge Troll's doubled toll, Lich Lord and Fortune Teller hidden tails, Never #081/#135 double negatives, Great Minds scales about yourself, sip auctions with no reason to bid, omen boon text that disagreed with its card), missing penalties added, props swapped for mimes or phones (League phases, Kahili, Safari Toss, Realms coasters). House and Pokémon changes are listed in `reference/README.md`; the League voice rule is in `CARD_VOICE_REFERENCE.md`.
+- **Checked**: `npm test` 841 passed; `npm run test:balance` 12 passed; typecheck; lint; build (budgets pass: 5,515 KiB runtime, 182.3 KiB gzip initial); `npm run cards:review` regenerated. **Not checked**: WebKit, a phone, the table.
 
 ## Done 2026-11-24: the WebKit "legacy finite game" failure on `main`
 

@@ -171,7 +171,7 @@ export const tower: FloorCards = {
         7,
         "Trap",
         "dare-tower",
-        "The Dare",
+        "The Wizard's Dare",
         "Drawer, look away. Left neighbor: Hold to read, start the clock. Mime it; drawer guesses.",
       ),
       secret: "THE WIZARD'S BEARD.",
@@ -198,7 +198,7 @@ export const tower: FloorCards = {
       "Monster",
       "imps-auction",
       "The Imp's Auction",
-      "An imp auctions the wizard's last potion. Bid sips clockwise; top bid drinks it.",
+      "An imp auctions the wizard's last potion. Bid sips clockwise; top bidder drinks it and gives 5.",
     ),
     // 2d6, and doubles are a better win.
     monster(
@@ -236,7 +236,7 @@ export const tower: FloorCards = {
     trap(
       7,
       "cauldron-tower",
-      "The Cauldron",
+      "The Boiling Cauldron",
       "A cauldron is boiling over, and shaking. Roll d20 before it blows.",
       "Potion everywhere, mostly on you. Drink 3.",
       "You take it off the fire in time. Give 3, piping hot.",
@@ -324,7 +324,7 @@ export const tower: FloorCards = {
     fork(
       7,
       "shortcut-tower",
-      "The Shortcut",
+      "The Teleport Circle",
       "A teleport circle chalked on the floor, half rubbed out. It might go up.",
       ["Take the stairs", "Step in the circle"],
     ),

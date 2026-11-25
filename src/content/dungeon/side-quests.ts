@@ -54,7 +54,7 @@ export const sideQuests: SideQuest[] = [
       guard(
         cottage,
         "witchs-cauldron",
-        "The Cauldron",
+        "The Witch's Cauldron",
         "A cauldron of something green, and a ladle. Roll d6.",
         moves(
           [

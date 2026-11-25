@@ -421,7 +421,7 @@ const sensei = rival(
   [
     [
       "pop-quiz",
-      "Pop Quiz",
+      "Sensei's Pop Quiz",
       "Sensei Saggynuts has a pop quiz and his loincloth is slipping. Roll d20 without looking down.",
       vs(
         "You looked. 'See me after.' Drink 3.",
@@ -507,7 +507,7 @@ const chuck = rival(
   {
     title: "Chuck the Cuck",
     rules:
-      "Chuck the Cuck is your squire now. Drawer, stare someone down as him. First to look away drinks 2.",
+      "Chuck the Cuck makes himself your squire. Drawer: stare someone down; first to look away drinks 2.",
     back: [
       "Chuck Is Back",
       "Chuck the Cuck is back with a notebook. Drawer, stare someone down as him. Look away first: drink 2.",
@@ -552,7 +552,7 @@ const chuck = rival(
   {
     title: "Chuck Begs to Serve",
     rules:
-      "Chuck the Cuck, on his knees, begs to serve you. He'll just watch. Take him and flip a coin.",
+      "Chuck the Cuck begs to serve you. He'll just watch. Take him, and a coin decides if he stays.",
     offers: [
       {
         label: "Take him · drink 2",

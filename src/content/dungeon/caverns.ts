@@ -66,7 +66,7 @@ export const caverns: FloorCards = {
       5,
       "smoke-wraith",
       "The Smoke Wraith",
-      "Breath-off in the smoke: hold your breath against your right neighbor. Breathe first: drink 4.",
+      "You and your right neighbor hold your breath in the smoke. First to breathe drinks 4.",
     ),
     monster(
       5,
@@ -200,7 +200,7 @@ export const caverns: FloorCards = {
       "The Blade Trap",
       "Blades swing out of the walls on their own. Hands up, then roll d20.",
       "Thinly sliced. Drink 4.",
-      "You jam the blades. Slice the table in half; the other half drinks 3.",
+      "You jam the blades. Chop the table in two with your hand; the half you're not on drinks 3.",
     ),
     ambush(
       5,
@@ -364,7 +364,7 @@ export const caverns: FloorCards = {
     fork(
       5,
       "locked-door-caverns",
-      "The Locked Door",
+      "The Iron Door",
       "An iron door, hot to the touch, with a claw mark the length of a man across it.",
       ["Leave it shut", "Force it open"],
     ),

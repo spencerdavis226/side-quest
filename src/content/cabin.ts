@@ -141,7 +141,7 @@ const authored: CardDefinition[] = [
     "cabin-mustard-tiger",
     "Mustard Tiger",
     "sip",
-    "Drink as much as whoever has drunk the most this game.",
+    "Point at whoever's drunk the most tonight. Drink until they say stop.",
   ),
 
   // --- Group -----------------------------------------------------------------
@@ -467,7 +467,7 @@ const authored: CardDefinition[] = [
     "cabin-what-is-give",
     "What Is? Give",
     "challenge",
-    "Have someone get you the drink they have. Roll d6. You both drink your roll minus 3.",
+    "Swap drinks with someone. Roll d6: you both drink your roll minus 3.",
     rollTable(1, 6, [
       { min: 1, max: 3, instruction: "Nobody drinks." },
       { min: 4, max: 4, instruction: "You both drink 1." },
@@ -512,7 +512,7 @@ const authored: CardDefinition[] = [
     "cabin-stonks",
     "Stonks",
     "rule",
-    "Smoke something if you're cool. Until your next turn, you're immune to drinks.",
+    "Smoke something if you've got it. Either way, you're immune to drinks until your next turn.",
   ),
   card(
     "cabin-asshole",
@@ -530,7 +530,7 @@ const authored: CardDefinition[] = [
     "cabin-like-i-said",
     "Like I Said",
     "rule",
-    "Drink 2. Until your next turn, mimic the next player.",
+    "Drink 2. Until your next turn, copy everything the next player says and does.",
   ),
   card(
     "cabin-steves-beanie",

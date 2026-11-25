@@ -39,7 +39,7 @@ test("Core composition matches the trimmed content brief", () => {
   const core = packs.find((p) => p.id === "core")!;
   // The Core deck is three plain sources (2026-10-24, owner): the generated
   // main deck, the supplied house sheet and Cabin weekend.
-  expect(core.cardIds).toHaveLength(298);
+  expect(core.cardIds).toHaveLength(295); // 298 until the 2026-11-25 review retired 3
   const coreCards = cards.filter(
     (c) => core.cardIds.includes(c.id) && !isHouseRow(c.id) && !isCabin(c.id),
   );
@@ -63,6 +63,8 @@ test("Core composition matches the trimmed content brief", () => {
 // cards `core.cabin-*` (`house.sheet-NNN` and `cabin.*` until 2026-11-15).
 const isHouseRow = (id: string) => /^core\.house-\d{3}$/.test(id);
 const isCabin = (id: string) => id.startsWith("core.cabin-");
+// Sheet rows retired in the 2026-11-25 card review (`RETIRED_SHEET_IDS`).
+const RETIRED_ROWS = new Set([37, 54, 79]);
 // Sheet rows that are CABIIN board spaces keep their CABIIN IDs.
 const cabinRows: Record<number, string> = {
   12: "maddy-booty",
@@ -72,7 +74,6 @@ const cabinRows: Record<number, string> = {
   40: "pokemon",
   42: "pet-that-dog",
   53: "abra-like-a-slut",
-  54: "whinnie-the-pooh",
 };
 test("each supplied sheet row lands in the Core deck (House or CABIIN IDs) or VIP night", () => {
   const core = packs.find((p) => p.id === "core")!;
@@ -84,11 +85,11 @@ test("each supplied sheet row lands in the Core deck (House or CABIIN IDs) or VI
   const sheetRows = Array.from(
     { length: 104 },
     (_, offset) => offset + 3,
-  ).filter((row) => row !== 75 && row !== 106);
+  ).filter((row) => row !== 75 && row !== 106 && !RETIRED_ROWS.has(row));
   const cabin = {
     cardIds: core.cardIds.filter(isCabin),
   };
-  expect(house.cardIds).toHaveLength(94);
+  expect(house.cardIds).toHaveLength(92);
   for (const row of sheetRows)
     if (cabinRows[row]) {
       expect(cabin.cardIds).toContain(`core.cabin-${cabinRows[row]}`);
@@ -102,7 +103,7 @@ test("each supplied sheet row lands in the Core deck (House or CABIIN IDs) or VI
   expect(vip.cardIds.slice(-4)).toEqual(
     [3, 4, 5, 6].map((row) => `vip.sheet-${String(row).padStart(3, "0")}`),
   );
-  expect(cards).toHaveLength(2380); // since 2026-11-24: 13 more core, 89 Great Minds, 46 Outbreak (20 of them callbacks) and 30 Dealer's Choice; since 2026-11-23: 166 Never Have I Ever, 59 more VIP and 15 Last Call closers (6 core, 3 VIP, 3 likely, 3 never); before: 106 core (10 coin cards, The Quest 2.1) + 94 house + 16 vip + 120 Pokémon (+72 League-only gym leaders, 79 gauntlet cards, 35 starters, 239 route, Victory Road and rival cards, 36 hideout cards) + 85 cabin + 250 likely + 156 secrets + 674 Realms (304 fights, elites and bosses; 153 Quest finds, gambles, merchants, forks and table moments; 20 omens, 19 adventurers (the Dragonslayer locked), 2 locked dragons, 6 summons, 6 dragon signs, 6 road choices, 27 landmarks, 22 rares, 11 echoes, 16 inns, 57 rival cards (seven rivals of eight since Lord Nocap on 2026-11-16, six since Rivals Phase 3, Sensei pinned since Phase 4 and a returning introduction each since Phase 6; the Gilded Company's 21 gate, crossroads and door cards cut) and 25 side-quest cards)
+  expect(cards).toHaveLength(2377); // since 2026-11-25: 3 sheet rows retired (37, 54, 79); since 2026-11-24: 13 more core, 89 Great Minds, 46 Outbreak (20 of them callbacks) and 30 Dealer's Choice; since 2026-11-23: 166 Never Have I Ever, 59 more VIP and 15 Last Call closers (6 core, 3 VIP, 3 likely, 3 never); before: 106 core (10 coin cards, The Quest 2.1) + 94 house + 16 vip + 120 Pokémon (+72 League-only gym leaders, 79 gauntlet cards, 35 starters, 239 route, Victory Road and rival cards, 36 hideout cards) + 85 cabin + 250 likely + 156 secrets + 674 Realms (304 fights, elites and bosses; 153 Quest finds, gambles, merchants, forks and table moments; 20 omens, 19 adventurers (the Dragonslayer locked), 2 locked dragons, 6 summons, 6 dragon signs, 6 road choices, 27 landmarks, 22 rares, 11 echoes, 16 inns, 57 rival cards (seven rivals of eight since Lord Nocap on 2026-11-16, six since Rivals Phase 3, Sensei pinned since Phase 4 and a returning introduction each since Phase 6; the Gilded Company's 21 gate, crossroads and door cards cut) and 25 side-quest cards)
 });
 
 test("League gyms come in eight tiers, one leader per region in each", () => {
@@ -129,7 +130,7 @@ test("the CABIIN cards sit in Core under their own IDs and are shared by none", 
   const cabin = {
     cardIds: core.cardIds.filter(isCabin),
   };
-  expect(cabin.cardIds).toHaveLength(85);
+  expect(cabin.cardIds).toHaveLength(84);
   // No card is in two packs.
   const all = packs.flatMap((p) => p.cardIds);
   expect(new Set(all).size).toBe(all.length);

@@ -170,7 +170,7 @@ const vipDeck: CardDefinition[] = [
   ),
   vipCard(
     "pop-quiz",
-    "Pop Quiz",
+    "VIP Pop Quiz",
     "challenge",
     "Name the VIP's middle name, star sign and usual drink. Drink 1 for each miss.",
   ),

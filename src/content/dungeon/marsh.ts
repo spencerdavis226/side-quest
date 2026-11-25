@@ -138,14 +138,14 @@ export const marsh: FloorCards = {
       6,
       "crabs",
       "Crabs",
-      "A giant crab. Now you've all got crabs. Flick a coaster to the edge, two tries. Miss: drink 3.",
+      "A giant crab. Now you've all got crabs. Walk sideways to the door and back. Laugh: drink 3.",
     ),
     mishap(
       6,
       "Monster",
       "toad-auction",
       "The Toad Auction",
-      "A toad auctions a jar of glowing swamp piss. Bid sips clockwise; top bid drinks them.",
+      "A toad auctions a jar of swamp piss. Bid sips clockwise; top bidder drinks the bid and gives 5.",
     ),
     trial(
       6,
@@ -346,7 +346,7 @@ export const marsh: FloorCards = {
     fork(
       6,
       "dare-marsh",
-      "The Dare",
+      "The Bog Dare",
       "The bog folk dare you to cross the rotten plank bridge at night. Nobody ever has.",
       ["Decline politely", "Take the dare"],
     ),
@@ -407,7 +407,7 @@ export const marsh: FloorCards = {
       "The Lizard King",
       "The lizardfolk's king wants the marsh, one boardwalk at a time. Roll d20.",
       "He takes your boardwalk. Drink 4.",
-      "You take his. Take someone's drink for a sip; they drink 4.",
+      "You take his. Steal a sip of someone's drink; they drink 4.",
       [
         trinket("Lucky Scale", { crit: 19 }),
         trinket("Scaled Pack", { satchel: 4, loot: ["shield"] }),

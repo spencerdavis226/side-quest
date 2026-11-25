@@ -276,7 +276,7 @@ export const frozenPass: FloorCards = {
     relic(
       8,
       "watchtower",
-      "The Watchtower",
+      "The Old Ladder",
       "A ladder up an old watchtower, and something glinting at the top. Climb, or don't.",
       13,
       "A rung gives. Drink 5.",
@@ -323,7 +323,7 @@ export const frozenPass: FloorCards = {
       "The Yak Herder",
       "A yak herder with a sled of supplies and a spot by his fire, for a price.",
       [
-        { label: "By the fire · 5", loot: "round" },
+        { label: "Fire · drink 5", loot: "round" },
         { label: "Trade your boots", cost: 2, loot: "revive" },
         { label: "Walk on" },
       ],
@@ -331,7 +331,7 @@ export const frozenPass: FloorCards = {
     fork(
       8,
       "cry-for-help-pass",
-      "A Cry for Help",
+      "The Caravan Horn",
       "A horn from a stuck caravan up the pass: three short blasts, for help.",
       ["Press on", "Answer the horn"],
     ),

@@ -167,3 +167,39 @@ G is drinking a Guinness down to the middle of the G on the glass. The dice
 
 Tin Hat Society (088) now says what to do with the theory: the table votes
 if it's believable, and if not, the teller drinks 2.
+
+## 2026-11-25 Card review
+
+The owner asked for a review of every card ("reword things that are
+complicated ... if things are too complicated to fit ... change what the card
+text is entirely"), then: drop Whinnie the Pooh, retire cards that need it,
+make titles unique, and make the League playful and clean. The raw sheets are
+unchanged.
+
+House sheet rows (`core.house-NNN`):
+
+- Retired: 037 Same Card, Wrong (narrated a Ride the Bus hand nobody played),
+  054 Whinnie the Pooh (`core.cabin-whinnie-the-pooh`; owner: "drop it
+  entirely") and 079 Missed the G (folded into 078). `RETIRED_SHEET_IDS` in
+  `src/content/custom.ts` lists them; saved games keep their snapshot.
+- 006/007 The Game Giveth/Taketh: no more "multiply by 1d6" (the app rolls no
+  such die): give or drink 3, and 3 more if the other card came up earlier.
+- 036 Called It: a real call, high or low, settled by the roll.
+- 039 This Sucks: Buffalo means finish your drink if you're caught holding it
+  in your dominant hand (owner); this card flips the Buffalo hand to the off
+  hand. `core.buffalo` now states the rule itself.
+- 045 Drink, bitch: everyone who drank on the last card (owner).
+- 078 Clean Split: the table judges the split; give or drink 4, no dice.
+- 010, 032, 091, 097 and Cabin row 40 (Pokemon) gained a slip; 014 Medusa,
+  015 Mr Freeze, 018 Story Time, 019 And the Chicks, 029 Pop Punk FMK, 046
+  Fiend, 047 Battery Life and 100 Dare say who acts and what failing costs.
+
+VIP rows: 003 counts sips over a minute (3 given per sip); 005 says "last
+digit" and covers a zero.
+
+Pokémon board cards (`pokemon.ts`): the legendary-catch, Safari Zone,
+Rattata, Missingno and Bug Contest rules no longer restate their dice table;
+Slowpoke, Mankey, Koffing, Rival May and Pokédex reworded for clarity. Plain
+cards that shared a title with a League card took a new title (Pikachu is
+Caught a Pikachu, Kyogre is Kyogre Rises, and so on).
+

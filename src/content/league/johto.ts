@@ -25,7 +25,7 @@ export const johto: Region = {
       "bugsy",
       "Bugsy",
       "Hive",
-      "Bugsy's bugs got in your pants. Roll 3d6 and check your shorts.",
+      "Bugsy's bugs got in your backpack. Roll 3d6 and shake it out.",
       rollTable(3, 6, [
         ...Array.from({ length: 8 }, (_, i) => ({
           min: i + 3,
@@ -123,7 +123,7 @@ export const johto: Region = {
   champions: [
     champion(
       "lance",
-      "Lance",
+      "Champion Lance",
       "Johto",
       "Lance used Hyper Beam on the whole table. Roll d20 and pray.",
       rollTable(1, 20, [
