@@ -2,6 +2,32 @@
 
 Updated 2026-11-25. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Done 2026-11-26: flaky tests fixed, tests and CI faster
+
+Owner: "fix flakey tests. I need to speed tests up if possible too".
+
+**Flakes and failures** (found from CI history since 2026-11-16 and three full Chromium e2e passes):
+- `game.spec.ts` "offline reload keeps the same revealed card" (2 of 10 passed) and the `@release` "legacy finite game" had the same race: they read the title with `innerText`, which is "" for hidden text, and under Reduced Motion the title's `visibility` lags the card face by a frame. Cause: the global Reduced Motion rule sets `transition-duration: 0.01ms` on `*`, and `transition-property` starts as `all`, so every inherited change is a transition. They read `textContent` now (20 of 20). The app shows the title a frame late under Reduced Motion; not visible, not changed.
+- `moments.spec.ts` "a beaten gym's badge flies": the flier lasts 620 ms and removes itself; a loaded runner read it after it landed. `watchFliers` (`support.ts`) sees fliers from inside the page and holds the badge's flight at its start; the jinx test counts its flier the same way.
+- `secondary.spec.ts`: two hard-coded counts (374, 925) were stale since the 2026-11-25 review retired 3 cards; both read the catalog now.
+- `pages.yml`: run #409's deploy failed twice. The deploy job uploaded the Pages artifact and deployed it at once, before GitHub had registered it ("No artifacts named github-pages"), and the re-run uploaded a second and failed on the duplicate. The build job uploads it now (on `main` only).
+
+**Speed** (same results: balance statistics diffed old vs new, identical):
+- `createSession` 34 ms to 6 ms on a Realms game: pool cards looked up in a map, not `catalog.find` per ID.
+- `finaleCard` uses an index built once per run's `stages` array (a `WeakMap`; the engine never changes a `stages` array in place), instead of searching every pool on each read; `runNames` called it for every card in the run.
+- `renameId` skips strings with a space (card text) and tests each pattern only with its marker: `parseSession` about 40% faster on a 532 KB save. `renamed-ids.test.ts` checks no renamed ID holds a space.
+- `save-fixtures.test.ts` is now `save-fixtures.ts` plus four `save-fixtures-<n>.test.ts` files, so Vitest runs them at once.
+- CI: WebKit's release suite is two jobs (`--shard`, 7 tests each); it was the slowest browser job (85 s).
+
+| Measured here (4 cores) | Before | After |
+|---|---|---|
+| `npm test` | 72 s | 46 s |
+| Quest balance file | 258 s | 82 s |
+| League balance file | 151 s | 64 s |
+| `npm run test:balance` | about 4.5 min | 98 s |
+
+- **Checked**: `npm test` 842 passed; typecheck; lint; build (budgets pass); `npm run test:balance` 12 passed; Chromium `test:e2e` 208 of 208; Chromium `test:release` 70 of 70 (5 repeats); the fixed specs 210 of 210 (5 repeats). **Not run locally**: WebKit (cannot run in this container); CI runs it.
+
 ## Done 2026-11-26: Last Call closers for Great Minds and Dealer's Choice
 
 Owner: "add last call closes for the new packs". Three closers each in `src/content/last-call.ts` (`mindsLastCall`, `dealerLastCall`), wired as `PackDefinition.lastCall` in `minds.ts` and `dealer.ts` (the closers are in the pack's loaded cards, not its deck, as in Never Have I Ever).

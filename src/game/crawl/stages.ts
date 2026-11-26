@@ -373,37 +373,48 @@ const uniqueIds = (cards: CardDefinition[]) => {
     return true;
   });
 };
-/** A finale card by ID, from any stage's pool, elites or inserts. A plain
- * search, no copy: it runs on every read of the card in play. */
+/** Every finale card by ID, per run's `stages` array, built on first use.
+ * The engine never changes a `stages` array or its pools in place (each
+ * change builds new ones), so the index stays true for the array it was
+ * built from (2026-11-26: the search ran on every read of the card in play,
+ * and `runNames` searched once per card in the run). */
+const finaleIndex = new WeakMap<object, Map<string, CardDefinition>>();
+function indexFinale(stages: QuestState["stages"]) {
+  const index = new Map<string, CardDefinition>();
+  // The same order the search used: stage by stage, its pool, elites,
+  // ambush, inserts, rare and variants; the first card with an ID wins.
+  const add = (cards: unknown) => {
+    if (!Array.isArray(cards)) return;
+    for (const c of cards as CardDefinition[])
+      if (c && typeof c.id === "string" && !index.has(c.id)) index.set(c.id, c);
+  };
+  for (const stage of stages) {
+    add(stage?.cards);
+    add(stage?.elite);
+    add(stage?.ambush);
+    if (Array.isArray(stage?.inserts))
+      for (const i of stage.inserts) add(i?.cards);
+    add(stage?.rare?.cards);
+    if (Array.isArray(stage?.variants))
+      for (const v of stage.variants) add(v?.cards);
+  }
+  return index;
+}
+/** A finale card by ID, from any stage's pool, elites or inserts. No copy:
+ * it runs on every read of the card in play. */
 export function finaleCard(
   quest: QuestState,
   id: string,
 ): CardDefinition | undefined {
-  const find = (cards: unknown) =>
-    Array.isArray(cards)
-      ? (cards as CardDefinition[]).find((c) => c?.id === id)
-      : undefined;
-  for (const stage of quest.stages) {
-    const card =
-      find(stage?.cards) ??
-      find(stage?.elite) ??
-      find(stage?.ambush) ??
-      (Array.isArray(stage?.inserts)
-        ? stage.inserts.reduce<CardDefinition | undefined>(
-            (got, i) => got ?? find(i?.cards),
-            undefined,
-          )
-        : undefined) ??
-      find(stage?.rare?.cards) ??
-      (Array.isArray(stage?.variants)
-        ? stage.variants.reduce<CardDefinition | undefined>(
-            (got, v) => got ?? find(v?.cards),
-            undefined,
-          )
-        : undefined);
-    if (card) return card;
+  const stages = quest.stages;
+  // A damaged save may hold anything here; it is searched, never cached.
+  if (!Array.isArray(stages)) return indexFinale(stages).get(id);
+  let index = finaleIndex.get(stages);
+  if (!index) {
+    index = indexFinale(stages);
+    finaleIndex.set(stages, index);
   }
-  return undefined;
+  return index.get(id);
 }
 /** A stage with variants reached (The Quest 2.0 Phase 6): the first card
  * becomes one of a group whose deeds the party all holds (picked at random

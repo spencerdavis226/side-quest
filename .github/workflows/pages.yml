@@ -97,8 +97,14 @@ jobs:
       options: --ipc=host
     strategy:
       fail-fast: true
+      # WebKit is split in two (2026-11-26): its release suite took 85 s on
+      # one runner, the last job a deploy waited for; Chromium's takes 36 s.
+      # `--shard` splits tests evenly (fullyParallel), so none runs twice.
       matrix:
-        project: [chromium, webkit]
+        include:
+          - { project: chromium, part: 1, parts: 1 }
+          - { project: webkit, part: 1, parts: 2 }
+          - { project: webkit, part: 2, parts: 2 }
     env:
       # The image's browsers are installed for root (Playwright's advice for
       # its container on Actions, which sets HOME elsewhere).
@@ -123,22 +129,22 @@ jobs:
         with:
           name: dist
           path: dist
-      - run: npm run test:release -- --project=${{ matrix.project }} --workers=2 --repeat-each=${{ inputs.repeat_each || 1 }}
+      - run: npm run test:release -- --project=${{ matrix.project }} --shard=${{ matrix.part }}/${{ matrix.parts }} --workers=2 --repeat-each=${{ inputs.repeat_each || 1 }}
       # Two fresh builds on one origin, driven in Chromium.
       - run: npm run test:update
         if: matrix.project == 'chromium'
-      - run: npm run test:e2e -- --project=${{ matrix.project }} --workers=2
+      - run: npm run test:e2e -- --project=${{ matrix.project }} --shard=${{ matrix.part }}/${{ matrix.parts }} --workers=2
         if: github.event_name == 'workflow_dispatch' && inputs.full_validation
-      - run: npm run test:sweep -- --project=${{ matrix.project }} --workers=2
+      - run: npm run test:sweep -- --project=${{ matrix.project }} --shard=${{ matrix.part }}/${{ matrix.parts }} --workers=2
         if: github.event_name == 'workflow_dispatch' && inputs.full_validation
-      - run: npm run test:workshop -- --project=${{ matrix.project }}
+      - run: npm run test:workshop -- --project=${{ matrix.project }} --shard=${{ matrix.part }}/${{ matrix.parts }}
         if: github.event_name == 'workflow_dispatch' && inputs.full_validation
         env:
           BASE_PATH: /
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: browser-failures-${{ matrix.project }}
+          name: browser-failures-${{ matrix.project }}-${{ matrix.part }}
           path: test-results/
   # The crawl and League balance simulations (4,000 seeded runs each), one
   # job per file so the two run at once; a deploy still waits for both.
