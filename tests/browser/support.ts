@@ -253,3 +253,29 @@ export const layoutSettled = (page: Page, selector: string) =>
  * whole file or block opting in with `motion` would be too broad. */
 export const withMotion = (page: Page) =>
   page.emulateMedia({ reducedMotion: "no-preference" });
+
+/** Count the prizes `flyTo` flies (`.moment-flier`), from inside the page,
+ * after the page has loaded. A flight lasts 620 ms and removes its clone, so
+ * a poll from the test can miss it under load (2026-11-26). With `pause`,
+ * each flight is held at its start, for a test that then seeks it. */
+export const watchFliers = (page: Page, pause = false) =>
+  page.evaluate((pause) => {
+    const w = window as unknown as { __fliers: number };
+    w.__fliers = 0;
+    new MutationObserver((changes) => {
+      for (const change of changes)
+        for (const node of change.addedNodes)
+          if (
+            node instanceof HTMLElement &&
+            node.classList.contains("moment-flier")
+          ) {
+            w.__fliers++;
+            if (pause)
+              for (const flight of node.getAnimations()) flight.pause();
+          }
+    }).observe(document.body, { childList: true });
+  }, pause);
+
+/** How many fliers `watchFliers` has seen. */
+export const fliers = (page: Page) =>
+  page.evaluate(() => (window as unknown as { __fliers: number }).__fliers);

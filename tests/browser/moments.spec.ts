@@ -1,4 +1,14 @@
-import { test, expect, seed, saved, withMotion, rng, frames } from "./support";
+import {
+  test,
+  expect,
+  seed,
+  saved,
+  withMotion,
+  rng,
+  frames,
+  watchFliers,
+  fliers,
+} from "./support";
 import { advance, createSession, currentCard } from "../../src/game/engine";
 import { returnToCard, rollDice } from "../../src/game/dice";
 import { cards, packs } from "../../src/content/catalog";
@@ -151,7 +161,10 @@ test("a boss's entrance plays once, and a tap on the card skips it and turns it"
   page,
 }) => {
   await withMotion(page);
-  await seed(page, advance(crawlAt("dungeon.snake-in-the-road", STEP.boss1 - 1)));
+  await seed(
+    page,
+    advance(crawlAt("dungeon.snake-in-the-road", STEP.boss1 - 1)),
+  );
   await page.locator(".game-card").click();
   const entrance = page.locator(".moment-entrance");
   await expect(entrance).toBeVisible();
@@ -191,6 +204,9 @@ test("a beaten gym's badge flies into the badges chip", async ({ page }) => {
   await withMotion(page);
   // Byron's ace, one hit landed: Won fells him and earns the sixth badge.
   await seed(page, advance(leagueAt("pokemon.gym-byron", { hits: 1 })));
+  // Held at its start the moment it flies, then seeked below: read later,
+  // a loaded runner could see it already landed and gone.
+  await watchFliers(page, true);
   await page.getByRole("button", { name: "Won", exact: true }).click();
   await expect(page.locator(".moment-badge")).toBeVisible();
   // No stamp first: the badge says it (2026-11-01, owner).
@@ -256,6 +272,7 @@ test("a jinx is laid on a scroll that rolls up into the jinx chip", async ({
     page,
     rolled(advance(crawlAt("dungeon.hedge-witch", STEP.floor1)), 2),
   );
+  await watchFliers(page);
   await page.locator(".game-card").click();
   const scroll = page.locator(".moment-jinx .jinx-scroll");
   await expect(scroll).toBeVisible();
@@ -264,10 +281,8 @@ test("a jinx is laid on a scroll that rolls up into the jinx chip", async ({
     "The cursed player croaks after every sentence",
   );
   // Its seal flies into the strip's jinx chip, then the moment ends.
-  await expect(page.locator(".moment-flier")).toHaveCount(1, {
-    timeout: 6000,
-  });
   await expect(page.locator(".moment-jinx")).toHaveCount(0, { timeout: 6000 });
+  expect(await fliers(page)).toBe(1);
   await expect(page.locator(".tag-jinx")).toBeVisible();
   await expect(
     page.getByRole("status").and(page.locator("#banner-announcer")),

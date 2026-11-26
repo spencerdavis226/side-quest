@@ -49,6 +49,17 @@ describe("renamed card IDs", () => {
       expect(RENAMED_RIVALS[to]).toBeUndefined();
   });
 
+  it("no renamed ID or rival key holds a space (renameId skips text)", () => {
+    const names = [
+      ...Object.keys(RENAMED_2026_11_15),
+      ...Object.keys(RENAMED_RIVALS),
+    ];
+    expect(names.filter((name) => /\s/.test(name))).toEqual([]);
+    expect(renameId("Drink 2. dungeon.ice-tray")).toBe(
+      "Drink 2. dungeon.ice-tray",
+    );
+  });
+
   it("reads boons, deeds and rival keys", () => {
     expect(renameId("dungeon.ice-tray")).toBe("dungeon.spellbook-shelf");
     expect(renameId("dungeon.big-cheese#1")).toBe("dungeon.great-boar#1");

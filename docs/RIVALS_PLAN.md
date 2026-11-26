@@ -481,7 +481,7 @@ Add `QUEST_RIVAL=<who>` to force a rival for tuning, beside `QUEST_RUNS` and `QU
 - `tests/rival.test.ts`: one `describe` per phase. Loop over `rivals` for anything every rival must do: names, line limits, the intro taking, the Crossroads dealing their own fight, the door dealing their own card, the duel handing back. Write a direct test for each verb, each counter, each door ending, betrayal timing (saved, never re-rolled, round trip), the arsenal's effects and Chuck's coin.
 - Every new saved state round-trips through `parseSession`. Every malformed shape is rejected (`badRival` and `validateParty`).
 - The fixture names are listed per phase. `scripts/save-fixtures.ts` finds each from seeded play (`table-play.ts` takes plaques at random, so it reaches the waiting states).
-- `tests/save-fixtures.test.ts` must keep every old fixture loading, including `2026-10-25-crawl-rival-on-the-stairs`, `2026-11-14-realms-door-humbled` and the ten `2026-11-15-realms-rival-*`.
+- `tests/save-fixtures-*.test.ts` must keep every old fixture loading, including `2026-10-25-crawl-rival-on-the-stairs`, `2026-11-14-realms-door-humbled` and the ten `2026-11-15-realms-rival-*`.
 - Browser (`tests/browser/crawl.spec.ts`): the chip, the dialog, a Do-Over's plaques, a pay-off, the door for each kind of ending. The sweep covers the card fit.
 - `tests/moments.test.ts`: every new moment detected once and never on resume or undo.
 

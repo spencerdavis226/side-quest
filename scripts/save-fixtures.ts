@@ -3,7 +3,7 @@
 // Each fixture is a session exactly as the app saves it, captured from a
 // seeded game played through the real engine: the first state that matches
 // its situation (a roll in flight, a starter evolved, a boss mid-fight, a
-// wiped party...). `tests/save-fixtures.test.ts` requires every fixture ever
+// wiped party...). `tests/save-fixtures-*.test.ts` requires every fixture ever
 // written to keep loading, so a change to save checks or card rules that
 // would turn a game in progress into "This save lost its place" fails the
 // tests instead of reaching a phone.
