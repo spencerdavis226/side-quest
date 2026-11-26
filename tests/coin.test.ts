@@ -97,8 +97,9 @@ describe("the coin", () => {
     // Ten in the core deck, three Realms fights, and since 2026-11-23 five
     // in Never Have I Ever, five in VIP night and three Last Call closers;
     // since 2026-11-24 one more in Core, one in Great Minds and three in
-    // Dealer's Choice.
-    expect(coins).toHaveLength(31);
+    // Dealer's Choice; since 2026-11-26 a Last Call closer each in Great
+    // Minds and Dealer's Choice.
+    expect(coins).toHaveLength(33);
     for (const c of coins) {
       expect(c.dice!.count, c.id).toBe(1);
       expect(c.dice!.outcomes, c.id).toHaveLength(2);

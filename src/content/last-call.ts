@@ -1,5 +1,5 @@
 import type { CardDefinition, Category, DiceDefinition } from "../game/types";
-import { cardFactory, flip } from "./author";
+import { cardFactory, flip, rollTable } from "./author";
 
 // Last Call (2026-11-23, owner): a Standard game (a card limit, no quest)
 // ends on one of these instead of just stopping. Each pack keeps a small pool
@@ -140,10 +140,66 @@ export const neverLastCall = closers("never", [
   ],
 ]);
 
+export const mindsLastCall = closers("minds", [
+  [
+    "last-herd",
+    "Last Herd",
+    "group",
+    "On 3, everyone names tonight's best moment. Lone answers finish their drink.",
+  ],
+  [
+    "how-gone",
+    "How Gone Are We",
+    "group",
+    "Show 1 to 5 fingers on 3: how drunk is this table? Furthest from you finishes their drink.",
+  ],
+  [
+    "one-mind",
+    "One Mind",
+    "group",
+    "On 3, everyone calls heads or tails. Then flip the coin.",
+    flip(
+      "Tails. Everyone who called heads finishes their drink.",
+      "Heads. Everyone who called tails finishes theirs.",
+    ),
+  ],
+]);
+
+export const dealerLastCall = closers("dealer", [
+  [
+    "last-hand",
+    "Last Hand",
+    "challenge",
+    "You deal the last hand: give out 10 drinks, no more than 4 to one player.",
+  ],
+  [
+    "house-always-wins",
+    "The House Always Wins",
+    "group",
+    "Roll for the house. Then everyone drinks.",
+    rollTable(1, 6, [
+      { min: 1, max: 5, instruction: "Everyone drinks {total}." },
+      { min: 6, max: 6, instruction: "Everyone finishes their drink." },
+    ]),
+  ],
+  [
+    "cash-out",
+    "Cash Out",
+    "sip",
+    "The table cashes out. Flip the coin to see who pays.",
+    flip(
+      "Tails. The house wins: you finish your drink.",
+      "Heads. You win: everyone else finishes theirs.",
+    ),
+  ],
+]);
+
 /** Every Last Call card, for the catalog and the imprint map. */
 export const lastCallCards = [
   ...coreLastCall,
   ...vipLastCall,
   ...likelyLastCall,
   ...neverLastCall,
+  ...mindsLastCall,
+  ...dealerLastCall,
 ];

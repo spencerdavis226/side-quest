@@ -1,5 +1,6 @@
 import type { CardDefinition, PackDefinition } from "../game/types";
 import { cardFactory, flip, roll } from "./author";
+import { mindsLastCall } from "./last-call";
 
 // Great Minds (2026-11-24, owner): everyone answers at once, so the whole
 // table plays every card. Herd Mentality's rule (match the crowd; the odd one
@@ -171,11 +172,9 @@ const specials: CardDefinition[] = [
   ),
 ];
 
-export const mindsCards: CardDefinition[] = [
-  ...herdCards,
-  ...scaleCards,
-  ...specials,
-];
+const mindsDeck = [...herdCards, ...scaleCards, ...specials];
+
+export const mindsCards: CardDefinition[] = [...mindsDeck, ...mindsLastCall];
 
 export const mindsPack: PackDefinition = {
   version: 1,
@@ -184,5 +183,6 @@ export const mindsPack: PackDefinition = {
   title: "Great Minds",
   description:
     "Everyone answers on 3. Match the crowd or pay for it: the odd ones out drink.",
-  cardIds: mindsCards.map((c) => c.id),
+  cardIds: mindsDeck.map((c) => c.id),
+  lastCall: mindsLastCall.map((c) => c.id),
 };

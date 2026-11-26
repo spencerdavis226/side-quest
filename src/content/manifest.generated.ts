@@ -860,6 +860,11 @@ export const packs: PackDefinition[] = [
       "minds.finger-count",
       "minds.coin-beer-or-liquor",
     ],
+    lastCall: [
+      "minds.closer-last-herd",
+      "minds.closer-how-gone",
+      "minds.closer-one-mind",
+    ],
   },
   {
     version: 1,
@@ -1113,6 +1118,11 @@ export const packs: PackDefinition[] = [
       "dealer.counting-cards",
       "dealer.ace-up-the-sleeve",
       "dealer.dealers-choice",
+    ],
+    lastCall: [
+      "dealer.closer-last-hand",
+      "dealer.closer-house-always-wins",
+      "dealer.closer-cash-out",
     ],
   },
   {

@@ -2,6 +2,16 @@
 
 Updated 2026-11-25. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Done 2026-11-26: Last Call closers for Great Minds and Dealer's Choice
+
+Owner: "add last call closes for the new packs". Three closers each in `src/content/last-call.ts` (`mindsLastCall`, `dealerLastCall`), wired as `PackDefinition.lastCall` in `minds.ts` and `dealer.ts` (the closers are in the pack's loaded cards, not its deck, as in Never Have I Ever).
+
+- Great Minds: Last Herd (lone answers finish), How Gone Are We (a 1-to-5 scale), One Mind (call heads or tails, coin).
+- Dealer's Choice: Last Hand (deal out 10 drinks), The House Always Wins (d6: everyone drinks the total, a 6 finishes), Cash Out (coin).
+- Packs with no pool now: Secrets & surprises, Pokémon, Realms.
+- Counts: catalog 2,377 → 2,383 (`workshop.test.ts`), coin cards 31 → 33 (`coin.test.ts`). Decks and saved games deal as before: the closer is picked after the shuffle.
+- **Checked**: `npm test` 841 passed; typecheck; lint; build (budgets pass: 5,516 KiB runtime, 182.4 KiB gzip initial); Chromium `@sweep` "every new standard card" 3 of 3 (it covers every closer); `npm run cards:review` regenerated.
+
 ## Done 2026-11-26: device checklists removed
 
 Owner: "Remove all the test on my phone instructions and checklist ... Ever single time ... on every single merge and push I test the app." The owner tests every merge on their iPhone and brings feedback to a session.
