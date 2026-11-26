@@ -36,7 +36,7 @@ CI=1 BASE_PATH=/side-quest/ TEST_PORT=4398 npm run test:release
 BASE_PATH=/side-quest/ npm run test:update
 ```
 
-The release smoke suite exercises the main flow, pack selection, card reading and scrolling, dice, and Pages assets in Chromium and WebKit. Run `npm run test:e2e` and `npm run test:workshop` for exhaustive browser/card checks when needed; they are not required on every publish. Installed Safari Home Screen behavior still needs the [physical-device checklist](docs/DEVICE_CHECKLIST.md).
+The release smoke suite exercises the main flow, pack selection, card reading and scrolling, dice, and Pages assets in Chromium and WebKit. Run `npm run test:e2e` and `npm run test:workshop` for exhaustive browser/card checks when needed; they are not required on every publish.
 
 ## Project map
 
@@ -72,13 +72,13 @@ Game actions save immediately and exactly once; animations display an outgoing s
 
 All motion durations live in one manifest (`src/presentation/theme.ts`) and reach CSS as `--motion-*` variables, including dialog enter/exit. The atmosphere is always on (CSS-only warm lighting, embers, dust and a short reveal glint); Reduce Motion removes it, and a hidden app suspends it. Sound was removed entirely — there is no audio subsystem or Effects/Ambience switch.
 
-Re-export the generated UI sheet with `npx tsx scripts/chrome.ts`; regenerate icons with `npm run generate:icons`. The full runtime remains offline-capable. Physical-device frame-rate and installed-iOS checks are still required before claiming native-level polish.
+Re-export the generated UI sheet with `npx tsx scripts/chrome.ts`; regenerate icons with `npm run generate:icons`. The full runtime remains offline-capable.
 
 ## Production workshop and release
 
-Open `/?workshop=1` on the development server for isolated card previews, seeded sessions, and dice fixtures. The approved ornate teal front uses plain parchment; the retired imprint browser is no longer exposed. Workshop code and fixtures are excluded from production; the approved shared frame and its assets are shipped. The packs are opt-in: `core` (105 cards), `house` (94 supplied sheet cards), `VIP night` (16), `pokemon` (120 board-sheet cards, plus 24 League-only gym leaders), `cabin` (85 CABIIN cards), `likely` (250 vote cards), and `secrets` (156 secret and timer cards). Group balance remains untested.
+Open `/?workshop=1` on the development server for isolated card previews, seeded sessions, and dice fixtures. The approved ornate teal front uses plain parchment; the retired imprint browser is no longer exposed. Workshop code and fixtures are excluded from production; the approved shared frame and its assets are shipped. The packs are opt-in: `core` (105 cards), `house` (94 supplied sheet cards), `VIP night` (16), `pokemon` (120 board-sheet cards, plus 24 League-only gym leaders), `cabin` (85 CABIIN cards), `likely` (250 vote cards), and `secrets` (156 secret and timer cards).
 
-See [Game design](docs/GAME_DESIGN.md), [Playtest record](docs/PLAYTEST.md), and [GitHub Pages release](docs/GITHUB_PAGES.md). The unified front is approved and used throughout. Dice use the approved full-screen `@3d-dice/dice-box-threejs` overlay; dice cards are spread across the packs (see STATUS.md).
+See [Game design](docs/GAME_DESIGN.md) and [GitHub Pages release](docs/GITHUB_PAGES.md). The unified front is approved and used throughout. Dice use the approved full-screen `@3d-dice/dice-box-threejs` overlay; dice cards are spread across the packs (see STATUS.md).
 
 Illustrations follow [Image creation guidelines](docs/ILLUSTRATION_GUIDELINES.md): centered, crop-safe, simple, original fantasy. Pack logos are registered separately and appear consistently in selection, pause, and card footers.
 

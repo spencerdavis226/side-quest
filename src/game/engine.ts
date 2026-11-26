@@ -363,15 +363,20 @@ export function createSession(
   if (config.quest) {
     const rules = packs.find((p) => p.id === config.quest)?.quest;
     if (!rules) throw new Error("This pack has no quest.");
+    // Looked up by ID once per game, not searched for each pool card (a
+    // Realms game reads thousands; 2026-11-26). The first card with an ID
+    // wins, as `find` did.
+    const byId = new Map<string, CardDefinition>();
+    for (const c of catalog) if (!byId.has(c.id)) byId.set(c.id, c);
     // Cards the Chronicle has not unlocked are left out of every pool.
     const open = (ids: string[]) =>
       ids.filter((id) => {
-        const lock = catalog.find((c) => c.id === id)?.unlock;
+        const lock = byId.get(id)?.unlock;
         return !lock || unlocked.has(lock);
       });
     const snapshot = (ids: string[]) =>
       open(ids).map((id) => {
-        const card = catalog.find((c) => c.id === id);
+        const card = byId.get(id);
         if (!card) throw new Error("A finale card is missing.");
         return structuredClone(card);
       });

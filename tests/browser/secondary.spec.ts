@@ -89,11 +89,13 @@ test("the pack count stays readable with every pack selected", async ({
   await dialog.getByRole("button", { name: "Done" }).click();
   const row = page.locator(".pack-selector");
   await expect(row.locator(".pack-logo")).toHaveCount(5);
-  // 886 since the VIP expansion (2026-11-23), 899 with 13 more Core cards
-  // (2026-11-24), 925 with Outbreak's 26 in Secrets & surprises the same
-  // day; Last Call closers and callbacks are not deck cards, so they are not
-  // counted.
-  const count = row.getByText("925 cards");
+  // Core and the four packs picked, read from the catalog (a hard-coded 925
+  // went stale when the 2026-11-25 review retired 3 cards). Last Call
+  // closers and callbacks are not deck cards, so they are not counted.
+  const total = ["core", "vip", "pokemon", "likely", "secrets"]
+    .map((id) => packs.find((p) => p.id === id)!.cardIds.length)
+    .reduce((a, b) => a + b);
+  const count = row.getByText(`${total} cards`);
   await expect(count).toBeVisible();
   expect(
     await count.evaluate((el) => {
@@ -128,10 +130,11 @@ test("VIP is a selectable add-on and Core can be deselected", async ({
     key,
   );
   expect(session.config.packIds).toEqual(["core", "vip"]);
-  // Core holds the house sheet and Cabin weekend too: 298 (285 before
-  // 2026-11-24) + 75 VIP cards (16 before the 2026-11-23 expansion), plus
-  // the one Last Call card a Standard game ends on.
-  expect(session.cards).toHaveLength(374);
+  // Core (the house sheet and Cabin weekend too) and VIP night, plus the one
+  // Last Call card a Standard game ends on. Read from the catalog: a
+  // hard-coded 374 went stale when the 2026-11-25 review retired 3 cards.
+  const deck = (id: string) => packs.find((p) => p.id === id)!.cardIds.length;
+  expect(session.cards).toHaveLength(deck("core") + deck("vip") + 1);
   expect(
     session.cards.some((card: { id: string }) => card.id === "core.house-091"),
   ).toBe(true);

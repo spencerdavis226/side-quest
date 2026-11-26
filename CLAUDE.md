@@ -25,7 +25,7 @@ AGENTS.md (imported above) holds the binding constraints and commands; `docs/STA
 ## Working rules
 
 - Read `docs/STATUS.md` first, but only the top sections; it is long and mostly history.
-- Verify with the narrowest check that proves the change, then say exactly what ran. `npm test` is fast (about 8 s) and covers engine and content; `npm run test:balance` (about 2 min) plays the crawl and League balance simulations, so run it after changing crawl or League cards or rules; layout and iOS-edge behavior need a production build plus Playwright (see AGENTS.md for the `TEST_PORT` pattern).
-- Emulated WebKit is not an iPhone. Never claim installed-app, Safari-toolbar, frost-strip, haptic, or performance behavior without a physical-device result in `docs/DEVICE_CHECKLIST.md`.
+- Verify with the narrowest check that proves the change, then say exactly what ran. `npm test` (about 45 s) covers engine and content; `npm run test:balance` (about 1.5 min) plays the crawl and League balance simulations, so run it after changing crawl or League cards or rules; layout and iOS-edge behavior need a production build plus Playwright (see AGENTS.md for the `TEST_PORT` pattern).
+- The owner tests every merge on their iPhone and brings feedback back to a session; do not ask for device checks, write device-test steps, or keep a device checklist. Emulated WebKit is not an iPhone, so report what emulation showed rather than claiming device behavior.
 - Card copy follows `docs/CARD_VOICE_REFERENCE.md` and `docs/AUTHORING.md`. Since 2026-10-17 the owner says nothing is gospel: supplied House/Pokémon wording may be improved too, recorded in `reference/README.md`.
 - Commits and pushes to `main` publish the live site (the workflow deploys on every push to `main`). Always ask first, except merging your own green pull request under the auto-merge rule in AGENTS.md.

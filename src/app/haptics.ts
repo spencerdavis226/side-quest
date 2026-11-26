@@ -4,8 +4,7 @@
 // its label from inside a tap's handler counts. So `haptic()` keeps one
 // hidden switch and clicks its label. It is not an API: Apple may stop it,
 // and it does nothing outside a user gesture (a timer, an animation's end).
-// Whether it fires on an iPhone, in the installed app, is a device check
-// (`docs/DEVICE_CHECKLIST.md`); emulation proves only that it is harmless.
+// Emulation proves only that it is harmless.
 
 /** Safari 18+ exposes the switch attribute; elsewhere this is a no-op. */
 const supported =

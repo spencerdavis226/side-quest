@@ -86,7 +86,10 @@ test("@release legacy finite game, rapid taps, restore, previous card, replay an
   );
   // The front is shown once the turn has ended; read the title from it then.
   await expect(page.locator(".card-front")).toHaveCSS("visibility", "visible");
-  const title = await page.locator(".study-title h2").innerText();
+  // textContent, not innerText: the title's visibility can lag the face by a
+  // frame (see "offline reload keeps the same revealed card").
+  await expect(page.locator(".study-title h2")).toHaveText(/\S/);
+  const title = (await page.locator(".study-title h2").textContent())!.trim();
   await page.reload();
   await expect(page.locator(".study-title h2")).toHaveText(title);
   await expect(page.locator(".progress")).toContainText("1 / 2");
@@ -283,10 +286,13 @@ test("offline reload keeps the same revealed card", async ({
   await ready(page);
   // The front is shown once the turn has ended; read the title from it then.
   await expect(page.locator(".card-front")).toHaveCSS("visibility", "visible");
-  // The title fits itself after the face shows and can read empty for a
-  // frame (2026-11-02: 1 in 5 runs read "", then failed after the reload).
-  await expect(page.locator(".study-title h2")).toHaveText(/\S/);
-  const title = await page.locator(".study-title h2").innerText();
+  // Read textContent, as toHaveText does, not innerText: innerText is "" for
+  // hidden text, and under Reduced Motion every element has a 0.01 ms
+  // transition (transition-property's initial value is all), so the title's
+  // inherited visibility lags the face by a frame (2026-11-26: 8 in 10 runs).
+  const heading = page.locator(".study-title h2");
+  await expect(heading).toHaveText(/\S/);
+  const title = (await heading.textContent())!.trim();
   await context.setOffline(true);
   await page.reload();
   await expect(page.locator(".study-title h2")).toHaveText(title);
@@ -634,7 +640,7 @@ test("offline uses local Grenze and painted controls", async ({
 }) => {
   test.skip(
     browserName !== "chromium",
-    "Installed Safari offline remains a physical-device check",
+    "Installed Safari offline cannot be emulated",
   );
   await page.goto("./");
   await page.evaluate(() => navigator.serviceWorker.ready);

@@ -433,7 +433,7 @@ Each phase is one session and one pull request. Each ends with: `npm test`, lint
 
 ### Phase 7: the owner's table
 
-Not code. The owner plays at least three runs on a phone (one where the rival is joined, one refused, one Heroic) and answers:
+Not code. The owner plays and brings feedback to a session. Questions worth having in mind:
 
 - Do you hate them by the door?
 - Is the Do-Over funny or infuriating in a bad way?
@@ -441,7 +441,7 @@ Not code. The owner plays at least three runs on a phone (one where the rival is
 - Is the betrayal a story or a cheat?
 - Does any name land flat?
 
-Record the answers in `docs/DEVICE_CHECKLIST.md`, then tune from them.
+Tune from the owner's feedback.
 
 ---
 
@@ -481,7 +481,7 @@ Add `QUEST_RIVAL=<who>` to force a rival for tuning, beside `QUEST_RUNS` and `QU
 - `tests/rival.test.ts`: one `describe` per phase. Loop over `rivals` for anything every rival must do: names, line limits, the intro taking, the Crossroads dealing their own fight, the door dealing their own card, the duel handing back. Write a direct test for each verb, each counter, each door ending, betrayal timing (saved, never re-rolled, round trip), the arsenal's effects and Chuck's coin.
 - Every new saved state round-trips through `parseSession`. Every malformed shape is rejected (`badRival` and `validateParty`).
 - The fixture names are listed per phase. `scripts/save-fixtures.ts` finds each from seeded play (`table-play.ts` takes plaques at random, so it reaches the waiting states).
-- `tests/save-fixtures.test.ts` must keep every old fixture loading, including `2026-10-25-crawl-rival-on-the-stairs`, `2026-11-14-realms-door-humbled` and the ten `2026-11-15-realms-rival-*`.
+- `tests/save-fixtures-*.test.ts` must keep every old fixture loading, including `2026-10-25-crawl-rival-on-the-stairs`, `2026-11-14-realms-door-humbled` and the ten `2026-11-15-realms-rival-*`.
 - Browser (`tests/browser/crawl.spec.ts`): the chip, the dialog, a Do-Over's plaques, a pay-off, the door for each kind of ending. The sweep covers the card fit.
 - `tests/moments.test.ts`: every new moment detected once and never on resume or undo.
 

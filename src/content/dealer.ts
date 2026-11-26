@@ -4,6 +4,7 @@ import type {
   PackDefinition,
 } from "../game/types";
 import { cardFactory, flip, rollTable } from "./author";
+import { dealerLastCall } from "./last-call";
 
 // Dealer's Choice (2026-11-24, owner): bar card games done with dice. Ride
 // the Bus, Pyramid and Screw the Dealer push your luck; here a pot card
@@ -312,7 +313,9 @@ const table: CardDefinition[] = [
   ),
 ];
 
-export const dealerCards: CardDefinition[] = [...pots, ...calls, ...table];
+const dealerDeck = [...pots, ...calls, ...table];
+
+export const dealerCards: CardDefinition[] = [...dealerDeck, ...dealerLastCall];
 
 export const dealerPack: PackDefinition = {
   version: 1,
@@ -321,5 +324,6 @@ export const dealerPack: PackDefinition = {
   title: "Dealer's Choice",
   description:
     "Bar card games with dice. Push your luck: cash out and give the pot, or ride on and risk drinking it.",
-  cardIds: dealerCards.map((c) => c.id),
+  cardIds: dealerDeck.map((c) => c.id),
+  lastCall: dealerLastCall.map((c) => c.id),
 };

@@ -2,8 +2,8 @@
 
 | Location                   | Runner                                                                                                           | What it needs                                                               |
 | -------------------------- | ---------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `tests/*.test.ts`          | `npm test` (Vitest, about 8 s)                                                                                   | nothing; engine, dice, content, presentation tokens, card-logic guards      |
-| `tests/*.balance.test.ts`  | `npm run test:balance` (about 2 min; CI runs each file in its own job)                                           | nothing; 4,000 seeded Pub Crawl and League runs each, holding the win rates |
+| `tests/*.test.ts`          | `npm test` (Vitest, about 45 s)                                                                                  | nothing; engine, dice, content, presentation tokens, card-logic guards      |
+| `tests/*.balance.test.ts`  | `npm run test:balance` (about 1.5 min; CI runs each file in its own job)                                         | nothing; 4,000 seeded Pub Crawl and League runs each, holding the win rates |
 | `tests/browser/*.spec.ts`  | `npm run test:release` (@release, the CI gate), `npm run test:e2e` (everything but @sweep), `npm run test:sweep` | a production build; serves `dist` with `vite preview`                       |
 | `tests/workshop/*.spec.ts` | `npm run test:workshop`                                                                                          | the dev server (`:5175`); never `dist`                                      |
 
@@ -26,6 +26,8 @@
 - Do not run two Playwright runners at once; they share `test-results/` and corrupt each other's traces (this caused a false failure before).
 - `--repeat-each=5` proves a change steady; the `pages.yml` dispatch takes `repeat_each` for the same in CI.
 - WebKit can run locally since 2026-11-16 in the `side-quest` cloud environment, which allows Playwright's download hosts (`npx playwright install webkit`). Reproduce a WebKit CI failure there with `--repeat-each` and `--workers=4` (more load, more failures) before guessing. A gesture spec must drag at a finger's pace (one step per rendered frame, `drag` in `tray.spec.ts`): Playwright's `steps` fire with no pause in WebKit and read as a flick.
-- Playwright projects emulate iPhone 13 in Chromium and WebKit. WebKit emulation is closer to Safari but is not an iPhone; physical results go in `docs/DEVICE_CHECKLIST.md`.
+- Playwright projects emulate iPhone 13 in Chromium and WebKit. WebKit emulation is closer to Safari but is not an iPhone.
 - `tests/fixtures/saves/` are real saves from earlier releases; never edit or delete one to make a test pass (see AGENTS.md).
-- Count assertions (`tests/workshop.test.ts`, `game.spec.ts`) change when cards or packs are added; update them with the content.
+- Count assertions (`tests/workshop.test.ts`, `game.spec.ts`) change when cards or packs are added; update them with the content. In a browser spec, read a count from the catalog (`packs`, `cards`) rather than writing the number: two hard-coded counts in `secondary.spec.ts` went stale for a day (2026-11-25).
+- Read text with `textContent` (what `toHaveText` checks), never `innerText`, which is "" for hidden text: under Reduced Motion every element has a 0.01 ms transition (`transition-property` starts as `all`), so an inherited `visibility` lags a frame (2026-11-26).
+- A moment that removes itself (`flyTo`'s fliers last 620 ms) is watched from inside the page (`watchFliers`), not polled from the test.

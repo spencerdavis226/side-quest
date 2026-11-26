@@ -771,18 +771,24 @@ export const RENAMED_RIVALS: Readonly<Record<string, string>> = {
 };
 /** Strings built from a rival's key: deeds and the Chronicle's feat. */
 const RIVAL_WORD = /^(rival-|nemesis-|drew-on-)?(bradley|mirabel|tutt)$/;
+const OLD_RIVAL_END = /(bradley|mirabel|tutt)$/;
 /** A boon is kept as its card ID and a suffix: `#<spoil>` for a trinket,
  * `#k` for a kit, `#o<index>` for a plaque. */
 const OFFER_BOON = /^(.+)(#(?:o?\d+|k))$/;
 
 /** One stored string, renamed if it names a renamed card or rival. */
 export function renameId(value: string): string {
+  // Card text (titles, rules, outcomes) is most of a save's strings, and no
+  // ID or rival key holds a space: skip the lookups (2026-11-26, about half
+  // of `parseSession`'s time on a Realms save).
+  if (value.includes(" ")) return value;
   const id = RENAMED_2026_11_15[value];
   if (id) return id;
-  const boon = OFFER_BOON.exec(value);
+  // Each pattern can only match with its marker, so most IDs skip both.
+  const boon = value.includes("#") ? OFFER_BOON.exec(value) : null;
   if (boon && RENAMED_2026_11_15[boon[1]])
     return RENAMED_2026_11_15[boon[1]] + boon[2];
-  const rival = RIVAL_WORD.exec(value);
+  const rival = OLD_RIVAL_END.test(value) ? RIVAL_WORD.exec(value) : null;
   if (rival) return (rival[1] ?? "") + RENAMED_RIVALS[rival[2]];
   return value;
 }

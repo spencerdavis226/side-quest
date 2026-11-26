@@ -1,6 +1,6 @@
 // A table that plays any game through the real engine, one tap or plaque at
 // a time, at random but sensibly: the save fixtures are captured from it
-// (`save-fixtures.ts`) and `tests/save-fixtures.test.ts` plays each loaded
+// (`save-fixtures.ts`) and `tests/save-fixtures-*.test.ts` plays each loaded
 // fixture on with it. Deterministic for a given seed.
 import {
   advance,
