@@ -444,7 +444,7 @@ test("@release the installed app lays out at the full screen height and never sc
   page,
 }) => {
   // Installed iOS apps report navigator.standalone. Emulation cannot reproduce
-  // their short svh/dvh viewport (see docs/DEVICE_CHECKLIST.md); this checks
+  // their short svh/dvh viewport; this checks
   // the layout targets the large viewport, which is the full screen there.
   // The atmosphere layer is measured here; Reduced Motion hides it.
   await withMotion(page);

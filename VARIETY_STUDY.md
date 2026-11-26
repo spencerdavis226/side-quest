@@ -144,7 +144,7 @@ Some rooms should stay d20 fights; the roll is part of the dungeon fantasy. Make
 
 ### Risks and open questions
 
-- **Balance.** Table-settled Won/Lost fights depend on people, not dice. The balance bot can only assume a win rate for them; real odds come from a playtest. No playtest has ever been recorded (`docs/PLAYTEST.md`); this proposal raises the value of one.
+- **Balance.** Table-settled Won/Lost fights depend on people, not dice. The balance bot can only assume a win rate for them; real odds come from a playtest.
 - **Reading load.** Secrets, timers and offers make cards longer. The 2:3 face and one-handed reading stay the constraint; each format needs a fit check at 320 px.
 - **Systems creep.** The 2026-10-31 streamline cut systems because they got in the way of card design. Everything in steps 1 and 2 is content using existing fields; steps 4 to 6 add mechanics and should each pass the same test: does it make cards better, or just add bookkeeping?
 - **Voice.** Copy drafted here is placeholder tone. The best cards in this game come from the group's own lore (`CARD_VOICE_REFERENCE.md`), which an agent can't invent. Section 4 gives formats; the owner's references make them land.

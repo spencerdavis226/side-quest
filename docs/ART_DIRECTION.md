@@ -177,7 +177,6 @@ Keep the transparent full-screen `@3d-dice/dice-box-threejs` roll over the live 
 - The lazy renderer warms while the revealed card is read. Normal playback spans 1.5–2.6 seconds plus initialization; frame interpolation follows the library's own pre-simulation. Body settings are applied at creation consistently, never changed between the pre-simulation and replay.
 - Use local procedural teal enamel, broader brass bevels and inlay, ivory pips on d6 and serif numerals on d20. Keep restrained highlights and projected contact shadows; no dimming or continuously running animation after settlement. Hand-authored markings keep every face exact without downloaded textures.
 - Sound remains removed. Reduced Motion, restoration, or renderer failure shows static saved values, with a tap returning to the resolved rule and no forced replay. Escape and stationary taps on the surrounding table can finish/dismiss; rules scrolling keeps its existing gesture protection.
-- Browser emulation does not establish physical-device frame rate or subjective approval. Review timing, material readability, and Safari toolbar behavior on the user's phone.
 
 ## Visual release gate
 

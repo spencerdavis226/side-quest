@@ -433,7 +433,7 @@ Each phase is one session and one pull request. Each ends with: `npm test`, lint
 
 ### Phase 7: the owner's table
 
-Not code. The owner plays at least three runs on a phone (one where the rival is joined, one refused, one Heroic) and answers:
+Not code. The owner plays and brings feedback to a session. Questions worth having in mind:
 
 - Do you hate them by the door?
 - Is the Do-Over funny or infuriating in a bad way?
@@ -441,7 +441,7 @@ Not code. The owner plays at least three runs on a phone (one where the rival is
 - Is the betrayal a story or a cheat?
 - Does any name land flat?
 
-Record the answers in `docs/DEVICE_CHECKLIST.md`, then tune from them.
+Tune from the owner's feedback.
 
 ---
 

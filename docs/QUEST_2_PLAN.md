@@ -946,7 +946,7 @@ One phase is one session and one pull request. Start each session by reading `AG
   - **Moments**: M24 a wax seal per new unlock after the ending's show (2.5 s, a tap skips; Reduced Motion and a reload show the news line only); the end screen's "New in the Chronicle" line names dragons slain for the first time, feats and unlocks; M22's counter ("3 of 8 found") ticks in the corner when the kind is new (`MomentDirector`'s `secrets`).
   - **Tests**: `tests/chronicle.test.ts`, `tests/browser/chronicle.spec.ts`; the sweep places a locked card in a run with everything unlocked (`crawlAt`'s `unlocked`). Fixture `2026-11-14-realms-heroic-mid`. The Phase 6 door test now checks the extra need on a d20 only (its door card came from `Math.random`, and a d6 door reads as written).
 
-- [ ] **Phase 8: the owner's table.** Not code. The owner plays two full runs on a phone and reports: does the last half hour drag, do the allies die too fast to love, is the dragon's turn slow in the hand, does the map read at arm's length. Tune from that. Record device results in `docs/DEVICE_CHECKLIST.md`.
+- [ ] **Phase 8: the owner's table.** Not code. The owner plays and brings feedback; questions worth having in mind: does the last half hour drag, do the allies die too fast to love, is the dragon's turn slow in the hand, does the map read at arm's length. Tune from that.
 
 **Docs to keep in step as phases land:** `AGENTS.md` (the Realms paragraph and constraints), `src/content/CLAUDE.md`, `src/game/CLAUDE.md`, `src/app/CLAUDE.md` (the Chronicle key), `docs/AUTHORING.md` (new card kinds and plaque fields), `tests/CLAUDE.md`, the in-app guide (`Guide.tsx`: rows for Allies, Lore, The dragon, The map), `scripts/save-fixtures.ts`, `scripts/table-play.ts`.
 

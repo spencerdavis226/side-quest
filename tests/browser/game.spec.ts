@@ -634,7 +634,7 @@ test("offline uses local Grenze and painted controls", async ({
 }) => {
   test.skip(
     browserName !== "chromium",
-    "Installed Safari offline remains a physical-device check",
+    "Installed Safari offline cannot be emulated",
   );
   await page.goto("./");
   await page.evaluate(() => navigator.serviceWorker.ready);

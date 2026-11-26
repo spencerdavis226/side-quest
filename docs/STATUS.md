@@ -2,6 +2,15 @@
 
 Updated 2026-11-25. **Single authoritative handoff.** Read `AGENTS.md` first. Older handoffs are in `docs/STATUS_ARCHIVE.md` (reference only). Direct user instructions win.
 
+## Done 2026-11-26: device checklists removed
+
+Owner: "Remove all the test on my phone instructions and checklist ... Ever single time ... on every single merge and push I test the app." The owner tests every merge on their iPhone and brings feedback to a session.
+
+- Deleted `docs/DEVICE_CHECKLIST.md` and `docs/PLAYTEST.md` (still in git history).
+- Removed the rules and pointers that sent agents to them (`AGENTS.md`, `CLAUDE.md`, `docs/CLAUDE.md`, `tests/CLAUDE.md`, `src/app/CLAUDE.md`, `src/presentation/CLAUDE.md`, `README.md`, `docs/GITHUB_PAGES.md`, `docs/ART_DIRECTION.md`, the owner's-table phases in `docs/RIVALS_PLAN.md` and `docs/QUEST_2_PLAN.md`, `VARIETY_STUDY.md`, and code comments in `haptics.ts`, `Play.tsx`, `layout.spec.ts`, `game.spec.ts`). The new rule: do not ask for device checks, write device-test steps, or keep a device checklist; report what was run, and do not claim device behavior from emulation.
+- Older sections below still mention the checklist, "Not checked: a phone" and table playtests. They are history, not open tasks.
+- No app behavior changed (comments and one skip message only).
+
 ## Done 2026-11-25: every card reviewed; titles unique; the League cleaned
 
 Owner: "do a full, really intelligent review of every single card string ... if things are too complicated to fit ... change what the card text is entirely". All 2,380 cards were read (rules, dice outcomes, phases, dragon moves, omens, plaques, secrets, rival lines); the owner approved the list, then: drop Whinnie the Pooh, "everyone who drank" for Drink, bitch, Buffalo means finish your drink if it's in your dominant hand (This Sucks flips it), retire any cards that need it, the League "playful and clean", "make titles unique", and "make all other changes you deem fit".

@@ -26,6 +26,6 @@
 - Do not run two Playwright runners at once; they share `test-results/` and corrupt each other's traces (this caused a false failure before).
 - `--repeat-each=5` proves a change steady; the `pages.yml` dispatch takes `repeat_each` for the same in CI.
 - WebKit can run locally since 2026-11-16 in the `side-quest` cloud environment, which allows Playwright's download hosts (`npx playwright install webkit`). Reproduce a WebKit CI failure there with `--repeat-each` and `--workers=4` (more load, more failures) before guessing. A gesture spec must drag at a finger's pace (one step per rendered frame, `drag` in `tray.spec.ts`): Playwright's `steps` fire with no pause in WebKit and read as a flick.
-- Playwright projects emulate iPhone 13 in Chromium and WebKit. WebKit emulation is closer to Safari but is not an iPhone; physical results go in `docs/DEVICE_CHECKLIST.md`.
+- Playwright projects emulate iPhone 13 in Chromium and WebKit. WebKit emulation is closer to Safari but is not an iPhone.
 - `tests/fixtures/saves/` are real saves from earlier releases; never edit or delete one to make a test pass (see AGENTS.md).
 - Count assertions (`tests/workshop.test.ts`, `game.spec.ts`) change when cards or packs are added; update them with the content.

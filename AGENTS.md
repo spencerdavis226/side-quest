@@ -51,5 +51,5 @@ npm run test:workshop  # dev server on :5175
 
 ## Evidence
 
-- Chromium/WebKit emulation is not physical iOS evidence; device-only checks live in `docs/DEVICE_CHECKLIST.md`.
+- The owner tests every merge on their iPhone and brings feedback back to a session; do not ask for device checks, write device-test steps, or keep a device checklist. Chromium/WebKit emulation is not an iPhone; say what was run, not how it behaves on the device.
 - Report failures honestly, including untracked tests. Never call checks green while any suite (including uncommitted ones) fails.

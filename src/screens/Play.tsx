@@ -430,7 +430,7 @@ export function Play({
   useLayoutEffect(() => {
     // Device experiment (2026-11-16, dev server only): `?flip=native` leaves
     // both faces to backface-visibility, to see whether iOS 26 still paints
-    // the mirrored face. See docs/DEVICE_CHECKLIST.md before removing this.
+    // the mirrored face.
     if (NATIVE_FLIP) return;
     const el = ref.current;
     const rotator = el?.querySelector<HTMLElement>(".card-rotator");
